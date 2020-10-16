@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-packages_ = find_packages()
+packages = find_packages()
 
 setup(name='rlberry',
       version='0.0.1',
