@@ -84,19 +84,17 @@ class FiniteMDP(SimulationModel):
         Sample a transition s' from P(s'|state, action).
         """
         prob = self.P[state, action, :]
-        s_ = self.rng.choice(self._states, p=prob)
-        return s_
+        next_state = self.rng.choice(self._states, p=prob)
+        reward = self.reward_fn(state, action, next_state)
+        done = self.is_terminal(self.state)
+        info = {}
+        return next_state, reward, done, info
 
     def step(self, action):
         assert action in self._actions, "Invalid action!"
-        next_state = self.sample_transition(self.state, action)
-        reward = self.reward_fn(self.state, action, next_state)
-        done = self.is_terminal(self.state)
-        info = {}
-
+        next_state, reward, done, info = self.sample(action, self.state)
         self.state = next_state
-        observation = next_state
-        return observation, reward, done, info
+        return next_state, reward, done, info
 
     def is_terminal(self, state):
         """
