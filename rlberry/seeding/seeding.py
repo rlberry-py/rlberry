@@ -11,7 +11,7 @@ def set_global_seed(seed):
     generators with (close to) independent outcomes.
 
     If the global seed is altered by the user, it has to be done only once,
-    after importing the rlberry
+    after importing rlberry for the first time.
     """
     _GLOBAL_SEED = seed
     _GLOBAL_SEED_SEQ = SeedSequence(_GLOBAL_SEED)
@@ -19,7 +19,13 @@ def set_global_seed(seed):
 def get_rng():
     """
     Get a random number generator (rng), from the global seed sequence.
+
+    Returns
+    -------
+    rng : numpy.random._generator.Generator
+        random number generator
     """
     # Spawn off 1 child SeedSequence
     child_seed = _GLOBAL_SEED_SEQ.spawn(1)
-    return default_rng(child_seed[0])
+    rng = default_rng(child_seed[0])
+    return rng
