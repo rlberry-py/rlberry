@@ -10,9 +10,13 @@ def set_global_seed(seed):
     rlberry has a global seed from which we can obtain different random number
     generators with (close to) independent outcomes.
 
-    If the global seed is altered by the user, it has to be done only once,
-    after importing rlberry for the first time.
+    Important:
+
+    If the global seed is altered by the user, it should be done only once,
+    after importing rlberry for the first time. This is to ensure that all
+    random number generators are children of the same SeedSequence.
     """
+    global _GLOBAL_SEED, _GLOBAL_SEED_SEQ
     _GLOBAL_SEED = seed
     _GLOBAL_SEED_SEQ = SeedSequence(_GLOBAL_SEED)
 
