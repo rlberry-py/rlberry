@@ -5,7 +5,25 @@ Interface that allows 2D rendering.
 from abc import ABC, abstractmethod
 from rlberry.rendering.render2d import Render2D
 
-class RenderInterface2D(ABC):
+class BaseRenderInterface(ABC):
+    def __init__(self):
+        self._rendering_enabled = False
+ 
+    def is_render_enabled(self):
+        return self._rendering_enabled
+
+    def enable_rendering(self):
+        self._rendering_enabled = True
+
+    def disable_rendering(self):
+        self._rendering_enabled = False
+
+    @abstractmethod 
+    def render(self, **kwargs):
+        pass
+
+
+class RenderInterface2D(BaseRenderInterface):
     def __init__(self):
         self._rendering_enabled           = False
         self._rendering_type              = "2d"
@@ -29,15 +47,6 @@ class RenderInterface2D(ABC):
 
     def append_state_for_rendering(self, state):
         self._state_history_for_rendering.append(state)
-
-    def is_render_enabled(self):
-        return self._rendering_enabled
-
-    def enable_rendering(self):
-        self._rendering_enabled = True
-
-    def disable_rendering(self):
-        self._rendering_enabled = False
 
     def set_refresh_interval(self, interval):
         self._refresh_interval = interval
