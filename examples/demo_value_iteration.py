@@ -3,7 +3,8 @@ from rlberry.agents.dynprog import ValueIterationAgent
 
 env = GridWorld(7, 10, walls=((2,2), (3,3)))
 agent = ValueIterationAgent(env, gamma=0.95)
-agent.fit()
+info = agent.fit()
+print(info)
 
 env.enable_rendering()
 

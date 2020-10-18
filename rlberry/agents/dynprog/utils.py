@@ -68,21 +68,22 @@ def value_iteration(R, P, gamma, epsilon=1e-6):
 
     Returns
     --------
-    tuple (Q, V) containing the epsilon-optimal Q and V functions, 
-    of shapes (S, A) and (S,), respectively.
+    tuple (Q, V, n_it) containing the epsilon-optimal Q and V functions, 
+    of shapes (S, A) and (S,), respectively, and n_it, the number of iterations
     """
     S, A  = R.shape 
     Q     = np.zeros((S, A))
     Q_aux = np.full((S, A), np.inf)
+    n_it = 0
     while np.abs(Q - Q_aux).max() > epsilon:
         Q_aux = Q
         Q = bellman_operator(Q, R, P, gamma)
-
+        n_it += 1
     V  = np.zeros(S)
     # numba does not support np.max(Q, axis=1)
     for ss in range(S):
         V[ss] = Q[ss, :].max()  
-    return Q, V 
+    return Q, V, n_it
 
 
 @jit(nopython=True)

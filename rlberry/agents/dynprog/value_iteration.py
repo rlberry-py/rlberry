@@ -2,6 +2,7 @@ from rlberry.agents.dynprog.utils import backward_induction, value_iteration
 from rlberry.agents.agent import Agent
 from rlberry.envs.finite.finite_mdp import FiniteMDP
 
+
 class ValueIterationAgent(Agent):
     """
     Value iteration for enviroments of type FiniteMDP (rlberry.envs.finite.finite_mdp.FiniteMDP)
@@ -41,11 +42,16 @@ class ValueIterationAgent(Agent):
         epsilon : double
             precision of value iteration, only used in discounted problems (when horizon is None).
         """
+        info = {}
         if self.horizon is None:
             assert self.gamma < 1.0, "The discounted setting requires gamma < 1.0"
-            self.Q, self.V = value_iteration(self.env.R, self.env.P, self.gamma, epsilon)
+            self.Q, self.V, n_it = value_iteration(self.env.R, self.env.P, self.gamma, epsilon)
+            info["n_iterations"] = n_it
+            info["precision"] = epsilon
         else:
             self.Q, self.V = backward_induction(self.env.R, self.env.P, self.horizon, self.gamma)
+            info["n_iterations"] = self.horizon
+        return info
 
 
     def policy(self, state, hh=0, **kwargs):
