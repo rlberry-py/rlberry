@@ -1,7 +1,0 @@
-numpy
-scipy
-pytest
-numba
-PyOpenGL
-PyOpenGL_accelerate
-pygame
