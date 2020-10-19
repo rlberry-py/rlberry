@@ -8,7 +8,7 @@ class Chain(FiniteMDP, RenderInterface2D):
     Simple chain environment. 
     Reward 0.05 in initial state, reward 1.0 in final state.
     """
-    def __init__(self, L, fail_prob):
+    def __init__(self, L=5, fail_prob=0.1):
         """
         Parameters
         ----------
