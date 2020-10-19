@@ -1,6 +1,6 @@
 # rlberry 
 
-![pytest](https://github.com/rlberry-py/rlberry/workflows/Test/badge.svg)
+![pytest](https://github.com/rlberry-py/rlberry/workflows/test/badge.svg)
 
 
 # Install
