@@ -31,9 +31,21 @@ def test_discrete_space(n):
                            (-np.inf,  np.inf, 1),
                            (-np.inf,  np.inf, 2),
                            (-np.inf,  np.inf, 4),
-                         ])
+                       ])
 def test_box_space_case_1(low, high, dim):
     sp = Box(low, high, dim)
     for ii in range(2**dim):
-        assert(sp.contains(sp.sample()))
-    
+        assert(sp.contains(sp.sample()))  
+
+@pytest.mark.parametrize("low, high",
+                [
+                ( np.array([0.0, 0.0, 0.0]),          np.array([1.0, 1.0, 1.0]) ),
+                ( np.array([-10.0, -10.0, -10.0]),    np.array([10.0, 10.0, 10.0]) ),
+                ( np.array([-10.0, -10.0, -10.0]),    np.array([10.0, 10.0, np.inf]) ),
+                ( np.array([-np.inf, -10.0, -10.0]),  np.array([10.0, 10.0, np.inf]) ), 
+                ( np.array([-np.inf, -10.0, -10.0]),  np.array([np.inf, 10.0, np.inf]) )             
+                ])
+def test_box_space_case_2(low, high):
+    sp = Box(low, high)
+    for ii in range(2**sp.dim):
+        assert(sp.contains(sp.sample()))  

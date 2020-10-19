@@ -2,7 +2,7 @@ import numpy as np
 import rlberry.spaces as spaces
 from rlberry.envs.interface import ForwardModel, GenerativeModel
 from rlberry.wrappers import Wrapper 
-from rlberry.utils.binsearch import binary_search_1d, binary_search_nd, unravel_index_uniform_bin
+from rlberry.utils.binsearch import binary_search_nd, unravel_index_uniform_bin
 
 class DiscretizeStateWrapper(Wrapper):
     """

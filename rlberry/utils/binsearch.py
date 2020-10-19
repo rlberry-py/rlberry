@@ -2,34 +2,6 @@ import numpy as np
 from numba import jit
 
 
-@jit(nopython=True)
-def binary_search_1d(x, bins_1d, left_idx=0, right_idx=-1):
-    """
-    1-dimensional binary search
-
-    Parameters
-    -----------
-    x : double
-        value to be searched
-    bins_1d :  numpy.ndarray or tuple
-        1d numpy array or tuple representing the bins
-
-    Returns
-    --------
-        Index of x in the partition defined by the bins. Returns -1 if x is not in the partition.
-    """
-    if(right_idx == -1):
-        right_idx = len(bins_1d) - 1
-    if(right_idx > left_idx):
-        mid = left_idx + (right_idx-left_idx) // 2
-        if(bins_1d[mid] <= x and bins_1d[mid+1]>x):
-            return mid 
-        if (x >= bins_1d[mid+1]):
-            return binary_search_1d(x, bins_1d, mid+1, right_idx)
-        if (x < bins_1d[mid]):
-            return binary_search_1d(x, bins_1d, left_idx, mid)
-    return -1
-
 def binary_search_nd(x_vec, bins):
     """
     n-dimensional binary search
@@ -51,7 +23,7 @@ def binary_search_nd(x_vec, bins):
     aux = 1
     assert dim == len(x_vec), "dimension mismatch in binary_search_nd()"
     for dd in range(dim):
-        index_dd = binary_search_1d(x_vec[dd], bins[dd])
+        index_dd = np.searchsorted(bins[dd], x_vec[dd], side='right') - 1
         assert index_dd != -1, "error in binary_search_nd()"
         flat_index += aux*index_dd 
         aux *=  (len(bins[dd]) - 1)
