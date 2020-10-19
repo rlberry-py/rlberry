@@ -1,4 +1,9 @@
-# rlberry
+# rlberry 
+
+![pytest](https://github.com/rlberry-py/rlberry/workflows/Test/badge.svg)
+
+
+# Install
 
 Creating a virtual environment and installing:
 
