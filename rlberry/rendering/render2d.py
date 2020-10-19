@@ -18,6 +18,10 @@ except:
     _IMPORT_SUCESSFUL = False
     
 
+# Flag to debug without screen 
+_DEBUG_NO_SCREEN = False
+
+
 class Render2D:
     def __init__(self):
         # parameters
@@ -131,7 +135,10 @@ class Render2D:
 
 
     def run_graphics(self):
-        global _IMPORT_SUCESSFUL
+        global _IMPORT_SUCESSFUL, _DEBUG_NO_SCREEN
+
+        if _DEBUG_NO_SCREEN:
+            return
 
         if _IMPORT_SUCESSFUL:
             pg.init()
@@ -152,17 +159,10 @@ class Render2D:
         else:
             print("Error: not possible to render the environment, pygame or pyopengl not installed.")
 
-if __name__=='__main__':
-    background = Scene()
-    shape = GeometricPrimitive("GL_QUADS")
-    shape.add_vertex((0.0, 0.0))
-    shape.add_vertex((0.0, 1.0))
-    shape.add_vertex((1.0, 1.0))
-    shape.add_vertex((1.0, 0.0))
-    shape.set_color((1.0, 0.0, 0.0))
-    background.add_shape(shape)
+def _activate_debug_mode():
+    global _DEBUG_NO_SCREEN
+    _DEBUG_NO_SCREEN = True
 
-    render = Render2D()
-    render.set_background(background)
-    render.run_graphics()
-    render.run_graphics()
+def _deactivate_debug_mode():
+    global _DEBUG_NO_SCREEN
+    _DEBUG_NO_SCREEN = False

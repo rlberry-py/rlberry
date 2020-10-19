@@ -20,6 +20,8 @@ To run tests, run `pytest`.
 With coverage: install and run pytest-cov
 ```
 pip install pytest-cov
-pytest --cov=rlberry --cov-report html:cov_html
+bash run_tests.sh
 ```
+
+See coverage report in `cov_html/index.html`.
 

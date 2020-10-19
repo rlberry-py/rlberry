@@ -22,6 +22,7 @@ classes = [
 @pytest.mark.parametrize("ModelClass", classes)
 def test_instantiation(ModelClass):
     env = ModelClass()
+
     if isinstance(env, ForwardModel):
         for ep in range(2):
             state = env.reset()

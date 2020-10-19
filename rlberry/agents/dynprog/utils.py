@@ -127,11 +127,3 @@ def bellman_operator(Q, R, P, gamma):
                 TQ[ss, aa] += gamma*P[ss, aa, ns] * V[ns]
     return TQ
 
-
-if __name__=='__main__':
-    from rlberry.envs.finite import GridWorld 
-    env = GridWorld()
-    Q, V = backward_induction(env.R, env.P, 30, gamma=0.5)
-    Q = Q[0, :, :]
-
-    Q2, _ = value_iteration(env.R, env.P, 0.5)

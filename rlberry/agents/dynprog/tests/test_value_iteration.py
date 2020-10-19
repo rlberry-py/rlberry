@@ -3,7 +3,9 @@ import numpy as np
 import rlberry.seeding as seeding
 from rlberry.agents.dynprog.utils import bellman_operator
 from rlberry.agents.dynprog.utils import value_iteration
-
+from rlberry.agents.dynprog.utils import backward_induction
+from rlberry.agents.dynprog import ValueIterationAgent
+from rlberry.envs.finite import FiniteMDP
 
 @pytest.mark.parametrize("gamma, S, A", 
                          [
@@ -54,11 +56,11 @@ def test_bellman_operator_monotonicity_and_contraction(gamma, S, A):
 
 @pytest.mark.parametrize("gamma, S, A", 
                          [
-                          (0.01, 20, 4), 
-                          (0.25,  20, 4), 
-                          (0.5,   20, 4),
-                          (0.75,  20, 4), 
-                          (0.99, 20, 4)
+                          (0.01, 10, 4), 
+                          (0.25, 10, 4), 
+                          (0.5,  10, 4),
+                          (0.75, 10, 4), 
+                          (0.99, 10, 4)
                           ] )
 def test_value_iteration(gamma, S, A):
     rng = seeding.get_rng()
@@ -76,3 +78,51 @@ def test_value_iteration(gamma, S, A):
             # check precision
             TQ = bellman_operator(Q, R, P, gamma)
             assert np.abs(TQ-Q).max() <= epsilon
+    
+
+@pytest.mark.parametrize("horizon, S, A", 
+                         [
+                          (10, 5,  4),
+                          (20, 10, 4)                                               
+                         ] )
+def test_backward_induction(horizon, S, A):
+    rng = seeding.get_rng()
+    for sim in range(5):
+        # generate random MDP
+        R  = rng.uniform(0.0, 1.0, (S, A))
+        P  = rng.uniform(0.0, 1.0, (S, A, S))
+        for ss in range(S):
+            for aa in range(A):
+                P[ss, aa, :] /= P[ss, aa, :].sum()
+        
+        # run backward induction
+        Q, V = backward_induction(R, P, horizon)
+    
+        assert Q.max() <= horizon
+        assert V.max() <= horizon
+
+        # run backward with clipping V to 1.0
+        Q, V = backward_induction(R, P, horizon, vmax=1.0)
+        assert V.max() <= 1.0
+    
+
+@pytest.mark.parametrize("horizon, gamma, S, A", 
+                         [
+                          (None, 0.5, 10, 4),
+                          (10,   1.0, 10, 4)
+                          ] )
+def test_value_iteration_agent(horizon, gamma, S, A):
+    rng = seeding.get_rng()
+    for sim in range(5):
+        # generate random MDP
+        R  = rng.uniform(0.0, 1.0, (S, A))
+        P  = rng.uniform(0.0, 1.0, (S, A, S))
+        for ss in range(S):
+            for aa in range(A):
+                P[ss, aa, :] /= P[ss, aa, :].sum()
+        
+        # create env and agent 
+        env = FiniteMDP(R, P)
+        agent = ValueIterationAgent(env, gamma=gamma, horizon=horizon)
+        # run
+        agent.fit()
