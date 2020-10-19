@@ -1,3 +1,6 @@
+# test coverage folder 
+cov_html/*
+
 # dev folder
 dev/*
 

@@ -38,8 +38,10 @@ def backward_induction(R, P, horizon, gamma=1.0, vmax=np.inf):
             for aa in range(A):
                 q_aa = R[ss, aa]
                 if hh < horizon - 1:
+                    # not using .dot instead of loop to avoid scipy dependency 
+                    # (numba seems to require scipy for linear algebra operations in numpy)
                     for ns in range(S):
-                        q_aa += gamma * P[ss, aa, ns]*V[hh + 1, ns]
+                        q_aa += gamma * P[ss, aa, ns]*V[hh + 1, ns]  
                 if q_aa > max_q:
                     max_q = q_aa
                 Q[hh, ss, aa] = q_aa
