@@ -7,12 +7,16 @@ from rlberry.rendering import GeometricPrimitive, Scene
 from os import environ
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 
-import pygame as pg
-from pygame.locals import *
+_IMPORT_SUCESSFUL = True
+try:
+    import pygame as pg
+    from pygame.locals import *
 
-from OpenGL.GL import *
-from OpenGL.GLU import *
-
+    from OpenGL.GL import *
+    from OpenGL.GLU import *
+except:
+    _IMPORT_SUCESSFUL = False
+    
 
 class Render2D:
     def __init__(self):
@@ -127,22 +131,26 @@ class Render2D:
 
 
     def run_graphics(self):
-        pg.init()
-        display = (self.window_width, self.window_height)
-        pg.display.set_mode(display, DOUBLEBUF|OPENGL)
-        pg.display.set_caption(self.window_name)
-        self.initGL()
-        while True:
-            for event in pg.event.get():
-                if event.type == pg.QUIT:
-                    pg.quit()
-                    return
-            #
-            self.display()
-            #
-            pg.display.flip()
-            pg.time.wait(self.refresh_interval)
+        global _IMPORT_SUCESSFUL
 
+        if _IMPORT_SUCESSFUL:
+            pg.init()
+            display = (self.window_width, self.window_height)
+            pg.display.set_mode(display, DOUBLEBUF|OPENGL)
+            pg.display.set_caption(self.window_name)
+            self.initGL()
+            while True:
+                for event in pg.event.get():
+                    if event.type == pg.QUIT:
+                        pg.quit()
+                        return
+                #
+                self.display()
+                #
+                pg.display.flip()
+                pg.time.wait(self.refresh_interval)
+        else:
+            print("Error: not possible to render the environment, pygame or pyopengl not installed.")
 
 if __name__=='__main__':
     background = Scene()
