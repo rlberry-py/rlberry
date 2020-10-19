@@ -38,7 +38,8 @@ def backward_induction(R, P, horizon, gamma=1.0, vmax=np.inf):
             for aa in range(A):
                 q_aa = R[ss, aa]
                 if hh < horizon - 1:
-                    q_aa += gamma * P[ss, aa, :].dot(V[hh + 1, :])
+                    for ns in range(S):
+                        q_aa += gamma * P[ss, aa, ns]*V[hh + 1, ns]
                 if q_aa > max_q:
                     max_q = q_aa
                 Q[hh, ss, aa] = q_aa
@@ -119,7 +120,9 @@ def bellman_operator(Q, R, P, gamma):
     #
     for ss in range(S):
         for aa in range(A):
-            TQ[ss, aa] = R[ss, aa] + gamma*P[ss, aa, :].dot(V)
+            TQ[ss, aa] = R[ss, aa] 
+            for ns in range(S):
+                TQ[ss, aa] += gamma*P[ss, aa, ns] * V[ns]
     return TQ
 
 
