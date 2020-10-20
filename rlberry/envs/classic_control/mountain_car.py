@@ -95,7 +95,7 @@ class MountainCar(SimulationModel, RenderInterface2D):
         if self.is_render_enabled():
             self.append_state_for_rendering(np.array(self.state))
 
-        next_state, reward, done, info = self.sample(action, self.state)
+        next_state, reward, done, info = self.sample(self.state, action)
         self.state = next_state.copy()
 
         return next_state, reward, done, info
@@ -104,7 +104,7 @@ class MountainCar(SimulationModel, RenderInterface2D):
         self.state = np.array([self.rng.uniform(low=-0.6, high=-0.4), 0])
         return self.state.copy()
 
-    def sample(self, action, state):
+    def sample(self, state, action):
         if (type(state) != np.ndarray):
             state = np.array(state)
         assert self.observation_space.contains(state), "Invalid state as argument of reset()."

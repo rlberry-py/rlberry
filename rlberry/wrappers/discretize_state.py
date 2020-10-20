@@ -52,7 +52,7 @@ class DiscretizeStateWrapper(Wrapper):
         next_state = binary_search_nd(next_state, self._bins)
         return next_state, reward, done, info
     
-    def sample(self, action, discrete_state):
+    def sample(self, discrete_state, action):
         if not isinstance(self.env, GenerativeModel):
             raise NotImplementedError("Wrapped environment does not implemement sample().")
 
@@ -60,7 +60,7 @@ class DiscretizeStateWrapper(Wrapper):
         assert self.observation_space.contains(discrete_state)
         continuous_state = self.get_continuous_state( discrete_state, randomize=True )
         # sample in the true environment 
-        next_state, reward, done, info = self.env.sample(action, continuous_state)
+        next_state, reward, done, info = self.env.sample(continuous_state, action)
         # discretize next state
         next_state = binary_search_nd(next_state, self._bins)
 

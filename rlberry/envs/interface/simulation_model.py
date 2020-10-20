@@ -31,7 +31,7 @@ class SimulationModel(ForwardModel, GenerativeModel):
         puts the environment in a default state and returns this state
     step(action)
         returns the outcome of an action
-    sample(action, state)
+    sample(state, action)
         returns a transition sampled from taking an action in a given state
     """
 

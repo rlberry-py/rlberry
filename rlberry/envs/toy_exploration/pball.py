@@ -149,7 +149,7 @@ class PBall(SimulationModel):
         self.state = projection_to_pball(self.state, self.p)
         return self.state.copy()
 
-    def sample(self, action, state):
+    def sample(self, state, action):
         assert self.action_space.contains(action)
         assert self.observation_space.contains(state)
 
@@ -165,7 +165,7 @@ class PBall(SimulationModel):
         return next_s, reward, done, {}
 
     def step(self, action):
-        next_s, reward, done, info = self.sample(action, self.state)
+        next_s, reward, done, info = self.sample(self.state, action)
         self.state = next_s.copy()
         return next_s, reward, done, info
     

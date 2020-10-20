@@ -66,7 +66,7 @@ class Chain(FiniteMDP, RenderInterface2D):
             self.append_state_for_rendering(self.state)
         
         # take step
-        next_state, reward, done, info = self.sample(action, self.state)
+        next_state, reward, done, info = self.sample(self.state, action)
  
         self.state = next_state
         return next_state, reward, done, info

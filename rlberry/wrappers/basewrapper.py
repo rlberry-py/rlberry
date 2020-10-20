@@ -30,10 +30,10 @@ class Wrapper(SimulationModel):
             raise NotImplementedError("Wrapped environment does not implemement step().")
         return self.env.step(action)
 
-    def sample(self, action, state):
+    def sample(self, state, action):
         if not isinstance(self.env, GenerativeModel):
             raise NotImplementedError("Wrapped environment does not implemement sample().")
-        return self.env.sample(action, state)
+        return self.env.sample(state, action)
     
     def render(self, **kwargs):
         if not isinstance(self.env, BaseRenderInterface):

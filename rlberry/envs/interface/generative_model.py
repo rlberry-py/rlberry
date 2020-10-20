@@ -24,14 +24,14 @@ class GenerativeModel(Model):
 
     Methods
     --------
-    sample(action, state)
+    sample(state, action)
         returns a transition sampled from taking an action in a given state
     """
     def __init__(self):
         super(GenerativeModel, self).__init__()
 
     @abstractmethod
-    def sample(action, state):
+    def sample(state, action):
         """
         Execute a step. Similar to gym function [1].
         [1] https://gym.openai.com/docs/#environments

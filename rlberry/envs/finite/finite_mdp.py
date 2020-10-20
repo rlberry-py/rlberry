@@ -79,7 +79,7 @@ class FiniteMDP(SimulationModel):
         assert S1 == S2 == S3
         assert A1 == A2
 
-    def sample(self, action, state):
+    def sample(self, state, action):
         """
         Sample a transition s' from P(s'|state, action).
         """
@@ -92,7 +92,7 @@ class FiniteMDP(SimulationModel):
 
     def step(self, action):
         assert action in self._actions, "Invalid action!"
-        next_state, reward, done, info = self.sample(action, self.state)
+        next_state, reward, done, info = self.sample(self.state, action)
         self.state = next_state
         return next_state, reward, done, info
 
