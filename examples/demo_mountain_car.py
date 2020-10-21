@@ -1,7 +1,17 @@
 from rlberry.envs.classic_control import MountainCar
+from rlberry.agents.mbqvi import MBQVIAgent 
+from rlberry.wrappers import DiscretizeStateWrapper 
 
-env = MountainCar()
+_env = MountainCar()
+env  = DiscretizeStateWrapper(_env, 20)
+agent = MBQVIAgent(env, n_samples=40, gamma=0.99)
+agent.fit()
+
 env.enable_rendering()
-for tt in range(150):
-    env.step(env.action_space.sample())
-env.render()
+state = env.reset()
+for tt in range(200):
+    action = agent.policy(state)
+    next_state, reward, done, _ = env.step(action)
+    state = next_state
+
+env.save_video("mountain_car.mp4", framerate=50)

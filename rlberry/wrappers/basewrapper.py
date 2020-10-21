@@ -39,7 +39,12 @@ class Wrapper(SimulationModel):
         if not isinstance(self.env, BaseRenderInterface):
             raise NotImplementedError("Wrapped environment does not implemement render().")
         return self.env.render(**kwargs)
-    
+
+    def save_video(self, filename, **kwargs):
+        if not isinstance(self.env, BaseRenderInterface):
+            raise NotImplementedError("Wrapped environment does not implemement save_video().")
+        return self.env.save_video(filename, **kwargs)
+
     def enable_rendering(self):
         if not isinstance(self.env, BaseRenderInterface):
             raise NotImplementedError("Wrapped environment does not implemement enable_rendering().") 
