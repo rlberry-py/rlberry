@@ -10,7 +10,7 @@ class ValueIterationAgent(Agent):
     Important: the discount gamma is also used if the problem is finite horizon, but, in this case,
     gamma can be set to 1.0.
     """
-    def __init__(self, env, gamma=0.95, horizon=None):
+    def __init__(self, env, gamma=0.95, horizon=None, epsilon=1e-6, **kwargs):
         """
         Parameters
         -----------
@@ -20,34 +20,34 @@ class ValueIterationAgent(Agent):
         horizon : int
             horizon, if the problem is finite-horizon. if None, the discounted problem is solved
             default = None
+        epsilon : double
+            precision of value iteration, only used in discounted problems (when horizon is None).
         """
         # initialize base class
         assert isinstance(env, FiniteMDP), "Value iteration requires a FiniteMDP model."
         Agent.__init__(self, env)
-        self.id = "ValueIterationAgent"
+        self.id = "ValueIteration"
 
         #
         self.gamma   = gamma 
         self.horizon = horizon
+        self.epsilon = epsilon
 
         # value functions
         self.Q = None 
         self.V = None 
 
 
-    def fit(self, epsilon=1e-6, **kwargs):
+    def fit(self, **kwargs):
         """
-        Parameters
-        -----------
-        epsilon : double
-            precision of value iteration, only used in discounted problems (when horizon is None).
+        Run value iteration.
         """
         info = {}
         if self.horizon is None:
             assert self.gamma < 1.0, "The discounted setting requires gamma < 1.0"
-            self.Q, self.V, n_it = value_iteration(self.env.R, self.env.P, self.gamma, epsilon)
+            self.Q, self.V, n_it = value_iteration(self.env.R, self.env.P, self.gamma, self.epsilon)
             info["n_iterations"] = n_it
-            info["precision"] = epsilon
+            info["precision"] = self.epsilon
         else:
             self.Q, self.V = backward_induction(self.env.R, self.env.P, self.horizon, self.gamma)
             info["n_iterations"] = self.horizon

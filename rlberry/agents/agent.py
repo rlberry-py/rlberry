@@ -21,7 +21,7 @@ class Agent(ABC):
     reset()
         puts the agent in default setup (optional)
     """
-    def __init__(self, env):
+    def __init__(self, env, **kwargs):
         self.id  = ""
         self.env = deepcopy(env)
 
