@@ -60,7 +60,7 @@ class GridWorld(FiniteMDP, RenderInterface2D):
         if terminal_states is not None:
             self.terminal_states = terminal_states
         else:
-            self.terminal_states = ()
+            self.terminal_states = ((nrows-1, ncols-1),)
 
         # Probability of going left/right/up/down when choosing the correspondent action
         # The remaining probability mass is distributed uniformly to other available actions

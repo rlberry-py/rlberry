@@ -25,3 +25,10 @@ bash run_tests.sh
 
 See coverage report in `cov_html/index.html`.
 
+
+# Notes
+
+* To save videos, installing [ffmpeg-python](https://github.com/kkroening/ffmpeg-python) is required:
+```
+pip install ffmpeg-python
+```

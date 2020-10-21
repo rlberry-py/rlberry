@@ -1,3 +1,6 @@
+# videos
+*.mp4
+
 # test coverage folder 
 cov_html/*
 

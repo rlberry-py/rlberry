@@ -55,7 +55,7 @@ class Chain(FiniteMDP, RenderInterface2D):
 
         # rendering info
         self.set_clipping_area((0, L, 0, 1))
-        self.set_refresh_interval(500)  # in milliseconds
+        self.set_refresh_interval(100)  # in milliseconds
 
 
     def step(self, action):

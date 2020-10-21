@@ -2,6 +2,8 @@
 OpenGL code for 2D rendering, using pygame.
 """
 
+import numpy as np
+
 from rlberry.rendering import GeometricPrimitive, Scene
 
 from os import environ
@@ -135,6 +137,9 @@ class Render2D:
 
 
     def run_graphics(self):
+        """
+        Sequentially displays scenes in self.data
+        """
         global _IMPORT_SUCESSFUL, _DEBUG_NO_SCREEN
 
         if _DEBUG_NO_SCREEN:
@@ -143,7 +148,7 @@ class Render2D:
         if _IMPORT_SUCESSFUL:
             pg.init()
             display = (self.window_width, self.window_height)
-            pg.display.set_mode(display, DOUBLEBUF|OPENGL)
+            screen = pg.display.set_mode(display, DOUBLEBUF|OPENGL)
             pg.display.set_caption(self.window_name)
             self.initGL()
             while True:
@@ -158,6 +163,46 @@ class Render2D:
                 pg.time.wait(self.refresh_interval)
         else:
             print("Error: not possible to render the environment, pygame or pyopengl not installed.")
+    
+
+    def get_video_data(self):
+        """
+        Stores scenes in self.data in a list of numpy arrays that can be used to save a video.
+        """
+        global _IMPORT_SUCESSFUL, _DEBUG_NO_SCREEN
+
+        if _DEBUG_NO_SCREEN:
+            return []
+
+        if _IMPORT_SUCESSFUL:
+            video_data = []
+
+            pg.init()
+            display = (self.window_width, self.window_height)
+            screen = pg.display.set_mode(display, DOUBLEBUF|OPENGL)
+            pg.display.set_caption(self.window_name)
+            self.initGL()
+
+            self.time_count = 0
+            while self.time_count <= len(self.data):
+                #
+                self.display()
+                #
+                pg.display.flip()
+
+                # 
+                # See https://stackoverflow.com/a/42754578/5691288
+                #
+                string_image = pg.image.tostring(screen, 'RGB')
+                temp_surf = pg.image.fromstring(string_image,(self.window_width, self.window_height),'RGB' )
+                tmp_arr = pg.surfarray.array3d(temp_surf)
+                imgdata = np.moveaxis(tmp_arr, 0, 1)
+                video_data.append(imgdata)
+
+            return video_data
+        else:
+            print("Error: not possible to render the environment, pygame or pyopengl not installed.")
+            return []
 
 def _activate_debug_mode():
     global _DEBUG_NO_SCREEN
