@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 packages = find_packages()
 
 install_requires = [
-'numpy',
+'numpy>=1.17',
 'pytest',
 'numba',
 'PyOpenGL',
