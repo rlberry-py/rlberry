@@ -3,7 +3,7 @@ from rlberry.rendering import BaseRenderInterface
 from rlberry.rendering import RenderInterface2D
 from rlberry.rendering.render2d import _activate_debug_mode
 
-from rlberry.envs.interface import ForwardModel, GenerativeModel
+from rlberry.envs.interface import OnlineModel, GenerativeModel
 
 from rlberry.envs.classic_control import MountainCar 
 
@@ -42,7 +42,7 @@ def test_render2d_interface(ModelClass):
     if isinstance(env, RenderInterface2D):
         env.enable_rendering()
 
-        if isinstance(env, ForwardModel):
+        if isinstance(env, OnlineModel):
             for ep in range(2):
                 state = env.reset()
                 for ii in range(50):

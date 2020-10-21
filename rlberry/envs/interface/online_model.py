@@ -2,11 +2,11 @@ from abc import abstractmethod
 from rlberry.envs.interface.model import Model
 
 
-class ForwardModel(Model):
+class OnlineModel(Model):
     """
-    Base class for foward models.
+    Base class for online models.
 
-    A forward model allows us to sample trajectories from an environment.
+    An online model allows us to sample trajectories from an environment.
 
     Attributes
     ----------
@@ -29,7 +29,7 @@ class ForwardModel(Model):
         returns the outcome of an action
     """
     def __init__(self):
-        super(ForwardModel, self).__init__()
+        super(OnlineModel, self).__init__()
 
     @abstractmethod
     def reset(self):

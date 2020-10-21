@@ -1,5 +1,5 @@
 from copy import deepcopy
-from rlberry.envs.interface import ForwardModel, GenerativeModel, SimulationModel
+from rlberry.envs.interface import OnlineModel, GenerativeModel, SimulationModel
 from rlberry.rendering import BaseRenderInterface
 
 class Wrapper(SimulationModel):
@@ -21,12 +21,12 @@ class Wrapper(SimulationModel):
         self.reward_range      = self.env.reward_range
 
     def reset(self):
-        if not isinstance(self.env, ForwardModel):
+        if not isinstance(self.env, OnlineModel):
             raise NotImplementedError("Wrapped environment does not implemement reset().")
         return self.env.reset()
 
     def step(self, action):
-        if not isinstance(self.env, ForwardModel):
+        if not isinstance(self.env, OnlineModel):
             raise NotImplementedError("Wrapped environment does not implemement step().")
         return self.env.step(action)
 

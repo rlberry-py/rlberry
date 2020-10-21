@@ -1,6 +1,6 @@
 import pytest 
 
-from rlberry.envs.interface import ForwardModel, GenerativeModel
+from rlberry.envs.interface import OnlineModel, GenerativeModel
 
 from rlberry.envs.classic_control import MountainCar 
 
@@ -23,7 +23,7 @@ classes = [
 def test_instantiation(ModelClass):
     env = ModelClass()
 
-    if isinstance(env, ForwardModel):
+    if isinstance(env, OnlineModel):
         for ep in range(2):
             state = env.reset()
             for ii in range(50):

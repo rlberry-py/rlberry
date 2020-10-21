@@ -3,7 +3,7 @@ Mountain Car environment adapted from OpenAI gym [1].
 
 * default reward is 0       (instead of -1)
 * reward in goal state is 1 (instead of 0)
-* also implemented as a generative model (in addition to a forward model)
+* also implemented as a generative model (in addition to an online model)
 * render function follows the rlberry rendering interface.
 
 [1] https://raw.githubusercontent.com/openai/gym/master/gym/envs/classic_control/mountain_car.py

@@ -1,11 +1,11 @@
-from rlberry.envs.interface.forward_model import ForwardModel
+from rlberry.envs.interface.online_model import OnlineModel
 from rlberry.envs.interface.generative_model import GenerativeModel
 
-class SimulationModel(ForwardModel, GenerativeModel):
+class SimulationModel(OnlineModel, GenerativeModel):
     """
     Base class for simulation models.
 
-    A simulation model is, at the same time, a forward model and a generative
+    A simulation model is, at the same time, an online model and a generative
     model:
     it allows us to sample trajectories *and* transitions from any state-action
     pair.
@@ -36,5 +36,5 @@ class SimulationModel(ForwardModel, GenerativeModel):
     """
 
     def __init__(self):
-        ForwardModel.__init__(self)
+        OnlineModel.__init__(self)
         GenerativeModel.__init__(self)
