@@ -18,7 +18,13 @@ class MBQVIAgent(Agent):
     "Finite-sample convergence rates for Q-learning and indirect algorithms." 
     Advances in neural information processing systems. 1999.
     """
-    def __init__(self, env, n_samples=10, gamma=0.95, horizon=None, epsilon=1e-6, verbose=1, **kwargs):
+    def __init__(self, env, 
+                       n_samples=10, 
+                       gamma=0.95, 
+                       horizon=None, 
+                       epsilon=1e-6, 
+                       verbose=1, 
+                       **kwargs):
         """
         Parameters:
         -----------
@@ -26,7 +32,6 @@ class MBQVIAgent(Agent):
             generative model with finite state-action space
         n_samples : int 
             number of samples *per state-action pair* used to estimate the empirical MDP
-
         gamma : double 
             discount factor in [0, 1]
         horizon : int

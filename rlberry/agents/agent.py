@@ -33,5 +33,5 @@ class Agent(ABC):
     def policy(self, state, **kwargs):
         pass 
 
-    def reset(self):
+    def reset(self, **kwargs):
         pass 

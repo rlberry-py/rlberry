@@ -1,0 +1,297 @@
+import numpy as np
+from numba import jit
+
+import rlberry.spaces as spaces
+from rlberry.agents import Agent
+from rlberry.agents.utils.metrics import metric_lp
+from rlberry.envs   import OnlineModel
+from rlberry.agents.dynprog.utils import backward_induction, value_iteration
+
+
+#
+# Map state to representative state
+# 
+@jit(nopython=True)
+def map_to_representative(state, 
+                          lp_metric, 
+                          representative_states, 
+                          n_representatives, 
+                          min_dist, 
+                          scaling, 
+                          accept_new_repr):
+    dist_to_closest = np.inf 
+    argmin   = -1
+    for ii in range(n_representatives):
+        dist = metric_lp(state, representative_states[ii, :], lp_metric, scaling)
+        if dist < dist_to_closest:
+            dist_to_closest = dist  
+            argmin   = ii 
+    
+    max_representatives = representative_states.shape[0]
+    if dist_to_closest > min_dist and n_representatives < max_representatives and accept_new_repr:
+        new_index = n_representatives
+        representative_states[new_index, :] = state
+        return new_index
+    return argmin
+
+
+class RSUCBVIAgent(Agent):
+    """
+    Value iteration with exploration bonuses for continuous-state environments,
+    using a online discretization strategy:
+    - Build (online) a set of representative states
+    - Estimate transtions an rewards on the finite set of representative states 
+    and actions.
+
+
+    References
+    ----------
+    Azar, Mohammad Gheshlaghi, Ian Osband, and Rémi Munos. 
+    "Minimax regret bounds for reinforcement learning." 
+    Proceedings of the 34th ICML, 2017.
+
+    Strehl, Alexander L., and Michael L. Littman. 
+    "An analysis of model-based interval estimation for Markov decision processes."
+     Journal of Computer and System Sciences 74.8 (2008): 1309-1331.
+
+    Kveton, Branislav, and Georgios Theocharous. 
+    "Kernel-Based Reinforcement Learning on Representative States." 
+    AAAI, 2012.
+
+    Domingues, O. D., Ménard, P., Pirotta, M., Kaufmann, E., & Valko, M. (2020). 
+    A kernel-based approach to non-stationary reinforcement learning in metric spaces. 
+    arXiv preprint arXiv:2007.05078.
+    """
+    def __init__(self, env, 
+                       n_episodes=1000,
+                       gamma=0.95, 
+                       horizon=20, 
+                       epsilon=1e-6, 
+                       lp_metric = 2,
+                       scaling  = None,
+                       min_dist = 0.1,
+                       max_repr = None,
+                       bonus_scale_factor = 1.0, 
+                       bonus_type = "simplified_bernstein", 
+                       verbose=1, 
+                       **kwargs):
+        """
+        env : OnlineModel    
+            Online model with continuous (Box) state space and discrete actions
+        n_episodes : int
+            number of episodes
+        gamma : double 
+            Discount factor in [0, 1]. If gamma is 1.0, the problem is set to be finite-horizon.
+        horizon : int
+            Horizon, if the problem is finite-horizon (gamma = 1.0).
+            Number of steps before recomputing the policy, if
+
+        epsilon : double
+            Precision of value iteration, only used in discounted problems (when horizon is None).
+        lp_metric: int
+            The metric on the state space is the one induced by the p-norm,
+            where p = lp_metric. Default = 2, for the Euclidean metric. 
+        scaling: numpy.ndarray
+            Must have the same size as state array, used to scale the states before computing the metric.
+            If None, set to:
+            - (env.observation_space.high - env.observation_space.low) if high and low are bounded
+            - np.ones(env.observation_space.dim) if high or low are unbounded
+        min_dist: double
+            Minimum distance between two representative states
+        max_repr: int
+            Maximum number of representative states.
+            If None, it is set to  (sqrt(d)/min_dist)**d, where d
+            is the dimension of the state space
+        bonus_scale_factor : double
+            Constant by which to multiply the exploration bonus, controls 
+            the level of exploration.
+        verbose : int
+            Controls the verbosity, if non zero, progress messages are printed.   
+        bonus_type : string
+             Type of exploration bonus. Currently, only "simplified_bernstein"
+             is implemented.
+        """
+        # init base class
+        Agent.__init__(self, env)
+        self.id = "RSUCBVI"
+
+        self.n_episodes         = n_episodes
+        self.gamma              = gamma 
+        self.horizon            = horizon 
+        self.epsilon            = epsilon 
+        self.lp_metric          = lp_metric
+        self.min_dist           = min_dist 
+        self.bonus_scale_factor = bonus_scale_factor 
+        self.verbose            = verbose 
+        self.bonus_type         = bonus_type
+
+        # criterion (discounted or finite horizon)
+        if self.gamma == 1.0:
+            self.criterion = "finite-horizon"
+        elif self.gamma < 1.0 and self.gamma >= 0.0:
+            self.criterion = "discounted"
+        else:
+            assert 0, "gamma must be in [0, 1]"
+
+        # check environment 
+        assert isinstance(self.env, OnlineModel)
+        assert isinstance(self.env.observation_space, spaces.Box) 
+        assert isinstance(self.env.action_space,      spaces.Discrete)  
+        
+        # state dimension
+        self.state_dim = self.env.observation_space.dim
+
+        # compute scaling, if it is None
+        if scaling is None:
+            # if high and low are bounded
+            if (self.env.observation_space.high == np.inf).sum() == 0 \
+                and (self.env.observation_space.low == -np.inf).sum() == 0:
+                scaling = self.env.observation_space.high - self.env.observation_space.low 
+            # if high or low are unbounded
+            else:
+                scaling = np.ones(self.state_dim)
+        else:
+            assert scaling.ndim == 1
+            assert scaling.shape[0] == self.state_dim 
+        self.scaling = scaling
+
+        # maximum value 
+        r_range = self.env.reward_range[1] - self.env.reward_range[0]
+        if r_range > np.inf:
+            if verbose >= 0:
+                print("Warning: in %s, reward range is infinity. Clipping it to 1."%self.id) 
+            r_range = 1.0
+
+        if self.criterion == "finite-horizon":
+            self.v_max = r_range*horizon
+        else:
+            self.v_max = r_range/(1.0-self.gamma)
+
+        # number of representative states and number of actions
+        if max_repr is None:
+            max_repr =  int(np.ceil( (1.0*np.sqrt(self.state_dim)/self.min_dist)**self.state_dim))
+        self.max_repr = max_repr
+
+        # current number of representative states
+        self.M = None  
+        self.A = self.env.action_space.n
+
+        # declaring variables
+        self.episode = None # current episode
+        self.representative_states = None  # array containing the coordinates of all representative statates
+        self.N_sa  = None   # visits to (s, a)
+        self.N_sas = None   # visits to (s, a, s')
+        self.S_sa  = None   # sum of rewards at (s, a)
+        self.B_sa  = None   # bonus at (s, a)
+        self.Q     = None   # Q function
+        self.V     = None   # V function
+
+        # initialize
+        self.reset()
+        
+
+    def reset(self, **kwargs):
+        self.M     = 0
+        self.representative_states = np.zeros((self.max_repr, self.state_dim))
+        self.N_sa  = np.zeros((self.max_repr, self.A))
+        self.N_sas = np.zeros((self.max_repr, self.A, self.max_repr))
+        self.S_sa  = np.zeros((self.max_repr, self.A))
+        self.B_sa  = self.v_max*np.ones((self.max_repr, self.A))
+
+        self.R_hat  = np.zeros((self.max_repr, self.A))
+        self.P_hat = np.zeros((self.max_repr, self.A, self.max_repr))
+
+        self.V = np.zeros((self.horizon, self.max_repr))
+        self.Q = np.zeros((self.horizon, self.max_repr, self.A))
+        self.episode = 0
+
+
+    def _map_to_repr(self, state, accept_new_repr=True):
+        repr_state = map_to_representative(state,
+                                           self.lp_metric, 
+                                           self.representative_states, 
+                                           self.M, 
+                                           self.min_dist, 
+                                           self.scaling, 
+                                           accept_new_repr)
+        # check if new representative state
+        if repr_state == self.M:
+            self.M += 1
+        return repr_state
+
+    def _update(self, state, action, next_state, reward):
+        repr_state      = self._map_to_repr(state)
+        repr_next_state = self._map_to_repr(next_state)
+
+        self.N_sa [repr_state, action]                  += 1
+        self.N_sas[repr_state, action, repr_next_state] += 1
+        self.S_sa [repr_state, action]                  += reward 
+        
+        self.R_hat[repr_state, action]    = self.S_sa [repr_state, action]/ self.N_sa [repr_state, action] 
+        self.P_hat[repr_state, action, :] = self.N_sas[repr_state, action,:]/self.N_sa[repr_state, action] 
+        self.B_sa[repr_state, action]     = self._compute_bonus(self.N_sa[repr_state, action])
+
+    def _compute_bonus(self, n):
+        if self.bonus_type == "simplified_bernstein":
+            bonus = self.bonus_scale_factor * np.sqrt(1.0/n) + self.v_max/n 
+            bonus = min(bonus, self.v_max)
+            return bonus
+        else:
+            raise NotImplementedError("Error: bonus type %s not implemented"%self.bonus_type)
+
+    def _get_action(self, state, hh = 0):
+        assert self.Q is not None
+        repr_state = self._map_to_repr(state, False)
+
+
+        # check if value function has not yet been computed for repr_state
+        if repr_state >= self.V.shape[-1]:
+            return self.env.action_space.sample()
+
+        # finite horizon
+        if self.criterion == "finite-horizon":
+            return self.Q[hh, repr_state, :].argmax()
+        # discounted
+        return self.Q[repr_state, :].argmax()
+
+    def run_episode(self):
+        # interact for H steps
+        episode_rewards = 0
+        state = self.env.reset()
+        for hh in range(self.horizon):
+            action = self._get_action(state, hh)
+            next_state, reward, done, _ = self.env.step(action)
+            self._update(state, action, next_state, reward)
+            state = next_state
+            episode_rewards += reward
+    
+        # run backward induction
+        if self.criterion == "finite-horizon":
+            self.Q, self.V = backward_induction(self.R_hat[:self.M, :] + self.B_sa[:self.M, :], self.P_hat[:self.M, :, :self.M], self.horizon, self.gamma, self.v_max)
+        else:
+            self.Q, self.V, n_it = value_iteration(self.R_hat[:self.M, :] + self.B_sa[:self.M, :], self.P_hat[:self.M, :, :self.M], self.gamma, self.epsilon)
+
+        # return sum of rewards collected in the episode
+        return episode_rewards
+
+    def policy(self, state, hh=0, **kwargs):
+        return self._get_action(state, hh)
+
+    def fit(self, **kwargs):
+        self._aux_episode = 0
+        self._rewards = np.zeros(self.n_episodes)
+        self._cumul_rewards = np.zeros(self.n_episodes)
+
+        # print_timer = RepeatedTimer(self._print_interval_seconds, self._print_info) # print info every 5 seconds
+        for kk in range(self.n_episodes):
+            episode_rewards = self.run_episode()
+            self._rewards[kk] = episode_rewards
+            if kk > 0:
+                self._cumul_rewards[kk] = episode_rewards + self._cumul_rewards[kk-1]
+            self._aux_episode = kk   # avoid synchorization problems (_print_info is called by another thread)
+            self.episode     += 1
+            if kk % 100  == 0:
+                print("sum of rewards = ", self._cumul_rewards[kk])
+        # print_timer.stop()
+        # self._print_info()  # print info of last episode
+        return self._rewards

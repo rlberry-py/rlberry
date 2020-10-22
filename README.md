@@ -32,3 +32,8 @@ See coverage report in `cov_html/index.html`.
 ```
 pip install ffmpeg-python
 ```
+
+* Convention for verbose:
+    * `verbose<0`: nothing is printed
+    * `verbose=0`: print only erros and importatnt warnings
+    * `verbose>1`: print progress messages

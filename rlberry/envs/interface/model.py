@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+import numpy as np
 from rlberry.seeding import seeding
 from rlberry.spaces import Space
 
@@ -25,6 +26,6 @@ class Model(ABC):
         self.id = ""
         self.observation_space: Space = None
         self.action_space:      Space = None
-        self.reward_range:      tuple = None
+        self.reward_range:      tuple = (-np.inf, np.inf)
         # random number generator
         self.rng = seeding.get_rng()

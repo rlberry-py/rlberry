@@ -105,6 +105,8 @@ class PBall(SimulationModel):
         mu_init : numpy.ndarray 
             array of size (d,) containing the mean of the initial state
         """
+        SimulationModel.__init__(self)
+        
         assert p >= 1, "PBall requires p>=1"
         if p not in [2, np.inf]:
             print("WARNING: for p!=2 or p!=np.inf, PBall does not make true projections onto the lp ball.")
@@ -144,7 +146,7 @@ class PBall(SimulationModel):
         if state is not None:
             self.state = state 
         else:
-            self.state = self.mu_init + self.sigma_init*np.random.randn(self.d)
+            self.state = self.mu_init + self.sigma_init*self.rng.normal(size=self.d) 
         # projection to unit ball
         self.state = projection_to_pball(self.state, self.p)
         return self.state.copy()
@@ -155,7 +157,7 @@ class PBall(SimulationModel):
 
         # next state
         action_vec = self.action_list[action]
-        next_s = self.A.dot(state) + self.B.dot(action_vec) + self.sigma*np.random.randn(self.d)
+        next_s = self.A.dot(state) + self.B.dot(action_vec) + self.sigma*self.rng.normal(size=self.d) 
         next_s = projection_to_pball(next_s, self.p)
 
         # done and reward

@@ -15,6 +15,7 @@ class Wrapper(SimulationModel):
     [1] https://github.com/openai/gym/blob/master/gym/core.py
     """
     def __init__(self, env):
+        SimulationModel.__init__(self)
         self.env = deepcopy(env)
         self.observation_space = self.env.observation_space 
         self.action_space      = self.env.action_space
