@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from copy import deepcopy
+from rlberry.seeding import get_rng
 
 class Agent(ABC):
     """
@@ -16,21 +17,22 @@ class Agent(ABC):
     --------
     fit(**kwargs)
         train the agent, returns dictionary with training info
-    policy(state, **kwargs)
-        returns the action to be taken in a given state
+    policy(observation, **kwargs)
+        returns the action to be taken given an observation
     reset()
         puts the agent in default setup (optional)
     """
     def __init__(self, env, **kwargs):
         self.id  = ""
         self.env = deepcopy(env)
+        self.env.rng = get_rng()
 
     @abstractmethod
     def fit(self, **kwargs):
         pass 
 
     @abstractmethod
-    def policy(self, state, **kwargs):
+    def policy(self, observation, **kwargs):
         pass 
 
     def reset(self, **kwargs):
