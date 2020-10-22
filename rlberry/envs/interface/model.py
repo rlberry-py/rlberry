@@ -18,7 +18,12 @@ class Model(ABC):
     reward_range : tuple
         tuple (r_min, r_max) containing the minimum and the maximum reward
     rng : numpy.random._generator.Generator
-        random number generator provided by rlberry.seeding
+        random number generator provided by rlberry.seeding 
+
+    Methods
+    -------
+    reseed 
+        get new random number generator
     """
 
     def __init__(self):
@@ -28,4 +33,10 @@ class Model(ABC):
         self.action_space:      Space = None
         self.reward_range:      tuple = (-np.inf, np.inf)
         # random number generator
+        self.rng = seeding.get_rng()
+
+    def reseed(self):
+        """
+        Get new random number generator for the model.
+        """
         self.rng = seeding.get_rng()

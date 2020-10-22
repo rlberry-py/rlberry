@@ -6,6 +6,8 @@ class Agent(ABC):
     """
     Basic interface for agents.
 
+    Input environment is (deep)copied and reseeded.
+
     Attributes
     ----------
     id : string
@@ -25,7 +27,7 @@ class Agent(ABC):
     def __init__(self, env, **kwargs):
         self.id  = ""
         self.env = deepcopy(env)
-        self.env.rng = seeding.get_rng()
+        self.env.reseed()
 
     @abstractmethod
     def fit(self, **kwargs):
