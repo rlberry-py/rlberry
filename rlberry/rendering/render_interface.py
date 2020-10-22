@@ -2,11 +2,16 @@
 Interface that allows 2D rendering.
 """
 
+
 from abc import ABC, abstractmethod
-from rlberry.rendering.render2d import Render2D
+from rlberry.rendering.opengl_render2d import OpenGLRender2D
 from rlberry.rendering.utils import video_write
 
-class BaseRenderInterface(ABC):
+
+class RenderInterface(ABC):
+    """
+    Common interface for rendering in rlberry.
+    """
     def __init__(self):
         self._rendering_enabled = False
  
@@ -33,7 +38,10 @@ class BaseRenderInterface(ABC):
         pass
 
 
-class RenderInterface2D(BaseRenderInterface):
+class RenderInterface2D(RenderInterface):
+    """
+    Interface for 2D rendering in rlberry.
+    """
     def __init__(self):
         self._rendering_enabled           = False
         self._rendering_type              = "2d"
@@ -91,7 +99,7 @@ class RenderInterface2D(BaseRenderInterface):
                 return 
 
             # render
-            renderer = Render2D()
+            renderer = OpenGLRender2D()
             renderer.window_name = self.id
             renderer.set_refresh_interval(self._refresh_interval)
             renderer.set_clipping_area(self._clipping_area)
@@ -112,7 +120,7 @@ class RenderInterface2D(BaseRenderInterface):
             return 
         
         # get video data from renderer
-        renderer = Render2D()
+        renderer = OpenGLRender2D()
         renderer.window_name = self.id
         renderer.set_refresh_interval(self._refresh_interval)
         renderer.set_clipping_area(self._clipping_area)

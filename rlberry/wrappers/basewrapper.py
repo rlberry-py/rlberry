@@ -1,6 +1,6 @@
 from copy import deepcopy
 from rlberry.envs.interface import OnlineModel, GenerativeModel, SimulationModel
-from rlberry.rendering import BaseRenderInterface
+from rlberry.rendering import RenderInterface
 
 class Wrapper(SimulationModel):
     """
@@ -36,22 +36,22 @@ class Wrapper(SimulationModel):
         return self.env.sample(state, action)
     
     def render(self, **kwargs):
-        if not isinstance(self.env, BaseRenderInterface):
+        if not isinstance(self.env, RenderInterface):
             raise NotImplementedError("Wrapped environment does not implemement render().")
         return self.env.render(**kwargs)
 
     def save_video(self, filename, **kwargs):
-        if not isinstance(self.env, BaseRenderInterface):
+        if not isinstance(self.env, RenderInterface):
             raise NotImplementedError("Wrapped environment does not implemement save_video().")
         return self.env.save_video(filename, **kwargs)
 
     def enable_rendering(self):
-        if not isinstance(self.env, BaseRenderInterface):
+        if not isinstance(self.env, RenderInterface):
             raise NotImplementedError("Wrapped environment does not implemement enable_rendering().") 
         self.env.enable_rendering()
 
     def disable_rendering(self):
-        if not isinstance(self.env, BaseRenderInterface):
+        if not isinstance(self.env, RenderInterface):
             raise NotImplementedError("Wrapped environment does not implemement disable_rendering().") 
         self.env.disable_rendering()
 

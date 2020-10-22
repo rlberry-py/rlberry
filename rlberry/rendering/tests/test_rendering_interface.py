@@ -1,7 +1,7 @@
 import pytest
-from rlberry.rendering import BaseRenderInterface
+from rlberry.rendering import RenderInterface
 from rlberry.rendering import RenderInterface2D
-from rlberry.rendering.render2d import _activate_debug_mode
+from rlberry.rendering.opengl_render2d import _activate_debug_mode
 
 from rlberry.envs.interface import OnlineModel, GenerativeModel
 
@@ -26,7 +26,7 @@ classes = [
 def test_instantiation(ModelClass):
     env = ModelClass()
 
-    if isinstance(env, BaseRenderInterface):
+    if isinstance(env, RenderInterface):
         env.disable_rendering()
         assert not env.is_render_enabled()
         env.enable_rendering()

@@ -24,7 +24,10 @@ except:
 _DEBUG_NO_SCREEN = False
 
 
-class Render2D:
+class OpenGLRender2D:
+    """
+    Class to render a list of scenes using OpenGL and pygame.
+    """
     def __init__(self):
         # parameters
         self.window_width  = 640
