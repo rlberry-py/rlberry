@@ -1,6 +1,15 @@
-# rlberry 
+# rlberry - A Reinforcement Learning Library for Research and Education 
 
 ![pytest](https://github.com/rlberry-py/rlberry/workflows/test/badge.svg)
+
+# Main differences with other libraries
+
+Our goals:
+* Structured documentation/tutorial/examples for each algorithm (inspired by sklearn). Good for RL courses.
+* Modular code: the implementation of each algorithm must be modular enough to allow improvements/modifications (useful for research).
+* Implement traditional RL algorithms so that we can compare them to deep algorithms. Before solving large scale problems with deep RL, we can validate the algorithms in small scale environments, where traditional RL works very well. Faster prototyping for deep algorithms. 
+* Module to automatically compare/benchmark algorithms. 
+* Avoid seed hacking with a unified seeding mechanism! 
 
 
 # Install
