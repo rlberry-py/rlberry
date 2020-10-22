@@ -1,6 +1,6 @@
+import rlberry.seeding as seeding
 from abc import ABC, abstractmethod
 from copy import deepcopy
-from rlberry.seeding import get_rng
 
 class Agent(ABC):
     """
@@ -25,7 +25,7 @@ class Agent(ABC):
     def __init__(self, env, **kwargs):
         self.id  = ""
         self.env = deepcopy(env)
-        self.env.rng = get_rng()
+        self.env.rng = seeding.get_rng()
 
     @abstractmethod
     def fit(self, **kwargs):
