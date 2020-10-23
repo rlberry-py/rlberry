@@ -2,14 +2,14 @@
 
 ![pytest](https://github.com/rlberry-py/rlberry/workflows/test/badge.svg)
 
-# Main differences with other libraries
+# Philosophy
 
-Our goals:
-* Structured documentation/tutorial/examples for each algorithm (inspired by sklearn). Good for RL courses.
-* Modular code: the implementation of each algorithm must be modular enough to allow improvements/modifications (useful for research).
-* Implement traditional RL algorithms so that we can compare them to deep algorithms. Before solving large scale problems with deep RL, we can validate the algorithms in small scale environments, where traditional RL works very well. Faster prototyping for deep algorithms. 
-* Module to automatically compare/benchmark algorithms. 
-* Avoid seed hacking with a unified seeding mechanism! 
+* For each algorithm, write documentation/tutorial/examples.
+* Provide a very general interface for agents, that
+    * puts **minimal constraints** on the agent code (=> making it easy to include new algorithms and modify existing ones)
+    * allows comparison between agents using a simple and unified evaluation interface (=> making it easy, for instance, to compare deep and "traditional" RL algorithms).
+* Unified seeding mechanism: define only one global seed, from which all other seeds will inherit, enforcing independence of the random number generators (=> avoid seed "optimization"!)
+* Simple interface for creating and **rendering** new environments. 
 
 
 # Install
