@@ -157,7 +157,7 @@ class RSUCBVIAgent(Agent):
 
         # maximum value 
         r_range = self.env.reward_range[1] - self.env.reward_range[0]
-        if r_range > np.inf:
+        if r_range == np.inf:
             if verbose >= 0:
                 print("Warning: in %s, reward range is infinity. Clipping it to 1."%self.id) 
             r_range = 1.0
