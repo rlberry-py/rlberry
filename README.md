@@ -1,5 +1,5 @@
-![rlberry](https://github.com/rlberry-py/logo/blob/master/berries.png?raw=true)
-![rlberry](https://github.com/rlberry-py/logo/blob/master/rlberry_logo.png?raw=true)
+![rlberry](logo/berries.png)
+![rlberry](logo/rlberry_logo.png)
 
 # A Reinforcement Learning Library for Research and Education 
 
