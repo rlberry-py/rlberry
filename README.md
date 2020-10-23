@@ -1,4 +1,7 @@
-# rlberry - A Reinforcement Learning Library for Research and Education 
+![rlberry](https://github.com/rlberry-py/logo/blob/master/berries.png?raw=true)
+![rlberry](https://github.com/rlberry-py/logo/blob/master/rlberry_logo.png?raw=true)
+
+# A Reinforcement Learning Library for Research and Education 
 
 ![pytest](https://github.com/rlberry-py/rlberry/workflows/test/badge.svg)
 
