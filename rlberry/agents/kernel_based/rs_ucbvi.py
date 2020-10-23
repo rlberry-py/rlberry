@@ -1,16 +1,15 @@
 import numpy as np
+import time
+
 from numba import jit
 
 import rlberry.spaces as spaces
 from rlberry.agents import Agent
 from rlberry.agents.utils.metrics import metric_lp
 from rlberry.envs   import OnlineModel
-from rlberry.agents.dynprog.utils import backward_induction, value_iteration
+from rlberry.agents.dynprog.utils import backward_induction_in_place
 
 
-#
-# Map state to representative state
-# 
 @jit(nopython=True)
 def map_to_representative(state, 
                           lp_metric, 
@@ -19,6 +18,9 @@ def map_to_representative(state,
                           min_dist, 
                           scaling, 
                           accept_new_repr):
+    """
+    Map state to representative state.
+    """
     dist_to_closest = np.inf 
     argmin   = -1
     for ii in range(n_representatives):
@@ -43,6 +45,9 @@ class RSUCBVIAgent(Agent):
     - Estimate transtions an rewards on the finite set of representative states 
     and actions.
 
+    Criterion: finite-horizon with discount factor gamma. 
+    If the discount is not 1, only the Q function at h=0 is used.
+
 
     References
     ----------
@@ -65,8 +70,7 @@ class RSUCBVIAgent(Agent):
     def __init__(self, env, 
                        n_episodes=1000,
                        gamma=0.95, 
-                       horizon=20, 
-                       epsilon=1e-6, 
+                       horizon=None, 
                        lp_metric = 2,
                        scaling  = None,
                        min_dist = 0.1,
@@ -83,11 +87,7 @@ class RSUCBVIAgent(Agent):
         gamma : double 
             Discount factor in [0, 1]. If gamma is 1.0, the problem is set to be finite-horizon.
         horizon : int
-            Horizon, if the problem is finite-horizon (gamma = 1.0).
-            Number of steps before recomputing the policy, if
-
-        epsilon : double
-            Precision of value iteration, only used in discounted problems (when horizon is None).
+            Horizon of the objective function. If None and gamma<1, set to 1/(1-gamma). 
         lp_metric: int
             The metric on the state space is the one induced by the p-norm,
             where p = lp_metric. Default = 2, for the Euclidean metric. 
@@ -118,25 +118,22 @@ class RSUCBVIAgent(Agent):
         self.n_episodes         = n_episodes
         self.gamma              = gamma 
         self.horizon            = horizon 
-        self.epsilon            = epsilon 
         self.lp_metric          = lp_metric
         self.min_dist           = min_dist 
         self.bonus_scale_factor = bonus_scale_factor 
         self.verbose            = verbose 
         self.bonus_type         = bonus_type
 
-        # criterion (discounted or finite horizon)
-        if self.gamma == 1.0:
-            self.criterion = "finite-horizon"
-        elif self.gamma < 1.0 and self.gamma >= 0.0:
-            self.criterion = "discounted"
-        else:
-            assert 0, "gamma must be in [0, 1]"
-
         # check environment 
         assert isinstance(self.env, OnlineModel)
         assert isinstance(self.env.observation_space, spaces.Box) 
         assert isinstance(self.env.action_space,      spaces.Discrete)  
+
+        # other checks
+        assert gamma >= 0 and gamma <= 1.0
+        if self.horizon is None:
+            assert gamma < 1.0, "If no horizon is given, gamma must be smaller than 1."
+            self.horizon = int(np.ceil(1.0/(1.0-gamma)))
         
         # state dimension
         self.state_dim = self.env.observation_space.dim
@@ -162,10 +159,10 @@ class RSUCBVIAgent(Agent):
                 print("Warning: in %s, reward range is infinity. Clipping it to 1."%self.id) 
             r_range = 1.0
 
-        if self.criterion == "finite-horizon":
+        if self.gamma == 1.0:
             self.v_max = r_range*horizon
         else:
-            self.v_max = r_range/(1.0-self.gamma)
+            self.v_max = r_range*(1.0-np.power(self.gamma, self.horizon))/(1.0-self.gamma)
 
         # number of representative states and number of actions
         if max_repr is None:
@@ -205,6 +202,57 @@ class RSUCBVIAgent(Agent):
         self.Q = np.zeros((self.horizon, self.max_repr, self.A))
         self.episode = 0
 
+        # logging config
+        self._last_printed_ep = 0 
+        self._time_last_log = time.clock() 
+        if self.verbose == 1:
+            self._log_interval = 60  # in seconds
+        elif self.verbose == 2:
+            self._log_interval = 30
+        elif self.verbose == 3:
+            self._log_interval = 15
+        elif self.verbose > 3:
+            self._log_interval =  5
+
+    def policy(self, state, hh=0, **kwargs):
+        return self._get_action(state, hh)
+
+
+    def fit(self, **kwargs):
+        info = {}
+        self._rewards = np.zeros(self.n_episodes)
+        self._cumul_rewards = np.zeros(self.n_episodes)
+        for kk in range(self.n_episodes):
+            episode_rewards = self._run_episode()
+            self._rewards[kk] = episode_rewards
+            if kk > 0:
+                self._cumul_rewards[kk] = episode_rewards + self._cumul_rewards[kk-1]
+            self.episode     += 1
+            # 
+            self._logging()
+
+        info["n_episodes"]      = self.n_episodes 
+        info["episode_rewards"] = self._rewards 
+        return info
+
+
+    def _logging(self):
+        if self.verbose > 0:
+            t_now = time.clock()
+            time_elapsed = t_now - self._time_last_log
+            if time_elapsed >= self._log_interval:
+                self._time_last_log   = t_now
+                print(self._info_to_print())
+                self._last_printed_ep = self.episode-1
+
+    def _info_to_print(self):
+        prev_episode = self._last_printed_ep
+        episode = self.episode - 1
+        reward_per_ep = self._rewards[prev_episode:episode+1].sum()/ max(1, episode-prev_episode)
+        time_per_ep   = self._log_interval*1000.0 /  max(1, episode-prev_episode)
+
+        to_print = "[%s] episode = %d/%d | reward/ep = %0.2f | time/ep = %0.2f ms" % (self.id, episode, self.n_episodes, reward_per_ep, time_per_ep)
+        return to_print
 
     def _map_to_repr(self, state, accept_new_repr=True):
         repr_state = map_to_representative(state,
@@ -219,6 +267,7 @@ class RSUCBVIAgent(Agent):
             self.M += 1
         return repr_state
 
+
     def _update(self, state, action, next_state, reward):
         repr_state      = self._map_to_repr(state)
         repr_next_state = self._map_to_repr(next_state)
@@ -231,6 +280,7 @@ class RSUCBVIAgent(Agent):
         self.P_hat[repr_state, action, :] = self.N_sas[repr_state, action,:]/self.N_sa[repr_state, action] 
         self.B_sa[repr_state, action]     = self._compute_bonus(self.N_sa[repr_state, action])
 
+
     def _compute_bonus(self, n):
         if self.bonus_type == "simplified_bernstein":
             bonus = self.bonus_scale_factor * np.sqrt(1.0/n) + self.v_max/n 
@@ -239,22 +289,19 @@ class RSUCBVIAgent(Agent):
         else:
             raise NotImplementedError("Error: bonus type %s not implemented"%self.bonus_type)
 
+
     def _get_action(self, state, hh = 0):
         assert self.Q is not None
         repr_state = self._map_to_repr(state, False)
 
-
-        # check if value function has not yet been computed for repr_state
-        if repr_state >= self.V.shape[-1]:
-            return self.env.action_space.sample()
-
-        # finite horizon
-        if self.criterion == "finite-horizon":
+        # no discount
+        if self.gamma == 1.0:
             return self.Q[hh, repr_state, :].argmax()
         # discounted
-        return self.Q[repr_state, :].argmax()
+        return self.Q[0, repr_state, :].argmax()
 
-    def run_episode(self):
+
+    def _run_episode(self):
         # interact for H steps
         episode_rewards = 0
         state = self.env.reset()
@@ -266,32 +313,14 @@ class RSUCBVIAgent(Agent):
             episode_rewards += reward
     
         # run backward induction
-        if self.criterion == "finite-horizon":
-            self.Q, self.V = backward_induction(self.R_hat[:self.M, :] + self.B_sa[:self.M, :], self.P_hat[:self.M, :, :self.M], self.horizon, self.gamma, self.v_max)
-        else:
-            self.Q, self.V, n_it = value_iteration(self.R_hat[:self.M, :] + self.B_sa[:self.M, :], self.P_hat[:self.M, :, :self.M], self.gamma, self.epsilon)
+        backward_induction_in_place(self.Q[:, :self.M, :], self.V[:, :self.M], 
+                                    self.R_hat[:self.M, :] + self.B_sa[:self.M, :], 
+                                    self.P_hat[:self.M, :, :self.M], 
+                                    self.horizon, self.gamma, self.v_max)
+        
 
         # return sum of rewards collected in the episode
         return episode_rewards
 
-    def policy(self, state, hh=0, **kwargs):
-        return self._get_action(state, hh)
 
-    def fit(self, **kwargs):
-        self._aux_episode = 0
-        self._rewards = np.zeros(self.n_episodes)
-        self._cumul_rewards = np.zeros(self.n_episodes)
-
-        # print_timer = RepeatedTimer(self._print_interval_seconds, self._print_info) # print info every 5 seconds
-        for kk in range(self.n_episodes):
-            episode_rewards = self.run_episode()
-            self._rewards[kk] = episode_rewards
-            if kk > 0:
-                self._cumul_rewards[kk] = episode_rewards + self._cumul_rewards[kk-1]
-            self._aux_episode = kk   # avoid synchorization problems (_print_info is called by another thread)
-            self.episode     += 1
-            if kk % 100  == 0:
-                print("sum of rewards = ", self._cumul_rewards[kk])
-        # print_timer.stop()
-        # self._print_info()  # print info of last episode
-        return self._rewards
+    
