@@ -27,6 +27,7 @@ class ValueIterationAgent(Agent):
         assert isinstance(env, FiniteMDP), "Value iteration requires a FiniteMDP model."
         Agent.__init__(self, env)
         self.id = "ValueIteration"
+        self.fit_returns = ("n_iterations", "precision")
 
         #
         self.gamma   = gamma 
@@ -51,6 +52,7 @@ class ValueIterationAgent(Agent):
         else:
             self.Q, self.V = backward_induction(self.env.R, self.env.P, self.horizon, self.gamma)
             info["n_iterations"] = self.horizon
+            info["precision"] = 0.0
         return info
 
 

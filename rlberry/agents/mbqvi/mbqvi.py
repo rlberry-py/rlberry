@@ -48,6 +48,7 @@ class MBQVIAgent(Agent):
         assert isinstance(env.action_space,      Discrete), "MBQVI requires a finite action space."
         Agent.__init__(self, env)
         self.id = "MBQVI"
+        self.fit_returns = ("n_samples", "total_samples","n_iterations", "precision")
 
         # 
         self.n_samples = n_samples
@@ -119,6 +120,7 @@ class MBQVIAgent(Agent):
         else:
             self.Q, self.V = backward_induction(self.R_hat, self.P_hat, self.horizon, self.gamma)
             info["n_iterations"] = self.horizon
+            info["precision"] = 0.0
         return info
 
     def policy(self, state, hh=0, **kwargs):

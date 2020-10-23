@@ -115,7 +115,8 @@ class RSUCBVIAgent(Agent):
         """
         # init base class
         Agent.__init__(self, env)
-        self.id = "RSUCBVI"
+        self.id = "RSUCBVI" 
+        self.fit_returns = ("n_episodes", "episode_rewards")
 
         self.n_episodes         = n_episodes
         self.gamma              = gamma 
