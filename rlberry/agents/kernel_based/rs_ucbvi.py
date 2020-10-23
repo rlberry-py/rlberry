@@ -7,7 +7,7 @@ import rlberry.spaces as spaces
 from rlberry.agents import Agent
 from rlberry.agents.utils.metrics import metric_lp
 from rlberry.envs   import OnlineModel
-from rlberry.agents.dynprog.utils import backward_induction_in_place
+from rlberry.agents.dynprog.utils import backward_induction, backward_induction_in_place
 
 
 @jit(nopython=True)
@@ -48,6 +48,8 @@ class RSUCBVIAgent(Agent):
     Criterion: finite-horizon with discount factor gamma. 
     If the discount is not 1, only the Q function at h=0 is used.
 
+    The recommended policy after all the episodes is a "pessimistic" policy, using
+    negative exploration bonuses.
 
     References
     ----------
@@ -183,6 +185,8 @@ class RSUCBVIAgent(Agent):
         self.Q     = None   # Q function
         self.V     = None   # V function
 
+        self.Q_policy = None # Q function for recommended policy
+
         # initialize
         self.reset()
         
@@ -200,6 +204,8 @@ class RSUCBVIAgent(Agent):
 
         self.V = np.zeros((self.horizon, self.max_repr))
         self.Q = np.zeros((self.horizon, self.max_repr, self.A))
+        self.Q_policy = None 
+
         self.episode = 0
 
         # logging config
@@ -215,7 +221,14 @@ class RSUCBVIAgent(Agent):
             self._log_interval =  5
 
     def policy(self, state, hh=0, **kwargs):
-        return self._get_action(state, hh)
+        assert self.Q_policy is not None
+        repr_state = self._map_to_repr(state, False)
+
+        # no discount
+        if self.gamma == 1.0:
+            return self.Q_policy[hh, repr_state, :].argmax()
+        # discounted
+        return self.Q_policy[0, repr_state, :].argmax()
 
 
     def fit(self, **kwargs):
@@ -230,6 +243,11 @@ class RSUCBVIAgent(Agent):
             self.episode     += 1
             # 
             self._logging()
+
+        # compute Q function for the recommended policy
+        self.Q_policy, _ =  backward_induction(self.R_hat[:self.M, :] - self.B_sa[:self.M, :],   # negative bonus, "pessimistic" policy, no clipping
+                                               self.P_hat[:self.M, :, :self.M], 
+                                               self.horizon, self.gamma)
 
         info["n_episodes"]      = self.n_episodes 
         info["episode_rewards"] = self._rewards 
