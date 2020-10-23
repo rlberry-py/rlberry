@@ -1,5 +1,4 @@
-![rlberry](logo/logo.svg)
-![rlberry](logo/rlberry_logo.png)
+<img src="logo/logo_wide.svg" width="50%">
 
 # A Reinforcement Learning Library for Research and Education 
 
