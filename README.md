@@ -9,9 +9,9 @@
 
 * For each algorithm, write documentation/tutorial/examples.
 * Provide a very general interface for agents, that
-    * puts **minimal constraints** on the agent code (=> making it easy to include new algorithms and modify existing ones)
+    * puts **minimal constraints** on the agent code (=> making it easy to include new algorithms and modify existing ones);
     * allows comparison between agents using a simple and unified evaluation interface (=> making it easy, for instance, to compare deep and "traditional" RL algorithms).
-* Unified seeding mechanism: define only one global seed, from which all other seeds will inherit, enforcing independence of the random number generators (=> avoid seed "optimization"!)
+* Unified seeding mechanism: define only one global seed, from which all other seeds will inherit, enforcing independence of the random number generators (=> avoid seed "optimization"!).
 * Simple interface for creating and **rendering** new environments. 
 
 
