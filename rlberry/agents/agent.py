@@ -13,7 +13,7 @@ class Agent(ABC):
         agent identifier
     env : rlberry.envs.interface.model.Model
         environment on which to train the agent
-    fit_returns : tuple
+    fit_info : tuple
         tuple of strings containing the keys in the dictionary returned by fit()
     
     Methods
@@ -34,7 +34,7 @@ class Agent(ABC):
         self.id  = ""
         self.env = deepcopy(env)
         self.env.reseed()
-        self.fit_returns = ()
+        self.fit_info = ()
 
     @abstractmethod
     def fit(self, **kwargs):

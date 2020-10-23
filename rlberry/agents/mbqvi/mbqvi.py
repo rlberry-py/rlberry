@@ -48,7 +48,7 @@ class MBQVIAgent(Agent):
         assert isinstance(env.action_space,      Discrete), "MBQVI requires a finite action space."
         Agent.__init__(self, env)
         self.id = "MBQVI"
-        self.fit_returns = ("n_samples", "total_samples","n_iterations", "precision")
+        self.fit_info = ("n_samples", "total_samples","n_iterations", "precision")
 
         # 
         self.n_samples = n_samples
