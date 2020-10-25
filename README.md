@@ -16,7 +16,7 @@
 
 # Install
 
-To install, first create a virtual environment using Anaconda or Miniconda (suggested):
+To install, first create a virtual environment using Anaconda or [Miniconda](https://docs.conda.io/en/latest/miniconda.html) (suggested):
 
 ```
 conda create -n rlberry python=3.7
