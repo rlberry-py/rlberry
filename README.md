@@ -16,7 +16,7 @@
 
 # Install
 
-Creating a virtual environment and installing:
+To install, first create a virtual environment using Anaconda or Miniconda (suggested):
 
 ```
 conda create -n rlberry python=3.7
@@ -24,11 +24,16 @@ conda activate rlberry
 pip install -e .
 ```
 
+Or you can also install directly (not suggested):
+
+```
+python3 -m pip install -e .
+```
+
 # Tests
 
-To run tests, run `pytest`.
+To run tests, run `pytest`. To run tests with coverage, install and run pytest-cov:
 
-With coverage: install and run pytest-cov
 ```
 pip install pytest-cov
 bash run_tests.sh
@@ -40,6 +45,7 @@ See coverage report in `cov_html/index.html`.
 # Notes
 
 * To save videos, installing [ffmpeg-python](https://github.com/kkroening/ffmpeg-python) is required:
+
 ```
 pip install ffmpeg-python
 ```
