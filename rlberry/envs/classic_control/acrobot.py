@@ -22,7 +22,7 @@ import numpy as np
 import rlberry.spaces as spaces
 from rlberry.envs.interface import OnlineModel
 from rlberry.rendering      import Scene, GeometricPrimitive, RenderInterface2D
-
+from rlberry.rendering.common_shapes import bar_shape, circle_shape
 
 __copyright__ = "Copyright 2013, RLPy http://acl.mit.edu/RLPy"
 __credits__ = ["Alborz Geramifard", "Robert H. Klein", "Christoph Dann",
@@ -226,23 +226,23 @@ class Acrobot(OnlineModel, RenderInterface2D):
 
 
 
-        # x1 =   self.LINK_LENGTH_1 * np.sin(theta1)
-        # y1 = - self.LINK_LENGTH_1 * np.cos(theta1)
+        link1 = bar_shape(p0, p1, 0.1)
+        link1.set_color((255/255, 140/255, 0/255))
 
-        # x2 = x1 + 
+        link2 = bar_shape(p1, p2, 0.1)
+        link2.set_color((210/255, 105/255, 30/255))
 
-        link1 = GeometricPrimitive("GL_LINES")
-        link1.add_vertex(p0)
-        link1.add_vertex(p1)
+        joint = circle_shape(p1, 0.075)
+        joint.set_color((255/255, 215/255, 0/255))
 
-        link2 = GeometricPrimitive("GL_LINES")
-        link2.add_vertex(p1)
-        link2.add_vertex(p2)
-
-
+        goal_line = GeometricPrimitive("GL_LINES")
+        goal_line.add_vertex((-5, 1))
+        goal_line.add_vertex(( 5, 1))
 
         scene.add_shape(link1)
         scene.add_shape(link2)
+        scene.add_shape(goal_line)
+        scene.add_shape(joint)
 
         return scene
 
