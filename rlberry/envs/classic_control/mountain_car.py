@@ -74,8 +74,6 @@ class MountainCar(SimulationModel, RenderInterface2D):
         self.low = np.array([self.min_position, -self.max_speed])
         self.high = np.array([self.max_position, self.max_speed])
 
-        self.viewer = None
-
         self.action_space = spaces.Discrete(3)
         self.observation_space = spaces.Box(self.low, self.high)
 
