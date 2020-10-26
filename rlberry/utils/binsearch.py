@@ -1,5 +1,4 @@
-import numpy as np 
-from numba import jit
+import numpy as np
 
 
 def binary_search_nd(x_vec, bins):
@@ -25,22 +24,23 @@ def binary_search_nd(x_vec, bins):
     for dd in range(dim):
         index_dd = np.searchsorted(bins[dd], x_vec[dd], side='right') - 1
         assert index_dd != -1, "error in binary_search_nd()"
-        flat_index += aux*index_dd 
-        aux *=  (len(bins[dd]) - 1)
+        flat_index += aux * index_dd
+        aux *= (len(bins[dd]) - 1)
     return flat_index
+
 
 def unravel_index_uniform_bin(flat_index, dim, n_per_dim):
     index = []
     aux_index = flat_index
     for dd in range(dim):
-        index.append(aux_index %  n_per_dim)
-        aux_index =  aux_index // n_per_dim 
+        index.append(aux_index % n_per_dim)
+        aux_index = aux_index // n_per_dim
     return tuple(index)
 
 
-if __name__=="__main__":
-    bins    = [ (0, 1, 2, 3, 4),
-                (0, 1, 2, 3, 4)]
-    x       = [3.9, 3.5]
-    index   = binary_search_nd(x, bins)
+if __name__ == "__main__":
+    bins = [(0, 1, 2, 3, 4),
+            (0, 1, 2, 3, 4)]
+    x = [3.9, 3.5]
+    index = binary_search_nd(x, bins)
     print(index)

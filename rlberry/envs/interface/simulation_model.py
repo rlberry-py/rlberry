@@ -1,5 +1,6 @@
-from rlberry.envs.interface.online_model import OnlineModel
 from rlberry.envs.interface.generative_model import GenerativeModel
+from rlberry.envs.interface.online_model import OnlineModel
+
 
 class SimulationModel(OnlineModel, GenerativeModel):
     """

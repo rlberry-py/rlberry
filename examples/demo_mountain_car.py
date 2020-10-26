@@ -1,9 +1,9 @@
+from rlberry.agents.mbqvi import MBQVIAgent
 from rlberry.envs.classic_control import MountainCar
-from rlberry.agents.mbqvi import MBQVIAgent 
-from rlberry.wrappers import DiscretizeStateWrapper 
+from rlberry.wrappers import DiscretizeStateWrapper
 
 _env = MountainCar()
-env  = DiscretizeStateWrapper(_env, 20)
+env = DiscretizeStateWrapper(_env, 20)
 agent = MBQVIAgent(env, n_samples=40, gamma=0.99)
 agent.fit()
 

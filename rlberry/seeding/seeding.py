@@ -1,9 +1,9 @@
-import numpy as np
 from numpy.random import SeedSequence, default_rng
 
 # Define global seed sequence
-_GLOBAL_SEED     = 42
+_GLOBAL_SEED = 42
 _GLOBAL_SEED_SEQ = SeedSequence(_GLOBAL_SEED)
+
 
 def set_global_seed(seed):
     """
@@ -19,6 +19,7 @@ def set_global_seed(seed):
     global _GLOBAL_SEED, _GLOBAL_SEED_SEQ
     _GLOBAL_SEED = seed
     _GLOBAL_SEED_SEQ = SeedSequence(_GLOBAL_SEED)
+
 
 def get_rng():
     """

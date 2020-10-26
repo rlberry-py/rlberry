@@ -1,6 +1,5 @@
 import numpy as np
 from numba import jit
-from typing import Tuple, Callable
 
 
 @jit(nopython=True)
@@ -41,7 +40,7 @@ def backward_induction(R, P, horizon, gamma=1.0, vmax=np.inf):
                     # not using .dot instead of loop to avoid scipy dependency 
                     # (numba seems to require scipy for linear algebra operations in numpy)
                     for ns in range(S):
-                        q_aa += gamma * P[ss, aa, ns]*V[hh + 1, ns]  
+                        q_aa += gamma * P[ss, aa, ns] * V[hh + 1, ns]
                 if q_aa > max_q:
                     max_q = q_aa
                 Q[hh, ss, aa] = q_aa
@@ -92,7 +91,7 @@ def backward_induction_in_place(Q, V, R, P, horizon, gamma=1.0, vmax=np.inf):
                     # not using .dot instead of loop to avoid scipy dependency 
                     # (numba seems to require scipy for linear algebra operations in numpy)
                     for ns in range(S):
-                        q_aa += gamma * P[ss, aa, ns]*V[hh + 1, ns]  
+                        q_aa += gamma * P[ss, aa, ns] * V[hh + 1, ns]
                 if q_aa > max_q:
                     max_q = q_aa
                 Q[hh, ss, aa] = q_aa
@@ -124,18 +123,18 @@ def value_iteration(R, P, gamma, epsilon=1e-6):
     tuple (Q, V, n_it) containing the epsilon-optimal Q and V functions, 
     of shapes (S, A) and (S,), respectively, and n_it, the number of iterations
     """
-    S, A  = R.shape 
-    Q     = np.zeros((S, A))
+    S, A = R.shape
+    Q = np.zeros((S, A))
     Q_aux = np.full((S, A), np.inf)
     n_it = 0
     while np.abs(Q - Q_aux).max() > epsilon:
         Q_aux = Q
         Q = bellman_operator(Q, R, P, gamma)
         n_it += 1
-    V  = np.zeros(S)
+    V = np.zeros(S)
     # numba does not support np.max(Q, axis=1)
     for ss in range(S):
-        V[ss] = Q[ss, :].max()  
+        V[ss] = Q[ss, :].max()
     return Q, V, n_it
 
 
@@ -163,17 +162,16 @@ def bellman_operator(Q, R, P, gamma):
     TQ, array of shape (S, A) containing the result of the Bellman operator
     applied to the input Q
     """
-    S, A = Q.shape 
+    S, A = Q.shape
     TQ = np.zeros((S, A))
-    V  = np.zeros(S)
+    V = np.zeros(S)
     # numba does not support np.max(Q, axis=1)
     for ss in range(S):
         V[ss] = Q[ss, :].max()
     #
     for ss in range(S):
         for aa in range(A):
-            TQ[ss, aa] = R[ss, aa] 
+            TQ[ss, aa] = R[ss, aa]
             for ns in range(S):
-                TQ[ss, aa] += gamma*P[ss, aa, ns] * V[ns]
+                TQ[ss, aa] += gamma * P[ss, aa, ns] * V[ns]
     return TQ
-

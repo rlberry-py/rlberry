@@ -1,5 +1,6 @@
 import rlberry.seeding as seeding
 
+
 def test_seeding():
     seed = 123
     seeding.set_global_seed(seed)

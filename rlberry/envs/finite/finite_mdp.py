@@ -1,6 +1,8 @@
 import numpy as np
+
 import rlberry.spaces as spaces
 from rlberry.envs.interface import SimulationModel
+
 
 class FiniteMDP(SimulationModel):
     """
@@ -15,6 +17,7 @@ class FiniteMDP(SimulationModel):
         array of shape (S, A, S) containing the transition probabilities,
         where P[s, a, s'] = Prob(S_{t+1}=s'| S_t = s, A_t = a).
     """
+
     def __init__(self, R, P, initial_state_distribution=0):
         """
         Parameters
@@ -36,11 +39,11 @@ class FiniteMDP(SimulationModel):
         self.P = P
 
         self.observation_space = spaces.Discrete(S)
-        self.action_space      = spaces.Discrete(A)
+        self.action_space = spaces.Discrete(A)
 
         self.state = None
 
-        self._states  = np.arange(S)
+        self._states = np.arange(S)
         self._actions = np.arange(A)
 
         self.reset()
@@ -52,7 +55,7 @@ class FiniteMDP(SimulationModel):
         """
         if isinstance(self.initial_state_distribution, np.ndarray):
             self.state = self.rng.choice(self._states,
-                            p=self.initial_state_distribution)
+                                         p=self.initial_state_distribution)
         else:
             self.state = self.initial_state_distribution
         return self.state
@@ -126,22 +129,22 @@ class FiniteMDP(SimulationModel):
         """
         indent = '    '
         for s in self._states:
-            print(("State %d" + indent)%s)
+            print(("State %d" + indent) % s)
             for a in self._actions:
                 print(indent + "Action ", a)
                 for ss in self._states:
                     if self.P[s, a, ss] > 0.0:
-                        print(2*indent + 'transition to %d with prob %0.2f'%(ss, self.P[s, a, ss]))
+                        print(2 * indent + 'transition to %d with prob %0.2f' % (ss, self.P[s, a, ss]))
             print("~~~~~~~~~~~~~~~~~~~~")
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     S = 3
     A = 2
 
     R = np.random.uniform(0, 1, (S, A))
     P = np.random.uniform(0, 1, (S, A, S))
-    initial_state_distr = 1 # np.ones(S)/S
+    initial_state_distr = 1  # np.ones(S)/S
     for ss in range(S):
         for aa in range(A):
             P[ss, aa, :] /= P[ss, aa, :].sum()

@@ -2,15 +2,18 @@
 Provide classes for geometric primitives in OpenGL and scenes. 
 """
 
+
 class Scene:
     """
     Class representing a scene, which is a vector of GeometricPrimitive objects
     """
+
     def __init__(self):
         self.shapes = []
 
     def add_shape(self, shape):
         self.shapes.append(shape)
+
 
 class GeometricPrimitive:
     """
@@ -29,6 +32,7 @@ class GeometricPrimitive:
      *      GL_QUADS
      *      GL_QUAD_STRIP
     """
+
     def __init__(self, primitive_type="GL_LINE_LOOP"):
         # primitive type
         self.type = primitive_type

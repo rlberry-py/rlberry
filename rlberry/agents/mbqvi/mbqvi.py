@@ -1,10 +1,9 @@
 import numpy as np
+
+from rlberry.agents import Agent
 from rlberry.agents.dynprog.utils import backward_induction, value_iteration
-from rlberry.agents         import Agent
-from rlberry.agents.dynprog import ValueIterationAgent
-from rlberry.envs.interface import GenerativeModel 
-from rlberry.envs.finite    import FiniteMDP
-from rlberry.spaces         import Discrete
+from rlberry.envs.interface import GenerativeModel
+from rlberry.spaces import Discrete
 
 
 class MBQVIAgent(Agent):
@@ -18,13 +17,14 @@ class MBQVIAgent(Agent):
     "Finite-sample convergence rates for Q-learning and indirect algorithms." 
     Advances in neural information processing systems. 1999.
     """
-    def __init__(self, env, 
-                       n_samples=10, 
-                       gamma=0.95, 
-                       horizon=None, 
-                       epsilon=1e-6, 
-                       verbose=1, 
-                       **kwargs):
+
+    def __init__(self, env,
+                 n_samples=10,
+                 gamma=0.95,
+                 horizon=None,
+                 epsilon=1e-6,
+                 verbose=1,
+                 **kwargs):
         """
         Parameters:
         -----------
@@ -45,24 +45,24 @@ class MBQVIAgent(Agent):
         # initialize base class
         assert isinstance(env, GenerativeModel), "MBQVI requires a generative model."
         assert isinstance(env.observation_space, Discrete), "MBQVI requires a finite state space."
-        assert isinstance(env.action_space,      Discrete), "MBQVI requires a finite action space."
+        assert isinstance(env.action_space, Discrete), "MBQVI requires a finite action space."
         Agent.__init__(self, env)
         self.id = "MBQVI"
-        self.fit_info = ("n_samples", "total_samples","n_iterations", "precision")
+        self.fit_info = ("n_samples", "total_samples", "n_iterations", "precision")
 
         # 
         self.n_samples = n_samples
         self.gamma = gamma
-        self.horizon = horizon 
+        self.horizon = horizon
         self.epsilon = epsilon
         self.verbose = verbose
 
         # empirical MDP, created in fit()
-        self.R_hat = None 
-        self.P_hat = None 
+        self.R_hat = None
+        self.P_hat = None
 
         # value functions
-        self.V = None 
+        self.V = None
         self.Q = None
 
     def _update(self, state, action, next_state, reward):
@@ -77,37 +77,37 @@ class MBQVIAgent(Agent):
         """
         Build empirical MDP and run value iteration.
         """
-        S = self.env.observation_space.n 
-        A = self.env.action_space.n 
-        self.N_sa  = np.zeros((S, A))
+        S = self.env.observation_space.n
+        A = self.env.action_space.n
+        self.N_sa = np.zeros((S, A))
         self.N_sas = np.zeros((S, A, S))
-        self.S_sa  = np.zeros((S, A))
+        self.S_sa = np.zeros((S, A))
 
         # collect data
-        total_samples = S*A*self.n_samples
-        count = 0 
+        total_samples = S * A * self.n_samples
+        count = 0
         if self.verbose > 0:
-            print("[%s] collecting %d samples per (s,a), total = %d samples"%(self.id, self.n_samples, total_samples))
+            print("[%s] collecting %d samples per (s,a), total = %d samples" % (self.id, self.n_samples, total_samples))
         for ss in range(S):
             for aa in range(A):
-                for nn in range(self.n_samples):                 
+                for nn in range(self.n_samples):
                     next_state, reward, _, _ = self.env.sample(ss, aa)
                     self._update(ss, aa, next_state, reward)
 
                     count += 1
                     if count % 10000 == 0 and self.verbose > 0:
-                        completed = 100*count/total_samples
-                        print("[%s] ... %d/%d  (%0.0f"%(self.id, count, total_samples, completed)+"%)")
+                        completed = 100 * count / total_samples
+                        print("[%s] ... %d/%d  (%0.0f" % (self.id, count, total_samples, completed) + "%)")
 
         # build model and run VI
         if self.verbose > 0:
-            print("[%s] building model and running backward induction..."%self.id)
+            print("[%s] building model and running backward induction..." % self.id)
 
-        N_sa  = np.maximum(self.N_sa, 1)
-        self.R_hat = self.S_sa/N_sa 
+        N_sa = np.maximum(self.N_sa, 1)
+        self.R_hat = self.S_sa / N_sa
         self.P_hat = np.zeros((S, A, S))
         for ss in range(S):
-            self.P_hat[:, :, ss] = self.N_sas[:,:,ss]/N_sa 
+            self.P_hat[:, :, ss] = self.N_sas[:, :, ss] / N_sa
 
         info = {}
         info["n_samples"] = self.n_samples

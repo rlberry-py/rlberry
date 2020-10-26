@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from copy import deepcopy
 
+
 class Agent(ABC):
     """
     Basic interface for agents.
@@ -30,26 +31,26 @@ class Agent(ABC):
     load(), optional
         load agent, returns an instance of the agent
     """
+
     def __init__(self, env, **kwargs):
-        self.id  = ""
+        self.id = ""
         self.env = deepcopy(env)
         self.env.reseed()
         self.fit_info = ()
 
     @abstractmethod
     def fit(self, **kwargs):
-        pass 
+        pass
 
     @abstractmethod
     def policy(self, observation, **kwargs):
-        pass 
+        pass
 
     def reset(self, **kwargs):
-        pass 
+        pass
 
     def save(self, **kwargs):
         pass
 
     def load(self, **kwargs):
-        pass 
-    
+        pass

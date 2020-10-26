@@ -5,7 +5,7 @@ import numpy as np
 try:
     import ffmpeg
 except:
-    _FFMPEG_INSTALLED = False 
+    _FFMPEG_INSTALLED = False
 
 
 def video_write(fn, images, framerate=60, vcodec='libx264'):
@@ -27,12 +27,13 @@ def video_write(fn, images, framerate=60, vcodec='libx264'):
     global _FFMPEG_INSTALLED
 
     if not _FFMPEG_INSTALLED:
-        print("Error: not able to save video, ffmpeg-python package required (https://github.com/kkroening/ffmpeg-python)")
-        return 
+        print(
+            "Error: not able to save video, ffmpeg-python package required (https://github.com/kkroening/ffmpeg-python)")
+        return
 
     if not isinstance(images, np.ndarray):
         images = np.asarray(images)
-    n,height,width,channels = images.shape
+    n, height, width, channels = images.shape
     process = (
         ffmpeg
             .input('pipe:', format='rawvideo', pix_fmt='rgb24', s='{}x{}'.format(width, height), r=framerate)

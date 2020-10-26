@@ -1,4 +1,5 @@
 import numpy as np
+
 from rlberry.spaces import Space
 
 
@@ -20,6 +21,7 @@ class Discrete(Space):
     contains(x)
         check if x belongs to the space
     """
+
     def __init__(self, n):
         """
         Parameters
@@ -38,5 +40,5 @@ class Discrete(Space):
         return (x >= 0) and (x < self.n) and np.issubdtype(type(x), np.integer)
 
     def __str__(self):
-        objstr = "%d-element Discrete space"%self.n
+        objstr = "%d-element Discrete space" % self.n
         return objstr

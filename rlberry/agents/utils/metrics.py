@@ -24,7 +24,7 @@ def metric_lp(x, y, p, scaling):
     assert scaling.ndim == 1
 
     d = len(x)
-    diff = np.abs((x-y)/scaling)
+    diff = np.abs((x - y) / scaling)
     # p = infinity
     if p == np.inf:
         return diff.max()
@@ -32,5 +32,4 @@ def metric_lp(x, y, p, scaling):
     tmp = 0
     for ii in range(d):
         tmp += np.power(diff[ii], p)
-    return np.power(tmp, 1.0/p)
-    
+    return np.power(tmp, 1.0 / p)

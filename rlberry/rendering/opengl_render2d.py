@@ -2,11 +2,12 @@
 OpenGL code for 2D rendering, using pygame.
 """
 
+from os import environ
+
 import numpy as np
 
-from rlberry.rendering import GeometricPrimitive, Scene
+from rlberry.rendering import Scene
 
-from os import environ
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 
 _IMPORT_SUCESSFUL = True
@@ -18,7 +19,6 @@ try:
     from OpenGL.GLU import *
 except:
     _IMPORT_SUCESSFUL = False
-    
 
 # Flag to debug without screen 
 _DEBUG_NO_SCREEN = False
@@ -28,13 +28,14 @@ class OpenGLRender2D:
     """
     Class to render a list of scenes using OpenGL and pygame.
     """
+
     def __init__(self):
         # parameters
-        self.window_width  = 640
+        self.window_width = 640
         self.window_height = 640
         self.background_color = (0.6, 0.75, 1.0)
         self.refresh_interval = 50
-        self.window_name   = "rlxp render"
+        self.window_name = "rlxp render"
         self.clipping_area = (-1.0, 1.0, -1.0, 1.0)
 
         # time counter
@@ -58,13 +59,13 @@ class OpenGLRender2D:
         """
         self.clipping_area = area
         base_size = max(self.window_width, self.window_height)
-        width_range  = area[1] - area[0]
+        width_range = area[1] - area[0]
         height_range = area[3] - area[2]
         base_range = max(width_range, height_range)
-        width_range  /= base_range
+        width_range /= base_range
         height_range /= base_range
-        self.window_width  = int( base_size*width_range  )
-        self.window_height = int( base_size*height_range )
+        self.window_width = int(base_size * width_range)
+        self.window_height = int(base_size * height_range)
 
     def set_data(self, data):
         self.data = data
@@ -106,7 +107,7 @@ class OpenGLRender2D:
         """
         Draw a 2D shape, of type GeometricPrimitive
         """
-        if   shape.type == "GL_POINTS":
+        if shape.type == "GL_POINTS":
             glBegin(GL_POINTS)
         elif shape.type == "GL_LINES":
             glBegin(GL_LINES)
@@ -138,7 +139,6 @@ class OpenGLRender2D:
             glVertex2f(vertex[0], vertex[1])
         glEnd()
 
-
     def run_graphics(self):
         """
         Sequentially displays scenes in self.data
@@ -151,7 +151,7 @@ class OpenGLRender2D:
         if _IMPORT_SUCESSFUL:
             pg.init()
             display = (self.window_width, self.window_height)
-            screen = pg.display.set_mode(display, DOUBLEBUF|OPENGL)
+            screen = pg.display.set_mode(display, DOUBLEBUF | OPENGL)
             pg.display.set_caption(self.window_name)
             self.initGL()
             while True:
@@ -166,7 +166,6 @@ class OpenGLRender2D:
                 pg.time.wait(self.refresh_interval)
         else:
             print("Error: not possible to render the environment, pygame or pyopengl not installed.")
-    
 
     def get_video_data(self):
         """
@@ -182,7 +181,7 @@ class OpenGLRender2D:
 
             pg.init()
             display = (self.window_width, self.window_height)
-            screen = pg.display.set_mode(display, DOUBLEBUF|OPENGL)
+            screen = pg.display.set_mode(display, DOUBLEBUF | OPENGL)
             pg.display.set_caption(self.window_name)
             self.initGL()
 
@@ -197,7 +196,7 @@ class OpenGLRender2D:
                 # See https://stackoverflow.com/a/42754578/5691288
                 #
                 string_image = pg.image.tostring(screen, 'RGB')
-                temp_surf = pg.image.fromstring(string_image,(self.window_width, self.window_height),'RGB' )
+                temp_surf = pg.image.fromstring(string_image, (self.window_width, self.window_height), 'RGB')
                 tmp_arr = pg.surfarray.array3d(temp_surf)
                 imgdata = np.moveaxis(tmp_arr, 0, 1)
                 video_data.append(imgdata)
@@ -207,9 +206,11 @@ class OpenGLRender2D:
             print("Error: not possible to render the environment, pygame or pyopengl not installed.")
             return []
 
+
 def _activate_debug_mode():
     global _DEBUG_NO_SCREEN
     _DEBUG_NO_SCREEN = True
+
 
 def _deactivate_debug_mode():
     global _DEBUG_NO_SCREEN

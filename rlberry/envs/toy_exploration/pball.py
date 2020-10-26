@@ -1,7 +1,8 @@
-import numpy as np 
+import numpy as np
+
 import rlberry.spaces as spaces
 from rlberry.envs.interface import SimulationModel
-from rlberry.rendering  import Scene, GeometricPrimitive, RenderInterface2D
+from rlberry.rendering import Scene, GeometricPrimitive, RenderInterface2D
 
 
 def projection_to_pball(x, p):
@@ -19,16 +20,16 @@ def projection_to_pball(x, p):
         return x
 
     if p == 2:
-        z = x/np.linalg.norm(x, ord=p)
+        z = x / np.linalg.norm(x, ord=p)
         return z
 
     if p == np.inf:
         z = np.minimum(1.0, np.maximum(x, -1.0))
-        return z 
-    
-    # below it is not a projection
-    return x/np.linalg.norm(x, ord=p)
-        
+        return z
+
+        # below it is not a projection
+    return x / np.linalg.norm(x, ord=p)
+
 
 class PBall(SimulationModel):
     """
@@ -71,12 +72,12 @@ class PBall(SimulationModel):
     """
 
     def __init__(self,
-                 p, 
+                 p,
                  action_list,
                  reward_amplitudes,
                  reward_smoothness,
                  reward_centers,
-                 A, 
+                 A,
                  B,
                  sigma,
                  sigma_init,
@@ -106,48 +107,48 @@ class PBall(SimulationModel):
             array of size (d,) containing the mean of the initial state
         """
         SimulationModel.__init__(self)
-        
+
         assert p >= 1, "PBall requires p>=1"
         if p not in [2, np.inf]:
             print("WARNING: for p!=2 or p!=np.inf, PBall does not make true projections onto the lp ball.")
-        self.p                 = p 
-        self.d, self.dp        = B.shape   # d and d'
-        self.m                 = len(action_list)
-        self.action_list       = action_list
-        self.reward_amplitudes = reward_amplitudes 
-        self.reward_smoothness = reward_smoothness 
-        self.reward_centers    = reward_centers
-        self.A                 = A  
-        self.B                 = B 
-        self.sigma             = sigma 
-        self.sigma_init        = sigma_init 
-        self.mu_init           = mu_init
+        self.p = p
+        self.d, self.dp = B.shape  # d and d'
+        self.m = len(action_list)
+        self.action_list = action_list
+        self.reward_amplitudes = reward_amplitudes
+        self.reward_smoothness = reward_smoothness
+        self.reward_centers = reward_centers
+        self.A = A
+        self.B = B
+        self.sigma = sigma
+        self.sigma_init = sigma_init
+        self.mu_init = mu_init
 
         # State and action spaces
-        low  = -1.0*np.ones(self.d, dtype=np.float64)
-        high =      np.ones(self.d, dtype=np.float64)
+        low = -1.0 * np.ones(self.d, dtype=np.float64)
+        high = np.ones(self.d, dtype=np.float64)
         self.observation_space = spaces.Box(low, high)
-        self.action_space      = spaces.Discrete(self.m)
+        self.action_space = spaces.Discrete(self.m)
 
         # reward range
         assert len(self.reward_amplitudes) == len(self.reward_smoothness) == len(self.reward_centers)
         assert self.reward_amplitudes.max() <= 1.0 and \
                self.reward_amplitudes.min() >= 0.0, "reward amplitudes b_i must be in [0, 1]"
-        assert self.reward_smoothness.min() >  0.0, "reward smoothness c_i must be > 0"
+        assert self.reward_smoothness.min() > 0.0, "reward smoothness c_i must be > 0"
         self.reward_range = (0, 1.0)
 
         # 
-        self.id = "%d-Ball"%self.p
+        self.id = "%d-Ball" % self.p
 
         # Initalize state
         self.reset()
 
     def reset(self, state=None):
         if state is not None:
-            self.state = state 
+            self.state = state
         else:
-            self.state = self.mu_init + self.sigma_init*self.rng.normal(size=self.d) 
-        # projection to unit ball
+            self.state = self.mu_init + self.sigma_init * self.rng.normal(size=self.d)
+            # projection to unit ball
         self.state = projection_to_pball(self.state, self.p)
         return self.state.copy()
 
@@ -157,12 +158,12 @@ class PBall(SimulationModel):
 
         # next state
         action_vec = self.action_list[action]
-        next_s = self.A.dot(state) + self.B.dot(action_vec) + self.sigma*self.rng.normal(size=self.d) 
+        next_s = self.A.dot(state) + self.B.dot(action_vec) + self.sigma * self.rng.normal(size=self.d)
         next_s = projection_to_pball(next_s, self.p)
 
         # done and reward
         done = False
-        reward = self.compute_reward_at(state)    
+        reward = self.compute_reward_at(state)
 
         return next_s, reward, done, {}
 
@@ -170,21 +171,21 @@ class PBall(SimulationModel):
         next_s, reward, done, info = self.sample(self.state, action)
         self.state = next_s.copy()
         return next_s, reward, done, info
-    
+
     def compute_reward_at(self, x):
         reward = 0
         for ii, b_ii in enumerate(self.reward_amplitudes):
             c_ii = self.reward_smoothness[ii]
             x_ii = self.reward_centers[ii]
-            dist = np.linalg.norm(x-x_ii, ord=self.p)
-            reward += b_ii * max(0.0, 1.0 - dist/c_ii)
+            dist = np.linalg.norm(x - x_ii, ord=self.p)
+            reward += b_ii * max(0.0, 1.0 - dist / c_ii)
         return reward
 
     def get_reward_lipschitz_constant(self):
-        ratios = self.reward_amplitudes/self.reward_smoothness 
-        Lr     = ratios.max()
-        return Lr 
-    
+        ratios = self.reward_amplitudes / self.reward_smoothness
+        Lr = ratios.max()
+        return Lr
+
     def get_transitions_lipschitz_constant(self):
         """
         note: considers a fixed action, returns Lipschitz constant w.r.t. to states.
@@ -192,39 +193,39 @@ class PBall(SimulationModel):
         If p!=1, p!=2 or p!=np.inf, returns an upper bound on the induced norm
         """
         if self.p == 1:
-            order = np.inf 
+            order = np.inf
         else:
             order = self.p / (self.p - 1.0)
-        
+
         if order in [1, 2]:
-            return np.linalg.norm(self.A, ord = order)
+            return np.linalg.norm(self.A, ord=order)
 
         # If p!=1, p!=2 or p!=np.inf, return upper bound on the induced norm.
-        return np.power(self.d, 1.0/self.p) * np.linalg.norm(self.A, ord = np.inf)
+        return np.power(self.d, 1.0 / self.p) * np.linalg.norm(self.A, ord=np.inf)
 
-        
+
 class PBall2D(PBall, RenderInterface2D):
     def __init__(self,
-                 p = 2, 
-                 action_list = [  0.05*np.array([1, 0]),
-                                 -0.05*np.array([1, 0]),
-                                  0.05*np.array([0, 1]),
-                                 -0.05*np.array([0, 1])],
-                 reward_amplitudes = np.array([1.0]),
-                 reward_smoothness = np.array([0.25]),
-                 reward_centers    = [np.array([0.75, 0.0])],
-                 A = np.eye(2), 
-                 B = np.eye(2),
-                 sigma = 0.01,
-                 sigma_init = 0.001,
-                 mu_init = np.array([0.0, 0.0])
+                 p=2,
+                 action_list=[0.05 * np.array([1, 0]),
+                              -0.05 * np.array([1, 0]),
+                              0.05 * np.array([0, 1]),
+                              -0.05 * np.array([0, 1])],
+                 reward_amplitudes=np.array([1.0]),
+                 reward_smoothness=np.array([0.25]),
+                 reward_centers=[np.array([0.75, 0.0])],
+                 A=np.eye(2),
+                 B=np.eye(2),
+                 sigma=0.01,
+                 sigma_init=0.001,
+                 mu_init=np.array([0.0, 0.0])
                  ):
         # Initialize PBall
-        PBall.__init__(self, p,  action_list, reward_amplitudes,reward_smoothness,
-                            reward_centers, A, B, sigma, sigma_init, mu_init)
-        
+        PBall.__init__(self, p, action_list, reward_amplitudes, reward_smoothness,
+                       reward_centers, A, B, sigma, sigma_init, mu_init)
+
         # Render interface
-        RenderInterface2D.__init__(self) 
+        RenderInterface2D.__init__(self)
 
         # rendering info
         self.set_clipping_area((-1, 1, -1, 1))
@@ -236,22 +237,21 @@ class PBall2D(PBall, RenderInterface2D):
             self.append_state_for_rendering(self.state.copy())
         return PBall.step(self, action)
 
-
     #
     # Code for rendering
     #
 
     def _get_ball_shape(self, xcenter, radius):
         shape = GeometricPrimitive("GL_POLYGON")
-        n_points = 200 
-        theta_vals = np.linspace(0.0, 2*np.pi, n_points)
+        n_points = 200
+        theta_vals = np.linspace(0.0, 2 * np.pi, n_points)
         for theta in theta_vals:
-            pp = np.array([2.0*np.cos(theta), 2.0*np.sin(theta)])
-            pp = xcenter + radius*projection_to_pball(pp, self.p)
-             # project to the main ball after translation
-            pp = projection_to_pball(pp, self.p) 
+            pp = np.array([2.0 * np.cos(theta), 2.0 * np.sin(theta)])
+            pp = xcenter + radius * projection_to_pball(pp, self.p)
+            # project to the main ball after translation
+            pp = projection_to_pball(pp, self.p)
             shape.add_vertex((pp[0], pp[1]))
-        return shape 
+        return shape
 
     def get_background(self):
         bg = Scene()
@@ -263,61 +263,62 @@ class PBall2D(PBall, RenderInterface2D):
 
         # reward position
         for ii, ampl in enumerate(self.reward_amplitudes):
-            contour = self._get_ball_shape(self.reward_centers[ii], 
-                                            self.reward_smoothness[ii])
-            ampl = 1.0-ampl  # dark violet = more reward
-            contour.set_color((0.5, 0.0, 0.5*(1.0+ampl)))
+            contour = self._get_ball_shape(self.reward_centers[ii],
+                                           self.reward_smoothness[ii])
+            ampl = 1.0 - ampl  # dark violet = more reward
+            contour.set_color((0.5, 0.0, 0.5 * (1.0 + ampl)))
             bg.add_shape(contour)
 
         return bg
 
-
     def get_scene(self, state):
-        scene = Scene() 
+        scene = Scene()
 
         agent = GeometricPrimitive("GL_QUADS")
         agent.set_color((0.75, 0.0, 0.5))
         size = 0.05
         x = state[0]
         y = state[1]
-        agent.add_vertex((x-size/4.0, y-size))
-        agent.add_vertex((x+size/4.0, y-size))
-        agent.add_vertex((x+size/4.0, y+size))
-        agent.add_vertex((x-size/4.0, y+size))
+        agent.add_vertex((x - size / 4.0, y - size))
+        agent.add_vertex((x + size / 4.0, y - size))
+        agent.add_vertex((x + size / 4.0, y + size))
+        agent.add_vertex((x - size / 4.0, y + size))
 
-        agent.add_vertex((x-size, y-size/4.0))
-        agent.add_vertex((x+size, y-size/4.0))
-        agent.add_vertex((x+size, y+size/4.0))
-        agent.add_vertex((x-size, y+size/4.0))
-        
+        agent.add_vertex((x - size, y - size / 4.0))
+        agent.add_vertex((x + size, y - size / 4.0))
+        agent.add_vertex((x + size, y + size / 4.0))
+        agent.add_vertex((x - size, y + size / 4.0))
+
         scene.add_shape(agent)
-        return scene 
+        return scene
+
 
 class SimplePBallND(PBall):
     """
     PBall environment in d dimensions with simple dynamics.
     """
+
     def __init__(self,
-                 p   = 2, 
-                 dim = 2,
-                 action_amplitude = 0.05,
-                 r_smoothness = 0.25,
-                 sigma = 0.01,
-                 sigma_init = 0.001,
-                 mu_init = None
+                 p=2,
+                 dim=2,
+                 action_amplitude=0.05,
+                 r_smoothness=0.25,
+                 sigma=0.01,
+                 sigma_init=0.001,
+                 mu_init=None
                  ):
         # Action list 
         action_list = []
         for dd in range(dim):
-            aux     = np.zeros(dim)
+            aux = np.zeros(dim)
             aux[dd] = action_amplitude
-            action_list.append(   aux)
-            action_list.append(-1*aux)
+            action_list.append(aux)
+            action_list.append(-1 * aux)
 
         # Rewards 
         reward_amplitudes = np.array([1.0])
         reward_smoothness = np.array([r_smoothness])
-        reward_centers       = [np.zeros(dim)]
+        reward_centers = [np.zeros(dim)]
         reward_centers[0][0] = 0.8
 
         # Transitions 
@@ -325,15 +326,15 @@ class SimplePBallND(PBall):
         B = np.eye(dim)
 
         # Initial position
-        if mu_init is None :
+        if mu_init is None:
             mu_init = np.zeros(dim)
 
         # Initialize PBall
-        PBall.__init__(self, p,  action_list, reward_amplitudes,reward_smoothness,
-                            reward_centers, A, B, sigma, sigma_init, mu_init)
+        PBall.__init__(self, p, action_list, reward_amplitudes, reward_smoothness,
+                       reward_centers, A, B, sigma, sigma_init, mu_init)
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     env = PBall2D(p=5)
     print(env.get_transitions_lipschitz_constant())
     print(env.get_reward_lipschitz_constant())

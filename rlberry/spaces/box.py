@@ -1,4 +1,5 @@
 import numpy as np
+
 from rlberry.spaces import Space
 
 
@@ -50,29 +51,28 @@ class Box(Space):
 
         if type(low) is not np.ndarray:
             assert dim is not None and dim > 0, \
-            "dim must be given if low/high are not arrays"
-            self.low  = np.full((dim,), low,  dtype=default_dtype)
+                "dim must be given if low/high are not arrays"
+            self.low = np.full((dim,), low, dtype=default_dtype)
             self.high = np.full((dim,), high, dtype=default_dtype)
-            self.dim  = dim
+            self.dim = dim
         else:
             assert low.ndim == high.ndim == 1, "high and low must be 1d"
             assert low.shape == high.shape, "low and high must have the same shape"
-            self.low  = low.copy()
+            self.low = low.copy()
             self.high = high.copy()
-            self.dim  = low.shape[0]
+            self.dim = low.shape[0]
 
         # check which dimensions are bounded
         self._boundedness = np.zeros(self.dim, dtype=np.uint8)
         for dd in range(self.dim):
             assert self.low[dd] < self.high[dd], "low < high is required!"
-            bounded_below = 1 * (self.low[dd]  != -np.inf)
-            bounded_above = 1 * (self.high[dd] !=  np.inf)
+            bounded_below = 1 * (self.low[dd] != -np.inf)
+            bounded_above = 1 * (self.high[dd] != np.inf)
             # 0 if not below and not above
             # 1 if not below and     above
             # 2 if     below and not above
             # 3 if     below and     above
-            self._boundedness[dd] = 2*bounded_below +  bounded_above
-
+            self._boundedness[dd] = 2 * bounded_below + bounded_above
 
     def sample(self):
         """
@@ -85,7 +85,7 @@ class Box(Space):
         xsample = np.zeros(self.dim)
         for dd in range(self.dim):
             # bounded above and below
-            if   self._boundedness[dd] == 3:
+            if self._boundedness[dd] == 3:
                 xsample[dd] = self.rng.uniform(self.low[dd], self.high[dd])
             # unbounded above
             elif self._boundedness[dd] == 2:
@@ -106,11 +106,11 @@ class Box(Space):
         if contain:
             for dd in range(self.dim):
                 contain = contain and \
-                        (x[dd] <= self.high[dd]) and (x[dd] >= self.low[dd])
+                          (x[dd] <= self.high[dd]) and (x[dd] >= self.low[dd])
         return contain
 
     def __str__(self):
-        objstr = "%d-dimensional Box space:\n"%self.dim
+        objstr = "%d-dimensional Box space:\n" % self.dim
         for dd in range(self.dim):
-            objstr += "   [%0.2f, %0.2f]\n"%(self.low[dd], self.high[dd])
+            objstr += "   [%0.2f, %0.2f]\n" % (self.low[dd], self.high[dd])
         return objstr

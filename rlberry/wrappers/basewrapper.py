@@ -1,6 +1,8 @@
 from copy import deepcopy
+
 from rlberry.envs.interface import OnlineModel, GenerativeModel, SimulationModel
 from rlberry.rendering import RenderInterface
+
 
 class Wrapper(SimulationModel):
     """
@@ -18,12 +20,13 @@ class Wrapper(SimulationModel):
 
     [1] https://github.com/openai/gym/blob/master/gym/core.py
     """
+
     def __init__(self, env):
         SimulationModel.__init__(self)
         self.env = deepcopy(env)
-        self.observation_space = self.env.observation_space 
-        self.action_space      = self.env.action_space
-        self.reward_range      = self.env.reward_range
+        self.observation_space = self.env.observation_space
+        self.action_space = self.env.action_space
+        self.reward_range = self.env.reward_range
 
     def reset(self):
         if not isinstance(self.env, OnlineModel):
@@ -39,7 +42,7 @@ class Wrapper(SimulationModel):
         if not isinstance(self.env, GenerativeModel):
             raise NotImplementedError("Wrapped environment does not implemement sample().")
         return self.env.sample(state, action)
-    
+
     def render(self, **kwargs):
         if not isinstance(self.env, RenderInterface):
             raise NotImplementedError("Wrapped environment does not implemement render().")
@@ -52,12 +55,12 @@ class Wrapper(SimulationModel):
 
     def enable_rendering(self):
         if not isinstance(self.env, RenderInterface):
-            raise NotImplementedError("Wrapped environment does not implemement enable_rendering().") 
+            raise NotImplementedError("Wrapped environment does not implemement enable_rendering().")
         self.env.enable_rendering()
 
     def disable_rendering(self):
         if not isinstance(self.env, RenderInterface):
-            raise NotImplementedError("Wrapped environment does not implemement disable_rendering().") 
+            raise NotImplementedError("Wrapped environment does not implemement disable_rendering().")
         self.env.disable_rendering()
 
     @property

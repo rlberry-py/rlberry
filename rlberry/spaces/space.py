@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
+
 from rlberry.seeding import seeding
+
 
 class Space(ABC):
     """
@@ -17,6 +19,7 @@ class Space(ABC):
     contains(x)
         check if x belongs to the space
     """
+
     def __init__(self):
         super().__init__()
         # random number generator
