@@ -4,6 +4,7 @@ try:
 except:
     _GYM_INSTALLED = False
 
+import logging
 import rlberry
 from rlberry.envs.interface import OnlineModel
 
@@ -37,8 +38,9 @@ class GymWrapper(OnlineModel):
         assert isinstance(gym_env, gym.Env)
 
         # Warnings
-        print("Warning (GymWrapper): seeding of gym.Env does not follow the same protocol as rlberry. Make sure to properly seed each instance before using the wrapped environment.")
-        print("Warning (GymWrapper): rendering gym.Env does not follow the same protocol as rlberry.")
+        logging.warning('GymWrapper: Seeding of gym.Env does not follow the same protocol as rlberry. Make sure to properly seed each instance before using the wrapped environment.')
+        logging.warning('GymWrapper: Rendering gym.Env does not follow the same protocol as rlberry.')
+
 
         # Convert spaces
         self.observation_space = convert_space_from_gym(gym_env.observation_space)

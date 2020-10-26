@@ -12,6 +12,10 @@ class Wrapper(SimulationModel):
     - If env does not implement sample(), calling Wrapper.sample() will raise an error.
     - If env does not implement render(), calling Wrapper.render() will raise an error
 
+
+    Note: it makes a deep copy of the input environment without reseeding. 
+
+
     [1] https://github.com/openai/gym/blob/master/gym/core.py
     """
     def __init__(self, env):

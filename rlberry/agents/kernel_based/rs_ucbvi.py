@@ -3,6 +3,7 @@ import time
 
 from numba import jit
 
+import logging
 import rlberry.spaces as spaces
 from rlberry.agents import Agent
 from rlberry.agents.utils.metrics import metric_lp
@@ -76,7 +77,7 @@ class RSUCBVIAgent(Agent):
                        lp_metric = 2,
                        scaling  = None,
                        min_dist = 0.1,
-                       max_repr = None,
+                       max_repr = 5000,
                        bonus_scale_factor = 1.0, 
                        bonus_type = "simplified_bernstein", 
                        verbose=1, 
@@ -158,8 +159,7 @@ class RSUCBVIAgent(Agent):
         # maximum value 
         r_range = self.env.reward_range[1] - self.env.reward_range[0]
         if r_range == np.inf:
-            if verbose >= 0:
-                print("Warning: in %s, reward range is infinity. Clipping it to 1."%self.id) 
+            logging.warning("%s: Reward range is infinity. Clipping it to 1."%self.id)
             r_range = 1.0
 
         if self.gamma == 1.0:
@@ -270,7 +270,7 @@ class RSUCBVIAgent(Agent):
         reward_per_ep = self._rewards[prev_episode:episode+1].sum()/ max(1, episode-prev_episode)
         time_per_ep   = self._log_interval*1000.0 /  max(1, episode-prev_episode)
 
-        to_print = "[%s] episode = %d/%d | reward/ep = %0.2f | time/ep = %0.2f ms" % (self.id, episode, self.n_episodes, reward_per_ep, time_per_ep)
+        to_print = "[%s] episode = %d/%d | representative states = %d |reward/ep = %0.2f | time/ep = %0.2f ms" % (self.id, episode, self.n_episodes, self.M, reward_per_ep, time_per_ep)
         return to_print
 
     def _map_to_repr(self, state, accept_new_repr=True):
