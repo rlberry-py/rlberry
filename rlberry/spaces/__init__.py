@@ -1,3 +1,3 @@
-from .box import Box
-from .discrete import Discrete
 from .space import Space
+from .discrete import Discrete
+from .box import Box
