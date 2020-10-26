@@ -1,4 +1,4 @@
 from .basewrapper import Wrapper
-from .gymwrapper import GymWrapper
 from .discretize_state import DiscretizeStateWrapper
+from .gymwrapper import GymWrapper
 from .rescale_reward import RescaleRewardWrapper

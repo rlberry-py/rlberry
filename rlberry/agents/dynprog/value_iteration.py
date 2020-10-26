@@ -1,5 +1,5 @@
-from rlberry.agents.dynprog.utils import backward_induction, value_iteration
 from rlberry.agents.agent import Agent
+from rlberry.agents.dynprog.utils import backward_induction, value_iteration
 from rlberry.envs.finite.finite_mdp import FiniteMDP
 
 
@@ -10,6 +10,7 @@ class ValueIterationAgent(Agent):
     Important: the discount gamma is also used if the problem is finite horizon, but, in this case,
     gamma can be set to 1.0.
     """
+
     def __init__(self, env, gamma=0.95, horizon=None, epsilon=1e-6, **kwargs):
         """
         Parameters
@@ -30,14 +31,13 @@ class ValueIterationAgent(Agent):
         self.fit_info = ("n_iterations", "precision")
 
         #
-        self.gamma   = gamma 
+        self.gamma = gamma
         self.horizon = horizon
         self.epsilon = epsilon
 
         # value functions
-        self.Q = None 
-        self.V = None 
-
+        self.Q = None
+        self.V = None
 
     def fit(self, **kwargs):
         """
@@ -54,7 +54,6 @@ class ValueIterationAgent(Agent):
             info["n_iterations"] = self.horizon
             info["precision"] = 0.0
         return info
-
 
     def policy(self, state, hh=0, **kwargs):
         """

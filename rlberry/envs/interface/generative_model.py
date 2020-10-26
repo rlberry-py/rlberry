@@ -1,4 +1,5 @@
 from abc import abstractmethod
+
 from rlberry.envs.interface.model import Model
 
 
@@ -27,6 +28,7 @@ class GenerativeModel(Model):
     sample(state, action)
         returns a transition sampled from taking an action in a given state
     """
+
     def __init__(self):
         super(GenerativeModel, self).__init__()
 

@@ -1,26 +1,23 @@
 import pytest
+
+from rlberry.envs.classic_control import MountainCar
+from rlberry.envs.finite import Chain
+from rlberry.envs.finite import GridWorld
+from rlberry.envs.interface import OnlineModel
+from rlberry.envs.toy_exploration import PBall2D
+from rlberry.envs.toy_exploration import SimplePBallND
 from rlberry.rendering import RenderInterface
 from rlberry.rendering import RenderInterface2D
 from rlberry.rendering.opengl_render2d import _activate_debug_mode
 
-from rlberry.envs.interface import OnlineModel, GenerativeModel
-
-from rlberry.envs.classic_control import MountainCar 
-
-from rlberry.envs.finite import GridWorld
-from rlberry.envs.finite import Chain
-
-from rlberry.envs.toy_exploration import PBall2D
-from rlberry.envs.toy_exploration import SimplePBallND
-
-
 classes = [
-            MountainCar,
-            GridWorld,
-            Chain,
-            PBall2D,
-            SimplePBallND
-          ]
+    MountainCar,
+    GridWorld,
+    Chain,
+    PBall2D,
+    SimplePBallND
+]
+
 
 @pytest.mark.parametrize("ModelClass", classes)
 def test_instantiation(ModelClass):
@@ -35,7 +32,7 @@ def test_instantiation(ModelClass):
 
 @pytest.mark.parametrize("ModelClass", classes)
 def test_render2d_interface(ModelClass):
-    _activate_debug_mode() # don't create window
+    _activate_debug_mode()  # don't create window
 
     env = ModelClass()
 
@@ -49,6 +46,6 @@ def test_render2d_interface(ModelClass):
                     assert env.observation_space.contains(state)
                     action = env.action_space.sample()
                     next_s, reward, done, info = env.step(action)
-                    state = next_s 
+                    state = next_s
                 env.render()
             env.clear_render_buffer()

@@ -1,9 +1,9 @@
+from rlberry.agents import RSUCBVIAgent
 from rlberry.envs.classic_control import MountainCar
 from rlberry.envs.toy_exploration import PBall2D
-from rlberry.agents import RSUCBVIAgent 
 
 for env, horizon in zip([MountainCar(), PBall2D()], [170, 50]):
-    print("Running RS-UCBVI on %s"%env.id)
+    print("Running RS-UCBVI on %s" % env.id)
     agent = RSUCBVIAgent(env, n_episodes=1000, gamma=0.99, horizon=horizon, bonus_scale_factor=0.1, verbose=4)
     agent.fit()
 

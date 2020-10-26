@@ -10,10 +10,13 @@ Mountain Car environment adapted from OpenAI gym [1].
 """
 
 import math
+
 import numpy as np
+
 import rlberry.spaces as spaces
 from rlberry.envs.interface import SimulationModel
-from rlberry.rendering      import Scene, GeometricPrimitive, RenderInterface2D
+from rlberry.rendering import Scene, GeometricPrimitive, RenderInterface2D
+
 
 class MountainCar(SimulationModel, RenderInterface2D):
     """
@@ -55,7 +58,7 @@ class MountainCar(SimulationModel, RenderInterface2D):
          The car position is more than 0.5
      """
 
-    def __init__(self, goal_velocity = 0):
+    def __init__(self, goal_velocity=0):
         # init base classes
         SimulationModel.__init__(self)
         RenderInterface2D.__init__(self)
@@ -68,8 +71,8 @@ class MountainCar(SimulationModel, RenderInterface2D):
         self.goal_position = 0.5
         self.goal_velocity = goal_velocity
 
-        self.force=0.001
-        self.gravity=0.0025
+        self.force = 0.001
+        self.gravity = 0.0025
 
         self.low = np.array([self.min_position, -self.max_speed])
         self.high = np.array([self.max_position, self.max_speed])
@@ -110,11 +113,11 @@ class MountainCar(SimulationModel, RenderInterface2D):
 
         position = state[0]
         velocity = state[1]
-        velocity += (action-1)*self.force + math.cos(3*position)*(-self.gravity)
+        velocity += (action - 1) * self.force + math.cos(3 * position) * (-self.gravity)
         velocity = np.clip(velocity, -self.max_speed, self.max_speed)
         position += velocity
         position = np.clip(position, self.min_position, self.max_position)
-        if (position==self.min_position and velocity<0): velocity = 0
+        if (position == self.min_position and velocity < 0): velocity = 0
 
         done = bool(position >= self.goal_position and velocity >= self.goal_velocity)
         reward = 0.0
@@ -125,7 +128,7 @@ class MountainCar(SimulationModel, RenderInterface2D):
         return next_state, reward, done, {}
 
     def _height(self, xs):
-        return np.sin(3 * xs)*.45+.55
+        return np.sin(3 * xs) * .45 + .55
 
     #
     # Below: code for rendering
@@ -134,19 +137,19 @@ class MountainCar(SimulationModel, RenderInterface2D):
     def get_background(self):
         bg = Scene()
         mountain = GeometricPrimitive("GL_TRIANGLE_FAN")
-        flag     = GeometricPrimitive("GL_TRIANGLES")
+        flag = GeometricPrimitive("GL_TRIANGLES")
         mountain.set_color((0.6, 0.3, 0.0))
         flag.set_color((0.0, 0.5, 0.0))
 
         # Mountain
         mountain.add_vertex((-0.3, -1.0))
-        mountain.add_vertex(( 0.6, -1.0))
+        mountain.add_vertex((0.6, -1.0))
 
-        n_points  = 50
-        obs_range = self.observation_space.high[0]-self.observation_space.low[0]
-        eps       = obs_range/(n_points-1)
+        n_points = 50
+        obs_range = self.observation_space.high[0] - self.observation_space.low[0]
+        eps = obs_range / (n_points - 1)
         for ii in reversed(range(n_points)):
-            x = self.observation_space.low[0] + ii*eps
+            x = self.observation_space.low[0] + ii * eps
             y = self._height(x)
             mountain.add_vertex((x, y))
         mountain.add_vertex((-1.2, -1.0))
@@ -154,9 +157,9 @@ class MountainCar(SimulationModel, RenderInterface2D):
         # Flag
         goal_x = self.goal_position
         goal_y = self._height(goal_x)
-        flag.add_vertex((goal_x,       goal_y))
-        flag.add_vertex((goal_x+0.025, goal_y+0.075))
-        flag.add_vertex((goal_x-0.025, goal_y+0.075))
+        flag.add_vertex((goal_x, goal_y))
+        flag.add_vertex((goal_x + 0.025, goal_y + 0.075))
+        flag.add_vertex((goal_x - 0.025, goal_y + 0.075))
 
         bg.add_shape(mountain)
         bg.add_shape(flag)
@@ -171,11 +174,10 @@ class MountainCar(SimulationModel, RenderInterface2D):
         size = 0.025
         x = state[0]
         y = self._height(x)
-        agent.add_vertex((x-size, y-size))
-        agent.add_vertex((x+size, y-size))
-        agent.add_vertex((x+size, y+size))
-        agent.add_vertex((x-size, y+size))
-
+        agent.add_vertex((x - size, y - size))
+        agent.add_vertex((x + size, y - size))
+        agent.add_vertex((x + size, y + size))
+        agent.add_vertex((x - size, y + size))
 
         scene.add_shape(agent)
         return scene

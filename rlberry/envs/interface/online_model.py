@@ -1,4 +1,5 @@
 from abc import abstractmethod
+
 from rlberry.envs.interface.model import Model
 
 
@@ -28,6 +29,7 @@ class OnlineModel(Model):
     step(action)
         returns the outcome of an action
     """
+
     def __init__(self):
         super(OnlineModel, self).__init__()
 

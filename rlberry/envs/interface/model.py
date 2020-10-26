@@ -1,7 +1,10 @@
-from abc import ABC, abstractmethod
+from abc import ABC
+
 import numpy as np
+
 from rlberry.seeding import seeding
 from rlberry.spaces import Space
+
 
 class Model(ABC):
     """
@@ -30,8 +33,8 @@ class Model(ABC):
         super(Model, self).__init__()
         self.id = ""
         self.observation_space: Space = None
-        self.action_space:      Space = None
-        self.reward_range:      tuple = (-np.inf, np.inf)
+        self.action_space: Space = None
+        self.reward_range: tuple = (-np.inf, np.inf)
         # random number generator
         self.rng = seeding.get_rng()
 

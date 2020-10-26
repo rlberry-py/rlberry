@@ -2,8 +2,8 @@
 Interface that allows 2D rendering.
 """
 
-
 from abc import ABC, abstractmethod
+
 from rlberry.rendering.opengl_render2d import OpenGLRender2D
 from rlberry.rendering.utils import video_write
 
@@ -12,9 +12,10 @@ class RenderInterface(ABC):
     """
     Common interface for rendering in rlberry.
     """
+
     def __init__(self):
         self._rendering_enabled = False
- 
+
     def is_render_enabled(self):
         return self._rendering_enabled
 
@@ -30,7 +31,7 @@ class RenderInterface(ABC):
         """
         pass
 
-    @abstractmethod 
+    @abstractmethod
     def render(self, **kwargs):
         """
         Display on screen.
@@ -42,9 +43,10 @@ class RenderInterface2D(RenderInterface):
     """
     Interface for 2D rendering in rlberry.
     """
+
     def __init__(self):
-        self._rendering_enabled           = False
-        self._rendering_type              = "2d"
+        self._rendering_enabled = False
+        self._rendering_type = "2d"
         self._state_history_for_rendering = []
         self._refresh_interval            = 50   # in milliseconds
         self._clipping_area               = (-1.0, 1.0, -1.0, 1.0) # (left, right, bottom, top)
@@ -83,8 +85,8 @@ class RenderInterface2D(RenderInterface):
         scenes = []
         for state in self._state_history_for_rendering:
             scene = self.get_scene(state)
-            scenes.append(scene) 
-        return background, scenes      
+            scenes.append(scene)
+        return background, scenes
 
     def render(self, **kwargs):
         """
@@ -92,13 +94,13 @@ class RenderInterface2D(RenderInterface):
         """
         if self.is_render_enabled():
             # background and data
-            background, data  = self._get_background_and_scenes()
+            background, data = self._get_background_and_scenes()
 
             if len(data) == 0:
                 print("No data to render.")
-                return 
+                return
 
-            # render
+                # render
             renderer = OpenGLRender2D()
             renderer.window_name = self.id
             renderer.set_refresh_interval(self._refresh_interval)
@@ -110,16 +112,16 @@ class RenderInterface2D(RenderInterface):
         else:
             print("Rendering not enabled for the environment.")
             return 1
-    
+
     def save_video(self, filename, framerate=25, **kwargs):
         # background and data
-        background, data  = self._get_background_and_scenes()
+        background, data = self._get_background_and_scenes()
 
         if len(data) == 0:
             print("No data to save.")
-            return 
-        
-        # get video data from renderer
+            return
+
+            # get video data from renderer
         renderer = OpenGLRender2D()
         renderer.window_name = self.id
         renderer.set_refresh_interval(self._refresh_interval)
