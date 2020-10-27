@@ -9,17 +9,13 @@ def bar_shape(p0, p1, width):
     x1, y1 = p1
 
     direction = np.array([x1-x0, y1-y0])
+    norm = np.sqrt( (direction*direction).sum() )
+    direction = direction/norm 
+
     # get vector perpendicular to direction
     u_vec = np.zeros(2)  
-    if direction[0] < 1e-6:
-        u_vec[0] = -1
-        u_vec[1] = 0
-    else:
-        u_vec[0] = -direction[1]/direction[0]
-        u_vec[1] = 1.0
-
-    norm = np.sqrt( (u_vec*u_vec).sum() )
-    u_vec = u_vec/norm 
+    u_vec[0] = -direction[1]
+    u_vec[1] =  direction[0]
 
     u_vec = u_vec*width/2
 

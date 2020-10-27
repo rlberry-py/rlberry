@@ -232,8 +232,11 @@ class Acrobot(OnlineModel, RenderInterface2D):
         link2 = bar_shape(p1, p2, 0.1)
         link2.set_color((210/255, 105/255, 30/255))
 
-        joint = circle_shape(p1, 0.075)
-        joint.set_color((255/255, 215/255, 0/255))
+        joint1 = circle_shape(p0, 0.075)
+        joint1.set_color((255/255, 215/255, 0/255))
+
+        joint2 = circle_shape(p1, 0.075)
+        joint2.set_color((255/255, 215/255, 0/255))
 
         goal_line = GeometricPrimitive("GL_LINES")
         goal_line.add_vertex((-5, 1))
@@ -241,8 +244,9 @@ class Acrobot(OnlineModel, RenderInterface2D):
 
         scene.add_shape(link1)
         scene.add_shape(link2)
+        scene.add_shape(joint1)
+        scene.add_shape(joint2)
         scene.add_shape(goal_line)
-        scene.add_shape(joint)
 
         return scene
 
