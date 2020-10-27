@@ -8,7 +8,8 @@ install_requires = [
     'numba',
     'PyOpenGL',
     'PyOpenGL_accelerate',
-    'pygame'
+    'pygame',
+    'torch>=1.6.0'
 ]
 
 setup(name='rlberry',
