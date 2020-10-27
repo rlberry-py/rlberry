@@ -48,8 +48,8 @@ class RenderInterface2D(RenderInterface):
         self._rendering_enabled = False
         self._rendering_type = "2d"
         self._state_history_for_rendering = []
-        self._refresh_interval = 50  # in milliseconds
-        self._clipping_area = (-1.0, 1.0, -1.0, 1.0)
+        self._refresh_interval            = 50   # in milliseconds
+        self._clipping_area               = (-1.0, 1.0, -1.0, 1.0) # (left, right, bottom, top)
 
     @abstractmethod
     def get_scene(self, state):

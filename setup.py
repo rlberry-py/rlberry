@@ -9,7 +9,9 @@ install_requires = [
     'PyOpenGL',
     'PyOpenGL_accelerate',
     'pygame',
-    'torch>=1.6.0'
+    'torch>=1.6.0',
+    'joblib',
+    'matplotlib'
 ]
 
 setup(name='rlberry',
