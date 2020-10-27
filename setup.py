@@ -9,7 +9,8 @@ install_requires = [
     'PyOpenGL',
     'PyOpenGL_accelerate',
     'pygame',
-    'joblib'
+    'joblib',
+    'matplotlib'
 ]
 
 setup(name='rlberry',
