@@ -8,7 +8,8 @@ install_requires = [
     'numba',
     'PyOpenGL',
     'PyOpenGL_accelerate',
-    'pygame'
+    'pygame',
+    'joblib'
 ]
 
 setup(name='rlberry',
