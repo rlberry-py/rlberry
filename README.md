@@ -55,3 +55,9 @@ pip install ffmpeg-python
     * `verbose>1`: print progress messages
 
 Errors and warnings are printed using the `logging` library.
+
+
+# Some design principles
+
+* Agents should not keep references to objects outside of their scope (e.g. reference to an environment supposed to be used/modified elsewhere). For instance, the abstract Agent class
+makes a deep copy of the input environment.
