@@ -5,12 +5,12 @@ import torch
 import torch.nn as nn
 from torch.distributions import Categorical
 
-# choose device
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
 import rlberry.spaces as spaces
 from rlberry.agents import Agent
 from rlberry.envs import OnlineModel
+
+# choose device
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 class ActorCritic(nn.Module):
@@ -86,7 +86,7 @@ class PPOAgent(Agent):
 
     References
     ----------
-    John Schulman, Filip Wolski, Prafulla Dhariwal, Alec Radford, Oleg Klimov (2017).
+    Schulman, J., Wolski, F., Dhariwal, P., Radford, A. & Klimov, O. (2017).
     "Proximal Policy Optimization Algorithms."
     arXiv preprint arXiv:1707.06347.
 
@@ -101,7 +101,7 @@ class PPOAgent(Agent):
                  gamma=0.99,
                  lr=0.0003,
                  eps_clip=0.2,
-                 K_epochs=10,
+                 k_epochs=10,
                  verbose=1,
                  **kwargs):
         """
@@ -117,7 +117,7 @@ class PPOAgent(Agent):
             Learning rate.
         eps_clip : double
             PPO clipping range (epsilon).
-        K_epochs : int
+        k_epochs : int
             Number of epochs per update.
         verbose : int
             Controls the verbosity, if non zero, progress messages are printed.
@@ -129,7 +129,7 @@ class PPOAgent(Agent):
         self.lr = lr
         self.gamma = gamma
         self.eps_clip = eps_clip
-        self.K_epochs = K_epochs
+        self.k_epochs = k_epochs
         self.horizon = horizon
         self.n_episodes = n_episodes
         self.state_dim = self.env.observation_space.dim
@@ -152,8 +152,6 @@ class PPOAgent(Agent):
 
         self.cat_policy_old = ActorCritic(self.state_dim, self.action_dim).to(device)
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
-
-        self.MseLoss = nn.MSELoss()
 
         self.memory = Memory()
 
@@ -265,7 +263,7 @@ class PPOAgent(Agent):
         old_logprobs = torch.stack(self.memory.logprobs).to(device).detach()
 
         # optimize policy for K epochs
-        for _ in range(self.K_epochs):
+        for _ in range(self.k_epochs):
             # evaluate old actions and values
             logprobs, state_values, dist_entropy = self.cat_policy.evaluate(old_states, old_actions)
 
