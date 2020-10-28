@@ -1,4 +1,4 @@
-from rlberry.agents import AVECPPOAgent
+from rlberry.agents.avec import AVECPPOAgent
 from rlberry.envs.classic_control import MountainCar
 from rlberry.envs.toy_exploration import PBall2D
 

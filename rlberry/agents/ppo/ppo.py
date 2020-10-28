@@ -153,6 +153,8 @@ class PPOAgent(Agent):
         self.cat_policy_old = ActorCritic(self.state_dim, self.action_dim).to(device)
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
 
+        self.MseLoss = nn.MSELoss()
+        
         self.memory = Memory()
 
         self.episode = 0
