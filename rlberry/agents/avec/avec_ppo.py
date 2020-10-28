@@ -74,11 +74,13 @@ class Memory:
 
 class AVECPPOAgent(Agent):
     """
-    AVEC uses a new training objective for the critic in actor-critic algorithms to better
-    approximate the value function (critic). This modification is:
-    - well-motivated by recent studies [1,2]
-    - theoretically sound
-    - intuitively supported by the need to improve the approximation error of the critic
+    AVEC uses a modification of the training objective for the critic in actor-critic algorithms
+    to better approximate the value function (critic). The new state-value function approximation
+    learns the *relative* value of the states rather than their *absolute* value as in conventional
+    actor-critic. This modification is:
+    - well-motivated by recent studies [1,2];
+    - theoretically sound;
+    - intuitively supported by the need to improve the approximation error of the critic.
 
     The application of Actor with Variance Estimated Critic (AVEC) to state-of-the-art policy
     gradient methods produces considerable gains in performance (on average +26% for SAC and +40% for PPO)
@@ -105,7 +107,7 @@ class AVECPPOAgent(Agent):
                  gamma=0.99,
                  lr=0.0003,
                  eps_clip=0.2,
-                 K_epochs=10,
+                 k_epochs=10,
                  verbose=1,
                  **kwargs):
         """
@@ -121,19 +123,19 @@ class AVECPPOAgent(Agent):
             Learning rate.
         eps_clip : double
             PPO clipping range (epsilon).
-        K_epochs : int
+        k_epochs : int
             Number of epochs per update.
         verbose : int
             Controls the verbosity, if non zero, progress messages are printed.
         """
         Agent.__init__(self, env)
-        self.id = "PPO"
+        self.id = "AVECPPO"
         self.fit_info = ("n_episodes", "episode_rewards")
 
         self.lr = lr
         self.gamma = gamma
         self.eps_clip = eps_clip
-        self.K_epochs = K_epochs
+        self.k_epochs = k_epochs
         self.horizon = horizon
         self.n_episodes = n_episodes
         self.state_dim = self.env.observation_space.dim
@@ -156,8 +158,6 @@ class AVECPPOAgent(Agent):
 
         self.cat_policy_old = ActorCritic(self.state_dim, self.action_dim).to(device)
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
-
-        self.MseLoss = nn.MSELoss()
 
         self.memory = Memory()
 
@@ -269,7 +269,7 @@ class AVECPPOAgent(Agent):
         old_logprobs = torch.stack(self.memory.logprobs).to(device).detach()
 
         # optimize policy for K epochs
-        for _ in range(self.K_epochs):
+        for _ in range(self.k_epochs):
             # evaluate old actions and values
             logprobs, state_values, dist_entropy = self.cat_policy.evaluate(old_states, old_actions)
 
@@ -293,7 +293,7 @@ class AVECPPOAgent(Agent):
     def _avec_loss(self, y_pred, y_true):
         """
         Computes the objective function used in AVEC for the learning of the value function:
-        the residual variance between the state values and the empirical returns.
+        the residual variance between the state-values and the empirical returns.
 
         Returns Var[y-ypred]
         :param y_pred: (np.ndarray) the prediction
