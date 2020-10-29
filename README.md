@@ -32,7 +32,7 @@ python3 -m pip install -e .
 
 # Tests
 
-To run tests, run `pytest`. To run tests with coverage, install and run pytest-cov:
+To run tests, run `pytest`. To run tests with coverage, install and run `pytest-cov`:
 
 ```
 pip install pytest-cov
