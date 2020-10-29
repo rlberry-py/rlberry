@@ -14,7 +14,7 @@ agents = [RSUCBVIAgent, RSKernelUCBVIAgent, PPOAgent, PPOAgent, PPOAgent]
 # -----------------------------
 # Parameters to fit each agent 
 # -----------------------------
-N_EPISODES         = 1500
+N_EPISODES         = 100
 GAMMA              = 0.99
 HORIZON            = 25
 BONUS_SCALE_FACTOR = 0.1
@@ -72,4 +72,9 @@ train_envs   = PBall2D()
 # ---------------------
 evaluator = ComparePolicy(agents, eval_env, eval_horizon, train_envs, agent_kwargs, nsim=20, njobs=4, verbose=5)
 evaluator.run()
+print(evaluator.agents_rewards[-1])
+print(evaluator.fitted_agents[-1].id)
+
 evaluator.plot()
+
+

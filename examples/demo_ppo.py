@@ -4,6 +4,10 @@ from rlberry.envs.toy_exploration import PBall2D
 
 render = False
 
+from rlberry.seeding import seeding
+
+seeding.set_global_seed(1223)
+
 for env, n_episodes, horizon in zip([PBall2D(), MountainCar()], [400, 40000], [256, 512]):
     print("Running PPO on %s" % env.id)
     agent = PPOAgent(env, n_episodes=n_episodes, horizon=horizon,
@@ -19,3 +23,4 @@ for env, n_episodes, horizon in zip([PBall2D(), MountainCar()], [400, 40000], [2
             state = next_state
 
         env.render()
+
