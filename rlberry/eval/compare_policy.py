@@ -7,7 +7,6 @@ import pandas as pd
 import seaborn as sns 
 from joblib import Parallel, delayed
 from copy import deepcopy
-
 from rlberry.envs import OnlineModel
 
 
@@ -171,7 +170,7 @@ class ComparePolicy:
             print("No output to be plotted.")
             return 
         
-        with sns.axes_style("darkgrid"):
+        with sns.axes_style("whitegrid"):
             ax = sns.boxplot(data=self.output)
             ax.set_xlabel("agent")
             ax.set_ylabel("rewards in one episode")
