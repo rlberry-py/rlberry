@@ -11,7 +11,9 @@ install_requires = [
     'pygame',
     'torch>=1.6.0',
     'joblib',
-    'matplotlib'
+    'matplotlib',
+    'seaborn',
+    'pandas'
 ]
 
 setup(name='rlberry',

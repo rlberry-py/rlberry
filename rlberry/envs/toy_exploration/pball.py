@@ -138,7 +138,7 @@ class PBall(SimulationModel):
         self.reward_range = (0, 1.0)
 
         # 
-        self.id = "%d-Ball" % self.p
+        self.id = "L%d-Ball" % self.p
 
         # Initalize state
         self.reset()
