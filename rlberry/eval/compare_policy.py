@@ -155,12 +155,12 @@ class ComparePolicy:
         unique_ids = []
         id_count = {}
         for agent in self.fitted_agents:
-            if agent.id not in id_count:
-                id_count[agent.id] = 1
+            if agent.name not in id_count:
+                id_count[agent.name] = 1
             else:
-                id_count[agent.id] += 1
+                id_count[agent.name] += 1
             
-            unique_ids.append(agent.id + "*"*(id_count[agent.id]-1))
+            unique_ids.append(agent.name + "*"*(id_count[agent.name]-1))
 
         # build output
         data = {}
@@ -177,7 +177,7 @@ class ComparePolicy:
             ax = sns.boxplot(data=self.output)
             ax.set_xlabel("agent")
             ax.set_ylabel("rewards in one episode")
-            plt.title("Environment = %s"%self.eval_env.id)
+            plt.title("Environment = %s"%self.eval_env.name)
             if show:
                 plt.show()
 
