@@ -1,4 +1,3 @@
-import gym
 from rlberry.envs import Acrobot
 from rlberry.agents import RSKernelUCBVIAgent
 from rlberry.wrappers import RescaleRewardWrapper

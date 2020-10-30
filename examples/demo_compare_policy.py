@@ -1,4 +1,3 @@
-import gym
 from rlberry.envs import PBall2D
 from rlberry.agents import RSKernelUCBVIAgent, RSUCBVIAgent
 from rlberry.agents.ppo import PPOAgent
