@@ -12,7 +12,7 @@ from rlberry.envs import OnlineModel
 
 def _fit_worker(args):
     agent_class, train_env, init_kwargs, fit_kwargs = args
-    agent = agent_class(train_env, **init_kwargs)
+    agent = agent_class(train_env, copy_env=False, reseed_env=False, **init_kwargs)
     agent.fit(**fit_kwargs)
     return agent
 
@@ -125,9 +125,12 @@ class ComparePolicy:
         # check train_envs
         if not isinstance(train_envs, list):
             # single training environment is given, convert to a list
-            # note: every element in the list is the same instance of the environment,
-            # but the agent constructor deep copies and reseeds the input environment.
-            self.train_envs = [train_envs] * len(self.agents)  
+            # by deep copying and reseeding
+            self.train_envs = []
+            for ii in range(len(self.agents)):
+                _env = deepcopy(train_envs)
+                _env.reseed()
+                self.train_envs.append(_env)  
         else:
             assert len(train_envs) == self.n_agents
             self.train_envs = train_envs

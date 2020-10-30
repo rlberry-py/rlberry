@@ -78,7 +78,7 @@ class RSUCBVIAgent(Agent):
                  lp_metric=2,
                  scaling=None,
                  min_dist=0.1,
-                 max_repr=5000,
+                 max_repr=1000,
                  bonus_scale_factor=1.0,
                  bonus_type="simplified_bernstein",
                  verbose=1,

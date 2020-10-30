@@ -1,3 +1,4 @@
+import rlberry.seeding as seeding
 from rlberry.envs import PBall2D
 from rlberry.agents import RSKernelUCBVIAgent, RSUCBVIAgent
 from rlberry.agents.ppo import PPOAgent
@@ -5,10 +6,13 @@ from rlberry.wrappers import RescaleRewardWrapper
 from rlberry.eval.compare_policy import ComparePolicy
 
 
+# global seed 
+seeding.set_global_seed(123)
+
 # ----------------------------
 # Define list of agent classes
 # ----------------------------
-agents = [RSUCBVIAgent, RSKernelUCBVIAgent, PPOAgent, PPOAgent, PPOAgent]
+agents = [RSUCBVIAgent, RSKernelUCBVIAgent, PPOAgent]
 
 # -----------------------------
 # Parameters to fit each agent 
@@ -40,19 +44,9 @@ params_2 = {"n_episodes":N_EPISODES,
 params_3 = {"n_episodes":N_EPISODES,
             "gamma":GAMMA,
             "horizon":HORIZON,
-            "lr": 0.00003}
-
-params_4 = {"n_episodes":N_EPISODES,
-            "gamma":GAMMA,
-            "horizon":HORIZON,
             "lr": 0.0003}
 
-params_5 = {"n_episodes":N_EPISODES,
-            "gamma":GAMMA,
-            "horizon":HORIZON,
-            "lr": 0.003}
-
-agent_kwargs = [params_1, params_2, params_3, params_4, params_5]
+agent_kwargs = [params_1, params_2, params_3]
 
 # ----------------------------------
 # Evaluation environment and horizon

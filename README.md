@@ -57,7 +57,8 @@ pip install ffmpeg-python
 Errors and warnings are printed using the `logging` library.
 
 
-# Some design principles
+# Implementation notes
 
-* Agents should not keep references to objects outside of their scope (e.g. reference to an environment supposed to be used/modified elsewhere). For instance, the abstract Agent class
-makes a deep copy of the input environment.
+* When inheriting from the `Agent` class, make sure to call `Agent.__init__(self, env, **kwargs)` using `**kwargs` in case new features are added to the base class, and to make sure that `copy_env` and `reseed_env` are always an option to any agent. 
+
+

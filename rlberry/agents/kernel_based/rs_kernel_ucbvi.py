@@ -126,7 +126,7 @@ class RSKernelUCBVIAgent(Agent):
                  scaling=None,
                  bandwidth= 0.05,
                  min_dist = 0.1,
-                 max_repr=5000,
+                 max_repr=1000,
                  bonus_scale_factor=1.0,
                  beta = 0.01,
                  bonus_type="simplified_bernstein",

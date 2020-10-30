@@ -1,6 +1,6 @@
 import pytest
 
-from rlberry.envs.classic_control import MountainCar
+from rlberry.envs.classic_control import MountainCar, Acrobot
 from rlberry.envs.finite import Chain
 from rlberry.envs.finite import GridWorld
 from rlberry.envs.interface import OnlineModel, GenerativeModel
@@ -12,7 +12,8 @@ classes = [
     GridWorld,
     Chain,
     PBall2D,
-    SimplePBallND
+    SimplePBallND,
+    Acrobot
 ]
 
 
