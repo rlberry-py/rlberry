@@ -67,6 +67,12 @@ class OpenGLRender2D:
         self.window_width = int(base_size * width_range)
         self.window_height = int(base_size * height_range)
 
+        # width and height must be divisible by 2
+        if self.window_width % 2 == 1:
+            self.window_width += 1
+        if self.window_height % 2 == 1:
+            self.window_height += 1
+
     def set_data(self, data):
         self.data = data
 
