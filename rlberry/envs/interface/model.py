@@ -12,7 +12,7 @@ class Model(ABC):
 
     Attributes
     ----------
-    id : string
+    name : string
         environment identifier
     observation_space : rlberry.spaces.Space
         observation space
@@ -29,9 +29,10 @@ class Model(ABC):
         get new random number generator
     """
 
+    name = ""
+
     def __init__(self):
         super(Model, self).__init__()
-        self.id = ""
         self.observation_space: Space = None
         self.action_space: Space = None
         self.reward_range: tuple = (-np.inf, np.inf)

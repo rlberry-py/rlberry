@@ -102,7 +102,7 @@ class RenderInterface2D(RenderInterface):
 
                 # render
             renderer = OpenGLRender2D()
-            renderer.window_name = self.id
+            renderer.window_name = self.name
             renderer.set_refresh_interval(self._refresh_interval)
             renderer.set_clipping_area(self._clipping_area)
             renderer.set_data(data)
@@ -123,7 +123,7 @@ class RenderInterface2D(RenderInterface):
 
             # get video data from renderer
         renderer = OpenGLRender2D()
-        renderer.window_name = self.id
+        renderer.window_name = self.name
         renderer.set_refresh_interval(self._refresh_interval)
         renderer.set_clipping_area(self._clipping_area)
         renderer.set_data(data)

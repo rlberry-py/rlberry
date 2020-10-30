@@ -18,6 +18,9 @@ class MBQVIAgent(Agent):
     Advances in neural information processing systems. 1999.
     """
 
+    name = "MBQVI"
+    fit_info = ("n_samples", "total_samples", "n_iterations", "precision")
+
     def __init__(self, env,
                  n_samples=10,
                  gamma=0.95,
@@ -47,8 +50,6 @@ class MBQVIAgent(Agent):
         assert isinstance(env.observation_space, Discrete), "MBQVI requires a finite state space."
         assert isinstance(env.action_space, Discrete), "MBQVI requires a finite action space."
         Agent.__init__(self, env, **kwargs)
-        self.id = "MBQVI"
-        self.fit_info = ("n_samples", "total_samples", "n_iterations", "precision")
 
         # 
         self.n_samples = n_samples
@@ -87,7 +88,7 @@ class MBQVIAgent(Agent):
         total_samples = S * A * self.n_samples
         count = 0
         if self.verbose > 0:
-            print("[%s] collecting %d samples per (s,a), total = %d samples" % (self.id, self.n_samples, total_samples))
+            print("[%s] collecting %d samples per (s,a), total = %d samples" % (self.name, self.n_samples, total_samples))
         for ss in range(S):
             for aa in range(A):
                 for nn in range(self.n_samples):
@@ -97,11 +98,11 @@ class MBQVIAgent(Agent):
                     count += 1
                     if count % 10000 == 0 and self.verbose > 0:
                         completed = 100 * count / total_samples
-                        print("[%s] ... %d/%d  (%0.0f" % (self.id, count, total_samples, completed) + "%)")
+                        print("[%s] ... %d/%d  (%0.0f" % (self.name, count, total_samples, completed) + "%)")
 
         # build model and run VI
         if self.verbose > 0:
-            print("[%s] building model and running backward induction..." % self.id)
+            print("[%s] building model and running backward induction..." % self.name)
 
         N_sa = np.maximum(self.N_sa, 1)
         self.R_hat = self.S_sa / N_sa

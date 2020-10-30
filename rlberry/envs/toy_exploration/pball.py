@@ -71,6 +71,8 @@ class PBall(SimulationModel):
     Default parameters are provided for a 2D environment, PBall2D
     """
 
+    name = "LP-Ball"
+
     def __init__(self,
                  p,
                  action_list,
@@ -138,7 +140,7 @@ class PBall(SimulationModel):
         self.reward_range = (0, 1.0)
 
         # 
-        self.id = "L%d-Ball" % self.p
+        self.name = "L%d-Ball" % self.p
 
         # Initalize state
         self.reset()

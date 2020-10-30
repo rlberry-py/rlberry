@@ -11,6 +11,9 @@ class ValueIterationAgent(Agent):
     gamma can be set to 1.0.
     """
 
+    name = "ValueIteration"
+    fit_info = ("n_iterations", "precision")
+
     def __init__(self, env, gamma=0.95, horizon=None, epsilon=1e-6, **kwargs):
         """
         Parameters
@@ -27,8 +30,6 @@ class ValueIterationAgent(Agent):
         # initialize base class
         assert isinstance(env, FiniteMDP), "Value iteration requires a FiniteMDP model."
         Agent.__init__(self, env, **kwargs)
-        self.id = "ValueIteration"
-        self.fit_info = ("n_iterations", "precision")
 
         #
         self.gamma = gamma

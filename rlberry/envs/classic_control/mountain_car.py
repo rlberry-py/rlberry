@@ -58,12 +58,12 @@ class MountainCar(SimulationModel, RenderInterface2D):
          The car position is more than 0.5
      """
 
+    name = "MountainCar"
+
     def __init__(self, goal_velocity=0):
         # init base classes
         SimulationModel.__init__(self)
         RenderInterface2D.__init__(self)
-
-        self.id = "MountainCar"
 
         self.min_position = -1.2
         self.max_position = 0.6

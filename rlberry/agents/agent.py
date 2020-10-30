@@ -15,13 +15,14 @@ class Agent(ABC):
 
     Attributes
     ----------
-    id : string
+    name : string
         agent identifier
-    env : rlberry.envs.interface.model.Model
-        environment on which to train the agent
     fit_info : tuple
         tuple of strings containing the keys in the dictionary returned by fit()
-    
+    env : rlberry.envs.interface.model.Model
+        environment on which to train the agent
+
+        
     Methods
     --------
     fit(**kwargs)
@@ -37,6 +38,9 @@ class Agent(ABC):
         load agent, returns an instance of the agent
     """
 
+    name = ""
+    fit_info = ()
+
     def __init__(self, env, copy_env=True, reseed_env=True,**kwargs):
         """
         Parameters
@@ -48,14 +52,12 @@ class Agent(ABC):
         reseed_env : bool
             If true, reseeds the environment.
         """
-        self.id = ""
         if copy_env:
             self.env = deepcopy(env)
         else:
             self.env = env 
         if reseed_env:
             self.env.reseed()
-        self.fit_info = ()
 
     @abstractmethod
     def fit(self, **kwargs):

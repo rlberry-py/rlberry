@@ -23,4 +23,4 @@ def test_discretizer(n_bins):
         next_s, reward, done, info = env.sample(state, action)
         assert env.observation_space.contains(next_s)
 
-    assert env.unwrapped.id == "MountainCar"
+    assert env.unwrapped.name == "MountainCar"

@@ -11,6 +11,8 @@ class GridWorld(FiniteMDP, RenderInterface2D):
     Note: terminal states are not set to be absorbing in the transition array P
     """
 
+    name = "GridWorld"
+
     def __init__(self,
                  nrows=5,
                  ncols=5,
@@ -94,7 +96,6 @@ class GridWorld(FiniteMDP, RenderInterface2D):
                            initial_state_distribution=self.coord2index[start_coord])
         RenderInterface2D.__init__(self)
         self.reset()
-        self.id = "GridWorld"
         self.reward_range = (self.R.min(), self.R.max())
 
         # rendering info

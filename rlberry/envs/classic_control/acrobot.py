@@ -96,11 +96,12 @@ class Acrobot(OnlineModel, RenderInterface2D):
     domain_fig = None
     actions_num = 3
 
+    name = "Acrobot"
+
     def __init__(self):
         # init base classes
         OnlineModel.__init__(self)
         RenderInterface2D.__init__(self)
-        self.id = "Acrobot"
         self.reward_range = (-1.0, 0.0)
 
         # rendering info

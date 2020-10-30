@@ -10,6 +10,8 @@ class Chain(FiniteMDP, RenderInterface2D):
     Reward 0.05 in initial state, reward 1.0 in final state.
     """
 
+    name = "Chain"
+
     def __init__(self, L=5, fail_prob=0.1):
         """
         Parameters
@@ -52,7 +54,6 @@ class Chain(FiniteMDP, RenderInterface2D):
         # init base classes
         FiniteMDP.__init__(self, R, P, initial_state_distribution=0)
         RenderInterface2D.__init__(self)
-        self.id = "Chain"
         self.reward_range = (0.0, 1.0)
 
         # rendering info

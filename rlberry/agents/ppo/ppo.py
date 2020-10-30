@@ -95,6 +95,9 @@ class PPOAgent(Agent):
     In International Conference on Machine Learning (pp. 1889-1897).
     """
 
+    name = "PPO"
+    fit_info = ("n_episodes", "episode_rewards")
+
     def __init__(self, env,
                  n_episodes=4000,
                  horizon=256,
@@ -123,8 +126,6 @@ class PPOAgent(Agent):
             Controls the verbosity, if non zero, progress messages are printed.
         """
         Agent.__init__(self, env, **kwargs)
-        self.id = "PPO"
-        self.fit_info = ("n_episodes", "episode_rewards")
 
         self.lr = lr
         self.gamma = gamma
@@ -213,7 +214,7 @@ class PPOAgent(Agent):
         fps = int((self.horizon / time_per_ep) * 1000)
 
         to_print = "[%s] episode = %d/%d | reward/ep = %0.2f | time/ep = %0.2f ms | fps = %i" % (
-            self.id, episode, self.n_episodes, reward_per_ep, time_per_ep, fps)
+            self.name, episode, self.n_episodes, reward_per_ep, time_per_ep, fps)
         return to_print
 
     def _select_action(self, state):

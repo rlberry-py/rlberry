@@ -66,7 +66,7 @@ train_envs   = PBall2D()
 evaluator = ComparePolicy(agents, eval_env, eval_horizon, train_envs, agent_kwargs, nsim=20, njobs=4, verbose=5)
 evaluator.run()
 print(evaluator.agents_rewards[-1])
-print(evaluator.fitted_agents[-1].id)
+print(evaluator.fitted_agents[-1].name)
 
 evaluator.plot()
 

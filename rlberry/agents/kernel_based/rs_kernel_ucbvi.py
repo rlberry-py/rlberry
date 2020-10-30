@@ -117,6 +117,9 @@ class RSKernelUCBVIAgent(Agent):
         https://www.aaai.org/ocs/index.php/AAAI/AAAI12/paper/viewFile/4967/5509
     """
 
+    name = "RSKernelUCBVI"
+    fit_info = ("n_episodes", "episode_rewards")
+
     def __init__(self, env,
                  n_episodes=1000,
                  gamma=0.95,
@@ -172,8 +175,6 @@ class RSKernelUCBVIAgent(Agent):
         """
         # init base class
         Agent.__init__(self, env, **kwargs)
-        self.id = "RSKernelUCBVI"
-        self.fit_info = ("n_episodes", "episode_rewards")
 
         self.n_episodes = n_episodes
         self.gamma = gamma
@@ -218,7 +219,7 @@ class RSKernelUCBVIAgent(Agent):
         # maximum value 
         r_range = self.env.reward_range[1] - self.env.reward_range[0]
         if r_range == np.inf:
-            logging.warning("%s: Reward range is infinity. Clipping it to 1." % self.id)
+            logging.warning("%s: Reward range is infinity. Clipping it to 1." % self.name)
             r_range = 1.0
 
         if self.gamma == 1.0:
@@ -325,7 +326,7 @@ class RSKernelUCBVIAgent(Agent):
         time_per_ep = self._log_interval * 1000.0 / max(1, episode - prev_episode)
 
         to_print = "[%s] episode = %d/%d | representative states = %d |reward/ep = %0.2f | time/ep = %0.2f ms" % (
-            self.id, episode, self.n_episodes, self.M, reward_per_ep, time_per_ep)
+            self.name, episode, self.n_episodes, self.M, reward_per_ep, time_per_ep)
         return to_print
 
     def _map_to_repr(self, state, accept_new_repr=True):
