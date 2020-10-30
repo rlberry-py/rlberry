@@ -128,7 +128,7 @@ class AVECPPOAgent(Agent):
         verbose : int
             Controls the verbosity, if non zero, progress messages are printed.
         """
-        Agent.__init__(self, env)
+        Agent.__init__(self, env, **kwargs)
         self.id = "AVECPPO"
         self.fit_info = ("n_episodes", "episode_rewards")
 

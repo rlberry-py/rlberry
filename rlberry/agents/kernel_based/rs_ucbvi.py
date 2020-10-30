@@ -116,7 +116,7 @@ class RSUCBVIAgent(Agent):
              is implemented.
         """
         # init base class
-        Agent.__init__(self, env)
+        Agent.__init__(self, env, **kwargs)
         self.id = "RSUCBVI"
         self.fit_info = ("n_episodes", "episode_rewards")
 

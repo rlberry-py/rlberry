@@ -8,6 +8,11 @@ class Agent(ABC):
 
     Input environment is (deep)copied and reseeded.
 
+    Notes
+    ------
+        Classes that implement this class should send **kwargs to Agent.__init__()
+
+
     Attributes
     ----------
     id : string
@@ -32,10 +37,24 @@ class Agent(ABC):
         load agent, returns an instance of the agent
     """
 
-    def __init__(self, env, **kwargs):
+    def __init__(self, env, copy_env=True, reseed_env=True,**kwargs):
+        """
+        Parameters
+        ----------
+        env : Model
+            Environment used to fit the agent.
+        copy_env : bool
+            If true, makes a deep copy of the environment.
+        reseed_env : bool
+            If true, reseeds the environment.
+        """
         self.id = ""
-        self.env = deepcopy(env)
-        self.env.reseed()
+        if copy_env:
+            self.env = deepcopy(env)
+        else:
+            self.env = env 
+        if reseed_env:
+            self.env.reseed()
         self.fit_info = ()
 
     @abstractmethod

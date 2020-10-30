@@ -46,7 +46,7 @@ class MBQVIAgent(Agent):
         assert isinstance(env, GenerativeModel), "MBQVI requires a generative model."
         assert isinstance(env.observation_space, Discrete), "MBQVI requires a finite state space."
         assert isinstance(env.action_space, Discrete), "MBQVI requires a finite action space."
-        Agent.__init__(self, env)
+        Agent.__init__(self, env, **kwargs)
         self.id = "MBQVI"
         self.fit_info = ("n_samples", "total_samples", "n_iterations", "precision")
 

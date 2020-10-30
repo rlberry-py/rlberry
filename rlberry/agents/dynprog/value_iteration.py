@@ -26,7 +26,7 @@ class ValueIterationAgent(Agent):
         """
         # initialize base class
         assert isinstance(env, FiniteMDP), "Value iteration requires a FiniteMDP model."
-        Agent.__init__(self, env)
+        Agent.__init__(self, env, **kwargs)
         self.id = "ValueIteration"
         self.fit_info = ("n_iterations", "precision")
 
