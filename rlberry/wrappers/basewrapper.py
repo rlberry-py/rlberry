@@ -8,14 +8,12 @@ class Wrapper(SimulationModel):
     """
     Wraps a given environment, similar to OpenAI gym's wrapper [1].
 
-    It inherits from SimulationModel and BaseRenderInterface, but its behavior depends 
+    It inherits from SimulationModel, but its behavior depends 
     on the wrapped enviroment (env):
     - If env does not implement step(), calling Wrapper.step() will raise an error.
     - If env does not implement sample(), calling Wrapper.sample() will raise an error.
-    - If env does not implement render(), calling Wrapper.render() will raise an error
 
-
-    Note: it makes a deep copy of the input environment without reseeding. 
+    Note: the input environment is not copied.
 
 
     [1] https://github.com/openai/gym/blob/master/gym/core.py
@@ -23,7 +21,7 @@ class Wrapper(SimulationModel):
 
     def __init__(self, env):
         SimulationModel.__init__(self)
-        self.env = deepcopy(env)
+        self.env = env
         self.observation_space = self.env.observation_space
         self.action_space = self.env.action_space
         self.reward_range = self.env.reward_range
