@@ -84,5 +84,5 @@ class DiscretizeStateWrapper(Wrapper):
             if randomize:
                 range_dd = self.env.observation_space.high[dd] - self.env.observation_space.low[dd]
                 epsilon = range_dd / self.n_bins
-                continuous_state[dd] += epsilon * np.random.uniform()
+                continuous_state[dd] += epsilon *self.rng.uniform()
         return continuous_state
