@@ -1,66 +1,93 @@
 from copy import deepcopy
-
-from rlberry.envs.interface import OnlineModel, GenerativeModel, SimulationModel
+from rlberry.envs.interface import Model, GenerativeModel, OnlineModel, SimulationModel
 from rlberry.rendering import RenderInterface
+from rlberry.wrappers.gym_utils import convert_space_from_gym
+
+import rlberry.seeding as seeding
+
+import logging
+
+_GYM_INSTALLED = True
+try:
+    import gym
+except:
+    _GYM_INSTALLED = False
 
 
-class Wrapper(SimulationModel):
+class Wrapper(Model):
     """
     Wraps a given environment, similar to OpenAI gym's wrapper [1].
+    Can also be used to wrap gym environments.
 
-    It inherits from SimulationModel, but its behavior depends 
-    on the wrapped enviroment (env):
-    - If env does not implement step(), calling Wrapper.step() will raise an error.
-    - If env does not implement sample(), calling Wrapper.sample() will raise an error.
+    The type of the wrapper is defined in runtime, according to the type of the 
+    wrapped environment (gym.Env, OnlineModel, GenerativeModel or SimulationModel)
 
-    Note: the input environment is not copied.
-
+    Note: 
+        The input environment is not copied (Wrapper.env points to the input env).
+        
+    See also: https://stackoverflow.com/questions/1443129/completely-wrap-an-object-in-python
 
     [1] https://github.com/openai/gym/blob/master/gym/core.py
     """
-
     def __init__(self, env):
-        SimulationModel.__init__(self)
+        # Init base class
+        Model.__init__(self)
+
+        # Save reference to env
         self.env = env
-        self.observation_space = self.env.observation_space
-        self.action_space = self.env.action_space
-        self.reward_range = self.env.reward_range
 
-    def reset(self):
-        if not isinstance(self.env, OnlineModel):
-            raise NotImplementedError("Wrapped environment does not implemement reset().")
-        return self.env.reset()
+        # Check if gym environment
+        if _GYM_INSTALLED and isinstance(env, gym.Env):
+            gym_env = env 
+            # Warnings
+            logging.warning(
+                'GymWrapper: Seeding of gym.Env does not follow the same protocol as rlberry. Make sure to properly seed each instance before using the wrapped environment.')
+            logging.warning(
+                'GymWrapper: Rendering gym.Env does not follow the same protocol as rlberry.')
+            # Convert spaces
+            self.observation_space = convert_space_from_gym(
+                gym_env.observation_space)
+            self.action_space = convert_space_from_gym(gym_env.action_space)
+            # Reward range
+            self.reward_range = gym_env.reward_range
 
-    def step(self, action):
-        if not isinstance(self.env, OnlineModel):
-            raise NotImplementedError("Wrapped environment does not implemement step().")
-        return self.env.step(action)
+            # Set class
+            self.__class__ = type(self.__class__.__name__,
+                              (self.__class__, OnlineModel), # gym environment is a rlberry OnlineModel
+                              self.__dict__)
 
-    def sample(self, state, action):
-        if not isinstance(self.env, GenerativeModel):
-            raise NotImplementedError("Wrapped environment does not implemement sample().")
-        return self.env.sample(state, action)
-
-    def render(self, **kwargs):
-        if not isinstance(self.env, RenderInterface):
-            raise NotImplementedError("Wrapped environment does not implemement render().")
-        return self.env.render(**kwargs)
-
-    def save_video(self, filename, **kwargs):
-        if not isinstance(self.env, RenderInterface):
-            raise NotImplementedError("Wrapped environment does not implemement save_video().")
-        return self.env.save_video(filename, **kwargs)
-
-    def enable_rendering(self):
-        if not isinstance(self.env, RenderInterface):
-            raise NotImplementedError("Wrapped environment does not implemement enable_rendering().")
-        self.env.enable_rendering()
-
-    def disable_rendering(self):
-        if not isinstance(self.env, RenderInterface):
-            raise NotImplementedError("Wrapped environment does not implemement disable_rendering().")
-        self.env.disable_rendering()
+        # If rlberry environment
+        else:
+            self.observation_space = self.env.observation_space
+            self.action_space = self.env.action_space
+            self.reward_range = self.env.reward_range 
+            # Set class
+            wrapper_class = Model 
+            if isinstance(env, SimulationModel):
+                wrapper_class = SimulationModel 
+            elif isinstance(env, OnlineModel):
+                wrapper_class = OnlineModel 
+            elif isinstance(env, GenerativeModel):
+                wrapper_class = GenerativeModel 
+            self.__class__ = type(self.__class__.__name__,
+                            (self.__class__, wrapper_class),
+                            self.__dict__) 
 
     @property
     def unwrapped(self):
         return self.env
+
+    def __getattr__(self, attr):
+        if attr in self.__dict__:
+            return getattr(self, attr)
+        return getattr(self.env, attr)
+
+    def reset(self):
+        return self.env.reset()
+
+    def step(self, action):
+        return self.env.step(action)
+
+    def sample(self, state, action):
+        return self.env.sample(state, action)
+
