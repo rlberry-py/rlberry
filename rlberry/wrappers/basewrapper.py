@@ -1,6 +1,5 @@
 from copy import deepcopy
 from rlberry.envs.interface import Model, GenerativeModel, OnlineModel, SimulationModel
-from rlberry.rendering import RenderInterface
 from rlberry.wrappers.gym_utils import convert_space_from_gym
 
 import rlberry.seeding as seeding

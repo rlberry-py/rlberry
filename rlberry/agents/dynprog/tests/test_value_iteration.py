@@ -4,6 +4,7 @@ import pytest
 import rlberry.seeding as seeding
 from rlberry.agents.dynprog import ValueIterationAgent
 from rlberry.agents.dynprog.utils import backward_induction
+from rlberry.agents.dynprog.utils import backward_induction_in_place
 from rlberry.agents.dynprog.utils import bellman_operator
 from rlberry.agents.dynprog.utils import value_iteration
 from rlberry.envs.finite import FiniteMDP
@@ -107,6 +108,14 @@ def test_backward_induction(horizon, S, A):
         # run backward with clipping V to 1.0
         Q, V = backward_induction(R, P, horizon, vmax=1.0)
         assert V.max() <= 1.0
+
+        # run bacward induction in place 
+        Q2 = np.zeros((horizon, S, A))
+        V2 = np.zeros((horizon, S))
+        backward_induction_in_place(Q2, V2, R, P, horizon, vmax=1.0)
+        assert np.array_equal(Q, Q2)
+        assert np.array_equal(V, V2)
+
 
 
 @pytest.mark.parametrize("horizon, gamma, S, A",

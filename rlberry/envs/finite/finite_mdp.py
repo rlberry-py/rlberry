@@ -40,6 +40,7 @@ class FiniteMDP(SimulationModel):
 
         self.observation_space = spaces.Discrete(S)
         self.action_space = spaces.Discrete(A)
+        self.reward_range = (self.R.min(), self.R.max())
 
         self.state = None
 
@@ -48,6 +49,7 @@ class FiniteMDP(SimulationModel):
 
         self.reset()
         self._check()
+
 
     def reset(self):
         """
