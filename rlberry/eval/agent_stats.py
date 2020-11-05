@@ -128,7 +128,7 @@ def plot_episode_rewards(agent_stats_list, cumulative=False, fignum=None, show=T
         plt.show()
 
 
-def compare_policies(agent_stats_list, eval_env, eval_horizon, nsim=10, fignum=None, show=True):
+def compare_policies(agent_stats_list, eval_env, eval_horizon, stationary_policy=True, nsim=10, fignum=None, show=True):
     """
     Compare the policies of each of the agents in agent_stats_list. 
     Each element of the agent_stats_list contains a list of fitted agents. 
@@ -147,6 +147,8 @@ def compare_policies(agent_stats_list, eval_env, eval_horizon, nsim=10, fignum=N
         Environment where to evaluate the policies.
     eval_horion : int 
         Number of time steps for policy evaluation.
+    stationary_policy : bool
+        If False, the time step h (0<= h <= eval_horizon) is sent as input to agent.policy() for policy evaluation.
     nsim : int 
         Number of simulations to evaluate each policy.
     """
@@ -171,7 +173,10 @@ def compare_policies(agent_stats_list, eval_env, eval_horizon, nsim=10, fignum=N
             # evaluate agent
             observation = eval_env.reset()
             for hh in range(eval_horizon):
-                action = agent.policy(observation, **agent_stats.policy_kwargs)
+                if stationary_policy:
+                    action = agent.policy(observation, **agent_stats.policy_kwargs)
+                else:
+                    action = agent.policy(observation, hh, **agent_stats.policy_kwargs)
                 observation, reward, done, _ = eval_env.step(action)
                 if done:
                     break
