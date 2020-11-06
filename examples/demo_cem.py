@@ -2,7 +2,7 @@ import numpy as np
 from rlberry.agents.cem import CEMAgent
 from rlberry.envs.toy_exploration import PBall2D
 
-env = PBall2D(reward_smoothness=np.array([0.8]))
+env = PBall2D(p=np.inf, reward_smoothness=np.array([0.8]), reward_centers=[np.array([0.4, 0.4])])
 n_batches  = 50
 batch_size = 16
 horizon = 25
@@ -14,7 +14,7 @@ agent.fit()
    
 env.enable_rendering()
 state = env.reset()
-for tt in range(200):
+for tt in range(4*horizon):
     action = agent.policy(state)
     next_state, reward, done, _ = env.step(action)
     state = next_state
