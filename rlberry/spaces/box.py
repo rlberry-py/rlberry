@@ -17,6 +17,8 @@ class Box(Space):
          [b_1, ..., b_n]
     dim : int
         dimension of the space (n in R^n)
+    is_bounded : bool
+        true if all the dimensions are bounded
     rng : numpy.random._generator.Generator
         random number generator provided by rlberry.seeding
 
@@ -63,6 +65,7 @@ class Box(Space):
             self.dim = low.shape[0]
 
         # check which dimensions are bounded
+        self.is_bounded = True
         self._boundedness = np.zeros(self.dim, dtype=np.uint8)
         for dd in range(self.dim):
             assert self.low[dd] < self.high[dd], "low < high is required!"
@@ -72,7 +75,8 @@ class Box(Space):
             # 1 if not below and     above
             # 2 if     below and not above
             # 3 if     below and     above
-            self._boundedness[dd] = 2 * bounded_below + bounded_above
+            self._boundedness[dd] = 2 * bounded_below + bounded_above 
+            self.is_bounded = self.is_bounded and (self._boundedness[dd] == 3)
 
     def sample(self):
         """

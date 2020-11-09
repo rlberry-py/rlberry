@@ -49,5 +49,9 @@ def test_box_space_case_1(low, high, dim):
                          ])
 def test_box_space_case_2(low, high):
     sp = Box(low, high)
+    if (-np.inf in low) or (np.inf in high):
+        assert not sp.is_bounded 
+    else:
+        assert sp.is_bounded
     for ii in range(2 ** sp.dim):
         assert (sp.contains(sp.sample()))
