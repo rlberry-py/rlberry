@@ -3,12 +3,12 @@ from rlberry.agents.cem import CEMAgent
 from rlberry.envs.toy_exploration import PBall2D
 
 env = PBall2D(p=np.inf, reward_smoothness=np.array([0.8]), reward_centers=[np.array([0.4, 0.4])])
-n_batches  = 50
-batch_size = 16
+n_episodes  = 2000
+batch_size = 100
 horizon = 25
 gamma = 0.99
 
-agent = CEMAgent(env, gamma, horizon, batch_size, n_batches, percentile=70, learning_rate=0.01)
+agent = CEMAgent(env, n_episodes, horizon, gamma, batch_size, percentile=70, learning_rate=0.01)
 agent.fit()
 
    

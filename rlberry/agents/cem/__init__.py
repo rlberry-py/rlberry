@@ -1,1 +1,1 @@
-from .cross_entropy_method import CEMAgent
+from .cem import CEMAgent

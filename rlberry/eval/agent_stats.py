@@ -47,8 +47,9 @@ class AgentStats:
         else:
             self.eval_env = deepcopy(eval_env)
             self.eval_env.reseed()
-        self.init_kwargs = deepcopy(init_kwargs)
-        self.fit_kwargs = deepcopy(fit_kwargs)
+        # init and fit kwargs are deep copied in fit()
+        self.init_kwargs = init_kwargs
+        self.fit_kwargs =  fit_kwargs
         self.policy_kwargs = deepcopy(policy_kwargs)
         self.nfit = nfit
         self.njobs = njobs
@@ -68,7 +69,7 @@ class AgentStats:
     def fit(self):
         if self.verbose > 0:
             print("\n Training AgentStats for %s... \n" % self.agent_name)
-        args = [(self.agent_class, train_env, self.init_kwargs, self.fit_kwargs)
+        args = [(self.agent_class, train_env, deepcopy(self.init_kwargs), deepcopy(self.fit_kwargs))
                 for train_env in self.train_env_set]
 
         workers_output = Parallel(n_jobs=self.njobs, verbose=self.verbose)(
