@@ -383,6 +383,9 @@ class RSKernelUCBVIAgent(Agent):
             state = next_state
             episode_rewards += reward
 
+            if done:
+                break
+
         # run backward induction
         backward_induction_in_place(self.Q[:, :self.M, :], self.V[:, :self.M],
                                     self.R_hat[:self.M, :] + self.B_sa[:self.M, :],
