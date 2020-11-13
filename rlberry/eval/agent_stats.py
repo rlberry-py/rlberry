@@ -4,6 +4,7 @@ import logging
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+import pickle
 import seaborn as sns
 import rlberry.seeding as seeding
 
@@ -12,8 +13,16 @@ class AgentStats:
     """
     Class to train, evaluate and gather statistics about an agent.
     """
-
-    def __init__(self, agent_class, train_env, eval_env=None, init_kwargs={}, fit_kwargs={}, policy_kwargs={}, nfit=4, njobs=4, verbose=5):
+    def __init__(self, 
+                 agent_class, 
+                 train_env, 
+                 eval_env=None, 
+                 init_kwargs={}, 
+                 fit_kwargs={}, 
+                 policy_kwargs={}, 
+                 nfit=4, 
+                 njobs=4, 
+                 verbose=5):
         """
         Parameters
         ----------
@@ -36,35 +45,38 @@ class AgentStats:
         verbose : int 
             Verbosity level.
         """
-        self.agent_name = agent_class.name
-        self.fit_info = agent_class.fit_info
+        # agent_class should only be None when the constructor is called 
+        # by the class method AgentStats.load(), since the agent class will be loaded.
+        if agent_class is not None: 
+            self.agent_name = agent_class.name
+            self.fit_info = agent_class.fit_info
 
-        self.agent_class = agent_class
-        self.train_env = train_env
-        if eval_env is None:
-            self.eval_env = deepcopy(train_env)
-            self.eval_env.reseed()
-        else:
-            self.eval_env = deepcopy(eval_env)
-            self.eval_env.reseed()
-        # init and fit kwargs are deep copied in fit()
-        self.init_kwargs = init_kwargs
-        self.fit_kwargs =  fit_kwargs
-        self.policy_kwargs = deepcopy(policy_kwargs)
-        self.nfit = nfit
-        self.njobs = njobs
-        self.verbose = verbose
+            self.agent_class = agent_class
+            self.train_env = train_env
+            if eval_env is None:
+                self.eval_env = deepcopy(train_env)
+                self.eval_env.reseed()
+            else:
+                self.eval_env = deepcopy(eval_env)
+                self.eval_env.reseed()
+            # init and fit kwargs are deep copied in fit()
+            self.init_kwargs = init_kwargs
+            self.fit_kwargs =  fit_kwargs
+            self.policy_kwargs = deepcopy(policy_kwargs)
+            self.nfit = nfit
+            self.njobs = njobs
+            self.verbose = verbose
 
-        # Create environment copies for training
-        self.train_env_set = []
-        for ii in range(nfit):
-            _env = deepcopy(train_env)
-            _env.reseed()
-            self.train_env_set.append(_env)
+            # Create environment copies for training
+            self.train_env_set = []
+            for ii in range(nfit):
+                _env = deepcopy(train_env)
+                _env.reseed()
+                self.train_env_set.append(_env)
 
-        #
-        self.fitted_agents = None
-        self.fit_statistics = {}
+            #
+            self.fitted_agents = None
+            self.fit_statistics = {}
 
     def fit(self):
         if self.verbose > 0:
@@ -87,6 +99,32 @@ class AgentStats:
             self.fit_statistics[entry] = []
             for stat in stats:
                 self.fit_statistics[entry].append(stat[entry])
+
+    def save(self, filename, **kwargs):
+        """
+        Parameters
+        ----------
+        filename : string
+            filename with .pickle extension 
+        """
+        if filename[-7:] != '.pickle':
+            filename += '.pickle'
+            
+        with open(filename, 'wb') as ff:
+            pickle.dump(self.__dict__, ff)
+        
+    
+    @classmethod
+    def load(cls, filename):
+        if filename[-7:] != '.pickle':
+            filename += '.pickle'
+
+        obj = cls(None, None)
+        with open(filename, 'rb') as ff:
+            tmp_dict = pickle.load(ff)
+        obj.__dict__.clear()
+        obj.__dict__.update(tmp_dict)
+        return obj
 
 
 def _fit_worker(args):
