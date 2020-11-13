@@ -179,9 +179,9 @@ def compare_policies(agent_stats_list, eval_env, eval_horizon, stationary_policy
                 else:
                     action = agent.policy(observation, hh, **agent_stats.policy_kwargs)
                 observation, reward, done, _ = eval_env.step(action)
+                episode_rewards[sim] += reward
                 if done:
                     break
-                episode_rewards[sim] += reward
         # store rewards
         agents_rewards.append(episode_rewards)
     
