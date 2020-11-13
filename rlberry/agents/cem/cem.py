@@ -5,6 +5,7 @@ import torch
 import torch.nn as nn
 from torch.distributions import Categorical
 
+import rlberry.seeding as seeding
 import rlberry.spaces as spaces
 from rlberry.agents import Agent
 from rlberry.envs import OnlineModel
@@ -99,6 +100,9 @@ class CEMAgent(Agent):
         self.horizon = horizon  
         self.verbose = verbose 
 
+        # random number generator
+        self.rng = seeding.get_rng()
+
         # policy net 
         hidden_size = 128
         obs_size = self.env.observation_space.high.shape[0]
@@ -168,7 +172,7 @@ class CEMAgent(Agent):
     def policy(self, observation, **kwargs):
         act_probs_v, scores = self._get_action_probabilities_tensor(observation)
         act_probs = act_probs_v.data.numpy()[0]
-        action = np.random.choice(len(act_probs), p=act_probs)
+        action = self.rng.choice(len(act_probs), p=act_probs)
         return action
 
     def _get_action_probabilities_tensor(self, observation):
