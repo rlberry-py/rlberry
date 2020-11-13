@@ -62,8 +62,6 @@ class CEMAgent(Agent):
                  batch_size=16, 
                  percentile=70, 
                  learning_rate=0.01, 
-                 uncertainty_estimator = None, 
-                 bonus_scale_factor = 0.1,
                  verbose=5, 
                  **kwargs):
         """
@@ -83,8 +81,6 @@ class CEMAgent(Agent):
             Percentile used to remove trajectories with low rewards.
         learning_rate : double 
             Optimizer learning rate 
-        uncertainty_estimator : UncertaintyEstimator
-        bonus_scale_factor : double
         verbose : int 
             Verbosity level.
         """
@@ -102,8 +98,6 @@ class CEMAgent(Agent):
         self.learning_rate = learning_rate
         self.horizon = horizon  
         self.verbose = verbose 
-        self.uncertainty_estimator = uncertainty_estimator
-        self.bonus_scale_factor = bonus_scale_factor
 
         # policy net 
         hidden_size = 128
@@ -172,35 +166,27 @@ class CEMAgent(Agent):
 
 
     def policy(self, observation, **kwargs):
-        act_probs_v = self._get_action_probabilities_tensor(observation)
+        act_probs_v, scores = self._get_action_probabilities_tensor(observation)
         act_probs = act_probs_v.data.numpy()[0]
         action = np.random.choice(len(act_probs), p=act_probs)
-        return action 
+        return action
 
     def _get_action_probabilities_tensor(self, observation):
         obs_v = torch.FloatTensor([observation]).to(device)
         sm = nn.Softmax(dim=1)
-        act_probs_v = sm(self.policy_net(obs_v)) 
-        return act_probs_v
+        scores = self.policy_net(obs_v)
+        act_probs_v = sm(scores) 
+        return act_probs_v, scores
 
     def _process_batch(self):
         rewards = np.array(self.memory.rewards)
-        
-        # compute bonuses
-        if self.uncertainty_estimator is not None:
-            bonuses = np.zeros_like(rewards)
-            assert self.memory.size == len(rewards)
-            for ii in range(self.memory.size):
-                for (state, action) in zip(self.memory.states[ii], self.memory.actions[ii]):
-                    bonuses[ii] += self.uncertainty_estimator.measure(state, action)      
-
-            rewards = rewards + self.bonus_scale_factor*bonuses
 
         reward_bound = np.percentile(rewards, self.percentile)
         reward_mean = float(np.mean(rewards))
 
         train_states = []
         train_actions = []
+
         for ii in range(self.memory.size):
             if rewards[ii] < reward_bound:
                 continue
@@ -209,7 +195,13 @@ class CEMAgent(Agent):
 
         train_states_tensor = torch.FloatTensor(train_states).to(device)
         train_actions_tensor = torch.LongTensor(train_actions).to(device)
-        return train_states_tensor, train_actions_tensor, reward_bound, reward_mean
+
+
+        # states in last trajectory
+        last_states = self.memory.states[-1]
+        last_states_tensor =  torch.FloatTensor(last_states).to(device)
+
+        return train_states_tensor, train_actions_tensor, reward_bound, reward_mean, last_states_tensor
 
     def _run_episode(self):    
         # interact for H steps
@@ -230,10 +222,6 @@ class CEMAgent(Agent):
             
             # increment rewards 
             episode_rewards += reward*np.power(self.gamma, hh)
-
-            # update uncertainty
-            if self.uncertainty_estimator is not None:
-                self.uncertainty_estimator.update(state, action, next_state, reward)
     
             if done:
                 break
@@ -244,13 +232,23 @@ class CEMAgent(Agent):
         return episode_rewards
     
     def _update(self):
-        train_states_tensor, train_actions_tensor, reward_bound, reward_mean = self._process_batch()
+        train_states_tensor, train_actions_tensor, reward_bound, reward_mean, last_states_tensor = self._process_batch()
         self.optimizer.zero_grad()
         action_scores = self.policy_net(train_states_tensor)
         loss = self.loss_fn(action_scores, train_actions_tensor)
+
+
+        # entropy in last trajectory
+        scores_last_traj = self.policy_net(last_states_tensor)
+        softmax = nn.Softmax(dim=1)
+        probs_last_traj = softmax(scores_last_traj) + 1e-3  # add 1e-3 to avoid zeros
+        entropy =  - torch.sum( (probs_last_traj * torch.log(probs_last_traj)), dim = 1)
+        entropy = torch.mean(entropy)
+
+        loss = loss - 0.1*entropy   
+
         loss.backward()
         self.optimizer.step()
-        # print("episode %d: loss=%.3f, reward_mean=%.1f, reward_bound=%.1f" % (
-        #         self.episode//self.batch_size, loss.item(), reward_mean, reward_bound))
+      
 
         return loss.item(), reward_mean, reward_bound
