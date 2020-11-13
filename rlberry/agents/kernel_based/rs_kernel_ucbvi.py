@@ -7,7 +7,7 @@ from numba import jit
 import rlberry.spaces as spaces
 from rlberry.agents import Agent
 from rlberry.agents.dynprog.utils import backward_induction, backward_induction_in_place
-from rlberry.agents.utils.metrics import metric_lp
+from rlberry.utils.metrics import metric_lp
 from rlberry.agents.kernel_based.kernels import kernel_func
 from rlberry.envs import OnlineModel
 

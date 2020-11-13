@@ -1,6 +1,6 @@
 import pytest 
 import numpy as np
-from rlberry.agents.utils.metrics import metric_lp 
+from rlberry.utils.metrics import metric_lp 
 
 @pytest.mark.parametrize("dim", [1,2,3,4])
 def test_metrics(dim):
