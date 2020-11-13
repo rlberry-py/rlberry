@@ -4,7 +4,6 @@ from rlberry.spaces import Box, Discrete
 from rlberry.utils.space_discretizer import Discretizer
 
 
-
 class DiscreteCounter(UncertaintyEstimator):
     def __init__(self, observation_space, action_space, n_bins_obs=10, n_bins_actions=10, **kwargs):
         UncertaintyEstimator.__init__(self, observation_space, action_space)
@@ -25,7 +24,6 @@ class DiscreteCounter(UncertaintyEstimator):
             self.continuous_action = True
             self.action_discretizer = Discretizer(self.action_space, n_bins_actions)
             self.n_actions = self.action_discretizer.discrete_space.n
-
     
         self.N_sa = np.zeros((self.n_states, self.n_actions))
 
@@ -35,6 +33,9 @@ class DiscreteCounter(UncertaintyEstimator):
         if self.continuous_action:
             action = self.action_discretizer.discretize(action)
         return state, action 
+
+    def reset(self):
+        self.N_sa = np.zeros((self.n_states, self.n_actions))
 
     def update(self, state, action, next_state, reward, **kwargs):
         state, action = self._preprocess(state, action)
