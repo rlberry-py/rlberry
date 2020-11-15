@@ -69,6 +69,10 @@ class Wrapper(Model):
             return getattr(self, attr)
         return getattr(self.env, attr)
 
+    def reseed(self):
+        self.rng = seeding.get_rng()
+        self.env.reseed()
+
     def reset(self):
         return self.env.reset()
 
