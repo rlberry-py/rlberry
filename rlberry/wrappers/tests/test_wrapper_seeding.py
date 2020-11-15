@@ -11,6 +11,14 @@ from rlberry.envs.toy_exploration import PBall2D
 from rlberry.envs.toy_exploration import SimplePBallND
 from rlberry.wrappers import Wrapper, RescaleRewardWrapper
 
+
+_GYM_INSTALLED = True
+try:
+    import gym
+except:
+    _GYM_INSTALLED = False
+
+
 classes = [
     MountainCar,
     GridWorld,
@@ -90,3 +98,47 @@ def test_wrapper_copy_reseeding(ModelClass):
         traj1 = get_env_trajectory(env, 500)
         traj2 = get_env_trajectory(c_env, 500)
         assert not compare_trajectories(traj1, traj2)
+
+@pytest.mark.parametrize("ModelClass", classes)
+def test_double_wrapper_copy_reseeding(ModelClass):
+    
+    seeding.set_global_seed(123)
+    env = Wrapper(Wrapper(ModelClass()))
+
+    c_env = deepcopy(env)
+    c_env.reseed()
+
+    if deepcopy(env).is_online():
+        traj1 = get_env_trajectory(env, 500)
+        traj2 = get_env_trajectory(c_env, 500)
+        assert not compare_trajectories(traj1, traj2)
+
+
+def test_gym_copy_reseeding():
+    seeding.set_global_seed(123)
+    if _GYM_INSTALLED:
+        gym_env = gym.make('Acrobot-v1')
+        env = Wrapper(gym_env)
+
+        c_env = deepcopy(env)
+        c_env.reseed()
+
+        if deepcopy(env).is_online():
+            traj1 = get_env_trajectory(env, 500)
+            traj2 = get_env_trajectory(c_env, 500)
+            assert not compare_trajectories(traj1, traj2)
+
+
+def test_gym_copy_reseeding_2():
+    seeding.set_global_seed(123)
+    if _GYM_INSTALLED:
+        gym_env = gym.make('Acrobot-v1')
+        env = RescaleRewardWrapper(Wrapper(Wrapper(gym_env)), (0, 1))  # nested wrapping
+
+        c_env = deepcopy(env)
+        c_env.reseed()
+
+        if deepcopy(env).is_online():
+            traj1 = get_env_trajectory(env, 500)
+            traj2 = get_env_trajectory(c_env, 500)
+            assert not compare_trajectories(traj1, traj2)

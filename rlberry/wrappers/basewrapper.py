@@ -38,8 +38,6 @@ class Wrapper(Model):
             gym_env = env 
             # Warnings
             logging.warning(
-                'GymWrapper: Seeding of gym.Env does not follow the same protocol as rlberry. Make sure to properly seed each instance before using the wrapped environment.')
-            logging.warning(
                 'GymWrapper: Rendering gym.Env does not follow the same protocol as rlberry.')
             # Convert spaces
             self.observation_space = convert_space_from_gym(
@@ -71,7 +69,11 @@ class Wrapper(Model):
 
     def reseed(self):
         self.rng = seeding.get_rng()
-        self.env.reseed()
+        if _GYM_INSTALLED and isinstance(self.env, gym.Env):
+            # get a seed for gym environment
+            self.env.seed(self.rng.integers(2**16).item())
+        else:
+            self.env.reseed()
 
     def reset(self):
         return self.env.reset()
