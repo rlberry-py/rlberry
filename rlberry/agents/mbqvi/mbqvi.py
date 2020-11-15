@@ -2,7 +2,6 @@ import numpy as np
 
 from rlberry.agents import Agent
 from rlberry.agents.dynprog.utils import backward_induction, value_iteration
-from rlberry.envs.interface import GenerativeModel
 from rlberry.spaces import Discrete
 
 
@@ -31,7 +30,7 @@ class MBQVIAgent(Agent):
         """
         Parameters:
         -----------
-        env : GenerativeModel
+        env : Model
             generative model with finite state-action space
         n_samples : int 
             number of samples *per state-action pair* used to estimate the empirical MDP
@@ -46,7 +45,7 @@ class MBQVIAgent(Agent):
             controls the verbosity, if non zero, progress messages are printed.
         """
         # initialize base class
-        assert isinstance(env, GenerativeModel), "MBQVI requires a generative model."
+        assert env.is_generative(), "MBQVI requires a generative model."
         assert isinstance(env.observation_space, Discrete), "MBQVI requires a finite state space."
         assert isinstance(env.action_space, Discrete), "MBQVI requires a finite action space."
         Agent.__init__(self, env, **kwargs)

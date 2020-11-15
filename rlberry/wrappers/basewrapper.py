@@ -1,6 +1,7 @@
 from copy import deepcopy
-from rlberry.envs.interface import Model, GenerativeModel, OnlineModel, SimulationModel
+from rlberry.envs.interface import Model
 from rlberry.wrappers.gym_utils import convert_space_from_gym
+
 
 import rlberry.seeding as seeding
 
@@ -17,9 +18,6 @@ class Wrapper(Model):
     """
     Wraps a given environment, similar to OpenAI gym's wrapper [1].
     Can also be used to wrap gym environments.
-
-    The type of the wrapper is defined in runtime, according to the type of the 
-    wrapped environment (gym.Env, OnlineModel, GenerativeModel or SimulationModel)
 
     Note: 
         The input environment is not copied (Wrapper.env points to the input env).
@@ -50,33 +48,23 @@ class Wrapper(Model):
             # Reward range
             self.reward_range = gym_env.reward_range
 
-            # Set class
-            self.__class__ = type(self.__class__.__name__,
-                              (self.__class__, OnlineModel), # gym environment is a rlberry OnlineModel
-                              self.__dict__)
-
         # If rlberry environment
         else:
             self.observation_space = self.env.observation_space
             self.action_space = self.env.action_space
             self.reward_range = self.env.reward_range 
-            # Set class
-            wrapper_class = Model 
-            if isinstance(env, SimulationModel):
-                wrapper_class = SimulationModel 
-            elif isinstance(env, OnlineModel):
-                wrapper_class = OnlineModel 
-            elif isinstance(env, GenerativeModel):
-                wrapper_class = GenerativeModel 
-            self.__class__ = type(self.__class__.__name__,
-                            (self.__class__, wrapper_class),
-                            self.__dict__) 
 
     @property
     def unwrapped(self):
         return self.env
 
     def __getattr__(self, attr):
+        """
+        The first condition is to avoid infinite recursion when deep copying.
+        See https://stackoverflow.com/a/47300262
+        """
+        if attr[:2]=='__':
+            raise AttributeError(attr)
         if attr in self.__dict__:
             return getattr(self, attr)
         return getattr(self.env, attr)
@@ -89,4 +77,19 @@ class Wrapper(Model):
 
     def sample(self, state, action):
         return self.env.sample(state, action)
+
+    def is_online(self):
+        try:
+            self.env.reset()
+            self.env.step(self.env.action_space.sample())
+            return True 
+        except Exception as ex:
+            return False 
+    
+    def is_generative(self):
+        try:
+            self.env.sample(self.env.observation_space.sample(), self.env.action_space.sample())
+            return True 
+        except Exception as ex:
+            return False 
 

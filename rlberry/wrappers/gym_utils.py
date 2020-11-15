@@ -5,7 +5,6 @@ except:
     _GYM_INSTALLED = False
 
 import rlberry
-from rlberry.envs.interface import OnlineModel
 
 
 def convert_space_from_gym(gym_space):

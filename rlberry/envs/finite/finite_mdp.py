@@ -1,10 +1,10 @@
 import numpy as np
 
 import rlberry.spaces as spaces
-from rlberry.envs.interface import SimulationModel
+from rlberry.envs.interface import Model
 
 
-class FiniteMDP(SimulationModel):
+class FiniteMDP(Model):
     """
     Base class for a finite MDP.
 
@@ -28,7 +28,7 @@ class FiniteMDP(SimulationModel):
             array of size (S,) containing the initial state distribution
             or an integer representing the initial/default state
         """
-        super(SimulationModel, self).__init__()
+        Model.__init__(self)
         self.initial_state_distribution = initial_state_distribution
         S, A = R.shape
 

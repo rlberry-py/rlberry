@@ -1,6 +1,4 @@
 import numpy as np
-
-from rlberry.envs.interface import OnlineModel, GenerativeModel
 from rlberry.wrappers import Wrapper
 
 
@@ -16,7 +14,7 @@ class RescaleRewardWrapper(Wrapper):
         reward_range: tuple (double, double)
             tuple with the desired reward range, which needs to be bounded.
         """
-        super().__init__(env)
+        Wrapper.__init__(self, env)
         self.reward_range = reward_range
         assert reward_range[0] < reward_range[1]
         assert reward_range[0] > -np.inf and reward_range[1] < np.inf
@@ -51,16 +49,11 @@ class RescaleRewardWrapper(Wrapper):
             return self._linear_rescaling(x, 0.0, 1.0, u0, u1)
 
     def step(self, action):
-        if not isinstance(self.env, OnlineModel):
-            raise NotImplementedError("Wrapped environment does not implemement step().")
-
         observation, reward, done, info = self.env.step(action)
         rescaled_reward = self._rescale(reward)
         return observation, rescaled_reward, done, info
 
     def sample(self, state, action):
-        if not isinstance(self.env, GenerativeModel):
-            raise NotImplementedError("Wrapped environment does not implemement sample().")
         observation, reward, done, info = self.env.sample(state, action)
         rescaled_reward = self._rescale(reward)
         return observation, rescaled_reward, done, info

@@ -3,7 +3,6 @@ import pytest
 from rlberry.envs.classic_control import MountainCar, Acrobot
 from rlberry.envs.finite import Chain
 from rlberry.envs.finite import GridWorld
-from rlberry.envs.interface import OnlineModel, GenerativeModel
 from rlberry.envs.toy_exploration import PBall2D
 from rlberry.envs.toy_exploration import SimplePBallND
 
@@ -21,7 +20,7 @@ classes = [
 def test_instantiation(ModelClass):
     env = ModelClass()
 
-    if isinstance(env, OnlineModel):
+    if env.is_online():
         for ep in range(2):
             state = env.reset()
             for ii in range(50):
@@ -30,7 +29,7 @@ def test_instantiation(ModelClass):
                 next_s, reward, done, info = env.step(action)
                 state = next_s
 
-    if isinstance(env, GenerativeModel):
+    if env.is_generative():
         for ii in range(100):
             state = env.observation_space.sample()
             action = env.action_space.sample()

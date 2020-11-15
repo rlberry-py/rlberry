@@ -3,7 +3,6 @@ import pytest
 from rlberry.envs.classic_control import MountainCar
 from rlberry.envs.finite import Chain
 from rlberry.envs.finite import GridWorld
-from rlberry.envs.interface import OnlineModel
 from rlberry.envs.toy_exploration import PBall2D
 from rlberry.envs.toy_exploration import SimplePBallND
 from rlberry.rendering import RenderInterface
@@ -39,7 +38,7 @@ def test_render2d_interface(ModelClass):
     if isinstance(env, RenderInterface2D):
         env.enable_rendering()
 
-        if isinstance(env, OnlineModel):
+        if env.is_online():
             for ep in range(2):
                 state = env.reset()
                 for ii in range(50):

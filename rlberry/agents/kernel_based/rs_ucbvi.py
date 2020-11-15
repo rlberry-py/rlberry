@@ -8,7 +8,6 @@ import rlberry.spaces as spaces
 from rlberry.agents import Agent
 from rlberry.agents.dynprog.utils import backward_induction, backward_induction_in_place
 from rlberry.utils.metrics import metric_lp
-from rlberry.envs import OnlineModel
 
 
 @jit(nopython=True)
@@ -87,7 +86,7 @@ class RSUCBVIAgent(Agent):
                  verbose=1,
                  **kwargs):
         """
-        env : OnlineModel    
+        env : Model    
             Online model with continuous (Box) state space and discrete actions
         n_episodes : int
             number of episodes
@@ -131,7 +130,7 @@ class RSUCBVIAgent(Agent):
         self.bonus_type = bonus_type
 
         # check environment 
-        assert isinstance(self.env, OnlineModel)
+        assert self.env.is_online()
         assert isinstance(self.env.observation_space, spaces.Box)
         assert isinstance(self.env.action_space, spaces.Discrete)
 

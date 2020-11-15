@@ -1,7 +1,6 @@
 import numpy as np
 
 import rlberry.spaces as spaces
-from rlberry.envs.interface import OnlineModel, GenerativeModel
 from rlberry.utils.binsearch import binary_search_nd, unravel_index_uniform_bin
 from rlberry.wrappers import Wrapper
 
@@ -44,21 +43,14 @@ class DiscretizeStateWrapper(Wrapper):
             self.discretized_states[:, ii] = self.get_continuous_state(ii, False)
 
     def reset(self):
-        if not isinstance(self.env, OnlineModel):
-            raise NotImplementedError("Wrapped environment does not implemement reset().")
         return self.get_discrete_state(self.env.reset())
 
     def step(self, action):
-        if not isinstance(self.env, OnlineModel):
-            raise NotImplementedError("Wrapped environment does not implemement step().")
         next_state, reward, done, info = self.env.step(action)
         next_state = binary_search_nd(next_state, self._bins)
         return next_state, reward, done, info
 
     def sample(self, discrete_state, action):
-        if not isinstance(self.env, GenerativeModel):
-            raise NotImplementedError("Wrapped environment does not implemement sample().")
-
         # map disctete state to continuous one
         assert self.observation_space.contains(discrete_state)
         continuous_state = self.get_continuous_state(discrete_state, randomize=True)

@@ -3,10 +3,10 @@ import pytest
 import rlberry.seeding as seeding
 import rlberry.spaces as spaces
 
+from copy import deepcopy
 from rlberry.envs.classic_control import MountainCar, Acrobot
 from rlberry.envs.finite import Chain
 from rlberry.envs.finite import GridWorld
-from rlberry.envs.interface import OnlineModel, GenerativeModel
 from rlberry.envs.toy_exploration import PBall2D
 from rlberry.envs.toy_exploration import SimplePBallND
 
@@ -46,7 +46,7 @@ def test_env_seeding(ModelClass):
     seeding.set_global_seed(123)
     env3 = ModelClass()
 
-    if isinstance(env1, OnlineModel):
+    if deepcopy(env1).is_online():
         traj1 = get_env_trajectory(env1, 500)
         traj2 = get_env_trajectory(env2, 500)
         traj3 = get_env_trajectory(env3, 500)

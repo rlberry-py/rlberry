@@ -20,7 +20,7 @@ SOURCE: https://github.com/rlpy/rlpy/blob/master/rlpy/Domains/Acrobot.py
 
 import numpy as np
 import rlberry.spaces as spaces
-from rlberry.envs.interface import OnlineModel
+from rlberry.envs.interface import Model
 from rlberry.rendering      import Scene, GeometricPrimitive, RenderInterface2D
 from rlberry.rendering.common_shapes import bar_shape, circle_shape
 
@@ -33,7 +33,7 @@ __author__ = "Christoph Dann <cdann@cdann.de>"
 # SOURCE:
 # https://github.com/rlpy/rlpy/blob/master/rlpy/Domains/Acrobot.py
 
-class Acrobot(OnlineModel, RenderInterface2D):
+class Acrobot(Model, RenderInterface2D):
     """
     Acrobot is a 2-link pendulum with only the second joint actuated.
     Initially, both links point downwards. The goal is to swing the
@@ -100,7 +100,7 @@ class Acrobot(OnlineModel, RenderInterface2D):
 
     def __init__(self):
         # init base classes
-        OnlineModel.__init__(self)
+        Model.__init__(self)
         RenderInterface2D.__init__(self)
         self.reward_range = (-1.0, 0.0)
 

@@ -14,11 +14,11 @@ import math
 import numpy as np
 
 import rlberry.spaces as spaces
-from rlberry.envs.interface import SimulationModel
+from rlberry.envs.interface import Model
 from rlberry.rendering import Scene, GeometricPrimitive, RenderInterface2D
 
 
-class MountainCar(SimulationModel, RenderInterface2D):
+class MountainCar(Model, RenderInterface2D):
     """
     Description:
         The agent (a car) is started at the bottom of a valley. For any given
@@ -62,7 +62,7 @@ class MountainCar(SimulationModel, RenderInterface2D):
 
     def __init__(self, goal_velocity=0):
         # init base classes
-        SimulationModel.__init__(self)
+        Model.__init__(self)
         RenderInterface2D.__init__(self)
 
         self.min_position = -1.2

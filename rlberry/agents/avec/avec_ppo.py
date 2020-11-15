@@ -10,7 +10,6 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 import rlberry.spaces as spaces
 from rlberry.agents import Agent
-from rlberry.envs import OnlineModel
 
 
 class ActorCritic(nn.Module):
@@ -114,8 +113,8 @@ class AVECPPOAgent(Agent):
                  verbose=1,
                  **kwargs):
         """
-        env : OnlineModel
-            Online model with continuous (Box) state space and discrete actions
+        env : Model
+            model with continuous (Box) state space and discrete actions
         n_episodes : int
             Number of episodes
         horizon : int
@@ -144,7 +143,7 @@ class AVECPPOAgent(Agent):
         self.verbose = verbose
 
         # check environment
-        assert isinstance(self.env, OnlineModel)
+        assert self.env.is_online()
         assert isinstance(self.env.observation_space, spaces.Box)
         assert isinstance(self.env.action_space, spaces.Discrete)
 

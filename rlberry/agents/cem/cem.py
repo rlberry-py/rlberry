@@ -8,7 +8,6 @@ from torch.distributions import Categorical
 import rlberry.seeding as seeding
 import rlberry.spaces as spaces
 from rlberry.agents import Agent
-from rlberry.envs import OnlineModel
 
 # choose device
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")

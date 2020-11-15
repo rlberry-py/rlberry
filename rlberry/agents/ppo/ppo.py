@@ -7,7 +7,6 @@ from torch.distributions import Categorical
 
 import rlberry.spaces as spaces
 from rlberry.agents import Agent
-from rlberry.envs import OnlineModel
 
 # choose device
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -108,7 +107,7 @@ class PPOAgent(Agent):
                  verbose=1,
                  **kwargs):
         """
-        env : OnlineModel
+        env : Model
             Online model with continuous (Box) state space and discrete actions
         n_episodes : int
             Number of episodes
@@ -138,7 +137,7 @@ class PPOAgent(Agent):
         self.verbose = verbose
 
         # check environment
-        assert isinstance(self.env, OnlineModel)
+        assert self.env.is_online()
         assert isinstance(self.env.observation_space, spaces.Box)
         assert isinstance(self.env.action_space, spaces.Discrete)
 

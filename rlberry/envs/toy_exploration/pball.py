@@ -1,7 +1,7 @@
 import numpy as np
 
 import rlberry.spaces as spaces
-from rlberry.envs.interface import SimulationModel
+from rlberry.envs.interface import Model
 from rlberry.rendering import Scene, GeometricPrimitive, RenderInterface2D
 
 
@@ -31,7 +31,7 @@ def projection_to_pball(x, p):
     return x / np.linalg.norm(x, ord=p)
 
 
-class PBall(SimulationModel):
+class PBall(Model):
     """
     Parametric family of environments whose state space is a unit sphere according to the p-norm in R^d.
 
@@ -108,7 +108,7 @@ class PBall(SimulationModel):
         mu_init : numpy.ndarray 
             array of size (d,) containing the mean of the initial state
         """
-        SimulationModel.__init__(self)
+        Model.__init__(self)
 
         assert p >= 1, "PBall requires p>=1"
         if p not in [2, np.inf]:
