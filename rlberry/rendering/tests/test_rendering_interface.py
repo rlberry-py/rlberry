@@ -7,7 +7,7 @@ from rlberry.envs.toy_exploration import PBall2D
 from rlberry.envs.toy_exploration import SimplePBallND
 from rlberry.rendering import RenderInterface
 from rlberry.rendering import RenderInterface2D
-from rlberry.rendering.opengl_render2d import _activate_debug_mode
+from rlberry.rendering import _activate_debug_mode
 
 classes = [
     MountainCar,

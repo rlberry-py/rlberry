@@ -9,7 +9,7 @@ print(info)
 env.enable_rendering()
 
 state = env.reset()
-for tt in range(50):
+for tt in range(200):
     action = agent.policy(state)
     next_s, _, done, _ = env.step(action)
     if done:

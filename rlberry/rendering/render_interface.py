@@ -5,6 +5,7 @@ Interface that allows 2D rendering.
 from abc import ABC, abstractmethod
 
 from rlberry.rendering.opengl_render2d import OpenGLRender2D
+from rlberry.rendering.pygame_render2d import PyGameRender2D
 from rlberry.rendering.utils import video_write
 
 
@@ -50,6 +51,17 @@ class RenderInterface2D(RenderInterface):
         self._state_history_for_rendering = []
         self._refresh_interval            = 50   # in milliseconds
         self._clipping_area               = (-1.0, 1.0, -1.0, 1.0) # (left, right, bottom, top)
+
+        # rendering type, either 'pygame' or 'opengl'
+        self.renderer_type = 'opengl'
+    
+    def get_renderer(self):
+        if self.renderer_type == 'opengl':
+            return OpenGLRender2D()
+        elif self.renderer_type == 'pygame':
+            return PyGameRender2D()
+        else:
+            raise NotImplementedError("Unknown renderer type.") 
 
     @abstractmethod
     def get_scene(self, state):
@@ -100,8 +112,9 @@ class RenderInterface2D(RenderInterface):
                 print("No data to render.")
                 return
 
-                # render
-            renderer = OpenGLRender2D()
+            # render
+            renderer = self.get_renderer()
+
             renderer.window_name = self.name
             renderer.set_refresh_interval(self._refresh_interval)
             renderer.set_clipping_area(self._clipping_area)
@@ -121,8 +134,8 @@ class RenderInterface2D(RenderInterface):
             print("No data to save.")
             return
 
-            # get video data from renderer
-        renderer = OpenGLRender2D()
+        # get video data from renderer
+        renderer = self.get_renderer()
         renderer.window_name = self.name
         renderer.set_refresh_interval(self._refresh_interval)
         renderer.set_clipping_area(self._clipping_area)

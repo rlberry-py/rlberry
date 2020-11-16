@@ -1,5 +1,5 @@
 """
-OpenGL code for 2D rendering, using pygame.
+Code for 2D rendering, using pygame (without OpenGL)
 """
 
 import rlberry.rendering as rendering 
@@ -13,23 +13,21 @@ _IMPORT_SUCESSFUL = True
 try:
     import pygame as pg
     from pygame.locals import *
-
-    from OpenGL.GL import *
-    from OpenGL.GLU import *
 except:
     _IMPORT_SUCESSFUL = False
 
 
-class OpenGLRender2D:
+
+class PyGameRender2D:
     """
-    Class to render a list of scenes using OpenGL and pygame.
+    Class to render a list of scenes using pygame.
     """
 
     def __init__(self):
         # parameters
         self.window_width = 800
         self.window_height = 800    # multiples of 16 are preferred 
-        self.background_color = (0.6, 0.75, 1.0)
+        self.background_color = (0.6*255, 0.75*255, 1.0*255)
         self.refresh_interval = 50
         self.window_name = "rlberry render"
         self.clipping_area = (-1.0, 1.0, -1.0, 1.0)
@@ -75,22 +73,12 @@ class OpenGLRender2D:
     def set_background(self, background):
         self.background = background
 
-    def initGL(self):
-        """
-        initialize GL
-        """
-        glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
-        gluOrtho2D(self.clipping_area[0], self.clipping_area[1],
-                   self.clipping_area[2], self.clipping_area[3])
-
     def display(self):
         """
         Callback function, handler for window re-paint
         """
         # Set background color (clear background)
-        glClearColor(self.background_color[0], self.background_color[1], self.background_color[2], 1.0)
-        glClear(GL_COLOR_BUFFER_BIT)
+        self.screen.fill(self.background_color)
 
         # Display background
         for shape in self.background.shapes:
@@ -103,43 +91,33 @@ class OpenGLRender2D:
                 self.draw_geometric2d(shape)
 
         self.time_count += 1
-        glFlush()
 
     def draw_geometric2d(self, shape):
         """
         Draw a 2D shape, of type GeometricPrimitive
         """
-        if shape.type == "GL_POINTS":
-            glBegin(GL_POINTS)
-        elif shape.type == "GL_LINES":
-            glBegin(GL_LINES)
-        elif shape.type == "GL_LINE_STRIP":
-            glBegin(GL_LINE_STRIP)
-        elif shape.type == "GL_LINE_LOOP":
-            glBegin(GL_LINE_LOOP)
-        elif shape.type == "GL_POLYGON":
-            glBegin(GL_POLYGON)
-        elif shape.type == "GL_TRIANGLES":
-            glBegin(GL_TRIANGLES)
-        elif shape.type == "GL_TRIANGLE_STRIP":
-            glBegin(GL_TRIANGLE_STRIP)
-        elif shape.type == "GL_TRIANGLE_FAN":
-            glBegin(GL_TRIANGLE_FAN)
-        elif shape.type == "GL_QUADS":
-            glBegin(GL_QUADS)
-        elif shape.type == "GL_QUAD_STRIP":
-            glBegin(GL_QUAD_STRIP)
+        if shape.type in ['GL_POLYGON', 'GL_QUADS', 'GL_TRIANGLES']:
+            area = self.clipping_area
+            width_range = area[1] - area[0]
+            height_range = area[3] - area[2]
+
+            vertices = []
+            for vertex in shape.vertices:
+                xx = vertex[0]*self.window_width/width_range
+                yy = vertex[1]*self.window_height/height_range
+
+                # put origin at bottom left instead of top left
+                yy = self.window_height - yy
+
+                pg_vertex = (xx, yy)
+                vertices.append(pg_vertex)
+        
+            color = (255*shape.color[0], 255*shape.color[1], 255*shape.color[2])
+            pg.draw.polygon(self.screen, color, vertices)
+
         else:
-            print("Invalid type for geometric primitive!")
-            raise NameError
+            raise NotImplementedError("Shape type %s not implemented in pygame renderer."%shape.type)
 
-        # set color
-        glColor3f(shape.color[0], shape.color[1], shape.color[2])
-
-        # create vertices
-        for vertex in shape.vertices:
-            glVertex2f(vertex[0], vertex[1])
-        glEnd()
 
     def run_graphics(self):
         """
@@ -153,9 +131,8 @@ class OpenGLRender2D:
         if _IMPORT_SUCESSFUL:
             pg.init()
             display = (self.window_width, self.window_height)
-            screen = pg.display.set_mode(display, DOUBLEBUF | OPENGL)
+            self.screen = pg.display.set_mode(display)
             pg.display.set_caption(self.window_name)
-            self.initGL()
             while True:
                 for event in pg.event.get():
                     if event.type == pg.QUIT:
@@ -183,9 +160,8 @@ class OpenGLRender2D:
 
             pg.init()
             display = (self.window_width, self.window_height)
-            screen = pg.display.set_mode(display, DOUBLEBUF | OPENGL)
+            self.screen = pg.display.set_mode(display)
             pg.display.set_caption(self.window_name)
-            self.initGL()
 
             self.time_count = 0
             while self.time_count <= len(self.data):
@@ -197,7 +173,7 @@ class OpenGLRender2D:
                 # 
                 # See https://stackoverflow.com/a/42754578/5691288
                 #
-                string_image = pg.image.tostring(screen, 'RGB')
+                string_image = pg.image.tostring(self.screen, 'RGB')
                 temp_surf = pg.image.fromstring(string_image, (self.window_width, self.window_height), 'RGB')
                 tmp_arr = pg.surfarray.array3d(temp_surf)
                 imgdata = np.moveaxis(tmp_arr, 0, 1)
@@ -207,3 +183,4 @@ class OpenGLRender2D:
         else:
             print("Error: not possible to render the environment, pygame or pyopengl not installed.")
             return []
+

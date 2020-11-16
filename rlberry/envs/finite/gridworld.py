@@ -2,6 +2,7 @@ import numpy as np
 
 from rlberry.envs.finite import FiniteMDP
 from rlberry.rendering import Scene, GeometricPrimitive, RenderInterface2D
+from rlberry.rendering.common_shapes import circle_shape
 
 
 class GridWorld(FiniteMDP, RenderInterface2D):
@@ -101,6 +102,7 @@ class GridWorld(FiniteMDP, RenderInterface2D):
         # rendering info
         self.set_clipping_area((0, self.ncols, 0, self.nrows))
         self.set_refresh_interval(100)  # in milliseconds
+        self.renderer_type = 'pygame'
 
     def is_terminal(self, state):
         state_coord = self.index2coord[state]
@@ -325,18 +327,21 @@ class GridWorld(FiniteMDP, RenderInterface2D):
 
         scene = Scene()
 
-        agent = GeometricPrimitive("GL_QUADS")
+        agent = circle_shape( (x, y), 0.25, n_points=25)
         agent.set_color((0.75, 0.0, 0.5))
-        size = 0.25
-        agent.add_vertex((x - size / 4.0, y - size))
-        agent.add_vertex((x + size / 4.0, y - size))
-        agent.add_vertex((x + size / 4.0, y + size))
-        agent.add_vertex((x - size / 4.0, y + size))
 
-        agent.add_vertex((x - size, y - size / 4.0))
-        agent.add_vertex((x + size, y - size / 4.0))
-        agent.add_vertex((x + size, y + size / 4.0))
-        agent.add_vertex((x - size, y + size / 4.0))
+        # agent = GeometricPrimitive("GL_QUADS")
+        # agent.set_color((0.75, 0.0, 0.5))
+        # size = 0.25
+        # agent.add_vertex((x - size / 4.0, y - size))
+        # agent.add_vertex((x + size / 4.0, y - size))
+        # agent.add_vertex((x + size / 4.0, y + size))
+        # agent.add_vertex((x - size / 4.0, y + size))
+
+        # agent.add_vertex((x - size, y - size / 4.0))
+        # agent.add_vertex((x + size, y - size / 4.0))
+        # agent.add_vertex((x + size, y + size / 4.0))
+        # agent.add_vertex((x - size, y + size / 4.0))
 
         scene.add_shape(agent)
         return scene
