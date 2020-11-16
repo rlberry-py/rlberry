@@ -2,7 +2,6 @@
 Code for 2D rendering, using pygame (without OpenGL)
 """
 
-import rlberry.rendering.config as config 
 import numpy as np
 from os import environ
 from rlberry.rendering import Scene
@@ -15,7 +14,6 @@ try:
     from pygame.locals import *
 except:
     _IMPORT_SUCESSFUL = False
-
 
 
 class PyGameRender2D:
@@ -125,9 +123,6 @@ class PyGameRender2D:
         """
         global _IMPORT_SUCESSFUL
 
-        if config._DEBUG_NO_SCREEN:
-            return
-
         if _IMPORT_SUCESSFUL:
             pg.init()
             display = (self.window_width, self.window_height)
@@ -151,9 +146,6 @@ class PyGameRender2D:
         Stores scenes in self.data in a list of numpy arrays that can be used to save a video.
         """
         global _IMPORT_SUCESSFUL
-
-        if config._DEBUG_NO_SCREEN:
-            return []
 
         if _IMPORT_SUCESSFUL:
             video_data = []

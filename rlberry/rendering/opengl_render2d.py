@@ -2,7 +2,6 @@
 OpenGL code for 2D rendering, using pygame.
 """
 
-import rlberry.rendering.config as config 
 import numpy as np
 from os import environ
 from rlberry.rendering import Scene
@@ -147,8 +146,6 @@ class OpenGLRender2D:
         """
         global _IMPORT_SUCESSFUL
 
-        if config._DEBUG_NO_SCREEN:
-            return
 
         if _IMPORT_SUCESSFUL:
             pg.init()
@@ -175,8 +172,6 @@ class OpenGLRender2D:
         """
         global _IMPORT_SUCESSFUL
 
-        if config._DEBUG_NO_SCREEN:
-            return []
 
         if _IMPORT_SUCESSFUL:
             video_data = []

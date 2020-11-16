@@ -7,7 +7,7 @@ from rlberry.envs.toy_exploration import PBall2D
 from rlberry.envs.toy_exploration import SimplePBallND
 from rlberry.rendering import RenderInterface
 from rlberry.rendering import RenderInterface2D
-from rlberry.rendering.config import _activate_debug_mode
+
 
 classes = [
     MountainCar,
@@ -31,9 +31,8 @@ def test_instantiation(ModelClass):
 
 @pytest.mark.parametrize("ModelClass", classes)
 def test_render2d_interface(ModelClass):
-    _activate_debug_mode()  # don't create window
-
     env = ModelClass()
+    env._disable_screen = True       # don't create window
 
     if isinstance(env, RenderInterface2D):
         env.enable_rendering()
