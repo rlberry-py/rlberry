@@ -2,7 +2,7 @@
 Code for 2D rendering, using pygame (without OpenGL)
 """
 
-import rlberry.rendering as rendering 
+import rlberry.rendering.config as config 
 import numpy as np
 from os import environ
 from rlberry.rendering import Scene
@@ -125,7 +125,7 @@ class PyGameRender2D:
         """
         global _IMPORT_SUCESSFUL
 
-        if rendering._DEBUG_NO_SCREEN:
+        if config._DEBUG_NO_SCREEN:
             return
 
         if _IMPORT_SUCESSFUL:
@@ -152,7 +152,7 @@ class PyGameRender2D:
         """
         global _IMPORT_SUCESSFUL
 
-        if rendering._DEBUG_NO_SCREEN:
+        if config._DEBUG_NO_SCREEN:
             return []
 
         if _IMPORT_SUCESSFUL:
