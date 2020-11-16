@@ -2,8 +2,6 @@
 Code for 2D rendering, using pygame (without OpenGL)
 """
 
-from rlberry.rendering import *
-
 import numpy as np
 from os import environ
 from rlberry.rendering import Scene
