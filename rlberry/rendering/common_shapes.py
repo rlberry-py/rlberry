@@ -3,7 +3,7 @@ from rlberry.rendering import Scene, GeometricPrimitive, RenderInterface2D
 
 
 def bar_shape(p0, p1, width):
-    shape = GeometricPrimitive("GL_QUADS")
+    shape = GeometricPrimitive("QUADS")
 
     x0, y0 = p0 
     x1, y1 = p1
@@ -27,7 +27,7 @@ def bar_shape(p0, p1, width):
 
 
 def circle_shape(center, radius, n_points=50):
-    shape = GeometricPrimitive("GL_POLYGON")
+    shape = GeometricPrimitive("POLYGON")
 
     x0, y0 = center
     theta = np.linspace(0.0, 2*np.pi, n_points)

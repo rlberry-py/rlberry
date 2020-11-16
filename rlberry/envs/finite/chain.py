@@ -84,7 +84,7 @@ class Chain(FiniteMDP, RenderInterface2D):
         bg = Scene()
         colors = [(0.8, 0.8, 0.8), (0.9, 0.9, 0.9)]
         for ii in range(self.L):
-            shape = GeometricPrimitive("GL_QUADS")
+            shape = GeometricPrimitive("QUADS")
             shape.add_vertex((ii, 0))
             shape.add_vertex((ii + 1, 0))
             shape.add_vertex((ii + 1, 1))
@@ -92,7 +92,7 @@ class Chain(FiniteMDP, RenderInterface2D):
             shape.set_color(colors[ii % 2])
             bg.add_shape(shape)
 
-        flag = GeometricPrimitive("GL_TRIANGLES")
+        flag = GeometricPrimitive("TRIANGLES")
         flag.set_color((0.0, 0.5, 0.0))
         x = self.L - 0.5
         y = 0.25
@@ -109,7 +109,7 @@ class Chain(FiniteMDP, RenderInterface2D):
         """
         scene = Scene()
 
-        agent = GeometricPrimitive("GL_QUADS")
+        agent = GeometricPrimitive("QUADS")
         agent.set_color((0.75, 0.0, 0.5))
 
         size = 0.25

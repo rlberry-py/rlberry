@@ -239,7 +239,7 @@ class Acrobot(Model, RenderInterface2D):
         joint2 = circle_shape(p1, 0.075)
         joint2.set_color((255/255, 215/255, 0/255))
 
-        goal_line = GeometricPrimitive("GL_LINES")
+        goal_line = GeometricPrimitive("LINES")
         goal_line.add_vertex((-5, 1))
         goal_line.add_vertex(( 5, 1))
 

@@ -136,8 +136,8 @@ class MountainCar(Model, RenderInterface2D):
 
     def get_background(self):
         bg = Scene()
-        mountain = GeometricPrimitive("GL_TRIANGLE_FAN")
-        flag = GeometricPrimitive("GL_TRIANGLES")
+        mountain = GeometricPrimitive("TRIANGLE_FAN")
+        flag = GeometricPrimitive("TRIANGLES")
         mountain.set_color((0.6, 0.3, 0.0))
         flag.set_color((0.0, 0.5, 0.0))
 
@@ -169,7 +169,7 @@ class MountainCar(Model, RenderInterface2D):
     def get_scene(self, state):
         scene = Scene()
 
-        agent = GeometricPrimitive("GL_QUADS")
+        agent = GeometricPrimitive("QUADS")
         agent.set_color((0.0, 0.0, 0.0))
         size = 0.025
         x = state[0]

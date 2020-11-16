@@ -291,7 +291,7 @@ class GridWorld(FiniteMDP, RenderInterface2D):
         # walls
         for wall in self.walls:
             y, x = wall
-            shape = GeometricPrimitive("GL_QUADS")
+            shape = GeometricPrimitive("POLYGON")
             shape.set_color((0.25, 0.25, 0.25))
             shape.add_vertex((x, y))
             shape.add_vertex((x + 1, y))
@@ -301,7 +301,7 @@ class GridWorld(FiniteMDP, RenderInterface2D):
 
         # rewards
         for (y, x) in self.reward_at:
-            flag = GeometricPrimitive("GL_TRIANGLES")
+            flag = GeometricPrimitive("POLYGON")
             rwd = self.reward_at[(y, x)]
             if rwd > 0:
                 flag.set_color((0.0, 0.5, 0.0))
@@ -327,21 +327,9 @@ class GridWorld(FiniteMDP, RenderInterface2D):
 
         scene = Scene()
 
-        agent = circle_shape( (x, y), 0.25, n_points=25)
+        agent = circle_shape( (x, y), 0.25, n_points=5)
+        agent.type = "POLYGON"
         agent.set_color((0.75, 0.0, 0.5))
-
-        # agent = GeometricPrimitive("GL_QUADS")
-        # agent.set_color((0.75, 0.0, 0.5))
-        # size = 0.25
-        # agent.add_vertex((x - size / 4.0, y - size))
-        # agent.add_vertex((x + size / 4.0, y - size))
-        # agent.add_vertex((x + size / 4.0, y + size))
-        # agent.add_vertex((x - size / 4.0, y + size))
-
-        # agent.add_vertex((x - size, y - size / 4.0))
-        # agent.add_vertex((x + size, y - size / 4.0))
-        # agent.add_vertex((x + size, y + size / 4.0))
-        # agent.add_vertex((x - size, y + size / 4.0))
 
         scene.add_shape(agent)
         return scene

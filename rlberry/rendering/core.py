@@ -19,18 +19,25 @@ class GeometricPrimitive:
     """
     Class representing an OpenGL geometric primitive.
 
-     * Primitive type (GL_LINE_LOOP by defaut)
-     * Possibilities:
-     *      GL_POINTS
-     *      GL_LINES
-     *      GL_LINE_STRIP
-     *      GL_LINE_LOOP
-     *      GL_POLYGON
-     *      GL_TRIANGLES
-     *      GL_TRIANGLE_STRIP
-     *      GL_TRIANGLE_FAN
-     *      GL_QUADS
-     *      GL_QUAD_STRIP
+     Primitive type (GL_LINE_LOOP by defaut)
+     
+     If using OpenGLRender2D, one of the following:
+           POINTS
+           LINES
+           LINE_STRIP
+           LINE_LOOP
+           POLYGON
+           TRIANGLES
+           TRIANGLE_STRIP
+           TRIANGLE_FAN
+           QUADS
+           QUAD_STRIP
+    
+    If using PyGameRender2D:
+            POLYGON
+    
+
+    TODO: Add support to more pygame shapes, see https://www.pygame.org/docs/ref/draw.html
     """
 
     def __init__(self, primitive_type="GL_LINE_LOOP"):

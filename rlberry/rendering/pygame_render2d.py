@@ -25,7 +25,7 @@ class PyGameRender2D:
         # parameters
         self.window_width = 800
         self.window_height = 800    # multiples of 16 are preferred 
-        self.background_color = (0.6*255, 0.75*255, 1.0*255)
+        self.background_color = (150, 190, 255)
         self.refresh_interval = 50
         self.window_name = "rlberry render"
         self.clipping_area = (-1.0, 1.0, -1.0, 1.0)
@@ -94,7 +94,7 @@ class PyGameRender2D:
         """
         Draw a 2D shape, of type GeometricPrimitive
         """
-        if shape.type in ['GL_POLYGON', 'GL_QUADS', 'GL_TRIANGLES']:
+        if shape.type in ['POLYGON']:
             area = self.clipping_area
             width_range = area[1] - area[0]
             height_range = area[3] - area[2]

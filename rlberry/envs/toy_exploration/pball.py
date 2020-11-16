@@ -244,7 +244,7 @@ class PBall2D(PBall, RenderInterface2D):
     #
 
     def _get_ball_shape(self, xcenter, radius):
-        shape = GeometricPrimitive("GL_POLYGON")
+        shape = GeometricPrimitive("POLYGON")
         n_points = 200
         theta_vals = np.linspace(0.0, 2 * np.pi, n_points)
         for theta in theta_vals:
@@ -276,7 +276,7 @@ class PBall2D(PBall, RenderInterface2D):
     def get_scene(self, state):
         scene = Scene()
 
-        agent = GeometricPrimitive("GL_QUADS")
+        agent = GeometricPrimitive("QUADS")
         agent.set_color((0.75, 0.0, 0.5))
         size = 0.05
         x = state[0]

@@ -108,25 +108,25 @@ class OpenGLRender2D:
         """
         Draw a 2D shape, of type GeometricPrimitive
         """
-        if shape.type == "GL_POINTS":
+        if shape.type == "POINTS":
             glBegin(GL_POINTS)
-        elif shape.type == "GL_LINES":
+        elif shape.type == "LINES":
             glBegin(GL_LINES)
-        elif shape.type == "GL_LINE_STRIP":
+        elif shape.type == "LINE_STRIP":
             glBegin(GL_LINE_STRIP)
-        elif shape.type == "GL_LINE_LOOP":
+        elif shape.type == "LINE_LOOP":
             glBegin(GL_LINE_LOOP)
-        elif shape.type == "GL_POLYGON":
+        elif shape.type == "POLYGON":
             glBegin(GL_POLYGON)
-        elif shape.type == "GL_TRIANGLES":
+        elif shape.type == "TRIANGLES":
             glBegin(GL_TRIANGLES)
-        elif shape.type == "GL_TRIANGLE_STRIP":
+        elif shape.type == "TRIANGLE_STRIP":
             glBegin(GL_TRIANGLE_STRIP)
-        elif shape.type == "GL_TRIANGLE_FAN":
+        elif shape.type == "TRIANGLE_FAN":
             glBegin(GL_TRIANGLE_FAN)
-        elif shape.type == "GL_QUADS":
+        elif shape.type == "QUADS":
             glBegin(GL_QUADS)
-        elif shape.type == "GL_QUAD_STRIP":
+        elif shape.type == "QUAD_STRIP":
             glBegin(GL_QUAD_STRIP)
         else:
             print("Invalid type for geometric primitive!")

@@ -1,6 +1,7 @@
 import pytest
 
 from rlberry.envs.classic_control import MountainCar
+from rlberry.envs.classic_control import Acrobot
 from rlberry.envs.finite import Chain
 from rlberry.envs.finite import GridWorld
 from rlberry.envs.toy_exploration import PBall2D
@@ -10,6 +11,7 @@ from rlberry.rendering import RenderInterface2D
 
 
 classes = [
+    Acrobot, 
     MountainCar,
     GridWorld,
     Chain,
