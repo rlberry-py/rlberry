@@ -6,7 +6,7 @@ Mountain Car environment adapted from OpenAI gym [1].
 * also implemented as a generative model (in addition to an online model)
 * render function follows the rlberry rendering interface.
 
-[1] https://raw.githubusercontent.com/openai/gym/master/gym/envs/classic_control/mountain_car.py
+[1] https://github.com/openai/gym/blob/master/gym/envs/classic_control/mountain_car.py
 """
 
 import math
