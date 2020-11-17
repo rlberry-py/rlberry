@@ -16,11 +16,17 @@
 
 # Install
 
-To install, first create a virtual environment using Anaconda or [Miniconda](https://docs.conda.io/en/latest/miniconda.html) (suggested):
+To install rlberry on your own device, first create a virtual environment using Anaconda or [Miniconda](https://docs.conda.io/en/latest/miniconda.html) (suggested):
 
 ```
 conda create -n rlberry python=3.7
 conda activate rlberry
+```
+
+Clone the repository to your device and
+
+```
+cd PATH/TO/YOUR/LOCAL/REPO
 pip install -e .
 ```
 
