@@ -20,6 +20,7 @@ class AgentStats:
                  init_kwargs={}, 
                  fit_kwargs={}, 
                  policy_kwargs={}, 
+                 agent_name=None,
                  nfit=4, 
                  njobs=4, 
                  verbose=5):
@@ -38,6 +39,8 @@ class AgentStats:
             Arguments required to train the agent.
         policy_kwargs : dict 
             Arguments required to call agent.policy().
+        agent_name : str
+            Name of the agent. If None, set to agent_class.name
         nfit : int
             Number of agent instances to fit.
         njobs : int 
@@ -48,9 +51,12 @@ class AgentStats:
         # agent_class should only be None when the constructor is called 
         # by the class method AgentStats.load(), since the agent class will be loaded.
         if agent_class is not None: 
-            self.agent_name = agent_class.name
-            self.fit_info = agent_class.fit_info
 
+            self.agent_name = agent_name
+            if agent_name is None:
+                self.agent_name = agent_class.name
+            
+            self.fit_info = agent_class.fit_info
             self.agent_class = agent_class
             self.train_env = train_env
             if eval_env is None:
