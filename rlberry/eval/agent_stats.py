@@ -17,6 +17,7 @@ class AgentStats:
                  agent_class, 
                  train_env, 
                  eval_env=None, 
+                 eval_horizon=None,
                  init_kwargs={}, 
                  fit_kwargs={}, 
                  policy_kwargs={}, 
@@ -65,6 +66,8 @@ class AgentStats:
             else:
                 self.eval_env = deepcopy(eval_env)
                 self.eval_env.reseed()
+
+            self.eval_horizon = eval_horizon
             # init and fit kwargs are deep copied in fit()
             self.init_kwargs = init_kwargs
             self.fit_kwargs =  fit_kwargs
@@ -173,7 +176,7 @@ def plot_episode_rewards(agent_stats_list, cumulative=False, fignum=None, show=T
         plt.show()
 
 
-def compare_policies(agent_stats_list, eval_env, eval_horizon, stationary_policy=True, nsim=10, fignum=None, show=True):
+def compare_policies(agent_stats_list, eval_env=None, eval_horizon=None, stationary_policy=True, nsim=10, fignum=None, show=True):
     """
     Compare the policies of each of the agents in agent_stats_list. 
     Each element of the agent_stats_list contains a list of fitted agents. 
@@ -189,9 +192,9 @@ def compare_policies(agent_stats_list, eval_env, eval_horizon, stationary_policy
     ----------
     agent_stats_list : list of AgentStats objects.
     eval_env : Model
-        Environment where to evaluate the policies.
-    eval_horion : int 
-        Number of time steps for policy evaluation.
+        Environment where to evaluate the policies. If None, it is taken from AgentStats.
+    eval_horizon : int 
+        Number of time steps for policy evaluation. If None, it is taken from AgentStats.
     stationary_policy : bool
         If False, the time step h (0<= h <= eval_horizon) is sent as input to agent.policy() for policy evaluation.
     nsim : int 
@@ -200,6 +203,8 @@ def compare_policies(agent_stats_list, eval_env, eval_horizon, stationary_policy
     #
     # evaluation 
     # 
+    use_eval_from_agent_stats = (eval_env is None) 
+    use_horizon_from_agent_stats = (eval_horizon is None) 
 
     rng = seeding.get_rng()
     plt.figure(fignum)
@@ -208,6 +213,14 @@ def compare_policies(agent_stats_list, eval_env, eval_horizon, stationary_policy
         # train agents if they are not already trained
         if agent_stats.fitted_agents is None:
             agent_stats.fit()
+
+        # eval env and horizon
+        if use_eval_from_agent_stats:
+            eval_env = agent_stats.eval_env
+            assert eval_env is not None, "eval_env not given in AgentStats %s" % agent_stats.agent_name
+        if use_horizon_from_agent_stats:
+            eval_horizon = agent_stats.eval_horizon
+            assert eval_horizon is not None, "eval_horizon not given in AgentStats %s" % agent_stats.agent_name
 
         # evaluate agent 
         episode_rewards = np.zeros(nsim)
@@ -256,7 +269,7 @@ def compare_policies(agent_stats_list, eval_env, eval_horizon, stationary_policy
         ax = sns.boxplot(data=output)
         ax.set_xlabel("agent")
         ax.set_ylabel("rewards in one episode")
-        plt.title("Environment = %s"%eval_env.name)
+        plt.title("Environment = %s"%eval_env.unwrapped.name)
         if show:
             plt.show()
     
