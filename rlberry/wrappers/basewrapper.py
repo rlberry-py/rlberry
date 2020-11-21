@@ -54,7 +54,7 @@ class Wrapper(Model):
 
     @property
     def unwrapped(self):
-        return self.env
+        return self.env.unwrapped
 
     def __getattr__(self, attr):
         """
@@ -98,4 +98,7 @@ class Wrapper(Model):
             return True 
         except Exception as ex:
             return False 
+    
+    def __str__(self):
+        return '<{}{}>'.format(type(self).__name__, self.env)
 

@@ -12,7 +12,7 @@ env = Wrapper(gym_env)
 # rescake rewards to [0, 1]
 env = RescaleRewardWrapper(env, (0.0, 1.0))
 
-agent = RSUCBVIAgent(env, n_episodes=200, gamma=0.99, horizon=200, bonus_scale_factor=0.1, min_dist=0.2, verbose=4)
+agent = RSUCBVIAgent(env, n_episodes=10, gamma=0.99, horizon=200, bonus_scale_factor=0.1, min_dist=0.2, verbose=4)
 agent.fit()
 
 state = env.reset()

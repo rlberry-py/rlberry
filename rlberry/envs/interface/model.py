@@ -119,5 +119,9 @@ class Model:
                 return False 
             else:
                 raise
+    
+    @property
+    def unwrapped(self):
+        return self
 
 
