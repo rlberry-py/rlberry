@@ -1,6 +1,6 @@
 import numpy as np
 from rlberry.agents.cem import CEMAgent
-from rlberry.envs.toy_exploration import PBall2D
+from rlberry.envs.benchmarks.ball_exploration import PBall2D
 
 import rlberry.seeding as seeding 
 

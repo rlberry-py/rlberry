@@ -1,6 +1,6 @@
 import numpy as np
+from rlberry.envs.benchmarks.ball_exploration import PBall2D
 
-from rlberry.envs.toy_exploration import PBall2D
 
 p = 5
 A = np.array([

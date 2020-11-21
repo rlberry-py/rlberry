@@ -4,8 +4,7 @@ from rlberry.envs.classic_control import MountainCar
 from rlberry.envs.classic_control import Acrobot
 from rlberry.envs.finite import Chain
 from rlberry.envs.finite import GridWorld
-from rlberry.envs.toy_exploration import PBall2D
-from rlberry.envs.toy_exploration import SimplePBallND
+from rlberry.envs.benchmarks.ball_exploration import PBall2D, SimplePBallND
 from rlberry.rendering import RenderInterface
 from rlberry.rendering import RenderInterface2D
 

@@ -1,5 +1,5 @@
 import rlberry.seeding as seeding
-from rlberry.envs import PBall2D
+from rlberry.envs.benchmarks.ball_exploration import PBall2D
 from rlberry.agents import RSKernelUCBVIAgent, RSUCBVIAgent
 from rlberry.agents.ppo import PPOAgent
 from rlberry.wrappers import RescaleRewardWrapper

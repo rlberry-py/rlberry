@@ -7,8 +7,8 @@ from copy import deepcopy
 from rlberry.envs.classic_control import MountainCar, Acrobot
 from rlberry.envs.finite import Chain
 from rlberry.envs.finite import GridWorld
-from rlberry.envs.toy_exploration import PBall2D
-from rlberry.envs.toy_exploration import SimplePBallND
+from rlberry.envs.benchmarks.ball_exploration import PBall2D, SimplePBallND
+
 
 classes = [
     MountainCar,
