@@ -101,7 +101,7 @@ class PPOAgent(Agent):
                  n_episodes=4000,
                  horizon=256,
                  gamma=0.99,
-                 lr=0.0003,
+                 learning_rate=0.0003,
                  eps_clip=0.2,
                  k_epochs=10,
                  verbose=1,
@@ -115,7 +115,7 @@ class PPOAgent(Agent):
             Horizon of the objective function. If None and gamma<1, set to 1/(1-gamma).
         gamma : double
             Discount factor in [0, 1]. If gamma is 1.0, the problem is set to be finite-horizon.
-        lr : double
+        learning_rate : double
             Learning rate.
         eps_clip : double
             PPO clipping range (epsilon).
@@ -126,7 +126,7 @@ class PPOAgent(Agent):
         """
         Agent.__init__(self, env, **kwargs)
 
-        self.lr = lr
+        self.learning_rate = learning_rate
         self.gamma = gamma
         self.eps_clip = eps_clip
         self.k_epochs = k_epochs
@@ -148,7 +148,7 @@ class PPOAgent(Agent):
 
     def reset(self, **kwargs):
         self.cat_policy = ActorCritic(self.state_dim, self.action_dim).to(device)
-        self.optimizer = torch.optim.Adam(self.cat_policy.parameters(), lr=self.lr, betas=(0.9, 0.999))
+        self.optimizer = torch.optim.Adam(self.cat_policy.parameters(), lr=self.learning_rate, betas=(0.9, 0.999))
 
         self.cat_policy_old = ActorCritic(self.state_dim, self.action_dim).to(device)
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
@@ -285,3 +285,16 @@ class PPOAgent(Agent):
 
         # copy new weights into old policy
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
+    
+
+    #
+    # for hyperparam optim
+    # 
+
+    @classmethod
+    def sample_parameters(cls, trial):
+        learning_rate = trial.suggest_loguniform('learning_rate', 1e-5, 1)
+
+        return {
+                'learning_rate': learning_rate,
+               }

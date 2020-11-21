@@ -32,6 +32,8 @@ class Agent(ABC):
         returns the action to be taken given an observation
     reset()
         puts the agent in default setup (optional)
+    sample_parameters(), optional
+        returns dictionary with sampled hyperparameters.
     save(), optional
         save agent 
     load(), optional
@@ -75,3 +77,14 @@ class Agent(ABC):
 
     def load(self, **kwargs):
         pass
+
+    @classmethod
+    def sample_parameters(cls, trial):
+        """
+        Sample hyperparameters for hyperparam optimization using Optuna (https://optuna.org/)
+
+        Parameters
+        ----------
+        trial: optuna.trial
+        """
+        raise NotImplementedError("Agent does not implement sample_parameters() for hyperparameter optimization.")

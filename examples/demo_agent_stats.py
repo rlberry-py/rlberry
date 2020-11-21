@@ -41,7 +41,7 @@ params = {
 params_ppo = {"n_episodes" : N_EPISODES,
               "gamma" : GAMMA,
               "horizon" : HORIZON,
-              "lr": 0.0003}
+              "learning_rate": 0.0003}
 
 # -----------------------------
 # Run AgentStats
