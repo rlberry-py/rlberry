@@ -21,20 +21,29 @@ To install rlberry on your own device, first create a virtual environment using 
 ```
 conda create -n rlberry python=3.7
 conda activate rlberry
-```
-
-Clone the repository to your device and
-
-```
-cd PATH/TO/YOUR/LOCAL/REPO
+git clone https://github.com/rlberry-py/rlberry.git
 pip install -e .
 ```
 
 Or you can also install directly (not suggested):
 
 ```
+git clone https://github.com/rlberry-py/rlberry.git
 python3 -m pip install -e .
 ```
+
+# Optional dependencies
+
+* For saving videos: [ffmpeg-python](https://github.com/kkroening/ffmpeg-python) 
+```
+pip install ffmpeg-python
+```
+
+* For hyperparameter optimization: [optuna](https://optuna.org/#installation)
+```
+pip install optuna
+```
+
 
 # Tests
 
@@ -48,23 +57,13 @@ bash run_tests.sh
 See coverage report in `cov_html/index.html`.
 
 
-# Notes
 
-* To save videos, installing [ffmpeg-python](https://github.com/kkroening/ffmpeg-python) is required:
+# Implementation notes
 
-```
-pip install ffmpeg-python
-```
+* When inheriting from the `Agent` class, make sure to call `Agent.__init__(self, env, **kwargs)` using `**kwargs` in case new features are added to the base class, and to make sure that `copy_env` and `reseed_env` are always an option to any agent. 
 
 * Convention for verbose in the agents:
     * `verbose=0`: nothing is printed
     * `verbose>1`: print progress messages
 
 Errors and warnings are printed using the `logging` library.
-
-
-# Implementation notes
-
-* When inheriting from the `Agent` class, make sure to call `Agent.__init__(self, env, **kwargs)` using `**kwargs` in case new features are added to the base class, and to make sure that `copy_env` and `reseed_env` are always an option to any agent. 
-
-
