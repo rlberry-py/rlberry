@@ -3,9 +3,10 @@ import pytest
 import rlberry.seeding as seeding 
 
 from rlberry.envs.classic_control import MountainCar
-from rlberry.envs.finite import FiniteMDP
+from rlberry.envs.finite import FiniteMDP, GridWorld
 from rlberry.wrappers.discretize_state import DiscretizeStateWrapper
 from rlberry.wrappers.rescale_reward import RescaleRewardWrapper
+from rlberry.wrappers.autoreset import AutoResetWrapper
 
 
 @pytest.mark.parametrize("n_bins", list(range(1, 10)))
@@ -104,3 +105,25 @@ def test_rescale_reward_2(rmin, rmax):
     for x in xx:
         y = wrapped._rescale(x)
         assert y >= rmin-tol and y <= rmax+tol
+
+
+@pytest.mark.parametrize("horizon", list(range(1, 10)))
+def test_autoreset(horizon):
+
+    # dummy MDP
+    S, A = 5, 2
+    R = np.ones((S, A))
+    P = np.ones((S, A, S))
+    for ss in range(S):
+        for aa in range(A):
+            P[ss, aa, :] /= P[ss, aa, :].sum()
+    env = FiniteMDP(R, P, initial_state_distribution=3) # initial state = 3
+    env = AutoResetWrapper(env, horizon)
+
+    state = env.reset()
+    for tt in range(5*horizon+1):
+        action = env.action_space.sample()
+        next_s, reward, done, info = env.step(action)
+        if (tt+1) % horizon == 0:
+            assert next_s == 3
+        state = next_s
