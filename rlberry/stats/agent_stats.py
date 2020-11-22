@@ -239,7 +239,7 @@ class AgentStats:
                 raise NotImplementedError("Pruner method %s is not implemented."%pruner_method)
 
             # optuna study
-            study = optuna.create_study(sampler=sampler, pruner=pruner)
+            study = optuna.create_study(sampler=sampler, pruner=pruner, direction='maximize')
             self.study = study
 
         def objective(trial):
