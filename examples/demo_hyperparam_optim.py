@@ -40,13 +40,30 @@ ppo_stats = AgentStats(PPOAgent, train_env, eval_horizon=HORIZON, init_kwargs=pa
 
 
 # hyperparam optim
-best_trial, data  = ppo_stats.optimize_hyperparams(ntrials=100, max_time=10, n_sim=5, n_fit=2, n_jobs=2, 
+best_trial, data  = ppo_stats.optimize_hyperparams(n_trials=10, max_time=None, n_sim=5, n_fit=2, n_jobs=2, 
                            sampler_method='random', pruner_method='halving')
 
+initial_n_trials = len(ppo_stats.study.trials)
+
 # save 
-ppo_stats.save('ppo_stats')
+ppo_stats.save('ppo_stats_backup')
+del ppo_stats
+
+# load 
+ppo_stats = AgentStats.load('ppo_stats_backup')
+
+# continue previous optimization
+best_trial, data  = ppo_stats.optimize_hyperparams(n_trials=10, max_time=None, n_sim=5, n_fit=2, n_jobs=2, 
+                           continue_previous=True)
+
+print("number of initial trials = ", initial_n_trials)
+print("number of trials after continuing= ", len(ppo_stats.study.trials))
 
 
+
+
+
+print("----")
 print("fitting agents after choosing hyperparams...")
 ppo_stats.fit()  # fit the 4 agents 
 

@@ -102,6 +102,10 @@ class AgentStats:
             # 
             self.rng = seeding.get_rng()
 
+            # optuna study
+            self.study = None 
+
+
     def fit(self):
         if self.verbose > 0:
             print("\n Training AgentStats for %s... \n" % self.agent_name)
@@ -151,8 +155,8 @@ class AgentStats:
         return obj
 
 
-    def optimize_hyperparams(self, ntrials=5, max_time=60, n_sim=5, n_fit=2, n_jobs=2, 
-                             sampler_method='random', pruner_method='halving'):
+    def optimize_hyperparams(self, n_trials=5, max_time=60, n_sim=5, n_fit=2, n_jobs=2, 
+                             sampler_method='random', pruner_method='halving', continue_previous=False):
         """ 
         Run hyperparameter optimization and updates init_kwargs with the best hyperparameters found.
 
@@ -160,7 +164,7 @@ class AgentStats:
 
         Parameters
         ----------
-        ntrials: int 
+        n_trials: int 
             Mumber of agent evaluations 
         max_time: int 
             Maximum time (in seconds) to run optimization. Set to None for unlimited time.
@@ -174,6 +178,9 @@ class AgentStats:
             Optuna sampling method.
         pruner_method : str
             Optuna pruner method.
+        continue_previous : bool
+            Set to true to continue previous optuna study. If true, sampler_method and pruner_method will be 
+            the same as in the previous study.
         """
         global _OPTUNA_INSTALLED
         if not _OPTUNA_INSTALLED:
@@ -182,20 +189,29 @@ class AgentStats:
         
         assert self.eval_horizon is not None, "To use optimize_hyperparams(), eval_horizon must be given to AgentStats."
 
-        # get sampler
-        if sampler_method == 'random':
-            sampler = optuna.samplers.RandomSampler(seed=self.rng.integers(2**16))
-        else:
-            raise NotImplementedError("Sampler method %s is not implemented."%sampler_method)
-        
-        # get pruner 
-        if pruner_method == 'halving':
-            pruner = optuna.pruners.SuccessiveHalvingPruner(min_resource=1, reduction_factor=4, min_early_stopping_rate=0)
-        else:
-            raise NotImplementedError("Pruner method %s is not implemented."%pruner_method)
+        #
+        # Create optuna study
+        #
+        if continue_previous:
+            assert self.study is not None 
+            study = self.study
 
-        # optuna study
-        study = optuna.create_study(sampler=sampler, pruner=pruner)
+        else: 
+            # get sampler
+            if sampler_method == 'random':
+                sampler = optuna.samplers.RandomSampler(seed=self.rng.integers(2**16))
+            else:
+                raise NotImplementedError("Sampler method %s is not implemented."%sampler_method)
+            
+            # get pruner 
+            if pruner_method == 'halving':
+                pruner = optuna.pruners.SuccessiveHalvingPruner(min_resource=1, reduction_factor=4, min_early_stopping_rate=0)
+            else:
+                raise NotImplementedError("Pruner method %s is not implemented."%pruner_method)
+
+            # optuna study
+            study = optuna.create_study(sampler=sampler, pruner=pruner)
+            self.study = study
 
         def objective(trial):
             kwargs = deepcopy(self.init_kwargs)
@@ -242,7 +258,7 @@ class AgentStats:
             signal.alarm(max_time)
 
         try:
-            study.optimize(objective, n_trials=ntrials, n_jobs=n_jobs)
+            study.optimize(objective, n_trials=n_trials, n_jobs=n_jobs)
         except:
             logging.warning("Evaluation timed out!")
         finally:
