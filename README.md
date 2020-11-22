@@ -4,6 +4,8 @@
 
 ![pytest](https://github.com/rlberry-py/rlberry/workflows/test/badge.svg)
 
+## [Try it on Google Colab! ![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://github.com/rlberry-py/rlberry/blob/main/notebooks/introduction_to_rlberry.ipynb)
+
 # Goals
 
 * Write detailed documentation and comprehensible tutorial/examples (Jupyter Notebook) for each implemented algorithm.
