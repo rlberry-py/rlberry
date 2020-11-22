@@ -173,18 +173,17 @@ class AgentStats:
 
 
     def optimize_hyperparams(self, n_trials=5, timeout=60, n_sim=5, n_fit=2, n_jobs=2, 
-                             sampler_method='random', pruner_method='halving', continue_previous=False):
+                             sampler_method='random', pruner_method='none', continue_previous=False):
         """ 
         Run hyperparameter optimization and updates init_kwargs with the best hyperparameters found.
+
+        Note: pruning not yet implemented. 
 
 
         Currently supported sampler_method:
             'random'
             'optuna_default'
 
-        Currently suppoerted pruner_method:
-            'none'
-            'halving'
 
         Parameters
         ----------

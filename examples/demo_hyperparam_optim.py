@@ -41,7 +41,7 @@ ppo_stats = AgentStats(PPOAgent, train_env, eval_horizon=HORIZON, init_kwargs=pa
 
 # hyperparam optim
 best_trial, data  = ppo_stats.optimize_hyperparams(n_trials=10, timeout=None, n_sim=5, n_fit=2, n_jobs=2, 
-                           sampler_method='optuna_default', pruner_method='halving')
+                           sampler_method='optuna_default')
 
 initial_n_trials = len(ppo_stats.study.trials)
 
