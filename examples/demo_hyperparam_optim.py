@@ -36,11 +36,11 @@ params_ppo = {"n_episodes" : N_EPISODES,
 # -------------------------------
 # Run AgentStats and save results
 # --------------------------------
-ppo_stats = AgentStats(PPOAgent, train_env, eval_horizon=HORIZON, init_kwargs=params_ppo, nfit=4)
+ppo_stats = AgentStats(PPOAgent, train_env, eval_horizon=HORIZON, init_kwargs=params_ppo, n_fit=4)
 
 
 # hyperparam optim
-best_trial, data  = ppo_stats.hyperparam_optim(ntrials=100, max_time=10, nsim=5, nfit=2, njobs=2, 
+best_trial, data  = ppo_stats.optimize_hyperparams(ntrials=100, max_time=10, n_sim=5, n_fit=2, n_jobs=2, 
                            sampler_method='random', pruner_method='halving')
 
 # save 

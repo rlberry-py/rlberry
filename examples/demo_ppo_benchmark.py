@@ -39,8 +39,8 @@ params_ppo = {"n_episodes" : N_EPISODES,
 # -----------------------------
 # Run AgentStats
 # -----------------------------
-oracle_stats = AgentStats(MBQVIAgent, d_train_env, init_kwargs=params_oracle, nfit=4, agent_name="Oracle")
-ppo_stats    = AgentStats(PPOAgent,   train_env,   init_kwargs=params_ppo,    nfit=4, agent_name="PPO")
+oracle_stats = AgentStats(MBQVIAgent, d_train_env, init_kwargs=params_oracle, n_fit=4, agent_name="Oracle")
+ppo_stats    = AgentStats(PPOAgent,   train_env,   init_kwargs=params_ppo,    n_fit=4, agent_name="PPO")
 
 agent_stats_list = [oracle_stats, ppo_stats]
 
@@ -48,5 +48,5 @@ agent_stats_list = [oracle_stats, ppo_stats]
 plot_episode_rewards(agent_stats_list, cumulative=True, show=False)
 
 # compare final policies
-output = compare_policies(agent_stats_list, eval_horizon=HORIZON, nsim=10)
+output = compare_policies(agent_stats_list, eval_horizon=HORIZON, n_sim=10)
 print(output)

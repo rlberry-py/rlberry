@@ -34,8 +34,8 @@ class AgentStats:
                  fit_kwargs={}, 
                  policy_kwargs={}, 
                  agent_name=None,
-                 nfit=4, 
-                 njobs=4, 
+                 n_fit=4, 
+                 n_jobs=4, 
                  verbose=5):
         """
         Parameters
@@ -54,9 +54,9 @@ class AgentStats:
             Arguments required to call agent.policy().
         agent_name : str
             Name of the agent. If None, set to agent_class.name
-        nfit : int
+        n_fit : int
             Number of agent instances to fit.
-        njobs : int 
+        n_jobs : int 
             Number of jobs to train the agents in parallel using joblib.
         verbose : int 
             Verbosity level.
@@ -84,13 +84,13 @@ class AgentStats:
             self.init_kwargs = init_kwargs
             self.fit_kwargs =  fit_kwargs
             self.policy_kwargs = deepcopy(policy_kwargs)
-            self.nfit = nfit
-            self.njobs = njobs
+            self.n_fit = n_fit
+            self.n_jobs = n_jobs
             self.verbose = verbose
 
             # Create environment copies for training
             self.train_env_set = []
-            for ii in range(nfit):
+            for ii in range(n_fit):
                 _env = deepcopy(train_env)
                 _env.reseed()
                 self.train_env_set.append(_env)
@@ -108,7 +108,7 @@ class AgentStats:
         args = [(self.agent_class, train_env, deepcopy(self.init_kwargs), deepcopy(self.fit_kwargs))
                 for train_env in self.train_env_set]
 
-        workers_output = Parallel(n_jobs=self.njobs, verbose=self.verbose)(
+        workers_output = Parallel(n_jobs=self.n_jobs, verbose=self.verbose)(
             delayed(_fit_worker)(arg) for arg in args)
 
         self.fitted_agents, stats = (
@@ -151,8 +151,8 @@ class AgentStats:
         return obj
 
 
-    def hyperparam_optim(self, ntrials=5, max_time=60, nsim=5, nfit=2, njobs=2, 
-                         sampler_method='random', pruner_method='halving'):
+    def optimize_hyperparams(self, ntrials=5, max_time=60, n_sim=5, n_fit=2, n_jobs=2, 
+                             sampler_method='random', pruner_method='halving'):
         """ 
         Run hyperparameter optimization and updates init_kwargs with the best hyperparameters found.
 
@@ -164,11 +164,11 @@ class AgentStats:
             Mumber of agent evaluations 
         max_time: int 
             Maximum time (in seconds) to run optimization. Set to None for unlimited time.
-        nsim : int 
+        n_sim : int 
             Number of Monte Carlo simulations to evaluate a policy.
-        nfit: int
+        n_fit: int
             Number of agents to fit for each hyperparam evaluation.
-        njobs: int
+        n_jobs: int
             Number of jobs to fit agents for each hyperparam evaluation, and also the number of jobs of optuna.
         sampler_method : str
             Optuna sampling method.
@@ -177,10 +177,10 @@ class AgentStats:
         """
         global _OPTUNA_INSTALLED
         if not _OPTUNA_INSTALLED:
-            logging.warning("Optuna not installed, hyperparam_optim() cannot be run.")
+            logging.warning("Optuna not installed, optimize_hyperparams() cannot be run.")
             return 
         
-        assert self.eval_horizon is not None, "To use hyperparam_optim(), eval_horizon must be given to AgentStats."
+        assert self.eval_horizon is not None, "To use optimize_hyperparams(), eval_horizon must be given to AgentStats."
 
         # get sampler
         if sampler_method == 'random':
@@ -213,8 +213,8 @@ class AgentStats:
                                         fit_kwargs=deepcopy(self.fit_kwargs),
                                         policy_kwargs=deepcopy(self.policy_kwargs),
                                         agent_name='optim',
-                                        nfit=nfit,
-                                        njobs=njobs,
+                                        n_fit=n_fit,
+                                        n_jobs=n_jobs,
                                         verbose=0)
             
             # Fit and evaluate params_stats
@@ -228,7 +228,7 @@ class AgentStats:
                                             eval_env=params_eval_env, 
                                             eval_horizon=self.eval_horizon, 
                                             stationary_policy=True,
-                                            nsim=nsim, 
+                                            n_sim=n_sim, 
                                             plot=False)               
 
             rewards = eval_result['optim'].values.mean()
@@ -242,7 +242,7 @@ class AgentStats:
             signal.alarm(max_time)
 
         try:
-            study.optimize(objective, n_trials=ntrials, n_jobs=njobs)
+            study.optimize(objective, n_trials=ntrials, n_jobs=n_jobs)
         except:
             logging.warning("Evaluation timed out!")
         finally:
@@ -327,11 +327,11 @@ def plot_episode_rewards(agent_stats_list, cumulative=False, fignum=None, show=T
         plt.show()
 
 
-def compare_policies(agent_stats_list, eval_env=None, eval_horizon=None, stationary_policy=True, nsim=10, fignum=None, show=True, plot=True):
+def compare_policies(agent_stats_list, eval_env=None, eval_horizon=None, stationary_policy=True, n_sim=10, fignum=None, show=True, plot=True):
     """
     Compare the policies of each of the agents in agent_stats_list. 
     Each element of the agent_stats_list contains a list of fitted agents. 
-    To evaluate the policy, we repeat nsim times:
+    To evaluate the policy, we repeat n_sim times:
         * choose one of the fitted agents uniformly at random
         * run its policy in eval_env for eval_horizon time steps
     
@@ -348,7 +348,7 @@ def compare_policies(agent_stats_list, eval_env=None, eval_horizon=None, station
         Number of time steps for policy evaluation. If None, it is taken from AgentStats.
     stationary_policy : bool
         If False, the time step h (0<= h <= eval_horizon) is sent as input to agent.policy() for policy evaluation.
-    nsim : int 
+    n_sim : int 
         Number of simulations to evaluate each policy.
     fignum: string or int
         Identifier of plot figure
@@ -379,8 +379,8 @@ def compare_policies(agent_stats_list, eval_env=None, eval_horizon=None, station
             assert eval_horizon is not None, "eval_horizon not given in AgentStats %s" % agent_stats.agent_name
 
         # evaluate agent 
-        episode_rewards = np.zeros(nsim)
-        for sim in range(nsim):
+        episode_rewards = np.zeros(n_sim)
+        for sim in range(n_sim):
             # choose one of the fitted agents randomly
             agent_idx = rng.integers(len(agent_stats.fitted_agents)) 
             agent = agent_stats.fitted_agents[agent_idx]

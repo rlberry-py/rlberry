@@ -36,7 +36,7 @@ params_ppo = {"n_episodes" : N_EPISODES,
 # -------------------------------
 # Run AgentStats and save results
 # --------------------------------
-ppo_stats = AgentStats(PPOAgent, train_env, init_kwargs=params_ppo, nfit=4)
+ppo_stats = AgentStats(PPOAgent, train_env, init_kwargs=params_ppo, n_fit=4)
 ppo_stats.fit()  # fit the 4 agents 
 ppo_stats.save('ppo_stats')
 del ppo_stats
@@ -51,5 +51,5 @@ agent_stats_list = [ppo_stats]
 plot_episode_rewards(agent_stats_list, cumulative=True, show=False)
 
 # compare final policies
-output = compare_policies(agent_stats_list, eval_env, eval_horizon=HORIZON, nsim=10)
+output = compare_policies(agent_stats_list, eval_env, eval_horizon=HORIZON, n_sim=10)
 print(output)

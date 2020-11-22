@@ -45,16 +45,16 @@ def test_agent_stats():
     agent.policy(None)
 
     # Run AgentStats
-    stats_agent1 = AgentStats(DummyAgent, train_env, init_kwargs=params, nfit=4) # fit 4 agents
-    stats_agent2 = AgentStats(DummyAgent, train_env, init_kwargs=params, nfit=4)
+    stats_agent1 = AgentStats(DummyAgent, train_env, init_kwargs=params, n_fit=4) # fit 4 agents
+    stats_agent2 = AgentStats(DummyAgent, train_env, init_kwargs=params, n_fit=4)
     agent_stats_list = [stats_agent1, stats_agent2]
 
     # learning curves
     plot_episode_rewards(agent_stats_list, cumulative=True, show=False)
 
     # compare final policies
-    compare_policies(agent_stats_list, eval_env, eval_horizon=params["horizon"], nsim=10, show=False)
-    compare_policies(agent_stats_list, eval_env, eval_horizon=params["horizon"], nsim=10, show=False, stationary_policy=False)
+    compare_policies(agent_stats_list, eval_env, eval_horizon=params["horizon"], n_sim=10, show=False)
+    compare_policies(agent_stats_list, eval_env, eval_horizon=params["horizon"], n_sim=10, show=False, stationary_policy=False)
 
     # check if fitted 
     for agent_stats in agent_stats_list:
