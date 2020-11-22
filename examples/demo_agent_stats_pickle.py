@@ -3,7 +3,7 @@ from rlberry.envs.benchmarks.ball_exploration import PBall2D
 from rlberry.agents import RSKernelUCBVIAgent, RSUCBVIAgent
 from rlberry.agents.ppo import PPOAgent
 from rlberry.wrappers import RescaleRewardWrapper
-from rlberry.eval.agent_stats import AgentStats, plot_episode_rewards, compare_policies
+from rlberry.stats import AgentStats, plot_episode_rewards, compare_policies
 
 
 # global seed

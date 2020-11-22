@@ -1,13 +1,14 @@
 from copy import deepcopy
+from datetime import datetime
 from joblib import Parallel, delayed
 import logging
 import numpy as np
-import matplotlib.pyplot as plt
-import pandas as pd
+import os
 import pickle
-import seaborn as sns
-import signal
+
 import rlberry.seeding as seeding
+from rlberry.stats.evaluation import compare_policies
+
 
 _OPTUNA_INSTALLED = True 
 try:
@@ -35,7 +36,8 @@ class AgentStats:
                  policy_kwargs={}, 
                  agent_name=None,
                  n_fit=4, 
-                 n_jobs=4, 
+                 n_jobs=4,
+                 output_dir='stats_data', 
                  verbose=5):
         """
         Parameters
@@ -58,17 +60,23 @@ class AgentStats:
             Number of agent instances to fit.
         n_jobs : int 
             Number of jobs to train the agents in parallel using joblib.
+        output_dir : str
+            Directory where to store data by default.
         verbose : int 
             Verbosity level.
         """
         # agent_class should only be None when the constructor is called 
         # by the class method AgentStats.load(), since the agent class will be loaded.
         if agent_class is not None: 
-
+            
             self.agent_name = agent_name
             if agent_name is None:
                 self.agent_name = agent_class.name
             
+            # create oject identifier 
+            timestamp = datetime.timestamp(datetime.now())
+            self.identifier = 'stats_{}_{}'.format(self.agent_name, str(int(timestamp)))
+
             self.fit_info = agent_class.fit_info
             self.agent_class = agent_class
             self.train_env = train_env
@@ -86,6 +94,7 @@ class AgentStats:
             self.policy_kwargs = deepcopy(policy_kwargs)
             self.n_fit = n_fit
             self.n_jobs = n_jobs
+            self.output_dir = output_dir
             self.verbose = verbose
 
             # Create environment copies for training
@@ -104,6 +113,9 @@ class AgentStats:
 
             # optuna study
             self.study = None 
+
+            # default filename to save data 
+            self.default_filename = os.path.join(self.output_dir, self.identifier)
 
 
     def fit(self):
@@ -128,13 +140,18 @@ class AgentStats:
             for stat in stats:
                 self.fit_statistics[entry].append(stat[entry])
 
-    def save(self, filename, **kwargs):
+    def save(self, filename=None, **kwargs):
         """
         Parameters
         ----------
         filename : string
-            filename with .pickle extension 
+            Filename with .pickle extension. If None, default_filename attribute is used
         """
+        if filename is None:
+            filename = self.default_filename
+            if not os.path.exists(self.output_dir):
+                os.makedirs(self.output_dir)
+
         if filename[-7:] != '.pickle':
             filename += '.pickle'
             
@@ -155,19 +172,26 @@ class AgentStats:
         return obj
 
 
-    def optimize_hyperparams(self, n_trials=5, max_time=60, n_sim=5, n_fit=2, n_jobs=2, 
+    def optimize_hyperparams(self, n_trials=5, timeout=60, n_sim=5, n_fit=2, n_jobs=2, 
                              sampler_method='random', pruner_method='halving', continue_previous=False):
         """ 
         Run hyperparameter optimization and updates init_kwargs with the best hyperparameters found.
 
-        Note: max_time probably only works in Unix systems, set to None in other systems.
+
+        Currently supported sampler_method:
+            'random'
+            'optuna_default'
+
+        Currently suppoerted pruner_method:
+            'none'
+            'halving'
 
         Parameters
         ----------
         n_trials: int 
             Mumber of agent evaluations 
-        max_time: int 
-            Maximum time (in seconds) to run optimization. Set to None for unlimited time.
+        timeout: int 
+            Stop study after the given number of second(s). Set to None for unlimited time.
         n_sim : int 
             Number of Monte Carlo simulations to evaluate a policy.
         n_fit: int
@@ -200,12 +224,17 @@ class AgentStats:
             # get sampler
             if sampler_method == 'random':
                 sampler = optuna.samplers.RandomSampler(seed=self.rng.integers(2**16))
+            elif sampler_method == 'optuna_default':
+                sampler = None
             else:
                 raise NotImplementedError("Sampler method %s is not implemented."%sampler_method)
             
             # get pruner 
             if pruner_method == 'halving':
                 pruner = optuna.pruners.SuccessiveHalvingPruner(min_resource=1, reduction_factor=4, min_early_stopping_rate=0)
+            
+            elif pruner_method == 'none':
+                pruner = None
             else:
                 raise NotImplementedError("Pruner method %s is not implemented."%pruner_method)
 
@@ -252,22 +281,11 @@ class AgentStats:
             return rewards
 
 
-        # run with timeout
-        if max_time is not None:
-            signal.signal(signal.SIGALRM, _signal_timeout_handler)
-            signal.alarm(max_time)
-
         try:
-            study.optimize(objective, n_trials=n_trials, n_jobs=n_jobs)
-        except:
-            logging.warning("Evaluation timed out!")
-        finally:
-            # disable alarm
-            if max_time is not None:   
-                try:
-                    signal.alarm(0)
-                except:
-                    pass
+            study.optimize(objective, n_trials=n_trials, n_jobs=n_jobs, timeout=timeout)
+        except KeyboardInterrupt:
+            logging.warning("Evaluation stopped.")
+
 
         # continue
         best_trial = study.best_trial
@@ -302,150 +320,3 @@ def _fit_worker(args):
     return agent, info
 
 
-def _signal_timeout_handler(signum, frame):
-    raise Exception("timed out!")
-
-
-#
-# Analysis functions 
-#
-
-
-def plot_episode_rewards(agent_stats_list, cumulative=False, fignum=None, show=True):
-    plt.figure(fignum)
-    for agent_stats in agent_stats_list:
-        if not 'episode_rewards' in agent_stats.fit_info:
-            logging.warning("episode_rewards not available for %s."%agent_stats.agent_name)
-            continue 
-        else:
-            # train agents if they are not already trained
-            if agent_stats.fitted_agents is None:
-                agent_stats.fit()
-            # get reward statistics and plot them 
-            rewards = np.array(agent_stats.fit_statistics['episode_rewards'])
-            if cumulative:
-                rewards = np.cumsum(rewards, axis=1)
-            mean_r  = rewards.mean(axis=0)
-            std_r   = rewards.std(axis=0)
-            episodes = np.arange(1, rewards.shape[1]+1)
-
-            plt.plot(episodes, mean_r, label=agent_stats.agent_name)
-            plt.fill_between(episodes, mean_r-std_r, mean_r+std_r, alpha=0.2)
-            plt.legend()
-            plt.xlabel("episodes")
-            if not cumulative:
-                plt.ylabel("reward in one episode")
-            else:
-                plt.ylabel("total reward")
-            plt.grid(True, alpha=0.75)
-
-    if show:
-        plt.show()
-
-
-def compare_policies(agent_stats_list, eval_env=None, eval_horizon=None, stationary_policy=True, n_sim=10, fignum=None, show=True, plot=True):
-    """
-    Compare the policies of each of the agents in agent_stats_list. 
-    Each element of the agent_stats_list contains a list of fitted agents. 
-    To evaluate the policy, we repeat n_sim times:
-        * choose one of the fitted agents uniformly at random
-        * run its policy in eval_env for eval_horizon time steps
-    
-    To do
-    ------
-    Paralellize evaluations of each agent.
-
-    Parameters
-    ----------
-    agent_stats_list : list of AgentStats objects.
-    eval_env : Model
-        Environment where to evaluate the policies. If None, it is taken from AgentStats.
-    eval_horizon : int 
-        Number of time steps for policy evaluation. If None, it is taken from AgentStats.
-    stationary_policy : bool
-        If False, the time step h (0<= h <= eval_horizon) is sent as input to agent.policy() for policy evaluation.
-    n_sim : int 
-        Number of simulations to evaluate each policy.
-    fignum: string or int
-        Identifier of plot figure
-    show: bool
-        If true, calls plt.show()
-    plot: bool
-        If false, do not plot.
-    """
-    #
-    # evaluation 
-    # 
-    use_eval_from_agent_stats = (eval_env is None) 
-    use_horizon_from_agent_stats = (eval_horizon is None) 
-
-    rng = seeding.get_rng()
-    agents_rewards = []
-    for agent_stats in agent_stats_list:
-        # train agents if they are not already trained
-        if agent_stats.fitted_agents is None:
-            agent_stats.fit()
-
-        # eval env and horizon
-        if use_eval_from_agent_stats:
-            eval_env = agent_stats.eval_env
-            assert eval_env is not None, "eval_env not given in AgentStats %s" % agent_stats.agent_name
-        if use_horizon_from_agent_stats:
-            eval_horizon = agent_stats.eval_horizon
-            assert eval_horizon is not None, "eval_horizon not given in AgentStats %s" % agent_stats.agent_name
-
-        # evaluate agent 
-        episode_rewards = np.zeros(n_sim)
-        for sim in range(n_sim):
-            # choose one of the fitted agents randomly
-            agent_idx = rng.integers(len(agent_stats.fitted_agents)) 
-            agent = agent_stats.fitted_agents[agent_idx]
-            # evaluate agent
-            observation = eval_env.reset()
-            for hh in range(eval_horizon):
-                if stationary_policy:
-                    action = agent.policy(observation, **agent_stats.policy_kwargs)
-                else:
-                    action = agent.policy(observation, hh, **agent_stats.policy_kwargs)
-                observation, reward, done, _ = eval_env.step(action)
-                episode_rewards[sim] += reward
-                if done:
-                    break
-        # store rewards
-        agents_rewards.append(episode_rewards)
-    
-    #
-    # plot 
-    # 
-
-    # build unique agent IDs (in case there are two agents with the same ID)
-    unique_ids = []
-    id_count = {}
-    for agent_stats in agent_stats_list:
-        name = agent_stats.agent_name
-        if name not in id_count:
-            id_count[name] = 1
-        else:
-            id_count[name] += 1
-        
-        unique_ids.append(name + "*"*(id_count[name]-1))
-    
-    # convert output to DataFrame
-    data = {}
-    for agent_id, agent_rewards in zip(unique_ids, agents_rewards):
-        data[agent_id] = agent_rewards
-    output = pd.DataFrame(data)
-
-    # plot 
-    if plot:
-        plt.figure(fignum)
-
-        with sns.axes_style("whitegrid"):
-            ax = sns.boxplot(data=output)
-            ax.set_xlabel("agent")
-            ax.set_ylabel("rewards in one episode")
-            plt.title("Environment = %s"%eval_env.unwrapped.name)
-            if show:
-                plt.show()
-    
-    return output

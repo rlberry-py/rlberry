@@ -3,7 +3,7 @@ import pytest
 import rlberry.seeding as seeding
 from rlberry.envs import GridWorld
 from rlberry.agents import Agent
-from rlberry.eval.agent_stats import AgentStats, plot_episode_rewards, compare_policies
+from rlberry.stats import AgentStats, plot_episode_rewards, compare_policies
 
 
 # global seed

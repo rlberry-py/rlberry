@@ -3,7 +3,7 @@ from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
 from rlberry.agents import MBQVIAgent
 from rlberry.agents.ppo import PPOAgent
 from rlberry.wrappers import RescaleRewardWrapper, DiscretizeStateWrapper
-from rlberry.eval.agent_stats import AgentStats, plot_episode_rewards, compare_policies
+from rlberry.stats import AgentStats, plot_episode_rewards, compare_policies
 
 
 # global seed

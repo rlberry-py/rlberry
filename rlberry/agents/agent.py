@@ -83,6 +83,9 @@ class Agent(ABC):
         """
         Sample hyperparameters for hyperparam optimization using Optuna (https://optuna.org/)
 
+        Note: only the kwargs sent to __init__ are optimized. Make sure to include in the Agent constructor
+        all "optimizable" parameters.
+
         Parameters
         ----------
         trial: optuna.trial
