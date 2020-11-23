@@ -16,7 +16,7 @@ install_requires = [
 ]
 
 tests_require = [
-    'pytest', 
+    'pytest',
     'pytest-cov',
     'numpy',
     'numba',
