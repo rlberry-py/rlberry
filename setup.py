@@ -15,7 +15,16 @@ install_requires = [
     'pandas'
 ]
 
-tests_require = ['pytest', 'pytest-cov']
+tests_require = [
+    'pytest', 
+    'pytest-cov',
+    'numpy',
+    'numba',
+    'joblib',
+    'matplotlib',
+    'pandas',
+    'seaborn'
+]
 
 extras_require = {
     'test': tests_require,
