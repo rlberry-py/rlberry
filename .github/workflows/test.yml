@@ -30,6 +30,4 @@ jobs:
           pip install -e .[test]
       - name: Test with pytest
         run: |
-          pip install pytest
-          pip install pytest-cov
           pytest --cov=rlberry --cov-report html:cov_html
