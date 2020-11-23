@@ -1,10 +1,36 @@
-<img src="logo/logo_wide.svg" width="50%">
+<!-- Logo -->
+<p align="center">
+   <img src="logo/logo_wide.svg" width="50%">
+</p>
 
-# A Reinforcement Learning Library for Research and Education 
+<!-- Short description -->
+<p align="center">
+   A Reinforcement Learning Library for Research and Education
+</p>
 
-![pytest](https://github.com/rlberry-py/rlberry/workflows/test/badge.svg)
+<!-- The badges -->
+<p align="center">
+   <a href="https://github.com/rlberry-py/rlberry/workflows/test/badge.svg">
+      <img alt="pytest" src="https://github.com/rlberry-py/rlberry/workflows/test/badge.svg">
+   </a>
+</p>
 
-## [Try it on Google Colab! ![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/rlberry-py/rlberry/blob/main/notebooks/introduction_to_rlberry.ipynb)
+<p align="center">
+   <a href="https://colab.research.google.com/github/rlberry-py/rlberry/blob/main/notebooks/introduction_to_rlberry.ipynb">
+      <b>Try it on Google Colab!</b>
+      <img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg">
+   </a>
+</p>
+
+<!-- Horizontal rule -->
+<hr>
+
+<!-- Table of content -->
+
+| Section | Description |
+|-|-|
+| [Goals](#goals) | The philosophy of the library |
+| [Installation](#installation) | How to install the library |
 
 # Goals
 
@@ -16,7 +42,7 @@
 * Simple interface for creating and rendering new environments. 
 
 
-# Install
+# Installation
 
 To install rlberry on your own device, first create a virtual environment using Anaconda or [Miniconda](https://docs.conda.io/en/latest/miniconda.html) (suggested):
 
