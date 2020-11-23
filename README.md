@@ -54,12 +54,10 @@
 * Unified seeding mechanism: define only one global seed, from which all other seeds will inherit, enforcing independence of the random number generators.
 * Simple interface for creating and rendering new environments. 
 
-
 # Installation
 
 To install rlberry on your own device, first create a virtual environment using Anaconda or [Miniconda](https://docs.conda.io/en/latest/miniconda.html) (suggested):
-
-```
+```shell
 conda create -n rlberry python=3.7
 conda activate rlberry
 git clone https://github.com/rlberry-py/rlberry.git
@@ -67,15 +65,15 @@ pip install -e .
 ```
 
 Or you can also install directly (not suggested):
-
-```
+```shell
 git clone https://github.com/rlberry-py/rlberry.git
 python3 -m pip install -e .
 ```
+
 ## Optional dependencies
 
 * For saving videos: [ffmpeg-python](https://github.com/kkroening/ffmpeg-python) 
-```
+```shell
 pip install ffmpeg-python
 ```
 
@@ -83,7 +81,6 @@ pip install ffmpeg-python
 ```
 pip install optuna
 ```
-
 
 # Getting started
 
@@ -98,9 +95,7 @@ bash run_tests.sh
 
 See coverage report in `cov_html/index.html`.
 
-
 # Documentation
-
 
 # Contributing
 
@@ -114,6 +109,4 @@ See coverage report in `cov_html/index.html`.
 
 Errors and warnings are printed using the `logging` library.
 
-
 # Citing rlberry
-
