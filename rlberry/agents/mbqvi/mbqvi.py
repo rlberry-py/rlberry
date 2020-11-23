@@ -12,8 +12,8 @@ class MBQVIAgent(Agent):
     Builds an empirical MDP and runs value iteration on it.
     Corresponds to the "indirect" algorithm studied by Kearns and Singh (1999).
 
-    Kearns, Michael J., and Satinder P. Singh. 
-    "Finite-sample convergence rates for Q-learning and indirect algorithms." 
+    Kearns, Michael J., and Satinder P. Singh.
+    "Finite-sample convergence rates for Q-learning and indirect algorithms."
     Advances in neural information processing systems. 1999.
     """
 
@@ -32,25 +32,30 @@ class MBQVIAgent(Agent):
         -----------
         env : Model
             generative model with finite state-action space
-        n_samples : int 
-            number of samples *per state-action pair* used to estimate the empirical MDP
-        gamma : double 
+        n_samples : int
+            number of samples *per state-action pair* used to estimate
+            the empirical MDP.
+        gamma : double
             discount factor in [0, 1]
         horizon : int
-            horizon, if the problem is finite-horizon. if None, the discounted problem is solved
-            default = None
+            horizon, if the problem is finite-horizon. if None, the discounted
+            problem is solved. default = None
         epsilon : double
-            precision of value iteration, only used in discounted problems (when horizon is None).
+            precision of value iteration, only used in discounted problems
+            (when horizon is None).
         verbose : int
             controls the verbosity, if non zero, progress messages are printed.
         """
         # initialize base class
-        assert env.is_generative(), "MBQVI requires a generative model."
-        assert isinstance(env.observation_space, Discrete), "MBQVI requires a finite state space."
-        assert isinstance(env.action_space, Discrete), "MBQVI requires a finite action space."
+        assert env.is_generative(), \
+            "MBQVI requires a generative model."
+        assert isinstance(env.observation_space, Discrete), \
+            "MBQVI requires a finite state space."
+        assert isinstance(env.action_space, Discrete), \
+            "MBQVI requires a finite action space."
         Agent.__init__(self, env, **kwargs)
 
-        # 
+        #
         self.n_samples = n_samples
         self.gamma = gamma
         self.horizon = horizon
@@ -87,7 +92,11 @@ class MBQVIAgent(Agent):
         total_samples = S * A * self.n_samples
         count = 0
         if self.verbose > 0:
-            print("[%s] collecting %d samples per (s,a), total = %d samples" % (self.name, self.n_samples, total_samples))
+            print(
+                "[{}] collecting {} samples per (s,a)".format(self.name,
+                                                              self.n_samples)
+                + ", total = {} samples.".format(total_samples)
+            )
         for ss in range(S):
             for aa in range(A):
                 for nn in range(self.n_samples):
@@ -97,11 +106,15 @@ class MBQVIAgent(Agent):
                     count += 1
                     if count % 10000 == 0 and self.verbose > 0:
                         completed = 100 * count / total_samples
-                        print("[%s] ... %d/%d  (%0.0f" % (self.name, count, total_samples, completed) + "%)")
+                        print("[{}] ... {}/{} ({:0.0f}%)".format(self.name,
+                                                                 count,
+                                                                 total_samples,
+                                                                 completed))
 
         # build model and run VI
         if self.verbose > 0:
-            print("[%s] building model and running backward induction..." % self.name)
+            print("{} building model".format(self.name)
+                  + " and running backward induction...")
 
         N_sa = np.maximum(self.N_sa, 1)
         self.R_hat = self.S_sa / N_sa
@@ -113,12 +126,15 @@ class MBQVIAgent(Agent):
         info["n_samples"] = self.n_samples
         info["total_samples"] = total_samples
         if self.horizon is None:
-            assert self.gamma < 1.0, "The discounted setting requires gamma < 1.0"
-            self.Q, self.V, n_it = value_iteration(self.R_hat, self.P_hat, self.gamma, self.epsilon)
+            assert self.gamma < 1.0, \
+                "The discounted setting requires gamma < 1.0"
+            self.Q, self.V, n_it = value_iteration(self.R_hat, self.P_hat,
+                                                   self.gamma, self.epsilon)
             info["n_iterations"] = n_it
             info["precision"] = self.epsilon
         else:
-            self.Q, self.V = backward_induction(self.R_hat, self.P_hat, self.horizon, self.gamma)
+            self.Q, self.V = backward_induction(self.R_hat, self.P_hat,
+                                                self.horizon, self.gamma)
             info["n_iterations"] = self.horizon
             info["precision"] = 0.0
         return info
@@ -127,10 +143,11 @@ class MBQVIAgent(Agent):
         """
         Parameters
         -----------
-        state : int 
+        state : int
         hh : int
-            stage when action is taken (for finite horizon problems, the optimal policy depends on hh)
-            not used if horizon is None.
+            Stage when action is taken (for finite horizon problems,
+            the optimal policy depends on hh).
+            Not used if horizon is None.
         """
         assert self.env.observation_space.contains(state)
         if self.horizon is None:

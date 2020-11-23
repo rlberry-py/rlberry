@@ -23,21 +23,21 @@ def kernel_func(z, kernel_type):
     z : double
     kernel_type : string
     """
-    if  kernel_type == "uniform":
-        return 1.0 * ( np.abs(z) <= 1)
+    if kernel_type == "uniform":
+        return 1.0 * (np.abs(z) <= 1)
     elif kernel_type == "triangular":
-        return (1.0 - np.abs(z)) * ( np.abs(z) <= 1)
+        return (1.0 - np.abs(z)) * (np.abs(z) <= 1)
     elif kernel_type == "gaussian":
-        return np.exp( -np.power(z, 2.0) / 2.0 )
+        return np.exp(-np.power(z, 2.0) / 2.0)
     elif kernel_type == "epanechnikov":
-        return (1.0 - np.power(z, 2.0)) * ( np.abs(z) <= 1)
+        return (1.0 - np.power(z, 2.0)) * (np.abs(z) <= 1)
     elif kernel_type == "quartic":
-        return np.power((1.0 - np.power(z, 2.0)), 2.0)* ( np.abs(z) <= 1)
+        return np.power((1.0 - np.power(z, 2.0)), 2.0)*(np.abs(z) <= 1)
     elif kernel_type == "triweight":
-        return np.power((1.0 - np.power(z, 2.0)), 3.0)* ( np.abs(z) <= 1)
+        return np.power((1.0 - np.power(z, 2.0)), 3.0)*(np.abs(z) <= 1)
     elif kernel_type == "tricube":
-        return np.power((1.0 - np.power(np.abs(z), 3.0)), 3.0)* ( np.abs(z) <= 1)
+        return np.power((1.0 - np.power(np.abs(z), 3.0)), 3.0)*(np.abs(z) <= 1)
     elif kernel_type == "cosine":
-        return np.cos(z*np.pi/2)*( np.abs(z) <= 1)
+        return np.cos(z*np.pi/2)*(np.abs(z) <= 1)
     else:
         raise NotImplementedError("Unknown kernel type.")

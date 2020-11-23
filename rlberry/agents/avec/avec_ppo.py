@@ -5,11 +5,11 @@ import torch
 import torch.nn as nn
 from torch.distributions import Categorical
 
-# choose device
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
 import rlberry.spaces as spaces
 from rlberry.agents import Agent
+
+# choose device
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 class ActorCritic(nn.Module):
@@ -73,29 +73,35 @@ class Memory:
 
 class AVECPPOAgent(Agent):
     """
-    AVEC uses a modification of the training objective for the critic in actor-critic algorithms
-    to better approximate the value function (critic). The new state-value function approximation
-    learns the *relative* value of the states rather than their *absolute* value as in conventional
+    AVEC uses a modification of the training objective for the critic in
+    actor-critic algorithms to better approximate the value function (critic).
+    The new state-value function approximation learns the *relative* value of
+    the states rather than their *absolute* value as in conventional
     actor-critic. This modification is:
     - well-motivated by recent studies [1,2];
     - theoretically sound;
-    - intuitively supported by the need to improve the approximation error of the critic.
+    - intuitively supported by the need to improve the approximation error
+    of the critic.
 
-    The application of Actor with Variance Estimated Critic (AVEC) to state-of-the-art policy
-    gradient methods produces considerable gains in performance (on average +26% for SAC and +40% for PPO)
+    The application of Actor with Variance Estimated Critic (AVEC) to
+    state-of-the-art policy gradient methods produces considerable
+    gains in performance (on average +26% for SAC and +40% for PPO)
     over the standard actor-critic training.
 
     References
     ----------
     Flet-Berliac, Y., Ouhamma, R., Maillard, O. A., & Preux, P. (2020).
-    "Is Standard Deviation the New Standard? Revisiting the Critic in Deep Policy Gradients."
+    "Is Standard Deviation the New Standard? Revisiting the Critic in Deep
+    Policy Gradients."
     arXiv preprint arXiv:2010.04440.
 
-    [1] Ilyas, A., Engstrom, L., Santurkar, S., Tsipras, D., Janoos, F., Rudolph, L. & Madry, A. (2020).
+    [1] Ilyas, A., Engstrom, L., Santurkar, S., Tsipras, D., Janoos, F.,
+    Rudolph, L. & Madry, A. (2020).
     "A closer look at deep policy gradients."
     In International Conference on Learning Representations.
 
-    [2] Tucker, G., Bhupatiraju, S., Gu, S., Turner, R., Ghahramani, Z. & Levine, S. (2018).
+    [2] Tucker, G., Bhupatiraju, S., Gu, S., Turner, R., Ghahramani, Z. &
+    Levine, S. (2018).
     "The mirage of action-dependent baselines in reinforcement learning."
     In International Conference on Machine Learning, pp. 5015–5024.
     """
@@ -118,9 +124,11 @@ class AVECPPOAgent(Agent):
         n_episodes : int
             Number of episodes
         horizon : int
-            Horizon of the objective function. If None and gamma<1, set to 1/(1-gamma).
+            Horizon of the objective function. If None and gamma<1,
+            set to 1/(1-gamma).
         gamma : double
-            Discount factor in [0, 1]. If gamma is 1.0, the problem is set to be finite-horizon.
+            Discount factor in [0, 1]. If gamma is 1.0, the problem is set
+            to be finite-horizon.
         lr : double
             Learning rate.
         eps_clip : double
@@ -153,10 +161,13 @@ class AVECPPOAgent(Agent):
         self.reset()
 
     def reset(self, **kwargs):
-        self.cat_policy = ActorCritic(self.state_dim, self.action_dim).to(device)
-        self.optimizer = torch.optim.Adam(self.cat_policy.parameters(), lr=self.lr, betas=(0.9, 0.999))
+        self.cat_policy = ActorCritic(self.state_dim,
+                                      self.action_dim).to(device)
+        self.optimizer = torch.optim.Adam(self.cat_policy.parameters(),
+                                          lr=self.lr, betas=(0.9, 0.999))
 
-        self.cat_policy_old = ActorCritic(self.state_dim, self.action_dim).to(device)
+        self.cat_policy_old = ActorCritic(self.state_dim,
+                                          self.action_dim).to(device)
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
 
         self.memory = Memory()
@@ -188,7 +199,8 @@ class AVECPPOAgent(Agent):
             episode_rewards = self._run_episode()
             self._rewards[k] = episode_rewards
             if k > 0:
-                self._cumul_rewards[k] = episode_rewards + self._cumul_rewards[k - 1]
+                self._cumul_rewards[k] = episode_rewards \
+                    + self._cumul_rewards[k - 1]
             self.episode += 1
             self._logging()
 
@@ -212,12 +224,17 @@ class AVECPPOAgent(Agent):
     def _info_to_print(self):
         prev_episode = self._last_printed_ep
         episode = self.episode - 1
-        reward_per_ep = self._rewards[prev_episode:episode + 1].sum() / max(1, episode - prev_episode)
-        time_per_ep = self._log_interval * 1000.0 / max(1, episode - prev_episode)
+        reward_per_ep = self._rewards[prev_episode:episode + 1].sum() / \
+            max(1, episode - prev_episode)
+        time_per_ep = self._log_interval * 1000.0 / \
+            max(1, episode - prev_episode)
         fps = int((self.horizon / time_per_ep) * 1000)
 
-        to_print = "[%s] episode = %d/%d | reward/ep = %0.2f | time/ep = %0.2f ms | fps = %i" % (
-            self.name, episode, self.n_episodes, reward_per_ep, time_per_ep, fps)
+        to_print = "[{}] episode = {}/{} ".format(self.name, episode+1,
+                                                  self.n_episodes) \
+            + "| reward/ep = {:0.2f} ".format(reward_per_ep) \
+            + "| time/ep = {:0.2f} ".format(time_per_ep) \
+            + "| fps = {}".format(fps)
         return to_print
 
     def _select_action(self, state):
@@ -253,7 +270,8 @@ class AVECPPOAgent(Agent):
         # monte carlo estimate of rewards
         rewards = []
         discounted_reward = 0
-        for reward, is_terminal in zip(reversed(self.memory.rewards), reversed(self.memory.is_terminals)):
+        for reward, is_terminal in zip(reversed(self.memory.rewards),
+                                       reversed(self.memory.is_terminals)):
             if is_terminal:
                 discounted_reward = 0
             discounted_reward = reward + (self.gamma * discounted_reward)
@@ -271,7 +289,8 @@ class AVECPPOAgent(Agent):
         # optimize policy for K epochs
         for _ in range(self.k_epochs):
             # evaluate old actions and values
-            logprobs, state_values, dist_entropy = self.cat_policy.evaluate(old_states, old_actions)
+            logprobs, state_values, dist_entropy = \
+                self.cat_policy.evaluate(old_states, old_actions)
 
             # find ratio (pi_theta / pi_theta__old)
             ratios = torch.exp(logprobs - old_logprobs.detach())
@@ -279,8 +298,11 @@ class AVECPPOAgent(Agent):
             # find surrogate loss
             advantages = rewards - state_values.detach()
             surr1 = ratios * advantages
-            surr2 = torch.clamp(ratios, 1 - self.eps_clip, 1 + self.eps_clip) * advantages
-            loss = -torch.min(surr1, surr2) + 0.5 * self._avec_loss(state_values, rewards) - 0.01 * dist_entropy
+            surr2 = torch.clamp(ratios, 1 - self.eps_clip, 1
+                                + self.eps_clip) * advantages
+            loss = -torch.min(surr1, surr2) \
+                + 0.5 * self._avec_loss(state_values, rewards) \
+                - 0.01 * dist_entropy
 
             # take gradient step
             self.optimizer.zero_grad()
@@ -292,8 +314,10 @@ class AVECPPOAgent(Agent):
 
     def _avec_loss(self, y_pred, y_true):
         """
-        Computes the objective function used in AVEC for the learning of the value function:
-        the residual variance between the state-values and the empirical returns.
+        Computes the objective function used in AVEC for the learning
+        of the value function:
+        the residual variance between the state-values and the
+        empirical returns.
 
         Returns Var[y-ypred]
         :param y_pred: (np.ndarray) the prediction

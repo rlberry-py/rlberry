@@ -5,10 +5,11 @@ from rlberry.envs.finite.finite_mdp import FiniteMDP
 
 class ValueIterationAgent(Agent):
     """
-    Value iteration for enviroments of type FiniteMDP (rlberry.envs.finite.finite_mdp.FiniteMDP)
+    Value iteration for enviroments of type FiniteMDP
+    (rlberry.envs.finite.finite_mdp.FiniteMDP)
 
-    Important: the discount gamma is also used if the problem is finite horizon, but, in this case,
-    gamma can be set to 1.0.
+    Important: the discount gamma is also used if the problem is
+    finite horizon, but, in this case, gamma can be set to 1.0.
     """
 
     name = "ValueIteration"
@@ -19,16 +20,19 @@ class ValueIterationAgent(Agent):
         Parameters
         -----------
         env : rlberry.envs.finite.finite_mdp.FiniteMDP
-        gamma : double 
+        gamma : double
             discount factor in [0, 1]
         horizon : int
-            horizon, if the problem is finite-horizon. if None, the discounted problem is solved
+            horizon, if the problem is finite-horizon. if None, the discounted
+            problem is solved
             default = None
         epsilon : double
-            precision of value iteration, only used in discounted problems (when horizon is None).
+            precision of value iteration, only used in discounted problems
+            (when horizon is None).
         """
         # initialize base class
-        assert isinstance(env, FiniteMDP), "Value iteration requires a FiniteMDP model."
+        assert isinstance(env, FiniteMDP), \
+            "Value iteration requires a FiniteMDP model."
         Agent.__init__(self, env, **kwargs)
 
         #
@@ -46,12 +50,15 @@ class ValueIterationAgent(Agent):
         """
         info = {}
         if self.horizon is None:
-            assert self.gamma < 1.0, "The discounted setting requires gamma < 1.0"
-            self.Q, self.V, n_it = value_iteration(self.env.R, self.env.P, self.gamma, self.epsilon)
+            assert self.gamma < 1.0, \
+                "The discounted setting requires gamma < 1.0"
+            self.Q, self.V, n_it = value_iteration(self.env.R, self.env.P,
+                                                   self.gamma, self.epsilon)
             info["n_iterations"] = n_it
             info["precision"] = self.epsilon
         else:
-            self.Q, self.V = backward_induction(self.env.R, self.env.P, self.horizon, self.gamma)
+            self.Q, self.V = backward_induction(self.env.R, self.env.P,
+                                                self.horizon, self.gamma)
             info["n_iterations"] = self.horizon
             info["precision"] = 0.0
         return info
@@ -60,10 +67,10 @@ class ValueIterationAgent(Agent):
         """
         Parameters
         -----------
-        state : int 
+        state : int
         hh : int
-            stage when action is taken (for finite horizon problems, the optimal policy depends on hh)
-            not used if horizon is None.
+            stage when action is taken (for finite horizon problems,
+            the optimal policy depends on hh) not used if horizon is None.
         """
         assert self.env.observation_space.contains(state)
         if self.horizon is None:

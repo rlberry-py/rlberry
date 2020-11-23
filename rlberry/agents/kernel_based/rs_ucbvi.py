@@ -6,7 +6,8 @@ from numba import jit
 
 import rlberry.spaces as spaces
 from rlberry.agents import Agent
-from rlberry.agents.dynprog.utils import backward_induction, backward_induction_in_place
+from rlberry.agents.dynprog.utils import backward_induction
+from rlberry.agents.dynprog.utils import backward_induction_in_place
 from rlberry.utils.metrics import metric_lp
 
 
@@ -24,13 +25,17 @@ def map_to_representative(state,
     dist_to_closest = np.inf
     argmin = -1
     for ii in range(n_representatives):
-        dist = metric_lp(state, representative_states[ii, :], lp_metric, scaling)
+        dist = metric_lp(state, representative_states[ii, :],
+                         lp_metric,
+                         scaling)
         if dist < dist_to_closest:
             dist_to_closest = dist
             argmin = ii
 
     max_representatives = representative_states.shape[0]
-    if dist_to_closest > min_dist and n_representatives < max_representatives and accept_new_repr:
+    if (dist_to_closest > min_dist) \
+        and (n_representatives < max_representatives) \
+            and accept_new_repr:
         new_index = n_representatives
         representative_states[new_index, :] = state
         return new_index
@@ -42,31 +47,34 @@ class RSUCBVIAgent(Agent):
     Value iteration with exploration bonuses for continuous-state environments,
     using a online discretization strategy:
     - Build (online) a set of representative states
-    - Estimate transtions an rewards on the finite set of representative states 
+    - Estimate transtions an rewards on the finite set of representative states
     and actions.
 
-    Criterion: finite-horizon with discount factor gamma. 
+    Criterion: finite-horizon with discount factor gamma.
     If the discount is not 1, only the Q function at h=0 is used.
 
-    The recommended policy after all the episodes is computed without exploration bonuses.
+    The recommended policy after all the episodes is computed without
+    exploration bonuses.
 
 
     References
     ----------
-    Azar, Mohammad Gheshlaghi, Ian Osband, and Rémi Munos. 
-    "Minimax regret bounds for reinforcement learning." 
+    Azar, Mohammad Gheshlaghi, Ian Osband, and Rémi Munos.
+    "Minimax regret bounds for reinforcement learning."
     Proceedings of the 34th ICML, 2017.
 
-    Strehl, Alexander L., and Michael L. Littman. 
-    "An analysis of model-based interval estimation for Markov decision processes."
+    Strehl, Alexander L., and Michael L. Littman.
+    "An analysis of model-based interval estimation for Markov decision
+    processes."
      Journal of Computer and System Sciences 74.8 (2008): 1309-1331.
 
-    Kveton, Branislav, and Georgios Theocharous. 
-    "Kernel-Based Reinforcement Learning on Representative States." 
+    Kveton, Branislav, and Georgios Theocharous.
+    "Kernel-Based Reinforcement Learning on Representative States."
     AAAI, 2012.
 
-    Domingues, O. D., Ménard, P., Pirotta, M., Kaufmann, E., & Valko, M. (2020). 
-    A kernel-based approach to non-stationary reinforcement learning in metric spaces. 
+    Domingues, O. D., Ménard, P., Pirotta, M., Kaufmann, E., & Valko, M.(2020).
+    A kernel-based approach to non-stationary reinforcement learning in metric
+    spaces.
     arXiv preprint arXiv:2007.05078.
     """
 
@@ -86,21 +94,25 @@ class RSUCBVIAgent(Agent):
                  verbose=1,
                  **kwargs):
         """
-        env : Model    
+        env : Model
             Online model with continuous (Box) state space and discrete actions
         n_episodes : int
             number of episodes
-        gamma : double 
-            Discount factor in [0, 1]. If gamma is 1.0, the problem is set to be finite-horizon.
+        gamma : double
+            Discount factor in [0, 1]. If gamma is 1.0, the problem is set to
+            be finite-horizon.
         horizon : int
-            Horizon of the objective function. If None and gamma<1, set to 1/(1-gamma). 
+            Horizon of the objective function. If None and gamma<1, set to
+            1/(1-gamma).
         lp_metric: int
             The metric on the state space is the one induced by the p-norm,
-            where p = lp_metric. Default = 2, for the Euclidean metric. 
+            where p = lp_metric. Default = 2, for the Euclidean metric.
         scaling: numpy.ndarray
-            Must have the same size as state array, used to scale the states before computing the metric.
+            Must have the same size as state array, used to scale the states
+            before computing the metric.
             If None, set to:
-            - (env.observation_space.high - env.observation_space.low) if high and low are bounded
+            - (env.observation_space.high - env.observation_space.low) if high
+            and low are bounded
             - np.ones(env.observation_space.dim) if high or low are unbounded
         min_dist: double
             Minimum distance between two representative states
@@ -109,10 +121,10 @@ class RSUCBVIAgent(Agent):
             If None, it is set to  (sqrt(d)/min_dist)**d, where d
             is the dimension of the state space
         bonus_scale_factor : double
-            Constant by which to multiply the exploration bonus, controls 
+            Constant by which to multiply the exploration bonus, controls
             the level of exploration.
         verbose : int
-            Controls the verbosity, if non zero, progress messages are printed.   
+            Controls the verbosity, if non zero, progress messages are printed.
         bonus_type : string
              Type of exploration bonus. Currently, only "simplified_bernstein"
              is implemented.
@@ -129,7 +141,7 @@ class RSUCBVIAgent(Agent):
         self.verbose = verbose
         self.bonus_type = bonus_type
 
-        # check environment 
+        # check environment
         assert self.env.is_online()
         assert isinstance(self.env.observation_space, spaces.Box)
         assert isinstance(self.env.action_space, spaces.Discrete)
@@ -137,7 +149,8 @@ class RSUCBVIAgent(Agent):
         # other checks
         assert gamma >= 0 and gamma <= 1.0
         if self.horizon is None:
-            assert gamma < 1.0, "If no horizon is given, gamma must be smaller than 1."
+            assert gamma < 1.0, \
+                "If no horizon is given, gamma must be smaller than 1."
             self.horizon = int(np.ceil(1.0 / (1.0 - gamma)))
 
         # state dimension
@@ -148,7 +161,8 @@ class RSUCBVIAgent(Agent):
             # if high and low are bounded
             if (self.env.observation_space.high == np.inf).sum() == 0 \
                     and (self.env.observation_space.low == -np.inf).sum() == 0:
-                scaling = self.env.observation_space.high - self.env.observation_space.low
+                scaling = self.env.observation_space.high \
+                    - self.env.observation_space.low
                 # if high or low are unbounded
             else:
                 scaling = np.ones(self.state_dim)
@@ -157,20 +171,23 @@ class RSUCBVIAgent(Agent):
             assert scaling.shape[0] == self.state_dim
         self.scaling = scaling
 
-        # maximum value 
+        # maximum value
         r_range = self.env.reward_range[1] - self.env.reward_range[0]
         if r_range == np.inf:
-            logging.warning("%s: Reward range is infinity. Clipping it to 1." % self.name)
+            logging.warning("{}: Reward range is infinity. ".format(self.name)
+                            + "Clipping it to 1.")
             r_range = 1.0
 
         if self.gamma == 1.0:
             self.v_max = r_range * horizon
         else:
-            self.v_max = r_range * (1.0 - np.power(self.gamma, self.horizon)) / (1.0 - self.gamma)
+            self.v_max = r_range * (1.0 - np.power(self.gamma, self.horizon)) \
+                                                        / (1.0 - self.gamma)
 
         # number of representative states and number of actions
         if max_repr is None:
-            max_repr = int(np.ceil((1.0 * np.sqrt(self.state_dim) / self.min_dist) ** self.state_dim))
+            max_repr = int(np.ceil((1.0 * np.sqrt(self.state_dim) /
+                                    self.min_dist) ** self.state_dim))
         self.max_repr = max_repr
 
         # current number of representative states
@@ -179,7 +196,7 @@ class RSUCBVIAgent(Agent):
 
         # declaring variables
         self.episode = None  # current episode
-        self.representative_states = None  # array containing the coordinates of all representative statates
+        self.representative_states = None  # coordinates of all repr states
         self.N_sa = None  # visits to (s, a)
         self.N_sas = None  # visits to (s, a, s')
         self.S_sa = None  # sum of rewards at (s, a)
@@ -239,9 +256,10 @@ class RSUCBVIAgent(Agent):
             episode_rewards = self._run_episode()
             self._rewards[kk] = episode_rewards
             if kk > 0:
-                self._cumul_rewards[kk] = episode_rewards + self._cumul_rewards[kk - 1]
+                self._cumul_rewards[kk] = episode_rewards \
+                    + self._cumul_rewards[kk - 1]
             self.episode += 1
-            # 
+            #
             self._logging()
 
         # compute Q function for the recommended policy
@@ -265,11 +283,16 @@ class RSUCBVIAgent(Agent):
     def _info_to_print(self):
         prev_episode = self._last_printed_ep
         episode = self.episode - 1
-        reward_per_ep = self._rewards[prev_episode:episode + 1].sum() / max(1, episode - prev_episode)
-        time_per_ep = self._log_interval * 1000.0 / max(1, episode - prev_episode)
+        reward_per_ep = self._rewards[prev_episode:episode + 1].sum() / \
+            max(1, episode - prev_episode)
+        time_per_ep = self._log_interval * 1000.0 / \
+            max(1, episode - prev_episode)
+        to_print = "[{}] episode = {}/{} ".format(self.name, episode+1,
+                                                  self.n_episodes) \
+            + "| representative states = {} ".format(self.M) \
+            + "| reward/ep = {:0.2f} ".format(reward_per_ep) \
+            + "| time/ep = {:0.2f} ".format(time_per_ep)
 
-        to_print = "[%s] episode = %d/%d | representative states = %d |reward/ep = %0.2f | time/ep = %0.2f ms" % (
-            self.name, episode, self.n_episodes, self.M, reward_per_ep, time_per_ep)
         return to_print
 
     def _map_to_repr(self, state, accept_new_repr=True):
@@ -293,9 +316,12 @@ class RSUCBVIAgent(Agent):
         self.N_sas[repr_state, action, repr_next_state] += 1
         self.S_sa[repr_state, action] += reward
 
-        self.R_hat[repr_state, action] = self.S_sa[repr_state, action] / self.N_sa[repr_state, action]
-        self.P_hat[repr_state, action, :] = self.N_sas[repr_state, action, :] / self.N_sa[repr_state, action]
-        self.B_sa[repr_state, action] = self._compute_bonus(self.N_sa[repr_state, action])
+        self.R_hat[repr_state, action] = self.S_sa[repr_state, action] \
+            / self.N_sa[repr_state, action]
+        self.P_hat[repr_state, action, :] = self.N_sas[repr_state, action, :] \
+            / self.N_sa[repr_state, action]
+        self.B_sa[repr_state, action] = \
+            self._compute_bonus(self.N_sa[repr_state, action])
 
     def _compute_bonus(self, n):
         if self.bonus_type == "simplified_bernstein":
@@ -303,7 +329,8 @@ class RSUCBVIAgent(Agent):
             bonus = min(bonus, self.v_max)
             return bonus
         else:
-            raise NotImplementedError("Error: bonus type %s not implemented" % self.bonus_type)
+            raise NotImplementedError(
+                "Error: bonus type {} not implemented".format(self.bonus_type))
 
     def _get_action(self, state, hh=0):
         assert self.Q is not None
@@ -330,10 +357,11 @@ class RSUCBVIAgent(Agent):
                 break
 
         # run backward induction
-        backward_induction_in_place(self.Q[:, :self.M, :], self.V[:, :self.M],
-                                    self.R_hat[:self.M, :] + self.B_sa[:self.M, :],
-                                    self.P_hat[:self.M, :, :self.M],
-                                    self.horizon, self.gamma, self.v_max)
+        backward_induction_in_place(
+            self.Q[:, :self.M, :], self.V[:, :self.M],
+            self.R_hat[:self.M, :] + self.B_sa[:self.M, :],
+            self.P_hat[:self.M, :, :self.M],
+            self.horizon, self.gamma, self.v_max)
 
         # return sum of rewards collected in the episode
         return episode_rewards

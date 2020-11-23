@@ -45,7 +45,7 @@ def test_bellman_operator_monotonicity_and_contraction(gamma, S, A):
         TQ0 = bellman_operator(Q0, R, P, gamma)
         TQ1 = bellman_operator(Q1, R, P, gamma)
 
-        # test contraction 
+        # test contraction
         norm_tq = np.abs(TQ1 - TQ0).max()
         norm_q = np.abs(Q1 - Q0).max()
         assert norm_tq <= gamma * norm_q
@@ -109,13 +109,12 @@ def test_backward_induction(horizon, S, A):
         Q, V = backward_induction(R, P, horizon, vmax=1.0)
         assert V.max() <= 1.0
 
-        # run bacward induction in place 
+        # run bacward induction in place
         Q2 = np.zeros((horizon, S, A))
         V2 = np.zeros((horizon, S))
         backward_induction_in_place(Q2, V2, R, P, horizon, vmax=1.0)
         assert np.array_equal(Q, Q2)
         assert np.array_equal(V, V2)
-
 
 
 @pytest.mark.parametrize("horizon, gamma, S, A",
@@ -133,7 +132,7 @@ def test_value_iteration_agent(horizon, gamma, S, A):
             for aa in range(A):
                 P[ss, aa, :] /= P[ss, aa, :].sum()
 
-        # create env and agent 
+        # create env and agent
         env = FiniteMDP(R, P)
         agent = ValueIterationAgent(env, gamma=gamma, horizon=horizon)
         # run

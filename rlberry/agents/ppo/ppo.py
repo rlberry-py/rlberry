@@ -73,13 +73,17 @@ class Memory:
 
 class PPOAgent(Agent):
     """
-    While Trust Region Policy Optimization (TRPO) constrains the KL divergence between successive
-    policies on the optimization trajectory, one disadvantage of this algorithm is that it can be
-    computationally costly. Proximal Policy Optimization (PPO) proposes replacing the KL-constrained
-    objective of TRPO by clipping the objective function.
+    While Trust Region Policy Optimization (TRPO) constrains the KL divergence
+    between successive policies on the optimization trajectory, one
+    disadvantage of this algorithm is that it can be
+    computationally costly. Proximal Policy Optimization (PPO) proposes
+    replacing the KL-constrained objective of TRPO by clipping the objective
+    function.
 
-    In Proximal Policy Optimization (PPO), the optimization problem of maximizing the sum of discounted
-    returns is solved by taking a ratio of the new policy and the old policy multiplied by the advantage function.
+    In Proximal Policy Optimization (PPO), the optimization problem of
+    maximizing the sum of discounted
+    returns is solved by taking a ratio of the new policy and the old policy
+    multiplied by the advantage function.
 
     In this implementation, we provide PPO with Clipped Objective.
 
@@ -112,9 +116,11 @@ class PPOAgent(Agent):
         n_episodes : int
             Number of episodes
         horizon : int
-            Horizon of the objective function. If None and gamma<1, set to 1/(1-gamma).
+            Horizon of the objective function. If None and gamma<1, set to
+            1/(1-gamma).
         gamma : double
-            Discount factor in [0, 1]. If gamma is 1.0, the problem is set to be finite-horizon.
+            Discount factor in [0, 1]. If gamma is 1.0, the problem is set to
+            be finite-horizon.
         learning_rate : double
             Learning rate.
         eps_clip : double
@@ -147,14 +153,18 @@ class PPOAgent(Agent):
         self.reset()
 
     def reset(self, **kwargs):
-        self.cat_policy = ActorCritic(self.state_dim, self.action_dim).to(device)
-        self.optimizer = torch.optim.Adam(self.cat_policy.parameters(), lr=self.learning_rate, betas=(0.9, 0.999))
+        self.cat_policy = ActorCritic(self.state_dim,
+                                      self.action_dim).to(device)
+        self.optimizer = torch.optim.Adam(self.cat_policy.parameters(),
+                                          lr=self.learning_rate,
+                                          betas=(0.9, 0.999))
 
-        self.cat_policy_old = ActorCritic(self.state_dim, self.action_dim).to(device)
+        self.cat_policy_old = ActorCritic(self.state_dim,
+                                          self.action_dim).to(device)
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
 
         self.MseLoss = nn.MSELoss()
-        
+
         self.memory = Memory()
 
         self.episode = 0
@@ -184,7 +194,8 @@ class PPOAgent(Agent):
             episode_rewards = self._run_episode()
             self._rewards[k] = episode_rewards
             if k > 0:
-                self._cumul_rewards[k] = episode_rewards + self._cumul_rewards[k - 1]
+                self._cumul_rewards[k] = episode_rewards \
+                    + self._cumul_rewards[k - 1]
             self.episode += 1
             self._logging()
 
@@ -208,12 +219,17 @@ class PPOAgent(Agent):
     def _info_to_print(self):
         prev_episode = self._last_printed_ep
         episode = self.episode - 1
-        reward_per_ep = self._rewards[prev_episode:episode + 1].sum() / max(1, episode - prev_episode)
-        time_per_ep = self._log_interval * 1000.0 / max(1, episode - prev_episode)
+        reward_per_ep = self._rewards[prev_episode:episode + 1].sum() \
+            / max(1, episode - prev_episode)
+        time_per_ep = self._log_interval * 1000.0 \
+            / max(1, episode - prev_episode)
         fps = int((self.horizon / time_per_ep) * 1000)
 
-        to_print = "[%s] episode = %d/%d | reward/ep = %0.2f | time/ep = %0.2f ms | fps = %i" % (
-            self.name, episode, self.n_episodes, reward_per_ep, time_per_ep, fps)
+        to_print = "[{}] episode = {}/{} ".format(self.name, episode+1,
+                                                  self.n_episodes) \
+            + "| reward/ep = {:0.2f} ".format(reward_per_ep) \
+            + "| time/ep = {:0.2f} ".format(time_per_ep) \
+            + "| fps = {}".format(fps)
         return to_print
 
     def _select_action(self, state):
@@ -249,7 +265,8 @@ class PPOAgent(Agent):
         # monte carlo estimate of rewards
         rewards = []
         discounted_reward = 0
-        for reward, is_terminal in zip(reversed(self.memory.rewards), reversed(self.memory.is_terminals)):
+        for reward, is_terminal in zip(reversed(self.memory.rewards),
+                                       reversed(self.memory.is_terminals)):
             if is_terminal:
                 discounted_reward = 0
             discounted_reward = reward + (self.gamma * discounted_reward)
@@ -267,7 +284,8 @@ class PPOAgent(Agent):
         # optimize policy for K epochs
         for _ in range(self.k_epochs):
             # evaluate old actions and values
-            logprobs, state_values, dist_entropy = self.cat_policy.evaluate(old_states, old_actions)
+            logprobs, state_values, dist_entropy = \
+                self.cat_policy.evaluate(old_states, old_actions)
 
             # find ratio (pi_theta / pi_theta__old)
             ratios = torch.exp(logprobs - old_logprobs.detach())
@@ -275,8 +293,11 @@ class PPOAgent(Agent):
             # find surrogate loss
             advantages = rewards - state_values.detach()
             surr1 = ratios * advantages
-            surr2 = torch.clamp(ratios, 1 - self.eps_clip, 1 + self.eps_clip) * advantages
-            loss = -torch.min(surr1, surr2) + 0.5 * self.MseLoss(state_values, rewards) - 0.01 * dist_entropy
+            surr2 = torch.clamp(ratios, 1 - self.eps_clip, 1 + self.eps_clip) \
+                * advantages
+            loss = -torch.min(surr1, surr2) \
+                + 0.5 * self.MseLoss(state_values, rewards)\
+                - 0.01 * dist_entropy
 
             # take gradient step
             self.optimizer.zero_grad()
@@ -285,11 +306,10 @@ class PPOAgent(Agent):
 
         # copy new weights into old policy
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
-    
 
     #
     # for hyperparam optim
-    # 
+    #
 
     @classmethod
     def sample_parameters(cls, trial):

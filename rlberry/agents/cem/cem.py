@@ -3,7 +3,6 @@ import time
 import numpy as np
 import torch
 import torch.nn as nn
-from torch.distributions import Categorical
 
 import rlberry.seeding as seeding
 import rlberry.spaces as spaces
@@ -32,10 +31,10 @@ class Memory:
         self.clear()
 
     def clear(self):
-        self.size   = 0
-        self.states = [] 
+        self.size = 0
+        self.states = []
         self.actions = []
-        self.rewards = []      
+        self.rewards = []
 
     def append(self, state, action, reward):
         self.states.append(state)
@@ -47,46 +46,46 @@ class Memory:
             self.actions.pop(0)
             self.rewards.pop(0)
             self.size = self.max_size
-    
- 
+
+
 class CEMAgent(Agent):
 
     name = "CrossEntropyAgent"
     fit_info = ("n_episodes", "episode_rewards")
 
-    def __init__(self, 
-                 env, 
-                 n_episodes=1000, 
-                 horizon=100, 
-                 gamma=0.99, 
-                 batch_size=16, 
-                 percentile=70, 
-                 learning_rate=0.01, 
-                 verbose=5, 
+    def __init__(self,
+                 env,
+                 n_episodes=1000,
+                 horizon=100,
+                 gamma=0.99,
+                 batch_size=16,
+                 percentile=70,
+                 learning_rate=0.01,
+                 verbose=5,
                  **kwargs):
         """
         Parameters
         ----------
         env : Model
             Environment for training.
-        n_episodes : int 
+        n_episodes : int
             Number of training episodes.
-        horizon : int 
+        horizon : int
             Maximum length of a trajectory.
         gamma : double
             Discount factor in [0, 1].
         batch_size : int
             Number of trajectories to sample at each iteration.
-        percentile : int 
+        percentile : int
             Percentile used to remove trajectories with low rewards.
-        learning_rate : double 
-            Optimizer learning rate 
-        verbose : int 
+        learning_rate : double
+            Optimizer learning rate
+        verbose : int
             Verbosity level.
         """
         Agent.__init__(self, env, **kwargs)
 
-        # check environment 
+        # check environment
         assert isinstance(self.env.observation_space, spaces.Box)
         assert isinstance(self.env.action_space, spaces.Discrete)
 
@@ -96,13 +95,13 @@ class CEMAgent(Agent):
         self.n_episodes = n_episodes
         self.percentile = percentile
         self.learning_rate = learning_rate
-        self.horizon = horizon  
-        self.verbose = verbose 
+        self.horizon = horizon
+        self.verbose = verbose
 
         # random number generator
         self.rng = seeding.get_rng()
 
-        # policy net 
+        # policy net
         hidden_size = 128
         obs_size = self.env.observation_space.high.shape[0]
         n_actions = self.env.action_space.n
@@ -110,9 +109,10 @@ class CEMAgent(Agent):
 
         # loss function and optimizer
         self.loss_fn = nn.CrossEntropyLoss()
-        self.optimizer = torch.optim.Adam(params=self.policy_net.parameters(), lr=self.learning_rate)
+        self.optimizer = torch.optim.Adam(params=self.policy_net.parameters(),
+                                          lr=self.learning_rate)
 
-        # memory 
+        # memory
         self.memory = Memory(self.batch_size)
 
         # logging config
@@ -136,7 +136,8 @@ class CEMAgent(Agent):
         for ep in range(self.n_episodes):
             episode_rewards = self._run_episode()
             self._rewards[ep] = episode_rewards
-            self._cumul_rewards[ep] = episode_rewards + self._cumul_rewards[max(0, ep - 1)]
+            self._cumul_rewards[ep] = episode_rewards + \
+                self._cumul_rewards[max(0, ep - 1)]
 
             # update policy and clear batch
             loss, reward_mean, reward_bound = self._update()
@@ -145,13 +146,14 @@ class CEMAgent(Agent):
 
         info["n_episodes"] = self.n_episodes
         info["episode_rewards"] = self._rewards
-        return info 
+        return info
 
     def _logging(self):
         if self.verbose > 0:
             t_now = time.clock()
             time_elapsed = t_now - self._time_last_log
-            if time_elapsed >= self._log_interval or self.episode == self.n_episodes:
+            if (time_elapsed >= self._log_interval) \
+                    or (self.episode == self.n_episodes):
                 self._time_last_log = t_now
                 print(self._info_to_print())
                 self._last_printed_ep = self.episode - 1
@@ -159,17 +161,22 @@ class CEMAgent(Agent):
     def _info_to_print(self):
         prev_episode = self._last_printed_ep
         episode = self.episode - 1
-        reward_per_ep = self._rewards[prev_episode:episode + 1].sum() / max(1, episode - prev_episode)
-        time_per_ep = self._log_interval * 1000.0 / max(1, episode - prev_episode)
+        reward_per_ep = self._rewards[prev_episode:episode + 1].sum() \
+            / max(1, episode - prev_episode)
+        time_per_ep = self._log_interval * 1000.0 \
+            / max(1, episode - prev_episode)
         fps = int((self.horizon / time_per_ep) * 1000)
 
-        to_print = "[%s] episode = %d/%d | reward/ep = %0.2f | time/ep = %0.2f ms | fps = %i" % (
-            self.name, episode+1, self.n_episodes, reward_per_ep, time_per_ep, fps)
+        to_print = "[{}] episode = {}/{} ".format(self.name, episode+1,
+                                                  self.n_episodes) \
+            + "| reward/ep = {:0.2f} ".format(reward_per_ep) \
+            + "| time/ep = {:0.2f} ".format(time_per_ep) \
+            + "| fps = {}".format(fps)
         return to_print
 
-
     def policy(self, observation, **kwargs):
-        act_probs_v, scores = self._get_action_probabilities_tensor(observation)
+        act_probs_v, scores = \
+            self._get_action_probabilities_tensor(observation)
         act_probs = act_probs_v.data.numpy()[0]
         action = self.rng.choice(len(act_probs), p=act_probs)
         return action
@@ -178,7 +185,7 @@ class CEMAgent(Agent):
         obs_v = torch.FloatTensor([observation]).to(device)
         sm = nn.Softmax(dim=1)
         scores = self.policy_net(obs_v)
-        act_probs_v = sm(scores) 
+        act_probs_v = sm(scores)
         return act_probs_v, scores
 
     def _process_batch(self):
@@ -199,20 +206,18 @@ class CEMAgent(Agent):
         train_states_tensor = torch.FloatTensor(train_states).to(device)
         train_actions_tensor = torch.LongTensor(train_actions).to(device)
 
-
         # states in last trajectory
         last_states = self.memory.states[-1]
-        last_states_tensor =  torch.FloatTensor(last_states).to(device)
+        last_states_tensor = torch.FloatTensor(last_states).to(device)
 
-        return train_states_tensor, train_actions_tensor, reward_bound, reward_mean, last_states_tensor
+        return train_states_tensor, train_actions_tensor,
+        reward_bound, reward_mean, last_states_tensor
 
-    def _run_episode(self):    
+    def _run_episode(self):
         # interact for H steps
         episode_rewards = 0
-        episode_states  = []
+        episode_states = []
         episode_actions = []
-
-        
         state = self.env.reset()
         for hh in range(self.horizon):
             # take action according to policy_net
@@ -222,10 +227,10 @@ class CEMAgent(Agent):
             # save
             episode_states.append(state)
             episode_actions.append(action)
-            
-            # increment rewards 
+
+            # increment rewards
             episode_rewards += reward*np.power(self.gamma, hh)
-    
+
             if done:
                 break
             state = next_state
@@ -233,25 +238,26 @@ class CEMAgent(Agent):
         self.memory.append(episode_states, episode_actions, episode_rewards)
 
         return episode_rewards
-    
+
     def _update(self):
-        train_states_tensor, train_actions_tensor, reward_bound, reward_mean, last_states_tensor = self._process_batch()
+        train_states_tensor, train_actions_tensor,\
+            reward_bound, reward_mean, \
+            last_states_tensor = self._process_batch()
         self.optimizer.zero_grad()
         action_scores = self.policy_net(train_states_tensor)
         loss = self.loss_fn(action_scores, train_actions_tensor)
 
-
         # entropy in last trajectory
         scores_last_traj = self.policy_net(last_states_tensor)
         softmax = nn.Softmax(dim=1)
-        probs_last_traj = softmax(scores_last_traj) + 1e-3  # add 1e-3 to avoid zeros
-        entropy =  - torch.sum( (probs_last_traj * torch.log(probs_last_traj)), dim = 1)
+        # 1e-3 is added to avoid zeros
+        probs_last_traj = softmax(scores_last_traj) + 1e-3
+        entropy = - torch.sum((probs_last_traj * torch.log(probs_last_traj)),
+                              dim=1)
         entropy = torch.mean(entropy)
 
-        loss = loss - 0.1*entropy   
-
+        loss = loss - 0.1*entropy
         loss.backward()
         self.optimizer.step()
-      
 
         return loss.item(), reward_mean, reward_bound
