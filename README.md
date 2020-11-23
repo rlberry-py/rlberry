@@ -16,6 +16,9 @@
    <a href="https://img.shields.io/github/contributors/rlberry-py/rlberry">
       <img alt="contributors" src="https://img.shields.io/github/contributors/rlberry-py/rlberry">
    </a>
+   <a href="https://app.codacy.com/gh/rlberry-py/rlberry?utm_source=github.com&utm_medium=referral&utm_content=rlberry-py/rlberry&utm_campaign=Badge_Grade">
+      <img alt="Codacy" src="https://api.codacy.com/project/badge/Grade/27e91674d18a4ac49edf91c339af1502">
+   </a>
 </p>
 
 <p align="center">
@@ -40,8 +43,6 @@
 | [Citation](#citing-rlberry) | How to cite this work |
 
 # Goals
-
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/27e91674d18a4ac49edf91c339af1502)](https://app.codacy.com/gh/rlberry-py/rlberry?utm_source=github.com&utm_medium=referral&utm_content=rlberry-py/rlberry&utm_campaign=Badge_Grade)
 
 * Write detailed documentation and comprehensible tutorial/examples (Jupyter Notebook) for each implemented algorithm.
 * Provide a general interface for agents, that
