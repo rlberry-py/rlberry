@@ -13,6 +13,9 @@
    <a href="https://github.com/rlberry-py/rlberry/workflows/test/badge.svg">
       <img alt="pytest" src="https://github.com/rlberry-py/rlberry/workflows/test/badge.svg">
    </a>
+   <a href="https://img.shields.io/github/contributors/rlberry-py/rlberry">
+      <img alt="contributors" src="https://img.shields.io/github/contributors/rlberry-py/rlberry">
+   </a>
 </p>
 
 <p align="center">
