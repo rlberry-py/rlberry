@@ -1,5 +1,5 @@
 """
-Provide classes for geometric primitives in OpenGL and scenes. 
+Provide classes for geometric primitives in OpenGL and scenes.
 """
 
 
@@ -20,7 +20,7 @@ class GeometricPrimitive:
     Class representing an OpenGL geometric primitive.
 
      Primitive type (GL_LINE_LOOP by defaut)
-     
+
      If using OpenGLRender2D, one of the following:
            POINTS
            LINES
@@ -32,12 +32,13 @@ class GeometricPrimitive:
            TRIANGLE_FAN
            QUADS
            QUAD_STRIP
-    
+
     If using PyGameRender2D:
             POLYGON
-    
 
-    TODO: Add support to more pygame shapes, see https://www.pygame.org/docs/ref/draw.html
+
+    TODO: Add support to more pygame shapes,
+    see https://www.pygame.org/docs/ref/draw.html
     """
 
     def __init__(self, primitive_type="GL_LINE_LOOP"):

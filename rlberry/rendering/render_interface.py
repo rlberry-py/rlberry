@@ -51,19 +51,19 @@ class RenderInterface2D(RenderInterface):
         self._rendering_enabled = False
         self._rendering_type = "2d"
         self._state_history_for_rendering = []
-        self._refresh_interval            = 50   # in milliseconds
-        self._clipping_area               = (-1.0, 1.0, -1.0, 1.0) # (left, right, bottom, top)
+        self._refresh_interval = 50   # in milliseconds
+        self._clipping_area = (-1.0, 1.0, -1.0, 1.0)  # (left,right,bottom,top)
 
         # rendering type, either 'pygame' or 'opengl'
         self.renderer_type = 'opengl'
-    
+
     def get_renderer(self):
         if self.renderer_type == 'opengl':
             return OpenGLRender2D()
         elif self.renderer_type == 'pygame':
             return PyGameRender2D()
         else:
-            raise NotImplementedError("Unknown renderer type.") 
+            raise NotImplementedError("Unknown renderer type.")
 
     @abstractmethod
     def get_scene(self, state):

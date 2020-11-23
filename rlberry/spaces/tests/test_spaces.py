@@ -39,18 +39,19 @@ def test_box_space_case_1(low, high, dim):
         assert (sp.contains(sp.sample()))
 
 
-@pytest.mark.parametrize("low, high",
-                         [
-                             (np.array([0.0, 0.0, 0.0]), np.array([1.0, 1.0, 1.0])),
-                             (np.array([-10.0, -10.0, -10.0]), np.array([10.0, 10.0, 10.0])),
-                             (np.array([-10.0, -10.0, -10.0]), np.array([10.0, 10.0, np.inf])),
-                             (np.array([-np.inf, -10.0, -10.0]), np.array([10.0, 10.0, np.inf])),
-                             (np.array([-np.inf, -10.0, -10.0]), np.array([np.inf, 10.0, np.inf]))
-                         ])
+@pytest.mark.parametrize(
+    "low, high",
+    [
+        (np.array([0.0, 0.0, 0.0]), np.array([1.0, 1.0, 1.0])),
+        (np.array([-10.0, -10.0, -10.0]), np.array([10.0, 10.0, 10.0])),
+        (np.array([-10.0, -10.0, -10.0]), np.array([10.0, 10.0, np.inf])),
+        (np.array([-np.inf, -10.0, -10.0]), np.array([10.0, 10.0, np.inf])),
+        (np.array([-np.inf, -10.0, -10.0]), np.array([np.inf, 10.0, np.inf]))
+    ])
 def test_box_space_case_2(low, high):
     sp = Box(low, high)
     if (-np.inf in low) or (np.inf in high):
-        assert not sp.is_bounded 
+        assert not sp.is_bounded
     else:
         assert sp.is_bounded
     for ii in range(2 ** sp.dim):

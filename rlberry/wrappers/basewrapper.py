@@ -1,4 +1,3 @@
-from copy import deepcopy
 from rlberry.envs.interface import Model
 from rlberry.wrappers.gym_utils import convert_space_from_gym
 
@@ -10,7 +9,7 @@ import logging
 _GYM_INSTALLED = True
 try:
     import gym
-except:
+except Exception:
     _GYM_INSTALLED = False
 
 
@@ -19,10 +18,12 @@ class Wrapper(Model):
     Wraps a given environment, similar to OpenAI gym's wrapper [1].
     Can also be used to wrap gym environments.
 
-    Note: 
-        The input environment is not copied (Wrapper.env points to the input env).
-        
-    See also: https://stackoverflow.com/questions/1443129/completely-wrap-an-object-in-python
+    Note:
+        The input environment is not copied (Wrapper.env points
+        to the input env).
+
+    See also:
+    https://stackoverflow.com/questions/1443129/completely-wrap-an-object-in-python
 
     [1] https://github.com/openai/gym/blob/master/gym/core.py
     """
@@ -35,10 +36,11 @@ class Wrapper(Model):
 
         # Check if gym environment
         if _GYM_INSTALLED and isinstance(env, gym.Env):
-            gym_env = env 
+            gym_env = env
             # Warnings
             logging.warning(
-                'GymWrapper: Rendering gym.Env does not follow the same protocol as rlberry.')
+                'GymWrapper: Rendering gym.Env does not \
+follow the same protocol as rlberry.')
             # Convert spaces
             self.observation_space = convert_space_from_gym(
                 gym_env.observation_space)
@@ -50,7 +52,7 @@ class Wrapper(Model):
         else:
             self.observation_space = self.env.observation_space
             self.action_space = self.env.action_space
-            self.reward_range = self.env.reward_range 
+            self.reward_range = self.env.reward_range
 
     @property
     def unwrapped(self):
@@ -61,7 +63,7 @@ class Wrapper(Model):
         The first condition is to avoid infinite recursion when deep copying.
         See https://stackoverflow.com/a/47300262
         """
-        if attr[:2]=='__':
+        if attr[:2] == '__':
             raise AttributeError(attr)
         if attr in self.__dict__:
             return getattr(self, attr)
@@ -88,17 +90,17 @@ class Wrapper(Model):
         try:
             self.env.reset()
             self.env.step(self.env.action_space.sample())
-            return True 
-        except Exception as ex:
-            return False 
-    
+            return True
+        except Exception:
+            return False
+
     def is_generative(self):
         try:
-            self.env.sample(self.env.observation_space.sample(), self.env.action_space.sample())
-            return True 
-        except Exception as ex:
-            return False 
-    
+            self.env.sample(self.env.observation_space.sample(),
+                            self.env.action_space.sample())
+            return True
+        except Exception:
+            return False
+
     def __str__(self):
         return '<{}{}>'.format(type(self).__name__, self.env)
-

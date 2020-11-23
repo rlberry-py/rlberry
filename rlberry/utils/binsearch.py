@@ -4,18 +4,19 @@ import numpy as np
 def binary_search_nd(x_vec, bins):
     """
     n-dimensional binary search
-    
+
     Parameters
     -----------
     x_vec : numpy.ndarray
         numpy 1d array to be searched in the bins
-    bins : list 
+    bins : list
         list of numpy 1d array, bins[d] = bins of the d-th dimension
-    
-    
+
+
     Returns
     --------
-    index (int) corresponding to the position of x in the partition defined by the bins.
+    index (int) corresponding to the position of x in the partition
+    defined by the bins.
     """
     dim = len(bins)
     flat_index = 0

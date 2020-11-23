@@ -6,10 +6,10 @@ def test_seeding():
     seeding.set_global_seed(seed)
     assert seeding._GLOBAL_SEED_SEQ.entropy == seed
 
-    rng1 = seeding.get_rng()
+    _ = seeding.get_rng()
     assert seeding._GLOBAL_SEED_SEQ.n_children_spawned == 1
 
-    rng2 = seeding.get_rng()
+    _ = seeding.get_rng()
     assert seeding._GLOBAL_SEED_SEQ.n_children_spawned == 2
 
 
@@ -30,4 +30,4 @@ def test_random_numbers():
     data3 = rng3.integers(100, size=1000)
 
     assert (data1 != data2).sum() > 5
-    assert (data2 != data3).sum() == 0 
+    assert (data2 != data3).sum() == 0

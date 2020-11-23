@@ -1,9 +1,9 @@
 import numpy as np
 import pytest
-import rlberry.seeding as seeding 
+import rlberry.seeding as seeding
 
 from rlberry.envs.classic_control import MountainCar
-from rlberry.envs.finite import FiniteMDP, GridWorld
+from rlberry.envs.finite import FiniteMDP
 from rlberry.wrappers.discretize_state import DiscretizeStateWrapper
 from rlberry.wrappers.rescale_reward import RescaleRewardWrapper
 from rlberry.wrappers.autoreset import AutoResetWrapper
@@ -32,12 +32,11 @@ def test_discretizer(n_bins):
 
 
 def test_rescale_reward():
-    # tolerance 
+    # tolerance
     tol = 1e-14
 
-
     rng = seeding.get_rng()
-    
+
     for ii in range(10):
         # generate random MDP
         S, A = 5, 2
@@ -48,11 +47,13 @@ def test_rescale_reward():
                 P[ss, aa, :] /= P[ss, aa, :].sum()
         env = FiniteMDP(R, P)
 
-        # test 
+        # test
         wrapped = RescaleRewardWrapper(env, (-10, 10))
         state = wrapped.reset()
         for ii in range(100):
-            _, reward, _, _ = wrapped.sample(wrapped.observation_space.sample(), wrapped.action_space.sample())
+            _, reward, _, _ = wrapped.sample(
+                wrapped.observation_space.sample(),
+                wrapped.action_space.sample())
             assert reward <= 10+tol and reward >= -10-tol
 
         state = wrapped.reset()
@@ -60,9 +61,10 @@ def test_rescale_reward():
             state, reward, _, _ = wrapped.step(wrapped.action_space.sample())
             assert reward <= 10+tol and reward >= -10-tol
 
+
 @pytest.mark.parametrize("rmin, rmax", [(0, 1), (-1, 1), (-5, 5), (-5, 15)])
-def test_rescale_reward_2(rmin, rmax):  
-    # tolerance 
+def test_rescale_reward_2(rmin, rmax):
+    # tolerance
     tol = 1e-15
 
     # dummy MDP
@@ -74,7 +76,7 @@ def test_rescale_reward_2(rmin, rmax):
             P[ss, aa, :] /= P[ss, aa, :].sum()
     env = FiniteMDP(R, P)
 
-    # test bounded case 
+    # test bounded case
     env.reward_range = (-100, 50)
     wrapped = RescaleRewardWrapper(env, (rmin, rmax))
     xx = np.linspace(-100, 50, num=100)
@@ -117,13 +119,14 @@ def test_autoreset(horizon):
     for ss in range(S):
         for aa in range(A):
             P[ss, aa, :] /= P[ss, aa, :].sum()
-    env = FiniteMDP(R, P, initial_state_distribution=3) # initial state = 3
+    # initial state = 3
+    env = FiniteMDP(R, P, initial_state_distribution=3)
     env = AutoResetWrapper(env, horizon)
 
-    state = env.reset()
+    env.reset()
     for tt in range(5*horizon+1):
         action = env.action_space.sample()
         next_s, reward, done, info = env.step(action)
         if (tt+1) % horizon == 0:
             assert next_s == 3
-        state = next_s
+

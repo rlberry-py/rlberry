@@ -11,8 +11,8 @@ environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 _IMPORT_SUCESSFUL = True
 try:
     import pygame as pg
-    from pygame.locals import *
-except:
+
+except Exception:
     _IMPORT_SUCESSFUL = False
 
 
@@ -24,7 +24,7 @@ class PyGameRender2D:
     def __init__(self):
         # parameters
         self.window_width = 800
-        self.window_height = 800    # multiples of 16 are preferred 
+        self.window_height = 800    # multiples of 16 are preferred
         self.background_color = (150, 190, 255)
         self.refresh_interval = 50
         self.window_name = "rlberry render"
@@ -109,13 +109,16 @@ class PyGameRender2D:
 
                 pg_vertex = (xx, yy)
                 vertices.append(pg_vertex)
-        
-            color = (255*shape.color[0], 255*shape.color[1], 255*shape.color[2])
+
+            color = (255*shape.color[0],
+                     255*shape.color[1],
+                     255*shape.color[2])
             pg.draw.polygon(self.screen, color, vertices)
 
         else:
-            raise NotImplementedError("Shape type %s not implemented in pygame renderer."%shape.type)
-
+            raise NotImplementedError(
+                "Shape type %s not implemented in pygame renderer."
+                % shape.type)
 
     def run_graphics(self):
         """
@@ -139,11 +142,13 @@ class PyGameRender2D:
                 pg.display.flip()
                 pg.time.wait(self.refresh_interval)
         else:
-            print("Error: not possible to render the environment, pygame or pyopengl not installed.")
+            print("Error: not possible to render the environment, \
+pygame or pyopengl not installed.")
 
     def get_video_data(self):
         """
-        Stores scenes in self.data in a list of numpy arrays that can be used to save a video.
+        Stores scenes in self.data in a list of numpy arrays that can be used
+        to save a video.
         """
         global _IMPORT_SUCESSFUL
 
@@ -162,17 +167,19 @@ class PyGameRender2D:
                 #
                 pg.display.flip()
 
-                # 
+                #
                 # See https://stackoverflow.com/a/42754578/5691288
                 #
                 string_image = pg.image.tostring(self.screen, 'RGB')
-                temp_surf = pg.image.fromstring(string_image, (self.window_width, self.window_height), 'RGB')
+                temp_surf = pg.image.fromstring(string_image,
+                                                (self.window_width,
+                                                 self.window_height), 'RGB')
                 tmp_arr = pg.surfarray.array3d(temp_surf)
                 imgdata = np.moveaxis(tmp_arr, 0, 1)
                 video_data.append(imgdata)
 
             return video_data
         else:
-            print("Error: not possible to render the environment, pygame or pyopengl not installed.")
+            print("Error: not possible to render the environment, pygame \
+or pyopengl not installed.")
             return []
-

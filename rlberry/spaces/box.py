@@ -58,8 +58,10 @@ class Box(Space):
             self.high = np.full((dim,), high, dtype=default_dtype)
             self.dim = dim
         else:
-            assert low.ndim == high.ndim == 1, "high and low must be 1d"
-            assert low.shape == high.shape, "low and high must have the same shape"
+            assert low.ndim == high.ndim == 1, \
+                "high and low must be 1d"
+            assert low.shape == high.shape, \
+                "low and high must have the same shape"
             self.low = low.copy()
             self.high = high.copy()
             self.dim = low.shape[0]
@@ -75,15 +77,15 @@ class Box(Space):
             # 1 if not below and     above
             # 2 if     below and not above
             # 3 if     below and     above
-            self._boundedness[dd] = 2 * bounded_below + bounded_above 
+            self._boundedness[dd] = 2 * bounded_below + bounded_above
             self.is_bounded = self.is_bounded and (self._boundedness[dd] == 3)
 
     def sample(self):
         """
         For each dimension i:
         - if bounded above and below:   uniform distribution on [a_i, b_i]
-        - if unbounded above:           exponential distribution on [a_i, infty]
-        - if unbounded below:           exponential distribution on [-infty, b_i]
+        - if unbounded above:   exponential distribution on [a_i, infty]
+        - if unbounded below:   exponential distribution on [-infty, b_i]
         - if unbounded above and below: normal distribution
         """
         xsample = np.zeros(self.dim)

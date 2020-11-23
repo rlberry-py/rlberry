@@ -11,11 +11,17 @@ environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 _IMPORT_SUCESSFUL = True
 try:
     import pygame as pg
-    from pygame.locals import *
+    from pygame.locals import DOUBLEBUF, OPENGL
 
-    from OpenGL.GL import *
-    from OpenGL.GLU import *
-except:
+    from OpenGL.GLU import gluOrtho2D
+    from OpenGL.GL import glMatrixMode, glLoadIdentity, glClearColor
+    from OpenGL.GL import glClear, glFlush, glBegin, glEnd
+    from OpenGL.GL import glColor3f, glVertex2f
+    from OpenGL.GL import GL_PROJECTION, GL_COLOR_BUFFER_BIT
+    from OpenGL.GL import GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_LINE_LOOP
+    from OpenGL.GL import GL_POLYGON, GL_TRIANGLES, GL_TRIANGLE_STRIP
+    from OpenGL.GL import GL_TRIANGLE_FAN, GL_QUADS, GL_QUAD_STRIP
+except Exception:
     _IMPORT_SUCESSFUL = False
 
 
@@ -27,7 +33,7 @@ class OpenGLRender2D:
     def __init__(self):
         # parameters
         self.window_width = 800
-        self.window_height = 800    # multiples of 16 are preferred 
+        self.window_height = 800    # multiples of 16 are preferred
         self.background_color = (0.6, 0.75, 1.0)
         self.refresh_interval = 50
         self.window_name = "rlberry render"
@@ -88,7 +94,8 @@ class OpenGLRender2D:
         Callback function, handler for window re-paint
         """
         # Set background color (clear background)
-        glClearColor(self.background_color[0], self.background_color[1], self.background_color[2], 1.0)
+        glClearColor(self.background_color[0], self.background_color[1],
+                     self.background_color[2], 1.0)
         glClear(GL_COLOR_BUFFER_BIT)
 
         # Display background
@@ -146,11 +153,10 @@ class OpenGLRender2D:
         """
         global _IMPORT_SUCESSFUL
 
-
         if _IMPORT_SUCESSFUL:
             pg.init()
             display = (self.window_width, self.window_height)
-            screen = pg.display.set_mode(display, DOUBLEBUF | OPENGL)
+            pg.display.set_mode(display, DOUBLEBUF | OPENGL)
             pg.display.set_caption(self.window_name)
             self.initGL()
             while True:
@@ -164,14 +170,15 @@ class OpenGLRender2D:
                 pg.display.flip()
                 pg.time.wait(self.refresh_interval)
         else:
-            print("Error: not possible to render the environment, pygame or pyopengl not installed.")
+            print("Error: not possible to render the environment, \
+pygame or pyopengl not installed.")
 
     def get_video_data(self):
         """
-        Stores scenes in self.data in a list of numpy arrays that can be used to save a video.
+        Stores scenes in self.data in a list of numpy arrays that can be used
+        to save a video.
         """
         global _IMPORT_SUCESSFUL
-
 
         if _IMPORT_SUCESSFUL:
             video_data = []
@@ -189,16 +196,19 @@ class OpenGLRender2D:
                 #
                 pg.display.flip()
 
-                # 
+                #
                 # See https://stackoverflow.com/a/42754578/5691288
                 #
                 string_image = pg.image.tostring(screen, 'RGB')
-                temp_surf = pg.image.fromstring(string_image, (self.window_width, self.window_height), 'RGB')
+                temp_surf = pg.image.fromstring(string_image,
+                                                (self.window_width,
+                                                 self.window_height), 'RGB')
                 tmp_arr = pg.surfarray.array3d(temp_surf)
                 imgdata = np.moveaxis(tmp_arr, 0, 1)
                 video_data.append(imgdata)
 
             return video_data
         else:
-            print("Error: not possible to render the environment, pygame or pyopengl not installed.")
+            print("Error: not possible to render the environment, \
+pygame or pyopengl not installed.")
             return []

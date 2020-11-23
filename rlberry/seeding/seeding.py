@@ -1,8 +1,8 @@
 from numpy.random import SeedSequence, default_rng
 
 # Define global seed sequence
-_GLOBAL_SEED = None 
-_GLOBAL_SEED_SEQ = None 
+_GLOBAL_SEED = None
+_GLOBAL_SEED_SEQ = None
 
 
 #
@@ -12,15 +12,15 @@ _GLOBAL_SEED_SEQ = None
 _TORCH_INSTALLED = True
 
 try:
-    import torch 
-except:
-    _TORCH_INSTALLED = False 
+    import torch
+except Exception:
+    _TORCH_INSTALLED = False
 
 
 #
 # Seeding functions
 #
-  
+
 def set_global_seed(seed=42):
     """
     rlberry has a global seed from which we can obtain different random number
@@ -33,13 +33,14 @@ def set_global_seed(seed=42):
     random number generators are children of the same SeedSequence.
 
     To do:
-        Check (torch seeding): https://github.com/pytorch/pytorch/issues/7068#issuecomment-487907668
+        Check (torch seeding):
+        https://github.com/pytorch/pytorch/issues/7068#issuecomment-487907668
     """
     global _GLOBAL_SEED, _GLOBAL_SEED_SEQ
     _GLOBAL_SEED = seed
     _GLOBAL_SEED_SEQ = SeedSequence(_GLOBAL_SEED)
-    
-    # get state (for seeding) 
+
+    # get state (for seeding)
     # rng_libs = get_rng()
     # state = rng_libs.__getstate__()['state']['state']
 
@@ -68,4 +69,3 @@ def get_rng():
 #
 
 set_global_seed()
-

@@ -10,13 +10,13 @@ def metric_lp(x, y, p, scaling):
     Parameters
     ----------
     x : numpy.ndarray
-        1d array 
+        1d array
     y : numpy.ndarray
-        1d array 
+        1d array
     p : int
         norm parameter
     scaling : numpy.ndarray
-        1d array 
+        1d array
     """
     assert p >= 1
     assert x.ndim == 1

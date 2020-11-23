@@ -4,7 +4,7 @@ from rlberry.wrappers import Wrapper
 
 class RescaleRewardWrapper(Wrapper):
     """
-    Rescale the reward function to a bounded range. 
+    Rescale the reward function to a bounded range.
     """
 
     def __init__(self, env, reward_range):
@@ -30,10 +30,10 @@ class RescaleRewardWrapper(Wrapper):
     def _rescale(self, reward):
         x0, x1 = self.env.reward_range
         u0, u1 = self.reward_range
-        # bounded reward 
+        # bounded reward
         if x0 > -np.inf and x1 < np.inf:
             return self._linear_rescaling(reward, x0, x1, u0, u1)
-        # unbounded  
+        # unbounded
         elif x0 > -np.inf and x1 == np.inf:
             x = reward - x0  # [0, infty]
             x = 2.0 / (1.0 + np.exp(-x)) - 1.0  # [0, 1]
