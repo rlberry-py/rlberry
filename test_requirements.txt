@@ -1,7 +1,0 @@
-numpy
-pytest
-numba
-joblib
-matplotlib
-pandas
-seaborn
