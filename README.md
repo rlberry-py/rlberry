@@ -31,6 +31,10 @@
 |-|-|
 | [Goals](#goals) | The philosophy of the library |
 | [Installation](#installation) | How to install the library |
+| [Getting started](#getting-started) | A quick guide on how to use rlberry |
+| [Documentation](#documentation) | A link to the documentation |
+| [Contributing](#contributing) | A guide for contributing |
+| [Citation](#citing-rlberry) | How to cite this work |
 
 # Goals
 
@@ -59,8 +63,7 @@ Or you can also install directly (not suggested):
 git clone https://github.com/rlberry-py/rlberry.git
 python3 -m pip install -e .
 ```
-
-# Optional dependencies
+## Optional dependencies
 
 * For saving videos: [ffmpeg-python](https://github.com/kkroening/ffmpeg-python) 
 ```
@@ -73,7 +76,9 @@ pip install optuna
 ```
 
 
-# Tests
+# Getting started
+
+## Tests
 
 To run tests, run `pytest`. To run tests with coverage, install and run `pytest-cov`:
 
@@ -85,8 +90,12 @@ bash run_tests.sh
 See coverage report in `cov_html/index.html`.
 
 
+# Documentation
 
-# Implementation notes
+
+# Contributing
+
+## Implementation notes
 
 * When inheriting from the `Agent` class, make sure to call `Agent.__init__(self, env, **kwargs)` using `**kwargs` in case new features are added to the base class, and to make sure that `copy_env` and `reseed_env` are always an option to any agent. 
 
@@ -95,3 +104,7 @@ See coverage report in `cov_html/index.html`.
     * `verbose>1`: print progress messages
 
 Errors and warnings are printed using the `logging` library.
+
+
+# Citing rlberry
+
