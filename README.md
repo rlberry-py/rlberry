@@ -19,6 +19,9 @@
    <a href="https://app.codacy.com/gh/rlberry-py/rlberry?utm_source=github.com&utm_medium=referral&utm_content=rlberry-py/rlberry&utm_campaign=Badge_Grade">
       <img alt="Codacy" src="https://api.codacy.com/project/badge/Grade/27e91674d18a4ac49edf91c339af1502">
    </a>
+   <a href="https://codecov.io/gh/rlberry-py/rlberry">
+      <img src="https://codecov.io/gh/rlberry-py/rlberry/branch/main/graph/badge.svg?token=TIFP7RUD75"/>
+   </a> 
 </p>
 
 <p align="center">
