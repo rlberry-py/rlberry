@@ -33,7 +33,7 @@ def binary_search_nd(x_vec, bins):
 def unravel_index_uniform_bin(flat_index, dim, n_per_dim):
     index = []
     aux_index = flat_index
-    for dd in range(dim):
+    for _ in range(dim):
         index.append(aux_index % n_per_dim)
         aux_index = aux_index // n_per_dim
     return tuple(index)
@@ -45,3 +45,4 @@ if __name__ == "__main__":
     x = [3.9, 3.5]
     index = binary_search_nd(x, bins)
     print(index)
+

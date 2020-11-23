@@ -25,7 +25,7 @@ def test_continuous_state_env():
     counter = DiscreteCounter(env.observation_space, env.action_space)
 
     for N in [10, 20, 30]:
-        for ii in range(100):
+        for _ in range(100):
             ss = env.observation_space.sample()
             aa = env.action_space.sample()
             for nn in range(N):
@@ -44,7 +44,7 @@ def test_continuous_state_env_2():
                                           env.action_space)
 
     for N in [10, 20, 30]:
-        for ii in range(100):
+        for _ in range(100):
             ss = env.observation_space.sample()
             aa = env.action_space.sample()
             for nn in range(N):
@@ -52,3 +52,4 @@ def test_continuous_state_env_2():
                 counter.update(ss, aa, ns, rr)
             assert counter.count(ss, aa) == N
             counter.reset()
+

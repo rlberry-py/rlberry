@@ -22,15 +22,16 @@ def test_instantiation(ModelClass):
     if env.is_online():
         for ep in range(2):
             state = env.reset()
-            for ii in range(50):
+            for _ in range(50):
                 assert env.observation_space.contains(state)
                 action = env.action_space.sample()
                 next_s, reward, done, info = env.step(action)
                 state = next_s
 
     if env.is_generative():
-        for ii in range(100):
+        for _ in range(100):
             state = env.observation_space.sample()
             action = env.action_space.sample()
             next_s, reward, done, info = env.sample(state, action)
             assert env.observation_space.contains(next_s)
+

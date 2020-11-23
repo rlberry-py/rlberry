@@ -31,7 +31,7 @@ from rlberry.envs.finite import FiniteMDP
 def test_bellman_operator_monotonicity_and_contraction(gamma, S, A):
     rng = seeding.get_rng()
     vmax = 1.0 / (1.0 - gamma)
-    for sim in range(10):
+    for _ in range(10):
         # generate random MDP
         R = rng.uniform(0.0, 1.0, (S, A))
         P = rng.uniform(0.0, 1.0, (S, A, S))

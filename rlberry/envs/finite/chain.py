@@ -27,7 +27,7 @@ class Chain(FiniteMDP, RenderInterface2D):
         # transition probabilities
         P = np.zeros((L, 2, L))
         for ss in range(L):
-            for aa in range(2):
+            for _ in range(2):
                 if ss == 0:
                     P[ss, 0, ss] = 1.0 - fail_prob  # action 0 = don't move
                     P[ss, 1, ss + 1] = 1.0 - fail_prob  # action 1 = right
