@@ -262,12 +262,12 @@ class GridWorld(FiniteMDP, RenderInterface2D):
         grid_values_ascii = ''
         for rr in range(self.nrows + 1):
             if rr < self.nrows:
-                grid_values_ascii += str(rr).zfill(2) + 2 * ' '
-                + ' '.join(grid_values[rr]) + '\n'
+                grid_values_ascii += str(rr).zfill(2) + 2 * ' ' \
+                    + ' '.join(grid_values[rr]) + '\n'
             else:
-                grid_values_ascii += 4 * ' '
-                + ' '.join([str(jj).zfill(2).ljust(9) for jj
-                            in range(self.ncols)])
+                grid_values_ascii += 4 * ' ' \
+                    + ' '.join([str(jj).zfill(2).ljust(9) for jj
+                                in range(self.ncols)])
         print(grid_values_ascii)
 
     def print_transition_at(self, row, col, action):

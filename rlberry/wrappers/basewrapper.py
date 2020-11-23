@@ -1,10 +1,9 @@
+import rlberry.seeding as seeding
+import logging
+
 from rlberry.envs.interface import Model
 from rlberry.wrappers.gym_utils import convert_space_from_gym
 
-
-import rlberry.seeding as seeding
-
-import logging
 
 _GYM_INSTALLED = True
 try:

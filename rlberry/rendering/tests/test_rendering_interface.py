@@ -39,12 +39,12 @@ def test_render2d_interface(ModelClass):
         env.enable_rendering()
 
         if env.is_online():
-            for ep in range(2):
+            for _ in range(2):
                 state = env.reset()
-                for ii in range(50):
+                for _ in range(50):
                     assert env.observation_space.contains(state)
                     action = env.action_space.sample()
-                    next_s, reward, done, info = env.step(action)
+                    next_s, _, _, _ = env.step(action)
                     state = next_s
                 env.render()
             env.clear_render_buffer()

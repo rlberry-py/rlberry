@@ -30,7 +30,7 @@ classes = [
 def get_env_trajectory(env, horizon):
     states = []
     ss = env.reset()
-    for ii in range(horizon):
+    for _ in range(horizon):
         states.append(ss)
         ss, _, _, _ = env.step(env.action_space.sample())
     return states

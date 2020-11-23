@@ -14,18 +14,18 @@ def test_discretizer(n_bins):
     env = DiscretizeStateWrapper(MountainCar(), n_bins)
     assert env.observation_space.n == n_bins * n_bins
 
-    for ep in range(2):
+    for _ in range(2):
         state = env.reset()
-        for ii in range(50):
+        for _ in range(50):
             assert env.observation_space.contains(state)
             action = env.action_space.sample()
-            next_s, reward, done, info = env.step(action)
+            next_s, _, _, _ = env.step(action)
             state = next_s
 
-    for ii in range(100):
+    for _ in range(100):
         state = env.observation_space.sample()
         action = env.action_space.sample()
-        next_s, reward, done, info = env.sample(state, action)
+        next_s, _, _, _ = env.sample(state, action)
         assert env.observation_space.contains(next_s)
 
     assert env.unwrapped.name == "MountainCar"
@@ -37,7 +37,7 @@ def test_rescale_reward():
 
     rng = seeding.get_rng()
 
-    for ii in range(10):
+    for _ in range(10):
         # generate random MDP
         S, A = 5, 2
         R = rng.uniform(0.0, 1.0, (S, A))
@@ -49,16 +49,16 @@ def test_rescale_reward():
 
         # test
         wrapped = RescaleRewardWrapper(env, (-10, 10))
-        state = wrapped.reset()
-        for ii in range(100):
+        _ = wrapped.reset()
+        for _ in range(100):
             _, reward, _, _ = wrapped.sample(
                 wrapped.observation_space.sample(),
                 wrapped.action_space.sample())
             assert reward <= 10+tol and reward >= -10-tol
 
-        state = wrapped.reset()
-        for ii in range(100):
-            state, reward, _, _ = wrapped.step(wrapped.action_space.sample())
+        _ = wrapped.reset()
+        for _ in range(100):
+            _, reward, _, _ = wrapped.step(wrapped.action_space.sample())
             assert reward <= 10+tol and reward >= -10-tol
 
 

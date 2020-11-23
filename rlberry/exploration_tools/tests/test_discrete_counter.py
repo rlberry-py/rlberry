@@ -12,7 +12,7 @@ def test_discrete_env():
     for N in range(10, 20):
         for ss in range(env.observation_space.n):
             for aa in range(env.action_space.n):
-                for nn in range(N):
+                for _ in range(N):
                     ns, rr, _, _ = env.sample(ss, aa)
                     counter.update(ss, aa, ns, rr)
                 assert counter.N_sa[ss, aa] == N
@@ -28,7 +28,7 @@ def test_continuous_state_env():
         for _ in range(100):
             ss = env.observation_space.sample()
             aa = env.action_space.sample()
-            for nn in range(N):
+            for _ in range(N):
                 ns, rr, _, _ = env.sample(ss, aa)
                 counter.update(ss, aa, ns, rr)
 

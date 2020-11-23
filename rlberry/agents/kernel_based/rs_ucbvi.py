@@ -19,9 +19,7 @@ def map_to_representative(state,
                           min_dist,
                           scaling,
                           accept_new_repr):
-    """
-    Map state to representative state.
-    """
+    """ Map state to representative state."""
     dist_to_closest = np.inf
     argmin = -1
     for ii in range(n_representatives):

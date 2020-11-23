@@ -30,9 +30,9 @@ class AgentStats:
                  train_env,
                  eval_env=None,
                  eval_horizon=None,
-                 init_kwargs={},
-                 fit_kwargs={},
-                 policy_kwargs={},
+                 init_kwargs=None,
+                 fit_kwargs=None,
+                 policy_kwargs=None,
                  agent_name=None,
                  n_fit=4,
                  n_jobs=4,
@@ -99,9 +99,16 @@ class AgentStats:
             self.output_dir = output_dir
             self.verbose = verbose
 
+            if init_kwargs is None:
+                self.init_kwargs = {}
+            if fit_kwargs is None:
+                self.fit_kwargs = {}
+            if policy_kwargs is None:
+                self.policy_kwargs = {}
+
             # Create environment copies for training
             self.train_env_set = []
-            for ii in range(n_fit):
+            for _ in range(n_fit):
                 _env = deepcopy(train_env)
                 _env.reseed()
                 self.train_env_set.append(_env)

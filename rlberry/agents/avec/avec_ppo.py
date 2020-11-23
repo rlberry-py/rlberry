@@ -72,6 +72,7 @@ class Memory:
 
 
 class AVECPPOAgent(Agent):
+
     """
     AVEC uses a modification of the training objective for the critic in
     actor-critic algorithms to better approximate the value function (critic).
@@ -251,7 +252,7 @@ class AVECPPOAgent(Agent):
         # interact for H steps
         episode_rewards = 0
         state = self.env.reset()
-        for t in range(self.horizon):
+        for _ in range(self.horizon):
             # running policy_old
             action = self._select_action(state)
             state, reward, done, _ = self.env.step(action)
