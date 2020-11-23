@@ -24,7 +24,10 @@ class AutoResetWrapper(Wrapper):
     def step(self, action):
         observation, reward, done, info = self.env.step(action)
         self.current_step += 1
-        if self.current_step == self.horizon:  # At H, always return to the initial state.
+        # At H, always return to the initial state.
+        # Also, set done to True.
+        if self.current_step == self.horizon:
             self.current_step = 0
             observation = self.env.reset()
+            done = True
         return observation, reward, done, info
