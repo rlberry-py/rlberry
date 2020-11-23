@@ -2,7 +2,7 @@ import rlberry.seeding as seeding
 from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
 from rlberry.agents import MBQVIAgent
 from rlberry.agents.ppo import PPOAgent
-from rlberry.wrappers import RescaleRewardWrapper, DiscretizeStateWrapper
+from rlberry.wrappers import DiscretizeStateWrapper
 from rlberry.stats import AgentStats, plot_episode_rewards, compare_policies
 
 
@@ -13,7 +13,7 @@ seeding.set_global_seed(1234)
 # Define train and evaluation envs
 # --------------------------------
 train_env = get_benchmark_env(level=5)
-d_train_env = DiscretizeStateWrapper(train_env, 20) 
+d_train_env = DiscretizeStateWrapper(train_env, 20)
 
 
 # -----------------------------
@@ -30,17 +30,19 @@ params_oracle = {
     "horizon": HORIZON
 }
 
-params_ppo = {"n_episodes" : N_EPISODES,
-              "gamma" : GAMMA,
-              "horizon" : HORIZON,
+params_ppo = {"n_episodes": N_EPISODES,
+              "gamma": GAMMA,
+              "horizon": HORIZON,
               "learning_rate": 0.0003,
-              "verbose":VERBOSE}
+              "verbose": VERBOSE}
 
 # -----------------------------
 # Run AgentStats
 # -----------------------------
-oracle_stats = AgentStats(MBQVIAgent, d_train_env, init_kwargs=params_oracle, n_fit=4, agent_name="Oracle")
-ppo_stats    = AgentStats(PPOAgent,   train_env,   init_kwargs=params_ppo,    n_fit=4, agent_name="PPO")
+oracle_stats = AgentStats(MBQVIAgent, d_train_env, init_kwargs=params_oracle,
+                          n_fit=4, agent_name="Oracle")
+ppo_stats = AgentStats(PPOAgent,   train_env,   init_kwargs=params_ppo,
+                       n_fit=4, agent_name="PPO")
 
 agent_stats_list = [oracle_stats, ppo_stats]
 

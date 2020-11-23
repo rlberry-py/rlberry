@@ -10,7 +10,7 @@ from rlberry.rendering import RenderInterface2D
 
 
 classes = [
-    Acrobot, 
+    Acrobot,
     MountainCar,
     GridWorld,
     Chain,

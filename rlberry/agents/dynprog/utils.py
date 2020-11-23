@@ -5,16 +5,17 @@ from numba import jit
 @jit(nopython=True)
 def backward_induction(R, P, horizon, gamma=1.0, vmax=np.inf):
     """
-    Backward induction to compute Q and V functions in the finite horizon setting.
+    Backward induction to compute Q and V functions in the
+    finite horizon setting.
 
     Parameters
     ----------
     R : numpy.ndarray
-        array of shape (S, A) contaning the rewards, where S is the number 
+        array of shape (S, A) contaning the rewards, where S is the number
         of states and A is the number of actions
     P : numpy.ndarray
-        array of shape (S, A, S) such that P[s,a,ns] is the probability of 
-        arriving at ns by taking action a in state s. 
+        array of shape (S, A, S) such that P[s,a,ns] is the probability of
+        arriving at ns by taking action a in state s.
     horizon : int
         problem horizon
     gamma : double
@@ -22,7 +23,7 @@ def backward_induction(R, P, horizon, gamma=1.0, vmax=np.inf):
     vmax : double
         maximum possible value in V
         default = np.inf
-    
+
     Returns
     --------
     tuple (Q, V) containing the Q and V functions, of shapes (horizon, S, A)
@@ -37,8 +38,9 @@ def backward_induction(R, P, horizon, gamma=1.0, vmax=np.inf):
             for aa in range(A):
                 q_aa = R[ss, aa]
                 if hh < horizon - 1:
-                    # not using .dot instead of loop to avoid scipy dependency 
-                    # (numba seems to require scipy for linear algebra operations in numpy)
+                    # not using .dot instead of loop to avoid scipy dependency
+                    # (numba seems to require scipy for linear
+                    # algebra operations in numpy)
                     for ns in range(S):
                         q_aa += gamma * P[ss, aa, ns] * V[hh + 1, ns]
                 if q_aa > max_q:
@@ -53,8 +55,9 @@ def backward_induction(R, P, horizon, gamma=1.0, vmax=np.inf):
 @jit(nopython=True)
 def backward_induction_in_place(Q, V, R, P, horizon, gamma=1.0, vmax=np.inf):
     """
-    Backward induction to compute Q and V functions in the finite horizon setting.
-    Takes as input the arrays where to store Q and V. 
+    Backward induction to compute Q and V functions in
+    the finite horizon setting.
+    Takes as input the arrays where to store Q and V.
 
     Parameters
     ----------
@@ -63,11 +66,11 @@ def backward_induction_in_place(Q, V, R, P, horizon, gamma=1.0, vmax=np.inf):
     V:  numpy.ndarray
         array of shape (horizon, S) where to store the V function
     R : numpy.ndarray
-        array of shape (S, A) contaning the rewards, where S is the number 
+        array of shape (S, A) contaning the rewards, where S is the number
         of states and A is the number of actions
     P : numpy.ndarray
-        array of shape (S, A, S) such that P[s,a,ns] is the probability of 
-        arriving at ns by taking action a in state s. 
+        array of shape (S, A, S) such that P[s,a,ns] is the probability of
+        arriving at ns by taking action a in state s.
     horizon : int
         problem horizon
     gamma : double
@@ -75,7 +78,7 @@ def backward_induction_in_place(Q, V, R, P, horizon, gamma=1.0, vmax=np.inf):
     vmax : double
         maximum possible value in V
         default = np.inf
-    
+
     Returns
     --------
     tuple (Q, V) containing the Q and V functions, of shapes (horizon, S, A)
@@ -88,8 +91,9 @@ def backward_induction_in_place(Q, V, R, P, horizon, gamma=1.0, vmax=np.inf):
             for aa in range(A):
                 q_aa = R[ss, aa]
                 if hh < horizon - 1:
-                    # not using .dot instead of loop to avoid scipy dependency 
-                    # (numba seems to require scipy for linear algebra operations in numpy)
+                    # not using .dot instead of loop to avoid scipy dependency
+                    # (numba seems to require scipy for linear algebra
+                    #  operations in numpy)
                     for ns in range(S):
                         q_aa += gamma * P[ss, aa, ns] * V[hh + 1, ns]
                 if q_aa > max_q:
@@ -108,19 +112,19 @@ def value_iteration(R, P, gamma, epsilon=1e-6):
     Parameters
     ----------
     R : numpy.ndarray
-        array of shape (S, A) contaning the rewards, where S is the number 
+        array of shape (S, A) contaning the rewards, where S is the number
         of states and A is the number of actions
     P : numpy.ndarray
-        array of shape (S, A, S) such that P[s,a,ns] is the probability of 
-        arriving at ns by taking action a in state s. 
+        array of shape (S, A, S) such that P[s,a,ns] is the probability of
+        arriving at ns by taking action a in state s.
     gamma : double
         discount factor
     epsilon : double
-        precision 
+        precision
 
     Returns
     --------
-    tuple (Q, V, n_it) containing the epsilon-optimal Q and V functions, 
+    tuple (Q, V, n_it) containing the epsilon-optimal Q and V functions,
     of shapes (S, A) and (S,), respectively, and n_it, the number of iterations
     """
     S, A = R.shape
@@ -149,11 +153,11 @@ def bellman_operator(Q, R, P, gamma):
         array of shape (S, A) containing the Q function to which apply
         the operator
     R : numpy.ndarray
-        array of shape (S, A) contaning the rewards, where S is the number 
+        array of shape (S, A) contaning the rewards, where S is the number
         of states and A is the number of actions
     P : numpy.ndarray
-        array of shape (S, A, S) such that P[s,a,ns] is the probability of 
-        arriving at ns by taking action a in state s. 
+        array of shape (S, A, S) such that P[s,a,ns] is the probability of
+        arriving at ns by taking action a in state s.
     gamma : double
         discount factor
 

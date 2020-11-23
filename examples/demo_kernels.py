@@ -25,5 +25,3 @@ for ii, k_type in enumerate(kernel_types):
     axes[ii].plot(z, kernel_vals)
     axes[ii].set_title(k_type)
 plt.show()
-
-    

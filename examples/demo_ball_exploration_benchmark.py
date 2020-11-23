@@ -18,9 +18,9 @@ print(info)
 env.enable_rendering()
 state = env.reset()
 for tt in range(5*env.horizon):
-    hh = tt 
+    hh = tt
     if hh >= env.horizon:
-        hh = tt % env.horizon 
+        hh = tt % env.horizon
     action = agent.policy(state, hh)
     next_s, _, _, _ = env.step(action)
     state = next_s
