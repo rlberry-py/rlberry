@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-packages = find_packages(exclude=['docs', 'notebooks', 'log'])
+packages = find_packages(exclude=['docs', 'notebooks', 'logo'])
 
 install_requires = [
     'numpy>=1.17',
