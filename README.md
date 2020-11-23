@@ -41,6 +41,8 @@
 
 # Goals
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/27e91674d18a4ac49edf91c339af1502)](https://app.codacy.com/gh/rlberry-py/rlberry?utm_source=github.com&utm_medium=referral&utm_content=rlberry-py/rlberry&utm_campaign=Badge_Grade)
+
 * Write detailed documentation and comprehensible tutorial/examples (Jupyter Notebook) for each implemented algorithm.
 * Provide a general interface for agents, that
     * puts minimal constraints on the agent code (=> making it easy to include new algorithms and modify existing ones);
