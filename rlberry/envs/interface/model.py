@@ -19,11 +19,11 @@ class Model:
     reward_range : tuple
         tuple (r_min, r_max) containing the minimum and the maximum reward
     rng : numpy.random._generator.Generator
-        random number generator provided by rlberry.seeding 
+        random number generator provided by rlberry.seeding
 
     Methods
     -------
-    reseed 
+    reseed()
         get new random number generator
     reset()
         puts the environment in a default state and returns this state
@@ -98,30 +98,31 @@ class Model:
         raise NotImplementedError("sample() method not implemented.")
 
     def is_online(self):
-        logging.warning("Checking if Model is online calls reset() and step() methods.")
+        logging.warning("Checking if Model is\
+online calls reset() and step() methods.")
         try:
             self.reset()
             self.step(self.action_space.sample())
-            return True 
+            return True
         except Exception as ex:
             if isinstance(ex, NotImplementedError):
-                return False 
+                return False
             else:
                 raise
-    
+
     def is_generative(self):
-        logging.warning("Checking if Model is generative calls sample() method.")
+        logging.warning("Checking if Model is \
+generative calls sample() method.")
         try:
-            self.sample(self.observation_space.sample(), self.action_space.sample())
-            return True 
+            self.sample(self.observation_space.sample(),
+                        self.action_space.sample())
+            return True
         except Exception as ex:
             if isinstance(ex, NotImplementedError):
-                return False 
+                return False
             else:
                 raise
-    
+
     @property
     def unwrapped(self):
         return self
-
-

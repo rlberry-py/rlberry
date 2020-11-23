@@ -1,7 +1,6 @@
-import numpy as np 
+import numpy as np
 import pytest
 import rlberry.seeding as seeding
-import rlberry.spaces as spaces
 
 from copy import deepcopy
 from rlberry.envs.classic_control import MountainCar, Acrobot
@@ -28,15 +27,17 @@ def get_env_trajectory(env, horizon):
         ss, _, _, _ = env.step(env.action_space.sample())
     return states
 
+
 def compare_trajectories(traj1, traj2):
     for ss1, ss2 in zip(traj1, traj2):
         if not np.array_equal(ss1, ss2):
-            return False 
+            return False
     return True
+
 
 @pytest.mark.parametrize("ModelClass", classes)
 def test_env_seeding(ModelClass):
-    
+
     seeding.set_global_seed(123)
     env1 = ModelClass()
 
@@ -57,10 +58,10 @@ def test_env_seeding(ModelClass):
 
 @pytest.mark.parametrize("ModelClass", classes)
 def test_copy_reseeding(ModelClass):
-    
+
     seeding.set_global_seed(123)
     env = ModelClass()
-    
+
     c_env = deepcopy(env)
     c_env.reseed()
 

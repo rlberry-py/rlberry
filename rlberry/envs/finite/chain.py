@@ -6,7 +6,7 @@ from rlberry.rendering import RenderInterface2D, Scene, GeometricPrimitive
 
 class Chain(FiniteMDP, RenderInterface2D):
     """
-    Simple chain environment. 
+    Simple chain environment.
     Reward 0.05 in initial state, reward 1.0 in final state.
     """
 
@@ -16,10 +16,10 @@ class Chain(FiniteMDP, RenderInterface2D):
         """
         Parameters
         ----------
-        L : int 
+        L : int
             length of the chain
-        fail_prob : double 
-            fail probability 
+        fail_prob : double
+            fail probability
         """
         assert L >= 2
         self.L = L

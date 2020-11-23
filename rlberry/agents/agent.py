@@ -10,7 +10,8 @@ class Agent(ABC):
 
     Notes
     ------
-        Classes that implement this class should send **kwargs to Agent.__init__()
+        Classes that implement this class should send **kwargs to
+        Agent.__init__()
 
 
     Attributes
@@ -18,15 +19,16 @@ class Agent(ABC):
     name : string
         agent identifier
     fit_info : tuple
-        tuple of strings containing the keys in the dictionary returned by fit()
+        tuple of strings containing the keys in the dictionary
+        returned by fit()
     env : rlberry.envs.interface.model.Model
         environment on which to train the agent
 
-        
+
     Methods
     --------
     fit(**kwargs)
-        train the agent, returns dictionary with training info, 
+        train the agent, returns dictionary with training info,
         whose keys are strings
     policy(observation, **kwargs)
         returns the action to be taken given an observation
@@ -35,7 +37,7 @@ class Agent(ABC):
     sample_parameters(), optional
         returns dictionary with sampled hyperparameters.
     save(), optional
-        save agent 
+        save agent
     load(), optional
         load agent, returns an instance of the agent
     """
@@ -43,7 +45,8 @@ class Agent(ABC):
     name = ""
     fit_info = ()
 
-    def __init__(self, env, copy_env=True, reseed_env=True,**kwargs):
+    def __init__(self, env, copy_env=True,
+                 reseed_env=True, **kwargs):
         """
         Parameters
         ----------
@@ -57,7 +60,7 @@ class Agent(ABC):
         if copy_env:
             self.env = deepcopy(env)
         else:
-            self.env = env 
+            self.env = env
         if reseed_env:
             self.env.reseed()
 
@@ -81,13 +84,14 @@ class Agent(ABC):
     @classmethod
     def sample_parameters(cls, trial):
         """
-        Sample hyperparameters for hyperparam optimization using Optuna (https://optuna.org/)
+        Sample hyperparameters for hyperparam optimization using
+        Optuna (https://optuna.org/)
 
-        Note: only the kwargs sent to __init__ are optimized. Make sure to include in the Agent constructor
-        all "optimizable" parameters.
+        Note: only the kwargs sent to __init__ are optimized. Make sure to
+        include in the Agent constructor all "optimizable" parameters.
 
         Parameters
         ----------
         trial: optuna.trial
         """
-        raise NotImplementedError("Agent does not implement sample_parameters() for hyperparameter optimization.")
+        raise NotImplementedError("sample_parameters() not implemented.")

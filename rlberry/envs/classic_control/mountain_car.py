@@ -6,7 +6,8 @@ Mountain Car environment adapted from OpenAI gym [1].
 * also implemented as a generative model (in addition to an online model)
 * render function follows the rlberry rendering interface.
 
-[1] https://github.com/openai/gym/blob/master/gym/envs/classic_control/mountain_car.py
+[1] https://github.com/openai/gym/blob/master/gym/envs/
+classic_control/mountain_car.py
 """
 
 import math
@@ -90,7 +91,8 @@ class MountainCar(Model, RenderInterface2D):
         self.reset()
 
     def step(self, action):
-        assert self.action_space.contains(action), "%r (%s) invalid" % (action, type(action))
+        assert self.action_space.contains(action), \
+            "%r (%s) invalid" % (action,  type(action))
 
         # save state for rendering
         if self.is_render_enabled():
@@ -108,18 +110,23 @@ class MountainCar(Model, RenderInterface2D):
     def sample(self, state, action):
         if (type(state) != np.ndarray):
             state = np.array(state)
-        assert self.observation_space.contains(state), "Invalid state as argument of reset()."
-        assert self.action_space.contains(action), "%r (%s) invalid" % (action, type(action))
+        assert self.observation_space.contains(state), \
+            "Invalid state as argument of reset()."
+        assert self.action_space.contains(action), \
+            "%r (%s) invalid" % (action, type(action))
 
         position = state[0]
         velocity = state[1]
-        velocity += (action - 1) * self.force + math.cos(3 * position) * (-self.gravity)
+        velocity += (action - 1) * self.force \
+            + math.cos(3 * position) * (-self.gravity)
         velocity = np.clip(velocity, -self.max_speed, self.max_speed)
         position += velocity
         position = np.clip(position, self.min_position, self.max_position)
-        if (position == self.min_position and velocity < 0): velocity = 0
+        if (position == self.min_position and velocity < 0):
+            velocity = 0
 
-        done = bool(position >= self.goal_position and velocity >= self.goal_velocity)
+        done = bool(position >= self.goal_position and
+                    velocity >= self.goal_velocity)
         reward = 0.0
         if done:
             reward = 1.0
@@ -146,7 +153,8 @@ class MountainCar(Model, RenderInterface2D):
         mountain.add_vertex((0.6, -1.0))
 
         n_points = 50
-        obs_range = self.observation_space.high[0] - self.observation_space.low[0]
+        obs_range = self.observation_space.high[0] \
+            - self.observation_space.low[0]
         eps = obs_range / (n_points - 1)
         for ii in reversed(range(n_points)):
             x = self.observation_space.low[0] + ii * eps

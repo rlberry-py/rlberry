@@ -50,7 +50,6 @@ class FiniteMDP(Model):
         self.reset()
         self._check()
 
-
     def reset(self):
         """
         Reset the environment to a default state.
@@ -136,7 +135,8 @@ class FiniteMDP(Model):
                 print(indent + "Action ", a)
                 for ss in self._states:
                     if self.P[s, a, ss] > 0.0:
-                        print(2 * indent + 'transition to %d with prob %0.2f' % (ss, self.P[s, a, ss]))
+                        print(2 * indent + 'transition to %d with prob %0.2f'
+                              % (ss, self.P[s, a, ss]))
             print("~~~~~~~~~~~~~~~~~~~~")
 
 
