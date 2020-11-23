@@ -8,13 +8,14 @@ from rlberry.rendering import Scene, GeometricPrimitive, RenderInterface2D
 def projection_to_pball(x, p):
     """
     Solve the problem:
-        min_z  ||x-z||_2^2 
+        min_z  ||x-z||_2^2
         s.t.   ||z||_p  <= 1
-    for p = 2 or p = np.inf 
+    for p = 2 or p = np.inf
 
     If p is not 2 or np.inf, it returns x/norm_p(x) if norm_p(x) > 1
 
-    WARNING: projection_to_pball is not actually a projection for p!=2 or p=!np.inf
+    WARNING: projection_to_pball is not actually a projection for p!=2
+    or p=!np.inf
     """
     if np.linalg.norm(x, ord=p) <= 1.0:
         return x
@@ -33,10 +34,12 @@ def projection_to_pball(x, p):
 
 class PBall(Model):
     """
-    Parametric family of environments whose state space is a unit sphere according to the p-norm in R^d.
+    Parametric family of environments whose state space is a unit sphere
+    according to the p-norm in R^d.
 
-    Note: 
-        The projection function is only a true projection for p in {2, infinity}. 
+    Note:
+        The projection function is only a true projection for
+        p in {2, infinity}.
 
     ----------------------------------------------------------------------
     State space:
@@ -59,13 +62,15 @@ class PBall(Model):
     Transitions:
         x_{t+1} = A x_t + B u_t + N
 
-        where 
+        where
             A: square matrix of size d
             B: matrix of size (d, d')
-            N: d-dimensional Gaussian noise with zero mean and covariance matrix sigma*I 
+            N: d-dimensional Gaussian noise with zero mean and covariance
+            matrix sigma*I
     ----------------------------------------------------------------------
     Initial state:
-        d-dimensional Gaussian with mean mu_init and covariance matrix sigma_init*I
+        d-dimensional Gaussian with mean mu_init and covariance matrix
+        sigma_init*I
     ----------------------------------------------------------------------
 
     Default parameters are provided for a 2D environment, PBall2D
@@ -87,32 +92,34 @@ class PBall(Model):
         """
         Parameters
         -----------
-        p : int 
+        p : int
             parameter of the p-norm
-        action_list : list 
-            list of actions {u_1, ..., u_m}, each action u_i is a d'-dimensional array
-        reward_amplitudes: list 
+        action_list : list
+            list of actions {u_1, ..., u_m}, each action u_i is a
+            d'-dimensional array
+        reward_amplitudes: list
             list of reward amplitudes: {b_1, ..., b_n}
-        reward_smoothness : list 
+        reward_smoothness : list
             list of reward smoothness: {c_1, ..., c_n}
-        reward_centers : list 
+        reward_centers : list
             list of reward centers:    {x_1, ..., x_n}
         A : numpy.ndarray
             array A of size (d, d)
         B : numpy.ndarray
             array B of size (d, d')
-        sigma : double 
-            transition noise sigma 
-        sigma_init : double 
+        sigma : double
+            transition noise sigma
+        sigma_init : double
             initial state noise sigma_init
-        mu_init : numpy.ndarray 
+        mu_init : numpy.ndarray
             array of size (d,) containing the mean of the initial state
         """
         Model.__init__(self)
 
         assert p >= 1, "PBall requires p>=1"
         if p not in [2, np.inf]:
-            print("WARNING: for p!=2 or p!=np.inf, PBall does not make true projections onto the lp ball.")
+            print("WARNING: for p!=2 or p!=np.inf, PBall \
+does not make true projections onto the lp ball.")
         self.p = p
         self.d, self.dp = B.shape  # d and d'
         self.m = len(action_list)
@@ -133,13 +140,16 @@ class PBall(Model):
         self.action_space = spaces.Discrete(self.m)
 
         # reward range
-        assert len(self.reward_amplitudes) == len(self.reward_smoothness) == len(self.reward_centers)
+        assert len(self.reward_amplitudes) == len(self.reward_smoothness)
+        assert len(self.reward_amplitudes) == len(self.reward_centers)
         assert self.reward_amplitudes.max() <= 1.0 and \
-               self.reward_amplitudes.min() >= 0.0, "reward amplitudes b_i must be in [0, 1]"
-        assert self.reward_smoothness.min() > 0.0, "reward smoothness c_i must be > 0"
+            self.reward_amplitudes.min() >= 0.0, \
+            "reward amplitudes b_i must be in [0, 1]"
+        assert self.reward_smoothness.min() > 0.0, \
+            "reward smoothness c_i must be > 0"
         self.reward_range = (0, 1.0)
 
-        # 
+        #
         self.name = "Lp-Ball"
 
         # Initalize state
@@ -149,7 +159,8 @@ class PBall(Model):
         if state is not None:
             self.state = state
         else:
-            self.state = self.mu_init + self.sigma_init * self.rng.normal(size=self.d)
+            self.state = self.mu_init \
+                + self.sigma_init * self.rng.normal(size=self.d)
             # projection to unit ball
         self.state = projection_to_pball(self.state, self.p)
         return self.state.copy()
@@ -160,7 +171,8 @@ class PBall(Model):
 
         # next state
         action_vec = self.action_list[action]
-        next_s = self.A.dot(state) + self.B.dot(action_vec) + self.sigma * self.rng.normal(size=self.d)
+        next_s = self.A.dot(state) + self.B.dot(action_vec) \
+            + self.sigma * self.rng.normal(size=self.d)
         next_s = projection_to_pball(next_s, self.p)
 
         # done and reward
@@ -190,7 +202,8 @@ class PBall(Model):
 
     def get_transitions_lipschitz_constant(self):
         """
-        note: considers a fixed action, returns Lipschitz constant w.r.t. to states.
+        note: considers a fixed action, returns Lipschitz constant
+        w.r.t. to states.
 
         If p!=1, p!=2 or p!=np.inf, returns an upper bound on the induced norm
         """
@@ -203,7 +216,8 @@ class PBall(Model):
             return np.linalg.norm(self.A, ord=order)
 
         # If p!=1, p!=2 or p!=np.inf, return upper bound on the induced norm.
-        return np.power(self.d, 1.0 / self.p) * np.linalg.norm(self.A, ord=np.inf)
+        return np.power(self.d, 1.0 / self.p) * np.linalg.norm(self.A,
+                                                               ord=np.inf)
 
 
 class PBall2D(PBall, RenderInterface2D):
@@ -223,8 +237,10 @@ class PBall2D(PBall, RenderInterface2D):
                  mu_init=np.array([0.0, 0.0])
                  ):
         # Initialize PBall
-        PBall.__init__(self, p, action_list, reward_amplitudes, reward_smoothness,
-                       reward_centers, A, B, sigma, sigma_init, mu_init)
+        PBall.__init__(self, p, action_list, reward_amplitudes,
+                       reward_smoothness,
+                       reward_centers,
+                       A, B, sigma, sigma_init, mu_init)
 
         # Render interface
         RenderInterface2D.__init__(self)
@@ -258,7 +274,7 @@ class PBall2D(PBall, RenderInterface2D):
     def get_background(self):
         bg = Scene()
 
-        # ball shape 
+        # ball shape
         contour = self._get_ball_shape(np.zeros(2), 1.0)
         contour.set_color((0.0, 0.0, 0.5))
         bg.add_shape(contour)
@@ -309,7 +325,7 @@ class SimplePBallND(PBall):
                  sigma_init=0.001,
                  mu_init=None
                  ):
-        # Action list 
+        # Action list
         action_list = []
         for dd in range(dim):
             aux = np.zeros(dim)
@@ -317,13 +333,13 @@ class SimplePBallND(PBall):
             action_list.append(aux)
             action_list.append(-1 * aux)
 
-        # Rewards 
+        # Rewards
         reward_amplitudes = np.array([1.0])
         reward_smoothness = np.array([r_smoothness])
         reward_centers = [np.zeros(dim)]
         reward_centers[0][0] = 0.8
 
-        # Transitions 
+        # Transitions
         A = np.eye(dim)
         B = np.eye(dim)
 
@@ -332,8 +348,10 @@ class SimplePBallND(PBall):
             mu_init = np.zeros(dim)
 
         # Initialize PBall
-        PBall.__init__(self, p, action_list, reward_amplitudes, reward_smoothness,
-                       reward_centers, A, B, sigma, sigma_init, mu_init)
+        PBall.__init__(self, p, action_list, reward_amplitudes,
+                       reward_smoothness,
+                       reward_centers,
+                       A, B, sigma, sigma_init, mu_init)
 
 
 if __name__ == '__main__':

@@ -1,5 +1,5 @@
 """
-Acrobot environment adapted from OpenAI gym [1]. 
+Acrobot environment adapted from OpenAI gym [1].
 
 
 Modifications:
@@ -7,12 +7,14 @@ Modifications:
 * render function follows the rlberry rendering interface.
 
 
-[1] https://github.com/openai/gym/blob/master/gym/envs/classic_control/acrobot.py
+[1] https://github.com/openai/gym/blob/master/gym/
+envs/classic_control/acrobot.py
 
 In [1], the credits are given to:
 
 Copyright 2013, RLPy http://acl.mit.edu/RLPy
-Alborz Geramifard, Robert H. Klein, Christoph Dann, William Dabney, Jonathan P. How
+Alborz Geramifard, Robert H. Klein, Christoph Dann, William Dabney,
+Jonathan P. How
 License: BSD 3-Clause
 Author = Christoph Dann <cdann@cdann.de>
 SOURCE: https://github.com/rlpy/rlpy/blob/master/rlpy/Domains/Acrobot.py
@@ -21,7 +23,7 @@ SOURCE: https://github.com/rlpy/rlpy/blob/master/rlpy/Domains/Acrobot.py
 import numpy as np
 import rlberry.spaces as spaces
 from rlberry.envs.interface import Model
-from rlberry.rendering      import Scene, GeometricPrimitive, RenderInterface2D
+from rlberry.rendering import Scene, GeometricPrimitive, RenderInterface2D
 from rlberry.rendering.common_shapes import bar_shape, circle_shape
 
 __copyright__ = "Copyright 2013, RLPy http://acl.mit.edu/RLPy"
@@ -32,6 +34,7 @@ __author__ = "Christoph Dann <cdann@cdann.de>"
 
 # SOURCE:
 # https://github.com/rlpy/rlpy/blob/master/rlpy/Domains/Acrobot.py
+
 
 class Acrobot(Model, RenderInterface2D):
     """
@@ -44,7 +47,8 @@ class Acrobot(Model, RenderInterface2D):
     The state consists of the sin() and cos() of the two rotational joint
     angles and the joint angular velocities :
     [cos(theta1) sin(theta1) cos(theta2) sin(theta2) thetaDot1 thetaDot2].
-    For the first link, an angle of 0 corresponds to the link pointing downwards.
+    For the first link, an angle of 0 corresponds to the link pointing
+    downwards.
     The angle of the second link is relative to the angle of the first link.
     An angle of 0 corresponds to having the same angle between the two links.
     A state of [1, 0, 1, 0, ..., ...] means that both links point downwards.
@@ -106,7 +110,8 @@ class Acrobot(Model, RenderInterface2D):
 
         # rendering info
         bound = self.LINK_LENGTH_1 + self.LINK_LENGTH_2 + 0.2
-        self.set_clipping_area((-bound, bound, -bound, bound))   # (left, right, bottom, top)
+        # (left, right, bottom, top)
+        self.set_clipping_area((-bound, bound, -bound, bound))
         self.set_refresh_interval(10)  # in milliseconds
 
         # observation and action spaces
@@ -114,11 +119,10 @@ class Acrobot(Model, RenderInterface2D):
         low = -high
         self.observation_space = spaces.Box(low=low, high=high)
         self.action_space = spaces.Discrete(3)
-        
+
         # initialize
         self.state = None
         self.reset()
-
 
     def reset(self):
         self.state = self.rng.uniform(low=-0.1, high=0.1, size=(4,))
@@ -136,7 +140,8 @@ class Acrobot(Model, RenderInterface2D):
 
         # Add noise to the force action
         if self.torque_noise_max > 0:
-            torque += self.rng.uniform(-self.torque_noise_max, self.torque_noise_max)
+            torque += self.rng.uniform(-self.torque_noise_max,
+                                       self.torque_noise_max)
 
         # Now, augment the state with our force action so it can be passed to
         # _dsdt
@@ -147,7 +152,8 @@ class Acrobot(Model, RenderInterface2D):
         ns = ns[-1]
         ns = ns[:4]  # omit action
         # ODEINT IS TOO SLOW!
-        # ns_continuous = integrate.odeint(self._dsdt, self.s_continuous, [0, self.dt])
+        # ns_continuous = integrate.odeint(self._dsdt, self.s_continuous,
+        # [0, self.dt])
         # self.s_continuous = ns_continuous[-1] # We only care about the state
         # at the ''final timestep'', self.dt
 
@@ -162,7 +168,8 @@ class Acrobot(Model, RenderInterface2D):
 
     def _get_ob(self):
         s = self.state
-        return np.array([np.cos(s[0]), np.sin(s[0]), np.cos(s[1]), np.sin(s[1]), s[2], s[3]])
+        return np.array([np.cos(s[0]), np.sin(s[0]), np.cos(s[1]),
+                        np.sin(s[1]), s[2], s[3]])
 
     def _terminal(self):
         s = self.state
@@ -196,36 +203,31 @@ class Acrobot(Model, RenderInterface2D):
             ddtheta2 = (a + d2 / d1 * phi1 - phi2) / \
                 (m2 * lc2 ** 2 + I2 - d2 ** 2 / d1)
         else:
-            # the following line is consistent with the java implementation and the
-            # book
-            ddtheta2 = (a + d2 / d1 * phi1 - m2 * l1 * lc2 * dtheta1 ** 2 * np.sin(theta2) - phi2) \
+            # the following line is consistent with the java implementation
+            # and the book
+            ddtheta2 = (a + d2 / d1 * phi1 - m2 * l1 * lc2 * dtheta1 ** 2 *
+                        np.sin(theta2) - phi2) \
                 / (m2 * lc2 ** 2 + I2 - d2 ** 2 / d1)
         ddtheta1 = -(d2 * ddtheta2 + phi1) / d1
         return (dtheta1, dtheta2, ddtheta1, ddtheta2, 0.)
 
-        
     #
     # Below: code for rendering
     #
 
     def get_background(self):
         bg = Scene()
-        return bg 
+        return bg
 
     def get_scene(self, state):
         scene = Scene()
 
-        theta1 = state[0]
-        theta2 = state[1]
-
         p0 = (0.0, 0.0)
 
         p1 = (self.LINK_LENGTH_1 * np.sin(state[0]),
-             -self.LINK_LENGTH_1 *np.cos(state[0]))
+              -self.LINK_LENGTH_1 * np.cos(state[0]))
         p2 = (p1[0] + self.LINK_LENGTH_2 * np.sin(state[0] + state[1]),
               p1[1] - self.LINK_LENGTH_2 * np.cos(state[0] + state[1]))
-
-
 
         link1 = bar_shape(p0, p1, 0.1)
         link1.set_color((255/255, 140/255, 0/255))
@@ -241,7 +243,7 @@ class Acrobot(Model, RenderInterface2D):
 
         goal_line = GeometricPrimitive("LINES")
         goal_line.add_vertex((-5, 1))
-        goal_line.add_vertex(( 5, 1))
+        goal_line.add_vertex((5, 1))
 
         scene.add_shape(link1)
         scene.add_shape(link2)
@@ -254,7 +256,8 @@ class Acrobot(Model, RenderInterface2D):
 
 def wrap(x, m, M):
     """Wraps ``x`` so m <= x <= M; but unlike ``bound()`` which
-    truncates, ``wrap()`` wraps x around the coordinate system defined by m,M.\n
+    truncates, ``wrap()`` wraps x around the coordinate system defined
+    by m,M.
     For example, m = -180, M = 180 (degrees), x = 360 --> returns 0.
 
     Args:
@@ -271,6 +274,7 @@ def wrap(x, m, M):
     while x < m:
         x = x + diff
     return x
+
 
 def bound(x, m, M=None):
     """Either have m as scalar, so bound(x,m,M) which returns m <= x <= M *OR*
@@ -297,7 +301,8 @@ def rk4(derivs, y0, t, *args, **kwargs):
     :func:`scipy.integrate`.
 
     Args:
-        derivs: the derivative of the system and has the signature ``dy = derivs(yi, ti)``
+        derivs: the derivative of the system and has the signature
+        ``dy = derivs(yi, ti)``
         y0: initial state vector
         t: sample times
         args: additional arguments passed to the derivative function
@@ -335,7 +340,6 @@ def rk4(derivs, y0, t, *args, **kwargs):
         yout = np.zeros((len(t), Ny), np.float_)
 
     yout[0] = y0
-
 
     for i in np.arange(len(t) - 1):
 

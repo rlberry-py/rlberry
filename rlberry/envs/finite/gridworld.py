@@ -33,11 +33,13 @@ class GridWorld(FiniteMDP, RenderInterface2D):
         start_coord : tuple
             tuple with coordinates of initial position
         terminal_states : tuple
-            ((row_0, col_0), (row_1, col_1), ...) = coordinates of terminal states
+            ((row_0, col_0), (row_1, col_1), ...) = coordinates of
+            terminal states
         success_probability : double
             probability of moving in the chosen direction
         reward_at: dict
-            dictionary, keys = tuple containing coordinates, values = reward at each coordinate
+            dictionary, keys = tuple containing coordinates, values = reward
+            at each coordinate
         walls : tuple
             ((row_0, col_0), (row_1, col_1), ...) = coordinates of walls
         default_reward : double
@@ -54,7 +56,8 @@ class GridWorld(FiniteMDP, RenderInterface2D):
         if reward_at is not None:
             self.reward_at = reward_at
             if isinstance(next(iter(self.reward_at.keys())), str):
-                self.reward_at = {eval(key): value for key, value in self.reward_at.items()}
+                self.reward_at = {eval(key): value for key, value
+                                  in self.reward_at.items()}
         else:
             self.reward_at = {(nrows - 1, ncols - 1): 1}
         if walls is not None:
@@ -66,8 +69,10 @@ class GridWorld(FiniteMDP, RenderInterface2D):
         else:
             self.terminal_states = ((nrows - 1, ncols - 1),)
 
-        # Probability of going left/right/up/down when choosing the correspondent action
-        # The remaining probability mass is distributed uniformly to other available actions
+        # Probability of going left/right/up/down when choosing the
+        # correspondent action
+        # The remaining probability mass is distributed uniformly to other
+        # available actions
         self.success_probability = success_probability
 
         # Start coordinate
@@ -93,8 +98,9 @@ class GridWorld(FiniteMDP, RenderInterface2D):
 
         # Build
         self._build()
+        init_state_coord = self.coord2index[start_coord]
         FiniteMDP.__init__(self, self.R, self.P,
-                           initial_state_distribution=self.coord2index[start_coord])
+                           initial_state_distribution=init_state_coord)
         RenderInterface2D.__init__(self)
         self.reset()
         self.reward_range = (self.R.min(), self.R.max())
@@ -158,7 +164,8 @@ class GridWorld(FiniteMDP, RenderInterface2D):
         for s in range(Ns):
             s_coord = self.index2coord[s]
             neighbors = self._get_neighbors(*s_coord)
-            valid_neighbors = [neighbors[nn][0] for nn in neighbors if neighbors[nn][1]]
+            valid_neighbors = [neighbors[nn][0] for nn in neighbors
+                               if neighbors[nn][1]]
             n_valid = len(valid_neighbors)
             for a in range(Na):  # each action corresponds to a direction
                 for nn in neighbors:
@@ -167,12 +174,15 @@ class GridWorld(FiniteMDP, RenderInterface2D):
                         next_s = self.coord2index[next_s_coord]
                         if a == nn:  # action is successful
                             self.P[s, a, next_s] = self.success_probability \
-                                                   + (1 - self.success_probability) * (n_valid == 1)
+                                + (1 - self.success_probability) \
+                                * (n_valid == 1)
                         elif neighbors[a][0] not in valid_neighbors:
                             self.P[s, a, s] = 1.0
                         else:
                             if n_valid > 1:
-                                self.P[s, a, next_s] = (1.0 - self.success_probability) / (n_valid - 1)
+                                self.P[s, a, next_s] = \
+                                    (1.0 - self.success_probability) \
+                                    / (n_valid - 1)
 
     def _get_neighbors(self, row, col):
         aux = {}
@@ -189,8 +199,10 @@ class GridWorld(FiniteMDP, RenderInterface2D):
 
     def get_transition_support(self, state):
         row, col = self.index2coord[state]
-        neighbors = [(row, col - 1), (row, col + 1), (row - 1, col), (row + 1, col)]
-        return [self.coord2index[coord] for coord in neighbors if self._is_valid(*coord)]
+        neighbors = [(row, col - 1), (row, col + 1),
+                     (row - 1, col), (row + 1, col)]
+        return [self.coord2index[coord] for coord in neighbors
+                if self._is_valid(*coord)]
 
     def _is_valid(self, row, col):
         if (row, col) in self.walls:
@@ -229,9 +241,11 @@ class GridWorld(FiniteMDP, RenderInterface2D):
         grid_ascii = ''
         for rr in range(self.nrows + 1):
             if rr < self.nrows:
-                grid_ascii += str(rr).zfill(2) + 2 * ' ' + ' '.join(grid[rr]) + '\n'
+                grid_ascii += str(rr).zfill(2) + 2 * ' '\
+                     + ' '.join(grid[rr]) + '\n'
             else:
-                grid_ascii += 3 * ' ' + ' '.join([str(jj).zfill(2) for jj in range(self.ncols)])
+                grid_ascii += 3 * ' ' + ' '.join([str(jj).zfill(2) for jj
+                                                  in range(self.ncols)])
 
         self.grid_ascii = grid_ascii
         self.grid_idx = grid_idx
@@ -248,9 +262,12 @@ class GridWorld(FiniteMDP, RenderInterface2D):
         grid_values_ascii = ''
         for rr in range(self.nrows + 1):
             if rr < self.nrows:
-                grid_values_ascii += str(rr).zfill(2) + 2 * ' ' + ' '.join(grid_values[rr]) + '\n'
+                grid_values_ascii += str(rr).zfill(2) + 2 * ' '
+                + ' '.join(grid_values[rr]) + '\n'
             else:
-                grid_values_ascii += 4 * ' ' + ' '.join([str(jj).zfill(2).ljust(9) for jj in range(self.ncols)])
+                grid_values_ascii += 4 * ' '
+                + ' '.join([str(jj).zfill(2).ljust(9) for jj
+                            in range(self.ncols)])
         print(grid_values_ascii)
 
     def print_transition_at(self, row, col, action):
@@ -261,7 +278,8 @@ class GridWorld(FiniteMDP, RenderInterface2D):
         a_idx = self.a_str2idx[action]
         for next_s_idx, prob in enumerate(self.P[s_idx, a_idx]):
             if prob > 0:
-                print("to (%d, %d) with prob %f" % (self.index2coord[next_s_idx] + (prob,)))
+                print("to (%d, %d) with prob %f" %
+                      (self.index2coord[next_s_idx] + (prob,)))
 
     def render_ascii(self):
         print(self._build_ascii())
@@ -327,7 +345,7 @@ class GridWorld(FiniteMDP, RenderInterface2D):
 
         scene = Scene()
 
-        agent = circle_shape( (x, y), 0.25, n_points=5)
+        agent = circle_shape((x, y), 0.25, n_points=5)
         agent.type = "POLYGON"
         agent.set_color((0.75, 0.0, 0.5))
 

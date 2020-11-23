@@ -1,5 +1,6 @@
 """
-This files provides a set of 2D environments with increasing difficulty of exploration.
+This files provides a set of 2D environments with increasing difficulty
+of exploration.
 
 The difficulty is ranked by the level.
 
@@ -15,23 +16,24 @@ from rlberry.envs.benchmarks.ball_exploration.pball import PBall2D
 
 
 def get_benchmark_env(level=1):
-    if  level == 1:
+    if level == 1:
         env = _get_autoreset_env(BallLevel1())
-        return env 
+        return env
     elif level == 2:
         env = _get_autoreset_env(BallLevel2())
-        return env 
+        return env
     elif level == 3:
         env = _get_autoreset_env(BallLevel3())
-        return env 
+        return env
     elif level == 4:
         env = _get_autoreset_env(BallLevel4())
-        return env 
+        return env
     elif level == 5:
         env = _get_autoreset_env(BallLevel5())
-        return env 
+        return env
     else:
         raise NotImplementedError("Invalid benchmark level.")
+
 
 def _get_autoreset_env(env):
     horizon = env.horizon
@@ -51,30 +53,31 @@ class BallLevel1(PBall2D):
         #
         self.p = 2
         self.action_list = [np.array([0.0, 0.0]),
-                          0.05 * np.array([1.0, 0.0]),
-                         -0.05 * np.array([1.0, 0.0]),
-                          0.05 * np.array([0.0, 1.0]),
-                         -0.05 * np.array([0.0, 1.0])]
+                            0.05 * np.array([1.0, 0.0]),
+                            -0.05 * np.array([1.0, 0.0]),
+                            0.05 * np.array([0.0, 1.0]),
+                            -0.05 * np.array([0.0, 1.0])]
 
         self.reward_amplitudes = np.array([1.0])
         self.reward_smoothness = np.array([0.5*np.sqrt(2)])
-        self.reward_centers    = [np.array([0.5, 0.5])]
+        self.reward_centers = [np.array([0.5, 0.5])]
         self.A = np.eye(2)
         self.B = np.eye(2)
-        self.sigma = 0.01 
-        self.sigma_init = 0.001 
+        self.sigma = 0.01
+        self.sigma_init = 0.001
         self.mu_init = np.array([0.0, 0.0])
 
-        PBall2D.__init__(self, self.p, 
-                               self.action_list,
-                               self.reward_amplitudes,
-                               self.reward_smoothness,
-                               self.reward_centers,
-                               self.A,
-                               self.B,
-                               self.sigma,
-                               self.sigma_init,
-                               self.mu_init)
+        PBall2D.__init__(self,
+                         self.p,
+                         self.action_list,
+                         self.reward_amplitudes,
+                         self.reward_smoothness,
+                         self.reward_centers,
+                         self.A,
+                         self.B,
+                         self.sigma,
+                         self.sigma_init,
+                         self.mu_init)
         self.name = "Ball Exploration Benchmark - Level 1"
 
 
@@ -91,35 +94,37 @@ class BallLevel2(PBall2D):
         #
         self.p = 2
         self.action_list = [np.array([0.0, 0.0]),
-                          0.05 * np.array([1.0, 0.0]),
-                         -0.05 * np.array([1.0, 0.0]),
-                          0.05 * np.array([0.0, 1.0]),
-                         -0.05 * np.array([0.0, 1.0])]
+                            0.05 * np.array([1.0, 0.0]),
+                            -0.05 * np.array([1.0, 0.0]),
+                            0.05 * np.array([0.0, 1.0]),
+                            -0.05 * np.array([0.0, 1.0])]
 
         self.reward_amplitudes = np.array([1.0])
         self.reward_smoothness = np.array([0.2])
-        self.reward_centers    = [np.array([0.5, 0.5])]
+        self.reward_centers = [np.array([0.5, 0.5])]
         self.A = np.eye(2)
         self.B = np.eye(2)
-        self.sigma = 0.01 
-        self.sigma_init = 0.001 
+        self.sigma = 0.01
+        self.sigma_init = 0.001
         self.mu_init = np.array([0.0, 0.0])
 
-        PBall2D.__init__(self, self.p, 
-                               self.action_list,
-                               self.reward_amplitudes,
-                               self.reward_smoothness,
-                               self.reward_centers,
-                               self.A,
-                               self.B,
-                               self.sigma,
-                               self.sigma_init,
-                               self.mu_init)
+        PBall2D.__init__(self,
+                         self.p,
+                         self.action_list,
+                         self.reward_amplitudes,
+                         self.reward_smoothness,
+                         self.reward_centers,
+                         self.A,
+                         self.B,
+                         self.sigma,
+                         self.sigma_init,
+                         self.mu_init)
         self.name = "Ball Exploration Benchmark - Level 2"
 
 #
 # Level 3
 #
+
 
 class BallLevel3(PBall2D):
     """
@@ -130,37 +135,38 @@ class BallLevel3(PBall2D):
         #
         self.p = 2
         self.action_list = [np.array([0.0, 0.0]),
-                          0.05 * np.array([1.0, 0.0]),
-                         -0.05 * np.array([1.0, 0.0]),
-                          0.05 * np.array([0.0, 1.0]),
-                         -0.05 * np.array([0.0, 1.0])]
+                            0.05 * np.array([1.0, 0.0]),
+                            -0.05 * np.array([1.0, 0.0]),
+                            0.05 * np.array([0.0, 1.0]),
+                            -0.05 * np.array([0.0, 1.0])]
 
         self.reward_amplitudes = np.array([1.0])
         self.reward_smoothness = np.array([0.2])
-        self.reward_centers    = [np.array([0.5, 0.5])]
+        self.reward_centers = [np.array([0.5, 0.5])]
         self.A = np.eye(2)
         self.B = np.eye(2)
         self.sigma = 0.025
-        self.sigma_init = 0.001 
+        self.sigma_init = 0.001
         self.mu_init = np.array([0.0, 0.0])
 
-        PBall2D.__init__(self, self.p, 
-                               self.action_list,
-                               self.reward_amplitudes,
-                               self.reward_smoothness,
-                               self.reward_centers,
-                               self.A,
-                               self.B,
-                               self.sigma,
-                               self.sigma_init,
-                               self.mu_init)
+        PBall2D.__init__(self,
+                         self.p,
+                         self.action_list,
+                         self.reward_amplitudes,
+                         self.reward_smoothness,
+                         self.reward_centers,
+                         self.A,
+                         self.B,
+                         self.sigma,
+                         self.sigma_init,
+                         self.mu_init)
         self.name = "Ball Exploration Benchmark - Level 3"
-
 
 
 #
 # Level 4
 #
+
 
 class BallLevel4(PBall2D):
     """
@@ -171,33 +177,33 @@ class BallLevel4(PBall2D):
         #
         self.p = 2
         self.action_list = [np.array([0.0, 0.0]),
-                          0.05 * np.array([1.0, 0.0]),
-                         -0.05 * np.array([1.0, 0.0]),
-                          0.05 * np.array([0.0, 1.0]),
-                         -0.05 * np.array([0.0, 1.0])]
+                            0.05 * np.array([1.0, 0.0]),
+                            -0.05 * np.array([1.0, 0.0]),
+                            0.05 * np.array([0.0, 1.0]),
+                            -0.05 * np.array([0.0, 1.0])]
 
         self.reward_amplitudes = np.array([1.0, 0.1])
         self.reward_smoothness = np.array([0.2, 0.5*np.sqrt(2)])
-        self.reward_centers    = [np.array([-0.5, -0.5]),     # far sparse
-                                  np.array([0.5, 0.5]) ]      # dense
-
+        self.reward_centers = [np.array([-0.5, -0.5]),     # far sparse
+                               np.array([0.5, 0.5])]      # dense
 
         self.A = np.eye(2)
         self.B = np.eye(2)
-        self.sigma = 0.01 
-        self.sigma_init = 0.001 
+        self.sigma = 0.01
+        self.sigma_init = 0.001
         self.mu_init = np.array([0.0, 0.0])
 
-        PBall2D.__init__(self, self.p, 
-                               self.action_list,
-                               self.reward_amplitudes,
-                               self.reward_smoothness,
-                               self.reward_centers,
-                               self.A,
-                               self.B,
-                               self.sigma,
-                               self.sigma_init,
-                               self.mu_init)
+        PBall2D.__init__(self,
+                         self.p,
+                         self.action_list,
+                         self.reward_amplitudes,
+                         self.reward_smoothness,
+                         self.reward_centers,
+                         self.A,
+                         self.B,
+                         self.sigma,
+                         self.sigma_init,
+                         self.mu_init)
         self.name = "Ball Exploration Benchmark - Level 4"
 
 
@@ -214,39 +220,37 @@ class BallLevel5(PBall2D):
         #
         self.p = 2
         self.action_list = [np.array([0.0, 0.0]),
-                          0.05 * np.array([1.0, 0.0]),
-                         -0.05 * np.array([1.0, 0.0]),
-                          0.05 * np.array([0.0, 1.0]),
-                         -0.05 * np.array([0.0, 1.0])]
+                            0.05 * np.array([1.0, 0.0]),
+                            -0.05 * np.array([1.0, 0.0]),
+                            0.05 * np.array([0.0, 1.0]),
+                            -0.05 * np.array([0.0, 1.0])]
 
         self.reward_amplitudes = np.array([1.0, 0.1])
         self.reward_smoothness = np.array([0.2, 0.5*np.sqrt(2)])
-        self.reward_centers    = [np.array([-0.5, -0.5]),     # far sparse
-                                  np.array([0.5, 0.5]) ]      # dense
-
+        self.reward_centers = [np.array([-0.5, -0.5]),     # far sparse
+                               np.array([0.5, 0.5])]       # dense
 
         self.A = np.eye(2)
         self.B = np.eye(2)
-        self.sigma = 0.025 
-        self.sigma_init = 0.001 
+        self.sigma = 0.025
+        self.sigma_init = 0.001
         self.mu_init = np.array([0.0, 0.0])
 
-        PBall2D.__init__(self, self.p, 
-                               self.action_list,
-                               self.reward_amplitudes,
-                               self.reward_smoothness,
-                               self.reward_centers,
-                               self.A,
-                               self.B,
-                               self.sigma,
-                               self.sigma_init,
-                               self.mu_init)
+        PBall2D.__init__(self,
+                         self.p,
+                         self.action_list,
+                         self.reward_amplitudes,
+                         self.reward_smoothness,
+                         self.reward_centers,
+                         self.A,
+                         self.B,
+                         self.sigma,
+                         self.sigma_init,
+                         self.mu_init)
         self.name = "Ball Exploration Benchmark - Level 5"
 
 
-
-
-if __name__=='__main__':
+if __name__ == '__main__':
     env = get_benchmark_env(5)
     env.enable_rendering()
     for ii in range(100):
@@ -255,6 +259,5 @@ if __name__=='__main__':
         # env.step(env.action_space.sample())
         # env.step(0)
         env.step(4)
-
 
     env.render()
