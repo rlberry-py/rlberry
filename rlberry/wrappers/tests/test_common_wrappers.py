@@ -129,4 +129,3 @@ def test_autoreset(horizon):
         next_s, reward, done, info = env.step(action)
         if (tt+1) % horizon == 0:
             assert next_s == 3
-

@@ -7,7 +7,7 @@ class UncertaintyEstimator(ABC):
         self.observation_space = observation_space
         self.action_space = action_space
 
-    def reset(**kwargs):
+    def reset(self, **kwargs):
         pass
 
     @abstractmethod
