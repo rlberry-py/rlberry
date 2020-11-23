@@ -210,8 +210,8 @@ class CEMAgent(Agent):
         last_states = self.memory.states[-1]
         last_states_tensor = torch.FloatTensor(last_states).to(device)
 
-        return train_states_tensor, train_actions_tensor,
-        reward_bound, reward_mean, last_states_tensor
+        return train_states_tensor, train_actions_tensor, \
+            reward_bound, reward_mean, last_states_tensor
 
     def _run_episode(self):
         # interact for H steps
