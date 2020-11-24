@@ -6,8 +6,8 @@ import os
 import pickle
 
 import rlberry.seeding as seeding
+from rlberry.agents import IncrementalAgent
 from rlberry.stats.evaluation import compare_policies
-
 
 _OPTUNA_INSTALLED = True
 try:
@@ -115,6 +115,7 @@ class AgentStats:
 
             #
             self.fitted_agents = None
+            self.fit_kwargs_list = None  # keep in memory for partial_fit()
             self.fit_statistics = {}
 
             #
@@ -128,6 +129,9 @@ class AgentStats:
                                                  self.identifier)
 
     def fit(self):
+        """
+        Fit the agent instances in parallel.
+        """
         if self.verbose > 0:
             print("\n Training AgentStats for %s... \n" % self.agent_name)
         args = [(self.agent_class, train_env,
@@ -145,6 +149,35 @@ class AgentStats:
             print("\n ... trained! \n")
 
         # gather all stats in a dictionary
+        self._process_fit_statistics(stats)
+
+    def partial_fit(self, fraction):
+        """
+        Partially fit the agent instances (not parallel).
+        """
+        assert fraction > 0.0 and fraction <= 1.0
+        assert issubclass(self.agent_class, IncrementalAgent)
+
+        # Create instances if this is the first call
+        if self.fitted_agents is None:
+            self.fitted_agents = []
+            self.fit_kwargs_list = []
+            for train_env in self.train_env_set:
+                init_kwargs = deepcopy(self.init_kwargs)
+                agent = self.agent_class(train_env, copy_env=False,
+                                         reseed_env=False, **init_kwargs)
+                self.fitted_agents.append(agent)
+                self.fit_kwargs_list.append(deepcopy(self.fit_kwargs))
+
+        # Run partial fit
+        stats = []
+        for agent, fit_kwargs in zip(self.fitted_agents, self.fit_kwargs_list):
+            info = agent.partial_fit(fraction, **fit_kwargs)
+            stats.append(info)
+        self._process_fit_statistics(stats)
+
+    def _process_fit_statistics(self, stats):
+        """Gather stats in a dictionary"""
         for entry in self.fit_info:
             self.fit_statistics[entry] = []
             for stat in stats:

@@ -6,53 +6,50 @@ import torch.nn as nn
 from torch.distributions import Categorical
 
 import rlberry.spaces as spaces
-from rlberry.agents import Agent
+from rlberry.agents import IncrementalAgent
 
 # choose device
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
-class ActorCritic(nn.Module):
-    def __init__(self, state_dim, action_dim):
-        super(ActorCritic, self).__init__()
-        # actor
-        self.actor = nn.Sequential(
-            nn.Linear(state_dim, 64),
-            nn.Tanh(),
-            nn.Linear(64, 64),
-            nn.Tanh(),
-            nn.Linear(64, action_dim),
-            nn.Softmax(dim=-1)
-        )
+class ValueNet(nn.Module):
+    def __init__(self, state_dim, hidden_size=64):
+        super(ValueNet, self).__init__()
         # critic
         self.critic = nn.Sequential(
-            nn.Linear(state_dim, 64),
+            nn.Linear(state_dim, hidden_size),
             nn.Tanh(),
-            nn.Linear(64, 64),
+            nn.Linear(hidden_size, hidden_size),
             nn.Tanh(),
-            nn.Linear(64, 1)
+            nn.Linear(hidden_size, 1)
         )
 
-    def forward(self):
-        raise NotImplementedError
-
-    def act(self, state):
-        action_probs = self.actor(state)
-        dist = Categorical(action_probs)
-        action = dist.sample()
-
-        return action, dist.log_prob(action)
-
-    def evaluate(self, state, action):
-        action_probs = self.actor(state)
-        dist = Categorical(action_probs)
-
-        action_logprobs = dist.log_prob(action)
-        dist_entropy = dist.entropy()
-
+    def forward(self, state):
         state_value = self.critic(state)
+        return torch.squeeze(state_value)
 
-        return action_logprobs, torch.squeeze(state_value), dist_entropy
+
+class PolicyNet(nn.Module):
+    def __init__(self, state_dim, action_dim, hidden_size=64):
+        super(PolicyNet, self).__init__()
+        # actor
+        self.actor = nn.Sequential(
+            nn.Linear(state_dim, hidden_size),
+            nn.Tanh(),
+            nn.Linear(hidden_size, hidden_size),
+            nn.Tanh(),
+            nn.Linear(hidden_size, action_dim)
+        )
+        self.softmax = nn.Softmax(dim=-1)
+
+    def forward(self, state):
+        action_probs = self.softmax(self.actor(state))
+        dist = Categorical(action_probs)
+        return dist
+
+    def action_scores(self, state):
+        action_scores = self.actor(state)
+        return action_scores
 
 
 class Memory:
@@ -71,22 +68,8 @@ class Memory:
         del self.is_terminals[:]
 
 
-class PPOAgent(Agent):
+class PPOAgent(IncrementalAgent):
     """
-    While Trust Region Policy Optimization (TRPO) constrains the KL divergence
-    between successive policies on the optimization trajectory, one
-    disadvantage of this algorithm is that it can be
-    computationally costly. Proximal Policy Optimization (PPO) proposes
-    replacing the KL-constrained objective of TRPO by clipping the objective
-    function.
-
-    In Proximal Policy Optimization (PPO), the optimization problem of
-    maximizing the sum of discounted
-    returns is solved by taking a ratio of the new policy and the old policy
-    multiplied by the advantage function.
-
-    In this implementation, we provide PPO with Clipped Objective.
-
     References
     ----------
     Schulman, J., Wolski, F., Dhariwal, P., Radford, A. & Klimov, O. (2017).
@@ -103,11 +86,12 @@ class PPOAgent(Agent):
 
     def __init__(self, env,
                  n_episodes=4000,
+                 batch_size=8,
                  horizon=256,
                  gamma=0.99,
-                 learning_rate=0.0003,
+                 learning_rate=0.01,
                  eps_clip=0.2,
-                 k_epochs=10,
+                 k_epochs=5,
                  verbose=1,
                  **kwargs):
         """
@@ -115,12 +99,12 @@ class PPOAgent(Agent):
             Online model with continuous (Box) state space and discrete actions
         n_episodes : int
             Number of episodes
+        batch_size : int
+            Number of episodes to wait before updating the policy.
         horizon : int
-            Horizon of the objective function. If None and gamma<1, set to
-            1/(1-gamma).
+            Horizon.
         gamma : double
-            Discount factor in [0, 1]. If gamma is 1.0, the problem is set to
-            be finite-horizon.
+            Discount factor in [0, 1].
         learning_rate : double
             Learning rate.
         eps_clip : double
@@ -130,20 +114,21 @@ class PPOAgent(Agent):
         verbose : int
             Controls the verbosity, if non zero, progress messages are printed.
         """
-        Agent.__init__(self, env, **kwargs)
+        IncrementalAgent.__init__(self, env, **kwargs)
 
-        self.learning_rate = learning_rate
+        self.n_episodes = n_episodes
+        self.batch_size = batch_size
+        self.horizon = horizon
         self.gamma = gamma
+        self.learning_rate = learning_rate
         self.eps_clip = eps_clip
         self.k_epochs = k_epochs
-        self.horizon = horizon
-        self.n_episodes = n_episodes
+
         self.state_dim = self.env.observation_space.dim
         self.action_dim = self.env.action_space.n
         self.verbose = verbose
 
         # check environment
-        assert self.env.is_online()
         assert isinstance(self.env.observation_space, spaces.Box)
         assert isinstance(self.env.action_space, spaces.Discrete)
 
@@ -153,14 +138,18 @@ class PPOAgent(Agent):
         self.reset()
 
     def reset(self, **kwargs):
-        self.cat_policy = ActorCritic(self.state_dim,
-                                      self.action_dim).to(device)
-        self.optimizer = torch.optim.Adam(self.cat_policy.parameters(),
-                                          lr=self.learning_rate,
-                                          betas=(0.9, 0.999))
+        self.cat_policy = PolicyNet(self.state_dim, self.action_dim).to(device)
+        self.policy_optimizer = torch.optim.Adam(self.cat_policy.parameters(),
+                                                 lr=self.learning_rate,
+                                                 betas=(0.9, 0.999))
 
-        self.cat_policy_old = ActorCritic(self.state_dim,
-                                          self.action_dim).to(device)
+        self.value_net = ValueNet(self.state_dim).to(device)
+        self.value_optimizer = torch.optim.Adam(self.value_net.parameters(),
+                                                lr=self.learning_rate,
+                                                betas=(0.9, 0.999))
+
+        self.cat_policy_old = \
+            PolicyNet(self.state_dim, self.action_dim).to(device)
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
 
         self.MseLoss = nn.MSELoss()
@@ -168,6 +157,10 @@ class PPOAgent(Agent):
         self.memory = Memory()
 
         self.episode = 0
+
+        # useful data
+        self._rewards = np.zeros(self.n_episodes)
+        self._cumul_rewards = np.zeros(self.n_episodes)
 
         # logging config
         self._last_printed_ep = 0
@@ -183,28 +176,31 @@ class PPOAgent(Agent):
 
     def policy(self, state, **kwargs):
         assert self.cat_policy is not None
-
-        return self._select_action(state)
+        state = torch.from_numpy(state).float().to(device)
+        action_dist = self.cat_policy_old(state)
+        action = action_dist.sample().item()
+        return action
 
     def fit(self, **kwargs):
         info = {}
-        self._rewards = np.zeros(self.n_episodes)
-        self._cumul_rewards = np.zeros(self.n_episodes)
         for k in range(self.n_episodes):
-            episode_rewards = self._run_episode()
-            self._rewards[k] = episode_rewards
-            if k > 0:
-                self._cumul_rewards[k] = episode_rewards \
-                    + self._cumul_rewards[k - 1]
-            self.episode += 1
-            self._logging()
-
-            # update
-            self._update()
-            self.memory.clear_memory()
+            self._run_episode()
 
         info["n_episodes"] = self.n_episodes
         info["episode_rewards"] = self._rewards
+        return info
+
+    def partial_fit(self, fraction, **kwargs):
+        assert fraction > 0.0 and fraction <= 1.0
+        n_episodes_to_run = int(np.ceil(fraction*self.n_episodes))
+        count = 0
+        while count < n_episodes_to_run and self.episode < self.n_episodes:
+            self._run_episode()
+            count += 1
+
+        info = {}
+        info["n_episodes"] = self.episode
+        info["episode_rewards"] = self._rewards[:self.episode]
         return info
 
     def _logging(self):
@@ -234,7 +230,9 @@ class PPOAgent(Agent):
 
     def _select_action(self, state):
         state = torch.from_numpy(state).float().to(device)
-        action, action_logprob = self.cat_policy_old.act(state)
+        action_dist = self.cat_policy_old(state)
+        action = action_dist.sample()
+        action_logprob = action_dist.log_prob(action)
 
         self.memory.states.append(state)
         self.memory.actions.append(action)
@@ -246,10 +244,10 @@ class PPOAgent(Agent):
         # interact for H steps
         episode_rewards = 0
         state = self.env.reset()
-        for _ in range(self.horizon):
+        for t in range(self.horizon):
             # running policy_old
             action = self._select_action(state)
-            state, reward, done, _ = self.env.step(action)
+            next_state, reward, done, _ = self.env.step(action)
 
             # save in batch
             self.memory.rewards.append(reward)
@@ -258,6 +256,22 @@ class PPOAgent(Agent):
 
             if done:
                 break
+
+            # update state
+            state = next_state
+
+        # update
+        ep = self.episode
+        self._rewards[ep] = episode_rewards
+        self._cumul_rewards[ep] = episode_rewards \
+            + self._cumul_rewards[max(0, ep - 1)]
+        self.episode += 1
+        self._logging()
+
+        #
+        if self.episode % self.batch_size == 0:
+            self._update()
+            self.memory.clear_memory()
 
         return episode_rewards
 
@@ -284,8 +298,10 @@ class PPOAgent(Agent):
         # optimize policy for K epochs
         for _ in range(self.k_epochs):
             # evaluate old actions and values
-            logprobs, state_values, dist_entropy = \
-                self.cat_policy.evaluate(old_states, old_actions)
+            action_dist = self.cat_policy(old_states)
+            logprobs = action_dist.log_prob(old_actions)
+            state_values = self.value_net(old_states)
+            dist_entropy = action_dist.entropy()
 
             # find ratio (pi_theta / pi_theta__old)
             ratios = torch.exp(logprobs - old_logprobs.detach())
@@ -293,28 +309,33 @@ class PPOAgent(Agent):
             # find surrogate loss
             advantages = rewards - state_values.detach()
             surr1 = ratios * advantages
-            surr2 = torch.clamp(ratios, 1 - self.eps_clip, 1 + self.eps_clip) \
-                * advantages
+            surr2 = torch.clamp(ratios, 1 - self.eps_clip,
+                                1 + self.eps_clip) * advantages
             loss = -torch.min(surr1, surr2) \
-                + 0.5 * self.MseLoss(state_values, rewards)\
+                + 0.5 * self.MseLoss(state_values, rewards) \
                 - 0.01 * dist_entropy
 
             # take gradient step
-            self.optimizer.zero_grad()
+            self.policy_optimizer.zero_grad()
+            self.value_optimizer.zero_grad()
+
             loss.mean().backward()
-            self.optimizer.step()
+
+            self.policy_optimizer.step()
+            self.value_optimizer.step()
 
         # copy new weights into old policy
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
 
     #
-    # for hyperparam optim
+    # For hyperparameter optimization
     #
-
     @classmethod
     def sample_parameters(cls, trial):
+        batch_size = trial.suggest_categorical('batch_size',
+                                               [1, 4, 8, 16, 32, 64])
         learning_rate = trial.suggest_loguniform('learning_rate', 1e-5, 1)
-
         return {
+                'batch_size': batch_size,
                 'learning_rate': learning_rate,
-               }
+                }

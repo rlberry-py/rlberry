@@ -32,8 +32,6 @@ class Agent(ABC):
         whose keys are strings
     policy(observation, **kwargs), abstract
         returns the action to be taken given an observation
-    partial_fit()
-        partially fits the agent (optional)
     reset()
         puts the agent in default setup (optional)
     sample_parameters(), optional
@@ -74,23 +72,6 @@ class Agent(ABC):
     @abstractmethod
     def policy(self, observation, **kwargs):
         """Returns an action, given an observation."""
-        pass
-
-    def partial_fit(self, fraction, **kwargs):
-        """
-        Partially fits the agent, according to the fraction parameter.
-
-        For instance, if the agent requires N episodes for a "full" fit,
-        calling partial_fit(0.5) will fit the agent for 0.5*N episodes.
-
-        Also, calling partial_fit(0.5) twice must be equivalent to
-        a single call to fit().
-
-        Parameters
-        ---------
-        fraction: double, in [0,1]
-            Fraction of the agent to fit.
-        """
         pass
 
     def reset(self, **kwargs):

@@ -19,6 +19,26 @@ def test_ppo_agent():
     agent.fit()
 
 
+def test_ppo_agent_partial_fit():
+    env = get_benchmark_env(level=1)
+    n_episodes = 10
+    horizon = 30
+
+    agent = PPOAgent(env,
+                     n_episodes=n_episodes,
+                     horizon=horizon,
+                     gamma=0.99,
+                     learning_rate=0.001,
+                     eps_clip=0.2,
+                     k_epochs=4,
+                     verbose=0)
+
+    agent.partial_fit(0.5)
+    assert agent.episode == 5
+    agent.partial_fit(0.5)
+    assert agent.episode == 10
+
+
 def test_avec_ppo_agent():
     env = get_benchmark_env(level=1)
     n_episodes = 5
