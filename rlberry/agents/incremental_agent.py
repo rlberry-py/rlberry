@@ -3,7 +3,6 @@ from rlberry.agents import Agent
 
 
 class IncrementalAgent(Agent):
-
     """Basic interface for agents that can be trained incrementally."""
 
     name = ""
