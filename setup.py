@@ -23,7 +23,16 @@ tests_require = [
     'seaborn'
 ]
 
+full_requires = [
+    'torch>=1.6.0',
+    'optuna',
+    'ffmpeg-python',
+    'PyOpenGL',
+    'PyOpenGL_accelerate',
+]
+
 extras_require = {
+    'full': full_requires,
     'test': tests_require,
     'deploy': ['sphinx', 'sphinx_rtd_theme'],
     'opengl_rendering': ['PyOpenGL', 'PyOpenGL_accelerate'],
@@ -44,4 +53,3 @@ setup(
     extras_require=extras_require,
     zip_safe=False,
 )
-

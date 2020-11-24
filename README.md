@@ -59,31 +59,43 @@
 
 ## Installation
 
-To install rlberry on your own device, first create a virtual environment using Anaconda or [Miniconda](https://docs.conda.io/en/latest/miniconda.html) (suggested):
-```shell
-conda create -n rlberry python=3.7
-conda activate rlberry
+### Cloning & creating virtual environment
+
+It is suggested to create a virtual environment using Anaconda or [Miniconda](https://docs.conda.io/en/latest/miniconda.html):
+
+```
 git clone https://github.com/rlberry-py/rlberry.git
+conda create -n rlberry python=3.7
+```
+
+### Basic installation
+
+Install without heavy libraries (e.g. pytorch).
+
+```
+conda activate rlberry
 pip install -e .
 ```
 
-Or you can also install directly (not suggested):
-```shell
-git clone https://github.com/rlberry-py/rlberry.git
-python3 -m pip install -e .
+### Full installation
+
+Install with all features,
+
+```
+conda activate rlberry
+pip install -e .[full]
 ```
 
-### Optional dependencies
+which includes:
 
-*   For saving videos: [ffmpeg-python](https://github.com/kkroening/ffmpeg-python) 
-```shell
-pip install ffmpeg-python
-```
+* [`PyTorch`](https://pytorch.org/) for Deep RL agents,
 
-*   For hyperparameter optimization: [optuna](https://optuna.org/#installation)
-```shell
-pip install optuna
-```
+* [`Optuna`](https://optuna.org/#installation) for hyperparameter optimization,
+
+* [`ffmpeg-python`](https://github.com/kkroening/ffmpeg-python) for saving videos,
+
+* [`PyOpenGL`](https://pypi.org/project/PyOpenGL/) for more rendering options.
+
 
 ## Getting started
 
