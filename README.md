@@ -45,16 +45,20 @@
 | [Contributing](#contributing) | A guide for contributing |
 | [Citation](#citing-rlberry) | How to cite this work |
 
-# Goals
+## Goals
 
 *   Write detailed documentation and comprehensible tutorial/examples (Jupyter Notebook) for each implemented algorithm.
+
 *   Provide a general interface for agents, that
+
     *   puts minimal constraints on the agent code (=> making it easy to include new algorithms and modify existing ones);
     *   allows comparison between agents using a simple and unified evaluation interface (=> making it easy, for instance, to compare deep and "traditional" RL algorithms).
+    
 *   Unified seeding mechanism: define only one global seed, from which all other seeds will inherit, enforcing independence of the random number generators.
+
 *   Simple interface for creating and rendering new environments. 
 
-# Installation
+## Installation
 
 To install rlberry on your own device, first create a virtual environment using Anaconda or [Miniconda](https://docs.conda.io/en/latest/miniconda.html) (suggested):
 ```shell
@@ -70,7 +74,7 @@ git clone https://github.com/rlberry-py/rlberry.git
 python3 -m pip install -e .
 ```
 
-## Optional dependencies
+### Optional dependencies
 
 *   For saving videos: [ffmpeg-python](https://github.com/kkroening/ffmpeg-python) 
 ```shell
@@ -82,9 +86,9 @@ pip install ffmpeg-python
 pip install optuna
 ```
 
-# Getting started
+## Getting started
 
-## Tests
+### Tests
 
 To run tests, run `pytest`. To run tests with coverage, install and run `pytest-cov`:
 
@@ -95,11 +99,11 @@ bash run_tests.sh
 
 See coverage report in `cov_html/index.html`.
 
-# Documentation
+## Documentation
 
-# Contributing
+## Contributing
 
-## Implementation notes
+### Implementation notes
 
 *   When inheriting from the `Agent` class, make sure to call `Agent.__init__(self, env, **kwargs)` using `**kwargs` in case new features are added to the base class, and to make sure that `copy_env` and `reseed_env` are always an option to any agent. 
 
@@ -109,4 +113,4 @@ See coverage report in `cov_html/index.html`.
 
 Errors and warnings are printed using the `logging` library.
 
-# Citing rlberry
+## Citing rlberry
