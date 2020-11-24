@@ -2,8 +2,7 @@ import numpy as np
 
 
 def binary_search_nd(x_vec, bins):
-    """
-    n-dimensional binary search
+    """n-dimensional binary search
 
     Parameters
     -----------

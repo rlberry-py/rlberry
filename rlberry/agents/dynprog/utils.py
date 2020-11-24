@@ -4,9 +4,7 @@ from rlberry.utils.jit_setup import numba_jit
 
 @numba_jit
 def backward_induction(R, P, horizon, gamma=1.0, vmax=np.inf):
-    """
-    Backward induction to compute Q and V functions in the
-    finite horizon setting.
+    """Backward induction to compute Q and V functions in the finite horizon setting.
 
     Parameters
     ----------
