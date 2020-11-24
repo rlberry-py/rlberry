@@ -63,7 +63,7 @@
 
 It is suggested to create a virtual environment using Anaconda or [Miniconda](https://docs.conda.io/en/latest/miniconda.html):
 
-```
+```bash
 git clone https://github.com/rlberry-py/rlberry.git
 conda create -n rlberry python=3.7
 ```
@@ -72,7 +72,7 @@ conda create -n rlberry python=3.7
 
 Install without heavy libraries (e.g. pytorch).
 
-```
+```bash
 conda activate rlberry
 pip install -e .
 ```
@@ -81,20 +81,17 @@ pip install -e .
 
 Install with all features,
 
-```
+```bash
 conda activate rlberry
 pip install -e .[full]
 ```
 
 which includes:
 
-* [`PyTorch`](https://pytorch.org/) for Deep RL agents,
-
-* [`Optuna`](https://optuna.org/#installation) for hyperparameter optimization,
-
-* [`ffmpeg-python`](https://github.com/kkroening/ffmpeg-python) for saving videos,
-
-* [`PyOpenGL`](https://pypi.org/project/PyOpenGL/) for more rendering options.
+*  [`PyTorch`](https://pytorch.org/) for Deep RL agents,
+*  [`Optuna`](https://optuna.org/#installation) for hyperparameter optimization,
+*  [`ffmpeg-python`](https://github.com/kkroening/ffmpeg-python) for saving videos,
+*  [`PyOpenGL`](https://pypi.org/project/PyOpenGL/) for more rendering options.
 
 
 ## Getting started
