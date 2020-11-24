@@ -51,6 +51,7 @@
 
 *   Provide a general interface for agents, that
     *   puts minimal constraints on the agent code (=> making it easy to include new algorithms and modify existing ones);
+
     *   allows comparison between agents using a simple and unified evaluation interface (=> making it easy, for instance, to compare deep and "traditional" RL algorithms).
     
 *   Unified seeding mechanism: define only one global seed, from which all other seeds will inherit, enforcing independence of the random number generators.
@@ -88,11 +89,10 @@ pip install -e .[full]
 
 which includes:
 
-*  [`PyTorch`](https://pytorch.org/) for Deep RL agents,
-*  [`Optuna`](https://optuna.org/#installation) for hyperparameter optimization,
-*  [`ffmpeg-python`](https://github.com/kkroening/ffmpeg-python) for saving videos,
-*  [`PyOpenGL`](https://pypi.org/project/PyOpenGL/) for more rendering options.
-
+*   [`PyTorch`](https://pytorch.org/) for Deep RL agents,
+*   [`Optuna`](https://optuna.org/#installation) for hyperparameter optimization,
+*   [`ffmpeg-python`](https://github.com/kkroening/ffmpeg-python) for saving videos,
+*   [`PyOpenGL`](https://pypi.org/project/PyOpenGL/) for more rendering options.
 
 ## Getting started
 
