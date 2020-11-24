@@ -10,6 +10,7 @@ class IncrementalAgent(Agent):
 
     def __init__(self, env, **kwargs):
         """
+
         Parameters
         ----------
         env : Model
@@ -19,8 +20,7 @@ class IncrementalAgent(Agent):
 
     @abstractmethod
     def partial_fit(self, fraction, **kwargs):
-        """
-        Partially fits the agent, according to the fraction parameter.
+        """Partially fits the agent, according to the fraction parameter.
 
         For instance, if the agent requires N episodes for a "full" fit,
         calling partial_fit(0.5) will fit the agent for 0.5*N episodes.
@@ -38,3 +38,4 @@ class IncrementalAgent(Agent):
         info : dict
         """
         raise NotImplementedError("agent.partial_fit() not implemented.")
+
