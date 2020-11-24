@@ -214,20 +214,27 @@ class AgentStats:
         obj.__dict__.update(tmp_dict)
         return obj
 
-    def optimize_hyperparams(self, n_trials=5, timeout=60, n_sim=5, n_fit=2,
-                             n_jobs=2,  sampler_method='random',
-                             pruner_method='none', continue_previous=False):
+    def optimize_hyperparams(self,
+                             n_trials=5,
+                             timeout=60,
+                             n_sim=5,
+                             n_fit=2,
+                             n_jobs=2,
+                             sampler_method='random',
+                             pruner_method='halving',
+                             continue_previous=False,
+                             partial_fit_fraction=0.25):
         """
         Run hyperparameter optimization and updates init_kwargs with the
         best hyperparameters found.
 
-            Note: pruning not yet implemented.
+        Currently supported sampler_method:
+            'random'
+            'optuna_default'
 
-
-            Currently supported sampler_method:
-                'random'
-                'optuna_default'
-
+        Currently supported pruner_method:
+            'none'
+            'halving'
 
         Parameters
         ----------
@@ -251,6 +258,11 @@ class AgentStats:
             Set to true to continue previous optuna study. If true,
             sampler_method and pruner_method will be
             the same as in the previous study.
+        partial_fit_fraction : double, in ]0, 1]
+            Fraction of the agent to fit for partial evaluation
+            (allows pruning of trials).
+            Only used for agents that implement partial_fit()
+            (IncrementalAgent interface).
         """
         global _OPTUNA_INSTALLED
         if not _OPTUNA_INSTALLED:
@@ -260,6 +272,8 @@ class AgentStats:
         assert self.eval_horizon is not None, \
             "To use optimize_hyperparams(), \
 eval_horizon must be given to AgentStats."
+
+        assert partial_fit_fraction > 0.0 and partial_fit_fraction <= 1.0
 
         #
         # Create optuna study
@@ -320,22 +334,59 @@ eval_horizon must be given to AgentStats."
                 n_jobs=n_jobs,
                 verbose=0)
 
-            # Fit and evaluate params_stats
-            params_stats.fit()
-
-            # Get rewards
+            # Evaluation environment copy
             params_eval_env = deepcopy(self.eval_env)
             params_eval_env.reseed()
 
-            eval_result = compare_policies(
-                        [params_stats],
-                        eval_env=params_eval_env,
-                        eval_horizon=self.eval_horizon,
-                        stationary_policy=True,
-                        n_sim=n_sim,
-                        plot=False)
+            #
+            # Case 1: partial fit, that allows pruning
+            #
+            if partial_fit_fraction < 1.0 \
+                    and issubclass(params_stats.agent_class, IncrementalAgent):
+                fraction_complete = 0.0
+                step = 0
+                while fraction_complete < 1.0:
+                    #
+                    params_stats.partial_fit(partial_fit_fraction)
+                    # Get rewards
+                    eval_result = compare_policies(
+                                [params_stats],
+                                eval_env=params_eval_env,
+                                eval_horizon=self.eval_horizon,
+                                stationary_policy=True,
+                                n_sim=n_sim,
+                                plot=False)
 
-            rewards = eval_result['optim'].values.mean()
+                    rewards = eval_result['optim'].values.mean()
+                    # Report intermediate objective value
+                    trial.report(rewards, step)
+
+                    #
+                    fraction_complete += partial_fit_fraction
+                    step += 1
+                    #
+
+                    # Handle pruning based on the intermediate value.
+                    if trial.should_prune():
+                        raise optuna.TrialPruned()
+
+            #
+            # Case 2: full fit
+            #
+            else:
+                # Fit and evaluate params_stats
+                params_stats.fit()
+
+                # Get rewards
+                eval_result = compare_policies(
+                            [params_stats],
+                            eval_env=params_eval_env,
+                            eval_horizon=self.eval_horizon,
+                            stationary_policy=True,
+                            n_sim=n_sim,
+                            plot=False)
+
+                rewards = eval_result['optim'].values.mean()
 
             return rewards
 
