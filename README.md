@@ -13,6 +13,9 @@
    <a href="https://github.com/rlberry-py/rlberry/workflows/test/badge.svg">
       <img alt="pytest" src="https://github.com/rlberry-py/rlberry/workflows/test/badge.svg">
    </a>
+   <a href='https://rlberry.readthedocs.io/en/latest/?badge=latest'>
+      <img src='https://readthedocs.org/projects/rlberry/badge/?version=latest' alt='Documentation Status' />
+   </a>
    <a href="https://img.shields.io/github/contributors/rlberry-py/rlberry">
       <img alt="contributors" src="https://img.shields.io/github/contributors/rlberry-py/rlberry">
    </a>
