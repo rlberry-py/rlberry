@@ -22,7 +22,7 @@ except Exception:
 
 class AgentStats:
     """Class to train, optimize hyperparameters, evaluate and gather statistics about an agent."""
-    
+
     def __init__(self,
                  agent_class,
                  train_env,
