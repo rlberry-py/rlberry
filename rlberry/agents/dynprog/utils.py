@@ -4,6 +4,7 @@ from numba import jit
 
 @jit(nopython=True)
 def backward_induction(R, P, horizon, gamma=1.0, vmax=np.inf):
+
     """
     Backward induction to compute Q and V functions in the
     finite horizon setting.
@@ -54,6 +55,7 @@ def backward_induction(R, P, horizon, gamma=1.0, vmax=np.inf):
 
 @jit(nopython=True)
 def backward_induction_in_place(Q, V, R, P, horizon, gamma=1.0, vmax=np.inf):
+
     """
     Backward induction to compute Q and V functions in
     the finite horizon setting.
@@ -106,6 +108,7 @@ def backward_induction_in_place(Q, V, R, P, horizon, gamma=1.0, vmax=np.inf):
 
 @jit(nopython=True)
 def value_iteration(R, P, gamma, epsilon=1e-6):
+
     """
     Value iteration for discounted problems.
 
@@ -144,6 +147,7 @@ def value_iteration(R, P, gamma, epsilon=1e-6):
 
 @jit(nopython=True)
 def bellman_operator(Q, R, P, gamma):
+
     """
     Bellman optimality operator for Q functions
 
