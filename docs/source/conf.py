@@ -14,7 +14,6 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('..'))
 
-import mock
 
 # -- Project information -----------------------------------------------------
 
@@ -65,10 +64,4 @@ html_static_path = ['_static']
 
 autodoc_default_flags = ['members', 'undoc-members']
 autodoc_member_order = 'bysource'
-
-# -- Packages to for RTD -----------------------------------------------------
-for module in [
-    'numba'
-]:
-    sys.modules[module] = mock.MagicMock()
 
