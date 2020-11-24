@@ -22,6 +22,7 @@ tests_require = [
     'pandas',
     'seaborn',
     'optuna',
+    'pyvirtualdisplay',
 ]
 
 full_requires = [
@@ -30,6 +31,7 @@ full_requires = [
     'ffmpeg-python',
     'PyOpenGL',
     'PyOpenGL_accelerate',
+    'pyvirtualdisplay',
 ]
 
 extras_require = {

@@ -1,6 +1,7 @@
 import os
 import pytest
 
+from pyvirtualdisplay import Display
 from rlberry.envs.classic_control import MountainCar
 from rlberry.envs.classic_control import Acrobot
 from rlberry.envs.finite import Chain
@@ -9,6 +10,8 @@ from rlberry.envs.benchmarks.ball_exploration import PBall2D, SimplePBallND
 from rlberry.rendering import RenderInterface
 from rlberry.rendering import RenderInterface2D
 
+display = Display(visible=0, size=(1400, 900))
+display.start()
 
 classes = [
     Acrobot,
@@ -50,4 +53,7 @@ def test_render2d_interface(ModelClass):
                 env.render()
             env.save_video('test_video.mp4')
             env.clear_render_buffer()
-        os.remove('test_video.mp4')
+        try:
+            os.remove('test_video.mp4')
+        except Exception:
+            pass
