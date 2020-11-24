@@ -39,6 +39,9 @@ extensions = [
     'sphinx.ext.autosectionlabel',
 ]
 
+# Remove packages dependent on C when building readthedocs
+autodoc_mock_imports = ['numba']
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
