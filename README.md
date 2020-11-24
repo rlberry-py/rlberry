@@ -89,6 +89,7 @@ pip install -e .[full]
 
 which includes:
 
+*   [`Numba`](https://github.com/numba/numba) for just-in-time compilation of algorithms based on dynamic programming,
 *   [`PyTorch`](https://pytorch.org/) for Deep RL agents,
 *   [`Optuna`](https://optuna.org/#installation) for hyperparameter optimization,
 *   [`ffmpeg-python`](https://github.com/kkroening/ffmpeg-python) for saving videos,

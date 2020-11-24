@@ -1,8 +1,8 @@
 import numpy as np
-from numba import jit
+from rlberry.utils.jit_setup import numba_jit
 
 
-@jit(nopython=True)
+@numba_jit
 def metric_lp(x, y, p, scaling):
     """
     Returns the p-norm:  || (x-y)/scaling||_p

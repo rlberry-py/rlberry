@@ -4,7 +4,6 @@ packages = find_packages(exclude=['docs', 'notebooks', 'logo'])
 
 install_requires = [
     'numpy>=1.17',
-    'numba',
     'pygame',
     'joblib',
     'matplotlib',
@@ -26,6 +25,7 @@ tests_require = [
 ]
 
 full_requires = [
+    'numba',
     'torch>=1.6.0',
     'optuna',
     'ffmpeg-python',

@@ -2,7 +2,7 @@ import logging
 import time
 
 import numpy as np
-from numba import jit
+from rlberry.utils.jit_setup import numba_jit
 
 import rlberry.spaces as spaces
 from rlberry.agents import Agent
@@ -13,7 +13,7 @@ from rlberry.agents.kernel_based.kernels import kernel_func
 from rlberry.agents.kernel_based.common import map_to_representative
 
 
-@jit(nopython=True)
+@numba_jit
 def update_model(repr_state, action, repr_next_state, reward,
                  n_representatives, repr_states,
                  lp_metric, scaling, bandwidth,
@@ -57,7 +57,7 @@ def update_model(repr_state, action, repr_next_state, reward,
                                                    v_max, bonus_type)
 
 
-@jit(nopython=True)
+@numba_jit
 def compute_bonus(sum_weights, beta, bonus_scale_factor, v_max, bonus_type):
     n = beta + sum_weights
     if bonus_type == "simplified_bernstein":

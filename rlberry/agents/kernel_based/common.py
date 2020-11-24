@@ -1,9 +1,9 @@
 import numpy as np
-from numba import jit
+from rlberry.utils.jit_setup import numba_jit
 from rlberry.utils.metrics import metric_lp
 
 
-@jit(nopython=True)
+@numba_jit
 def map_to_representative(state,
                           lp_metric,
                           representative_states,

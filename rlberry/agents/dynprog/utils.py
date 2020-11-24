@@ -1,8 +1,8 @@
 import numpy as np
-from numba import jit
+from rlberry.utils.jit_setup import numba_jit
 
 
-@jit(nopython=True)
+@numba_jit
 def backward_induction(R, P, horizon, gamma=1.0, vmax=np.inf):
 
     """
@@ -53,7 +53,7 @@ def backward_induction(R, P, horizon, gamma=1.0, vmax=np.inf):
     return Q, V
 
 
-@jit(nopython=True)
+@numba_jit
 def backward_induction_in_place(Q, V, R, P, horizon, gamma=1.0, vmax=np.inf):
 
     """
@@ -106,7 +106,7 @@ def backward_induction_in_place(Q, V, R, P, horizon, gamma=1.0, vmax=np.inf):
                 V[hh, ss] = vmax
 
 
-@jit(nopython=True)
+@numba_jit
 def value_iteration(R, P, gamma, epsilon=1e-6):
 
     """
@@ -145,7 +145,7 @@ def value_iteration(R, P, gamma, epsilon=1e-6):
     return Q, V, n_it
 
 
-@jit(nopython=True)
+@numba_jit
 def bellman_operator(Q, R, P, gamma):
 
     """

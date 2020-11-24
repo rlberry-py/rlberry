@@ -1,8 +1,8 @@
 import numpy as np
-from numba import jit
+from rlberry.utils.jit_setup import numba_jit
 
 
-@jit(nopython=True)
+@numba_jit
 def kernel_func(z, kernel_type):
     """
     Returns a kernel function to the real value z.
