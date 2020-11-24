@@ -5,7 +5,6 @@ from rlberry.envs.interface import Model
 
 
 class FiniteMDP(Model):
-
     """
     Base class for a finite MDP.
 

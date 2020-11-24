@@ -72,7 +72,6 @@ class Memory:
 
 
 class AVECPPOAgent(Agent):
-
     """
     AVEC uses a modification of the training objective for the critic in
     actor-critic algorithms to better approximate the value function (critic).

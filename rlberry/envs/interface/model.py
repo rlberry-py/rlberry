@@ -5,7 +5,6 @@ from rlberry.spaces import Space
 
 
 class Model:
-
     """
     Base class for an environment model.
 
