@@ -29,6 +29,7 @@ extras_require = {
     'opengl_rendering': ['PyOpenGL', 'PyOpenGL_accelerate'],
     'torch_agents': ['torch>=1.6.0'],
     'hyperparam_optimization': ['optuna'],
+    'save_video': ['ffmpeg-python'],
 }
 
 setup(
