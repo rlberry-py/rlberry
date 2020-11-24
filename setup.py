@@ -37,7 +37,7 @@ full_requires = [
 extras_require = {
     'full': full_requires,
     'test': tests_require,
-    'deploy': ['sphinx', 'sphinx_rtd_theme', 'mock'],
+    'deploy': ['sphinx', 'sphinx_rtd_theme'],
     'opengl_rendering': ['PyOpenGL', 'PyOpenGL_accelerate'],
     'torch_agents': ['torch>=1.6.0'],
     'hyperparam_optimization': ['optuna'],

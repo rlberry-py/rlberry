@@ -10,8 +10,11 @@ from rlberry.envs.benchmarks.ball_exploration import PBall2D, SimplePBallND
 from rlberry.rendering import RenderInterface
 from rlberry.rendering import RenderInterface2D
 
-display = Display(visible=0, size=(1400, 900))
-display.start()
+try:
+    display = Display(visible=0, size=(1400, 900))
+    display.start()
+except Exception:
+    pass
 
 classes = [
     Acrobot,
@@ -57,3 +60,4 @@ def test_render2d_interface(ModelClass):
             os.remove('test_video.mp4')
         except Exception:
             pass
+
