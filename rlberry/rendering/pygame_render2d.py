@@ -120,7 +120,7 @@ class PyGameRender2D:
                 "Shape type %s not implemented in pygame renderer."
                 % shape.type)
 
-    def run_graphics(self):
+    def run_graphics(self, debug_mode=False):
         """
         Sequentially displays scenes in self.data
         """
@@ -141,6 +141,11 @@ class PyGameRender2D:
                 #
                 pg.display.flip()
                 pg.time.wait(self.refresh_interval)
+
+                # in debug mode, stop
+                if debug_mode:
+                    pg.quit()
+                    return
         else:
             print("Error: not possible to render the environment, \
 pygame or pyopengl not installed.")

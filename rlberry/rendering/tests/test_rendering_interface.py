@@ -1,3 +1,4 @@
+import os
 import pytest
 
 from rlberry.envs.classic_control import MountainCar
@@ -33,7 +34,7 @@ def test_instantiation(ModelClass):
 @pytest.mark.parametrize("ModelClass", classes)
 def test_render2d_interface(ModelClass):
     env = ModelClass()
-    env._disable_screen = True       # don't create window
+    env._debug_mode = True       # rendering debug
 
     if isinstance(env, RenderInterface2D):
         env.enable_rendering()
@@ -41,10 +42,12 @@ def test_render2d_interface(ModelClass):
         if env.is_online():
             for _ in range(2):
                 state = env.reset()
-                for _ in range(50):
+                for _ in range(5):
                     assert env.observation_space.contains(state)
                     action = env.action_space.sample()
                     next_s, _, _, _ = env.step(action)
                     state = next_s
                 env.render()
+            env.save_video('test_video.mp4')
             env.clear_render_buffer()
+        os.remove('test_video.mp4')
