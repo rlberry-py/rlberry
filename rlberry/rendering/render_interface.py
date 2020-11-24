@@ -16,7 +16,7 @@ class RenderInterface(ABC):
 
     def __init__(self):
         self._rendering_enabled = False
-        self._disable_screen = False  # for testing and debug only
+        self._debug_mode = False  # for testing and debug only
 
     def is_render_enabled(self):
         return self._rendering_enabled
@@ -106,8 +106,6 @@ class RenderInterface2D(RenderInterface):
         """
         Function to render an environment that implements the interface.
         """
-        if self._disable_screen:
-            return
 
         if self.is_render_enabled():
             # background and data
@@ -125,15 +123,13 @@ class RenderInterface2D(RenderInterface):
             renderer.set_clipping_area(self._clipping_area)
             renderer.set_data(data)
             renderer.set_background(background)
-            renderer.run_graphics()
+            renderer.run_graphics(self._debug_mode)
             return 0
         else:
             print("Rendering not enabled for the environment.")
             return 1
 
     def save_video(self, filename, framerate=25, **kwargs):
-        if self._disable_screen:
-            return
 
         # background and data
         background, data = self._get_background_and_scenes()

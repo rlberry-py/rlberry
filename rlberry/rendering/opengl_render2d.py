@@ -147,7 +147,7 @@ class OpenGLRender2D:
             glVertex2f(vertex[0], vertex[1])
         glEnd()
 
-    def run_graphics(self):
+    def run_graphics(self, debug_mode=False):
         """
         Sequentially displays scenes in self.data
         """
@@ -169,6 +169,11 @@ class OpenGLRender2D:
                 #
                 pg.display.flip()
                 pg.time.wait(self.refresh_interval)
+
+                # in debug mode, stop
+                if debug_mode:
+                    pg.quit()
+                    return
         else:
             print("Error: not possible to render the environment, \
 pygame or pyopengl not installed.")
