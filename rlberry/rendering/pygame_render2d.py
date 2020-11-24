@@ -17,9 +17,7 @@ except Exception:
 
 
 class PyGameRender2D:
-    """
-    Class to render a list of scenes using pygame.
-    """
+    """Class to render a list of scenes using pygame."""
 
     def __init__(self):
         # parameters
@@ -189,3 +187,4 @@ pygame or pyopengl not installed.")
             print("Error: not possible to render the environment, pygame \
 or pyopengl not installed.")
             return []
+

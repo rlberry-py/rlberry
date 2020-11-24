@@ -4,7 +4,6 @@ from rlberry.utils.jit_setup import numba_jit
 
 @numba_jit
 def backward_induction(R, P, horizon, gamma=1.0, vmax=np.inf):
-
     """
     Backward induction to compute Q and V functions in the
     finite horizon setting.
@@ -55,7 +54,6 @@ def backward_induction(R, P, horizon, gamma=1.0, vmax=np.inf):
 
 @numba_jit
 def backward_induction_in_place(Q, V, R, P, horizon, gamma=1.0, vmax=np.inf):
-
     """
     Backward induction to compute Q and V functions in
     the finite horizon setting.
@@ -108,7 +106,6 @@ def backward_induction_in_place(Q, V, R, P, horizon, gamma=1.0, vmax=np.inf):
 
 @numba_jit
 def value_iteration(R, P, gamma, epsilon=1e-6):
-
     """
     Value iteration for discounted problems.
 
@@ -147,7 +144,6 @@ def value_iteration(R, P, gamma, epsilon=1e-6):
 
 @numba_jit
 def bellman_operator(Q, R, P, gamma):
-
     """
     Bellman optimality operator for Q functions
 
@@ -183,3 +179,4 @@ def bellman_operator(Q, R, P, gamma):
             for ns in range(S):
                 TQ[ss, aa] += gamma * P[ss, aa, ns] * V[ns]
     return TQ
+
