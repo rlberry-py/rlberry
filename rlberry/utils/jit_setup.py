@@ -8,5 +8,5 @@ try:
     numba_jit = jit(nopython=True)
 except Exception:
     def numba_jit(func, **options):
-        """ This decorator does not modify the decorated function. """
+        """This decorator does not modify the decorated function."""
         return func

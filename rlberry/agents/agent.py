@@ -27,11 +27,13 @@ class Agent(ABC):
 
     Methods
     --------
-    fit(**kwargs)
+    fit(**kwargs), abstract
         train the agent, returns dictionary with training info,
         whose keys are strings
-    policy(observation, **kwargs)
+    policy(observation, **kwargs), abstract
         returns the action to be taken given an observation
+    partial_fit()
+        partially fits the agent (optional)
     reset()
         puts the agent in default setup (optional)
     sample_parameters(), optional
@@ -66,20 +68,42 @@ class Agent(ABC):
 
     @abstractmethod
     def fit(self, **kwargs):
+        """Train the agent using the provided environment."""
         pass
 
     @abstractmethod
     def policy(self, observation, **kwargs):
+        """Returns an action, given an observation."""
+        pass
+
+    def partial_fit(self, fraction, **kwargs):
+        """
+        Partially fits the agent, according to the fraction parameter.
+
+        For instance, if the agent requires N episodes for a "full" fit,
+        calling partial_fit(0.5) will fit the agent for 0.5*N episodes.
+
+        Also, calling partial_fit(0.5) twice must be equivalent to
+        a single call to fit().
+
+        Parameters
+        ---------
+        fraction: double, in [0,1]
+            Fraction of the agent to fit.
+        """
         pass
 
     def reset(self, **kwargs):
+        """Put the agent in default setup."""
         pass
 
     def save(self, **kwargs):
-        pass
+        """Save agent object."""
+        raise NotImplementedError("agent.save() not implemented.")
 
     def load(self, **kwargs):
-        pass
+        """Load agent object."""
+        raise NotImplementedError("agent.load() not implemented.")
 
     @classmethod
     def sample_parameters(cls, trial):
@@ -94,4 +118,4 @@ class Agent(ABC):
         ----------
         trial: optuna.trial
         """
-        raise NotImplementedError("sample_parameters() not implemented.")
+        raise NotImplementedError("agent.sample_parameters() not implemented.")
