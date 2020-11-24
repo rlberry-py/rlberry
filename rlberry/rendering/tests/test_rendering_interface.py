@@ -50,4 +50,7 @@ def test_render2d_interface(ModelClass):
                 env.render()
             env.save_video('test_video.mp4')
             env.clear_render_buffer()
-        os.remove('test_video.mp4')
+        try:
+            os.remove('test_video.mp4')
+        except Exception:
+            pass
