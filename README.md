@@ -50,7 +50,6 @@
 *   Write detailed documentation and comprehensible tutorial/examples (Jupyter Notebook) for each implemented algorithm.
 
 *   Provide a general interface for agents, that
-
     *   puts minimal constraints on the agent code (=> making it easy to include new algorithms and modify existing ones);
     *   allows comparison between agents using a simple and unified evaluation interface (=> making it easy, for instance, to compare deep and "traditional" RL algorithms).
     
