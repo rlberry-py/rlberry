@@ -51,6 +51,8 @@ class Model:
         Get new random number generator for the model.
         """
         self.rng = seeding.get_rng()
+        self.observation_space.rng = self.rng
+        self.action_space.rng = self.rng
 
     def reset(self):
         """
