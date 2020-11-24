@@ -1,9 +1,13 @@
+import numpy as np
 import pytest
 
 from rlberry.envs.classic_control import MountainCar, Acrobot
 from rlberry.envs.finite import Chain
 from rlberry.envs.finite import GridWorld
 from rlberry.envs.benchmarks.ball_exploration import PBall2D, SimplePBallND
+from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
+from rlberry.rendering.render_interface import RenderInterface2D
+
 
 classes = [
     MountainCar,
@@ -34,3 +38,27 @@ def test_instantiation(ModelClass):
             action = env.action_space.sample()
             next_s, _, _, _ = env.sample(state, action)
             assert env.observation_space.contains(next_s)
+
+
+@pytest.mark.parametrize("ModelClass", classes)
+def test_rendering_calls(ModelClass):
+    env = ModelClass()
+    if isinstance(env, RenderInterface2D):
+        _ = env.get_background()
+        _ = env.get_scene(env.observation_space.sample())
+
+
+def test_gridworld_aux_functions():
+    env = GridWorld()
+    env.print()  # from FiniteMDP
+    vals = np.ones(env.observation_space.n)
+    env.display_values(vals)
+    env.print_transition_at(0, 0, 'up')
+
+
+def test_ball2d_benchmark_instantiation():
+    for level in [1, 2, 3, 4, 5]:
+        env = get_benchmark_env(level)
+        for aa in range(env.action_space.n):
+            env.step(aa)
+            env.sample(env.observation_space.sample(), aa)

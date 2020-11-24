@@ -20,7 +20,8 @@ tests_require = [
     'joblib',
     'matplotlib',
     'pandas',
-    'seaborn'
+    'seaborn',
+    'optuna',
 ]
 
 full_requires = [

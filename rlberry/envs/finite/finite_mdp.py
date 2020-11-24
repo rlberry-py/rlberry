@@ -140,15 +140,15 @@ class FiniteMDP(Model):
             print("~~~~~~~~~~~~~~~~~~~~")
 
 
-if __name__ == '__main__':
-    S = 3
-    A = 2
+# if __name__ == '__main__':
+#     S = 3
+#     A = 2
 
-    R = np.random.uniform(0, 1, (S, A))
-    P = np.random.uniform(0, 1, (S, A, S))
-    initial_state_distr = 1  # np.ones(S)/S
-    for ss in range(S):
-        for aa in range(A):
-            P[ss, aa, :] /= P[ss, aa, :].sum()
+#     R = np.random.uniform(0, 1, (S, A))
+#     P = np.random.uniform(0, 1, (S, A, S))
+#     initial_state_distr = 1  # np.ones(S)/S
+#     for ss in range(S):
+#         for aa in range(A):
+#             P[ss, aa, :] /= P[ss, aa, :].sum()
 
-    env = FiniteMDP(R, P, initial_state_distribution=initial_state_distr)
+#     env = FiniteMDP(R, P, initial_state_distribution=initial_state_distr)

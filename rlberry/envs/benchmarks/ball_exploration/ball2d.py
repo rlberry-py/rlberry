@@ -144,14 +144,14 @@ class BallLevel5(BallLevel4):
         self.name = "Ball Exploration Benchmark - Level 5"
 
 
-if __name__ == '__main__':
-    env = get_benchmark_env(1)
-    env.enable_rendering()
-    for ii in range(100):
-        # env.step(1)
-        # env.step(3)
-        # env.step(env.action_space.sample())
-        # env.step(0)
-        env.step(4)
+# if __name__ == '__main__':
+#     env = get_benchmark_env(1)
+#     env.enable_rendering()
+#     for ii in range(100):
+#         # env.step(1)
+#         # env.step(3)
+#         # env.step(env.action_space.sample())
+#         # env.step(0)
+#         env.step(4)
 
-    env.render()
+#     env.render()

@@ -1,4 +1,5 @@
 import numpy as np
+import os
 import rlberry.seeding as seeding
 from rlberry.envs import GridWorld
 from rlberry.agents import Agent
@@ -12,11 +13,12 @@ seeding.set_global_seed(1234)
 class DummyAgent(Agent):
     fit_info = ("episode_rewards",)
 
-    def __init__(self, env, n_episodes, **kwargs):
+    def __init__(self, env, n_episodes, hyperparameter=0, **kwargs):
         Agent.__init__(self, env, **kwargs)
         self.name = "DummyAgent"
         self.n_episodes = n_episodes
         self.fitted = False
+        self.hyperparameter = hyperparameter
 
     def fit(self, **kwargs):
         info = {}
@@ -26,6 +28,11 @@ class DummyAgent(Agent):
 
     def policy(self, observation, time=0, **kwargs):
         return self.env.action_space.sample()
+
+    @classmethod
+    def sample_parameters(cls, trial):
+        hyperparameter = trial.suggest_categorical('hyperparameter', [1, 2, 3])
+        return {'hyperparameter': hyperparameter}
 
 
 def test_agent_stats():
@@ -44,9 +51,9 @@ def test_agent_stats():
 
     # Run AgentStats
     stats_agent1 = AgentStats(DummyAgent, train_env,
-                              init_kwargs=params, n_fit=4)
+                              init_kwargs=params, n_fit=4, eval_horizon=10)
     stats_agent2 = AgentStats(DummyAgent, train_env,
-                              init_kwargs=params, n_fit=4)
+                              init_kwargs=params, n_fit=4, eval_horizon=10)
     agent_stats_list = [stats_agent1, stats_agent2]
 
     # learning curves
@@ -64,3 +71,14 @@ def test_agent_stats():
         assert len(agent_stats.fitted_agents) == 4
         for agent in agent_stats.fitted_agents:
             assert agent.fitted
+
+    # test saving/loading
+    stats_agent1.save('test_agent_stats_file.pickle')
+    loaded_stats = AgentStats.load('test_agent_stats_file.pickle')
+    assert stats_agent1.identifier == loaded_stats.identifier
+
+    # delete file
+    os.remove('test_agent_stats_file.pickle')
+
+    # test hyperparemeter optimization
+    loaded_stats.optimize_hyperparams()

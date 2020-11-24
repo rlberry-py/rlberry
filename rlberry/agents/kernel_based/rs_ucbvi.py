@@ -195,7 +195,7 @@ class RSUCBVIAgent(Agent):
 
         # logging config
         self._last_printed_ep = 0
-        self._time_last_log = time.clock()
+        self._time_last_log = time.process_time()
         if self.verbose == 1:
             self._log_interval = 60  # in seconds
         elif self.verbose == 2:
@@ -240,7 +240,7 @@ class RSUCBVIAgent(Agent):
 
     def _logging(self):
         if self.verbose > 0:
-            t_now = time.clock()
+            t_now = time.process_time()
             time_elapsed = t_now - self._time_last_log
             if time_elapsed >= self._log_interval:
                 self._time_last_log = t_now
@@ -258,7 +258,7 @@ class RSUCBVIAgent(Agent):
                                                   self.n_episodes) \
             + "| representative states = {} ".format(self.M) \
             + "| reward/ep = {:0.2f} ".format(reward_per_ep) \
-            + "| time/ep = {:0.2f} ".format(time_per_ep)
+            + "| time/ep = {:0.2f} ms".format(time_per_ep)
 
         return to_print
 
