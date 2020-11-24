@@ -212,6 +212,7 @@ pygame or pyopengl not installed.")
                 imgdata = np.moveaxis(tmp_arr, 0, 1)
                 video_data.append(imgdata)
 
+            pg.quit()
             return video_data
         else:
             print("Error: not possible to render the environment, \
