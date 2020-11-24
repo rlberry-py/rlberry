@@ -14,6 +14,7 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('..'))
 
+import mock
 
 # -- Project information -----------------------------------------------------
 
@@ -39,9 +40,6 @@ extensions = [
     'sphinx.ext.autosectionlabel',
 ]
 
-# Remove packages dependent on C when building readthedocs
-autodoc_mock_imports = ['numba']
-
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
@@ -62,4 +60,15 @@ html_theme = 'sphinx_rtd_theme'
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+
+# -- Autodoc -----------------------------------------------------------------
+
+autodoc_default_flags = ['members', 'undoc-members']
+autodoc_member_order = 'bysource'
+
+# -- Packages to for RTD -----------------------------------------------------
+for module in [
+    'numba'
+]:
+    sys.modules[module] = mock.MagicMock()
 
