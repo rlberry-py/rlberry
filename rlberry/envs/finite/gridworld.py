@@ -21,7 +21,7 @@ class GridWorld(FiniteMDP, RenderInterface2D):
                  terminal_states=None,
                  success_probability=0.9,
                  reward_at=None,
-                 walls=None,
+                 walls=((1, 1), (2, 2)),
                  default_reward=0.0):
         """
         Parameters
@@ -353,7 +353,8 @@ class GridWorld(FiniteMDP, RenderInterface2D):
         return scene
 
 
-if __name__ == '__main__':
-    env = GridWorld()
-    env.step(env.action_space.sample())
-    env.render_ascii()
+# if __name__ == '__main__':
+#     env = GridWorld(nrows=5, ncols=5,
+#                     reward_at={(4, 4): 1, (4, 3): -1})
+#     env.step(env.action_space.sample())
+#     env.render_ascii()

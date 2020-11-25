@@ -49,8 +49,10 @@ def test_rendering_calls(ModelClass):
 
 
 def test_gridworld_aux_functions():
-    env = GridWorld()
+    env = GridWorld(nrows=5, ncols=5, walls=((1, 1),),
+                    reward_at={(4, 4): 1, (4, 3): -1})
     env.print()  # from FiniteMDP
+    env.render_ascii()  # from GridWorld
     vals = np.ones(env.observation_space.n)
     env.display_values(vals)
     env.print_transition_at(0, 0, 'up')
@@ -62,3 +64,10 @@ def test_ball2d_benchmark_instantiation():
         for aa in range(env.action_space.n):
             env.step(aa)
             env.sample(env.observation_space.sample(), aa)
+
+
+@pytest.mark.parametrize("p", [1, 2, 3, 4, 5, np.inf])
+def test_pball_env(p):
+    env = PBall2D(p=p)
+    env.get_reward_lipschitz_constant()
+    env.get_transitions_lipschitz_constant()

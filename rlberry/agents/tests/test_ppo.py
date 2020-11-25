@@ -16,7 +16,9 @@ def test_ppo_agent():
                      eps_clip=0.2,
                      k_epochs=4,
                      verbose=0)
+    agent._log_interval = 0
     agent.fit()
+    agent.policy(env.observation_space.sample())
 
 
 def test_ppo_agent_partial_fit():
@@ -31,12 +33,15 @@ def test_ppo_agent_partial_fit():
                      learning_rate=0.001,
                      eps_clip=0.2,
                      k_epochs=4,
-                     verbose=0)
+                     verbose=1)
+    agent._log_interval = 0
 
     agent.partial_fit(0.5)
+    agent.policy(env.observation_space.sample())
     assert agent.episode == 5
     agent.partial_fit(0.5)
     assert agent.episode == 10
+    agent.policy(env.observation_space.sample())
 
 
 def test_avec_ppo_agent():
@@ -51,5 +56,7 @@ def test_avec_ppo_agent():
                          lr=0.001,
                          eps_clip=0.2,
                          k_epochs=4,
-                         verbose=0)
+                         verbose=1)
+    agent._log_interval = 0
     agent.fit()
+    agent.policy(env.observation_space.sample())

@@ -15,19 +15,22 @@ from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
                 "cosine"
 ])
 def test_rs_kernel_ucbvi(kernel_type):
-    env = get_benchmark_env(level=1)
-    agent = RSKernelUCBVIAgent(
-                            env,
-                            n_episodes=5,
-                            gamma=0.99,
-                            horizon=30,
-                            bonus_scale_factor=0.01,
-                            min_dist=0.2,
-                            bandwidth=0.05,
-                            beta=1.0,
-                            kernel_type=kernel_type,
-                            verbose=0)
-    agent.fit()
+    for horizon in [None, 30]:
+        env = get_benchmark_env(level=1)
+        agent = RSKernelUCBVIAgent(
+                                env,
+                                n_episodes=5,
+                                gamma=0.95,
+                                horizon=horizon,
+                                bonus_scale_factor=0.01,
+                                min_dist=0.2,
+                                bandwidth=0.05,
+                                beta=1.0,
+                                kernel_type=kernel_type,
+                                verbose=1)
+        agent._log_interval = 0
+        agent.fit()
+        agent.policy(env.observation_space.sample())
 
 
 def test_rs_ucbvi():
@@ -37,5 +40,7 @@ def test_rs_ucbvi():
                          gamma=0.99,
                          horizon=30,
                          bonus_scale_factor=0.1,
-                         verbose=0)
+                         verbose=1)
+    agent._log_interval = 0
     agent.fit()
+    agent.policy(env.observation_space.sample())

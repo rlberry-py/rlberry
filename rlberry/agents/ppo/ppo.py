@@ -219,6 +219,7 @@ class PPOAgent(IncrementalAgent):
             / max(1, episode - prev_episode)
         time_per_ep = self._log_interval * 1000.0 \
             / max(1, episode - prev_episode)
+        time_per_ep = max(0.01, time_per_ep)  # avoid div by zero
         fps = int((self.horizon / time_per_ep) * 1000)
 
         to_print = "[{}] episode = {}/{} ".format(self.name, episode+1,

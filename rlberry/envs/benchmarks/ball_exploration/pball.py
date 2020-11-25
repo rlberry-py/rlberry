@@ -354,15 +354,15 @@ class SimplePBallND(PBall):
                        A, B, sigma, sigma_init, mu_init)
 
 
-if __name__ == '__main__':
-    env = PBall2D(p=5)
-    print(env.get_transitions_lipschitz_constant())
-    print(env.get_reward_lipschitz_constant())
+# if __name__ == '__main__':
+#     env = PBall2D(p=5)
+#     print(env.get_transitions_lipschitz_constant())
+#     print(env.get_reward_lipschitz_constant())
 
-    env.enable_rendering()
+#     env.enable_rendering()
 
-    for ii in range(100):
-        env.step(1)
-        env.step(3)
+#     for ii in range(100):
+#         env.step(1)
+#         env.step(3)
 
-    env.render()
+#     env.render()

@@ -45,8 +45,7 @@ class DummyAgent(IncrementalAgent):
         return {'hyperparameter': hyperparameter}
 
 
-def test_agent_stats():
-
+def test_agent_stats_1():
     # Define train and evaluation envs
     train_env = GridWorld()
     eval_env = GridWorld()
@@ -92,6 +91,50 @@ def test_agent_stats():
 
     # test hyperparemeter optimization
     loaded_stats.optimize_hyperparams()
+    loaded_stats.optimize_hyperparams(continue_previous=True)
+
+
+def test_agent_stats_2():
+    # Define train and evaluation envs
+    train_env = GridWorld()
+    eval_env = GridWorld()
+
+    # Parameters
+    params = {"n_episodes": 500, "horizon": 20}
+
+    # Run AgentStats
+    stats_agent1 = AgentStats(DummyAgent, train_env, eval_env=eval_env,
+                              init_kwargs=params, n_fit=4, eval_horizon=10,
+                              n_jobs=1)
+    stats_agent2 = AgentStats(DummyAgent, train_env, eval_env=eval_env,
+                              init_kwargs=params, n_fit=4, eval_horizon=10,
+                              n_jobs=1)
+    agent_stats_list = [stats_agent1, stats_agent2]
+
+    # compare final policies
+    compare_policies(agent_stats_list, n_sim=10, show=False)
+    compare_policies(agent_stats_list,
+                     n_sim=10, show=False, stationary_policy=False)
+
+    # learning curves
+    plot_episode_rewards(agent_stats_list, cumulative=True, show=False)
+
+    # check if fitted
+    for agent_stats in agent_stats_list:
+        assert len(agent_stats.fitted_agents) == 4
+        for agent in agent_stats.fitted_agents:
+            assert agent.fitted
+
+    # test saving/loading
+    stats_agent1.save()
+    loaded_stats = AgentStats.load(stats_agent1.default_filename)
+    assert stats_agent1.identifier == loaded_stats.identifier
+
+    # delete file
+    os.remove(stats_agent1.default_filename+'.pickle')
+
+    # test hyperparemeter optimization
+    loaded_stats.optimize_hyperparams()
 
 
 def test_agent_stats_partial_fit():
@@ -116,10 +159,10 @@ def test_agent_stats_partial_fit():
     stats.partial_fit(0.5)
     for agent in stats.fitted_agents:
         assert agent.fraction_fitted == 0.6
-    # for _ in range(2):
-    #     stats.partial_fit(0.5)
-    #     for agent in stats.fitted_agents:
-    #         assert agent.fraction_fitted == 1.0
+    for _ in range(2):
+        stats.partial_fit(0.5)
+        for agent in stats.fitted_agents:
+            assert agent.fraction_fitted == 1.0
 
     # learning curves
     plot_episode_rewards([stats], cumulative=True, show=False)
