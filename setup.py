@@ -44,15 +44,27 @@ extras_require = {
     'save_video': ['ffmpeg-python'],
 }
 
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
 setup(
     name='rlberry',
     version='0.0.1',
-    description='Reinforcement Learning Library',
+    description='An easy-to-use reinforcement learning library',
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    author='rlberry team',
     url='https://github.com/rlberry-py',
     license='MIT',
     packages=packages,
+    classifiers=[
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+    ],
     install_requires=install_requires,
     tests_require=tests_require,
     extras_require=extras_require,
     zip_safe=False,
 )
+
