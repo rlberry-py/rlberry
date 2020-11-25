@@ -1,4 +1,5 @@
 import numpy as np
+import logging
 
 _FFMPEG_INSTALLED = True
 try:
@@ -27,9 +28,13 @@ def video_write(fn, images, framerate=60, vcodec='libx264'):
     """
     global _FFMPEG_INSTALLED
 
+    if len(images) == 0:
+        logging.warning("Calling video_write() with empty images.")
+        return
+
     if not _FFMPEG_INSTALLED:
-        print(
-            "Error: not able to save video, ffmpeg-python \
+        logging.error(
+            "video_write(): Unable to save video, ffmpeg-python \
 package required (https://github.com/kkroening/ffmpeg-python)")
         return
 
