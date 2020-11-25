@@ -102,7 +102,7 @@ which includes:
 
 ### Tests
 
-To run tests, run `pytest`. To run tests with coverage, install and run `pytest-cov`:
+To run tests, run `pytest` (make sure you have installed the test dependencies with `pip install -e .[test]`). To run tests with coverage, install and run `pytest-cov`:
 
 ```shell
 pip install pytest-cov
