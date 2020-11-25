@@ -7,4 +7,3 @@ Currently, we are accepting the following forms of contributions:
 -   Documentation improvements
 -   New environments
 -   New agents
-
