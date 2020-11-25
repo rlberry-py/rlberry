@@ -41,9 +41,9 @@
 
 | Section | Description |
 |-|-|
-| [Goals](#goals) | The philosophy of the library |
-| [Installation](#installation) | How to install the library |
-| [Getting started](#getting-started) | A quick guide on how to use rlberry |
+| [Goals](#goals) | The philosophy of `rlberry` |
+| [Installation](#installation) | How to install `rlberry` |
+| [Getting started](#getting-started) | A quick usage guide of `rlberry` |
 | [Documentation](#documentation) | A link to the documentation |
 | [Contributing](#contributing) | A guide for contributing |
 | [Citation](#citing-rlberry) | How to cite this work |
@@ -108,7 +108,7 @@ To run tests, install test dependencies with `pip install -e .[test]` and run `p
 
 ## Contributing
 
-Want to contribute to `rlberry`, please check [our contribution guidelines](CONTRIBUTING.md). A list of interesting TODO's will be available soon. **If you want to add any new agents or environments, do not hesitate to [open an issue](https://github.com/rlberry-py/rlberry/issues/new/choose)!**
+Want to contribute to `rlberry`? Please check [our contribution guidelines](CONTRIBUTING.md). A list of interesting TODO's will be available soon. **If you want to add any new agents or environments, do not hesitate to [open an issue](https://github.com/rlberry-py/rlberry/issues/new/choose)!**
 
 ### Implementation notes
 
