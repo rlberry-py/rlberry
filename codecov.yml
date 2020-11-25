@@ -20,4 +20,5 @@ comment:
   require_changes: no
 
 ignore:
-  - "rlberry/rlberry/rendering/tests/"
+  - "./rlberry/rendering/opengl_render2d.py"
+
