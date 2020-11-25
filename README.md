@@ -108,6 +108,8 @@ To run tests, install test dependencies with `pip install -e .[test]` and run `p
 
 ## Contributing
 
+Want to contribute to `rlberry`, please check [our contribution guidelines](CONTRIBUTING.md). A list of interesting TODO's will be available soon. **If you want to add any new agents or environments, do not hesitate to [open an issue](https://github.com/rlberry-py/rlberry/issues/new/choose)!**
+
 ### Implementation notes
 
 *   When inheriting from the `Agent` class, make sure to call `Agent.__init__(self, env, **kwargs)` using `**kwargs` in case new features are added to the base class, and to make sure that `copy_env` and `reseed_env` are always an option to any agent. 
