@@ -14,7 +14,7 @@
       <img alt="pytest" src="https://github.com/rlberry-py/rlberry/workflows/test/badge.svg">
    </a>
    <a href='https://rlberry.readthedocs.io/en/latest/?badge=latest'>
-      <img src='https://readthedocs.org/projects/rlberry/badge/?version=latest' alt='Documentation Status' />
+      <img alt="Documentation Status" src="https://readthedocs.org/projects/rlberry/badge/?version=latest">
    </a>
    <a href="https://img.shields.io/github/contributors/rlberry-py/rlberry">
       <img alt="contributors" src="https://img.shields.io/github/contributors/rlberry-py/rlberry">
@@ -23,8 +23,11 @@
       <img alt="Codacy" src="https://api.codacy.com/project/badge/Grade/27e91674d18a4ac49edf91c339af1502">
    </a>
    <a href="https://codecov.io/gh/rlberry-py/rlberry">
-      <img src="https://codecov.io/gh/rlberry-py/rlberry/branch/main/graph/badge.svg?token=TIFP7RUD75"/>
-   </a> 
+      <img alt="codecov" src="https://codecov.io/gh/rlberry-py/rlberry/branch/main/graph/badge.svg?token=TIFP7RUD75">
+   </a>
+   <a href="https://pypi.org/project/rlberry/">
+      <img alt="PyPI" src="https://img.shields.io/pypi/v/rlberry">
+   </a>
 </p>
 
 <p align="center">
