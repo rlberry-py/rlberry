@@ -296,8 +296,10 @@ class AVECPPOAgent(Agent):
             # find ratio (pi_theta / pi_theta__old)
             ratios = torch.exp(logprobs - old_logprobs.detach())
 
-            # find surrogate loss
+            # normalize the advantages
             advantages = rewards - state_values.detach()
+            advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
+            # find surrogate loss
             surr1 = ratios * advantages
             surr2 = torch.clamp(ratios, 1 - self.eps_clip, 1
                                 + self.eps_clip) * advantages
