@@ -5,7 +5,7 @@ render = False
 for env, n_episodes, horizon in zip([MountainCar()], [40000], [256]):
     print("Running PPO on %s" % env.name)
     agent = AVECPPOAgent(env, n_episodes=n_episodes, horizon=horizon,
-                         gamma=0.99, lr=0.00025, eps_clip=0.2,
+                         gamma=0.99, learning_rate=0.00025, eps_clip=0.2,
                          k_epochs=4, verbose=4)
     agent.fit()
 

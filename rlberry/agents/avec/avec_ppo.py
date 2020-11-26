@@ -114,7 +114,9 @@ class AVECPPOAgent(IncrementalAgent):
                  batch_size=8,
                  horizon=256,
                  gamma=0.99,
-                 lr=0.0003,
+                 entr_coef=0.01,
+                 vf_coef=0.5,
+                 learning_rate=0.0003,
                  eps_clip=0.2,
                  k_epochs=10,
                  verbose=1,
@@ -132,7 +134,11 @@ class AVECPPOAgent(IncrementalAgent):
         gamma : double
             Discount factor in [0, 1]. If gamma is 1.0, the problem is set
             to be finite-horizon.
-        lr : double
+        entr_coef : double
+            Entropy coefficient.
+        vf_coef : double
+            Value function loss coefficient.
+        learning_rate : double
             Learning rate.
         eps_clip : double
             PPO clipping range (epsilon).
@@ -143,13 +149,16 @@ class AVECPPOAgent(IncrementalAgent):
         """
         IncrementalAgent.__init__(self, env, **kwargs)
 
-        self.lr = lr
+        self.learning_rate = learning_rate
         self.gamma = gamma
+        self.entr_coef = entr_coef
+        self.vf_coef = vf_coef
         self.eps_clip = eps_clip
         self.k_epochs = k_epochs
         self.horizon = horizon
         self.n_episodes = n_episodes
         self.batch_size = batch_size
+        
         self.state_dim = self.env.observation_space.dim
         self.action_dim = self.env.action_space.n
         self.verbose = verbose
@@ -167,7 +176,7 @@ class AVECPPOAgent(IncrementalAgent):
         self.cat_policy = ActorCritic(self.state_dim,
                                       self.action_dim).to(device)
         self.optimizer = torch.optim.Adam(self.cat_policy.parameters(),
-                                          lr=self.lr, betas=(0.9, 0.999))
+                                          lr=self.learning_rate, betas=(0.9, 0.999))
 
         self.cat_policy_old = ActorCritic(self.state_dim,
                                           self.action_dim).to(device)
@@ -324,8 +333,8 @@ class AVECPPOAgent(IncrementalAgent):
             surr2 = torch.clamp(ratios, 1 - self.eps_clip, 1
                                 + self.eps_clip) * advantages
             loss = -torch.min(surr1, surr2) \
-                   + 0.5 * self._avec_loss(state_values, rewards) \
-                   - 0.01 * dist_entropy
+                   + self.vf_coef * self._avec_loss(state_values, rewards) \
+                   - self.entr_coef * dist_entropy
 
             # take gradient step
             self.optimizer.zero_grad()

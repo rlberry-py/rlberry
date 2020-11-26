@@ -89,6 +89,8 @@ class PPOAgent(IncrementalAgent):
                  batch_size=8,
                  horizon=256,
                  gamma=0.99,
+                 entr_coef=0.01,
+                 vf_coef=0.5,
                  learning_rate=0.01,
                  eps_clip=0.2,
                  k_epochs=5,
@@ -105,6 +107,10 @@ class PPOAgent(IncrementalAgent):
             Horizon.
         gamma : double
             Discount factor in [0, 1].
+        entr_coef : double
+            Entropy coefficient.
+        vf_coef : double
+            Value function loss coefficient.
         learning_rate : double
             Learning rate.
         eps_clip : double
@@ -120,6 +126,8 @@ class PPOAgent(IncrementalAgent):
         self.batch_size = batch_size
         self.horizon = horizon
         self.gamma = gamma
+        self.entr_coef = entr_coef
+        self.vf_coef = vf_coef
         self.learning_rate = learning_rate
         self.eps_clip = eps_clip
         self.k_epochs = k_epochs
@@ -311,8 +319,8 @@ class PPOAgent(IncrementalAgent):
             surr2 = torch.clamp(ratios, 1 - self.eps_clip,
                                 1 + self.eps_clip) * advantages
             loss = -torch.min(surr1, surr2) \
-                + 0.5 * self.MseLoss(state_values, rewards) \
-                - 0.01 * dist_entropy
+                + self.vf_coef * self.MseLoss(state_values, rewards) \
+                - self.entr_coef * dist_entropy
 
             # take gradient step
             self.policy_optimizer.zero_grad()
