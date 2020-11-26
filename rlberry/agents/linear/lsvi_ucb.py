@@ -151,7 +151,7 @@ class LSVIUCBAgent(Agent):
     def run_episode(self):
         state = self.env.reset()
         episode_rewards = 0
-        for hh in range(self.horizon):
+        for _ in range(self.horizon):
             if self.bonus_scale_factor == 0.0:
                 action = self.env.action_space.sample()
             else:
@@ -225,7 +225,7 @@ class LSVIUCBAgent(Agent):
     def _run_lsvi(self, bonus_factor):
         # run value iteration
         q_w = np.zeros(self.dim)
-        for hh in range(self.horizon - 1, -1, -1):
+        for _ in range(self.horizon - 1, -1, -1):
             # solve M x = b, where x = q_w, and M = self.lambda_mat
             b = self._compute_targets(q_w, bonus_factor)
             q_w = self.lambda_mat_inv.T @ b
