@@ -25,4 +25,4 @@ class Tuple(gym.spaces.Tuple, SpaceSeeder):
         SpaceSeeder.__init__(self)
 
     def reseed(self):
-        [space.reseed() for space in self.spaces]
+        _ = [space.reseed() for space in self.spaces]

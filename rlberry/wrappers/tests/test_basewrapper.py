@@ -2,17 +2,10 @@ from rlberry.envs.interface import Model
 from rlberry.wrappers import Wrapper
 from rlberry.envs import GridWorld
 from rlberry.spaces import Discrete, Box
-
-_GYM_INSTALLED = True
-try:
-    import gym
-except Exception:
-    _GYM_INSTALLED = False
+import gym
 
 
 def test_wrapper():
-    global _GYM_INSTALLED
-
     env = GridWorld()
     wrapped = Wrapper(env)
     assert isinstance(wrapped, Model)
@@ -27,16 +20,15 @@ def test_wrapper():
 
 
 def test_gym_wrapper():
-    if _GYM_INSTALLED:
-        gym_env = gym.make('Acrobot-v1')
-        wrapped = Wrapper(gym_env)
-        assert isinstance(wrapped, Model)
-        assert wrapped.is_online()
-        assert not wrapped.is_generative()
+    gym_env = gym.make('Acrobot-v1')
+    wrapped = Wrapper(gym_env)
+    assert isinstance(wrapped, Model)
+    assert wrapped.is_online()
+    assert not wrapped.is_generative()
 
-        assert isinstance(wrapped.observation_space, Box)
-        assert isinstance(wrapped.action_space, Discrete)
+    assert isinstance(wrapped.observation_space, Box)
+    assert isinstance(wrapped.action_space, Discrete)
 
-        # calling some gym functions
-        wrapped.close()
-        wrapped.seed()
+    # calling some gym functions
+    wrapped.close()
+    wrapped.seed()

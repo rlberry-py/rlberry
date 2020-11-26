@@ -1,15 +1,9 @@
 import rlberry.seeding as seeding
 import logging
+import gym
 
 from rlberry.envs.interface import Model
 from rlberry.wrappers.gym_utils import convert_space_from_gym
-
-
-_GYM_INSTALLED = True
-try:
-    import gym
-except Exception:
-    _GYM_INSTALLED = False
 
 
 class Wrapper(Model):
@@ -34,7 +28,7 @@ class Wrapper(Model):
         self.env = env
 
         # Check if gym environment
-        if _GYM_INSTALLED and isinstance(env, gym.Env):
+        if isinstance(env, gym.Env):
             gym_env = env
             # Warnings
             logging.warning(
@@ -70,7 +64,7 @@ follow the same protocol as rlberry.')
 
     def reseed(self):
         self.rng = seeding.get_rng()
-        if _GYM_INSTALLED and isinstance(self.env, gym.Env):
+        if isinstance(self.env, gym.Env):
             # get a seed for gym environment
             self.env.seed(self.rng.integers(2**16).item())
         else:

@@ -23,6 +23,7 @@ tests_require = [
     'seaborn',
     'optuna',
     'pyvirtualdisplay',
+    'gym',
 ]
 
 full_requires = [
@@ -68,4 +69,3 @@ setup(
     extras_require=extras_require,
     zip_safe=False,
 )
-

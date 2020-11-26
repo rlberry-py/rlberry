@@ -25,4 +25,4 @@ class Dict(gym.spaces.Dict, SpaceSeeder):
         SpaceSeeder.__init__(self)
 
     def reseed(self):
-        [space.reseed() for space in self.spaces.values()]
+        _ = [space.reseed() for space in self.spaces.values()]
