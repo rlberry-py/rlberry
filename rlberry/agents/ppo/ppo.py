@@ -193,7 +193,8 @@ class PPOAgent(IncrementalAgent):
         for k in range(self.n_episodes):
             self._run_episode()
 
-        info = {"n_episodes": self.episode, "episode_rewards": self._rewards[:self.episode]}
+        info = {"n_episodes": self.episode,
+                "episode_rewards": self._rewards[:self.episode]}
         return info
 
     def partial_fit(self, fraction, **kwargs):
@@ -204,7 +205,8 @@ class PPOAgent(IncrementalAgent):
             self._run_episode()
             count += 1
 
-        info = {"n_episodes": self.episode, "episode_rewards": self._rewards[:self.episode]}
+        info = {"n_episodes": self.episode,
+                "episode_rewards": self._rewards[:self.episode]}
         return info
 
     def _logging(self):
@@ -313,7 +315,8 @@ class PPOAgent(IncrementalAgent):
 
             # normalize the advantages
             advantages = rewards - state_values.detach()
-            advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
+            advantages = (advantages - advantages.mean()) / \
+                (advantages.std() + 1e-8)
             # find surrogate loss
             surr1 = ratios * advantages
             surr2 = torch.clamp(ratios, 1 - self.eps_clip,

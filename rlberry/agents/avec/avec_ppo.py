@@ -176,7 +176,8 @@ class AVECPPOAgent(IncrementalAgent):
         self.cat_policy = ActorCritic(self.state_dim,
                                       self.action_dim).to(device)
         self.optimizer = torch.optim.Adam(self.cat_policy.parameters(),
-                                          lr=self.learning_rate, betas=(0.9, 0.999))
+                                          lr=self.learning_rate,
+                                          betas=(0.9, 0.999))
 
         self.cat_policy_old = ActorCritic(self.state_dim,
                                           self.action_dim).to(device)
@@ -211,7 +212,8 @@ class AVECPPOAgent(IncrementalAgent):
         for k in range(self.n_episodes):
             self._run_episode()
 
-        info = {"n_episodes": self.episode, "episode_rewards": self._rewards[:self.episode]}
+        info = {"n_episodes": self.episode,
+                "episode_rewards": self._rewards[:self.episode]}
         return info
 
     def partial_fit(self, fraction, **kwargs):
@@ -222,7 +224,8 @@ class AVECPPOAgent(IncrementalAgent):
             self._run_episode()
             count += 1
 
-        info = {"n_episodes": self.episode, "episode_rewards": self._rewards[:self.episode]}
+        info = {"n_episodes": self.episode,
+                "episode_rewards": self._rewards[:self.episode]}
         return info
 
     def _logging(self):
@@ -238,9 +241,9 @@ class AVECPPOAgent(IncrementalAgent):
         prev_episode = self._last_printed_ep
         episode = self.episode - 1
         reward_per_ep = self._rewards[prev_episode:episode + 1].sum() / \
-                        max(1, episode - prev_episode)
+            max(1, episode - prev_episode)
         time_per_ep = self._log_interval * 1000.0 / \
-                      max(1, episode - prev_episode)
+            max(1, episode - prev_episode)
         time_per_ep = max(0.01, time_per_ep)  # avoid div by zero
         fps = int((self.horizon / time_per_ep) * 1000)
 
@@ -285,7 +288,7 @@ class AVECPPOAgent(IncrementalAgent):
         ep = self.episode
         self._rewards[ep] = episode_rewards
         self._cumul_rewards[ep] = episode_rewards \
-                                  + self._cumul_rewards[max(0, ep - 1)]
+            + self._cumul_rewards[max(0, ep - 1)]
         self.episode += 1
         self._logging()
 
@@ -327,14 +330,15 @@ class AVECPPOAgent(IncrementalAgent):
 
             # normalize the advantages
             advantages = rewards - state_values.detach()
-            advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
+            advantages = (advantages - advantages.mean()) / \
+                (advantages.std() + 1e-8)
             # find surrogate loss
             surr1 = ratios * advantages
             surr2 = torch.clamp(ratios, 1 - self.eps_clip, 1
                                 + self.eps_clip) * advantages
             loss = -torch.min(surr1, surr2) \
-                   + self.vf_coef * self._avec_loss(state_values, rewards) \
-                   - self.entr_coef * dist_entropy
+                + self.vf_coef * self._avec_loss(state_values, rewards) \
+                - self.entr_coef * dist_entropy
 
             # take gradient step
             self.optimizer.zero_grad()
