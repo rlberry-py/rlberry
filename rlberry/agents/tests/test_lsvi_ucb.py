@@ -34,7 +34,10 @@ def test_lsvi_ucb_matrix_inversion(FeatMapClass):
     def feature_map_fn():
         return FeatMapClass(env.observation_space.n, env.action_space.n)
 
-    agent = LSVIUCBAgent(env, feature_map_fn=feature_map_fn, horizon=10)
-    for _ in range(10):
-        agent.run_episode()
+    agent = LSVIUCBAgent(env, n_episodes=10,
+                         feature_map_fn=feature_map_fn,
+                         horizon=10)
+    agent.fit()
     assert np.allclose(np.linalg.inv(agent.lambda_mat), agent.lambda_mat_inv)
+    assert agent.episode == 10
+    agent.policy(env.observation_space.sample())

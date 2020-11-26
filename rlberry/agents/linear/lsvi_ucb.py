@@ -9,6 +9,10 @@ class LSVIUCBAgent(Agent):
     A version of Least-Squares Value Iteration with UCB (LSVI-UCB),
     proposed by Jin et al. (2020).
 
+    If bonus_scale_factor is 0.0, performs random exploration.
+
+    TODO: Optimize using jit, improve logging.
+
     References
     ----------
     Jin, C., Yang, Z., Wang, Z., & Jordan, M. I. (2020, July).
@@ -27,6 +31,7 @@ class LSVIUCBAgent(Agent):
                  gamma=0.99,
                  bonus_scale_factor=1.0,
                  reg_factor=0.01,
+                 verbose=1,
                  **kwargs):
         """
         Parameters
@@ -46,6 +51,8 @@ class LSVIUCBAgent(Agent):
             Constant by which to multiply the exploration bonus.
         reg_factor : double
             Linear regression regularization factor.
+        verbose : int
+            Verbosity level.
         """
         Agent.__init__(self, env, **kwargs)
 
@@ -55,6 +62,11 @@ class LSVIUCBAgent(Agent):
         self.gamma = gamma
         self.bonus_scale_factor = bonus_scale_factor
         self.reg_factor = reg_factor
+        self.verbose = verbose
+
+        #
+        if self.bonus_scale_factor == 0.0:
+            self.name = 'LSVI-Random-Expl'
 
         # maximum value
         r_range = self.env.reward_range[1] - self.env.reward_range[0]
@@ -82,6 +94,7 @@ class LSVIUCBAgent(Agent):
         self.lambda_mat = None      # lambda matrix
         self.lambda_mat_inv = None  # inverse of lambda matrix
         self.w_vec = None           # vector representation of Q
+        self.w_policy = None        # representation of Q for final policy
         self.reward_hist = None     # reward history
         self.state_hist = None      # state history
         self.action_hist = None     # action history
@@ -105,29 +118,44 @@ class LSVIUCBAgent(Agent):
         self.nstate_hist = []
         #
         self._rewards = np.zeros(self.n_episodes)
+        #
+        self.w_policy = None
 
     def fit(self, **kwargs):
         info = {}
         for _ in range(self.n_episodes):
             self.run_episode()
+
+            # log
+            if self.verbose > 0:
+                print(self._info_to_print())
+
+        self.w_policy = self._run_lsvi(bonus_factor=0.0)
+
         info['n_episodes'] = self.n_episodes
         info['episode_rewards'] = self._rewards
         return info
 
     def policy(self, observation, **kwargs):
-        q_vec = self._compute_q_vec(observation, self.bonus_scale_factor)
+        q_w = self.w_policy
+        assert q_w is not None
+        #
+        q_vec = self._compute_q_vec(q_w, observation, 0.0)
         return q_vec.argmax()
 
     def _optimistic_policy(self, observation):
-        q_vec = self._compute_q_vec(observation, self.bonus_scale_factor)
+        q_w = self.w_vec
+        q_vec = self._compute_q_vec(q_w, observation, self.bonus_scale_factor)
         return q_vec.argmax()
 
     def run_episode(self):
         state = self.env.reset()
         episode_rewards = 0
         for hh in range(self.horizon):
-            # action = self.env.action_space.sample()
-            action = self._optimistic_policy(state)
+            if self.bonus_scale_factor == 0.0:
+                action = self.env.action_space.sample()
+            else:
+                action = self._optimistic_policy(state)
             next_state, reward, is_terminal, _ = self.env.step(action)
 
             feat = self.feature_map.map(state, action)
@@ -154,7 +182,7 @@ class LSVIUCBAgent(Agent):
                 break
 
         # update Q function representation
-        self._update_q()
+        self.w_vec = self._run_lsvi(self.bonus_scale_factor)
 
         # store data
         self._rewards[self.episode] = episode_rewards
@@ -164,102 +192,54 @@ class LSVIUCBAgent(Agent):
 
         return episode_rewards
 
-    def _compute_q(self, state, action, bonus_factor):
+    def _compute_q(self, q_w, state, action, bonus_factor):
+        """q_w is the vector representation of the Q function."""
         feat = self.feature_map.map(state, action)
-        inverse_counts = feat @ self.lambda_mat_inv.T @ feat
+        inverse_counts = feat @ (self.lambda_mat_inv.T @ feat)
         bonus = bonus_factor * np.sqrt(inverse_counts)
 
-        q = feat.dot(self.w_vec) + bonus
+        q = feat.dot(q_w) + bonus
         q = min(q, self.v_max)
         return q
 
-    def _compute_q_vec(self, state, bonus_factor):
+    def _compute_q_vec(self, q_w, state, bonus_factor):
         A = self.env.action_space.n
         q_vec = np.zeros(A)
         for aa in range(A):
-            q_vec[aa] = self._compute_q(state, aa, bonus_factor)
+            q_vec[aa] = self._compute_q(q_w, state, aa, bonus_factor)
         return q_vec
 
-    def _compute_targets(self):
+    def _compute_targets(self, q_w, bonus_factor):
         T = len(self.reward_hist)
         b = np.zeros(self.dim)
         for tt in range(T):
-            q_ns = self._compute_q_vec(self.nstate_hist[tt],
-                                       self.bonus_scale_factor)
+            q_ns = self._compute_q_vec(q_w,
+                                       self.nstate_hist[tt],
+                                       bonus_factor)
             target = self.reward_hist[tt] + self.gamma*q_ns.max()
             feat = self.feature_map.map(self.state_hist[tt],
                                         self.action_hist[tt])
             b = b + target*feat
-            return b
+        return b
 
-    def _update_q(self):
+    def _run_lsvi(self, bonus_factor):
         # run value iteration
+        q_w = np.zeros(self.dim)
         for hh in range(self.horizon - 1, -1, -1):
-            # solve M x = b, where x = self.w_vec, and M = self.lambda_mat
-            b = self._compute_targets()
-            self.w_vec = self.lambda_mat_inv.T @ b
+            # solve M x = b, where x = q_w, and M = self.lambda_mat
+            b = self._compute_targets(q_w, bonus_factor)
+            q_w = self.lambda_mat_inv.T @ b
+        return q_w
 
-
-if __name__ == '__main__':
-    from rlberry.agents.features import FeatureMap
-    from rlberry.envs.finite import GridWorld
-    from rlberry.stats import AgentStats, plot_episode_rewards,\
-        compare_policies
-    from rlberry.agents.dynprog import ValueIterationAgent
-
-    class OneHotFeatureMap(FeatureMap):
-        def __init__(self, S, A):
-            self.S = env.observation_space.n
-            self.A = env.action_space.n
-            self.shape = (S*A,)
-
-        def map(self, observation, action):
-            feat = np.zeros((self.S, self.A))
-            feat[observation, action] = 1.0
-            return feat.flatten()
-
-    class RandomFeatMap(FeatureMap):
-        def __init__(self, S, A):
-            self.feat_mat = np.random.randn(S, A, 10)
-            self.shape = (10,)
-
-        def map(self, observation, action):
-            feat = self.feat_mat[observation, action, :]
-            return feat.copy()
-
-    env = GridWorld(nrows=5, ncols=5, walls=(), success_probability=1.0)
-
-    def feature_map_fn():
-        return OneHotFeatureMap(env.observation_space.n, env.action_space.n)
-        # return RandomFeatMap(env.observation_space.n, env.action_space.n)
-
-    params = {'n_episodes': 2000,
-              'feature_map_fn': feature_map_fn,
-              'horizon': 10,
-              'bonus_scale_factor': 5.0,
-              'gamma': 0.99
-              }
-
-    params_oracle = {
-                     'horizon': 10,
-                     'gamma': 0.99
-                     }
-
-    stats = AgentStats(LSVIUCBAgent,
-                       env,
-                       eval_horizon=10,
-                       init_kwargs=params,
-                       n_fit=4)
-
-    oracle_stats = AgentStats(ValueIterationAgent,
-                              env,
-                              eval_horizon=10,
-                              init_kwargs=params_oracle,
-                              n_fit=2)
-
-    plot_episode_rewards([stats], cumulative=True, show=False)
-    compare_policies([stats, oracle_stats], show=True)
-
-    # visualize
-    agent_eval = stats.fitted_agents[0]
-    state = env.reset()
+    #
+    # Logging
+    #
+    def _info_to_print(self):
+        episode = self.episode
+        avg_over = 10
+        reward_per_ep = \
+            self._rewards[max(0, episode-avg_over):episode + 1].mean()
+        to_print = "[{}] episode = {}/{} ".format(self.name, episode+1,
+                                                  self.n_episodes) \
+            + "| reward/ep = {:0.2f} ".format(reward_per_ep)
+        return to_print
