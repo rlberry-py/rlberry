@@ -1,6 +1,6 @@
 <!-- Logo -->
 <p align="center">
-   <img src="logo/logo_wide.svg" width="50%">
+   <img src="assets/logo_wide.svg" width="50%">
 </p>
 
 <!-- Short description -->
