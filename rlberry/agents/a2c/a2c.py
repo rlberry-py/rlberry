@@ -12,47 +12,44 @@ from rlberry.agents import IncrementalAgent
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
-class ActorCritic(nn.Module):
-    def __init__(self, state_dim, action_dim):
-        super(ActorCritic, self).__init__()
-        # actor
-        self.actor = nn.Sequential(
-            nn.Linear(state_dim, 64),
-            nn.Tanh(),
-            nn.Linear(64, 64),
-            nn.Tanh(),
-            nn.Linear(64, action_dim),
-            nn.Softmax(dim=-1)
-        )
+class ValueNet(nn.Module):
+    def __init__(self, state_dim, hidden_size=64):
+        super(ValueNet, self).__init__()
         # critic
         self.critic = nn.Sequential(
-            nn.Linear(state_dim, 64),
+            nn.Linear(state_dim, hidden_size),
             nn.Tanh(),
-            nn.Linear(64, 64),
+            nn.Linear(hidden_size, hidden_size),
             nn.Tanh(),
-            nn.Linear(64, 1)
+            nn.Linear(hidden_size, 1)
         )
 
-    def forward(self):
-        raise NotImplementedError
-
-    def act(self, state):
-        action_probs = self.actor(state)
-        dist = Categorical(action_probs)
-        action = dist.sample()
-
-        return action, dist.log_prob(action)
-
-    def evaluate(self, state, action):
-        action_probs = self.actor(state)
-        dist = Categorical(action_probs)
-
-        action_logprobs = dist.log_prob(action)
-        dist_entropy = dist.entropy()
-
+    def forward(self, state):
         state_value = self.critic(state)
+        return torch.squeeze(state_value)
 
-        return action_logprobs, torch.squeeze(state_value), dist_entropy
+
+class PolicyNet(nn.Module):
+    def __init__(self, state_dim, action_dim, hidden_size=64):
+        super(PolicyNet, self).__init__()
+        # actor
+        self.actor = nn.Sequential(
+            nn.Linear(state_dim, hidden_size),
+            nn.Tanh(),
+            nn.Linear(hidden_size, hidden_size),
+            nn.Tanh(),
+            nn.Linear(hidden_size, action_dim)
+        )
+        self.softmax = nn.Softmax(dim=-1)
+
+    def forward(self, state):
+        action_probs = self.softmax(self.actor(state))
+        dist = Categorical(action_probs)
+        return dist
+
+    def action_scores(self, state):
+        action_scores = self.actor(state)
+        return action_scores
 
 
 class Memory:
@@ -71,42 +68,16 @@ class Memory:
         del self.is_terminals[:]
 
 
-class AVECPPOAgent(IncrementalAgent):
+class A2CAgent(IncrementalAgent):
     """
-    AVEC uses a modification of the training objective for the critic in
-    actor-critic algorithms to better approximate the value function (critic).
-    The new state-value function approximation learns the *relative* value of
-    the states rather than their *absolute* value as in conventional
-    actor-critic. This modification is:
-    - well-motivated by recent studies [1,2];
-    - theoretically sound;
-    - intuitively supported by the need to improve the approximation error
-    of the critic.
-
-    The application of Actor with Variance Estimated Critic (AVEC) to
-    state-of-the-art policy gradient methods produces considerable
-    gains in performance (on average +26% for SAC and +40% for PPO)
-    over the standard actor-critic training.
-
     References
     ----------
-    Flet-Berliac, Y., Ouhamma, R., Maillard, O. A., & Preux, P. (2020).
-    "Is Standard Deviation the New Standard? Revisiting the Critic in Deep
-    Policy Gradients."
-    arXiv preprint arXiv:2010.04440.
-
-    [1] Ilyas, A., Engstrom, L., Santurkar, S., Tsipras, D., Janoos, F.,
-    Rudolph, L. & Madry, A. (2020).
-    "A closer look at deep policy gradients."
-    In International Conference on Learning Representations.
-
-    [2] Tucker, G., Bhupatiraju, S., Gu, S., Turner, R., Ghahramani, Z. &
-    Levine, S. (2018).
-    "The mirage of action-dependent baselines in reinforcement learning."
-    In International Conference on Machine Learning, pp. 5015–5024.
+    Mnih, V., Badia, A.P., Mirza, M., Graves, A., Lillicrap, T., Harley, T., Silver, D. & Kavukcuoglu, K. (2016).
+    "Asynchronous methods for deep reinforcement learning."
+    In International Conference on Machine Learning (pp. 1928-1937).
     """
 
-    name = "AVECPPO"
+    name = "A2C"
     fit_info = ("n_episodes", "episode_rewards")
 
     def __init__(self, env,
@@ -115,33 +86,25 @@ class AVECPPOAgent(IncrementalAgent):
                  horizon=256,
                  gamma=0.99,
                  entr_coef=0.01,
-                 vf_coef=0.5,
-                 learning_rate=0.0003,
-                 eps_clip=0.2,
-                 k_epochs=10,
+                 learning_rate=0.01,
+                 k_epochs=5,
                  verbose=1,
                  **kwargs):
         """
         env : Model
-            model with continuous (Box) state space and discrete actions
+            Online model with continuous (Box) state space and discrete actions
         n_episodes : int
             Number of episodes
         batch_size : int
             Number of episodes to wait before updating the policy.
         horizon : int
-            Horizon of the objective function. If None and gamma<1,
-            set to 1/(1-gamma).
+            Horizon.
         gamma : double
-            Discount factor in [0, 1]. If gamma is 1.0, the problem is set
-            to be finite-horizon.
+            Discount factor in [0, 1].
         entr_coef : double
             Entropy coefficient.
-        vf_coef : double
-            Value function loss coefficient.
         learning_rate : double
             Learning rate.
-        eps_clip : double
-            PPO clipping range (epsilon).
         k_epochs : int
             Number of epochs per update.
         verbose : int
@@ -149,15 +112,13 @@ class AVECPPOAgent(IncrementalAgent):
         """
         IncrementalAgent.__init__(self, env, **kwargs)
 
-        self.learning_rate = learning_rate
-        self.gamma = gamma
-        self.entr_coef = entr_coef
-        self.vf_coef = vf_coef
-        self.eps_clip = eps_clip
-        self.k_epochs = k_epochs
-        self.horizon = horizon
         self.n_episodes = n_episodes
         self.batch_size = batch_size
+        self.horizon = horizon
+        self.gamma = gamma
+        self.entr_coef = entr_coef
+        self.learning_rate = learning_rate
+        self.k_epochs = k_epochs
 
         self.state_dim = self.env.observation_space.dim
         self.action_dim = self.env.action_space.n
@@ -173,14 +134,21 @@ class AVECPPOAgent(IncrementalAgent):
         self.reset()
 
     def reset(self, **kwargs):
-        self.cat_policy = ActorCritic(self.state_dim,
-                                      self.action_dim).to(device)
-        self.optimizer = torch.optim.Adam(self.cat_policy.parameters(),
-                                          lr=self.learning_rate, betas=(0.9, 0.999))
+        self.cat_policy = PolicyNet(self.state_dim, self.action_dim).to(device)
+        self.policy_optimizer = torch.optim.Adam(self.cat_policy.parameters(),
+                                                 lr=self.learning_rate,
+                                                 betas=(0.9, 0.999))
 
-        self.cat_policy_old = ActorCritic(self.state_dim,
-                                          self.action_dim).to(device)
+        self.value_net = ValueNet(self.state_dim).to(device)
+        self.value_optimizer = torch.optim.Adam(self.value_net.parameters(),
+                                                lr=self.learning_rate,
+                                                betas=(0.9, 0.999))
+
+        self.cat_policy_old = \
+            PolicyNet(self.state_dim, self.action_dim).to(device)
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
+
+        self.MseLoss = nn.MSELoss()
 
         self.memory = Memory()
 
@@ -204,8 +172,10 @@ class AVECPPOAgent(IncrementalAgent):
 
     def policy(self, state, **kwargs):
         assert self.cat_policy is not None
-
-        return self._select_action(state)
+        state = torch.from_numpy(state).float().to(device)
+        action_dist = self.cat_policy_old(state)
+        action = action_dist.sample().item()
+        return action
 
     def fit(self, **kwargs):
         for k in range(self.n_episodes):
@@ -216,7 +186,7 @@ class AVECPPOAgent(IncrementalAgent):
 
     def partial_fit(self, fraction, **kwargs):
         assert 0.0 < fraction <= 1.0
-        n_episodes_to_run = int(np.ceil(fraction * self.n_episodes))
+        n_episodes_to_run = int(np.ceil(fraction*self.n_episodes))
         count = 0
         while count < n_episodes_to_run and self.episode < self.n_episodes:
             self._run_episode()
@@ -237,23 +207,25 @@ class AVECPPOAgent(IncrementalAgent):
     def _info_to_print(self):
         prev_episode = self._last_printed_ep
         episode = self.episode - 1
-        reward_per_ep = self._rewards[prev_episode:episode + 1].sum() / \
-                        max(1, episode - prev_episode)
-        time_per_ep = self._log_interval * 1000.0 / \
-                      max(1, episode - prev_episode)
+        reward_per_ep = self._rewards[prev_episode:episode + 1].sum() \
+            / max(1, episode - prev_episode)
+        time_per_ep = self._log_interval * 1000.0 \
+            / max(1, episode - prev_episode)
         time_per_ep = max(0.01, time_per_ep)  # avoid div by zero
         fps = int((self.horizon / time_per_ep) * 1000)
 
-        to_print = "[{}] episode = {}/{} ".format(self.name, episode + 1,
+        to_print = "[{}] episode = {}/{} ".format(self.name, episode+1,
                                                   self.n_episodes) \
-                   + "| reward/ep = {:0.2f} ".format(reward_per_ep) \
-                   + "| time/ep = {:0.2f} ms".format(time_per_ep) \
-                   + "| fps = {}".format(fps)
+            + "| reward/ep = {:0.2f} ".format(reward_per_ep) \
+            + "| time/ep = {:0.2f} ms".format(time_per_ep) \
+            + "| fps = {}".format(fps)
         return to_print
 
     def _select_action(self, state):
         state = torch.from_numpy(state).float().to(device)
-        action, action_logprob = self.cat_policy_old.act(state)
+        action_dist = self.cat_policy_old(state)
+        action = action_dist.sample()
+        action_logprob = action_dist.log_prob(action)
 
         self.memory.states.append(state)
         self.memory.actions.append(action)
@@ -285,7 +257,7 @@ class AVECPPOAgent(IncrementalAgent):
         ep = self.episode
         self._rewards[ep] = episode_rewards
         self._cumul_rewards[ep] = episode_rewards \
-                                  + self._cumul_rewards[max(0, ep - 1)]
+            + self._cumul_rewards[max(0, ep - 1)]
         self.episode += 1
         self._logging()
 
@@ -307,58 +279,42 @@ class AVECPPOAgent(IncrementalAgent):
             discounted_reward = reward + (self.gamma * discounted_reward)
             rewards.insert(0, discounted_reward)
 
-        # normalizing the rewards
+        # normalize the rewards
         rewards = torch.tensor(rewards).to(device).float()
         rewards = (rewards - rewards.mean()) / (rewards.std() + 1e-5)
 
         # convert list to tensor
         old_states = torch.stack(self.memory.states).to(device).detach()
         old_actions = torch.stack(self.memory.actions).to(device).detach()
-        old_logprobs = torch.stack(self.memory.logprobs).to(device).detach()
 
         # optimize policy for K epochs
         for _ in range(self.k_epochs):
             # evaluate old actions and values
-            logprobs, state_values, dist_entropy = \
-                self.cat_policy.evaluate(old_states, old_actions)
-
-            # find ratio (pi_theta / pi_theta__old)
-            ratios = torch.exp(logprobs - old_logprobs.detach())
+            action_dist = self.cat_policy(old_states)
+            logprobs = action_dist.log_prob(old_actions)
+            state_values = self.value_net(old_states)
+            dist_entropy = action_dist.entropy()
 
             # normalize the advantages
             advantages = rewards - state_values.detach()
             advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
-            # find surrogate loss
-            surr1 = ratios * advantages
-            surr2 = torch.clamp(ratios, 1 - self.eps_clip, 1
-                                + self.eps_clip) * advantages
-            loss = -torch.min(surr1, surr2) \
-                   + self.vf_coef * self._avec_loss(state_values, rewards) \
-                   - self.entr_coef * dist_entropy
+            # find pg loss
+            pg_loss = - logprobs * advantages
+            loss = pg_loss \
+                + 0.5 * self.MseLoss(state_values, rewards) \
+                - self.entr_coef * dist_entropy
 
             # take gradient step
-            self.optimizer.zero_grad()
+            self.policy_optimizer.zero_grad()
+            self.value_optimizer.zero_grad()
+
             loss.mean().backward()
-            self.optimizer.step()
+
+            self.policy_optimizer.step()
+            self.value_optimizer.step()
 
         # copy new weights into old policy
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
-
-    def _avec_loss(self, y_pred, y_true):
-        """
-        Computes the objective function used in AVEC for the learning
-        of the value function:
-        the residual variance between the state-values and the
-        empirical returns.
-
-        Returns Var[y-ypred]
-        :param y_pred: (np.ndarray) the prediction
-        :param y_true: (np.ndarray) the expected value
-        :return: (float) residual variance of ypred and y
-        """
-        assert y_true.ndim == 1 and y_pred.ndim == 1
-
-        return torch.var(y_true - y_pred)
 
     #
     # For hyperparameter optimization
@@ -369,6 +325,6 @@ class AVECPPOAgent(IncrementalAgent):
                                                [1, 4, 8, 16, 32, 64])
         learning_rate = trial.suggest_loguniform('learning_rate', 1e-5, 1)
         return {
-            'batch_size': batch_size,
-            'learning_rate': learning_rate,
-        }
+                'batch_size': batch_size,
+                'learning_rate': learning_rate,
+                }
