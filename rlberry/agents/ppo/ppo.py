@@ -182,25 +182,21 @@ class PPOAgent(IncrementalAgent):
         return action
 
     def fit(self, **kwargs):
-        info = {}
         for k in range(self.n_episodes):
             self._run_episode()
 
-        info["n_episodes"] = self.n_episodes
-        info["episode_rewards"] = self._rewards
+        info = {"n_episodes": self.episode, "episode_rewards": self._rewards[:self.episode]}
         return info
 
     def partial_fit(self, fraction, **kwargs):
-        assert fraction > 0.0 and fraction <= 1.0
+        assert 0.0 < fraction <= 1.0
         n_episodes_to_run = int(np.ceil(fraction*self.n_episodes))
         count = 0
         while count < n_episodes_to_run and self.episode < self.n_episodes:
             self._run_episode()
             count += 1
 
-        info = {}
-        info["n_episodes"] = self.episode
-        info["episode_rewards"] = self._rewards[:self.episode]
+        info = {"n_episodes": self.episode, "episode_rewards": self._rewards[:self.episode]}
         return info
 
     def _logging(self):
@@ -307,8 +303,10 @@ class PPOAgent(IncrementalAgent):
             # find ratio (pi_theta / pi_theta__old)
             ratios = torch.exp(logprobs - old_logprobs.detach())
 
-            # find surrogate loss
+            # normalize the advantages
             advantages = rewards - state_values.detach()
+            advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
+            # find surrogate loss
             surr1 = ratios * advantages
             surr2 = torch.clamp(ratios, 1 - self.eps_clip,
                                 1 + self.eps_clip) * advantages
