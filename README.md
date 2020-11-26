@@ -77,7 +77,7 @@ conda create -n rlberry python=3.7
 
 ### Basic installation
 
-Install without heavy libraries (e.g. pytorch).
+Install without heavy libraries (e.g. pytorch):
 
 ```bash
 conda activate rlberry
@@ -86,7 +86,7 @@ pip install -e .
 
 ### Full installation
 
-Install with all features,
+Install with all features:
 
 ```bash
 conda activate rlberry
@@ -95,11 +95,11 @@ pip install -e .[full]
 
 which includes:
 
-*   [`Numba`](https://github.com/numba/numba) for just-in-time compilation of algorithms based on dynamic programming,
-*   [`PyTorch`](https://pytorch.org/) for Deep RL agents,
-*   [`Optuna`](https://optuna.org/#installation) for hyperparameter optimization,
-*   [`ffmpeg-python`](https://github.com/kkroening/ffmpeg-python) for saving videos,
-*   [`PyOpenGL`](https://pypi.org/project/PyOpenGL/) for more rendering options.
+*   [`Numba`](https://github.com/numba/numba) for just-in-time compilation of algorithms based on dynamic programming
+*   [`PyTorch`](https://pytorch.org/) for Deep RL agents
+*   [`Optuna`](https://optuna.org/#installation) for hyperparameter optimization
+*   [`ffmpeg-python`](https://github.com/kkroening/ffmpeg-python) for saving videos
+*   [`PyOpenGL`](https://pypi.org/project/PyOpenGL/) for more rendering options
 
 ## Getting started
 
