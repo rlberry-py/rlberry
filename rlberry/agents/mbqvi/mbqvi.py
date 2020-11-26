@@ -71,17 +71,13 @@ class MBQVIAgent(Agent):
         self.Q = None
 
     def _update(self, state, action, next_state, reward):
-        """
-        Update model statistics.
-        """
+        """Update model statistics."""
         self.N_sa[state, action] += 1
         self.N_sas[state, action, next_state] += 1
         self.S_sa[state, action] += reward
 
     def fit(self, **kwargs):
-        """
-        Build empirical MDP and run value iteration.
-        """
+        """Build empirical MDP and run value iteration."""
         S = self.env.observation_space.n
         A = self.env.action_space.n
         self.N_sa = np.zeros((S, A))
@@ -99,7 +95,7 @@ class MBQVIAgent(Agent):
             )
         for ss in range(S):
             for aa in range(A):
-                for nn in range(self.n_samples):
+                for _ in range(self.n_samples):
                     next_state, reward, _, _ = self.env.sample(ss, aa)
                     self._update(ss, aa, next_state, reward)
 
@@ -155,3 +151,4 @@ class MBQVIAgent(Agent):
         else:
             assert hh >= 0 and hh < self.horizon
             return self.Q[hh, state, :].argmax()
+
