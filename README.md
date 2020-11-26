@@ -125,4 +125,7 @@ Want to contribute to `rlberry`? Please check [our contribution guidelines](CONT
 
 Errors and warnings are printed using the `logging` library.
 
+*   From `gym` to `rlberry`:
+   * `reseed` (rlberry) should be called instead of `seed` (gym). `seed` keeps compatilibity with gym, whereas `reseed` uses the unified seeding mechanism of `rlberry`.
+
 ## Citing rlberry

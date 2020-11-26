@@ -1,7 +1,6 @@
 import numpy as np
 import logging
 from rlberry.seeding import seeding
-from rlberry.spaces import Space
 
 
 class Model:
@@ -40,8 +39,8 @@ class Model:
     name = ""
 
     def __init__(self):
-        self.observation_space: Space = None
-        self.action_space: Space = None
+        self.observation_space = None
+        self.action_space = None
         self.reward_range: tuple = (-np.inf, np.inf)
         # random number generator
         self.rng = seeding.get_rng()

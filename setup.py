@@ -8,7 +8,8 @@ install_requires = [
     'joblib',
     'matplotlib',
     'seaborn',
-    'pandas'
+    'pandas',
+    'gym'
 ]
 
 tests_require = [

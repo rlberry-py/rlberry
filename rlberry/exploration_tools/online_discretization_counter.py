@@ -64,7 +64,8 @@ class OnlineDiscretizationCounter(UncertaintyEstimator):
             If None, set to:
             - (env.observation_space.high - env.observation_space.low) if high
             and low are bounded
-            - np.ones(env.observation_space.dim) if high or low are unbounded
+            - np.ones(env.observation_space.shape[0]) if high or low are
+            unbounded
         min_dist: double
             Minimum distance between two representative states
         max_repr: int
@@ -80,13 +81,13 @@ class OnlineDiscretizationCounter(UncertaintyEstimator):
         self.lp_metric = lp_metric
         self.min_dist = min_dist
         self.max_repr = max_repr
-        self.state_dim = self.observation_space.dim
+        self.state_dim = self.observation_space.shape[0]
         self.n_actions = self.action_space.n
 
         # compute scaling, if it is None
         if scaling is None:
             # if high and low are bounded
-            if self.observation_space.is_bounded:
+            if self.observation_space.is_bounded():
                 scaling = self.observation_space.high \
                     - self.observation_space.low
                 # if high or low are unbounded

@@ -1,25 +1,43 @@
-import rlberry
-
-_GYM_INSTALLED = True
-try:
-    import gym
-except Exception:
-    _GYM_INSTALLED = False
+import gym
+from rlberry.spaces import Discrete
+from rlberry.spaces import Box
+from rlberry.spaces import Tuple
+from rlberry.spaces import MultiDiscrete
+from rlberry.spaces import MultiBinary
+from rlberry.spaces import Dict
 
 
 def convert_space_from_gym(gym_space):
-    global _GYM_INSTALLED
-    assert _GYM_INSTALLED, \
-        "gym required by convert_space_from_gym() but not installed."
-
     if isinstance(gym_space, gym.spaces.Discrete):
-        n = gym_space.n
-        rlberry_space = rlberry.spaces.Discrete(n)
+        return Discrete(gym_space.n)
+    #
+    #
     elif isinstance(gym_space, gym.spaces.Box):
-        assert gym_space.high.ndim == 1, \
-            "Conversion from gym.spaces.Box requires high and low to be 1d."
-        high = gym_space.high
-        low = gym_space.low
-        rlberry_space = rlberry.spaces.Box(low, high)
-
-    return rlberry_space
+        return Box(gym_space.low,
+                   gym_space.high,
+                   gym_space.shape,
+                   gym_space.dtype)
+    #
+    #
+    elif isinstance(gym_space, gym.spaces.Tuple):
+        spaces = []
+        for sp in gym_space.spaces:
+            spaces.append(convert_space_from_gym(sp))
+        return Tuple(spaces)
+    #
+    #
+    elif isinstance(gym_space, gym.spaces.MultiDiscrete):
+        return MultiDiscrete(gym_space.nvec)
+    #
+    #
+    elif isinstance(gym_space, gym.spaces.MultiBinary):
+        return MultiBinary(gym_space.n)
+    #
+    #
+    elif isinstance(gym_space, gym.spaces.Dict):
+        spaces = {}
+        for key in gym_space.spaces:
+            spaces[key] = convert_space_from_gym(gym_space[key])
+        return Dict(spaces)
+    else:
+        raise ValueError("Unknown space class: {}".format(type(gym_space)))

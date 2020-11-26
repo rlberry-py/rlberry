@@ -159,7 +159,7 @@ class AVECPPOAgent(IncrementalAgent):
         self.n_episodes = n_episodes
         self.batch_size = batch_size
 
-        self.state_dim = self.env.observation_space.dim
+        self.state_dim = self.env.observation_space.shape[0]
         self.action_dim = self.env.action_space.n
         self.verbose = verbose
 

@@ -1,25 +1,26 @@
-import numpy as np
+import gym
+from rlberry.spaces import SpaceSeeder
 
-from rlberry.spaces import Space
 
-
-class Discrete(Space):
+class Discrete(gym.spaces.Discrete, SpaceSeeder):
     """
     Class that represents discrete spaces.
 
+
+    Inherited from gym.spaces.Discrete for compatibility with gym.
+
+    rlberry wraps gym.spaces to make sure the seeding
+    mechanism is unified in the library (rlberry.seeding)
+
     Attributes
     ----------
-    n : int
-        number of elements in the space
     rng : numpy.random._generator.Generator
         random number generator provided by rlberry.seeding
 
     Methods
     -------
-    sample()
-        sample element from the space
-    contains(x)
-        check if x belongs to the space
+    reseed()
+        get new random number generator
     """
 
     def __init__(self, n):
@@ -30,14 +31,11 @@ class Discrete(Space):
             number of elements in the space
         """
         assert n >= 0, "The number of elements in Discrete must be >= 0"
-        super(Discrete, self).__init__()
-        self.n = n
+        SpaceSeeder.__init__(self)
+        gym.spaces.Discrete.__init__(self, n)
 
     def sample(self):
         return self.rng.integers(0, self.n)
-
-    def contains(self, x):
-        return (x >= 0) and (x < self.n) and np.issubdtype(type(x), np.integer)
 
     def __str__(self):
         objstr = "%d-element Discrete space" % self.n
