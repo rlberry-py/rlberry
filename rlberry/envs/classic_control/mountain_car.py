@@ -46,18 +46,18 @@ class MountainCar(RenderInterface2D, Model):
         gravitational pull acting on the car.
 
     Reward:
-         Reward of 1 is awarded if the agent reached the flag (position = 0.5)
-         on top of the mountain.
-         Reward of 0 is awarded if the position of the agent is less than 0.5.
+        Reward of 1 is awarded if the agent reached the flag (position = 0.5)
+        on top of the mountain.
+        Reward of 0 is awarded if the position of the agent is less than 0.5.
 
     Starting State:
-         The position of the car is assigned a uniform random value in
-         [-0.6 , -0.4].
-         The starting velocity of the car is always assigned to 0.
+        The position of the car is assigned a uniform random value in
+        [-0.6 , -0.4].
+        The starting velocity of the car is always assigned to 0.
 
-     Episode Termination:
-         The car position is more than 0.5
-     """
+    Episode Termination:
+        The car position is more than 0.5
+    """
 
     name = "MountainCar"
 
