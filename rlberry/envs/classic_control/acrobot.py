@@ -36,7 +36,7 @@ __author__ = "Christoph Dann <cdann@cdann.de>"
 # https://github.com/rlpy/rlpy/blob/master/rlpy/Domains/Acrobot.py
 
 
-class Acrobot(Model, RenderInterface2D):
+class Acrobot(RenderInterface2D, Model):
     """
     Acrobot is a 2-link pendulum with only the second joint actuated.
     Initially, both links point downwards. The goal is to swing the

@@ -1,9 +1,10 @@
+import gym
 import numpy as np
 import logging
 from rlberry.seeding import seeding
 
 
-class Model:
+class Model(gym.Env):
     """
     Base class for an environment model.
 
@@ -52,31 +53,6 @@ class Model:
         self.rng = seeding.get_rng()
         self.observation_space.rng = self.rng
         self.action_space.rng = self.rng
-
-    def reset(self):
-        """
-        Puts the environment in a default state and returns this state.
-        """
-        raise NotImplementedError("reset() method not implemented.")
-
-    def step(self, action):
-        """
-        Execute a step. Similar to gym function [1].
-        [1] https://gym.openai.com/docs/#environments
-
-        Parameters
-        ----------
-        action : object
-            action to take in the environment
-
-        Returns:
-        -------
-        observation : object
-        reward : float
-        done  : bool
-        info  : dict
-        """
-        raise NotImplementedError("step() method not implemented.")
 
     def sample(self, state, action):
         """

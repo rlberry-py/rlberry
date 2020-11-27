@@ -4,7 +4,7 @@ from rlberry.envs.finite import FiniteMDP
 from rlberry.rendering import RenderInterface2D, Scene, GeometricPrimitive
 
 
-class Chain(FiniteMDP, RenderInterface2D):
+class Chain(RenderInterface2D, FiniteMDP):
     """
     Simple chain environment.
     Reward 0.05 in initial state, reward 1.0 in final state.
