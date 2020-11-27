@@ -5,7 +5,7 @@ from rlberry.rendering import Scene, GeometricPrimitive, RenderInterface2D
 from rlberry.rendering.common_shapes import circle_shape
 
 
-class GridWorld(FiniteMDP, RenderInterface2D):
+class GridWorld(RenderInterface2D, FiniteMDP):
     """
     Simple GridWorld environment.
 

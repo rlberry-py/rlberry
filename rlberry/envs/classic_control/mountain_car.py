@@ -19,7 +19,7 @@ from rlberry.envs.interface import Model
 from rlberry.rendering import Scene, GeometricPrimitive, RenderInterface2D
 
 
-class MountainCar(Model, RenderInterface2D):
+class MountainCar(RenderInterface2D, Model):
     """
     Description:
         The agent (a car) is started at the bottom of a valley. For any given

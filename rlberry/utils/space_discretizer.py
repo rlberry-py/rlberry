@@ -8,7 +8,7 @@ class Discretizer:
     def __init__(self, space, n_bins):
         assert isinstance(space, Box), \
             "Discretization is only implemented for Box spaces."
-        assert space.is_bounded
+        assert space.is_bounded()
         self.space = space
         self.n_bins = n_bins
 

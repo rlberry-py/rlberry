@@ -220,7 +220,7 @@ does not make true projections onto the lp ball.")
                                                                ord=np.inf)
 
 
-class PBall2D(PBall, RenderInterface2D):
+class PBall2D(RenderInterface2D, PBall):
     def __init__(self,
                  p=2,
                  action_list=[0.05 * np.array([1, 0]),

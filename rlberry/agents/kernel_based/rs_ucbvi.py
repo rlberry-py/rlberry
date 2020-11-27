@@ -80,7 +80,8 @@ class RSUCBVIAgent(Agent):
             If None, set to:
             - (env.observation_space.high - env.observation_space.low) if high
             and low are bounded
-            - np.ones(env.observation_space.dim) if high or low are unbounded
+            - np.ones(env.observation_space.shape[0]) if high or low are
+            unbounded
         min_dist: double
             Minimum distance between two representative states
         max_repr: int
@@ -121,7 +122,7 @@ class RSUCBVIAgent(Agent):
             self.horizon = int(np.ceil(1.0 / (1.0 - gamma)))
 
         # state dimension
-        self.state_dim = self.env.observation_space.dim
+        self.state_dim = self.env.observation_space.shape[0]
 
         # compute scaling, if it is None
         if scaling is None:
