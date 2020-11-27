@@ -92,7 +92,7 @@ class MountainCar(RenderInterface2D, Model):
 
     def step(self, action):
         assert self.action_space.contains(action), \
-            "%r (%s) invalid" % (action,  type(action))
+            "%r (%s) invalid" % (action, type(action))
 
         # save state for rendering
         if self.is_render_enabled():
