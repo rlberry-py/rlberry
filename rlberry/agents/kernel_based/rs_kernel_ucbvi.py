@@ -4,7 +4,7 @@ import time
 import numpy as np
 from rlberry.utils.jit_setup import numba_jit
 
-import rlberry.spaces as spaces
+import gym.spaces as spaces
 from rlberry.agents import Agent
 from rlberry.agents.dynprog.utils import backward_induction
 from rlberry.agents.dynprog.utils import backward_induction_in_place

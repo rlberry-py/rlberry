@@ -5,7 +5,7 @@ import torch
 import torch.nn as nn
 
 import rlberry.seeding as seeding
-import rlberry.spaces as spaces
+import gym.spaces as spaces
 from rlberry.agents import Agent
 
 # choose device

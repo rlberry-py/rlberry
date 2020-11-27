@@ -2,7 +2,7 @@ import logging
 import time
 import numpy as np
 
-import rlberry.spaces as spaces
+import gym.spaces as spaces
 from rlberry.agents import Agent
 from rlberry.agents.dynprog.utils import backward_induction
 from rlberry.agents.dynprog.utils import backward_induction_in_place

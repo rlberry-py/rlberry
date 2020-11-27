@@ -5,7 +5,7 @@ import torch
 import torch.nn as nn
 from torch.distributions import Categorical
 
-import rlberry.spaces as spaces
+import gym.spaces as spaces
 from rlberry.agents import IncrementalAgent
 
 # choose device

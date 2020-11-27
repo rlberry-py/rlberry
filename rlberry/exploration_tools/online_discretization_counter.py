@@ -3,7 +3,7 @@ import numpy as np
 from rlberry.utils.jit_setup import numba_jit
 from rlberry.exploration_tools.uncertainty_estimator \
     import UncertaintyEstimator
-from rlberry.spaces import Box, Discrete
+from gym.spaces import Box, Discrete
 from rlberry.utils.metrics import metric_lp
 
 
