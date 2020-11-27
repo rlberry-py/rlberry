@@ -1,15 +1,16 @@
 from abc import ABC, abstractmethod
 from gym import spaces
 
+from rlberry.agents import Agent
 from rlberry.agents.dqn.exploration import exploration_factory
 from rlberry.agents.dqn.memory import ReplayMemory, Transition
 from rlberry.utils.configuration import Configurable
 
 
-class AbstractDQNAgent(Configurable, ABC):
+class AbstractDQNAgent(Configurable, Agent, ABC):
     def __init__(self, env, config=None):
-        super(AbstractDQNAgent, self).__init__(config)
-        self.env = env
+        Agent.__init__(self, env, copy_env=False, reseed_env=False)
+        Configurable.__init__(self, config)
         assert isinstance(env.action_space, spaces.Discrete), \
             "Only compatible with Discrete action spaces."
         self.memory = ReplayMemory(self.config)
