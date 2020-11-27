@@ -15,10 +15,10 @@ def loss_function_factory(loss_function):
         raise ValueError("Unknown loss function : {}".format(loss_function))
 
 
-def optimizer_factory(optimizer_type, params, lr=None, weight_decay=None, k=None, **kwargs):
+def optimizer_factory(params, optimizer_type="ADAM", **kwargs):
     if optimizer_type == "ADAM":
-        return torch.optim.Adam(params=params, lr=lr, weight_decay=weight_decay)
+        return torch.optim.Adam(params=params, **kwargs)
     elif optimizer_type == "RMS_PROP":
-        return torch.optim.RMSprop(params=params, weight_decay=weight_decay)
+        return torch.optim.RMSprop(params=params, **kwargs)
     else:
         raise ValueError("Unknown optimizer type: {}".format(optimizer_type))

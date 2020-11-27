@@ -5,8 +5,6 @@ import numpy as np
 from gym import spaces
 from torch.nn import functional as F
 
-from rlberry.utils.configuration import Configurable
-
 
 class ValueNet(nn.Module):
     def __init__(self, state_dim, hidden_size=64):
@@ -130,68 +128,70 @@ class BaseModule(torch.nn.Module):
         self.apply(self._init_weights)
 
 
-class MultiLayerPerceptron(BaseModule, Configurable):
-    def __init__(self, config):
-        super().__init__()
-        Configurable.__init__(self, config)
-        sizes = [self.config["in"]] + self.config["layers"]
+class MultiLayerPerceptron(BaseModule):
+    def __init__(self,
+                in_size=None,
+                layer_sizes=[64, 64],
+                reshape="True",
+                out_size=None,
+                 **kwargs):
+        super().__init__(**kwargs)
+        self.reshape = reshape
+        self.layer_sizes = layer_sizes
+        self.out_size = out_size
+        sizes = [in_size] + layer_sizes
         layers_list = [nn.Linear(sizes[i], sizes[i + 1]) for i in range(len(sizes) - 1)]
         self.layers = nn.ModuleList(layers_list)
-        if self.config.get("out", None):
-            self.predict = nn.Linear(sizes[-1], self.config["out"])
-
-    @classmethod
-    def default_config(cls):
-        return {"in": None,
-                "layers": [64, 64],
-                "activation": "RELU",
-                "reshape": "True",
-                "out": None}
+        if out_size:
+            self.predict = nn.Linear(sizes[-1], out_size)
 
     def forward(self, x):
-        if self.config["reshape"]:
+        if self.reshape:
             x = x.reshape(x.shape[0], -1)  # We expect a batch of vectors
         for layer in self.layers:
             x = self.activation(layer(x))
-        if self.config.get("out", None):
+        if self.out_size:
             x = self.predict(x)
         return x
 
 
-class DuelingNetwork(BaseModule, Configurable):
-    def __init__(self, config):
+class DuelingNetwork(BaseModule):
+    def __init__(self,
+                 in_size=None,
+                 base_module_kwargs={},
+                 value_kwargs={},
+                 advantage_kwargs={},
+                 out_size=None):
         super().__init__()
-        Configurable.__init__(self, config)
-        self.config["base_module"]["in"] = self.config["in"]
-        self.base_module = model_factory(self.config["base_module"])
-        self.config["value"]["in"] = self.base_module.config["layers"][-1]
-        self.config["value"]["out"] = 1
-        self.value = model_factory(self.config["value"])
-        self.config["advantage"]["in"] = self.base_module.config["layers"][-1]
-        self.config["advantage"]["out"] = self.config["out"]
-        self.advantage = model_factory(self.config["advantage"])
-
-    @classmethod
-    def default_config(cls):
-        return {"in": None,
-                "base_module": {"type": "MultiLayerPerceptron", "out": None},
-                "value": {"type": "MultiLayerPerceptron", "layers": [], "out": None},
-                "advantage": {"type": "MultiLayerPerceptron", "layers": [], "out": None},
-                "out": None}
+        self.out_size = out_size
+        base_module_kwargs["in_size"] = in_size
+        self.base_module = model_factory(**base_module_kwargs)
+        value_kwargs["in_size"] = self.base_module.layer_sizes[-1]
+        value_kwargs["out_size"] = 1
+        self.value = model_factory(**value_kwargs)
+        advantage_kwargs["in_size"] = self.base_module.layer_sizes[-1]
+        advantage_kwargs["out_size"] = out_size
+        self.advantage = model_factory(**advantage_kwargs)
 
     def forward(self, x):
         x = self.base_module(x)
-        value = self.value(x).expand(-1,  self.config["out"])
+        value = self.value(x).expand(-1, self.out_size)
         advantage = self.advantage(x)
-        return value + advantage - advantage.mean(1).unsqueeze(1).expand(-1,  self.config["out"])
+        return value + advantage - advantage.mean(1).unsqueeze(1).expand(-1, self.out_size)
 
 
-class ConvolutionalNetwork(nn.Module, Configurable):
-    def __init__(self, config):
+class ConvolutionalNetwork(nn.Module):
+    def __init__(self,
+                 activation="RELU",
+                 in_channels=None,
+                 in_height=None,
+                 in_width=None,
+                 head_mlp_kwargs={},
+                 out_size=None,
+                 **kwargs):
         super().__init__()
-        Configurable.__init__(self, config)
-        self.activation = activation_factory(self.config["activation"])
-        self.conv1 = nn.Conv2d(self.config["in_channels"], 16, kernel_size=2, stride=2)
+        self.activation = activation_factory(activation)
+        self.conv1 = nn.Conv2d(in_channels, 16, kernel_size=2, stride=2)
         self.conv2 = nn.Conv2d(16, 32, kernel_size=2, stride=2)
         self.conv3 = nn.Conv2d(32, 64, kernel_size=2, stride=2)
 
@@ -200,30 +200,12 @@ class ConvolutionalNetwork(nn.Module, Configurable):
         # and therefore the input image size, so compute it.
         def conv2d_size_out(size, kernel_size=2, stride=2):
             return (size - (kernel_size - 1) - 1) // stride  + 1
-        convw = conv2d_size_out(conv2d_size_out(conv2d_size_out(self.config["in_width"])))
-        convh = conv2d_size_out(conv2d_size_out(conv2d_size_out(self.config["in_height"])))
+        convw = conv2d_size_out(conv2d_size_out(conv2d_size_out(in_width)))
+        convh = conv2d_size_out(conv2d_size_out(conv2d_size_out(in_height)))
         assert convh > 0 and convw > 0
-        self.config["head_mlp"]["in"] = convw * convh * 64
-        self.config["head_mlp"]["out"] = self.config["out"]
-        self.head = model_factory(self.config["head_mlp"])
-
-    @classmethod
-    def default_config(cls):
-        return {
-            "in_channels": None,
-            "in_height": None,
-            "in_width": None,
-            "activation": "RELU",
-            "head_mlp": {
-                "type": "MultiLayerPerceptron",
-                "in": None,
-                "layers": [],
-                "activation": "RELU",
-                "reshape": "True",
-                "out": None
-            },
-            "out": None
-        }
+        head_mlp_kwargs["in_size"] = convw * convh * 64
+        head_mlp_kwargs["out_size"] = out_size
+        self.head = model_factory(**self.head_mlp_kwargs)
 
     def forward(self, x):
         """
@@ -236,138 +218,109 @@ class ConvolutionalNetwork(nn.Module, Configurable):
         return self.head(x)
 
 
-class EgoAttention(BaseModule, Configurable):
-    def __init__(self, config):
+class EgoAttention(BaseModule):
+    def __init__(self,
+                 feature_size=64,
+                 heads=4,
+                 dropout_factor=0):
         super().__init__()
-        Configurable.__init__(self, config)
-        self.features_per_head = int(self.config["feature_size"] / self.config["heads"])
+        self.feature_size = feature_size
+        self.heads = heads
+        self.dropout_factor = dropout_factor
+        self.features_per_head = int(self.feature_size / self.heads)
 
-        self.value_all = nn.Linear(self.config["feature_size"], self.config["feature_size"], bias=False)
-        self.key_all = nn.Linear(self.config["feature_size"], self.config["feature_size"], bias=False)
-        self.query_ego = nn.Linear(self.config["feature_size"], self.config["feature_size"], bias=False)
-        self.attention_combine = nn.Linear(self.config["feature_size"], self.config["feature_size"], bias=False)
+        self.value_all = nn.Linear(self.feature_size, self.feature_size, bias=False)
+        self.key_all = nn.Linear(self.feature_size, self.feature_size, bias=False)
+        self.query_ego = nn.Linear(self.feature_size, self.feature_size, bias=False)
+        self.attention_combine = nn.Linear(self.feature_size, self.feature_size, bias=False)
 
     @classmethod
     def default_config(cls):
         return {
-            "feature_size": 64,
-            "heads": 4,
-            "dropout_factor": 0,
         }
 
     def forward(self, ego, others, mask=None):
         batch_size = others.shape[0]
         n_entities = others.shape[1] + 1
-        input_all = torch.cat((ego.view(batch_size, 1, self.config["feature_size"]), others), dim=1)
+        input_all = torch.cat((ego.view(batch_size, 1, self.feature_size), others), dim=1)
         # Dimensions: Batch, entity, head, feature_per_head
-        key_all = self.key_all(input_all).view(batch_size, n_entities, self.config["heads"], self.features_per_head)
-        value_all = self.value_all(input_all).view(batch_size, n_entities, self.config["heads"], self.features_per_head)
-        query_ego = self.query_ego(ego).view(batch_size, 1, self.config["heads"], self.features_per_head)
+        key_all = self.key_all(input_all).view(batch_size, n_entities, self.heads, self.features_per_head)
+        value_all = self.value_all(input_all).view(batch_size, n_entities, self.heads, self.features_per_head)
+        query_ego = self.query_ego(ego).view(batch_size, 1, self.heads, self.features_per_head)
 
         # Dimensions: Batch, head, entity, feature_per_head
         key_all = key_all.permute(0, 2, 1, 3)
         value_all = value_all.permute(0, 2, 1, 3)
         query_ego = query_ego.permute(0, 2, 1, 3)
         if mask is not None:
-            mask = mask.view((batch_size, 1, 1, n_entities)).repeat((1, self.config["heads"], 1, 1))
+            mask = mask.view((batch_size, 1, 1, n_entities)).repeat((1, self.heads, 1, 1))
         value, attention_matrix = attention(query_ego, key_all, value_all, mask,
-                                            nn.Dropout(self.config["dropout_factor"]))
-        result = (self.attention_combine(value.reshape((batch_size, self.config["feature_size"]))) + ego.squeeze(1))/2
+                                            nn.Dropout(self.dropout_factor))
+        result = (self.attention_combine(value.reshape((batch_size, self.feature_size))) + ego.squeeze(1))/2
         return result, attention_matrix
 
 
-class SelfAttention(BaseModule, Configurable):
-    def __init__(self, config):
-        super().__init__()
-        Configurable.__init__(self, config)
-        self.features_per_head = int(self.config["feature_size"] / self.config["heads"])
+class SelfAttention(BaseModule):
+    def __init__(self,
+                 feature_size=64,
+                 heads=4,
+                 dropout_factor=0,
+                 **kwargs):
+        super().__init__(**kwargs)
+        self.feature_size = feature_size
+        self.heads = heads
+        self.dropout_factor = dropout_factor
+        self.features_per_head = int(self.feature_size / self.heads)
 
-        self.value_all = nn.Linear(self.config["feature_size"], self.config["feature_size"], bias=False)
-        self.key_all = nn.Linear(self.config["feature_size"], self.config["feature_size"], bias=False)
-        self.query_all = nn.Linear(self.config["feature_size"], self.config["feature_size"], bias=False)
-        self.attention_combine = nn.Linear(self.config["feature_size"], self.config["feature_size"], bias=False)
-
-    @classmethod
-    def default_config(cls):
-        return {
-            "feature_size": 64,
-            "heads": 4,
-            "dropout_factor": 0,
-        }
+        self.value_all = nn.Linear(self.feature_size, self.feature_size, bias=False)
+        self.key_all = nn.Linear(self.feature_size, self.feature_size, bias=False)
+        self.query_all = nn.Linear(self.feature_size, self.feature_size, bias=False)
+        self.attention_combine = nn.Linear(self.feature_size, self.feature_size, bias=False)
 
     def forward(self, ego, others, mask=None):
         batch_size = others.shape[0]
         n_entities = others.shape[1] + 1
-        input_all = torch.cat((ego.view(batch_size, 1, self.config["feature_size"]), others), dim=1)
+        input_all = torch.cat((ego.view(batch_size, 1, self.feature_size), others), dim=1)
         # Dimensions: Batch, entity, head, feature_per_head
-        key_all = self.key_all(input_all).view(batch_size, n_entities, self.config["heads"], self.features_per_head)
-        value_all = self.value_all(input_all).view(batch_size, n_entities, self.config["heads"], self.features_per_head)
-        query_all = self.query_all(input_all).view(batch_size, n_entities, self.config["heads"], self.features_per_head)
+        key_all = self.key_all(input_all).view(batch_size, n_entities, self.heads, self.features_per_head)
+        value_all = self.value_all(input_all).view(batch_size, n_entities, self.heads, self.features_per_head)
+        query_all = self.query_all(input_all).view(batch_size, n_entities, self.heads, self.features_per_head)
 
         # Dimensions: Batch, head, entity, feature_per_head
         key_all = key_all.permute(0, 2, 1, 3)
         value_all = value_all.permute(0, 2, 1, 3)
         query_all = query_all.permute(0, 2, 1, 3)
         if mask is not None:
-            mask = mask.view((batch_size, 1, 1, n_entities)).repeat((1, self.config["heads"], 1, 1))
+            mask = mask.view((batch_size, 1, 1, n_entities)).repeat((1, self.heads, 1, 1))
         value, attention_matrix = attention(query_all, key_all, value_all, mask,
-                                            nn.Dropout(self.config["dropout_factor"]))
-        result = (self.attention_combine(value.reshape((batch_size, n_entities, self.config["feature_size"]))) + input_all)/2
+                                            nn.Dropout(self.dropout_factor))
+        result = (self.attention_combine(value.reshape((batch_size, n_entities, self.feature_size))) + input_all)/2
         return result, attention_matrix
 
 
-class EgoAttentionNetwork(BaseModule, Configurable):
-    def __init__(self, config):
-        super().__init__()
-        Configurable.__init__(self, config)
-        self.config = config
-        if not self.config["embedding_layer"]["in"]:
-            self.config["embedding_layer"]["in"] = self.config["in"]
-        if not self.config["others_embedding_layer"]["in"]:
-            self.config["others_embedding_layer"]["in"] = self.config["in"]
-        self.config["output_layer"]["in"] = self.config["attention_layer"]["feature_size"]
-        self.config["output_layer"]["out"] = self.config["out"]
+class EgoAttentionNetwork(BaseModule):
+    def __init__(self,
+                 in_size=None,
+                 out_size=None,
+                 presence_feature_idx=0,
+                 embedding_layer_kwargs={},
+                 attention_layer_kwargs={},
+                 output_layer_kwargs={},
+                 **kwargs):
+        super().__init__(**kwargs)
+        self.out_size = out_size
+        self.presence_feature_idx = presence_feature_idx
+        if not embedding_layer_kwargs.get("in_size", None):
+            embedding_layer_kwargs["in_size"] = in_size
 
-        self.ego_embedding = model_factory(self.config["embedding_layer"])
-        self.others_embedding = model_factory(self.config["others_embedding_layer"])
+        self.attention_layer = EgoAttention(**attention_layer_kwargs)
+
+        output_layer_kwargs["in_size"] = self.attention_layer.feature_size
+        output_layer_kwargs["out_size"] = self.out_size
+
+        self.embedding = model_factory(self.embedding_layer)
         self.self_attention_layer = None
-        if self.config["self_attention_layer"]:
-            self.self_attention_layer = SelfAttention(self.config["self_attention_layer"])
-        self.attention_layer = EgoAttention(self.config["attention_layer"])
-        self.output_layer = model_factory(self.config["output_layer"])
-
-    @classmethod
-    def default_config(cls):
-        return {
-            "in": None,
-            "out": None,
-            "presence_feature_idx": 0,
-            "embedding_layer": {
-                "type": "MultiLayerPerceptron",
-                "layers": [128, 128, 128],
-                "reshape": False
-            },
-            "others_embedding_layer": {
-                "type": "MultiLayerPerceptron",
-                "layers": [128, 128, 128],
-                "reshape": False
-            },
-            "self_attention_layer": {
-                "type": "SelfAttention",
-                "feature_size": 128,
-                "heads": 4
-            },
-            "attention_layer": {
-                "type": "EgoAttention",
-                "feature_size": 128,
-                "heads": 4
-            },
-            "output_layer": {
-                "type": "MultiLayerPerceptron",
-                "layers": [128, 128, 128],
-                "reshape": False
-            },
-        }
+        self.output_layer = model_factory(self.output_layer)
 
     def forward(self, x):
         ego_embedded_att, _ = self.forward_attention(x)
@@ -378,74 +331,16 @@ class EgoAttentionNetwork(BaseModule, Configurable):
         ego = x[:, 0:1, :]
         others = x[:, 1:, :]
         if mask is None:
-            mask = x[:, :, self.config["presence_feature_idx"]:self.config["presence_feature_idx"] + 1] < 0.5
+            mask = x[:, :, self.presence_feature_idx:self.presence_feature_idx + 1] < 0.5
         return ego, others, mask
 
     def forward_attention(self, x):
         ego, others, mask = self.split_input(x)
-        ego, others = self.ego_embedding(ego), self.others_embedding(others)
-        if self.self_attention_layer:
-            self_att, _ = self.self_attention_layer(ego, others, mask)
-            ego, others, mask = self.split_input(self_att, mask=mask)
+        ego, others = self.embedding(ego), self.embedding(others)
         return self.attention_layer(ego, others, mask)
 
     def get_attention_matrix(self, x):
         _, attention_matrix = self.forward_attention(x)
-        return attention_matrix
-
-
-class AttentionNetwork(BaseModule, Configurable):
-    def __init__(self, config):
-        super().__init__()
-        Configurable.__init__(self, config)
-        self.config = config
-        if not self.config["embedding_layer"]["in"]:
-            self.config["embedding_layer"]["in"] = self.config["in"]
-        self.config["output_layer"]["in"] = self.config["attention_layer"]["feature_size"]
-        self.config["output_layer"]["out"] = self.config["out"]
-
-        self.embedding = model_factory(self.config["embedding_layer"])
-        self.attention_layer = SelfAttention(self.config["attention_layer"])
-        self.output_layer = model_factory(self.config["output_layer"])
-
-    @classmethod
-    def default_config(cls):
-        return {
-            "in": None,
-            "out": None,
-            "presence_feature_idx": 0,
-            "embedding_layer": {
-                "type": "MultiLayerPerceptron",
-                "layers": [128, 128, 128],
-                "reshape": False
-            },
-            "attention_layer": {
-                "type": "SelfAttention",
-                "feature_size": 128,
-                "heads": 4
-            },
-            "output_layer": {
-                "type": "MultiLayerPerceptron",
-                "layers": [128, 128, 128],
-                "reshape": False
-            },
-        }
-
-    def forward(self, x):
-        ego, others, mask = self.split_input(x)
-        ego_embedded_att, _ = self.attention_layer(self.embedding(ego), self.others_embedding(others), mask)
-        return self.output_layer(ego_embedded_att)
-
-    def split_input(self, x):
-        # Dims: batch, entities, features
-        ego = x[:, 0:1, :]
-        others = x[:, 1:, :]
-        mask = x[:, :, self.config["presence_feature_idx"]:self.config["presence_feature_idx"] + 1] < 0.5
-        return ego, others, mask
-
-    def get_attention_matrix(self, x):
-        ego, others, mask = self.split_input(x)
-        _, attention_matrix = self.attention_layer(self.embedding(ego), self.others_embedding(others), mask)
         return attention_matrix
 
 
@@ -483,7 +378,8 @@ def trainable_parameters(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 
-def size_model_config(env, model_config):
+def size_model_config(env,
+                      **model_config):
     """
         Update the configuration of a model depending on the environment observation/action spaces
 
@@ -502,23 +398,24 @@ def size_model_config(env, model_config):
         model_config["in_height"] = int(obs_shape[1])
         model_config["in_width"] = int(obs_shape[2])
     else:
-        model_config["in"] = int(np.prod(obs_shape))
+        model_config["in_size"] = int(np.prod(obs_shape))
 
     if isinstance(env.action_space, spaces.Discrete):
-        model_config["out"] = env.action_space.n
+        model_config["out_size"] = env.action_space.n
     elif isinstance(env.action_space, spaces.Tuple):
-        model_config["out"] = env.action_space.spaces[0].n
+        model_config["out_size"] = env.action_space.spaces[0].n
+    return model_config
 
 
-def model_factory(config: dict) -> nn.Module:
-    if config["type"] == "MultiLayerPerceptron":
-        return MultiLayerPerceptron(config)
-    elif config["type"] == "DuelingNetwork":
-        return DuelingNetwork(config)
-    elif config["type"] == "ConvolutionalNetwork":
-        return ConvolutionalNetwork(config)
-    elif config["type"] == "EgoAttentionNetwork":
-        return EgoAttentionNetwork(config)
+def model_factory(type="MultiLayerPerceptron", **kwargs) -> nn.Module:
+    if type == "MultiLayerPerceptron":
+        return MultiLayerPerceptron(**kwargs)
+    elif type == "DuelingNetwork":
+        return DuelingNetwork(**kwargs)
+    elif type == "ConvolutionalNetwork":
+        return ConvolutionalNetwork(**kwargs)
+    elif type == "EgoAttentionNetwork":
+        return EgoAttentionNetwork(**kwargs)
     else:
         raise ValueError("Unknown model type")
 

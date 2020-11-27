@@ -12,21 +12,20 @@ logger = logging.getLogger(__name__)
 
 
 class DQNAgent(AbstractDQNAgent):
-    def __init__(self, env, config=None):
-        super(DQNAgent, self).__init__(env, config)
-        size_model_config(self.env, self.config["model"])
-        self.value_net = model_factory(self.config["model"])
-        self.target_net = model_factory(self.config["model"])
+    def __init__(self, env, **kwargs):
+        super().__init__(env, **kwargs)
+        self.model_kwargs = size_model_config(self.env, **self.model_kwargs)
+        self.value_net = model_factory(**self.model_kwargs)
+        self.target_net = model_factory(**self.model_kwargs)
         self.target_net.load_state_dict(self.value_net.state_dict())
         self.target_net.eval()
         logger.debug("Number of trainable parameters: {}".format(trainable_parameters(self.value_net)))
-        self.device = choose_device(self.config["device"])
+        self.device = choose_device(self.device)
         self.value_net.to(self.device)
         self.target_net.to(self.device)
-        self.loss_function = loss_function_factory(self.config["loss_function"])
-        self.optimizer = optimizer_factory(self.config["optimizer"]["type"],
-                                           self.value_net.parameters(),
-                                           **self.config["optimizer"])
+        self.loss_function = loss_function_factory(self.loss_function)
+        self.optimizer = optimizer_factory(self.value_net.parameters(),
+                                           **self.optimizer_kwargs)
         self.steps = 0
 
     def step_optimizer(self, loss):
@@ -57,7 +56,7 @@ class DQNAgent(AbstractDQNAgent):
             with torch.no_grad():
                 # Compute V(s_{t+1}) for all next states.
                 next_state_values = torch.zeros(batch.reward.shape).to(self.device)
-                if self.config["double"]:
+                if self.double:
                     # Double Q-learning: pick best actions from policy network
                     _, best_actions = self.value_net(batch.next_state).max(1)
                     # Double Q-learning: estimate action values from target network
@@ -66,7 +65,7 @@ class DQNAgent(AbstractDQNAgent):
                     best_values, _ = self.target_net(batch.next_state).max(1)
                 next_state_values[~batch.terminal] = best_values[~batch.terminal]
                 # Compute the expected Q values
-                target_state_action_value = batch.reward + self.config["gamma"] * next_state_values
+                target_state_action_value = batch.reward + self.gamma * next_state_values
 
         # Compute loss
         loss = self.loss_function(state_action_values, target_state_action_value)

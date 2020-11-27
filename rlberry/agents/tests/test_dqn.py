@@ -1,6 +1,7 @@
 import gym
 from rlberry.wrappers import Wrapper
 from rlberry.agents.dqn.pytorch import DQNAgent
+from rlberry.wrappers import Wrapper
 
 
 def test_dqn_agent():

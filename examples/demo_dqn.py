@@ -3,13 +3,10 @@ from pathlib import Path
 from torch.utils.tensorboard import SummaryWriter
 
 from rlberry.agents.dqn.pytorch import DQNAgent
+from rlberry.wrappers import Wrapper
 
-env = gym.make("CartPole-v0")
-config = {
-    "n_episodes": 100,
-    "exploration": {"tau": 1000},
-}
-agent = DQNAgent(env, config=config)
+env = Wrapper(gym.make("CartPole-v0"))
+agent = DQNAgent(env, n_episodes=100, exploration_kwargs={"tau": 1000})
 agent.set_writer(SummaryWriter())
 print(f"Running DQN on {env}")
 print(f"Visualize with tensorboard by running:\n$ tensorboard --logdir {Path(agent.writer.log_dir).parent}")
@@ -21,5 +18,5 @@ for episode in range(3):
     while not done:
         action = agent.policy(state)
         state, reward, done, _ = env.step(action)
-        env.render()
-env.close()
+        env.unwrapped.render()
+env.unwrapped.close()

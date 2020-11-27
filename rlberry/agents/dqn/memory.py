@@ -1,27 +1,29 @@
 import random
 from collections import namedtuple
 
-from rlberry.utils.configuration import Configurable
-
 Transition = namedtuple('Transition', ('state', 'action', 'reward', 'next_state', 'terminal', 'info'))
 
 
-class ReplayMemory(Configurable):
+class ReplayMemory(object):
     """
         Container that stores and samples transitions.
     """
-    def __init__(self, config=None, transition_type=Transition):
-        super(ReplayMemory, self).__init__(config)
-        self.capacity = int(self.config['memory_capacity'])
+    def __init__(self,
+                 transition_type=Transition,
+                 capacity=10000,
+                 n_steps=1,
+                 gamma=0.99,
+                 **kwargs):
+        self.capacity = int(capacity)
         self.transition_type = transition_type
+        self.n_steps = n_steps
+        self.gamma = gamma
         self.memory = []
         self.position = 0
 
     @classmethod
     def default_config(cls):
-        return dict(memory_capacity=10000,
-                    n_steps=1,
-                    gamma=0.99)
+        return dict()
 
     def push(self, *args):
         """Saves a transition."""
@@ -44,14 +46,14 @@ class ReplayMemory(Configurable):
         :return: the sampled batch
         """
         # FIXME: use general seeding
-        if self.config["n_steps"] == 1:
+        if self.n_steps == 1:
             # Directly sample transitions
             return random.sample(self.memory, batch_size)
         else:
             # Sample initial transition indexes
             indexes = random.sample(range(len(self.memory)), batch_size)
             # Get the batch of n-consecutive-transitions starting from sampled indexes
-            all_transitions = [self.memory[i:i+self.config["n_steps"]] for i in indexes]
+            all_transitions = [self.memory[i:i+self.n_steps] for i in indexes]
             # Collapse transitions
             return map(self.collapse_n_steps, all_transitions) if collapsed else all_transitions
 
@@ -72,7 +74,7 @@ class ReplayMemory(Configurable):
                 break
             else:
                 _, _, reward, next_state, done, info = transition
-                discount *= self.config['gamma']
+                discount *= self.gamma
                 cumulated_reward += discount*reward
         return state, action, cumulated_reward, next_state, done, info
 

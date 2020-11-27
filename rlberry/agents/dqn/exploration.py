@@ -3,12 +3,10 @@ import numpy as np
 from gym import spaces
 
 from rlberry.seeding import seeding
-from rlberry.utils.configuration import Configurable
 
 
-class DiscreteDistribution(Configurable, ABC):
-    def __init__(self, config=None, **kwargs):
-        super(DiscreteDistribution, self).__init__(config)
+class DiscreteDistribution(ABC):
+    def __init__(self, **kwargs):
         self.np_random = None
 
     @abstractmethod
@@ -47,25 +45,27 @@ class EpsilonGreedy(DiscreteDistribution):
         Uniform distribution with probability epsilon, and optimal action with probability 1-epsilon
     """
 
-    def __init__(self, action_space, config=None):
-        super(EpsilonGreedy, self).__init__(config)
+    def __init__(self,
+                 action_space,
+                 temperature=1.0,
+                 final_temperature=0.1,
+                 tau=5000,
+                 **kwargs):
+        super().__init__(**kwargs)
         self.action_space = action_space
+        self.temperature = temperature
+        self.final_temperature = final_temperature
+        self.tau = tau
         if isinstance(self.action_space, spaces.Tuple):
             self.action_space = self.action_space.spaces[0]
         if not isinstance(self.action_space, spaces.Discrete):
             raise TypeError("The action space should be discrete")
-        self.config['final_temperature'] = min(self.config['temperature'], self.config['final_temperature'])
+        self.final_temperature = min(self.temperature, self.final_temperature)
         self.optimal_action = None
         self.epsilon = 0
         self.time = 0
         self.writer = None
         self.seed()
-
-    @classmethod
-    def default_config(cls):
-        return dict(temperature=1.0,
-                    final_temperature=0.1,
-                    tau=5000)
 
     def get_distribution(self):
         distribution = {action: self.epsilon / self.action_space.n for action in range(self.action_space.n)}
@@ -79,9 +79,8 @@ class EpsilonGreedy(DiscreteDistribution):
         :param step_time: whether to update epsilon schedule
         """
         self.optimal_action = np.argmax(values)
-        self.epsilon = self.config['final_temperature'] + \
-            (self.config['temperature'] - self.config['final_temperature']) * \
-            np.exp(- self.time / self.config['tau'])
+        self.epsilon = self.final_temperature + (self.temperature - self.final_temperature) * \
+            np.exp(- self.time / self.tau)
         if self.writer:
             self.writer.add_scalar('exploration/epsilon', self.epsilon, self.time)
 
@@ -100,8 +99,8 @@ class Greedy(DiscreteDistribution):
         Always use the optimal action
     """
 
-    def __init__(self, action_space, config=None):
-        super(Greedy, self).__init__(config)
+    def __init__(self, action_space):
+        super().__init__()
         self.action_space = action_space
         if isinstance(self.action_space, spaces.Tuple):
             self.action_space = self.action_space.spaces[0]
@@ -118,16 +117,16 @@ class Greedy(DiscreteDistribution):
         self.values = values
 
 
-def exploration_factory(exploration_config, action_space):
+def exploration_factory(action_space, method="EpsilonGreedy", **kwargs):
     """
         Handles creation of exploration policies
     :param exploration_config: configuration dictionary of the policy, must contain a "method" key
     :param action_space: the environment action space
     :return: a new exploration policy
     """
-    if exploration_config['method'] == 'Greedy':
-        return Greedy(action_space, exploration_config)
-    elif exploration_config['method'] == 'EpsilonGreedy':
-        return EpsilonGreedy(action_space, exploration_config)
+    if method == 'Greedy':
+        return Greedy(action_space, **kwargs)
+    elif method == 'EpsilonGreedy':
+        return EpsilonGreedy(action_space, **kwargs)
     else:
         raise ValueError("Unknown exploration method")

@@ -4,41 +4,46 @@ from gym import spaces
 from rlberry.agents import Agent
 from rlberry.agents.dqn.exploration import exploration_factory
 from rlberry.agents.dqn.memory import ReplayMemory, Transition
-from rlberry.utils.configuration import Configurable
 
 
-class AbstractDQNAgent(Configurable, Agent, ABC):
-    def __init__(self, env, config=None):
-        Agent.__init__(self, env, copy_env=False, reseed_env=False)
-        Configurable.__init__(self, config)
+class AbstractDQNAgent(Agent, ABC):
+    def __init__(self, env,
+                 model_kwargs={"type": "DuelingNetwork"},
+                 optimizer_kwargs=dict(),
+                 exploration_kwargs={},
+                 n_episodes=1000,
+                 loss_function="l2",
+                 memory_kwargs={},
+                 batch_size=100,
+                 gamma=0.99,
+                 device="cuda:best",
+                 target_update=1,
+                 double=True):
+        super().__init__(env)
+        self.model_kwargs = model_kwargs
+        self.optimizer_kwargs = optimizer_kwargs
+        self.exploration_kwargs = exploration_kwargs
+        self.n_episodes = n_episodes
+        self.loss_function = loss_function
+        self.memory_kwargs = memory_kwargs
+        self.batch_size = batch_size
+        self.gamma = gamma
+        self.device = device
+        self.target_update = target_update
+        self.double = double
+
         assert isinstance(env.action_space, spaces.Discrete), \
             "Only compatible with Discrete action spaces."
-        self.memory = ReplayMemory(self.config)
-        self.exploration_policy = exploration_factory(self.config["exploration"], self.env.action_space)
+
+        self.memory = ReplayMemory(**self.memory_kwargs)
+        self.exploration_policy = exploration_factory(self.env.action_space, **exploration_kwargs)
         self.training = True
         self.steps = 0
         self.writer = None
 
-    @classmethod
-    def default_config(cls):
-        return dict(model=dict(type="DuelingNetwork"),
-                    optimizer=dict(type="ADAM",
-                                   lr=5e-4,
-                                   weight_decay=0,
-                                   k=5),
-                    n_episodes=1000,
-                    loss_function="l2",
-                    memory_capacity=50000,
-                    batch_size=100,
-                    gamma=0.99,
-                    device="cuda:best",
-                    exploration=dict(method="EpsilonGreedy"),
-                    target_update=1,
-                    double=True)
-
     def fit(self, **kwargs):
         episode_rewards = []
-        for episode in range(self.config["n_episodes"]):
+        for episode in range(self.n_episodes):
             print("episode", episode)
             done, total_reward = False, 0
             state = self.env.reset()
@@ -54,7 +59,7 @@ class AbstractDQNAgent(Configurable, Agent, ABC):
             episode_rewards.append(total_reward)
 
         return {
-            "n_episodes": self.config["n_episodes"],
+            "n_episodes": self.n_episodes,
             "episode_rewards": episode_rewards
         }
 
@@ -85,7 +90,7 @@ class AbstractDQNAgent(Configurable, Agent, ABC):
     def policy(self, observation, **kwargs):
         """
             Act according to the state-action value model and an exploration policy
-        :param state: current state
+        :param observation: current obs
         :return: an action
         """
         values = self.get_state_action_values(observation)
@@ -93,14 +98,14 @@ class AbstractDQNAgent(Configurable, Agent, ABC):
         return self.exploration_policy.sample()
 
     def sample_minibatch(self):
-        if len(self.memory) < self.config["batch_size"]:
+        if len(self.memory) < self.batch_size:
             return None
-        transitions = self.memory.sample(self.config["batch_size"])
+        transitions = self.memory.sample(self.batch_size)
         return Transition(*zip(*transitions))
 
     def update_target_network(self):
         self.steps += 1
-        if self.steps % self.config["target_update"] == 0:
+        if self.steps % self.target_update == 0:
             self.target_net.load_state_dict(self.value_net.state_dict())
 
     @abstractmethod
@@ -175,5 +180,5 @@ class AbstractDQNAgent(Configurable, Agent, ABC):
 
     def eval(self):
         self.training = False
-        self.config['exploration']['method'] = "Greedy"
-        self.exploration_policy = exploration_factory(self.config["exploration"], self.env.action_space)
+        self.exploration_kwargs['method'] = "Greedy"
+        self.exploration_policy = exploration_factory(self.env.action_space, **self.exploration_kwargs)
