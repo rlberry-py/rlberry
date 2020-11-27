@@ -1,4 +1,7 @@
 import random
+from collections import namedtuple
+
+from rlberry.utils.configuration import Configurable
 
 Transition = namedtuple('Transition', ('state', 'action', 'reward', 'next_state', 'terminal', 'info'))
 

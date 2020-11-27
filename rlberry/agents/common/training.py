@@ -1,4 +1,4 @@
-from rlberry.utils import torch
+import torch
 from torch.nn import functional as F
 
 

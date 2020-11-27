@@ -17,6 +17,7 @@ class AbstractDQNAgent(Configurable, ABC):
         self.training = True
         self.previous_state = None
         self.steps = 0
+        self.writer = None
 
     @classmethod
     def default_config(cls):
@@ -25,6 +26,7 @@ class AbstractDQNAgent(Configurable, ABC):
                                    lr=5e-4,
                                    weight_decay=0,
                                    k=5),
+                    n_episodes=1000,
                     loss_function="l2",
                     memory_capacity=50000,
                     batch_size=100,
@@ -33,6 +35,28 @@ class AbstractDQNAgent(Configurable, ABC):
                     exploration=dict(method="EpsilonGreedy"),
                     target_update=1,
                     double=True)
+
+    def fit(self, **kwargs):
+        episode_rewards = []
+        for episode in range(self.config["n_episodes"]):
+            print("episode", episode)
+            done, total_reward = False, 0
+            state = self.env.reset()
+            while not done:
+                self.exploration_policy.step_time()
+                action = self.policy(state)
+                next_state, reward, done, info = self.env.step(action)
+                self.record(state, action, reward, next_state, done, info)
+                state = next_state
+                total_reward += reward
+            if self.writer:
+                self.writer.add_scalar("fit/total_reward", total_reward, episode)
+            episode_rewards.append(total_reward)
+
+        return {
+            "n_episodes": self.config["n_episodes"],
+            "episode_rewards": episode_rewards
+        }
 
     def record(self, state, action, reward, next_state, done, info):
         """
@@ -58,16 +82,13 @@ class AbstractDQNAgent(Configurable, ABC):
             self.step_optimizer(loss)
             self.update_target_network()
 
-    def act(self, state, step_exploration_time=True):
+    def policy(self, state):
         """
             Act according to the state-action value model and an exploration policy
         :param state: current state
-        :param step_exploration_time: step the exploration schedule
         :return: an action
         """
         self.previous_state = state
-        if step_exploration_time:
-            self.exploration_policy.step_time()
         values = self.get_state_action_values(state)
         self.exploration_policy.update(values)
         return self.exploration_policy.sample()
@@ -139,7 +160,7 @@ class AbstractDQNAgent(Configurable, ABC):
         pass
 
     def set_writer(self, writer):
-        super().set_writer(writer)
+        self.writer = writer
         try:
             self.exploration_policy.set_writer(writer)
         except AttributeError:
