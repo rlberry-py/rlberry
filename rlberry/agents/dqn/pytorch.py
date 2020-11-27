@@ -99,5 +99,5 @@ class DQNAgent(AbstractDQNAgent):
         obs_shape = self.env.observation_space.shape if isinstance(self.env.observation_space, spaces.Box) else \
             self.env.observation_space.spaces[0].shape
         model_input = torch.zeros((1, *obs_shape), dtype=torch.float, device=self.device)
-        self.writer.add_graph(self.value_net, input_to_model=(model_input,)),
+        self.writer.add_graph(self.value_net, input_to_model=(model_input,))
         self.writer.add_scalar("agent/trainable_parameters", trainable_parameters(self.value_net), 0)
