@@ -38,23 +38,26 @@ __author__ = "Christoph Dann <cdann@cdann.de>"
 
 class Acrobot(RenderInterface2D, Model):
     """
-    Acrobot is a 2-link pendulum with only the second joint actuated.
-    Initially, both links point downwards. The goal is to swing the
-    end-effector at a height at least the length of one link above the base.
-    Both links can swing freely and can pass by each other, i.e., they don't
-    collide when they have the same angle.
-    **STATE:**
-    The state consists of the sin() and cos() of the two rotational joint
-    angles and the joint angular velocities :
-    [cos(theta1) sin(theta1) cos(theta2) sin(theta2) thetaDot1 thetaDot2].
-    For the first link, an angle of 0 corresponds to the link pointing
-    downwards.
-    The angle of the second link is relative to the angle of the first link.
-    An angle of 0 corresponds to having the same angle between the two links.
-    A state of [1, 0, 1, 0, ..., ...] means that both links point downwards.
-    **ACTIONS:**
-    The action is either applying +1, 0 or -1 torque on the joint between
-    the two pendulum links.
+    Description:
+        Acrobot is a 2-link pendulum with only the second joint actuated.
+        Initially, both links point downwards. The goal is to swing the
+        end-effector at a height at least the length of one link above the base.
+        Both links can swing freely and can pass by each other, i.e., they don't
+        collide when they have the same angle.
+        
+    State:
+        The state consists of the sin() and cos() of the two rotational joint
+        angles and the joint angular velocities:
+        [cos(theta1) sin(theta1) cos(theta2) sin(theta2) thetaDot1 thetaDot2].
+        For the first link, an angle of 0 corresponds to the link pointing
+        downwards.
+        The angle of the second link is relative to the angle of the first link.
+        An angle of 0 corresponds to having the same angle between the two links.
+        A state of [1, 0, 1, 0, ..., ...] means that both links point downwards.
+        
+    Actions:
+        The action is either applying +1, 0 or -1 torque on the joint between
+        the two pendulum links.
     .. note::
         The dynamics equations were missing some terms in the NIPS paper which
         are present in the book. R. Sutton confirmed in personal correspondence
@@ -62,7 +65,8 @@ class Acrobot(RenderInterface2D, Model):
         generated with the equations shown in the book.
         However, there is the option to run the domain with the paper equations
         by setting book_or_nips = 'nips'
-    **REFERENCE:**
+    
+    Reference:
     .. seealso::
         R. Sutton: Generalization in Reinforcement Learning:
         Successful Examples Using Sparse Coarse Coding (NIPS 1996)
@@ -318,6 +322,7 @@ def rk4(derivs, y0, t, *args, **kwargs):
         t = arange(0.0, 2.0, dt)
         y0 = (1,2)
         yout = rk4(derivs6, y0, t)
+        
     Example 2::
         ## 1D system
         alpha = 2
@@ -325,6 +330,7 @@ def rk4(derivs, y0, t, *args, **kwargs):
             return -alpha*x + exp(-t)
         y0 = 1
         yout = rk4(derivs, y0, t)
+        
     If you have access to scipy, you should probably be using the
     scipy.integrate tools rather than this function.
 
