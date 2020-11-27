@@ -2,7 +2,7 @@ import numpy as np
 
 from rlberry.agents import Agent
 from rlberry.agents.dynprog.utils import backward_induction, value_iteration
-from rlberry.spaces import Discrete
+from gym.spaces import Discrete
 
 
 class MBQVIAgent(Agent):

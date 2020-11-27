@@ -1,7 +1,7 @@
 import logging
 import numpy as np
 from rlberry.agents import Agent
-from rlberry.spaces import Discrete
+from gym.spaces import Discrete
 
 
 class LSVIUCBAgent(Agent):

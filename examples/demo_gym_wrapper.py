@@ -1,13 +1,9 @@
-import gym
-
+from rlberry.envs import gym_make
 from rlberry.agents import RSUCBVIAgent
-from rlberry.wrappers import Wrapper
 from rlberry.wrappers import RescaleRewardWrapper
 
-gym_env = gym.make('Acrobot-v1')
-gym_env.reward_range = (-1.0, 0.0)  # missing in gym implementation
-# from gym to rlberry
-env = Wrapper(gym_env)
+env = gym_make('Acrobot-v1')
+env.reward_range = (-1.0, 0.0)  # missing in gym implementation
 
 # rescake rewards to [0, 1]
 env = RescaleRewardWrapper(env, (0.0, 1.0))

@@ -73,6 +73,9 @@ class Wrapper(Model):
     def sample(self, state, action):
         return self.env.sample(state, action)
 
+    def render(self):
+        return self.env.render()
+
     def is_online(self):
         try:
             self.env.reset()
