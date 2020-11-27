@@ -130,16 +130,16 @@ class BaseModule(torch.nn.Module):
 
 class MultiLayerPerceptron(BaseModule):
     def __init__(self,
-                in_size=None,
-                layer_sizes=[64, 64],
-                reshape="True",
-                out_size=None,
+                 in_size=None,
+                 layer_sizes=None,
+                 reshape="True",
+                 out_size=None,
                  **kwargs):
         super().__init__(**kwargs)
         self.reshape = reshape
-        self.layer_sizes = layer_sizes
+        self.layer_sizes = layer_sizes or [64, 64]
         self.out_size = out_size
-        sizes = [in_size] + layer_sizes
+        sizes = [in_size] + self.layer_sizes
         layers_list = [nn.Linear(sizes[i], sizes[i + 1]) for i in range(len(sizes) - 1)]
         self.layers = nn.ModuleList(layers_list)
         if out_size:
@@ -158,17 +158,20 @@ class MultiLayerPerceptron(BaseModule):
 class DuelingNetwork(BaseModule):
     def __init__(self,
                  in_size=None,
-                 base_module_kwargs={},
-                 value_kwargs={},
-                 advantage_kwargs={},
+                 base_module_kwargs=None,
+                 value_kwargs=None,
+                 advantage_kwargs=None,
                  out_size=None):
         super().__init__()
         self.out_size = out_size
+        base_module_kwargs = base_module_kwargs or {}
         base_module_kwargs["in_size"] = in_size
         self.base_module = model_factory(**base_module_kwargs)
+        value_kwargs = value_kwargs or {}
         value_kwargs["in_size"] = self.base_module.layer_sizes[-1]
         value_kwargs["out_size"] = 1
         self.value = model_factory(**value_kwargs)
+        advantage_kwargs = advantage_kwargs or {}
         advantage_kwargs["in_size"] = self.base_module.layer_sizes[-1]
         advantage_kwargs["out_size"] = out_size
         self.advantage = model_factory(**advantage_kwargs)
@@ -186,7 +189,7 @@ class ConvolutionalNetwork(nn.Module):
                  in_channels=None,
                  in_height=None,
                  in_width=None,
-                 head_mlp_kwargs={},
+                 head_mlp_kwargs=None,
                  out_size=None,
                  **kwargs):
         super().__init__()
@@ -203,6 +206,7 @@ class ConvolutionalNetwork(nn.Module):
         convw = conv2d_size_out(conv2d_size_out(conv2d_size_out(in_width)))
         convh = conv2d_size_out(conv2d_size_out(conv2d_size_out(in_height)))
         assert convh > 0 and convw > 0
+        head_mlp_kwargs = head_mlp_kwargs or {}
         head_mlp_kwargs["in_size"] = convw * convh * 64
         head_mlp_kwargs["out_size"] = out_size
         self.head = model_factory(**self.head_mlp_kwargs)
@@ -303,23 +307,25 @@ class EgoAttentionNetwork(BaseModule):
                  in_size=None,
                  out_size=None,
                  presence_feature_idx=0,
-                 embedding_layer_kwargs={},
-                 attention_layer_kwargs={},
-                 output_layer_kwargs={},
+                 embedding_layer_kwargs=None,
+                 attention_layer_kwargs=None,
+                 output_layer_kwargs=None,
                  **kwargs):
         super().__init__(**kwargs)
         self.out_size = out_size
         self.presence_feature_idx = presence_feature_idx
+        embedding_layer_kwargs = embedding_layer_kwargs or {}
         if not embedding_layer_kwargs.get("in_size", None):
             embedding_layer_kwargs["in_size"] = in_size
 
+        attention_layer_kwargs = attention_layer_kwargs or {}
         self.attention_layer = EgoAttention(**attention_layer_kwargs)
 
+        output_layer_kwargs = output_layer_kwargs or {}
         output_layer_kwargs["in_size"] = self.attention_layer.feature_size
         output_layer_kwargs["out_size"] = self.out_size
 
         self.embedding = model_factory(self.embedding_layer)
-        self.self_attention_layer = None
         self.output_layer = model_factory(self.output_layer)
 
     def forward(self, x):

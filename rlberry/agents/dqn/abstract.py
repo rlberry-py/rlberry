@@ -8,24 +8,24 @@ from rlberry.agents.dqn.memory import ReplayMemory, Transition
 
 class AbstractDQNAgent(Agent, ABC):
     def __init__(self, env,
-                 model_kwargs={"type": "DuelingNetwork"},
-                 optimizer_kwargs=dict(),
-                 exploration_kwargs={},
+                 model_kwargs=None,
+                 optimizer_kwargs=None,
+                 exploration_kwargs=None,
+                 memory_kwargs=None,
                  n_episodes=1000,
                  loss_function="l2",
-                 memory_kwargs={},
                  batch_size=100,
                  gamma=0.99,
                  device="cuda:best",
                  target_update=1,
                  double=True):
         super().__init__(env)
-        self.model_kwargs = model_kwargs
-        self.optimizer_kwargs = optimizer_kwargs
-        self.exploration_kwargs = exploration_kwargs
+        self.model_kwargs = model_kwargs or {"type": "DuelingNetwork"}
+        self.optimizer_kwargs = optimizer_kwargs or {}
+        self.exploration_kwargs = exploration_kwargs or {}
+        self.memory_kwargs = memory_kwargs or {}
         self.n_episodes = n_episodes
         self.loss_function = loss_function
-        self.memory_kwargs = memory_kwargs
         self.batch_size = batch_size
         self.gamma = gamma
         self.device = device
