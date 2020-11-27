@@ -16,7 +16,6 @@ class AbstractDQNAgent(Configurable, Agent, ABC):
         self.memory = ReplayMemory(self.config)
         self.exploration_policy = exploration_factory(self.config["exploration"], self.env.action_space)
         self.training = True
-        self.previous_state = None
         self.steps = 0
         self.writer = None
 
@@ -83,14 +82,13 @@ class AbstractDQNAgent(Configurable, Agent, ABC):
             self.step_optimizer(loss)
             self.update_target_network()
 
-    def policy(self, state):
+    def policy(self, observation, **kwargs):
         """
             Act according to the state-action value model and an exploration policy
         :param state: current state
         :return: an action
         """
-        self.previous_state = state
-        values = self.get_state_action_values(state)
+        values = self.get_state_action_values(observation)
         self.exploration_policy.update(values)
         return self.exploration_policy.sample()
 
@@ -157,7 +155,7 @@ class AbstractDQNAgent(Configurable, Agent, ABC):
     def seed(self, seed=None):
         return self.exploration_policy.seed(seed)
 
-    def reset(self):
+    def reset(self, **kwargs):
         pass
 
     def set_writer(self, writer):
@@ -168,7 +166,6 @@ class AbstractDQNAgent(Configurable, Agent, ABC):
             pass
 
     def action_distribution(self, state):
-        self.previous_state = state
         values = self.get_state_action_values(state)
         self.exploration_policy.update(values)
         return self.exploration_policy.get_distribution()

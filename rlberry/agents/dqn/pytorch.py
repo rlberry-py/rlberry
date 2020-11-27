@@ -79,13 +79,13 @@ class DQNAgent(AbstractDQNAgent):
     def get_batch_state_action_values(self, states):
         return self.value_net(torch.tensor(states, dtype=torch.float).to(self.device)).data.cpu().numpy()
 
-    def save(self, filename):
+    def save(self, filename, **kwargs):
         state = {'state_dict': self.value_net.state_dict(),
                  'optimizer': self.optimizer.state_dict()}
         torch.save(state, filename)
         return filename
 
-    def load(self, filename):
+    def load(self, filename, **kwargs):
         checkpoint = torch.load(filename, map_location=self.device)
         self.value_net.load_state_dict(checkpoint['state_dict'])
         self.target_net.load_state_dict(checkpoint['state_dict'])
