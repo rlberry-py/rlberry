@@ -4,10 +4,33 @@ from gym.core import Env
 
 class Configurable(object):
     """
-        This class is a container for a configuration dictionary.
-        It allows to provide a default_config function with pre-filled configuration.
-        When provided with an input configuration, the default one will recursively be updated,
-        and the input configuration will also be updated with the resulting configuration.
+    This class is a container for a configuration dictionary.
+
+    It allows to provide a default_config function with pre-filled configuration.
+    When provided with an input configuration, the default one will recursively be updated,
+    and the input configuration will also be updated with the resulting configuration.
+
+    For example, consider the following example: you have a default configuration
+    default = {
+        "a": 1,
+        "b": {
+            "c": 1,
+            "d": 1
+        }
+    }
+    and you want to define a partial modification of this dict as:
+    config = {
+        "a": 2,
+        "b": {
+            "d": 2
+        }
+    }
+
+    You cannot do default.update(config), otherwise the value of "c" will disappear.
+    The proper behavior is given by Configurable.rec_update(default, config).
+
+    In addition, an object inheriting Configurable can define a default configuration in its
+    default_config() class method, and it will be recursively updated with the partial config given in the constructor.
     """
     def __init__(self, config=None):
         self.config = self.default_config()
@@ -20,7 +43,8 @@ class Configurable(object):
     @classmethod
     def default_config(cls):
         """
-            Override this function to provide the default configuration of the child class
+        Override this function to provide the default configuration of the child class.
+
         :return: a configuration dictionary
         """
         return {}
@@ -28,7 +52,8 @@ class Configurable(object):
     @staticmethod
     def rec_update(d, u):
         """
-            Recursive update of a mapping
+        Recursive update of a mapping.
+
         :param d: a mapping
         :param u: a mapping
         :return: d updated recursively with u
@@ -50,7 +75,7 @@ _ignored_keys = set(Dummy.__dict__.keys())
 
 class Serializable(dict):
     """
-        Automatically serialize all fields of an object to a dictionary.
+    Automatically serialize all fields of an object to a dictionary.
 
     Keys correspond to field names, and values correspond to field values representation by default but are
     recursively expanded to sub-dictionaries for any Serializable field.
@@ -76,9 +101,9 @@ class Serializable(dict):
 
 def serialize(obj):
     """
-        Serialize any object to a dictionary, so that it can be dumped easily to a JSON file.
+    Serialize any object to a dictionary, so that it can be dumped easily to a JSON file.
 
-     Four rules are applied:
+    Four rules are applied:
         - To be able to recreate the object, specify its class, or its spec id if the object is an Env.
         - If the object has a config dictionary field, use it. It is assumed that this config suffices to recreate a
         similar object.
