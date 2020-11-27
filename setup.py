@@ -8,7 +8,8 @@ install_requires = [
     'joblib',
     'matplotlib',
     'seaborn',
-    'pandas'
+    'pandas',
+    'gym'
 ]
 
 tests_require = [
@@ -22,6 +23,7 @@ tests_require = [
     'seaborn',
     'optuna',
     'pyvirtualdisplay',
+    'gym',
 ]
 
 full_requires = [
@@ -67,4 +69,3 @@ setup(
     extras_require=extras_require,
     zip_safe=False,
 )
-
