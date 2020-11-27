@@ -1,9 +1,6 @@
 import rlberry.seeding as seeding
-import logging
 import gym
-
 from rlberry.envs.interface import Model
-from rlberry.wrappers.gym_utils import convert_space_from_gym
 
 
 class Wrapper(Model):
@@ -27,25 +24,14 @@ class Wrapper(Model):
         # Save reference to env
         self.env = env
 
-        # Check if gym environment
-        if isinstance(env, gym.Env):
-            gym_env = env
-            # Warnings
-            logging.warning(
-                'GymWrapper: Rendering gym.Env does not \
-follow the same protocol as rlberry.')
-            # Convert spaces
-            self.observation_space = convert_space_from_gym(
-                gym_env.observation_space)
-            self.action_space = convert_space_from_gym(gym_env.action_space)
-            # Reward range
-            self.reward_range = gym_env.reward_range
+        self.observation_space = self.env.observation_space
+        self.action_space = self.env.action_space
+        self.reward_range = self.env.reward_range
 
-        # If rlberry environment
-        else:
-            self.observation_space = self.env.observation_space
-            self.action_space = self.env.action_space
-            self.reward_range = self.env.reward_range
+        # If gym environment, reseeding is necessary here for
+        # reproducibility.
+        if isinstance(env, gym.Env):
+            self.reseed()
 
     @property
     def unwrapped(self):
@@ -64,11 +50,19 @@ follow the same protocol as rlberry.')
 
     def reseed(self):
         self.rng = seeding.get_rng()
-        if isinstance(self.env, gym.Env):
+        # seed gym.Env that is not a rlberry Model
+        if isinstance(self.env, gym.Env) \
+                and not isinstance(self.env, Model):
             # get a seed for gym environment
-            self.env.seed(self.rng.integers(2**16).item())
+            seed = self.rng.integers(2**16).item()
+            self.env.seed(seed)
+            self.observation_space.seed(seed)
+            self.action_space.seed(seed)
+        # seed rlberry Model
         else:
             self.env.reseed()
+            self.observation_space.rng = self.env.rng
+            self.action_space.rng = self.env.rng
 
     def reset(self):
         return self.env.reset()

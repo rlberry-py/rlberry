@@ -1,7 +1,6 @@
 from rlberry.envs.interface import Model
 from rlberry.wrappers import Wrapper
 from rlberry.envs import GridWorld
-from rlberry.spaces import Discrete, Box
 import gym
 
 
@@ -26,8 +25,7 @@ def test_gym_wrapper():
     assert wrapped.is_online()
     assert not wrapped.is_generative()
 
-    assert isinstance(wrapped.observation_space, Box)
-    assert isinstance(wrapped.action_space, Discrete)
+    wrapped.reseed()
 
     # calling some gym functions
     wrapped.close()
