@@ -103,6 +103,36 @@ which includes:
 
 ## Getting started
 
+### Compatibility with [OpenAI Gym](https://gym.openai.com/)
+
+If you want to use `gym` environments with `rlberry`, simply do the following:
+
+```python
+from rlberry.env import gym_make
+
+# for example, let's take CartPole
+env = gym_make('CartPole-v1')
+```
+
+This way, `env` behaves exactly the same as the `gym` environment, we simply replace the seeding function by `env.reseed()`, which ensures unified seeding and reproducibility when using `rlberry`.
+
+
+### Seeding 
+
+In `rlberry`, __only one global seed__ is defined, and all the random number generators used by the agents and environments inherit from this seed, ensuring __reproducibility__  and __independence between the generators__ (see [NumPy SeedSequence](https://numpy.org/doc/stable/reference/random/parallel.html)).
+
+Example:
+
+```python
+import rlberry.seeding as seeding
+
+seeding.set_global_seed(seed=123)
+
+# From now on, no more seeds are defined by the user, and all the results are reproducible.
+...
+
+```
+
 ### Tests
 
 To run tests, install test dependencies with `pip install -e .[test]` and run `pytest`. To run tests with coverage, install test dependencies and run `bash run_testscov.sh`. See coverage report in `cov_html/index.html`.
