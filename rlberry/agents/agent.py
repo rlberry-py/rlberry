@@ -78,11 +78,11 @@ class Agent(ABC):
         """Put the agent in default setup."""
         pass
 
-    def save(self, **kwargs):
+    def save(self, filename, **kwargs):
         """Save agent object."""
         raise NotImplementedError("agent.save() not implemented.")
 
-    def load(self, **kwargs):
+    def load(self, filename, **kwargs):
         """Load agent object."""
         raise NotImplementedError("agent.load() not implemented.")
 
