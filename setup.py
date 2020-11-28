@@ -29,6 +29,7 @@ tests_require = [
 full_requires = [
     'numba',
     'torch>=1.6.0',
+    'tensorboard',
     'optuna',
     'ffmpeg-python',
     'PyOpenGL',
@@ -41,7 +42,7 @@ extras_require = {
     'test': tests_require,
     'deploy': ['sphinx', 'sphinx_rtd_theme'],
     'opengl_rendering': ['PyOpenGL', 'PyOpenGL_accelerate'],
-    'torch_agents': ['torch>=1.6.0'],
+    'torch_agents': ['torch>=1.6.0', 'tensorboard'],
     'hyperparam_optimization': ['optuna'],
     'save_video': ['ffmpeg-python'],
 }

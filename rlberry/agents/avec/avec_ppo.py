@@ -2,57 +2,14 @@ import time
 
 import numpy as np
 import torch
-import torch.nn as nn
-from torch.distributions import Categorical
 
 import gym.spaces as spaces
 from rlberry.agents import IncrementalAgent
 
 # choose device
+from rlberry.agents.common.models import ActorCritic
+
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
-
-class ActorCritic(nn.Module):
-    def __init__(self, state_dim, action_dim):
-        super(ActorCritic, self).__init__()
-        # actor
-        self.actor = nn.Sequential(
-            nn.Linear(state_dim, 64),
-            nn.Tanh(),
-            nn.Linear(64, 64),
-            nn.Tanh(),
-            nn.Linear(64, action_dim),
-            nn.Softmax(dim=-1)
-        )
-        # critic
-        self.critic = nn.Sequential(
-            nn.Linear(state_dim, 64),
-            nn.Tanh(),
-            nn.Linear(64, 64),
-            nn.Tanh(),
-            nn.Linear(64, 1)
-        )
-
-    def forward(self):
-        raise NotImplementedError
-
-    def act(self, state):
-        action_probs = self.actor(state)
-        dist = Categorical(action_probs)
-        action = dist.sample()
-
-        return action, dist.log_prob(action)
-
-    def evaluate(self, state, action):
-        action_probs = self.actor(state)
-        dist = Categorical(action_probs)
-
-        action_logprobs = dist.log_prob(action)
-        dist_entropy = dist.entropy()
-
-        state_value = self.critic(state)
-
-        return action_logprobs, torch.squeeze(state_value), dist_entropy
 
 
 class Memory:
