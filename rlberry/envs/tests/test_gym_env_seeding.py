@@ -1,19 +1,16 @@
-import gym
 import numpy as np
 import pytest
 import rlberry.seeding as seeding
-from rlberry.wrappers import Wrapper
+from rlberry.envs import gym_make
+
 
 from copy import deepcopy
 
 
-# gym_envs = [
-#     'Acrobot-v1',
-#     'CartPole-v1',
-#     'MountainCar-v0',
-# ]
 gym_envs = [
-    'Acrobot-v1'
+    'Acrobot-v1',
+    'CartPole-v1',
+    'MountainCar-v0',
 ]
 
 
@@ -22,7 +19,9 @@ def get_env_trajectory(env, horizon):
     ss = env.reset()
     for ii in range(horizon):
         states.append(ss)
-        ss, _, _, _ = env.step(env.action_space.sample())
+        ss, _, done, _ = env.step(env.action_space.sample())
+        if done:
+            ss = env.reset()
     return states
 
 
@@ -37,13 +36,13 @@ def compare_trajectories(traj1, traj2):
 def test_env_seeding(env_name):
 
     seeding.set_global_seed(123)
-    env1 = Wrapper(gym.make(env_name))
+    env1 = gym_make(env_name)
 
     seeding.set_global_seed(456)
-    env2 = Wrapper(gym.make(env_name))
+    env2 = gym_make(env_name)
 
     seeding.set_global_seed(123)
-    env3 = Wrapper(gym.make(env_name))
+    env3 = gym_make(env_name)
 
     if deepcopy(env1).is_online():
         traj1 = get_env_trajectory(env1, 500)
@@ -58,7 +57,7 @@ def test_env_seeding(env_name):
 def test_copy_reseeding(env_name):
 
     seeding.set_global_seed(123)
-    env = Wrapper(gym.make(env_name))
+    env = gym_make(env_name)
 
     c_env = deepcopy(env)
     c_env.reseed()
