@@ -9,7 +9,7 @@ import gym.spaces as spaces
 from rlberry.agents import Agent
 
 # choose device
-from rlberry.agents.common.models import Net
+from rlberry.agents.utils.torch_models import Net
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 

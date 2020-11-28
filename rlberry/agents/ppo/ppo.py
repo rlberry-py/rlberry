@@ -6,7 +6,7 @@ import torch.nn as nn
 
 import gym.spaces as spaces
 from rlberry.agents import IncrementalAgent
-from rlberry.agents.common.models import ValueNet, PolicyNet
+from rlberry.agents.utils.torch_models import ValueNet, PolicyNet
 
 # choose device
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
