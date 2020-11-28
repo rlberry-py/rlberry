@@ -98,6 +98,7 @@ which includes:
 *   [`Numba`](https://github.com/numba/numba) for just-in-time compilation of algorithms based on dynamic programming
 *   [`PyTorch`](https://pytorch.org/) for Deep RL agents
 *   [`Optuna`](https://optuna.org/#installation) for hyperparameter optimization
+*   [`Sacred`](https://github.com/IDSIA/sacred) for handling experiment configurations
 *   [`ffmpeg-python`](https://github.com/kkroening/ffmpeg-python) for saving videos
 *   [`PyOpenGL`](https://pypi.org/project/PyOpenGL/) for more rendering options
 

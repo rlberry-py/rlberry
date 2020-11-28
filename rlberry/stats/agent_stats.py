@@ -89,7 +89,7 @@ class AgentStats:
 
             self.eval_horizon = eval_horizon
             # init and fit kwargs are deep copied in fit()
-            self.init_kwargs = init_kwargs
+            self.init_kwargs = deepcopy(init_kwargs)
             self.fit_kwargs = fit_kwargs
             self.policy_kwargs = deepcopy(policy_kwargs)
             self.n_fit = n_fit
