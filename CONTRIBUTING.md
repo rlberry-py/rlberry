@@ -79,8 +79,8 @@ class MyAgent(Agent):
         # ... and param_2 could be a learning_rate
         param_2 = trial.suggest_loguniform('param_2', 1e-5, 1)
         return {
-                'batch_size': batch_size,
-                'learning_rate': learning_rate,
+                'param_1': param_1,
+                'param_2': param_2,
                 }
 ```
 
