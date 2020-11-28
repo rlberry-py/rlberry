@@ -190,7 +190,7 @@ class PPOAgent(IncrementalAgent):
         return action
 
     def fit(self, **kwargs):
-        for k in range(self.n_episodes):
+        for _ in range(self.n_episodes):
             self._run_episode()
 
         info = {"n_episodes": self.episode,
@@ -251,7 +251,7 @@ class PPOAgent(IncrementalAgent):
         # interact for H steps
         episode_rewards = 0
         state = self.env.reset()
-        for t in range(self.horizon):
+        for _ in range(self.horizon):
             # running policy_old
             action = self._select_action(state)
             next_state, reward, done, _ = self.env.step(action)

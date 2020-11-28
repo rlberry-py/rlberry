@@ -44,7 +44,7 @@ class Acrobot(RenderInterface2D, Model):
         end-effector at a height at least the length of one link above the base.
         Both links can swing freely and can pass by each other, i.e., they don't
         collide when they have the same angle.
-        
+
     State:
         The state consists of the sin() and cos() of the two rotational joint
         angles and the joint angular velocities:
@@ -54,7 +54,7 @@ class Acrobot(RenderInterface2D, Model):
         The angle of the second link is relative to the angle of the first link.
         An angle of 0 corresponds to having the same angle between the two links.
         A state of [1, 0, 1, 0, ..., ...] means that both links point downwards.
-        
+
     Actions:
         The action is either applying +1, 0 or -1 torque on the joint between
         the two pendulum links.
@@ -65,7 +65,7 @@ class Acrobot(RenderInterface2D, Model):
         generated with the equations shown in the book.
         However, there is the option to run the domain with the paper equations
         by setting book_or_nips = 'nips'
-    
+
     Reference:
     .. seealso::
         R. Sutton: Generalization in Reinforcement Learning:

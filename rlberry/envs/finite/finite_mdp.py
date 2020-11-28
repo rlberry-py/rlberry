@@ -100,7 +100,8 @@ class FiniteMDP(Model):
         self.state = next_state
         return next_state, reward, done, info
 
-    def is_terminal(self, state):
+    @staticmethod
+    def is_terminal(state):
         """
         Returns true if a state is terminal.
         """

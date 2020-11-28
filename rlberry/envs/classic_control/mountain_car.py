@@ -108,7 +108,7 @@ class MountainCar(RenderInterface2D, Model):
         return self.state.copy()
 
     def sample(self, state, action):
-        if (type(state) != np.ndarray):
+        if not isinstance(state, np.ndarray):
             state = np.array(state)
         assert self.observation_space.contains(state), \
             "Invalid state as argument of reset()."
@@ -134,7 +134,8 @@ class MountainCar(RenderInterface2D, Model):
         next_state = np.array([position, velocity])
         return next_state, reward, done, {}
 
-    def _height(self, xs):
+    @staticmethod
+    def _height(xs):
         return np.sin(3 * xs) * .45 + .55
 
     #

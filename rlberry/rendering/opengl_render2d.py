@@ -111,7 +111,8 @@ class OpenGLRender2D:
         self.time_count += 1
         glFlush()
 
-    def draw_geometric2d(self, shape):
+    @staticmethod
+    def draw_geometric2d(shape):
         """
         Draw a 2D shape, of type GeometricPrimitive
         """
