@@ -8,13 +8,16 @@ Currently, we are accepting the following forms of contributions:
 -   New environments
 -   New agents
 
+## Guidelines for docstring
 
-# Guidelines for new agents
+*   Follow the [numpydoc docstring guide](https://numpydoc.readthedocs.io/en/latest/format.html).
 
+## Guidelines for new agents
 
-* Create a folder for the agent `rlberry/agents/agent_name`.
-* Create `rlberry/agents/agent_name/__init__.py`.
-* Write a test to check that the agent is running `rlberry/agents/test_agent_name.py`.
+*   Create a folder for the agent `rlberry/agents/agent_name`.
+*   Create `rlberry/agents/agent_name/__init__.py`.
+*   Write a test to check that the agent is running `rlberry/agents/test_agent_name.py`.
+*   Write an example `examples/demo_agent_name.py`.
 
 ### Agent code template
 
