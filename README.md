@@ -44,25 +44,40 @@
 
 | Section | Description |
 |-|-|
-| [Goals](#goals) | The philosophy of `rlberry` |
+| [Introduction](#introduction) | The philosophy of `rlberry` |
 | [Installation](#installation) | How to install `rlberry` |
 | [Getting started](#getting-started) | A quick usage guide of `rlberry` |
 | [Documentation](#documentation) | A link to the documentation |
 | [Contributing](#contributing) | A guide for contributing |
 | [Citation](#citing-rlberry) | How to cite this work |
 
-## Goals
+## Introduction
 
-*   Write detailed documentation and comprehensible tutorial/examples (Jupyter Notebook) for each implemented algorithm.
+The goal of `rlberry`to make **Reinforcement Learning** (RL) research and teaching easier. For that purpose, `rlberry` provides several interfaces that allow users to create their own experimental pipeline in a fast, clear and reproducible way. `rlberry` comprises the following major components and main features:
 
-*   Provide a general interface for agents, that
+*   An interface for agents, that
     *   puts minimal constraints on the agent code (=> making it easy to include new algorithms and modify existing ones);
 
-    *   allows comparison between agents using a simple and unified evaluation interface (=> making it easy, for instance, to compare deep and "traditional" RL algorithms).
-    
-*   Unified seeding mechanism: define only one global seed, from which all other seeds will inherit, enforcing independence of the random number generators.
+    *   allows comparison between agents using a simple and unified evaluation interface (=> making it easy, for instance, to compare deep and "traditional" RL algorithms);
 
-*   Simple interface for creating and rendering new environments. 
+    *   includes detailed documentation and comprehensible tutorial/examples (Jupyter Notebook) for each implemented agents (=> making it easy for education).
+
+*   An interface for environments, that
+    *   allows to create novel environments easily (=> making it possible to add your own environments);
+
+    *   totally adapts to [`OpenAI Gym`](https://gym.openai.com/) (=> making it easy to use any existing environments from `Gym`).
+
+*   An interface for rendering, that
+    *   provides simple and clear visualisation of your experiments.
+
+*   Several important features include
+    *   a unified seeding mechanism: define only one global seed, from which all other seeds will inherit, enforcing independence of the random number generators;
+
+    *   an interface to [`Optuna`](https://optuna.org/) that allows automatic hyperparameter optimisation;
+
+    *   an interface to [`sacred`](https://sacred.readthedocs.io/en/stable/quickstart.html) that facilitates configuration, organisation, logging and reproducing of computational experiments.
+
+
 
 ## Installation
 
@@ -103,6 +118,10 @@ which includes:
 *   [`PyOpenGL`](https://pypi.org/project/PyOpenGL/) for more rendering options
 
 ## Getting started
+
+If you are new comer or just want to play around with `rlberry`: please try it with <a href="https://colab.research.google.com/github/rlberry-py/rlberry/blob/main/notebooks/introduction_to_rlberry.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg"></a>.
+
+If you want to design a full RL experimental pipeline: please see <a href="https://colab.research.google.com/github/rlberry-py/rlberry/blob/main/notebooks/experimental_pipeline_with_rlberry.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg"></a> for an example.  
 
 ### Compatibility with [OpenAI Gym](https://gym.openai.com/)
 
