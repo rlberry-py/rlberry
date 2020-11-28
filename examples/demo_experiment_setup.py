@@ -1,9 +1,7 @@
 """
-Running the following the commands line will:
+Running this script will:
 *  Execute the experiments
-*  Save a config.json file, with the parameters used
-
-python examples/demo_experiment_setup.py  && python examples/demo_experiment_setup.py save_config with config_filename='config_demo.yaml'
+*  Save a config.json file in the folder dev/demo_experiment, with the parameters used
 """
 
 import rlberry.seeding as seeding
