@@ -23,7 +23,7 @@ ex.observers.append(fs_observer)
 def cfg():
     """
     Defines experiment parameters, using the Sacred library.
-    See Secret documentation at https://sacred.readthedocs.io/en/stable/
+    See Sacred documentation at https://sacred.readthedocs.io/en/stable/
     """
     params = {}
     params['ppo'] = {
