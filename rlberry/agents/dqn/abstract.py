@@ -7,30 +7,23 @@ from rlberry.agents.dqn.memory import ReplayMemory, Transition
 
 
 class AbstractDQNAgent(Agent, ABC):
-    def __init__(self, env,
-                 model_kwargs=None,
-                 optimizer_kwargs=None,
+    def __init__(self,
+                 env,
+                 horizon,
                  exploration_kwargs=None,
                  memory_kwargs=None,
                  n_episodes=1000,
-                 loss_function="l2",
                  batch_size=100,
-                 gamma=0.99,
-                 device="cuda:best",
                  target_update=1,
                  double=True,
                  **kwargs):
         ABC.__init__(self)
         Agent.__init__(self, env, **kwargs)
-        self.model_kwargs = model_kwargs or {"type": "DuelingNetwork"}
-        self.optimizer_kwargs = optimizer_kwargs or {}
+        self.horizon = horizon
         self.exploration_kwargs = exploration_kwargs or {}
         self.memory_kwargs = memory_kwargs or {}
         self.n_episodes = n_episodes
-        self.loss_function = loss_function
         self.batch_size = batch_size
-        self.gamma = gamma
-        self.device = device
         self.target_update = target_update
         self.double = double
 
@@ -51,13 +44,16 @@ class AbstractDQNAgent(Agent, ABC):
             print("episode", episode)
             done, total_reward = False, 0
             state = self.env.reset()
-            while not done:
+            ep_time = 0
+            while not done and ep_time < self.horizon:
                 self.exploration_policy.step_time()
                 action = self.policy(state)
                 next_state, reward, done, info = self.env.step(action)
                 self.record(state, action, reward, next_state, done, info)
                 state = next_state
                 total_reward += reward
+                #
+                ep_time += 1
             if self.writer:
                 self.writer.add_scalar("fit/total_reward",
                                        total_reward,

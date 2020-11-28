@@ -13,6 +13,15 @@ from rlberry.utils.torch import choose_device
 logger = logging.getLogger(__name__)
 
 
+def default_qvalue_net_fn(env):
+    """
+    Returns a default Q value network.
+    """
+    model_config = {"type": "DuelingNetwork"}
+    model_config = size_model_config(env, **model_config)
+    return model_factory(**model_config)
+
+
 class DQNAgent(AbstractDQNAgent):
     """
     Deep Q Learning Agent.
@@ -21,50 +30,66 @@ class DQNAgent(AbstractDQNAgent):
     ----------
     env: gym.Env
         Environment
-    model_kwargs: dict
-        Parameters of the neural network representing the Q function.
-    optimizer_kwargs: dict
-        Parameters of the optimization algorithm.
-    memory_kwargs : dict
-        Parameters of the replay buffer
     n_episodes : int
         Number of episodes to train the algorithm
+    horizon : int
+        Maximum lenght of an episode.
+    gamma : double
+        Discount factor
+    qvalue_net_fn : function
+        Function that returns an instance of a network representing
+        the Q function.
+        If none, a default network is used.
     loss_function : str
         Type of loss function. Possibilities: 'l2', 'l1', 'smooth_l1'
     batch_size : int
         Batch size
-    gamma : double
-        Discount factor
     device : str
         Device used by pytorch.
     target_update : int
         Number of steps to wait before updating the target network.
     double : bool
         If true, use double Q-learning.
+    optimizer_kwargs: dict
+        Parameters of the optimization algorithm.
+    exploration_kwargs : dict
+        Parameters of exploration policy.
+    memory_kwargs : dict
+        Parameters of the replay buffer: capacity (int) and n_steps (int)
     """
     def __init__(self,
                  env,
-                 model_kwargs=None,
-                 optimizer_kwargs=None,
-                 exploration_kwargs=None,
-                 memory_kwargs=None,
                  n_episodes=1000,
+                 horizon=256,
+                 gamma=0.99,
+                 qvalue_net_fn=None,
                  loss_function="l2",
                  batch_size=100,
-                 gamma=0.99,
                  device="cuda:best",
                  target_update=1,
                  double=True,
+                 optimizer_kwargs=None,
+                 exploration_kwargs=None,
+                 memory_kwargs=None,
                  **kwargs):
         # Wrap arguments and initialize base class
-        args = (env, model_kwargs, optimizer_kwargs, exploration_kwargs,
-                memory_kwargs, n_episodes, loss_function, batch_size, gamma,
-                device, target_update, double)
-        AbstractDQNAgent.__init__(self, *args, **kwargs)
+        memory_kwargs = memory_kwargs or {}
+        memory_kwargs['gamma'] = gamma
+        base_args = (env, horizon, exploration_kwargs, memory_kwargs,
+                     n_episodes, batch_size, target_update, double)
+        AbstractDQNAgent.__init__(self, *base_args, **kwargs)
 
-        self.model_kwargs = size_model_config(self.env, **self.model_kwargs)
-        self.value_net = model_factory(**self.model_kwargs)
-        self.target_net = model_factory(**self.model_kwargs)
+        # init
+        self.optimizer_kwargs = optimizer_kwargs or {}
+        self.device = device
+        self.loss_function = loss_function
+        self.gamma = gamma
+        #
+        qvalue_net_fn = qvalue_net_fn \
+            or (lambda: default_qvalue_net_fn(self.env))
+        self.value_net = qvalue_net_fn()
+        self.target_net = qvalue_net_fn()
+        #
         self.target_net.load_state_dict(self.value_net.state_dict())
         self.target_net.eval()
         logger.debug("Number of trainable parameters: {}"
