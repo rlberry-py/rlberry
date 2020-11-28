@@ -108,7 +108,7 @@ which includes:
 If you want to use `gym` environments with `rlberry`, simply do the following:
 
 ```python
-from rlberry.env import gym_make
+from rlberry.envs import gym_make
 
 # for example, let's take CartPole
 env = gym_make('CartPole-v1')
