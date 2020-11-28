@@ -133,7 +133,8 @@ class Acrobot(RenderInterface2D, Model):
         return self._get_ob()
 
     def step(self, action):
-        assert self.action_space.contains(action)
+        assert self.action_space.contains(action), \
+                "%r (%s) invalid" % (action, type(action))
 
         # save state for rendering
         if self.is_render_enabled():
@@ -168,7 +169,7 @@ class Acrobot(RenderInterface2D, Model):
         self.state = ns
         terminal = self._terminal()
         reward = -1. if not terminal else 0.
-        return (self._get_ob(), reward, terminal, {})
+        return self._get_ob(), reward, terminal, {}
 
     def _get_ob(self):
         s = self.state
@@ -322,7 +323,7 @@ def rk4(derivs, y0, t, *args, **kwargs):
         t = arange(0.0, 2.0, dt)
         y0 = (1,2)
         yout = rk4(derivs6, y0, t)
-        
+ 
     Example 2::
         ## 1D system
         alpha = 2
@@ -330,7 +331,7 @@ def rk4(derivs, y0, t, *args, **kwargs):
             return -alpha*x + exp(-t)
         y0 = 1
         yout = rk4(derivs, y0, t)
-        
+ 
     If you have access to scipy, you should probably be using the
     scipy.integrate tools rather than this function.
 
@@ -360,3 +361,4 @@ def rk4(derivs, y0, t, *args, **kwargs):
         k4 = np.asarray(derivs(y0 + dt * k3, thist + dt, *args, **kwargs))
         yout[i + 1] = y0 + dt / 6.0 * (k1 + 2 * k2 + 2 * k3 + k4)
     return yout
+

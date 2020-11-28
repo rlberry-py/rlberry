@@ -3,7 +3,7 @@ import pytest
 import rlberry.seeding as seeding
 
 from copy import deepcopy
-from rlberry.envs.classic_control import MountainCar, Acrobot
+from rlberry.envs.classic_control import MountainCar, Acrobot, Pendulum
 from rlberry.envs.finite import Chain
 from rlberry.envs.finite import GridWorld
 from rlberry.envs.benchmarks.ball_exploration import PBall2D, SimplePBallND
@@ -15,7 +15,8 @@ classes = [
     Chain,
     PBall2D,
     SimplePBallND,
-    Acrobot
+    Acrobot,
+    Pendulum
 ]
 
 

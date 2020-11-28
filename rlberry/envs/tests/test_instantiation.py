@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from rlberry.envs.classic_control import MountainCar, Acrobot
+from rlberry.envs.classic_control import MountainCar, Acrobot, Pendulum
 from rlberry.envs.finite import Chain
 from rlberry.envs.finite import GridWorld
 from rlberry.envs.benchmarks.ball_exploration import PBall2D, SimplePBallND
@@ -15,7 +15,8 @@ classes = [
     Chain,
     PBall2D,
     SimplePBallND,
-    Acrobot
+    Acrobot,
+    Pendulum
 ]
 
 
@@ -71,3 +72,4 @@ def test_pball_env(p):
     env = PBall2D(p=p)
     env.get_reward_lipschitz_constant()
     env.get_transitions_lipschitz_constant()
+

@@ -4,6 +4,7 @@ import pytest
 from pyvirtualdisplay import Display
 from rlberry.envs.classic_control import MountainCar
 from rlberry.envs.classic_control import Acrobot
+from rlberry.envs.classic_control import Pendulum
 from rlberry.envs.finite import Chain
 from rlberry.envs.finite import GridWorld
 from rlberry.envs.benchmarks.ball_exploration import PBall2D, SimplePBallND
@@ -18,6 +19,7 @@ except Exception:
 
 classes = [
     Acrobot,
+    Pendulum,
     MountainCar,
     GridWorld,
     Chain,
