@@ -71,12 +71,17 @@ class MyAgent(Agent):
         ----------
         trial: optuna.trial
         """
-        # for example
-        batch_size = trial.suggest_categorical('batch_size',
+        # Note: param_1 and param_2 are in the constructor.
+
+        # for example, param_1 could be the batch_size...
+        param_1 = trial.suggest_categorical('param_1',
                                                [1, 4, 8, 16, 32, 64])
-        learning_rate = trial.suggest_loguniform('learning_rate', 1e-5, 1)
+        # ... and param_2 could be a learning_rate
+        param_2 = trial.suggest_loguniform('param_2', 1e-5, 1)
         return {
                 'batch_size': batch_size,
                 'learning_rate': learning_rate,
                 }
 ```
+
+__Remark__: For a faster hyperparameter optimization, it is recommended to implement the `partial_fit()` function in the `IncrementalAgent` interface (`rlberry/agents/incremental_agent.py`), in which case the agent must inherit from `IncrementalAgent`.
