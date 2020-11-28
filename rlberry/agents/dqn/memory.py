@@ -1,12 +1,14 @@
 import random
 from collections import namedtuple
 
-Transition = namedtuple('Transition', ('state', 'action', 'reward', 'next_state', 'terminal', 'info'))
+Transition = namedtuple('Transition',
+                        ('state', 'action', 'reward',
+                         'next_state', 'terminal', 'info'))
 
 
 class ReplayMemory(object):
     """
-        Container that stores and samples transitions.
+    Container that stores and samples transitions.
     """
     def __init__(self,
                  transition_type=Transition,

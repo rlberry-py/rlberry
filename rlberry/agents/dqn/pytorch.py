@@ -2,8 +2,10 @@ import logging
 import torch
 from gym import spaces
 
-from rlberry.agents.common.models import size_model_config, model_factory, trainable_parameters
-from rlberry.agents.common.training import loss_function_factory, optimizer_factory
+from rlberry.agents.common.models import size_model_config, model_factory
+from rlberry.agents.common.models import trainable_parameters
+from rlberry.agents.common.training import loss_function_factory
+from rlberry.agents.common.training import optimizer_factory
 from rlberry.agents.dqn.abstract import AbstractDQNAgent
 from rlberry.agents.dqn.memory import Transition
 from rlberry.utils.torch import choose_device
@@ -12,14 +14,61 @@ logger = logging.getLogger(__name__)
 
 
 class DQNAgent(AbstractDQNAgent):
-    def __init__(self, env, **kwargs):
-        super().__init__(env, **kwargs)
+    """
+    Deep Q Learning Agent.
+
+    Parameters
+    ----------
+    env: gym.Env
+        Environment
+    model_kwargs: dict
+        Parameters of the neural network representing the Q function.
+    optimizer_kwargs: dict
+        Parameters of the optimization algorithm.
+    memory_kwargs : dict
+        Parameters of the replay buffer
+    n_episodes : int
+        Number of episodes to train the algorithm
+    loss_function : str
+        Type of loss function. Possibilities: 'l2', 'l1', 'smooth_l1'
+    batch_size : int
+        Batch size
+    gamma : double
+        Discount factor
+    device : str
+        Device used by pytorch.
+    target_update : int
+        Number of steps to wait before updating the target network.
+    double : bool
+        If true, use double Q-learning.
+    """
+    def __init__(self,
+                 env,
+                 model_kwargs=None,
+                 optimizer_kwargs=None,
+                 exploration_kwargs=None,
+                 memory_kwargs=None,
+                 n_episodes=1000,
+                 loss_function="l2",
+                 batch_size=100,
+                 gamma=0.99,
+                 device="cuda:best",
+                 target_update=1,
+                 double=True,
+                 **kwargs):
+        # Wrap arguments and initialize base class
+        args = (env, model_kwargs, optimizer_kwargs, exploration_kwargs,
+                memory_kwargs, n_episodes, loss_function, batch_size, gamma,
+                device, target_update, double)
+        AbstractDQNAgent.__init__(self, *args, **kwargs)
+
         self.model_kwargs = size_model_config(self.env, **self.model_kwargs)
         self.value_net = model_factory(**self.model_kwargs)
         self.target_net = model_factory(**self.model_kwargs)
         self.target_net.load_state_dict(self.value_net.state_dict())
         self.target_net.eval()
-        logger.debug("Number of trainable parameters: {}".format(trainable_parameters(self.value_net)))
+        logger.debug("Number of trainable parameters: {}"
+                     .format(trainable_parameters(self.value_net)))
         self.device = choose_device(self.device)
         self.value_net.to(self.device)
         self.target_net.to(self.device)
@@ -40,43 +89,62 @@ class DQNAgent(AbstractDQNAgent):
         # Compute concatenate the batch elements
         if not isinstance(batch.state, torch.Tensor):
             # logger.info("Casting the batch to torch.tensor")
-            state = torch.cat(tuple(torch.tensor([batch.state], dtype=torch.float))).to(self.device)
-            action = torch.tensor(batch.action, dtype=torch.long).to(self.device)
-            reward = torch.tensor(batch.reward, dtype=torch.float).to(self.device)
-            next_state = torch.cat(tuple(torch.tensor([batch.next_state], dtype=torch.float))).to(self.device)
-            terminal = torch.tensor(batch.terminal, dtype=torch.bool).to(self.device)
-            batch = Transition(state, action, reward, next_state, terminal, batch.info)
+            state = torch.cat(tuple(torch.tensor([batch.state],
+                              dtype=torch.float))).to(self.device)
+            action = torch.tensor(batch.action,
+                                  dtype=torch.long).to(self.device)
+            reward = torch.tensor(batch.reward,
+                                  dtype=torch.float).to(self.device)
+            next_state = torch.cat(tuple(torch.tensor([batch.next_state],
+                                   dtype=torch.float))).to(self.device)
+            terminal = torch.tensor(batch.terminal,
+                                    dtype=torch.bool).to(self.device)
+            batch = Transition(state, action, reward,
+                               next_state, terminal, batch.info)
 
         # Compute Q(s_t, a) - the model computes Q(s_t), then we select the
         # columns of actions taken
         state_action_values = self.value_net(batch.state)
-        state_action_values = state_action_values.gather(1, batch.action.unsqueeze(1)).squeeze(1)
+        state_action_values = \
+            state_action_values.gather(1, batch.action.unsqueeze(1)).squeeze(1)
 
         if target_state_action_value is None:
             with torch.no_grad():
                 # Compute V(s_{t+1}) for all next states.
-                next_state_values = torch.zeros(batch.reward.shape).to(self.device)
+                next_state_values = \
+                    torch.zeros(batch.reward.shape).to(self.device)
                 if self.double:
                     # Double Q-learning: pick best actions from policy network
                     _, best_actions = self.value_net(batch.next_state).max(1)
-                    # Double Q-learning: estimate action values from target network
-                    best_values = self.target_net(batch.next_state).gather(1, best_actions.unsqueeze(1)).squeeze(1)
+                    # Double Q-learning: estimate action values
+                    # from target network
+                    best_values = self.target_net(
+                                    batch.next_state
+                                    ).gather(1, best_actions.unsqueeze(1))\
+                                     .squeeze(1)
                 else:
                     best_values, _ = self.target_net(batch.next_state).max(1)
-                next_state_values[~batch.terminal] = best_values[~batch.terminal]
+                next_state_values[~batch.terminal] \
+                    = best_values[~batch.terminal]
                 # Compute the expected Q values
-                target_state_action_value = batch.reward + self.gamma * next_state_values
+                target_state_action_value = batch.reward \
+                    + self.gamma * next_state_values
 
         # Compute loss
-        loss = self.loss_function(state_action_values, target_state_action_value)
+        loss = self.loss_function(state_action_values,
+                                  target_state_action_value)
         return loss, target_state_action_value, batch
 
     def get_batch_state_values(self, states):
-        values, actions = self.value_net(torch.tensor(states, dtype=torch.float).to(self.device)).max(1)
+        values, actions = self.value_net(torch.tensor(states,
+                                         dtype=torch.float)
+                                         .to(self.device)).max(1)
         return values.data.cpu().numpy(), actions.data.cpu().numpy()
 
     def get_batch_state_action_values(self, states):
-        return self.value_net(torch.tensor(states, dtype=torch.float).to(self.device)).data.cpu().numpy()
+        return self.value_net(torch.tensor(states,
+                              dtype=torch.float)
+                              .to(self.device)).data.cpu().numpy()
 
     def save(self, filename, **kwargs):
         state = {'state_dict': self.value_net.state_dict(),
@@ -96,8 +164,11 @@ class DQNAgent(AbstractDQNAgent):
 
     def set_writer(self, writer):
         super().set_writer(writer)
-        obs_shape = self.env.observation_space.shape if isinstance(self.env.observation_space, spaces.Box) else \
+        obs_shape = self.env.observation_space.shape \
+            if isinstance(self.env.observation_space, spaces.Box) else \
             self.env.observation_space.spaces[0].shape
-        model_input = torch.zeros((1, *obs_shape), dtype=torch.float, device=self.device)
+        model_input = torch.zeros((1, *obs_shape), dtype=torch.float,
+                                  device=self.device)
         self.writer.add_graph(self.value_net, input_to_model=(model_input,))
-        self.writer.add_scalar("agent/trainable_parameters", trainable_parameters(self.value_net), 0)
+        self.writer.add_scalar("agent/trainable_parameters",
+                               trainable_parameters(self.value_net), 0)

@@ -18,8 +18,10 @@ class AbstractDQNAgent(Agent, ABC):
                  gamma=0.99,
                  device="cuda:best",
                  target_update=1,
-                 double=True):
-        super().__init__(env)
+                 double=True,
+                 **kwargs):
+        ABC.__init__(self)
+        Agent.__init__(self, env, **kwargs)
         self.model_kwargs = model_kwargs or {"type": "DuelingNetwork"}
         self.optimizer_kwargs = optimizer_kwargs or {}
         self.exploration_kwargs = exploration_kwargs or {}
@@ -36,7 +38,9 @@ class AbstractDQNAgent(Agent, ABC):
             "Only compatible with Discrete action spaces."
 
         self.memory = ReplayMemory(**self.memory_kwargs)
-        self.exploration_policy = exploration_factory(self.env.action_space, **exploration_kwargs)
+        self.exploration_policy = \
+            exploration_factory(self.env.action_space,
+                                **self.exploration_kwargs)
         self.training = True
         self.steps = 0
         self.writer = None
@@ -55,7 +59,9 @@ class AbstractDQNAgent(Agent, ABC):
                 state = next_state
                 total_reward += reward
             if self.writer:
-                self.writer.add_scalar("fit/total_reward", total_reward, episode)
+                self.writer.add_scalar("fit/total_reward",
+                                       total_reward,
+                                       episode)
             episode_rewards.append(total_reward)
 
         return {
@@ -65,18 +71,21 @@ class AbstractDQNAgent(Agent, ABC):
 
     def record(self, state, action, reward, next_state, done, info):
         """
-            Record a transition by performing a Deep Q-Network iteration
+        Record a transition by performing a Deep Q-Network iteration
 
-            - push the transition into memory
-            - sample a minibatch
-            - compute the bellman residual loss over the minibatch
-            - perform one gradient descent step
-            - slowly track the policy network with the target network
-        :param state: a state
-        :param action: an action
-        :param reward: a reward
-        :param next_state: a next state
-        :param done: whether state is terminal
+        - push the transition into memory
+        - sample a minibatch
+        - compute the bellman residual loss over the minibatch
+        - perform one gradient descent step
+        - slowly track the policy network with the target network
+
+        Parameters
+        ----------
+        state : object
+        action : object
+        reward : double
+        next_state : object
+        done : bool
         """
         if not self.training:
             return
@@ -89,7 +98,11 @@ class AbstractDQNAgent(Agent, ABC):
 
     def policy(self, observation, **kwargs):
         """
-            Act according to the state-action value model and an exploration policy
+        Act according to the state-action value model and an exploration
+        policy
+
+        Parameters
+
         :param observation: current obs
         :return: an action
         """
@@ -111,11 +124,20 @@ class AbstractDQNAgent(Agent, ABC):
     @abstractmethod
     def compute_bellman_residual(self, batch, target_state_action_value=None):
         """
-            Compute the Bellman Residual Loss over a batch
-        :param batch: batch of transitions
-        :param target_state_action_value: if provided, acts as a target (s,a)-value
-                                          if not, it will be computed from batch and model (Double DQN target)
-        :return: the loss over the batch, and the computed target
+        Compute the Bellman Residual Loss over a batch
+
+        Parameters
+        ----------
+        batch
+            batch of transitions
+        target_state_action_value
+            if provided, acts as a target (s,a)-value
+            if not, it will be computed from batch and model
+            (Double DQN target)
+
+        Returns
+        -------
+        The loss over the batch, and the computed target.
         """
         raise NotImplementedError
 
@@ -123,10 +145,18 @@ class AbstractDQNAgent(Agent, ABC):
     def get_batch_state_values(self, states):
         """
         Get the state values of several states
-        :param states: [s1; ...; sN] an array of states
-        :return: values, actions:
-                 - [V1; ...; VN] the array of the state values for each state
-                 - [a1*; ...; aN*] the array of corresponding optimal action indexes for each state
+
+        Parameters
+        ----------
+        states : array
+            [s1; ...; sN] an array of states
+
+        Returns
+        -------
+        values, actions:
+            * [V1; ...; VN] the array of the state values for each state
+            * [a1*; ...; aN*] the array of corresponding optimal action
+            indexes for each state
         """
         raise NotImplementedError
 
@@ -134,23 +164,42 @@ class AbstractDQNAgent(Agent, ABC):
     def get_batch_state_action_values(self, states):
         """
         Get the state-action values of several states
-        :param states: [s1; ...; sN] an array of states
-        :return: values:[[Q11, ..., Q1n]; ...] the array of all action values for each state
+
+        Parameters
+        ----------
+        states : array
+            [s1; ...; sN] an array of states
+
+        Returns
+        -------
+        values:[[Q11, ..., Q1n]; ...] the array of all action values
+        for each state
         """
         raise NotImplementedError
 
     def get_state_value(self, state):
         """
-        :param state: s, an environment state
-        :return: V, its state-value
+        Parameters
+        ----------
+        state : object
+            s, an environment state
+        Returns
+        -------
+        V, its state-value
         """
         values, actions = self.get_batch_state_values([state])
         return values[0], actions[0]
 
     def get_state_action_values(self, state):
         """
-        :param state: s, an environment state
-        :return: [Q(a1,s), ..., Q(an,s)] the array of its action-values for each actions
+        Parameters
+        ----------
+        state : object
+            s, an environment state
+
+        Returns
+        -------
+            The array of its action-values for each actions.
         """
         return self.get_batch_state_action_values([state])[0]
 
@@ -181,4 +230,6 @@ class AbstractDQNAgent(Agent, ABC):
     def eval(self):
         self.training = False
         self.exploration_kwargs['method'] = "Greedy"
-        self.exploration_policy = exploration_factory(self.env.action_space, **self.exploration_kwargs)
+        self.exploration_policy = \
+            exploration_factory(self.env.action_space,
+                                **self.exploration_kwargs)

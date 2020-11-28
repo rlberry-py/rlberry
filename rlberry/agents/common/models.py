@@ -352,13 +352,23 @@ class EgoAttentionNetwork(BaseModule):
 
 def attention(query, key, value, mask=None, dropout=None):
     """
-        Compute a Scaled Dot Product Attention.
-    :param query: size: batch, head, 1 (ego-entity), features
-    :param key:  size: batch, head, entities, features
-    :param value: size: batch, head, entities, features
-    :param mask: size: batch,  head, 1 (absence feature), 1 (ego-entity)
-    :param dropout:
-    :return: the attention softmax(QK^T/sqrt(dk))V
+    Compute a Scaled Dot Product Attention.
+
+    Parameters
+    ----------
+    query
+        size: batch, head, 1 (ego-entity), features
+    key
+        size: batch, head, entities, features
+    value
+        size: batch, head, entities, features
+    mask
+        size: batch,  head, 1 (absence feature), 1 (ego-entity)
+    dropout
+
+    Returns
+    -------
+    The attention softmax(QK^T/sqrt(dk))V
     """
     d_k = query.size(-1)
     scores = torch.matmul(query, key.transpose(-2, -1)) / np.sqrt(d_k)
@@ -387,19 +397,25 @@ def trainable_parameters(model):
 def size_model_config(env,
                       **model_config):
     """
-        Update the configuration of a model depending on the environment observation/action spaces
+    Update the configuration of a model depending on the environment
+    observation/action spaces.
 
-        Typically, the input/output sizes.
+    Typically, the input/output sizes.
 
-    :param env: an environment
-    :param model_config: a model configuration
+    Parameters
+    ----------
+    env : gym.Env
+        An environment.
+    model_config : dict
+        A model configuration.
     """
 
     if isinstance(env.observation_space, spaces.Box):
         obs_shape = env.observation_space.shape
     elif isinstance(env.observation_space, spaces.Tuple):
         obs_shape = env.observation_space.spaces[0].shape
-    if model_config["type"] == "ConvolutionalNetwork":  # Assume CHW observation space
+    # Assume CHW observation space
+    if model_config["type"] == "ConvolutionalNetwork":
         model_config["in_channels"] = int(obs_shape[0])
         model_config["in_height"] = int(obs_shape[1])
         model_config["in_width"] = int(obs_shape[2])
@@ -424,4 +440,3 @@ def model_factory(type="MultiLayerPerceptron", **kwargs) -> nn.Module:
         return EgoAttentionNetwork(**kwargs)
     else:
         raise ValueError("Unknown model type")
-
