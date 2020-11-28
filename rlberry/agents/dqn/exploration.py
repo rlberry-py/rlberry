@@ -12,37 +12,46 @@ class DiscreteDistribution(ABC):
     @abstractmethod
     def get_distribution(self):
         """
-        :return: a distribution over actions {action:probability}
+        Returns
+        -------
+        A distribution over actions {action:probability}
         """
         raise NotImplementedError()
 
     def sample(self):
         """
-        :return: an action sampled from the distribution
+        Returns
+        -------
+        An action sampled from the distribution
         """
         distribution = self.get_distribution()
-        return self.np_random.choice(list(distribution.keys()), 1, p=np.array(list(distribution.values())))[0]
+        return self.np_random.choice(
+                    list(distribution.keys()), 1,
+                    p=np.array(list(distribution.values())))[0]
 
-    def seed(self, seed=None):
+    def seed(self):
         """
-            Seed the policy randomness source
-        :param seed: the seed to be used
-        :return: the used seed
+        Seed the policy randomness source
         """
         self.np_random = seeding.get_rng()
 
     def set_time(self, time):
-        """ Set the local time, allowing to schedule the distribution temperature. """
+        """
+        Set the local time, allowing to schedule the distribution temperature.
+        """
         pass
 
     def step_time(self):
-        """ Step the local time, allowing to schedule the distribution temperature. """
+        """
+        Step the local time, allowing to schedule the distribution temperature.
+        """
         pass
 
 
 class EpsilonGreedy(DiscreteDistribution):
     """
-        Uniform distribution with probability epsilon, and optimal action with probability 1-epsilon
+    Uniform distribution with probability epsilon, and optimal action with
+    probability 1-epsilon.
     """
 
     def __init__(self,
@@ -68,21 +77,30 @@ class EpsilonGreedy(DiscreteDistribution):
         self.seed()
 
     def get_distribution(self):
-        distribution = {action: self.epsilon / self.action_space.n for action in range(self.action_space.n)}
+        distribution = {action: self.epsilon / self.action_space.n
+                        for action in range(self.action_space.n)}
         distribution[self.optimal_action] += 1 - self.epsilon
         return distribution
 
     def update(self, values):
         """
-            Update the action distribution parameters
-        :param values: the state-action values
-        :param step_time: whether to update epsilon schedule
+        Update the action distribution parameters
+
+        Parameters
+        -----------
+        values
+            The state-action values
+        step_time
+            Whether to update epsilon schedule
         """
         self.optimal_action = np.argmax(values)
-        self.epsilon = self.final_temperature + (self.temperature - self.final_temperature) * \
+        self.epsilon = self.final_temperature \
+            + (self.temperature - self.final_temperature) * \
             np.exp(- self.time / self.tau)
         if self.writer:
-            self.writer.add_scalar('exploration/epsilon', self.epsilon, self.time)
+            self.writer.add_scalar('exploration/epsilon',
+                                   self.epsilon,
+                                   self.time)
 
     def step_time(self):
         self.time += 1
@@ -96,7 +114,7 @@ class EpsilonGreedy(DiscreteDistribution):
 
 class Greedy(DiscreteDistribution):
     """
-        Always use the optimal action
+    Always use the optimal action
     """
 
     def __init__(self, action_space):
@@ -111,7 +129,8 @@ class Greedy(DiscreteDistribution):
 
     def get_distribution(self):
         optimal_action = np.argmax(self.values)
-        return {action: 1 if action == optimal_action else 0 for action in range(self.action_space.n)}
+        return {action: 1 if action == optimal_action
+                else 0 for action in range(self.action_space.n)}
 
     def update(self, values):
         self.values = values
@@ -119,10 +138,18 @@ class Greedy(DiscreteDistribution):
 
 def exploration_factory(action_space, method="EpsilonGreedy", **kwargs):
     """
-        Handles creation of exploration policies
-    :param exploration_config: configuration dictionary of the policy, must contain a "method" key
-    :param action_space: the environment action space
-    :return: a new exploration policy
+    Handles creation of exploration policies
+
+    Parameters
+    ----------
+    exploration_config : dict
+        Configuration dictionary of the policy, must contain a "method" key.
+    action_space : gym.spaces.Space
+        The environment action space
+
+    Returns
+    -------
+    A new exploration policy.
     """
     if method == 'Greedy':
         return Greedy(action_space, **kwargs)

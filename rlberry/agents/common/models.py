@@ -140,7 +140,8 @@ class MultiLayerPerceptron(BaseModule):
         self.layer_sizes = layer_sizes or [64, 64]
         self.out_size = out_size
         sizes = [in_size] + self.layer_sizes
-        layers_list = [nn.Linear(sizes[i], sizes[i + 1]) for i in range(len(sizes) - 1)]
+        layers_list = [nn.Linear(sizes[i], sizes[i + 1])
+                       for i in range(len(sizes) - 1)]
         self.layers = nn.ModuleList(layers_list)
         if out_size:
             self.predict = nn.Linear(sizes[-1], out_size)
@@ -180,7 +181,8 @@ class DuelingNetwork(BaseModule):
         x = self.base_module(x)
         value = self.value(x).expand(-1, self.out_size)
         advantage = self.advantage(x)
-        return value + advantage - advantage.mean(1).unsqueeze(1).expand(-1, self.out_size)
+        return value + advantage \
+            - advantage.mean(1).unsqueeze(1).expand(-1, self.out_size)
 
 
 class ConvolutionalNetwork(nn.Module):
@@ -202,7 +204,7 @@ class ConvolutionalNetwork(nn.Module):
         # Number of Linear input connections depends on output of conv2d layers
         # and therefore the input image size, so compute it.
         def conv2d_size_out(size, kernel_size=2, stride=2):
-            return (size - (kernel_size - 1) - 1) // stride  + 1
+            return (size - (kernel_size - 1) - 1) // stride + 1
         convw = conv2d_size_out(conv2d_size_out(conv2d_size_out(in_width)))
         convh = conv2d_size_out(conv2d_size_out(conv2d_size_out(in_height)))
         assert convh > 0 and convw > 0
@@ -233,10 +235,18 @@ class EgoAttention(BaseModule):
         self.dropout_factor = dropout_factor
         self.features_per_head = int(self.feature_size / self.heads)
 
-        self.value_all = nn.Linear(self.feature_size, self.feature_size, bias=False)
-        self.key_all = nn.Linear(self.feature_size, self.feature_size, bias=False)
-        self.query_ego = nn.Linear(self.feature_size, self.feature_size, bias=False)
-        self.attention_combine = nn.Linear(self.feature_size, self.feature_size, bias=False)
+        self.value_all = nn.Linear(self.feature_size,
+                                   self.feature_size,
+                                   bias=False)
+        self.key_all = nn.Linear(self.feature_size,
+                                 self.feature_size,
+                                 bias=False)
+        self.query_ego = nn.Linear(self.feature_size,
+                                   self.feature_size,
+                                   bias=False)
+        self.attention_combine = nn.Linear(self.feature_size,
+                                           self.feature_size,
+                                           bias=False)
 
     @classmethod
     def default_config(cls):
@@ -246,21 +256,36 @@ class EgoAttention(BaseModule):
     def forward(self, ego, others, mask=None):
         batch_size = others.shape[0]
         n_entities = others.shape[1] + 1
-        input_all = torch.cat((ego.view(batch_size, 1, self.feature_size), others), dim=1)
+        input_all = torch.cat((ego.view(batch_size, 1,
+                               self.feature_size), others), dim=1)
         # Dimensions: Batch, entity, head, feature_per_head
-        key_all = self.key_all(input_all).view(batch_size, n_entities, self.heads, self.features_per_head)
-        value_all = self.value_all(input_all).view(batch_size, n_entities, self.heads, self.features_per_head)
-        query_ego = self.query_ego(ego).view(batch_size, 1, self.heads, self.features_per_head)
+        key_all = self.key_all(input_all).view(batch_size,
+                                               n_entities,
+                                               self.heads,
+                                               self.features_per_head)
+        value_all = self.value_all(input_all).view(batch_size,
+                                                   n_entities,
+                                                   self.heads,
+                                                   self.features_per_head)
+        query_ego = self.query_ego(ego).view(batch_size, 1,
+                                             self.heads,
+                                             self.features_per_head)
 
         # Dimensions: Batch, head, entity, feature_per_head
         key_all = key_all.permute(0, 2, 1, 3)
         value_all = value_all.permute(0, 2, 1, 3)
         query_ego = query_ego.permute(0, 2, 1, 3)
         if mask is not None:
-            mask = mask.view((batch_size, 1, 1, n_entities)).repeat((1, self.heads, 1, 1))
-        value, attention_matrix = attention(query_ego, key_all, value_all, mask,
+            mask = mask.view((batch_size, 1, 1,
+                              n_entities)).repeat((1, self.heads, 1, 1))
+        value, attention_matrix = attention(query_ego,
+                                            key_all,
+                                            value_all,
+                                            mask,
                                             nn.Dropout(self.dropout_factor))
-        result = (self.attention_combine(value.reshape((batch_size, self.feature_size))) + ego.squeeze(1))/2
+        result = (self.attention_combine(
+                    value.reshape((batch_size,
+                                   self.feature_size))) + ego.squeeze(1))/2
         return result, attention_matrix
 
 
@@ -276,29 +301,50 @@ class SelfAttention(BaseModule):
         self.dropout_factor = dropout_factor
         self.features_per_head = int(self.feature_size / self.heads)
 
-        self.value_all = nn.Linear(self.feature_size, self.feature_size, bias=False)
-        self.key_all = nn.Linear(self.feature_size, self.feature_size, bias=False)
-        self.query_all = nn.Linear(self.feature_size, self.feature_size, bias=False)
-        self.attention_combine = nn.Linear(self.feature_size, self.feature_size, bias=False)
+        self.value_all = nn.Linear(self.feature_size,
+                                   self.feature_size,
+                                   bias=False)
+        self.key_all = nn.Linear(self.feature_size,
+                                 self.feature_size,
+                                 bias=False)
+        self.query_all = nn.Linear(self.feature_size,
+                                   self.feature_size,
+                                   bias=False)
+        self.attention_combine = nn.Linear(self.feature_size,
+                                           self.feature_size,
+                                           bias=False)
 
     def forward(self, ego, others, mask=None):
         batch_size = others.shape[0]
         n_entities = others.shape[1] + 1
-        input_all = torch.cat((ego.view(batch_size, 1, self.feature_size), others), dim=1)
+        input_all = torch.cat((ego.view(batch_size, 1,
+                                        self.feature_size),
+                               others), dim=1)
         # Dimensions: Batch, entity, head, feature_per_head
-        key_all = self.key_all(input_all).view(batch_size, n_entities, self.heads, self.features_per_head)
-        value_all = self.value_all(input_all).view(batch_size, n_entities, self.heads, self.features_per_head)
-        query_all = self.query_all(input_all).view(batch_size, n_entities, self.heads, self.features_per_head)
+        key_all = self.key_all(input_all).view(batch_size, n_entities,
+                                               self.heads,
+                                               self.features_per_head)
+        value_all = self.value_all(input_all).view(batch_size, n_entities,
+                                                   self.heads,
+                                                   self.features_per_head)
+        query_all = self.query_all(input_all).view(batch_size,
+                                                   n_entities,
+                                                   self.heads,
+                                                   self.features_per_head)
 
         # Dimensions: Batch, head, entity, feature_per_head
         key_all = key_all.permute(0, 2, 1, 3)
         value_all = value_all.permute(0, 2, 1, 3)
         query_all = query_all.permute(0, 2, 1, 3)
         if mask is not None:
-            mask = mask.view((batch_size, 1, 1, n_entities)).repeat((1, self.heads, 1, 1))
-        value, attention_matrix = attention(query_all, key_all, value_all, mask,
+            mask = mask.view((batch_size, 1, 1,
+                              n_entities)).repeat((1, self.heads, 1, 1))
+        value, attention_matrix = attention(query_all, key_all, value_all,
+                                            mask,
                                             nn.Dropout(self.dropout_factor))
-        result = (self.attention_combine(value.reshape((batch_size, n_entities, self.feature_size))) + input_all)/2
+        result = (self.attention_combine(
+            value.reshape((batch_size, n_entities, self.feature_size)))
+            + input_all)/2
         return result, attention_matrix
 
 
@@ -337,7 +383,8 @@ class EgoAttentionNetwork(BaseModule):
         ego = x[:, 0:1, :]
         others = x[:, 1:, :]
         if mask is None:
-            mask = x[:, :, self.presence_feature_idx:self.presence_feature_idx + 1] < 0.5
+            aux = self.presence_feature_idx
+            mask = x[:, :, aux:aux + 1] < 0.5
         return ego, others, mask
 
     def forward_attention(self, x):

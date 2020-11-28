@@ -40,12 +40,22 @@ class ReplayMemory(object):
 
     def sample(self, batch_size, collapsed=True):
         """
-            Sample a batch of transitions.
+        Sample a batch of transitions.
 
-            If n_steps is greater than one, the batch will be composed of lists of successive transitions.
-        :param batch_size: size of the batch
-        :param collapsed: whether successive transitions must be collapsed into one n-step transition.
-        :return: the sampled batch
+        If n_steps is greater than one, the batch will be composed of
+        lists of successive transitions.
+
+        Parameters
+        ----------
+        batch_size: int
+            Size of the batch
+        collapsed : bool
+            Whether successive transitions must be collapsed into one n-step
+            transition.
+
+        Returns
+        -------
+        The sampled batch
         """
         # FIXME: use general seeding
         if self.n_steps == 1:
@@ -54,22 +64,34 @@ class ReplayMemory(object):
         else:
             # Sample initial transition indexes
             indexes = random.sample(range(len(self.memory)), batch_size)
-            # Get the batch of n-consecutive-transitions starting from sampled indexes
+            # Get the batch of n-consecutive-transitions starting
+            # from sampled indexes
             all_transitions = [self.memory[i:i+self.n_steps] for i in indexes]
             # Collapse transitions
-            return map(self.collapse_n_steps, all_transitions) if collapsed else all_transitions
+            return map(self.collapse_n_steps, all_transitions) if collapsed \
+                else all_transitions
 
     def collapse_n_steps(self, transitions):
         """
-            Collapse n transitions <s,a,r,s',t> of a trajectory into one transition <s0, a0, Sum(r_i), sp, tp>.
+        Collapse n transitions <s,a,r,s',t> of a trajectory into one
+        transition <s0, a0, Sum(r_i), sp, tp>.
 
-            We start from the initial state, perform the first action, and then the return estimate is formed by
-            accumulating the discounted rewards along the trajectory until a terminal state or the end of the
-            trajectory is reached.
-        :param transitions: A list of n successive transitions
-        :return: The corresponding n-step transition
+        We start from the initial state, perform the first action, and
+        then the return estimate is formed by accumulating the discounted
+        rewards along the trajectory until a terminal state or the end of the
+        trajectory is reached.
+
+        Parameters
+        ----------
+        transitions : list
+             A list of n successive transitions
+
+        Returns
+        -------
+            The corresponding n-step transition
         """
-        state, action, cumulated_reward, next_state, done, info = transitions[0]
+        state, action, cumulated_reward, next_state, done, info = \
+            transitions[0]
         discount = 1
         for transition in transitions[1:]:
             if done:
