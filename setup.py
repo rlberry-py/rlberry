@@ -9,7 +9,8 @@ install_requires = [
     'matplotlib',
     'seaborn',
     'pandas',
-    'gym'
+    'gym',
+    'dill',
 ]
 
 tests_require = [

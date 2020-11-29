@@ -1,10 +1,18 @@
+"""
+Notes
+-----
+
+dill[1] is required to extend pickle (see https://stackoverflow.com/a/25353243)
+
+[1] https://github.com/uqfoundation/dill
+"""
+
 from copy import deepcopy
 from datetime import datetime
 from joblib import Parallel, delayed
 import logging
 import os
-import pickle
-
+import dill
 import rlberry.seeding as seeding
 from rlberry.agents import IncrementalAgent
 from rlberry.stats.evaluation import compare_policies
@@ -16,12 +24,18 @@ except Exception:
     _OPTUNA_INSTALLED = False
 
 
+logger = logging.getLogger(__name__)
+
+
 #
 # Main class
 #
 
 class AgentStats:
-    """Class to train, optimize hyperparameters, evaluate and gather statistics about an agent."""
+    """
+    Class to train, optimize hyperparameters, evaluate and gather
+    statistics about an agent.
+    """
 
     def __init__(self,
                  agent_class,
@@ -198,7 +212,7 @@ class AgentStats:
             filename += '.pickle'
 
         with open(filename, 'wb') as ff:
-            pickle.dump(self.__dict__, ff)
+            dill.dump(self.__dict__, ff)
 
     @classmethod
     def load(cls, filename):
@@ -207,7 +221,7 @@ class AgentStats:
 
         obj = cls(None, None)
         with open(filename, 'rb') as ff:
-            tmp_dict = pickle.load(ff)
+            tmp_dict = dill.load(ff)
         obj.__dict__.clear()
         obj.__dict__.update(tmp_dict)
         return obj
@@ -406,7 +420,7 @@ class AgentStats:
                            n_jobs=n_jobs,
                            timeout=timeout)
         except KeyboardInterrupt:
-            logging.warning("Evaluation stopped.")
+            logger.warning("Evaluation stopped.")
 
         # continue
         best_trial = study.best_trial

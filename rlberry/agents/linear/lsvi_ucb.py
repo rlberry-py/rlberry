@@ -3,6 +3,8 @@ import numpy as np
 from rlberry.agents import Agent
 from gym.spaces import Discrete
 
+logger = logging.getLogger(__name__)
+
 
 class LSVIUCBAgent(Agent):
     """
@@ -71,8 +73,8 @@ class LSVIUCBAgent(Agent):
         # maximum value
         r_range = self.env.reward_range[1] - self.env.reward_range[0]
         if r_range == np.inf:
-            logging.warning("{}: Reward range is infinity. ".format(self.name)
-                            + "Clipping it to 1.")
+            logger.warning("{}: Reward range is infinity. ".format(self.name)
+                           + "Clipping it to 1.")
             r_range = 1.0
 
         if self.gamma == 1.0:

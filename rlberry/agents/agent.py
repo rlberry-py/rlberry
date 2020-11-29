@@ -57,6 +57,10 @@ class Agent(ABC):
         reseed_env : bool
             If true, reseeds the environment.
         """
+        # Check if wrong parameters have been sent to an agent.
+        assert kwargs == {}, \
+            'Unknown parameters sent to agent:' + str(kwargs.keys())
+
         if copy_env:
             self.env = deepcopy(env)
         else:

@@ -3,6 +3,8 @@ import numpy as np
 import logging
 from rlberry.seeding import seeding
 
+logger = logging.getLogger(__name__)
+
 
 class Model(gym.Env):
     """
@@ -75,7 +77,7 @@ class Model(gym.Env):
         raise NotImplementedError("sample() method not implemented.")
 
     def is_online(self):
-        logging.warning("Checking if Model is\
+        logger.warning("Checking if Model is\
 online calls reset() and step() methods.")
         try:
             self.reset()
@@ -88,7 +90,7 @@ online calls reset() and step() methods.")
                 raise
 
     def is_generative(self):
-        logging.warning("Checking if Model is \
+        logger.warning("Checking if Model is \
 generative calls sample() method.")
         try:
             self.sample(self.observation_space.sample(),

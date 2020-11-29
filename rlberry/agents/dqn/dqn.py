@@ -50,8 +50,10 @@ class DQNAgent(AbstractDQNAgent):
         Number of steps to wait before updating the target network.
     double : bool
         If true, use double Q-learning.
-    optimizer_kwargs: dict
-        Parameters of the optimization algorithm.
+    learning_rate : double
+        Optimizer learning rate.
+    optimizer_type: str
+        Type of optimizer. 'ADAM' by defaut.
     exploration_kwargs : dict
         Parameters of exploration policy.
     memory_kwargs : dict
@@ -62,13 +64,14 @@ class DQNAgent(AbstractDQNAgent):
                  n_episodes=1000,
                  horizon=256,
                  gamma=0.99,
-                 qvalue_net_fn=None,
                  loss_function="l2",
                  batch_size=100,
                  device="cuda:best",
                  target_update=1,
+                 learning_rate=0.001,
+                 optimizer_type='ADAM',
+                 qvalue_net_fn=None,
                  double=True,
-                 optimizer_kwargs=None,
                  exploration_kwargs=None,
                  memory_kwargs=None,
                  **kwargs):
@@ -80,7 +83,8 @@ class DQNAgent(AbstractDQNAgent):
         AbstractDQNAgent.__init__(self, *base_args, **kwargs)
 
         # init
-        self.optimizer_kwargs = optimizer_kwargs or {}
+        self.optimizer_kwargs = {'optimizer_type': optimizer_type,
+                                 'lr': learning_rate}
         self.device = device
         self.loss_function = loss_function
         self.gamma = gamma
