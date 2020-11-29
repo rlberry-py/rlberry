@@ -7,7 +7,10 @@ import torch.nn as nn
 import gym.spaces as spaces
 from rlberry.agents import IncrementalAgent
 from rlberry.agents.utils.memories import Memory
-from rlberry.agents.utils.torch_models import ValueNet, PolicyNet
+from rlberry.agents.utils.torch_training import optimizer_factory
+from rlberry.agents.utils.torch_models import default_policy_net_fn
+from rlberry.agents.utils.torch_models import default_value_net_fn
+
 
 # choose device
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -15,6 +18,40 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 class PPOAgent(IncrementalAgent):
     """
+    Parameters
+    ----------
+    env : Model
+        Online model with continuous (Box) state space and discrete actions
+    n_episodes : int
+        Number of episodes
+    batch_size : int
+        Number of episodes to wait before updating the policy.
+    horizon : int
+        Horizon.
+    gamma : double
+        Discount factor in [0, 1].
+    entr_coef : double
+        Entropy coefficient.
+    vf_coef : double
+        Value function loss coefficient.
+    learning_rate : double
+        Learning rate.
+    optimizer_type: str
+        Type of optimizer. 'ADAM' by defaut.
+    eps_clip : double
+        PPO clipping range (epsilon).
+    k_epochs : int
+        Number of epochs per update.
+    policy_net_fn : function
+        Function that returns an instance of a policy network (pytorch).
+        If None, a default net is used.
+    value_net_fn : function
+        Function that returns an instance of a value network (pytorch).
+        If None, a default net is used.
+    verbose : int
+        Controls the verbosity, if non zero, progress messages are printed.
+
+
     References
     ----------
     Schulman, J., Wolski, F., Dhariwal, P., Radford, A. & Klimov, O. (2017).
@@ -37,34 +74,13 @@ class PPOAgent(IncrementalAgent):
                  entr_coef=0.01,
                  vf_coef=0.5,
                  learning_rate=0.01,
+                 optimizer_type='ADAM',
                  eps_clip=0.2,
                  k_epochs=5,
+                 policy_net_fn=None,
+                 value_net_fn=None,
                  verbose=1,
                  **kwargs):
-        """
-        env : Model
-            Online model with continuous (Box) state space and discrete actions
-        n_episodes : int
-            Number of episodes
-        batch_size : int
-            Number of episodes to wait before updating the policy.
-        horizon : int
-            Horizon.
-        gamma : double
-            Discount factor in [0, 1].
-        entr_coef : double
-            Entropy coefficient.
-        vf_coef : double
-            Value function loss coefficient.
-        learning_rate : double
-            Learning rate.
-        eps_clip : double
-            PPO clipping range (epsilon).
-        k_epochs : int
-            Number of epochs per update.
-        verbose : int
-            Controls the verbosity, if non zero, progress messages are printed.
-        """
         IncrementalAgent.__init__(self, env, **kwargs)
 
         self.n_episodes = n_episodes
@@ -81,6 +97,16 @@ class PPOAgent(IncrementalAgent):
         self.action_dim = self.env.action_space.n
         self.verbose = verbose
 
+        #
+        self.policy_net_fn = policy_net_fn \
+            or (lambda: default_policy_net_fn(self.env))
+
+        self.value_net_fn = value_net_fn \
+            or (lambda: default_value_net_fn(self.env))
+
+        self.optimizer_kwargs = {'optimizer_type': optimizer_type,
+                                 'lr': learning_rate}
+
         # check environment
         assert isinstance(self.env.observation_space, spaces.Box)
         assert isinstance(self.env.action_space, spaces.Discrete)
@@ -91,18 +117,17 @@ class PPOAgent(IncrementalAgent):
         self.reset()
 
     def reset(self, **kwargs):
-        self.cat_policy = PolicyNet(self.state_dim, self.action_dim).to(device)
-        self.policy_optimizer = torch.optim.Adam(self.cat_policy.parameters(),
-                                                 lr=self.learning_rate,
-                                                 betas=(0.9, 0.999))
+        self.cat_policy = self.policy_net_fn().to(device)
+        self.policy_optimizer = optimizer_factory(
+                                    self.cat_policy.parameters(),
+                                    **self.optimizer_kwargs)
 
-        self.value_net = ValueNet(self.state_dim).to(device)
-        self.value_optimizer = torch.optim.Adam(self.value_net.parameters(),
-                                                lr=self.learning_rate,
-                                                betas=(0.9, 0.999))
+        self.value_net = self.value_net_fn().to(device)
+        self.value_optimizer = optimizer_factory(
+                                    self.value_net.parameters(),
+                                    **self.optimizer_kwargs)
 
-        self.cat_policy_old = \
-            PolicyNet(self.state_dim, self.action_dim).to(device)
+        self.cat_policy_old = self.policy_net_fn().to(device)
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
 
         self.MseLoss = nn.MSELoss()

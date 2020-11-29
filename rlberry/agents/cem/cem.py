@@ -8,14 +8,40 @@ import rlberry.seeding as seeding
 import gym.spaces as spaces
 from rlberry.agents import Agent
 from rlberry.agents.utils.memories import CEMMemory
+from rlberry.agents.utils.torch_training import optimizer_factory
+from rlberry.agents.utils.torch_models import default_policy_net_fn
+
 
 # choose device
-from rlberry.agents.utils.torch_models import Net
-
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 class CEMAgent(Agent):
+    """
+    Parameters
+    ----------
+    env : Model
+        Environment for training.
+    n_episodes : int
+        Number of training episodes.
+    horizon : int
+        Maximum length of a trajectory.
+    gamma : double
+        Discount factor in [0, 1].
+    batch_size : int
+        Number of trajectories to sample at each iteration.
+    percentile : int
+        Percentile used to remove trajectories with low rewards.
+    learning_rate : double
+        Optimizer learning rate
+    optimizer_type: str
+        Type of optimizer. 'ADAM' by defaut.
+    policy_net_fn : function
+        Function that returns an instance of a policy network (pytorch).
+        If None, a default net is used.
+    verbose : int
+        Verbosity level.
+    """
 
     name = "CrossEntropyAgent"
     fit_info = ("n_episodes", "episode_rewards")
@@ -28,28 +54,10 @@ class CEMAgent(Agent):
                  batch_size=16,
                  percentile=70,
                  learning_rate=0.01,
+                 optimizer_type='ADAM',
+                 policy_net_fn=None,
                  verbose=5,
                  **kwargs):
-        """
-        Parameters
-        ----------
-        env : Model
-            Environment for training.
-        n_episodes : int
-            Number of training episodes.
-        horizon : int
-            Maximum length of a trajectory.
-        gamma : double
-            Discount factor in [0, 1].
-        batch_size : int
-            Number of trajectories to sample at each iteration.
-        percentile : int
-            Percentile used to remove trajectories with low rewards.
-        learning_rate : double
-            Optimizer learning rate
-        verbose : int
-            Verbosity level.
-        """
         Agent.__init__(self, env, **kwargs)
 
         # check environment
@@ -68,16 +76,21 @@ class CEMAgent(Agent):
         # random number generator
         self.rng = seeding.get_rng()
 
+        #
+        self.policy_net_fn = policy_net_fn \
+            or (lambda: default_policy_net_fn(self.env))
+
+        self.optimizer_kwargs = {'optimizer_type': optimizer_type,
+                                 'lr': learning_rate}
+
         # policy net
-        hidden_size = 128
-        obs_size = self.env.observation_space.high.shape[0]
-        n_actions = self.env.action_space.n
-        self.policy_net = Net(obs_size, hidden_size, n_actions).to(device)
+        self.policy_net = self.policy_net_fn().to(device)
 
         # loss function and optimizer
         self.loss_fn = nn.CrossEntropyLoss()
-        self.optimizer = torch.optim.Adam(params=self.policy_net.parameters(),
-                                          lr=self.learning_rate)
+        self.optimizer = optimizer_factory(
+                                    self.policy_net.parameters(),
+                                    **self.optimizer_kwargs)
 
         # memory
         self.memory = CEMMemory(self.batch_size)
@@ -152,7 +165,7 @@ class CEMAgent(Agent):
     def _get_action_probabilities_tensor(self, observation):
         obs_v = torch.FloatTensor([observation]).to(device)
         sm = nn.Softmax(dim=1)
-        scores = self.policy_net(obs_v)
+        scores = self.policy_net.action_scores(obs_v)
         act_probs_v = sm(scores)
         return act_probs_v, scores
 
@@ -212,11 +225,11 @@ class CEMAgent(Agent):
             reward_bound, reward_mean, \
             last_states_tensor = self._process_batch()
         self.optimizer.zero_grad()
-        action_scores = self.policy_net(train_states_tensor)
+        action_scores = self.policy_net.action_scores(train_states_tensor)
         loss = self.loss_fn(action_scores, train_actions_tensor)
 
         # entropy in last trajectory
-        scores_last_traj = self.policy_net(last_states_tensor)
+        scores_last_traj = self.policy_net.action_scores(last_states_tensor)
         softmax = nn.Softmax(dim=1)
         # 1e-3 is added to avoid zeros
         probs_last_traj = softmax(scores_last_traj) + 1e-3

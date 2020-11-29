@@ -6,13 +6,15 @@ import seaborn as sns
 
 import rlberry.seeding as seeding
 
+logger = logging.getLogger(__name__)
+
 
 def plot_episode_rewards(agent_stats_list, cumulative=False,
                          fignum=None, show=True):
     plt.figure(fignum)
     for agent_stats in agent_stats_list:
         if 'episode_rewards' not in agent_stats.fit_info:
-            logging.warning("episode_rewards not \
+            logger.warning("episode_rewards not \
 available for %s." % agent_stats.agent_name)
             continue
         else:

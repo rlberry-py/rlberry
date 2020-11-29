@@ -6,6 +6,8 @@ from rlberry.exploration_tools.uncertainty_estimator \
 from gym.spaces import Box, Discrete
 from rlberry.utils.metrics import metric_lp
 
+logger = logging.getLogger(__name__)
+
 
 @numba_jit
 def map_to_representative(state,
@@ -126,7 +128,7 @@ class OnlineDiscretizationCounter(UncertaintyEstimator):
 
         if self.n_representatives >= self.max_repr \
                 and (not self._overflow_warning):
-            logging.warning("OnlineDiscretizationCounter reached \
+            logger.warning("OnlineDiscretizationCounter reached \
 the maximum number of representative states.")
             self._overflow_warning = True
 

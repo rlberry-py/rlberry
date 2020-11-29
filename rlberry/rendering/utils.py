@@ -7,6 +7,8 @@ try:
 except Exception:
     _FFMPEG_INSTALLED = False
 
+logger = logging.getLogger(__name__)
+
 
 def video_write(fn, images, framerate=60, vcodec='libx264'):
     """
@@ -30,11 +32,11 @@ def video_write(fn, images, framerate=60, vcodec='libx264'):
 
     try:
         if len(images) == 0:
-            logging.warning("Calling video_write() with empty images.")
+            logger.warning("Calling video_write() with empty images.")
             return
 
         if not _FFMPEG_INSTALLED:
-            logging.error(
+            logger.error(
                 "video_write(): Unable to save video, ffmpeg-python \
     package required (https://github.com/kkroening/ffmpeg-python)")
             return
@@ -45,7 +47,7 @@ def video_write(fn, images, framerate=60, vcodec='libx264'):
         process = (
             ffmpeg
             .input('pipe:', format='rawvideo', pix_fmt='rgb24',
-                s='{}x{}'.format(width, height), r=framerate)
+                   s='{}x{}'.format(width, height), r=framerate)
             .output(fn, pix_fmt='yuv420p', vcodec=vcodec)
             .overwrite_output()
             .run_async(pipe_stdin=True)
@@ -60,5 +62,5 @@ def video_write(fn, images, framerate=60, vcodec='libx264'):
         process.wait()
 
     except Exception as ex:
-        logging.warning("Not possible to save \
+        logger.warning("Not possible to save \
 video, due to exception: {}".format(str(ex)))

@@ -11,6 +11,32 @@ from gym import spaces
 from torch.nn import functional as F
 
 
+#
+# Utility functions
+#
+
+def default_policy_net_fn(env):
+    """
+    Returns a default value network.
+    """
+    state_dim = env.observation_space.shape[0]
+    action_dim = env.action_space.n
+
+    return PolicyNet(state_dim, action_dim)
+
+
+def default_value_net_fn(env):
+    """
+    Returns a default value network.
+    """
+    state_dim = env.observation_space.shape[0]
+    return ValueNet(state_dim)
+
+
+#
+# Classes
+#
+
 class ValueNet(nn.Module):
     def __init__(self, state_dim, hidden_size=64):
         super(ValueNet, self).__init__()
@@ -49,49 +75,6 @@ class PolicyNet(nn.Module):
     def action_scores(self, state):
         action_scores = self.actor(state)
         return action_scores
-
-
-class ActorCritic(nn.Module):
-    def __init__(self, state_dim, action_dim):
-        super(ActorCritic, self).__init__()
-        # actor
-        self.actor = nn.Sequential(
-            nn.Linear(state_dim, 64),
-            nn.Tanh(),
-            nn.Linear(64, 64),
-            nn.Tanh(),
-            nn.Linear(64, action_dim),
-            nn.Softmax(dim=-1)
-        )
-        # critic
-        self.critic = nn.Sequential(
-            nn.Linear(state_dim, 64),
-            nn.Tanh(),
-            nn.Linear(64, 64),
-            nn.Tanh(),
-            nn.Linear(64, 1)
-        )
-
-    def forward(self):
-        raise NotImplementedError
-
-    def act(self, state):
-        action_probs = self.actor(state)
-        dist = Categorical(action_probs)
-        action = dist.sample()
-
-        return action, dist.log_prob(action)
-
-    def evaluate(self, state, action):
-        action_probs = self.actor(state)
-        dist = Categorical(action_probs)
-
-        action_logprobs = dist.log_prob(action)
-        dist_entropy = dist.entropy()
-
-        state_value = self.critic(state)
-
-        return action_logprobs, torch.squeeze(state_value), dist_entropy
 
 
 class Net(nn.Module):
@@ -284,7 +267,5 @@ def model_factory(type="MultiLayerPerceptron", **kwargs) -> nn.Module:
         return DuelingNetwork(**kwargs)
     elif type == "ConvolutionalNetwork":
         return ConvolutionalNetwork(**kwargs)
-    elif type == "EgoAttentionNetwork":
-        return EgoAttentionNetwork(**kwargs)
     else:
         raise ValueError("Unknown model type")
