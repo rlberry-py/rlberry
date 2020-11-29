@@ -103,8 +103,7 @@ class A2CAgent(IncrementalAgent):
                                                 lr=self.learning_rate,
                                                 betas=(0.9, 0.999))
 
-        self.cat_policy_old = \
-            PolicyNet(self.state_dim, self.action_dim).to(device)
+        self.cat_policy_old = PolicyNet(self.state_dim, self.action_dim).to(device)
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
 
         self.MseLoss = nn.MSELoss()

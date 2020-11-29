@@ -6,8 +6,7 @@ import torch
 import gym.spaces as spaces
 from rlberry.agents import IncrementalAgent
 
-# choose device
-from rlberry.agents.utils.torch_models import ActorCritic
+from rlberry.agents.utils.torch_models import ValueNet, PolicyNet
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -130,14 +129,17 @@ class AVECPPOAgent(IncrementalAgent):
         self.reset()
 
     def reset(self, **kwargs):
-        self.cat_policy = ActorCritic(self.state_dim,
-                                      self.action_dim).to(device)
-        self.optimizer = torch.optim.Adam(self.cat_policy.parameters(),
+        self.cat_policy = PolicyNet(self.state_dim,
+                                    self.action_dim).to(device)
+        self.policy_optimizer = torch.optim.Adam(self.cat_policy.parameters(),
                                           lr=self.learning_rate,
                                           betas=(0.9, 0.999))
-
-        self.cat_policy_old = ActorCritic(self.state_dim,
-                                          self.action_dim).to(device)
+        self.value_net = ValueNet(self.state_dim).to(device)
+        self.value_optimizer = torch.optim.Adam(self.value_net.parameters(),
+                                                lr=self.learning_rate,
+                                                betas=(0.9, 0.999))
+        self.cat_policy_old = PolicyNet(self.state_dim,
+                                        self.action_dim).to(device)
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
 
         self.memory = Memory()
@@ -162,8 +164,11 @@ class AVECPPOAgent(IncrementalAgent):
 
     def policy(self, state, **kwargs):
         assert self.cat_policy is not None
+        state = torch.from_numpy(state).float().to(device)
+        action_dist = self.cat_policy_old(state)
+        action = action_dist.sample().item()
 
-        return self._select_action(state)
+        return action
 
     def fit(self, **kwargs):
         for _ in range(self.n_episodes):
@@ -198,9 +203,9 @@ class AVECPPOAgent(IncrementalAgent):
         prev_episode = self._last_printed_ep
         episode = self.episode - 1
         reward_per_ep = self._rewards[prev_episode:episode + 1].sum() / \
-            max(1, episode - prev_episode)
+                        max(1, episode - prev_episode)
         time_per_ep = self._log_interval * 1000.0 / \
-            max(1, episode - prev_episode)
+                      max(1, episode - prev_episode)
         time_per_ep = max(0.01, time_per_ep)  # avoid div by zero
         fps = int((self.horizon / time_per_ep) * 1000)
 
@@ -213,7 +218,9 @@ class AVECPPOAgent(IncrementalAgent):
 
     def _select_action(self, state):
         state = torch.from_numpy(state).float().to(device)
-        action, action_logprob = self.cat_policy_old.act(state)
+        action_dist = self.cat_policy_old(state)
+        action = action_dist.sample()
+        action_logprob = action_dist.log_prob(action)
 
         self.memory.states.append(state)
         self.memory.actions.append(action)
@@ -245,7 +252,7 @@ class AVECPPOAgent(IncrementalAgent):
         ep = self.episode
         self._rewards[ep] = episode_rewards
         self._cumul_rewards[ep] = episode_rewards \
-            + self._cumul_rewards[max(0, ep - 1)]
+                                  + self._cumul_rewards[max(0, ep - 1)]
         self.episode += 1
         self._logging()
 
@@ -279,8 +286,10 @@ class AVECPPOAgent(IncrementalAgent):
         # optimize policy for K epochs
         for _ in range(self.k_epochs):
             # evaluate old actions and values
-            logprobs, state_values, dist_entropy = \
-                self.cat_policy.evaluate(old_states, old_actions)
+            action_dist = self.cat_policy(old_states)
+            logprobs = action_dist.log_prob(old_actions)
+            state_values = self.value_net(old_states)
+            dist_entropy = action_dist.entropy()
 
             # find ratio (pi_theta / pi_theta__old)
             ratios = torch.exp(logprobs - old_logprobs.detach())
@@ -288,19 +297,23 @@ class AVECPPOAgent(IncrementalAgent):
             # normalize the advantages
             advantages = rewards - state_values.detach()
             advantages = (advantages - advantages.mean()) / \
-                (advantages.std() + 1e-8)
+                         (advantages.std() + 1e-8)
             # find surrogate loss
             surr1 = ratios * advantages
             surr2 = torch.clamp(ratios, 1 - self.eps_clip, 1
                                 + self.eps_clip) * advantages
             loss = -torch.min(surr1, surr2) \
-                + self.vf_coef * self._avec_loss(state_values, rewards) \
-                - self.entr_coef * dist_entropy
+                   + self.vf_coef * self._avec_loss(state_values, rewards) \
+                   - self.entr_coef * dist_entropy
 
             # take gradient step
-            self.optimizer.zero_grad()
+            self.policy_optimizer.zero_grad()
+            self.value_optimizer.zero_grad()
+
             loss.mean().backward()
-            self.optimizer.step()
+
+            self.policy_optimizer.step()
+            self.value_optimizer.step()
 
         # copy new weights into old policy
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
