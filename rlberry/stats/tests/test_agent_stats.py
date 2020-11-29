@@ -170,3 +170,4 @@ def test_agent_stats_partial_fit():
     # compare final policies
     compare_policies([stats], eval_env,
                      eval_horizon=params["horizon"], n_sim=10, show=False)
+

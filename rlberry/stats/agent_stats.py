@@ -221,14 +221,17 @@ class AgentStats:
                              sampler_method='random',
                              pruner_method='halving',
                              continue_previous=False,
-                             partial_fit_fraction=0.25):
+                             partial_fit_fraction=0.25,
+                             sampler_kwargs={}):
         """
         Run hyperparameter optimization and updates init_kwargs with the
         best hyperparameters found.
 
         Currently supported sampler_method:
-            'random'
-            'optuna_default'
+            'random' -> Random Search
+            'optuna_default' -> TPE
+            'grid' -> Grid Search
+            'cmaes' -> CMA-ES
 
         Currently supported pruner_method:
             'none'
@@ -237,7 +240,7 @@ class AgentStats:
         Parameters
         ----------
         n_trials: int
-            Mumber of agent evaluations
+            Number of agent evaluations
         timeout: int
             Stop study after the given number of second(s).
             Set to None for unlimited time.
@@ -247,13 +250,13 @@ class AgentStats:
             Number of agents to fit for each hyperparam evaluation.
         n_jobs: int
             Number of jobs to fit agents for each hyperparam evaluation,
-            and also the number of jobs of optuna.
+            and also the number of jobs of Optuna.
         sampler_method : str
             Optuna sampling method.
         pruner_method : str
             Optuna pruner method.
         continue_previous : bool
-            Set to true to continue previous optuna study. If true,
+            Set to true to continue previous Optuna study. If true,
             sampler_method and pruner_method will be
             the same as in the previous study.
         partial_fit_fraction : double, in ]0, 1]
@@ -261,6 +264,9 @@ class AgentStats:
             (allows pruning of trials).
             Only used for agents that implement partial_fit()
             (IncrementalAgent interface).
+        sampler_kwargs : dict
+            Allows users to use different Optuna samplers with
+            personalized arguments.
         """
         global _OPTUNA_INSTALLED
         if not _OPTUNA_INSTALLED:
@@ -268,8 +274,7 @@ class AgentStats:
             return
 
         assert self.eval_horizon is not None, \
-            "To use optimize_hyperparams(), \
-eval_horizon must be given to AgentStats."
+            "To use optimize_hyperparams(), eval_horizon must be given to AgentStats."
 
         assert partial_fit_fraction > 0.0 and partial_fit_fraction <= 1.0
 
@@ -285,11 +290,19 @@ eval_horizon must be given to AgentStats."
             if sampler_method == 'random':
                 optuna_seed = self.rng.integers(2**16)
                 sampler = optuna.samplers.RandomSampler(seed=optuna_seed)
+            elif sampler_method == 'grid':
+                assert sampler_kwargs is not None, \
+                    "To use GridSampler, a search_space dictionary must be provided."
+                sampler = optuna.samplers.GridSampler(**sampler_kwargs)
+            elif sampler_method == 'cmaes':
+                optuna_seed = self.rng.integers(2**16)
+                sampler_kwargs['seed'] = optuna_seed
+                sampler = optuna.samplers.CmaEsSampler(**sampler_kwargs)
             elif sampler_method == 'optuna_default':
-                sampler = None
+                sampler = optuna.samplers.TPESampler(**sampler_kwargs)
             else:
-                raise NotImplementedError("Sampler method %s is\
- not implemented." % sampler_method)
+                raise NotImplementedError("Sampler method %s is \
+                                          not implemented." % sampler_method)
 
             # get pruner
             if pruner_method == 'halving':
@@ -297,12 +310,11 @@ eval_horizon must be given to AgentStats."
                             min_resource=1,
                             reduction_factor=4,
                             min_early_stopping_rate=0)
-
             elif pruner_method == 'none':
                 pruner = None
             else:
-                raise NotImplementedError("Pruner method %s is\
- not implemented." % pruner_method)
+                raise NotImplementedError("Pruner method %s is not implemented." \
+                                          % pruner_method)
 
             # optuna study
             study = optuna.create_study(sampler=sampler,
@@ -427,3 +439,4 @@ def _fit_worker(args):
                         reseed_env=False, **init_kwargs)
     info = agent.fit(**fit_kwargs)
     return agent, info
+
