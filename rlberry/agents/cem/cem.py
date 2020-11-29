@@ -1,5 +1,3 @@
-import time
-
 import numpy as np
 import torch
 import torch.nn as nn
@@ -10,6 +8,7 @@ from rlberry.agents import Agent
 from rlberry.agents.utils.memories import CEMMemory
 from rlberry.agents.utils.torch_training import optimizer_factory
 from rlberry.agents.utils.torch_models import default_policy_net_fn
+from rlberry.utils.writers import PeriodicWriter
 
 
 # choose device
@@ -95,17 +94,11 @@ class CEMAgent(Agent):
         # memory
         self.memory = CEMMemory(self.batch_size)
 
-        # logging config
-        self._last_printed_ep = 0
-        self._time_last_log = time.process_time()
-        if self.verbose == 1:
-            self._log_interval = 60  # in seconds
-        elif self.verbose == 2:
-            self._log_interval = 30
-        elif self.verbose == 3:
-            self._log_interval = 15
-        elif self.verbose > 3:
-            self._log_interval = 5
+        # default writer
+        log_every = 0
+        if self.verbose > 0:
+            log_every = 200/self.verbose
+        self.writer = PeriodicWriter(self.name, log_every=log_every)
 
     def fit(self, **kwargs):
         self.episode = 0
@@ -121,39 +114,10 @@ class CEMAgent(Agent):
 
             # update policy and clear batch
             loss, reward_mean, reward_bound = self._update()
-            self.episode += 1
-            self._logging()
 
         info["n_episodes"] = self.n_episodes
         info["episode_rewards"] = self._rewards
         return info
-
-    def _logging(self):
-        if self.verbose > 0:
-            t_now = time.process_time()
-            time_elapsed = t_now - self._time_last_log
-            if (time_elapsed >= self._log_interval) \
-                    or (self.episode == self.n_episodes):
-                self._time_last_log = t_now
-                print(self._info_to_print())
-                self._last_printed_ep = self.episode - 1
-
-    def _info_to_print(self):
-        prev_episode = self._last_printed_ep
-        episode = self.episode - 1
-        reward_per_ep = self._rewards[prev_episode:episode + 1].sum() \
-            / max(1, episode - prev_episode)
-        time_per_ep = self._log_interval * 1000.0 \
-            / max(1, episode - prev_episode)
-        time_per_ep = max(0.01, time_per_ep)  # avoid div by zero
-        fps = int((self.horizon / time_per_ep) * 1000)
-
-        to_print = "[{}] episode = {}/{} ".format(self.name, episode+1,
-                                                  self.n_episodes) \
-            + "| reward/ep = {:0.2f} ".format(reward_per_ep) \
-            + "| time/ep = {:0.2f} ms".format(time_per_ep) \
-            + "| fps = {}".format(fps)
-        return to_print
 
     def policy(self, observation, **kwargs):
         act_probs_v, scores = \
@@ -217,6 +181,11 @@ class CEMAgent(Agent):
             state = next_state
 
         self.memory.append(episode_states, episode_actions, episode_rewards)
+        self.episode += 1
+
+        if self.writer is not None:
+            self.writer.add_scalar("episode", self.episode, None)
+            self.writer.add_scalar("ep reward", episode_rewards)
 
         return episode_rewards
 

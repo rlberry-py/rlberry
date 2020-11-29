@@ -1,5 +1,4 @@
 import logging
-import time
 import numpy as np
 
 import gym.spaces as spaces
@@ -7,6 +6,8 @@ from rlberry.agents import Agent
 from rlberry.agents.dynprog.utils import backward_induction
 from rlberry.agents.dynprog.utils import backward_induction_in_place
 from rlberry.agents.kernel_based.common import map_to_representative
+from rlberry.utils.writers import PeriodicWriter
+
 
 logger = logging.getLogger(__name__)
 
@@ -196,17 +197,11 @@ class RSUCBVIAgent(Agent):
 
         self.episode = 0
 
-        # logging config
-        self._last_printed_ep = 0
-        self._time_last_log = time.process_time()
-        if self.verbose == 1:
-            self._log_interval = 60  # in seconds
-        elif self.verbose == 2:
-            self._log_interval = 30
-        elif self.verbose == 3:
-            self._log_interval = 15
-        elif self.verbose > 3:
-            self._log_interval = 5
+        # default writer
+        log_every = 0
+        if self.verbose > 0:
+            log_every = 200/self.verbose
+        self.writer = PeriodicWriter(self.name, log_every=log_every)
 
     def policy(self, state, hh=0, **kwargs):
         assert self.Q_policy is not None
@@ -222,15 +217,8 @@ class RSUCBVIAgent(Agent):
         info = {}
         self._rewards = np.zeros(self.n_episodes)
         self._cumul_rewards = np.zeros(self.n_episodes)
-        for kk in range(self.n_episodes):
-            episode_rewards = self._run_episode()
-            self._rewards[kk] = episode_rewards
-            if kk > 0:
-                self._cumul_rewards[kk] = episode_rewards \
-                    + self._cumul_rewards[kk - 1]
-            self.episode += 1
-            #
-            self._logging()
+        for _ in range(self.n_episodes):
+            self._run_episode()
 
         # compute Q function for the recommended policy
         self.Q_policy, _ = backward_induction(self.R_hat[:self.M, :],
@@ -240,31 +228,6 @@ class RSUCBVIAgent(Agent):
         info["n_episodes"] = self.n_episodes
         info["episode_rewards"] = self._rewards
         return info
-
-    def _logging(self):
-        if self.verbose > 0:
-            t_now = time.process_time()
-            time_elapsed = t_now - self._time_last_log
-            if time_elapsed >= self._log_interval:
-                self._time_last_log = t_now
-                print(self._info_to_print())
-                self._last_printed_ep = self.episode - 1
-
-    def _info_to_print(self):
-        prev_episode = self._last_printed_ep
-        episode = self.episode - 1
-        reward_per_ep = self._rewards[prev_episode:episode + 1].sum() / \
-            max(1, episode - prev_episode)
-        time_per_ep = self._log_interval * 1000.0 / \
-            max(1, episode - prev_episode)
-        time_per_ep = max(0.01, time_per_ep)  # avoid div by zero
-        to_print = "[{}] episode = {}/{} ".format(self.name, episode+1,
-                                                  self.n_episodes) \
-            + "| representative states = {} ".format(self.M) \
-            + "| reward/ep = {:0.2f} ".format(reward_per_ep) \
-            + "| time/ep = {:0.2f} ms".format(time_per_ep)
-
-        return to_print
 
     def _map_to_repr(self, state, accept_new_repr=True):
         repr_state = map_to_representative(state,
@@ -333,6 +296,21 @@ class RSUCBVIAgent(Agent):
             self.R_hat[:self.M, :] + self.B_sa[:self.M, :],
             self.P_hat[:self.M, :, :self.M],
             self.horizon, self.gamma, self.v_max)
+
+        ep = self.episode
+        self._rewards[ep] = episode_rewards
+        self._cumul_rewards[ep] = episode_rewards \
+            + self._cumul_rewards[max(0, ep - 1)]
+
+        self.episode += 1
+        #
+        if self.writer is not None:
+            avg_reward = self._cumul_rewards[ep]/max(1, ep)
+
+            self.writer.add_scalar("episode", self.episode, None)
+            self.writer.add_scalar("ep reward", episode_rewards)
+            self.writer.add_scalar("avg reward", avg_reward)
+            self.writer.add_scalar("representative states", self.M)
 
         # return sum of rewards collected in the episode
         return episode_rewards
