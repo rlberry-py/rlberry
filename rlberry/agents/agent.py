@@ -17,13 +17,15 @@ class Agent(ABC):
     Attributes
     ----------
     name : string
-        agent identifier
+        Agent identifier
     fit_info : tuple
-        tuple of strings containing the keys in the dictionary
+        Tuple of strings containing the keys in the dictionary
         returned by fit()
     env : rlberry.envs.interface.model.Model
-        environment on which to train the agent
-
+        Environment on which to train the agent
+    writer : object
+        Writer object (e.g. tensorboard SummaryWriter).
+        Default = None.
 
     Methods
     --------
@@ -40,13 +42,18 @@ class Agent(ABC):
         save agent
     load(), optional
         load agent, returns an instance of the agent
+    set_writer()
+        set the writer attribute.
     """
 
     name = ""
     fit_info = ()
 
-    def __init__(self, env, copy_env=True,
-                 reseed_env=True, **kwargs):
+    def __init__(self,
+                 env,
+                 copy_env=True,
+                 reseed_env=True,
+                 **kwargs):
         """
         Parameters
         ----------
@@ -67,6 +74,9 @@ class Agent(ABC):
             self.env = env
         if reseed_env:
             self.env.reseed()
+
+        #
+        self.writer = None
 
     @abstractmethod
     def fit(self, **kwargs):
@@ -89,6 +99,9 @@ class Agent(ABC):
     def load(self, filename, **kwargs):
         """Load agent object."""
         raise NotImplementedError("agent.load() not implemented.")
+
+    def set_writer(self, writer):
+        self.writer = writer
 
     @classmethod
     def sample_parameters(cls, trial):

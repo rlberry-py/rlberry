@@ -38,4 +38,3 @@ class IncrementalAgent(Agent):
         info : dict
         """
         raise NotImplementedError("agent.partial_fit() not implemented.")
-

@@ -59,6 +59,9 @@ class DQNAgent(AbstractDQNAgent):
     memory_kwargs : dict
         Parameters of the replay buffer: capacity (int) and n_steps (int)
     """
+    name = 'DQN'
+    fit_info = ("n_episodes", "episode_rewards")
+
     def __init__(self,
                  env,
                  n_episodes=1000,
