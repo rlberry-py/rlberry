@@ -1,5 +1,4 @@
 import numpy as np
-import os
 import rlberry.seeding as seeding
 from rlberry.envs import GridWorld
 from rlberry.agents import IncrementalAgent
@@ -14,12 +13,18 @@ seeding.set_global_seed(1234)
 class DummyAgent(IncrementalAgent):
     fit_info = ("episode_rewards",)
 
-    def __init__(self, env, n_episodes, hyperparameter=0, **kwargs):
+    def __init__(self,
+                 env,
+                 n_episodes,
+                 hyperparameter1=0,
+                 hyperparameter2=0,
+                 **kwargs):
         IncrementalAgent.__init__(self, env, **kwargs)
         self.name = "DummyAgent"
         self.n_episodes = n_episodes
         self.fitted = False
-        self.hyperparameter = hyperparameter
+        self.hyperparameter1 = hyperparameter1
+        self.hyperparameter2 = hyperparameter2
 
         self.fraction_fitted = 0.0
 
@@ -42,9 +47,12 @@ class DummyAgent(IncrementalAgent):
 
     @classmethod
     def sample_parameters(cls, trial):
-        hyperparameter1 = trial.suggest_categorical('hyperparameter1', [1, 2, 3])
-        hyperparameter2 = trial.suggest_uniform('hyperparameter2', -10, 10)
-        return {'hyperparameter1': hyperparameter1, 'hyperparameter2': hyperparameter2}
+        hyperparameter1 \
+            = trial.suggest_categorical('hyperparameter1', [1, 2, 3])
+        hyperparameter2 \
+            = trial.suggest_uniform('hyperparameter2', -10, 10)
+        return {'hyperparameter1': hyperparameter1,
+                'hyperparameter2': hyperparameter2}
 
 
 def test_hyperparam_optim_tpe():
@@ -52,7 +60,7 @@ def test_hyperparam_optim_tpe():
     train_env = GridWorld()
 
     # Parameters
-    params = {"n_episodes": 500, "horizon": 20}
+    params = {"n_episodes": 500}
 
     # Run AgentStats
     stats_agent = AgentStats(DummyAgent, train_env, init_kwargs=params,
@@ -69,7 +77,7 @@ def test_hyperparam_optim_random():
     train_env = GridWorld()
 
     # Parameters
-    params = {"n_episodes": 500, "horizon": 20}
+    params = {"n_episodes": 500}
 
     # Run AgentStats
     stats_agent = AgentStats(DummyAgent, train_env, init_kwargs=params,
@@ -84,16 +92,19 @@ def test_hyperparam_optim_grid():
     train_env = GridWorld()
 
     # Parameters
-    params = {"n_episodes": 500, "horizon": 20}
+    params = {"n_episodes": 500}
 
     # Run AgentStats
     stats_agent = AgentStats(DummyAgent, train_env, init_kwargs=params,
                              n_fit=4, eval_horizon=10, n_jobs=1)
 
     # test hyperparameter optimization with grid sampler
-    search_space = {"hyperparameter1": [1, 2, 3], "hyperparameter2": [-5, 0, 5]}
+    search_space = {"hyperparameter1": [1, 2, 3],
+                    "hyperparameter2": [-5, 0, 5]}
     sampler_kwargs = {"search_space": search_space}
-    stats_agent.optimize_hyperparams(n_trials=3*3, sampler_method="grid", sampler_kwargs=sampler_kwargs)
+    stats_agent.optimize_hyperparams(n_trials=3*3,
+                                     sampler_method="grid",
+                                     sampler_kwargs=sampler_kwargs)
 
 
 def test_hyperparam_optim_cmaes():
@@ -101,7 +112,7 @@ def test_hyperparam_optim_cmaes():
     train_env = GridWorld()
 
     # Parameters
-    params = {"n_episodes": 500, "horizon": 20}
+    params = {"n_episodes": 500}
 
     # Run AgentStats
     stats_agent = AgentStats(DummyAgent, train_env, init_kwargs=params,
@@ -109,4 +120,3 @@ def test_hyperparam_optim_cmaes():
 
     # test hyperparameter optimization with CMA-ES sampler
     stats_agent.optimize_hyperparams(sampler_method="cmaes")
-
