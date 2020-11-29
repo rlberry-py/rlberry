@@ -288,7 +288,8 @@ class AgentStats:
             return
 
         assert self.eval_horizon is not None, \
-            "To use optimize_hyperparams(), eval_horizon must be given to AgentStats."
+            "To use optimize_hyperparams(), " + \
+            "eval_horizon must be given to AgentStats."
 
         assert partial_fit_fraction > 0.0 and partial_fit_fraction <= 1.0
 
@@ -306,7 +307,8 @@ class AgentStats:
                 sampler = optuna.samplers.RandomSampler(seed=optuna_seed)
             elif sampler_method == 'grid':
                 assert sampler_kwargs is not None, \
-                    "To use GridSampler, a search_space dictionary must be provided."
+                    "To use GridSampler, " + \
+                    "a search_space dictionary must be provided."
                 sampler = optuna.samplers.GridSampler(**sampler_kwargs)
             elif sampler_method == 'cmaes':
                 optuna_seed = self.rng.integers(2**16)
@@ -315,7 +317,8 @@ class AgentStats:
             elif sampler_method == 'optuna_default':
                 sampler = optuna.samplers.TPESampler(**sampler_kwargs)
             else:
-                raise NotImplementedError("Sampler method %s is not implemented." % sampler_method)
+                raise NotImplementedError(
+                      "Sampler method %s is not implemented." % sampler_method)
 
             # get pruner
             if pruner_method == 'halving':
@@ -326,7 +329,8 @@ class AgentStats:
             elif pruner_method == 'none':
                 pruner = None
             else:
-                raise NotImplementedError("Pruner method %s is not implemented." % pruner_method)
+                raise NotImplementedError(
+                      "Pruner method %s is not implemented." % pruner_method)
 
             # optuna study
             study = optuna.create_study(sampler=sampler,
@@ -451,4 +455,3 @@ def _fit_worker(args):
                         reseed_env=False, **init_kwargs)
     info = agent.fit(**fit_kwargs)
     return agent, info
-
