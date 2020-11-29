@@ -51,7 +51,8 @@ def test_agent_stats_1():
     eval_env = GridWorld()
 
     # Parameters
-    params = {"n_episodes": 500, "horizon": 20}
+    params = {"n_episodes": 500}
+    horizon = 20
 
     # Check DummyAgent
     agent = DummyAgent(train_env, **params)
@@ -70,9 +71,9 @@ def test_agent_stats_1():
 
     # compare final policies
     compare_policies(agent_stats_list, eval_env,
-                     eval_horizon=params["horizon"], n_sim=10, show=False)
+                     eval_horizon=horizon, n_sim=10, show=False)
     compare_policies(agent_stats_list, eval_env,
-                     eval_horizon=params["horizon"],
+                     eval_horizon=horizon,
                      n_sim=10, show=False, stationary_policy=False)
 
     # check if fitted
@@ -100,7 +101,7 @@ def test_agent_stats_2():
     eval_env = GridWorld()
 
     # Parameters
-    params = {"n_episodes": 500, "horizon": 20}
+    params = {"n_episodes": 500}
 
     # Run AgentStats
     stats_agent1 = AgentStats(DummyAgent, train_env, eval_env=eval_env,
@@ -143,7 +144,8 @@ def test_agent_stats_partial_fit():
     eval_env = GridWorld()
 
     # Parameters
-    params = {"n_episodes": 500, "horizon": 20}
+    params = {"n_episodes": 500}
+    horizon = 20
 
     # Check DummyAgent
     agent = DummyAgent(train_env, **params)
@@ -169,4 +171,4 @@ def test_agent_stats_partial_fit():
 
     # compare final policies
     compare_policies([stats], eval_env,
-                     eval_horizon=params["horizon"], n_sim=10, show=False)
+                     eval_horizon=horizon, n_sim=10, show=False)

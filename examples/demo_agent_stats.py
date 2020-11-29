@@ -31,6 +31,15 @@ params = {
     "horizon": HORIZON,
     "bonus_scale_factor": BONUS_SCALE_FACTOR,
     "min_dist": MIN_DIST,
+    "verbose": VERBOSE
+}
+
+params_kernel = {
+    "n_episodes": N_EPISODES,
+    "gamma": GAMMA,
+    "horizon": HORIZON,
+    "bonus_scale_factor": BONUS_SCALE_FACTOR,
+    "min_dist": MIN_DIST,
     "bandwidth": 0.1,
     "beta": 1.0,
     "kernel_type": "gaussian",
@@ -48,7 +57,7 @@ params_ppo = {"n_episodes": N_EPISODES,
 rsucbvi_stats = AgentStats(RSUCBVIAgent, train_env,
                            init_kwargs=params, n_fit=4)
 rskernel_stats = AgentStats(RSKernelUCBVIAgent, train_env,
-                            init_kwargs=params, n_fit=4)
+                            init_kwargs=params_kernel, n_fit=4)
 ppo_stats = AgentStats(PPOAgent, train_env, init_kwargs=params_ppo, n_fit=4)
 
 agent_stats_list = [rsucbvi_stats, rskernel_stats, ppo_stats]

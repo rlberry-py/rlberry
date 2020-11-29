@@ -8,6 +8,7 @@ import rlberry.seeding as seeding
 import gym.spaces as spaces
 from rlberry.agents import Agent
 from rlberry.agents.utils.memories import CEMMemory
+from rlberry.agents.utils.torch_training import optimizer_factory
 from rlberry.agents.utils.torch_models import default_policy_net_fn
 
 
@@ -33,6 +34,8 @@ class CEMAgent(Agent):
         Percentile used to remove trajectories with low rewards.
     learning_rate : double
         Optimizer learning rate
+    optimizer_type: str
+        Type of optimizer. 'ADAM' by defaut.
     policy_net_fn : function
         Function that returns an instance of a policy network (pytorch).
         If None, a default net is used.
@@ -51,6 +54,7 @@ class CEMAgent(Agent):
                  batch_size=16,
                  percentile=70,
                  learning_rate=0.01,
+                 optimizer_type='ADAM',
                  policy_net_fn=None,
                  verbose=5,
                  **kwargs):
@@ -76,13 +80,17 @@ class CEMAgent(Agent):
         self.policy_net_fn = policy_net_fn \
             or (lambda: default_policy_net_fn(self.env))
 
+        self.optimizer_kwargs = {'optimizer_type': optimizer_type,
+                                 'lr': learning_rate}
+
         # policy net
         self.policy_net = self.policy_net_fn().to(device)
 
         # loss function and optimizer
         self.loss_fn = nn.CrossEntropyLoss()
-        self.optimizer = torch.optim.Adam(params=self.policy_net.parameters(),
-                                          lr=self.learning_rate)
+        self.optimizer = optimizer_factory(
+                                    self.policy_net.parameters(),
+                                    **self.optimizer_kwargs)
 
         # memory
         self.memory = CEMMemory(self.batch_size)

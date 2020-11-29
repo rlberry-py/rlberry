@@ -6,6 +6,7 @@ import torch.nn as nn
 import gym.spaces as spaces
 from rlberry.agents import IncrementalAgent
 from rlberry.agents.utils.memories import Memory
+from rlberry.agents.utils.torch_training import optimizer_factory
 from rlberry.agents.utils.torch_models import default_policy_net_fn
 from rlberry.agents.utils.torch_models import default_value_net_fn
 
@@ -32,6 +33,8 @@ class A2CAgent(IncrementalAgent):
         Entropy coefficient.
     learning_rate : double
         Learning rate.
+    optimizer_type: str
+        Type of optimizer. 'ADAM' by defaut.
     k_epochs : int
         Number of epochs per update.
     policy_net_fn : function
@@ -62,6 +65,7 @@ class A2CAgent(IncrementalAgent):
                  gamma=0.99,
                  entr_coef=0.01,
                  learning_rate=0.01,
+                 optimizer_type='ADAM',
                  k_epochs=5,
                  policy_net_fn=None,
                  value_net_fn=None,
@@ -88,6 +92,9 @@ class A2CAgent(IncrementalAgent):
         self.value_net_fn = value_net_fn \
             or (lambda: default_value_net_fn(self.env))
 
+        self.optimizer_kwargs = {'optimizer_type': optimizer_type,
+                                 'lr': learning_rate}
+
         # check environment
         assert isinstance(self.env.observation_space, spaces.Box)
         assert isinstance(self.env.action_space, spaces.Discrete)
@@ -99,14 +106,14 @@ class A2CAgent(IncrementalAgent):
 
     def reset(self, **kwargs):
         self.cat_policy = self.policy_net_fn().to(device)
-        self.policy_optimizer = torch.optim.Adam(self.cat_policy.parameters(),
-                                                 lr=self.learning_rate,
-                                                 betas=(0.9, 0.999))
+        self.policy_optimizer = optimizer_factory(
+                                    self.cat_policy.parameters(),
+                                    **self.optimizer_kwargs)
 
         self.value_net = self.value_net_fn().to(device)
-        self.value_optimizer = torch.optim.Adam(self.value_net.parameters(),
-                                                lr=self.learning_rate,
-                                                betas=(0.9, 0.999))
+        self.value_optimizer = optimizer_factory(
+                                self.value_net.parameters(),
+                                **self.optimizer_kwargs)
 
         self.cat_policy_old = self.policy_net_fn().to(device)
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())

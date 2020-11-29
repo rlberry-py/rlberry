@@ -2,7 +2,7 @@ from rlberry.envs import gym_make
 from pathlib import Path
 from torch.utils.tensorboard import SummaryWriter
 
-from rlberry.agents.dqn.pytorch import DQNAgent
+from rlberry.agents.dqn import DQNAgent
 
 env = gym_make("CartPole-v0")
 agent = DQNAgent(env, n_episodes=50, exploration_kwargs={"tau": 1000})
