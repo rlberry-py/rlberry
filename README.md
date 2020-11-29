@@ -84,7 +84,7 @@ The goal of `rlberry`to make **Reinforcement Learning** (RL) research and teachi
 
 ## Getting started
 
-We provide a set of notebooks on [Google colab](https://colab.research.google.com/) with examples about how to use `rlberry`.
+We provide a handful of notebooks on [Google colab](https://colab.research.google.com/) as examples to show you how to use `rlberry`.
 
 | Content | Description | Link |
 |-|-|-|
