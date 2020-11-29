@@ -110,3 +110,42 @@ class ReplayMemory(object):
 
     def is_empty(self):
         return len(self.memory) == 0
+
+
+class Memory:
+    def __init__(self):
+        self.actions = []
+        self.states = []
+        self.logprobs = []
+        self.rewards = []
+        self.is_terminals = []
+
+    def clear_memory(self):
+        del self.actions[:]
+        del self.states[:]
+        del self.logprobs[:]
+        del self.rewards[:]
+        del self.is_terminals[:]
+
+
+class CEMMemory:
+    def __init__(self, max_size):
+        self.max_size = max_size
+        self.clear()
+
+    def clear(self):
+        self.size = 0
+        self.states = []
+        self.actions = []
+        self.rewards = []
+
+    def append(self, state, action, reward):
+        self.states.append(state)
+        self.actions.append(action)
+        self.rewards.append(reward)
+        self.size += 1
+        if self.size == self.max_size+1:
+            self.states.pop(0)
+            self.actions.pop(0)
+            self.rewards.pop(0)
+            self.size = self.max_size
