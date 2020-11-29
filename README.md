@@ -77,6 +77,9 @@ The goal of `rlberry`to make **Reinforcement Learning** (RL) research and teachi
 
     *   an interface to [`sacred`](https://sacred.readthedocs.io/en/stable/quickstart.html) that facilitates configuration, organisation, logging and reproducing of computational experiments.
 
+<p align="center">
+   <img src="assets/rlberry.svg" width="50%">
+</p>
 
 
 ## Installation
