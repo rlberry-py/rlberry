@@ -16,12 +16,18 @@ except Exception:
     _OPTUNA_INSTALLED = False
 
 
+logger = logging.getLogger(__name__)
+
+
 #
 # Main class
 #
 
 class AgentStats:
-    """Class to train, optimize hyperparameters, evaluate and gather statistics about an agent."""
+    """
+    Class to train, optimize hyperparameters, evaluate and gather
+    statistics about an agent.
+    """
 
     def __init__(self,
                  agent_class,
@@ -394,7 +400,7 @@ eval_horizon must be given to AgentStats."
                            n_jobs=n_jobs,
                            timeout=timeout)
         except KeyboardInterrupt:
-            logging.warning("Evaluation stopped.")
+            logger.warning("Evaluation stopped.")
 
         # continue
         best_trial = study.best_trial

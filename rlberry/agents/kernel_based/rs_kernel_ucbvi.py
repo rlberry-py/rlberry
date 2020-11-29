@@ -12,6 +12,8 @@ from rlberry.utils.metrics import metric_lp
 from rlberry.agents.kernel_based.kernels import kernel_func
 from rlberry.agents.kernel_based.common import map_to_representative
 
+logger = logging.getLogger(__name__)
+
 
 @numba_jit
 def update_model(repr_state, action, repr_next_state, reward,
@@ -206,8 +208,8 @@ class RSKernelUCBVIAgent(Agent):
         # maximum value
         r_range = self.env.reward_range[1] - self.env.reward_range[0]
         if r_range == np.inf:
-            logging.warning("{}: Reward range is infinity. ".format(self.name)
-                            + "Clipping it to 1.")
+            logger.warning("{}: Reward range is infinity. ".format(self.name)
+                           + "Clipping it to 1.")
             r_range = 1.0
 
         if self.gamma == 1.0:
