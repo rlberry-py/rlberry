@@ -120,3 +120,4 @@ def test_hyperparam_optim_cmaes():
 
     # test hyperparameter optimization with CMA-ES sampler
     stats_agent.optimize_hyperparams(sampler_method="cmaes")
+
