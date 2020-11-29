@@ -3,7 +3,7 @@ from gym import spaces
 
 from rlberry.agents import Agent
 from rlberry.agents.dqn.exploration import exploration_factory
-from rlberry.agents.dqn.memory import ReplayMemory, Transition
+from rlberry.agents.utils.memories import ReplayMemory, Transition
 
 
 class AbstractDQNAgent(Agent, ABC):

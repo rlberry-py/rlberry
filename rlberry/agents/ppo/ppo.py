@@ -6,26 +6,11 @@ import torch.nn as nn
 
 import gym.spaces as spaces
 from rlberry.agents import IncrementalAgent
+from rlberry.agents.utils.memories import Memory
 from rlberry.agents.utils.torch_models import ValueNet, PolicyNet
 
 # choose device
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
-
-class Memory:
-    def __init__(self):
-        self.actions = []
-        self.states = []
-        self.logprobs = []
-        self.rewards = []
-        self.is_terminals = []
-
-    def clear_memory(self):
-        del self.actions[:]
-        del self.states[:]
-        del self.logprobs[:]
-        del self.rewards[:]
-        del self.is_terminals[:]
 
 
 class PPOAgent(IncrementalAgent):

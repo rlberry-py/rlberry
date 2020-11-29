@@ -7,7 +7,7 @@ from rlberry.agents.utils.torch_models import trainable_parameters
 from rlberry.agents.utils.torch_training import loss_function_factory
 from rlberry.agents.utils.torch_training import optimizer_factory
 from rlberry.agents.dqn.abstract import AbstractDQNAgent
-from rlberry.agents.dqn.memory import Transition
+from rlberry.agents.utils.memories import Transition
 from rlberry.utils.torch import choose_device
 
 logger = logging.getLogger(__name__)
