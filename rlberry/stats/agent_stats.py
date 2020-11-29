@@ -301,8 +301,7 @@ class AgentStats:
             elif sampler_method == 'optuna_default':
                 sampler = optuna.samplers.TPESampler(**sampler_kwargs)
             else:
-                raise NotImplementedError("Sampler method %s is \
-                                          not implemented." % sampler_method)
+                raise NotImplementedError("Sampler method %s is not implemented." % sampler_method)
 
             # get pruner
             if pruner_method == 'halving':
@@ -313,8 +312,7 @@ class AgentStats:
             elif pruner_method == 'none':
                 pruner = None
             else:
-                raise NotImplementedError("Pruner method %s is not implemented." \
-                                          % pruner_method)
+                raise NotImplementedError("Pruner method %s is not implemented." % pruner_method)
 
             # optuna study
             study = optuna.create_study(sampler=sampler,
