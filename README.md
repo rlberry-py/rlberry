@@ -45,8 +45,8 @@
 | Section | Description |
 |-|-|
 | [Introduction](#introduction) | The philosophy of `rlberry` |
-| [Installation](#installation) | How to install `rlberry` |
 | [Getting started](#getting-started) | A quick usage guide of `rlberry` |
+| [Installation](#installation) | How to install `rlberry` |
 | [Documentation](#documentation) | A link to the documentation |
 | [Contributing](#contributing) | A guide for contributing |
 | [Citation](#citing-rlberry) | How to cite this work |
@@ -75,12 +75,61 @@ The goal of `rlberry`to make **Reinforcement Learning** (RL) research and teachi
 
     *   an interface to [`Optuna`](https://optuna.org/) that allows automatic hyperparameter optimisation;
 
-    *   an interface to [`Sacred`](https://sacred.readthedocs.io/en/stable/quickstart.html) that facilitates configuration, organisation, logging and reproducing of computational experiments.
+    *   compatibility with [`Sacred`](https://sacred.readthedocs.io/en/stable/quickstart.html) that facilitates configuration, organisation, logging and reproducing of computational experiments.
 
 <p align="center">
    <img src="assets/rlberry.svg" width="60%">
 </p>
 
+
+## Getting started
+
+We provide a set of notebooks on [Google colab](https://colab.research.google.com/) with examples about how to use `rlberry`.
+
+| Content | Description | Link |
+|-|-|-|
+| Introduction to `rlberry` | How to create an agent, optimize its hyperparameters and compare to a baseline. | <a href="https://colab.research.google.com/github/rlberry-py/rlberry/blob/main/notebooks/introduction_to_rlberry.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg"></a> |
+| RL Experimental Pipeline | How to define a configuration, run experiments in parallel and save a `config.json` for reproducibility. | <a href="https://colab.research.google.com/github/rlberry-py/rlberry/blob/main/notebooks/experimental_pipeline_with_rlberry.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg"></a> |
+
+
+### Compatibility with [OpenAI Gym](https://gym.openai.com/)
+
+If you want to use `gym` environments with `rlberry`, simply do the following:
+
+```python
+from rlberry.envs import gym_make
+
+# for example, let's take CartPole
+env = gym_make('CartPole-v1')
+```
+
+This way, `env` behaves exactly the same as the `gym` environment, we simply replace the seeding function by `env.reseed()`, which ensures unified seeding and reproducibility when using `rlberry`.
+
+
+### Seeding 
+
+In `rlberry`, __only one global seed__ is defined, and all the random number generators used by the agents and environments inherit from this seed, ensuring __reproducibility__  and __independence between the generators__ (see [NumPy SeedSequence](https://numpy.org/doc/stable/reference/random/parallel.html)).
+
+Example:
+
+```python
+import rlberry.seeding as seeding
+
+seeding.set_global_seed(seed=123)
+
+# From now on, no more seeds are defined by the user, and all the results are reproducible.
+...
+
+# If you need a random number generator (rng), call:
+rng = seeding.get_rng()   
+
+# which gives a numpy Generator (https://numpy.org/doc/stable/reference/random/generator.html) 
+# that is independent of all the previous generators created by seeding.get_rng()
+rng.integers(5)
+rng.normal()
+# etc
+
+```
 
 ## Installation
 
@@ -120,42 +169,6 @@ which includes:
 *   [`ffmpeg-python`](https://github.com/kkroening/ffmpeg-python) for saving videos
 *   [`PyOpenGL`](https://pypi.org/project/PyOpenGL/) for more rendering options
 
-## Getting started
-
-If you are new comer or just want to play around with `rlberry`: please try it with <a href="https://colab.research.google.com/github/rlberry-py/rlberry/blob/main/notebooks/introduction_to_rlberry.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg"></a>.
-
-If you want to design a full RL experimental pipeline: please see <a href="https://colab.research.google.com/github/rlberry-py/rlberry/blob/main/notebooks/experimental_pipeline_with_rlberry.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg"></a> for an example.  
-
-### Compatibility with [OpenAI Gym](https://gym.openai.com/)
-
-If you want to use `gym` environments with `rlberry`, simply do the following:
-
-```python
-from rlberry.envs import gym_make
-
-# for example, let's take CartPole
-env = gym_make('CartPole-v1')
-```
-
-This way, `env` behaves exactly the same as the `gym` environment, we simply replace the seeding function by `env.reseed()`, which ensures unified seeding and reproducibility when using `rlberry`.
-
-
-### Seeding 
-
-In `rlberry`, __only one global seed__ is defined, and all the random number generators used by the agents and environments inherit from this seed, ensuring __reproducibility__  and __independence between the generators__ (see [NumPy SeedSequence](https://numpy.org/doc/stable/reference/random/parallel.html)).
-
-Example:
-
-```python
-import rlberry.seeding as seeding
-
-seeding.set_global_seed(seed=123)
-
-# From now on, no more seeds are defined by the user, and all the results are reproducible.
-...
-
-```
-
 ### Tests
 
 To run tests, install test dependencies with `pip install -e .[test]` and run `pytest`. To run tests with coverage, install test dependencies and run `bash run_testscov.sh`. See coverage report in `cov_html/index.html`.
@@ -174,7 +187,7 @@ Want to contribute to `rlberry`? Please check [our contribution guidelines](CONT
 
 *   Convention for verbose in the agents:
     *   `verbose=0`: nothing is printed
-    *   `verbose>1`: print progress messages
+    *   `verbose>=1`: print progress messages
 
 Errors and warnings are printed using the `logging` library.
 
