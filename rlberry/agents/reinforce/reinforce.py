@@ -1,6 +1,5 @@
 import numpy as np
 import torch
-import torch.nn as nn
 
 import gym.spaces as spaces
 from rlberry.agents import IncrementalAgent
@@ -33,7 +32,7 @@ class REINFORCEAgent(IncrementalAgent):
     learning_rate : double
         Learning rate.
     normalize: bool
-        If True normalize rewards and advantages
+        If True normalize rewards
     optimizer_type: str
         Type of optimizer. 'ADAM' by defaut.
     policy_net_fn : function
