@@ -35,6 +35,30 @@ class AgentStats:
     """
     Class to train, optimize hyperparameters, evaluate and gather
     statistics about an agent.
+
+    Parameters
+    ----------
+    agent_class
+        Class of the agent.
+    train_env : Model
+        Enviroment used to initialize/train the agent.
+    eval_env : Model
+        Environment used to evaluate the agent. If None, set to a
+        reseeded deep copy of train_env.
+    init_kwargs : dict
+        Arguments required by the agent's constructor.
+    fit_kwargs : dict
+        Arguments required to train the agent.
+    policy_kwargs : dict
+        Arguments required to call agent.policy().
+    agent_name : str
+        Name of the agent. If None, set to agent_class.name
+    n_fit : int
+        Number of agent instances to fit.
+    n_jobs : int
+        Number of jobs to train the agents in parallel using joblib.
+    output_dir : str
+        Directory where to store data by default.
     """
 
     def __init__(self,
@@ -49,31 +73,6 @@ class AgentStats:
                  n_fit=4,
                  n_jobs=4,
                  output_dir='stats_data'):
-        """
-        Parameters
-        ----------
-        agent_class
-            Class of the agent.
-        train_env : Model
-            Enviroment used to initialize/train the agent.
-        eval_env : Model
-            Environment used to evaluate the agent. If None, set to a
-            reseeded deep copy of train_env.
-        init_kwargs : dict
-            Arguments required by the agent's constructor.
-        fit_kwargs : dict
-            Arguments required to train the agent.
-        policy_kwargs : dict
-            Arguments required to call agent.policy().
-        agent_name : str
-            Name of the agent. If None, set to agent_class.name
-        n_fit : int
-            Number of agent instances to fit.
-        n_jobs : int
-            Number of jobs to train the agents in parallel using joblib.
-        output_dir : str
-            Directory where to store data by default.
-        """
         # agent_class should only be None when the constructor is called
         # by the class method AgentStats.load(), since the agent class
         # will be loaded.
@@ -419,7 +418,6 @@ class AgentStats:
 
         # continue
         best_trial = study.best_trial
-
 
         logger.debug(f'Number of finished trials: {len(study.trials)}')
         logger.debug('Best trial:')

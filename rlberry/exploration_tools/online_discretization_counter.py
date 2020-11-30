@@ -43,6 +43,28 @@ class OnlineDiscretizationCounter(UncertaintyEstimator):
     """
     Note: currently, only implemented for continuous (Box) states and
     discrete actions.
+
+    Parameters
+    ----------
+    observation_space : spaces.Box
+    action_space : spaces.Discrete
+    lp_metric: int
+        The metric on the state space is the one induced by the p-norm,
+        where p = lp_metric. Default = 2, for the Euclidean metric.
+    scaling: numpy.ndarray
+        Must have the same size as state array, used to scale the states
+        before computing the metric.
+        If None, set to:
+        - (env.observation_space.high - env.observation_space.low) if high
+        and low are bounded
+        - np.ones(env.observation_space.shape[0]) if high or low are
+        unbounded
+    min_dist: double
+        Minimum distance between two representative states
+    max_repr: int
+        Maximum number of representative states.
+        If None, it is set to  (sqrt(d)/min_dist)**d, where d
+        is the dimension of the state space
     """
     def __init__(self,
                  observation_space,
@@ -52,29 +74,6 @@ class OnlineDiscretizationCounter(UncertaintyEstimator):
                  max_repr=1000,
                  scaling=None,
                  **kwargs):
-        """
-        Parameters
-        ----------
-        observation_space : spaces.Box
-        action_space : spaces.Discrete
-        lp_metric: int
-            The metric on the state space is the one induced by the p-norm,
-            where p = lp_metric. Default = 2, for the Euclidean metric.
-        scaling: numpy.ndarray
-            Must have the same size as state array, used to scale the states
-            before computing the metric.
-            If None, set to:
-            - (env.observation_space.high - env.observation_space.low) if high
-            and low are bounded
-            - np.ones(env.observation_space.shape[0]) if high or low are
-            unbounded
-        min_dist: double
-            Minimum distance between two representative states
-        max_repr: int
-            Maximum number of representative states.
-            If None, it is set to  (sqrt(d)/min_dist)**d, where d
-            is the dimension of the state space
-        """
         UncertaintyEstimator.__init__(self, observation_space, action_space)
 
         assert isinstance(action_space, Discrete)

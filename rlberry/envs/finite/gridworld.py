@@ -13,6 +13,27 @@ class GridWorld(RenderInterface2D, FiniteMDP):
     Simple GridWorld environment.
 
     Note: terminal states are not set to be absorbing in the transition array P
+
+    Parameters
+    -----------
+    nrows : int
+        number of rows
+    ncols : int
+        number of columns
+    start_coord : tuple
+        tuple with coordinates of initial position
+    terminal_states : tuple
+        ((row_0, col_0), (row_1, col_1), ...) = coordinates of
+        terminal states
+    success_probability : double
+        probability of moving in the chosen direction
+    reward_at: dict
+        dictionary, keys = tuple containing coordinates, values = reward
+        at each coordinate
+    walls : tuple
+        ((row_0, col_0), (row_1, col_1), ...) = coordinates of walls
+    default_reward : double
+        reward received at states not in  'reward_at'
     """
 
     name = "GridWorld"
@@ -26,28 +47,6 @@ class GridWorld(RenderInterface2D, FiniteMDP):
                  reward_at=None,
                  walls=((1, 1), (2, 2)),
                  default_reward=0.0):
-        """
-        Parameters
-        -----------
-        nrows : int
-            number of rows
-        ncols : int
-            number of columns
-        start_coord : tuple
-            tuple with coordinates of initial position
-        terminal_states : tuple
-            ((row_0, col_0), (row_1, col_1), ...) = coordinates of
-            terminal states
-        success_probability : double
-            probability of moving in the chosen direction
-        reward_at: dict
-            dictionary, keys = tuple containing coordinates, values = reward
-            at each coordinate
-        walls : tuple
-            ((row_0, col_0), (row_1, col_1), ...) = coordinates of walls
-        default_reward : double
-            reward received at states not in  'reward_at'
-        """
         # Grid dimensions
         self.nrows = nrows
         self.ncols = ncols
@@ -282,7 +281,7 @@ class GridWorld(RenderInterface2D, FiniteMDP):
         for next_s_idx, prob in enumerate(self.P[s_idx, a_idx]):
             if prob > 0:
                 logger.info("to (%d, %d) with prob %f" %
-                      (self.index2coord[next_s_idx] + (prob,)))
+                            (self.index2coord[next_s_idx] + (prob,)))
 
     def render_ascii(self):
         logger.info(self._build_ascii())

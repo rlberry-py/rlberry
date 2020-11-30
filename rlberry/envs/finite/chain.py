@@ -8,19 +8,18 @@ class Chain(RenderInterface2D, FiniteMDP):
     """
     Simple chain environment.
     Reward 0.05 in initial state, reward 1.0 in final state.
+
+    Parameters
+    ----------
+    L : int
+        length of the chain
+    fail_prob : double
+        fail probability
     """
 
     name = "Chain"
 
     def __init__(self, L=5, fail_prob=0.1):
-        """
-        Parameters
-        ----------
-        L : int
-            length of the chain
-        fail_prob : double
-            fail probability
-        """
         assert L >= 2
         self.L = L
 

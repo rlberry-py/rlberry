@@ -10,26 +10,25 @@ class ValueIterationAgent(Agent):
 
     Important: the discount gamma is also used if the problem is
     finite horizon, but, in this case, gamma can be set to 1.0.
+
+    Parameters
+    -----------
+    env : rlberry.envs.finite.finite_mdp.FiniteMDP
+    gamma : double
+        discount factor in [0, 1]
+    horizon : int
+        horizon, if the problem is finite-horizon. if None, the discounted
+        problem is solved
+        default = None
+    epsilon : double
+        precision of value iteration, only used in discounted problems
+        (when horizon is None).
     """
 
     name = "ValueIteration"
     fit_info = ("n_iterations", "precision")
 
     def __init__(self, env, gamma=0.95, horizon=None, epsilon=1e-6, **kwargs):
-        """
-        Parameters
-        -----------
-        env : rlberry.envs.finite.finite_mdp.FiniteMDP
-        gamma : double
-            discount factor in [0, 1]
-        horizon : int
-            horizon, if the problem is finite-horizon. if None, the discounted
-            problem is solved
-            default = None
-        epsilon : double
-            precision of value iteration, only used in discounted problems
-            (when horizon is None).
-        """
         # initialize base class
         assert isinstance(env, FiniteMDP), \
             "Value iteration requires a FiniteMDP model."

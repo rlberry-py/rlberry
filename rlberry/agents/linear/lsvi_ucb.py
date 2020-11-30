@@ -15,6 +15,24 @@ class LSVIUCBAgent(Agent):
 
     TODO: Optimize using jit, improve logging.
 
+    Parameters
+    ----------
+    env : Model
+        Online model of an environment.
+    horizon : int
+        Maximum length of each episode.
+    feature_map_fn : function
+        Function that returns a feature map instance
+        (rlberry.agents.features.FeatureMap class).
+    n_episodes : int
+        number of episodes
+    gamma : double
+        Discount factor.
+    bonus_scale_factor : double
+        Constant by which to multiply the exploration bonus.
+    reg_factor : double
+        Linear regression regularization factor.
+
     References
     ----------
     Jin, C., Yang, Z., Wang, Z., & Jordan, M. I. (2020, July).
@@ -34,25 +52,6 @@ class LSVIUCBAgent(Agent):
                  bonus_scale_factor=1.0,
                  reg_factor=0.01,
                  **kwargs):
-        """
-        Parameters
-        ----------
-        env : Model
-            Online model of an environment.
-        horizon : int
-            Maximum length of each episode.
-        feature_map_fn : function
-            Function that returns a feature map instance
-            (rlberry.agents.features.FeatureMap class).
-        n_episodes : int
-            number of episodes
-        gamma : double
-            Discount factor.
-        bonus_scale_factor : double
-            Constant by which to multiply the exploration bonus.
-        reg_factor : double
-            Linear regression regularization factor.
-        """
         Agent.__init__(self, env, **kwargs)
 
         self.horizon = horizon
@@ -236,6 +235,6 @@ class LSVIUCBAgent(Agent):
         reward_per_ep = \
             self._rewards[max(0, episode-avg_over):episode + 1].mean()
         message = "[{}] episode = {}/{} ".format(self.name, episode+1,
-                                                  self.n_episodes) \
+                                                 self.n_episodes) \
             + "| reward/ep = {:0.2f} ".format(reward_per_ep)
         logger.debug(message)

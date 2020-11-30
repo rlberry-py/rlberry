@@ -11,6 +11,14 @@ class FiniteMDP(Model):
     """
     Base class for a finite MDP.
 
+    Parameters
+    ----------
+    R : numpy.ndarray
+    P : numpy.ndarray
+    initial_state_distribution : numpy.ndarray or int
+        array of size (S,) containing the initial state distribution
+        or an integer representing the initial/default state
+
     Attributes
     ----------
     R : numpy.ndarray
@@ -22,15 +30,6 @@ class FiniteMDP(Model):
     """
 
     def __init__(self, R, P, initial_state_distribution=0):
-        """
-        Parameters
-        ----------
-        R : numpy.ndarray
-        P : numpy.ndarray
-        initial_state_distribution : numpy.ndarray or int
-            array of size (S,) containing the initial state distribution
-            or an integer representing the initial/default state
-        """
         Model.__init__(self)
         self.initial_state_distribution = initial_state_distribution
         S, A = R.shape

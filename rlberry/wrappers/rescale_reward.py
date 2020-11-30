@@ -5,15 +5,14 @@ from rlberry.wrappers import Wrapper
 class RescaleRewardWrapper(Wrapper):
     """
     Rescale the reward function to a bounded range.
+
+    Parameters
+    ----------
+    reward_range: tuple (double, double)
+        tuple with the desired reward range, which needs to be bounded.
     """
 
     def __init__(self, env, reward_range):
-        """
-        Parameters
-        ----------
-        reward_range: tuple (double, double)
-            tuple with the desired reward range, which needs to be bounded.
-        """
         Wrapper.__init__(self, env)
         self.reward_range = reward_range
         assert reward_range[0] < reward_range[1]

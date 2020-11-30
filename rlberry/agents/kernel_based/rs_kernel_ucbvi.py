@@ -85,6 +85,51 @@ class RSKernelUCBVIAgent(Agent):
     The recommended policy after all the episodes is computed without
     exploration bonuses.
 
+
+    Parameters
+    ----------
+    env : Model
+        Online model with continuous (Box) state space and discrete actions
+    n_episodes : int
+        number of episodes
+    gamma : double
+        Discount factor in [0, 1]. If gamma is 1.0, the problem is set to
+        be finite-horizon.
+    horizon : int
+        Horizon of the objective function. If None and gamma<1, set to
+        1/(1-gamma).
+    lp_metric: int
+        The metric on the state space is the one induced by the p-norm,
+        where p = lp_metric. Default = 2, for the Euclidean metric.
+    kernel_type : string
+        See rlberry.agents.kernel_based.kernels.kernel_func for
+        possible kernel types.
+    scaling: numpy.ndarray
+        Must have the same size as state array, used to scale the states
+        before computing the metric.
+        If None, set to:
+        - (env.observation_space.high - env.observation_space.low) if high
+            and low are bounded
+        - np.ones(env.observation_space.shape[0]) if high or low
+        are unbounded
+    bandwidth : double
+        Kernel bandwidth.
+    min_dist : double
+        Minimum distance between two representative states
+    max_repr : int
+        Maximum number of representative states.
+        If None, it is set to  (sqrt(d)/min_dist)**d, where d
+        is the dimension of the state space
+    bonus_scale_factor : double
+        Constant by which to multiply the exploration bonus,
+        controls the level of exploration.
+    beta : double
+        Regularization constant.
+    bonus_type : string
+            Type of exploration bonus. Currently, only "simplified_bernstein"
+            is implemented.
+
+
     References
     ----------
     [1] Domingues et al., 2020
@@ -116,48 +161,6 @@ class RSKernelUCBVIAgent(Agent):
                  beta=0.01,
                  bonus_type="simplified_bernstein",
                  **kwargs):
-        """
-        env : Model
-            Online model with continuous (Box) state space and discrete actions
-        n_episodes : int
-            number of episodes
-        gamma : double
-            Discount factor in [0, 1]. If gamma is 1.0, the problem is set to
-            be finite-horizon.
-        horizon : int
-            Horizon of the objective function. If None and gamma<1, set to
-            1/(1-gamma).
-        lp_metric: int
-            The metric on the state space is the one induced by the p-norm,
-            where p = lp_metric. Default = 2, for the Euclidean metric.
-        kernel_type : string
-            See rlberry.agents.kernel_based.kernels.kernel_func for
-            possible kernel types.
-        scaling: numpy.ndarray
-            Must have the same size as state array, used to scale the states
-            before computing the metric.
-            If None, set to:
-            - (env.observation_space.high - env.observation_space.low) if high
-                and low are bounded
-            - np.ones(env.observation_space.shape[0]) if high or low
-            are unbounded
-        bandwidth : double
-            Kernel bandwidth.
-        min_dist : double
-            Minimum distance between two representative states
-        max_repr : int
-            Maximum number of representative states.
-            If None, it is set to  (sqrt(d)/min_dist)**d, where d
-            is the dimension of the state space
-        bonus_scale_factor : double
-            Constant by which to multiply the exploration bonus,
-            controls the level of exploration.
-        beta : double
-            Regularization constant.
-        bonus_type : string
-             Type of exploration bonus. Currently, only "simplified_bernstein"
-             is implemented.
-        """
         # init base class
         Agent.__init__(self, env, **kwargs)
 

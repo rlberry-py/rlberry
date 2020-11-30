@@ -15,6 +15,25 @@ class MBQVIAgent(Agent):
     Builds an empirical MDP and runs value iteration on it.
     Corresponds to the "indirect" algorithm studied by Kearns and Singh (1999).
 
+    Parameters
+    -----------
+    env : Model
+        generative model with finite state-action space
+    n_samples : int
+        number of samples *per state-action pair* used to estimate
+        the empirical MDP.
+    gamma : double
+        discount factor in [0, 1]
+    horizon : int
+        horizon, if the problem is finite-horizon. if None, the discounted
+        problem is solved. default = None
+    epsilon : double
+        precision of value iteration, only used in discounted problems
+        (when horizon is None).
+
+
+    References
+    ----------
     Kearns, Michael J., and Satinder P. Singh.
     "Finite-sample convergence rates for Q-learning and indirect algorithms."
     Advances in neural information processing systems. 1999.
@@ -29,23 +48,6 @@ class MBQVIAgent(Agent):
                  horizon=None,
                  epsilon=1e-6,
                  **kwargs):
-        """
-        Parameters:
-        -----------
-        env : Model
-            generative model with finite state-action space
-        n_samples : int
-            number of samples *per state-action pair* used to estimate
-            the empirical MDP.
-        gamma : double
-            discount factor in [0, 1]
-        horizon : int
-            horizon, if the problem is finite-horizon. if None, the discounted
-            problem is solved. default = None
-        epsilon : double
-            precision of value iteration, only used in discounted problems
-            (when horizon is None).
-        """
         # initialize base class
         assert env.is_generative(), \
             "MBQVI requires a generative model."
@@ -99,13 +101,15 @@ class MBQVIAgent(Agent):
                     count += 1
                     if count % 10000 == 0:
                         completed = 100 * count / total_samples
-                        logger.debug("[{}] ... {}/{} ({:0.0f}%)".format(self.name,
+                        logger.debug("[{}] ... {}/{} ({:0.0f}%)".format(
+                                                                 self.name,
                                                                  count,
                                                                  total_samples,
                                                                  completed))
 
         # build model and run VI
-        logger.debug(f"{self.name} building model and running backward induction...")
+        logger.debug(
+            f"{self.name} building model and running backward induction...")
 
         N_sa = np.maximum(self.N_sa, 1)
         self.R_hat = self.S_sa / N_sa
@@ -146,4 +150,3 @@ class MBQVIAgent(Agent):
         else:
             assert hh >= 0 and hh < self.horizon
             return self.Q[hh, state, :].argmax()
-
