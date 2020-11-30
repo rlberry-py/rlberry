@@ -111,8 +111,6 @@ class REINFORCEAgent(IncrementalAgent):
                                     self.value_net.parameters(),
                                     **self.optimizer_kwargs)
 
-        self.MseLoss = nn.MSELoss()
-
         self.memory = Memory()
 
         self.episode = 0
@@ -220,12 +218,8 @@ class REINFORCEAgent(IncrementalAgent):
         logprobs = action_dist.log_prob(actions)
         state_values = self.value_net(states)
 
-        # compute advantages
-        advantages = rewards - state_values.detach()
-        if self.normalize:
-          advantages = self._normalize(advantages)
         # compute loss
-        loss = -logprobs * advantages + self.MseLoss(state_values, rewards)
+        loss = -logprobs * rewards
 
         # take gradient step
         self.policy_optimizer.zero_grad()
