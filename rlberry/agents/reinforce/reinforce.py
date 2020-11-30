@@ -6,10 +6,7 @@ from rlberry.agents import IncrementalAgent
 from rlberry.agents.utils.memories import Memory
 from rlberry.agents.utils.torch_training import optimizer_factory
 from rlberry.agents.utils.torch_models import default_policy_net_fn
-from rlberry.agents.utils.torch_models import default_value_net_fn
 from rlberry.utils.writers import PeriodicWriter
-
-
 
 # choose device
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -38,9 +35,6 @@ class REINFORCEAgent(IncrementalAgent):
     policy_net_fn : function
         Function that returns an instance of a policy network (pytorch).
         If None, a default net is used.
-    value_net_fn : function
-        Function that returns an instance of a value network (pytorch).
-        If None, a default net is used.
     verbose : int
         Controls the verbosity, if non zero, progress messages are printed.
 
@@ -64,7 +58,6 @@ class REINFORCEAgent(IncrementalAgent):
                  normalize = False,
                  optimizer_type='ADAM',
                  policy_net_fn=None,
-                 value_net_fn=None,
                  verbose=5,
                  **kwargs):
         IncrementalAgent.__init__(self, env, **kwargs)
@@ -84,9 +77,6 @@ class REINFORCEAgent(IncrementalAgent):
         self.policy_net_fn = policy_net_fn \
             or (lambda: default_policy_net_fn(self.env))
 
-        self.value_net_fn = value_net_fn \
-            or (lambda: default_value_net_fn(self.env))
-
         self.optimizer_kwargs = {'optimizer_type': optimizer_type,
                                  'lr': learning_rate}
 
@@ -103,11 +93,6 @@ class REINFORCEAgent(IncrementalAgent):
         self.policy_net = self.policy_net_fn().to(device)
         self.policy_optimizer = optimizer_factory(
                                     self.policy_net.parameters(),
-                                    **self.optimizer_kwargs)
-
-        self.value_net = self.value_net_fn().to(device)
-        self.value_optimizer = optimizer_factory(
-                                    self.value_net.parameters(),
                                     **self.optimizer_kwargs)
 
         self.memory = Memory()
@@ -212,22 +197,19 @@ class REINFORCEAgent(IncrementalAgent):
         rewards = torch.FloatTensor(rewards).to(device)
         if self.normalize:
           rewards = self._normalize(rewards)
-        # evaluate logprobs and values
+        # evaluate logprobs
         action_dist = self.policy_net(states)
         logprobs = action_dist.log_prob(actions)
-        state_values = self.value_net(states)
 
         # compute loss
         loss = -logprobs * rewards
 
         # take gradient step
         self.policy_optimizer.zero_grad()
-        self.value_optimizer.zero_grad()
 
         loss.mean().backward()
 
         self.policy_optimizer.step()
-        self.value_optimizer.step()
 
 
     #
