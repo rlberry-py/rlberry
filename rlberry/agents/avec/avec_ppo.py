@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+import torch.nn as nn
 
 import gym.spaces as spaces
 from rlberry.agents import IncrementalAgent
@@ -92,7 +93,8 @@ class AVECPPOAgent(IncrementalAgent):
                  horizon=256,
                  gamma=0.99,
                  entr_coef=0.01,
-                 vf_coef=0.5,
+                 vf_coef=0.,
+                 avec_coef=1.,
                  learning_rate=0.0003,
                  optimizer_type='ADAM',
                  eps_clip=0.2,
@@ -107,6 +109,7 @@ class AVECPPOAgent(IncrementalAgent):
         self.gamma = gamma
         self.entr_coef = entr_coef
         self.vf_coef = vf_coef
+        self.avec_coef = avec_coef
         self.eps_clip = eps_clip
         self.k_epochs = k_epochs
         self.horizon = horizon
@@ -150,6 +153,8 @@ class AVECPPOAgent(IncrementalAgent):
         self.cat_policy_old = self.policy_net_fn().to(device)
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
 
+        self.MseLoss = nn.MSELoss()
+
         self.memory = Memory()
 
         self.episode = 0
@@ -180,7 +185,7 @@ class AVECPPOAgent(IncrementalAgent):
                 "episode_rewards": self._rewards[:self.episode]}
         return info
 
-    def partial_fit(self, fraction, **kwargs):
+    def partial_fit(self, fraction: float, **kwargs):
         assert 0.0 < fraction <= 1.0
         n_episodes_to_run = int(np.ceil(fraction * self.n_episodes))
         count = 0
@@ -283,7 +288,8 @@ class AVECPPOAgent(IncrementalAgent):
             surr2 = torch.clamp(ratios, 1 - self.eps_clip, 1
                                 + self.eps_clip) * advantages
             loss = -torch.min(surr1, surr2) \
-                + self.vf_coef * self._avec_loss(state_values, rewards) \
+                + self.avec_coef * self._avec_loss(state_values, rewards) \
+                + self.vf_coef * self.MseLoss(state_values, rewards) \
                 - self.entr_coef * dist_entropy
 
             # take gradient step

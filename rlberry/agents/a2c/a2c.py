@@ -149,7 +149,7 @@ class A2CAgent(IncrementalAgent):
                 "episode_rewards": self._rewards[:self.episode]}
         return info
 
-    def partial_fit(self, fraction, **kwargs):
+    def partial_fit(self, fraction: float, **kwargs):
         assert 0.0 < fraction <= 1.0
         n_episodes_to_run = int(np.ceil(fraction*self.n_episodes))
         count = 0
