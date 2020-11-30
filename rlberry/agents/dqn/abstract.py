@@ -8,6 +8,7 @@ from rlberry.agents.utils.memories import ReplayMemory, Transition
 
 logger = logging.getLogger(__name__)
 
+
 class AbstractDQNAgent(Agent, ABC):
     def __init__(self,
                  env,

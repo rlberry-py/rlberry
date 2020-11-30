@@ -3,7 +3,9 @@ from pathlib import Path
 import gym
 
 
-def configure_logging(level: str = "INFO", file_path: Path = None, file_level: str = "DEBUG") -> None:
+def configure_logging(level: str = "INFO",
+                      file_path: Path = None,
+                      file_level: str = "DEBUG") -> None:
     """
     Set the logging configuration
 
