@@ -1,4 +1,7 @@
 import time
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class PeriodicWriter:
@@ -64,7 +67,7 @@ class PeriodicWriter:
         logs_per_ms = self.log_every / max(1, time_elapsed)
         message += " | freq = {:0.3f} logs/ms".format(logs_per_ms)
 
-        print(message)
+        logger.debug(message)
 
     def __getattr__(self, attr):
         """

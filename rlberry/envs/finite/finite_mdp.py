@@ -1,7 +1,10 @@
 import numpy as np
+import logging
 
 import rlberry.spaces as spaces
 from rlberry.envs.interface import Model
+
+logger = logging.getLogger(__name__)
 
 
 class FiniteMDP(Model):
@@ -125,20 +128,20 @@ class FiniteMDP(Model):
         """
         return self.R[state, action]
 
-    def print(self):
+    def log(self):
         """
         Print the structure of the MDP.
         """
         indent = '    '
         for s in self._states:
-            print(("State %d" + indent) % s)
+            logger.info(f"State {s} {indent}")
             for a in self._actions:
-                print(indent + "Action ", a)
+                logger.info(f"{indent} Action {a}")
                 for ss in self._states:
                     if self.P[s, a, ss] > 0.0:
-                        print(2 * indent + 'transition to %d with prob %0.2f'
-                              % (ss, self.P[s, a, ss]))
-            print("~~~~~~~~~~~~~~~~~~~~")
+                        logger.info(f'{2 * indent} transition to {ss} '
+                                    f'with prob {self.P[s, a, ss]: .2f}')
+            logger.info("~~~~~~~~~~~~~~~~~~~~")
 
 
 # if __name__ == '__main__':

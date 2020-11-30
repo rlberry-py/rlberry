@@ -2,9 +2,11 @@ import rlberry.seeding as seeding
 from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
 from rlberry.agents import MBQVIAgent
 from rlberry.agents.ppo import PPOAgent
+from rlberry.utils.logging import configure_logging
 from rlberry.wrappers import DiscretizeStateWrapper
 from rlberry.stats import AgentStats, plot_episode_rewards, compare_policies
 
+configure_logging("DEBUG")
 
 # global seed
 seeding.set_global_seed(1234)
@@ -22,7 +24,6 @@ d_train_env = DiscretizeStateWrapper(train_env, 20)
 N_EPISODES = 500
 GAMMA = 0.99
 HORIZON = 50
-VERBOSE = 4
 
 params_oracle = {
     "n_samples": 20,  # samples per state-action
@@ -33,8 +34,7 @@ params_oracle = {
 params_ppo = {"n_episodes": N_EPISODES,
               "gamma": GAMMA,
               "horizon": HORIZON,
-              "learning_rate": 0.0003,
-              "verbose": VERBOSE}
+              "learning_rate": 0.0003}
 
 # -----------------------------
 # Run AgentStats

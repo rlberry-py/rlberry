@@ -61,7 +61,6 @@ class RSUCBVIAgent(Agent):
                  max_repr=1000,
                  bonus_scale_factor=1.0,
                  bonus_type="simplified_bernstein",
-                 verbose=1,
                  **kwargs):
         """
         env : Model
@@ -94,8 +93,6 @@ class RSUCBVIAgent(Agent):
         bonus_scale_factor : double
             Constant by which to multiply the exploration bonus, controls
             the level of exploration.
-        verbose : int
-            Controls the verbosity, if non zero, progress messages are printed.
         bonus_type : string
              Type of exploration bonus. Currently, only "simplified_bernstein"
              is implemented.
@@ -109,7 +106,6 @@ class RSUCBVIAgent(Agent):
         self.lp_metric = lp_metric
         self.min_dist = min_dist
         self.bonus_scale_factor = bonus_scale_factor
-        self.verbose = verbose
         self.bonus_type = bonus_type
 
         # check environment
@@ -198,10 +194,8 @@ class RSUCBVIAgent(Agent):
         self.episode = 0
 
         # default writer
-        log_every = 0
-        if self.verbose > 0:
-            log_every = 200/self.verbose
-        self.writer = PeriodicWriter(self.name, log_every=log_every)
+        self.writer = PeriodicWriter(self.name,
+                                     log_every=5*logger.getEffectiveLevel())
 
     def policy(self, state, hh=0, **kwargs):
         assert self.Q_policy is not None

@@ -1,11 +1,14 @@
 from rlberry.agents import RSUCBVIAgent
 from rlberry.envs.classic_control import MountainCar
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
+from rlberry.utils.logging import configure_logging
+
+configure_logging("DEBUG")
 
 for env, horizon in zip([MountainCar(), PBall2D()], [170, 50]):
     print("Running RS-UCBVI on %s" % env.name)
     agent = RSUCBVIAgent(env, n_episodes=1000, gamma=0.99, horizon=horizon,
-                         bonus_scale_factor=0.1, verbose=4)
+                         bonus_scale_factor=0.1)
     agent.fit()
 
     env.enable_rendering()

@@ -22,14 +22,12 @@ GAMMA = 0.99
 HORIZON = 50
 BONUS_SCALE_FACTOR = 0.1
 MIN_DIST = 0.1
-VERBOSE = 4
 
 
 params_ppo = {"n_episodes": N_EPISODES,
               "gamma": GAMMA,
               "horizon": HORIZON,
-              "learning_rate": 0.0003,
-              "verbose": 5}
+              "learning_rate": 0.0003}
 
 # -------------------------------
 # Run AgentStats and save results
