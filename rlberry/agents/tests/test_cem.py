@@ -15,8 +15,7 @@ def test_cem_agent():
                      gamma,
                      batch_size,
                      percentile=70,
-                     learning_rate=0.01,
-                     verbose=1)
+                     learning_rate=0.01)
     agent._log_interval = 0
     agent.fit()
     agent.policy(env.observation_space.sample())

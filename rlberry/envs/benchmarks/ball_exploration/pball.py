@@ -1,8 +1,11 @@
 import numpy as np
+import logging
 
 import rlberry.spaces as spaces
 from rlberry.envs.interface import Model
 from rlberry.rendering import Scene, GeometricPrimitive, RenderInterface2D
+
+logger = logging.getLogger(__name__)
 
 
 def projection_to_pball(x, p):
@@ -118,7 +121,7 @@ class PBall(Model):
 
         assert p >= 1, "PBall requires p>=1"
         if p not in [2, np.inf]:
-            print("WARNING: for p!=2 or p!=np.inf, PBall \
+            logger.warning("For p!=2 or p!=np.inf, PBall \
 does not make true projections onto the lp ball.")
         self.p = p
         self.d, self.dp = B.shape  # d and d'

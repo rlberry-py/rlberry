@@ -3,6 +3,9 @@ from pathlib import Path
 from torch.utils.tensorboard import SummaryWriter
 
 from rlberry.agents.dqn import DQNAgent
+from rlberry.utils.logging import configure_logging
+
+configure_logging(level="DEBUG")
 
 env = gym_make("CartPole-v0")
 agent = DQNAgent(env, n_episodes=50, exploration_kwargs={"tau": 1000})
@@ -10,7 +13,7 @@ agent.set_writer(SummaryWriter())
 
 print(f"Running DQN on {env}")
 print(f"Visualize with tensorboard by \
-running:\n$ tensorboard --logdir {Path(agent.writer.log_dir).parent}")
+running:\n$tensorboard --logdir {Path(agent.writer.log_dir).parent}")
 
 agent.fit()
 

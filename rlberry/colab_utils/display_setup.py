@@ -21,7 +21,6 @@ def show_video(filename=None, directory='./videos'):
     else:
         files = Path(directory).glob("*.mp4")
     for mp4 in files:
-        print(mp4)
         video_b64 = base64.b64encode(mp4.read_bytes())
         html.append('''<video alt="{}" autoplay
                       loop controls style="height: 400px;">

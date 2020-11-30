@@ -88,3 +88,18 @@ class MyAgent(Agent):
 ```
 
 __Remark__: For a faster hyperparameter optimization, it is recommended to implement the `partial_fit()` function in the `IncrementalAgent` interface (`rlberry/agents/incremental_agent.py`), in which case the agent must inherit from `IncrementalAgent`.
+
+
+## Guidelines for logging
+
+*   `logger.info()`, `logger.warning()` and `logger.error()` should be used inside the `rlberry` package, rather than `print()`.
+*    The desired level of verbosity can be chosen by calling `configure_logging`, e.g.:
+
+```python
+from rlberry.utils.logging import configure_logging
+configure_logging(level="DEBUG")
+configure_logging(level="INFO")
+# etc
+```
+
+* `print()` statements can be used outside `rlberry`, e.g., in scripts and notebooks.

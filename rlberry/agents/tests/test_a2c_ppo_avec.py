@@ -14,8 +14,7 @@ def test_a2c_agent():
                      horizon=horizon,
                      gamma=0.99,
                      learning_rate=0.001,
-                     k_epochs=4,
-                     verbose=0)
+                     k_epochs=4)
     agent._log_interval = 0
     agent.fit()
     agent.policy(env.observation_space.sample())
@@ -31,8 +30,7 @@ def test_a2c_agent_partial_fit():
                      horizon=horizon,
                      gamma=0.99,
                      learning_rate=0.001,
-                     k_epochs=4,
-                     verbose=1)
+                     k_epochs=4)
     agent._log_interval = 0
 
     agent.partial_fit(0.5)
@@ -54,8 +52,7 @@ def test_ppo_agent():
                      gamma=0.99,
                      learning_rate=0.001,
                      eps_clip=0.2,
-                     k_epochs=4,
-                     verbose=0)
+                     k_epochs=4)
     agent._log_interval = 0
     agent.fit()
     agent.policy(env.observation_space.sample())
@@ -73,8 +70,7 @@ def test_ppo_agent_partial_fit():
                      learning_rate=0.001,
                      eps_clip=0.2,
                      k_epochs=4,
-                     batch_size=1,
-                     verbose=1)
+                     batch_size=1)
     agent._log_interval = 0
 
     agent.partial_fit(0.5)
@@ -97,8 +93,7 @@ def test_avec_ppo_agent():
                          learning_rate=0.001,
                          eps_clip=0.2,
                          k_epochs=4,
-                         batch_size=1,
-                         verbose=1)
+                         batch_size=1)
     agent._log_interval = 0
     agent.fit()
     agent.policy(env.observation_space.sample())
@@ -116,8 +111,7 @@ def test_avec_ppo_agent_partial_fit():
                          learning_rate=0.001,
                          eps_clip=0.2,
                          k_epochs=4,
-                         batch_size=1,
-                         verbose=1)
+                         batch_size=1)
     agent._log_interval = 0
 
     agent.partial_fit(0.5)

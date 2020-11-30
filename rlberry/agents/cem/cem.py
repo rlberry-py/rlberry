@@ -1,6 +1,7 @@
 import numpy as np
 import torch
 import torch.nn as nn
+import logging
 
 import rlberry.seeding as seeding
 import gym.spaces as spaces
@@ -10,7 +11,7 @@ from rlberry.agents.utils.torch_training import optimizer_factory
 from rlberry.agents.utils.torch_models import default_policy_net_fn
 from rlberry.utils.writers import PeriodicWriter
 
-
+logger = logging.getLogger(__name__)
 # choose device
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -38,8 +39,6 @@ class CEMAgent(Agent):
     policy_net_fn : function
         Function that returns an instance of a policy network (pytorch).
         If None, a default net is used.
-    verbose : int
-        Verbosity level.
     """
 
     name = "CrossEntropyAgent"
@@ -55,7 +54,6 @@ class CEMAgent(Agent):
                  learning_rate=0.01,
                  optimizer_type='ADAM',
                  policy_net_fn=None,
-                 verbose=5,
                  **kwargs):
         Agent.__init__(self, env, **kwargs)
 
@@ -70,7 +68,6 @@ class CEMAgent(Agent):
         self.percentile = percentile
         self.learning_rate = learning_rate
         self.horizon = horizon
-        self.verbose = verbose
 
         # random number generator
         self.rng = seeding.get_rng()
@@ -95,10 +92,8 @@ class CEMAgent(Agent):
         self.memory = CEMMemory(self.batch_size)
 
         # default writer
-        log_every = 0
-        if self.verbose > 0:
-            log_every = 200/self.verbose
-        self.writer = PeriodicWriter(self.name, log_every=log_every)
+        self.writer = PeriodicWriter(self.name,
+                                     log_every=5*logger.getEffectiveLevel())
 
     def fit(self, **kwargs):
         self.episode = 0

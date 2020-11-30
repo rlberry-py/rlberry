@@ -1,8 +1,11 @@
 import numpy as np
+import logging
 
 from rlberry.envs.finite import FiniteMDP
 from rlberry.rendering import Scene, GeometricPrimitive, RenderInterface2D
 from rlberry.rendering.common_shapes import circle_shape
+
+logger = logging.getLogger(__name__)
 
 
 class GridWorld(RenderInterface2D, FiniteMDP):
@@ -268,21 +271,21 @@ class GridWorld(RenderInterface2D, FiniteMDP):
                 grid_values_ascii += 4 * ' ' \
                     + ' '.join([str(jj).zfill(2).ljust(9) for jj
                                 in range(self.ncols)])
-        print(grid_values_ascii)
+        logger.info(grid_values_ascii)
 
     def print_transition_at(self, row, col, action):
         s_idx = self.coord2index[(row, col)]
         if s_idx < 0:
-            print("wall!")
+            logger.info("wall!")
             return
         a_idx = self.a_str2idx[action]
         for next_s_idx, prob in enumerate(self.P[s_idx, a_idx]):
             if prob > 0:
-                print("to (%d, %d) with prob %f" %
+                logger.info("to (%d, %d) with prob %f" %
                       (self.index2coord[next_s_idx] + (prob,)))
 
     def render_ascii(self):
-        print(self._build_ascii())
+        logger.info(self._build_ascii())
 
     def step(self, action):
         assert self.action_space.contains(action), "Invalid action!"

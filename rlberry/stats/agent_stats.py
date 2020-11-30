@@ -48,8 +48,7 @@ class AgentStats:
                  agent_name=None,
                  n_fit=4,
                  n_jobs=4,
-                 output_dir='stats_data',
-                 verbose=5):
+                 output_dir='stats_data'):
         """
         Parameters
         ----------
@@ -74,8 +73,6 @@ class AgentStats:
             Number of jobs to train the agents in parallel using joblib.
         output_dir : str
             Directory where to store data by default.
-        verbose : int
-            Verbosity level.
         """
         # agent_class should only be None when the constructor is called
         # by the class method AgentStats.load(), since the agent class
@@ -109,7 +106,6 @@ class AgentStats:
             self.n_fit = n_fit
             self.n_jobs = n_jobs
             self.output_dir = output_dir
-            self.verbose = verbose
 
             if init_kwargs is None:
                 self.init_kwargs = {}
@@ -144,21 +140,19 @@ class AgentStats:
         """
         Fit the agent instances in parallel.
         """
-        if self.verbose > 0:
-            print("\n Training AgentStats for %s... \n" % self.agent_name)
+        logger.debug(f"Training AgentStats for {self.agent_name}... ")
         args = [(self.agent_class, train_env,
                 deepcopy(self.init_kwargs), deepcopy(self.fit_kwargs))
                 for train_env in self.train_env_set]
 
-        workers_output = Parallel(n_jobs=self.n_jobs, verbose=self.verbose)(
+        workers_output = Parallel(n_jobs=self.n_jobs)(
             delayed(_fit_worker)(arg) for arg in args)
 
         self.fitted_agents, stats = (
             [i for i, j in workers_output],
             [j for i, j in workers_output])
 
-        if self.verbose > 0:
-            print("\n ... trained! \n")
+        logger.debug("... trained!")
 
         # gather all stats in a dictionary
         self._process_fit_statistics(stats)
@@ -357,8 +351,7 @@ class AgentStats:
                 policy_kwargs=deepcopy(self.policy_kwargs),
                 agent_name='optim',
                 n_fit=n_fit,
-                n_jobs=n_jobs,
-                verbose=0)
+                n_jobs=n_jobs)
 
             # Evaluation environment copy
             params_eval_env = deepcopy(self.eval_env)
@@ -427,16 +420,13 @@ class AgentStats:
         # continue
         best_trial = study.best_trial
 
-        if self.verbose > 0:
-            print('Number of finished trials: ', len(study.trials))
 
-            print('Best trial:')
-
-            print('Value: ', best_trial.value)
-
-            print('Params: ')
-            for key, value in best_trial.params.items():
-                print('    {}: {}'.format(key, value))
+        logger.debug(f'Number of finished trials: {len(study.trials)}')
+        logger.debug('Best trial:')
+        logger.debug(f'Value: {best_trial.value}')
+        logger.debug('Params:')
+        for key, value in best_trial.params.items():
+            logger.debug(f'    {key}: {value}')
 
         # update using best parameters
         self.init_kwargs.update(best_trial.params)

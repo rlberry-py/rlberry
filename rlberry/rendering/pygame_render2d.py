@@ -4,7 +4,10 @@ Code for 2D rendering, using pygame (without OpenGL)
 
 import numpy as np
 from os import environ
+import logging
 from rlberry.rendering import Scene
+
+logger = logging.getLogger(__name__)
 
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 
@@ -145,7 +148,7 @@ class PyGameRender2D:
                     pg.quit()
                     return
         else:
-            print("Error: not possible to render the environment, \
+            logger.error("Not possible to render the environment, \
 pygame or pyopengl not installed.")
 
     def get_video_data(self):
@@ -184,7 +187,7 @@ pygame or pyopengl not installed.")
             pg.quit()
             return video_data
         else:
-            print("Error: not possible to render the environment, pygame \
+            logger.error("Not possible to render the environment, pygame \
 or pyopengl not installed.")
             return []
 

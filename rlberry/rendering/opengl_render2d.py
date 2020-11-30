@@ -4,8 +4,10 @@ OpenGL code for 2D rendering, using pygame.
 
 import numpy as np
 from os import environ
+import logging
 from rlberry.rendering import Scene
 
+logger = logging.getLogger(__name__)
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 
 _IMPORT_SUCESSFUL = True
@@ -137,7 +139,7 @@ class OpenGLRender2D:
         elif shape.type == "QUAD_STRIP":
             glBegin(GL_QUAD_STRIP)
         else:
-            print("Invalid type for geometric primitive!")
+            logger.error("Invalid type for geometric primitive!")
             raise NameError
 
         # set color
@@ -176,7 +178,7 @@ class OpenGLRender2D:
                     pg.quit()
                     return
         else:
-            print("Error: not possible to render the environment, \
+            logger.error("Not possible to render the environment, \
 pygame or pyopengl not installed.")
 
     def get_video_data(self):
@@ -216,6 +218,6 @@ pygame or pyopengl not installed.")
             pg.quit()
             return video_data
         else:
-            print("Error: not possible to render the environment, \
+            logger.error("Not possible to render the environment, \
 pygame or pyopengl not installed.")
             return []

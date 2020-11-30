@@ -1,10 +1,12 @@
+
 import rlberry.seeding as seeding
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
 from rlberry.agents import RSKernelUCBVIAgent, RSUCBVIAgent
 from rlberry.agents.ppo import PPOAgent
 from rlberry.stats import AgentStats, plot_episode_rewards, compare_policies
+from rlberry.utils.logging import configure_logging
 
-
+configure_logging("DEBUG")
 # global seed
 seeding.set_global_seed(1234)
 
@@ -23,7 +25,6 @@ GAMMA = 0.99
 HORIZON = 50
 BONUS_SCALE_FACTOR = 0.1
 MIN_DIST = 0.1
-VERBOSE = 4
 
 params = {
     "n_episodes": N_EPISODES,
@@ -31,7 +32,6 @@ params = {
     "horizon": HORIZON,
     "bonus_scale_factor": BONUS_SCALE_FACTOR,
     "min_dist": MIN_DIST,
-    "verbose": VERBOSE
 }
 
 params_kernel = {
@@ -43,7 +43,6 @@ params_kernel = {
     "bandwidth": 0.1,
     "beta": 1.0,
     "kernel_type": "gaussian",
-    "verbose": VERBOSE
 }
 
 params_ppo = {"n_episodes": N_EPISODES,

@@ -33,7 +33,6 @@ class LSVIUCBAgent(Agent):
                  gamma=0.99,
                  bonus_scale_factor=1.0,
                  reg_factor=0.01,
-                 verbose=1,
                  **kwargs):
         """
         Parameters
@@ -53,8 +52,6 @@ class LSVIUCBAgent(Agent):
             Constant by which to multiply the exploration bonus.
         reg_factor : double
             Linear regression regularization factor.
-        verbose : int
-            Verbosity level.
         """
         Agent.__init__(self, env, **kwargs)
 
@@ -64,7 +61,6 @@ class LSVIUCBAgent(Agent):
         self.gamma = gamma
         self.bonus_scale_factor = bonus_scale_factor
         self.reg_factor = reg_factor
-        self.verbose = verbose
 
         #
         if self.bonus_scale_factor == 0.0:
@@ -128,9 +124,7 @@ class LSVIUCBAgent(Agent):
         for _ in range(self.n_episodes):
             self.run_episode()
 
-            # log
-            if self.verbose > 0:
-                print(self._info_to_print())
+        self.log_info()
 
         self.w_policy = self._run_lsvi(bonus_factor=0.0)
 
@@ -236,12 +230,12 @@ class LSVIUCBAgent(Agent):
     #
     # Logging
     #
-    def _info_to_print(self):
+    def log_info(self):
         episode = self.episode
         avg_over = 10
         reward_per_ep = \
             self._rewards[max(0, episode-avg_over):episode + 1].mean()
-        to_print = "[{}] episode = {}/{} ".format(self.name, episode+1,
+        message = "[{}] episode = {}/{} ".format(self.name, episode+1,
                                                   self.n_episodes) \
             + "| reward/ep = {:0.2f} ".format(reward_per_ep)
-        return to_print
+        logger.debug(message)

@@ -2,11 +2,14 @@
 Interface that allows 2D rendering.
 """
 
+import logging
 from abc import ABC, abstractmethod
 
 from rlberry.rendering.opengl_render2d import OpenGLRender2D
 from rlberry.rendering.pygame_render2d import PyGameRender2D
 from rlberry.rendering.utils import video_write
+
+logger = logging.getLogger(__name__)
 
 
 class RenderInterface(ABC):
@@ -112,7 +115,7 @@ class RenderInterface2D(RenderInterface):
             background, data = self._get_background_and_scenes()
 
             if len(data) == 0:
-                print("No data to render.")
+                logger.info("No data to render.")
                 return
 
             # render
@@ -126,7 +129,7 @@ class RenderInterface2D(RenderInterface):
             renderer.run_graphics(self._debug_mode)
             return 0
         else:
-            print("Rendering not enabled for the environment.")
+            logger.info("Rendering not enabled for the environment.")
             return 1
 
     def save_video(self, filename, framerate=25, **kwargs):
@@ -135,7 +138,7 @@ class RenderInterface2D(RenderInterface):
         background, data = self._get_background_and_scenes()
 
         if len(data) == 0:
-            print("No data to save.")
+            logger.info("No data to save.")
             return
 
         # get video data from renderer

@@ -1,8 +1,11 @@
 import numpy as np
+import logging
 
 from rlberry.agents import Agent
 from rlberry.agents.dynprog.utils import backward_induction, value_iteration
 from gym.spaces import Discrete
+
+logger = logging.getLogger(__name__)
 
 
 class MBQVIAgent(Agent):
@@ -25,7 +28,6 @@ class MBQVIAgent(Agent):
                  gamma=0.95,
                  horizon=None,
                  epsilon=1e-6,
-                 verbose=1,
                  **kwargs):
         """
         Parameters:
@@ -43,8 +45,6 @@ class MBQVIAgent(Agent):
         epsilon : double
             precision of value iteration, only used in discounted problems
             (when horizon is None).
-        verbose : int
-            controls the verbosity, if non zero, progress messages are printed.
         """
         # initialize base class
         assert env.is_generative(), \
@@ -60,7 +60,6 @@ class MBQVIAgent(Agent):
         self.gamma = gamma
         self.horizon = horizon
         self.epsilon = epsilon
-        self.verbose = verbose
 
         # empirical MDP, created in fit()
         self.R_hat = None
@@ -87,12 +86,10 @@ class MBQVIAgent(Agent):
         # collect data
         total_samples = S * A * self.n_samples
         count = 0
-        if self.verbose > 0:
-            print(
-                "[{}] collecting {} samples per (s,a)".format(self.name,
-                                                              self.n_samples)
-                + ", total = {} samples.".format(total_samples)
-            )
+        logger.debug(
+            f"[{self.name}] collecting {self.n_samples} samples per (s,a)"
+            f", total = {total_samples} samples."
+        )
         for ss in range(S):
             for aa in range(A):
                 for _ in range(self.n_samples):
@@ -100,17 +97,15 @@ class MBQVIAgent(Agent):
                     self._update(ss, aa, next_state, reward)
 
                     count += 1
-                    if count % 10000 == 0 and self.verbose > 0:
+                    if count % 10000 == 0:
                         completed = 100 * count / total_samples
-                        print("[{}] ... {}/{} ({:0.0f}%)".format(self.name,
+                        logger.debug("[{}] ... {}/{} ({:0.0f}%)".format(self.name,
                                                                  count,
                                                                  total_samples,
                                                                  completed))
 
         # build model and run VI
-        if self.verbose > 0:
-            print("{} building model".format(self.name)
-                  + " and running backward induction...")
+        logger.debug(f"{self.name} building model and running backward induction...")
 
         N_sa = np.maximum(self.N_sa, 1)
         self.R_hat = self.S_sa / N_sa

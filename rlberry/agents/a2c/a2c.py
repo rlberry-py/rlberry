@@ -1,6 +1,7 @@
 import numpy as np
 import torch
 import torch.nn as nn
+import logging
 
 import gym.spaces as spaces
 from rlberry.agents import IncrementalAgent
@@ -10,6 +11,7 @@ from rlberry.agents.utils.torch_models import default_policy_net_fn
 from rlberry.agents.utils.torch_models import default_value_net_fn
 from rlberry.utils.writers import PeriodicWriter
 
+logger = logging.getLogger(__name__)
 
 # choose device
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -43,8 +45,6 @@ class A2CAgent(IncrementalAgent):
     value_net_fn : function
         Function that returns an instance of a value network (pytorch).
         If None, a default net is used.
-    verbose : int
-        Controls the verbosity, if non zero, progress messages are printed.
 
 
     References
@@ -69,7 +69,6 @@ class A2CAgent(IncrementalAgent):
                  k_epochs=5,
                  policy_net_fn=None,
                  value_net_fn=None,
-                 verbose=1,
                  **kwargs):
         IncrementalAgent.__init__(self, env, **kwargs)
 
@@ -83,7 +82,6 @@ class A2CAgent(IncrementalAgent):
 
         self.state_dim = self.env.observation_space.shape[0]
         self.action_dim = self.env.action_space.n
-        self.verbose = verbose
 
         #
         self.policy_net_fn = policy_net_fn \
@@ -129,9 +127,7 @@ class A2CAgent(IncrementalAgent):
         self._cumul_rewards = np.zeros(self.n_episodes)
 
         # default writer
-        log_every = 0
-        if self.verbose > 0:
-            log_every = 200/self.verbose
+        log_every = 5*logger.getEffectiveLevel()
         self.writer = PeriodicWriter(self.name, log_every=log_every)
 
     def policy(self, state, **kwargs):

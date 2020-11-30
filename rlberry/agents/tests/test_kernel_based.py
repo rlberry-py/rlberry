@@ -26,8 +26,7 @@ def test_rs_kernel_ucbvi(kernel_type):
                                 min_dist=0.2,
                                 bandwidth=0.05,
                                 beta=1.0,
-                                kernel_type=kernel_type,
-                                verbose=1)
+                                kernel_type=kernel_type)
         agent._log_interval = 0
         agent.fit()
         agent.policy(env.observation_space.sample())
@@ -39,8 +38,7 @@ def test_rs_ucbvi():
                          n_episodes=5,
                          gamma=0.99,
                          horizon=30,
-                         bonus_scale_factor=0.1,
-                         verbose=1)
+                         bonus_scale_factor=0.1)
     agent._log_interval = 0
     agent.fit()
     agent.policy(env.observation_space.sample())

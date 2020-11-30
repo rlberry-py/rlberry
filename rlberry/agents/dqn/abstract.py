@@ -1,9 +1,12 @@
 from abc import ABC, abstractmethod
 from gym import spaces
+import logging
 
 from rlberry.agents import Agent
 from rlberry.agents.dqn.exploration import exploration_factory
 from rlberry.agents.utils.memories import ReplayMemory, Transition
+
+logger = logging.getLogger(__name__)
 
 
 class AbstractDQNAgent(Agent, ABC):
@@ -41,7 +44,7 @@ class AbstractDQNAgent(Agent, ABC):
     def fit(self, **kwargs):
         episode_rewards = []
         for episode in range(self.n_episodes):
-            print("episode", episode)
+            logger.debug(f"episode {episode+1}/{self.n_episodes}")
             done, total_reward = False, 0
             state = self.env.reset()
             ep_time = 0
