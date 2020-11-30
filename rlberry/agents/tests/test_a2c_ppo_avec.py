@@ -111,8 +111,7 @@ def test_avec_ppo_agent_partial_fit():
                          learning_rate=0.001,
                          eps_clip=0.2,
                          k_epochs=4,
-                         batch_size=1,
-                         verbose=1)
+                         batch_size=1)
     agent._log_interval = 0
 
     agent.partial_fit(0.5)
