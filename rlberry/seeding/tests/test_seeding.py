@@ -4,10 +4,22 @@ import rlberry.seeding as seeding
 def test_seeding():
     seed = 123
     seeding.set_global_seed(seed)
+
+    # check that reimports do not cause problems
+    import rlberry
+    import rlberry.seeding
+    #
+
     assert seeding._GLOBAL_SEED_SEQ.entropy == seed
 
     _ = seeding.get_rng()
     assert seeding._GLOBAL_SEED_SEQ.n_children_spawned == 1
+
+    # check that reimports do not cause problems
+    import rlberry
+    import rlberry.seeding
+    assert seeding._GLOBAL_SEED_SEQ.entropy == seed
+    #
 
     _ = seeding.get_rng()
     assert seeding._GLOBAL_SEED_SEQ.n_children_spawned == 2
