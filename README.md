@@ -68,14 +68,14 @@ The goal of `rlberry`to make **Reinforcement Learning** (RL) research and teachi
     *   totally adapts to [`OpenAI Gym`](https://gym.openai.com/) (=> making it easy to use any existing environments from `gym`).
 
 *   An interface for rendering, that
-    *   provides simple and clear visualisation of your experiments.
+    *   provides simple and clear visualization of your experiments.
 
 *   Several important features include
     *   a unified seeding mechanism: define only one global seed, from which all other seeds will inherit, enforcing independence of the random number generators;
 
-    *   an interface to [`Optuna`](https://optuna.org/) that allows automatic hyperparameter optimisation;
+    *   an interface to [`Optuna`](https://optuna.org/) that allows automatic hyperparameter optimization;
 
-    *   compatibility with [`Sacred`](https://sacred.readthedocs.io/en/stable/quickstart.html) that facilitates configuration, organisation, logging and reproducing of computational experiments.
+    *   compatibility with [`Sacred`](https://sacred.readthedocs.io/en/stable/quickstart.html) that facilitates configuration, organization, logging and reproducing of computational experiments.
 
 <p align="center">
    <img src="assets/rlberry.svg" width="70%">
