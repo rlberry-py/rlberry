@@ -42,7 +42,8 @@ class REINFORCEAgent(IncrementalAgent):
     References
     ----------
     Williams, Ronald J.,
-    "Simple statistical gradient-following algorithms for connectionist reinforcement learning."
+    "Simple statistical gradient-following algorithms for connectionist
+    reinforcement learning."
     ReinforcementLearning.Springer,Boston,MA,1992.5-3
     """
 
@@ -55,7 +56,7 @@ class REINFORCEAgent(IncrementalAgent):
                  horizon=256,
                  gamma=0.99,
                  learning_rate=0.0001,
-                 normalize = False,
+                 normalize=False,
                  optimizer_type='ADAM',
                  policy_net_fn=None,
                  verbose=5,
@@ -178,7 +179,7 @@ class REINFORCEAgent(IncrementalAgent):
         return episode_rewards
 
     def _normalize(self, x):
-      return (x-x.mean())/(x.std()+1e-5)
+        return (x-x.mean())/(x.std()+1e-5)
 
     def _update(self):
         # monte carlo estimate of rewards
@@ -196,7 +197,8 @@ class REINFORCEAgent(IncrementalAgent):
         actions = torch.LongTensor(self.memory.actions).to(device)
         rewards = torch.FloatTensor(rewards).to(device)
         if self.normalize:
-          rewards = self._normalize(rewards)
+            rewards = self._normalize(rewards)
+            
         # evaluate logprobs
         action_dist = self.policy_net(states)
         logprobs = action_dist.log_prob(actions)
@@ -210,7 +212,6 @@ class REINFORCEAgent(IncrementalAgent):
         loss.mean().backward()
 
         self.policy_optimizer.step()
-
 
     #
     # For hyperparameter optimization
