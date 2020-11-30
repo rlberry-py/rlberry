@@ -185,11 +185,7 @@ Want to contribute to `rlberry`? Please check [our contribution guidelines](CONT
 
 *   When inheriting from the `Agent` class, make sure to call `Agent.__init__(self, env, **kwargs)` using `**kwargs` in case new features are added to the base class, and to make sure that `copy_env` and `reseed_env` are always an option to any agent. 
 
-*   Convention for verbose in the agents:
-    *   `verbose=0`: nothing is printed
-    *   `verbose>=1`: print progress messages
-
-Errors and warnings are printed using the `logging` library.
+Infos, errors and warnings are printed using the `logging` library.
 
 *   From `gym` to `rlberry`:
     *   `reseed` (rlberry) should be called instead of `seed` (gym). `seed` keeps compatilibity with gym, whereas `reseed` uses the unified seeding mechanism of `rlberry`.
