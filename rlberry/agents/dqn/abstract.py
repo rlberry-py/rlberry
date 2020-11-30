@@ -2,14 +2,14 @@ from abc import ABC, abstractmethod
 from gym import spaces
 import logging
 
-from rlberry.agents import Agent
+from rlberry.agents import IncrementalAgent
 from rlberry.agents.dqn.exploration import exploration_factory
 from rlberry.agents.utils.memories import ReplayMemory, Transition
 
 logger = logging.getLogger(__name__)
 
 
-class AbstractDQNAgent(Agent, ABC):
+class AbstractDQNAgent(IncrementalAgent, ABC):
     def __init__(self,
                  env,
                  horizon,
@@ -21,7 +21,7 @@ class AbstractDQNAgent(Agent, ABC):
                  double=True,
                  **kwargs):
         ABC.__init__(self)
-        Agent.__init__(self, env, **kwargs)
+        IncrementalAgent.__init__(self, env, **kwargs)
         self.horizon = horizon
         self.exploration_kwargs = exploration_kwargs or {}
         self.memory_kwargs = memory_kwargs or {}
@@ -42,31 +42,36 @@ class AbstractDQNAgent(Agent, ABC):
         self.writer = None
 
     def fit(self, **kwargs):
+        return self.partial_fit(fraction=1, **kwargs)
+
+    def partial_fit(self, fraction, **kwargs):
         episode_rewards = []
-        for episode in range(self.n_episodes):
+        for episode in range(int(fraction * self.n_episodes)):
             logger.debug(f"episode {episode+1}/{self.n_episodes}")
-            done, total_reward = False, 0
-            state = self.env.reset()
-            ep_time = 0
-            while not done and ep_time < self.horizon:
-                self.exploration_policy.step_time()
-                action = self.policy(state)
-                next_state, reward, done, info = self.env.step(action)
-                self.record(state, action, reward, next_state, done, info)
-                state = next_state
-                total_reward += reward
-                #
-                ep_time += 1
+            total_reward = self._run_episode()
             if self.writer:
                 self.writer.add_scalar("fit/total_reward",
                                        total_reward,
                                        episode)
             episode_rewards.append(total_reward)
-
         return {
-            "n_episodes": self.n_episodes,
+            "n_episodes": int(fraction * self.n_episodes),
             "episode_rewards": episode_rewards
         }
+
+    def _run_episode(self):
+        total_reward = 0
+        state = self.env.reset()
+        for _ in range(self.horizon):
+            self.exploration_policy.step_time()
+            action = self.policy(state)
+            next_state, reward, done, info = self.env.step(action)
+            self.record(state, action, reward, next_state, done, info)
+            state = next_state
+            total_reward += reward
+            if done:
+                break
+        return total_reward
 
     def record(self, state, action, reward, next_state, done, info):
         """
