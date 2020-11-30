@@ -65,7 +65,7 @@ The goal of `rlberry`to make **Reinforcement Learning** (RL) research and teachi
 *   An interface for environments, that
     *   allows to create novel environments easily (=> making it possible to add your own environments);
 
-    *   totally adapts to [`OpenAI Gym`](https://gym.openai.com/) (=> making it easy to use any existing environments from `Gym`).
+    *   totally adapts to [`OpenAI Gym`](https://gym.openai.com/) (=> making it easy to use any existing environments from `gym`).
 
 *   An interface for rendering, that
     *   provides simple and clear visualisation of your experiments.
@@ -78,7 +78,7 @@ The goal of `rlberry`to make **Reinforcement Learning** (RL) research and teachi
     *   compatibility with [`Sacred`](https://sacred.readthedocs.io/en/stable/quickstart.html) that facilitates configuration, organisation, logging and reproducing of computational experiments.
 
 <p align="center">
-   <img src="assets/rlberry.svg" width="60%">
+   <img src="assets/rlberry.svg" width="70%">
 </p>
 
 

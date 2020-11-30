@@ -6,3 +6,4 @@ from .mbqvi import *
 from .ppo import *
 from .avec import *
 from .a2c import *
+from .reinforce import *

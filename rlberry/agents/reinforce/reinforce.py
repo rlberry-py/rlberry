@@ -1,7 +1,6 @@
 import numpy as np
 import torch
 import torch.nn as nn
-import logging
 
 import gym.spaces as spaces
 from rlberry.agents import IncrementalAgent
@@ -11,13 +10,11 @@ from rlberry.agents.utils.torch_models import default_policy_net_fn
 from rlberry.agents.utils.torch_models import default_value_net_fn
 from rlberry.utils.writers import PeriodicWriter
 
-logger = logging.getLogger(__name__)
-
 # choose device
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
-class A2CAgent(IncrementalAgent):
+class REINFORCEAgent(IncrementalAgent):
     """
     Parameters
     ----------
@@ -31,31 +28,31 @@ class A2CAgent(IncrementalAgent):
         Horizon.
     gamma : double
         Discount factor in [0, 1].
-    entr_coef : double
-        Entropy coefficient.
     learning_rate : double
         Learning rate.
+    normalize: bool
+        If True normalize rewards and advantages
     optimizer_type: str
         Type of optimizer. 'ADAM' by defaut.
-    k_epochs : int
-        Number of epochs per update.
     policy_net_fn : function
         Function that returns an instance of a policy network (pytorch).
         If None, a default net is used.
     value_net_fn : function
         Function that returns an instance of a value network (pytorch).
         If None, a default net is used.
+    verbose : int
+        Controls the verbosity, if non zero, progress messages are printed.
 
 
     References
     ----------
-    Mnih, V., Badia, A.P., Mirza, M., Graves, A., Lillicrap, T., Harley, T.,
-    Silver, D. & Kavukcuoglu, K. (2016).
-    "Asynchronous methods for deep reinforcement learning."
-    In International Conference on Machine Learning (pp. 1928-1937).
+    Williams, Ronald J.,
+    "Simple statistical gradient-following algorithms for connectionist
+    reinforcement learning."
+    ReinforcementLearning.Springer,Boston,MA,1992.5-3
     """
 
-    name = "A2C"
+    name = "REINFORCE"
     fit_info = ("n_episodes", "episode_rewards")
 
     def __init__(self, env,
@@ -63,12 +60,12 @@ class A2CAgent(IncrementalAgent):
                  batch_size=8,
                  horizon=256,
                  gamma=0.99,
-                 entr_coef=0.01,
-                 learning_rate=0.01,
+                 learning_rate=0.0001,
+                 normalize=False,
                  optimizer_type='ADAM',
-                 k_epochs=5,
                  policy_net_fn=None,
                  value_net_fn=None,
+                 verbose=5,
                  **kwargs):
         IncrementalAgent.__init__(self, env, **kwargs)
 
@@ -76,12 +73,12 @@ class A2CAgent(IncrementalAgent):
         self.batch_size = batch_size
         self.horizon = horizon
         self.gamma = gamma
-        self.entr_coef = entr_coef
         self.learning_rate = learning_rate
-        self.k_epochs = k_epochs
+        self.normalize = normalize
 
         self.state_dim = self.env.observation_space.shape[0]
         self.action_dim = self.env.action_space.n
+        self.verbose = verbose
 
         #
         self.policy_net_fn = policy_net_fn \
@@ -97,24 +94,21 @@ class A2CAgent(IncrementalAgent):
         assert isinstance(self.env.observation_space, spaces.Box)
         assert isinstance(self.env.action_space, spaces.Discrete)
 
-        self.cat_policy = None  # categorical policy function
+        self.policy_net = None  # policy network
 
         # initialize
         self.reset()
 
     def reset(self, **kwargs):
-        self.cat_policy = self.policy_net_fn().to(device)
+        self.policy_net = self.policy_net_fn().to(device)
         self.policy_optimizer = optimizer_factory(
-                                    self.cat_policy.parameters(),
+                                    self.policy_net.parameters(),
                                     **self.optimizer_kwargs)
 
         self.value_net = self.value_net_fn().to(device)
         self.value_optimizer = optimizer_factory(
-                                self.value_net.parameters(),
-                                **self.optimizer_kwargs)
-
-        self.cat_policy_old = self.policy_net_fn().to(device)
-        self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
+                                    self.value_net.parameters(),
+                                    **self.optimizer_kwargs)
 
         self.MseLoss = nn.MSELoss()
 
@@ -127,13 +121,15 @@ class A2CAgent(IncrementalAgent):
         self._cumul_rewards = np.zeros(self.n_episodes)
 
         # default writer
-        log_every = 5*logger.getEffectiveLevel()
+        log_every = 0
+        if self.verbose > 0:
+            log_every = 200/self.verbose
         self.writer = PeriodicWriter(self.name, log_every=log_every)
 
     def policy(self, state, **kwargs):
-        assert self.cat_policy is not None
+        assert self.policy_net is not None
         state = torch.from_numpy(state).float().to(device)
-        action_dist = self.cat_policy_old(state)
+        action_dist = self.policy_net(state)
         action = action_dist.sample().item()
         return action
 
@@ -157,28 +153,18 @@ class A2CAgent(IncrementalAgent):
                 "episode_rewards": self._rewards[:self.episode]}
         return info
 
-    def _select_action(self, state):
-        state = torch.from_numpy(state).float().to(device)
-        action_dist = self.cat_policy_old(state)
-        action = action_dist.sample()
-        action_logprob = action_dist.log_prob(action)
-
-        self.memory.states.append(state)
-        self.memory.actions.append(action)
-        self.memory.logprobs.append(action_logprob)
-
-        return action.item()
-
     def _run_episode(self):
         # interact for H steps
         episode_rewards = 0
         state = self.env.reset()
         for _ in range(self.horizon):
-            # running policy_old
-            action = self._select_action(state)
+            # running policy
+            action = self.policy(state)
             next_state, reward, done, _ = self.env.step(action)
 
             # save in batch
+            self.memory.states.append(state)
+            self.memory.actions.append(action)
             self.memory.rewards.append(reward)
             self.memory.is_terminals.append(done)
             episode_rewards += reward
@@ -195,6 +181,7 @@ class A2CAgent(IncrementalAgent):
         self._cumul_rewards[ep] = episode_rewards \
             + self._cumul_rewards[max(0, ep - 1)]
         self.episode += 1
+
         #
         if self.writer is not None:
             self.writer.add_scalar("episode", self.episode, None)
@@ -207,6 +194,9 @@ class A2CAgent(IncrementalAgent):
 
         return episode_rewards
 
+    def _normalize(self, x):
+        return (x-x.mean())/(x.std()+1e-5)
+
     def _update(self):
         # monte carlo estimate of rewards
         rewards = []
@@ -218,43 +208,32 @@ class A2CAgent(IncrementalAgent):
             discounted_reward = reward + (self.gamma * discounted_reward)
             rewards.insert(0, discounted_reward)
 
-        # normalize the rewards
-        rewards = torch.tensor(rewards).to(device).float()
-        rewards = (rewards - rewards.mean()) / (rewards.std() + 1e-5)
-
         # convert list to tensor
-        old_states = torch.stack(self.memory.states).to(device).detach()
-        old_actions = torch.stack(self.memory.actions).to(device).detach()
+        states = torch.FloatTensor(self.memory.states).to(device)
+        actions = torch.LongTensor(self.memory.actions).to(device)
+        rewards = torch.FloatTensor(rewards).to(device)
+        if self.normalize:
+            rewards = self._normalize(rewards)
+        # evaluate logprobs and values
+        action_dist = self.policy_net(states)
+        logprobs = action_dist.log_prob(actions)
+        state_values = self.value_net(states)
 
-        # optimize policy for K epochs
-        for _ in range(self.k_epochs):
-            # evaluate old actions and values
-            action_dist = self.cat_policy(old_states)
-            logprobs = action_dist.log_prob(old_actions)
-            state_values = self.value_net(old_states)
-            dist_entropy = action_dist.entropy()
+        # compute advantages
+        advantages = rewards - state_values.detach()
+        if self.normalize:
+            advantages = self._normalize(advantages)
+        # compute loss
+        loss = -logprobs * advantages + self.MseLoss(state_values, rewards)
 
-            # normalize the advantages
-            advantages = rewards - state_values.detach()
-            advantages = (advantages - advantages.mean()) \
-                / (advantages.std() + 1e-8)
-            # find pg loss
-            pg_loss = - logprobs * advantages
-            loss = pg_loss \
-                + 0.5 * self.MseLoss(state_values, rewards) \
-                - self.entr_coef * dist_entropy
+        # take gradient step
+        self.policy_optimizer.zero_grad()
+        self.value_optimizer.zero_grad()
 
-            # take gradient step
-            self.policy_optimizer.zero_grad()
-            self.value_optimizer.zero_grad()
+        loss.mean().backward()
 
-            loss.mean().backward()
-
-            self.policy_optimizer.step()
-            self.value_optimizer.step()
-
-        # copy new weights into old policy
-        self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
+        self.policy_optimizer.step()
+        self.value_optimizer.step()
 
     #
     # For hyperparameter optimization

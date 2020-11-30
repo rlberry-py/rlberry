@@ -62,10 +62,3 @@ def get_rng():
     child_seed = _GLOBAL_SEED_SEQ.spawn(1)
     rng = default_rng(child_seed[0])
     return rng
-
-
-#
-# Set global seed
-#
-
-set_global_seed()
