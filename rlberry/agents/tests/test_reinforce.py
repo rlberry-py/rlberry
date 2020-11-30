@@ -11,8 +11,7 @@ def test_reinforce_agent():
                      n_episodes=n_episodes,
                      horizon=horizon,
                      gamma=0.99,
-                     learning_rate=0.001,
-                     verbose=0)
+                     learning_rate=0.001)
     agent._log_interval = 0
     agent.fit()
     agent.policy(env.observation_space.sample())
@@ -27,8 +26,7 @@ def test_reinforce_agent_partial_fit():
                      n_episodes=n_episodes,
                      horizon=horizon,
                      gamma=0.99,
-                     learning_rate=0.001,
-                     verbose=1)
+                     learning_rate=0.001)
     agent._log_interval = 0
 
     agent.partial_fit(0.5)

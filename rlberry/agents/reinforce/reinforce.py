@@ -1,3 +1,4 @@
+import logging
 import numpy as np
 import torch
 
@@ -10,6 +11,8 @@ from rlberry.utils.writers import PeriodicWriter
 
 # choose device
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+logger = logging.getLogger(__name__)
 
 
 class REINFORCEAgent(IncrementalAgent):
@@ -35,9 +38,6 @@ class REINFORCEAgent(IncrementalAgent):
     policy_net_fn : function
         Function that returns an instance of a policy network (pytorch).
         If None, a default net is used.
-    verbose : int
-        Controls the verbosity, if non zero, progress messages are printed.
-
 
     References
     ----------
@@ -59,7 +59,6 @@ class REINFORCEAgent(IncrementalAgent):
                  normalize=False,
                  optimizer_type='ADAM',
                  policy_net_fn=None,
-                 verbose=5,
                  **kwargs):
         IncrementalAgent.__init__(self, env, **kwargs)
 
@@ -72,7 +71,6 @@ class REINFORCEAgent(IncrementalAgent):
 
         self.state_dim = self.env.observation_space.shape[0]
         self.action_dim = self.env.action_space.n
-        self.verbose = verbose
 
         #
         self.policy_net_fn = policy_net_fn \
@@ -105,9 +103,7 @@ class REINFORCEAgent(IncrementalAgent):
         self._cumul_rewards = np.zeros(self.n_episodes)
 
         # default writer
-        log_every = 0
-        if self.verbose > 0:
-            log_every = 200/self.verbose
+        log_every = 5*logger.getEffectiveLevel()
         self.writer = PeriodicWriter(self.name, log_every=log_every)
 
     def policy(self, state, **kwargs):
@@ -198,7 +194,7 @@ class REINFORCEAgent(IncrementalAgent):
         rewards = torch.FloatTensor(rewards).to(device)
         if self.normalize:
             rewards = self._normalize(rewards)
-            
+
         # evaluate logprobs
         action_dist = self.policy_net(states)
         logprobs = action_dist.log_prob(actions)
