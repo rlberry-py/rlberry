@@ -4,9 +4,7 @@ from rlberry.envs.benchmarks.ball_exploration import PBall2D
 from rlberry.agents import RSKernelUCBVIAgent, RSUCBVIAgent
 from rlberry.agents.ppo import PPOAgent
 from rlberry.stats import AgentStats, plot_episode_rewards, compare_policies
-from rlberry.utils.logging import configure_logging
 
-configure_logging("DEBUG")
 # global seed
 seeding.set_global_seed(1234)
 

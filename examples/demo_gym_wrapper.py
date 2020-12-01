@@ -1,9 +1,6 @@
 from rlberry.envs import gym_make
 from rlberry.agents import RSUCBVIAgent
-from rlberry.utils.logging import configure_logging
 from rlberry.wrappers import RescaleRewardWrapper
-
-configure_logging("DEBUG")
 
 env = gym_make('Acrobot-v1')
 env.reward_range = (-1.0, 0.0)  # missing in gym implementation

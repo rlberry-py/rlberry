@@ -1,9 +1,7 @@
 from rlberry.envs import Acrobot
 from rlberry.agents import RSKernelUCBVIAgent
-from rlberry.utils.logging import configure_logging
 from rlberry.wrappers import RescaleRewardWrapper
 
-configure_logging("DEBUG")
 
 env = Acrobot()
 # rescake rewards to [0, 1]

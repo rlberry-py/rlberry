@@ -2,9 +2,7 @@ import rlberry.seeding as seeding
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
 from rlberry.agents.ppo import PPOAgent
 from rlberry.stats import AgentStats
-from rlberry.utils.logging import configure_logging
 
-configure_logging("DEBUG")
 # global seed
 seeding.set_global_seed(1234)
 
