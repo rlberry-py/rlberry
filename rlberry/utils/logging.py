@@ -5,7 +5,8 @@ import gym
 
 def configure_logging(level: str = "INFO",
                       file_path: Path = None,
-                      file_level: str = "DEBUG") -> None:
+                      file_level: str = "DEBUG",
+                      default_msg: str = "") -> None:
     """
     Set the logging configuration
 
@@ -20,16 +21,18 @@ def configure_logging(level: str = "INFO",
         Path to a log file
     file_level
         Level of verbosity for the file handler
+    default_msg
+        Message to append to the beginning all logs (e.g. thread id).
     """
     config = {
         "version": 1,
         "disable_existing_loggers": False,
         "formatters": {
             "standard": {
-                "format": "[%(levelname)s] %(message)s "
+                "format": default_msg+"[%(levelname)s] %(message)s "
             },
             "detailed": {
-                "format": "[%(name)s:%(levelname)s] %(message)s "
+                "format": default_msg+"[%(name)s:%(levelname)s] %(message)s "
             }
         },
         "handlers": {
