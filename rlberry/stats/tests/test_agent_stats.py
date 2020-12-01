@@ -112,6 +112,10 @@ def test_agent_stats_2():
                               n_jobs=1)
     agent_stats_list = [stats_agent1, stats_agent2]
 
+    # set some writers
+    stats_agent1.set_writer(None, 1)
+    stats_agent1.set_writer(None, 2)
+
     # compare final policies
     compare_policies(agent_stats_list, n_sim=10, show=False)
     compare_policies(agent_stats_list,
@@ -155,6 +159,10 @@ def test_agent_stats_partial_fit():
     # Run AgentStats
     stats = AgentStats(DummyAgent, train_env,
                        init_kwargs=params, n_fit=4, eval_horizon=10)
+
+    # set some writers
+    stats.set_writer(None, 0)
+    stats.set_writer(None, 3)
 
     # Run partial fit
     stats.partial_fit(0.1)

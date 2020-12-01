@@ -2,9 +2,6 @@ import numpy as np
 from rlberry.agents.cem import CEMAgent
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
 import rlberry.seeding as seeding
-from rlberry.utils.logging import configure_logging
-
-configure_logging(level="DEBUG")
 
 seeding.set_global_seed(123)
 

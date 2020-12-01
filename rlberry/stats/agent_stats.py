@@ -16,6 +16,8 @@ import dill
 import rlberry.seeding as seeding
 from rlberry.agents import IncrementalAgent
 from rlberry.stats.evaluation import compare_policies
+from rlberry.utils.logging import configure_logging
+
 
 _OPTUNA_INSTALLED = True
 try:
@@ -48,7 +50,7 @@ class AgentStats:
     init_kwargs : dict
         Arguments required by the agent's constructor.
     fit_kwargs : dict
-        Arguments required to train the agent.
+        Arguments required to call agent.fit().
     policy_kwargs : dict
         Arguments required to call agent.policy().
     agent_name : str
@@ -59,6 +61,8 @@ class AgentStats:
         Number of jobs to train the agents in parallel using joblib.
     output_dir : str
         Directory where to store data by default.
+    thread_logging_level : str, default = 'INFO'
+        Logging level in each of the threads used to fit agents.
     """
 
     def __init__(self,
@@ -72,7 +76,8 @@ class AgentStats:
                  agent_name=None,
                  n_fit=4,
                  n_jobs=4,
-                 output_dir='stats_data'):
+                 output_dir='stats_data',
+                 thread_logging_level='INFO'):
         # agent_class should only be None when the constructor is called
         # by the class method AgentStats.load(), since the agent class
         # will be loaded.
@@ -105,6 +110,7 @@ class AgentStats:
             self.n_fit = n_fit
             self.n_jobs = n_jobs
             self.output_dir = output_dir
+            self.thread_logging_level = thread_logging_level
 
             if init_kwargs is None:
                 self.init_kwargs = {}
@@ -119,6 +125,9 @@ class AgentStats:
                 _env = deepcopy(train_env)
                 _env.reseed()
                 self.train_env_set.append(_env)
+
+            # Create list of writers for each agent that will be trained
+            self.writers = ['default' for _ in range(n_fit)]
 
             #
             self.fitted_agents = None
@@ -135,23 +144,51 @@ class AgentStats:
             self.default_filename = os.path.join(self.output_dir,
                                                  self.identifier)
 
+    def set_writer(self, writer, idx):
+        """
+        Note
+        -----
+        Must be called right after creating an instance of AgentStats.
+
+        Parameters
+        ----------
+        writer : object, 'default' or None
+            Writer for an agent, e.g. tensorboard SummaryWriter,
+            rlberry PeriodicWriter.
+            If 'default', use the default writer in the Agent class.
+            If None, disable any writer
+        idx : int
+            Index of the agent to set the writer (0 <= idx < `n_fit`).
+            AgentStats fits `n_fit` agents, the writer of each one of them
+            needs to be set separetely.
+        """
+        assert idx >= 0 and idx < self.n_fit, \
+            "Invalid index sent to AgentStats.set_writer()"
+        self.writers[idx] = writer
+
     def fit(self):
         """
         Fit the agent instances in parallel.
         """
-        logger.debug(f"Training AgentStats for {self.agent_name}... ")
-        args = [(self.agent_class, train_env,
-                deepcopy(self.init_kwargs), deepcopy(self.fit_kwargs))
-                for train_env in self.train_env_set]
+        logger.info(f"Training AgentStats for {self.agent_name}... ")
+        args = [(self.agent_class,
+                train_env,
+                deepcopy(self.init_kwargs),
+                deepcopy(self.fit_kwargs),
+                writer,
+                self.thread_logging_level,
+                thread_idx)
+                for thread_idx, (train_env, writer)
+                in enumerate(zip(self.train_env_set, self.writers))]
 
-        workers_output = Parallel(n_jobs=self.n_jobs)(
+        workers_output = Parallel(n_jobs=self.n_jobs, verbose=5)(
             delayed(_fit_worker)(arg) for arg in args)
 
         self.fitted_agents, stats = (
             [i for i, j in workers_output],
             [j for i, j in workers_output])
 
-        logger.debug("... trained!")
+        logger.info("... trained!")
 
         # gather all stats in a dictionary
         self._process_fit_statistics(stats)
@@ -167,11 +204,17 @@ class AgentStats:
         if self.fitted_agents is None:
             self.fitted_agents = []
             self.fit_kwargs_list = []
-            for train_env in self.train_env_set:
+            for idx, train_env in enumerate(self.train_env_set):
                 init_kwargs = deepcopy(self.init_kwargs)
+                # create agent instance
                 agent = self.agent_class(train_env, copy_env=False,
                                          reseed_env=False, **init_kwargs)
+                # set agent writer
+                if self.writers[idx] != 'default':
+                    agent.set_writer(self.writers[idx])
+                #
                 self.fitted_agents.append(agent)
+                #
                 self.fit_kwargs_list.append(deepcopy(self.fit_kwargs))
 
         # Run partial fit
@@ -419,12 +462,12 @@ class AgentStats:
         # continue
         best_trial = study.best_trial
 
-        logger.debug(f'Number of finished trials: {len(study.trials)}')
-        logger.debug('Best trial:')
-        logger.debug(f'Value: {best_trial.value}')
-        logger.debug('Params:')
+        logger.info(f'Number of finished trials: {len(study.trials)}')
+        logger.info('Best trial:')
+        logger.info(f'Value: {best_trial.value}')
+        logger.info('Params:')
         for key, value in best_trial.params.items():
-            logger.debug(f'    {key}: {value}')
+            logger.info(f'    {key}: {value}')
 
         # update using best parameters
         self.init_kwargs.update(best_trial.params)
@@ -436,10 +479,18 @@ class AgentStats:
 # Aux functions
 #
 
-
 def _fit_worker(args):
-    agent_class, train_env, init_kwargs, fit_kwargs = args
+    agent_class, train_env, init_kwargs, \
+        fit_kwargs, writer, thread_logging_level, thread_id = args
+    # logging level in thread
+    configure_logging(thread_logging_level,
+                      default_msg=f"[worker {thread_id}]")
+    # create agent
     agent = agent_class(train_env, copy_env=False,
                         reseed_env=False, **init_kwargs)
+    # set writer
+    if writer != 'default':
+        agent.set_writer(writer)
+    # fit agent
     info = agent.fit(**fit_kwargs)
     return agent, info
