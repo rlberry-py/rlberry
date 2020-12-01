@@ -10,9 +10,11 @@ dill[1] is required to extend pickle (see https://stackoverflow.com/a/25353243)
 from copy import deepcopy
 from datetime import datetime
 from joblib import Parallel, delayed
+import json
 import logging
 import os
 import dill
+import pandas as pd
 import rlberry.seeding as seeding
 from rlberry.agents import IncrementalAgent
 from rlberry.stats.evaluation import compare_policies
@@ -132,7 +134,8 @@ class AgentStats:
             #
             self.fitted_agents = None
             self.fit_kwargs_list = None  # keep in memory for partial_fit()
-            self.fit_statistics = {}
+            self.fit_statistics = None
+            self.best_hyperparams = None
 
             #
             self.rng = seeding.get_rng()
@@ -226,13 +229,67 @@ class AgentStats:
 
     def _process_fit_statistics(self, stats):
         """Gather stats in a dictionary"""
+        self.fit_statistics = {}
         for entry in self.fit_info:
             self.fit_statistics[entry] = []
             for stat in stats:
                 self.fit_statistics[entry].append(stat[entry])
 
+    def save_results(self, output_dir=None, **kwargs):
+        """
+        Save the results obtained by optimize_hyperparameters(),
+        fit() and partial_fit() to a directory.
+
+        Parameters
+        ----------
+        output_dir : str or None
+            Output directory. If None, use self.output_dir.
+        """
+        # use default self.output_dir if another one is not provided.
+        output_dir = output_dir or self.output_dir
+        # create dir if it does not exist
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+        # save optimized hyperparameters
+        if self.best_hyperparams is not None:
+            fname = os.path.join(output_dir,
+                                 'best_hyperparams_'
+                                 + self.agent_name
+                                 + ".json")
+            _safe_serialize_json(self.best_hyperparams, fname)
+        # save fit_statistics that can be aggregated in a pandas DataFrame
+        for entry in self.fit_statistics:
+            # gather data for entry
+            all_data = {}
+            for run, data in enumerate(self.fit_statistics[entry]):
+                all_data[f'run_{run}'] = data
+            try:
+                output = pd.DataFrame(all_data)
+                # save
+                fname = os.path.join(output_dir,
+                                     'stats_'
+                                     + str(entry)
+                                     + '_'
+                                     + self.agent_name
+                                     + ".csv")
+                output.to_csv(fname, index=None)
+            except Exception:
+                logger.warning(f"Could not save entry [{entry}]"
+                               + " of fit_statistics.")
+
     def save(self, filename=None, **kwargs):
         """
+        Pickle the AgentStats object completely, so that
+        it can be loaded and continued later.
+
+        This is useful, for instance:
+        * If we want to run hyperparameter optimization for
+        a few minutes/hours, save the results, then continue
+        the optimization later.
+        * If we ran some experiments and we want to reload
+        the trained agents to visualize their policies
+        policy in a rendered environment and create videos.
+
         Parameters
         ----------
         filename : string
@@ -393,7 +450,8 @@ class AgentStats:
                 policy_kwargs=deepcopy(self.policy_kwargs),
                 agent_name='optim',
                 n_fit=n_fit,
-                n_jobs=n_jobs)
+                n_jobs=n_jobs,
+                thread_logging_level='WARNING')
 
             # Evaluation environment copy
             params_eval_env = deepcopy(self.eval_env)
@@ -469,6 +527,9 @@ class AgentStats:
         for key, value in best_trial.params.items():
             logger.info(f'    {key}: {value}')
 
+        # store best parameters
+        self.best_hyperparams = best_trial.params
+
         # update using best parameters
         self.init_kwargs.update(best_trial.params)
 
@@ -494,3 +555,12 @@ def _fit_worker(args):
     # fit agent
     info = agent.fit(**fit_kwargs)
     return agent, info
+
+
+def _safe_serialize_json(obj, filename):
+    """
+    Source: https://stackoverflow.com/a/56138540/5691288
+    """
+    default = lambda o: f"<<non-serializable: {type(o).__qualname__}>>"
+    with open(filename, 'w') as fp:
+        json.dump(obj, fp, sort_keys=True, indent=4, default=default)

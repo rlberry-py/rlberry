@@ -5,6 +5,7 @@ Running this script will:
 with the parameters we used
 """
 
+import rlberry.seeding as seeding
 from rlberry.agents import PPOAgent, A2CAgent
 from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
 from rlberry.stats import AgentStats, compare_policies, plot_episode_rewards
@@ -32,28 +33,32 @@ def cfg():
     """
     params = {}
     params['ppo'] = {
-                    "n_episodes": 500,
+                    "n_episodes": 10,
                     "gamma": 0.99,
                     "horizon": 50,
                     "learning_rate": 0.0003
                     }
 
     params['a2c'] = {
-                    "n_episodes": 500,
+                    "n_episodes": 10,
                     "gamma": 0.99,
                     "horizon": 50,
                     "learning_rate": 0.0003
                     }
 
-    optimize_hyperparams = False
+    optimize_hyperparams = True
+    rlberry_seed = 123
 
 
 @ex.automain
 def run_experiment(params,
-                   optimize_hyperparams):
+                   optimize_hyperparams,
+                   rlberry_seed):
     """
     Main experiment function
     """
+    seeding.set_global_seed(rlberry_seed)
+
     # Choose environment
     env = get_benchmark_env(level=1)
 
@@ -63,7 +68,8 @@ def run_experiment(params,
                               env,
                               init_kwargs=params['ppo'],
                               eval_horizon=params['ppo']['horizon'],
-                              n_fit=2)
+                              n_fit=2,
+                              output_dir=fs_observer.dir)
 
     # uncomment to disable writer of the 2nd PPO thread
     # stats['ppo'].set_writer(None, 1)
@@ -72,7 +78,8 @@ def run_experiment(params,
                               env,
                               init_kwargs=params['a2c'],
                               eval_horizon=params['a2c']['horizon'],
-                              n_fit=2)
+                              n_fit=2,
+                              output_dir=fs_observer.dir)
 
     # uncomment to disable writer of the 1st A2C thread
     # stats['a2c'].set_writer(None, 0)
@@ -83,10 +90,12 @@ def run_experiment(params,
     if optimize_hyperparams:
         for stats in agent_stats_list:
             # timeout after 20 seconds
-            stats.optimize_hyperparams(n_trials=50, timeout=10)
+            stats.optimize_hyperparams(n_trials=50, timeout=10, n_fit=2)
 
+    # Fit with best hyperparams and save results
     for stats in agent_stats_list:
-        stats.partial_fit(0.5)
+        stats.fit()
+        stats.save_results()
 
     # learning curves
     plot_episode_rewards(agent_stats_list, cumulative=True, show=False)
