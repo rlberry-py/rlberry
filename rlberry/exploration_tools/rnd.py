@@ -1,5 +1,4 @@
-from rlberry.exploration_tools.uncertainty_estimator \
-    import UncertaintyEstimator
+from rlberry.exploration_tools.uncertainty_estimator import UncertaintyEstimator
 from rlberry.agents.utils.torch_models import ConvolutionalNetwork, MultiLayerPerceptron
 import torch
 
@@ -48,9 +47,9 @@ class RandomNetworkDistillation(UncertaintyEstimator):
                                 lr=learning_rate,
                                 betas=(0.9, 0.999))
 
-    def update(self, state, action, next_state, reward, **kwargs):
+    def update(self, state, **kwargs):
         self.random_embedding = self.random_target_network(torch.from_numpy(state).unsqueeze(0).to(device))
         self.predicted_embedding = self.predictor_network.forward(torch.from_numpy(state).unsqueeze(0).to(device))
 
-    def measure(self, state, action, **kwargs):
+    def measure(self, state, **kwargs):
         return torch.norm(self.predicted_embedding.detach() - self.random_embedding.detach(), p=2)
