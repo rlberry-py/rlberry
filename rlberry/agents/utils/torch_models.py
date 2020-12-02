@@ -122,11 +122,13 @@ class MultiLayerPerceptron(BaseModule):
                  layer_sizes=None,
                  reshape="True",
                  out_size=None,
+                 activation="RELU",
                  **kwargs):
         super().__init__(**kwargs)
         self.reshape = reshape
         self.layer_sizes = layer_sizes or [64, 64]
         self.out_size = out_size
+        self.activation = activation_factory(activation)
         sizes = [in_size] + self.layer_sizes
         layers_list = [nn.Linear(sizes[i], sizes[i + 1])
                        for i in range(len(sizes) - 1)]
@@ -138,7 +140,7 @@ class MultiLayerPerceptron(BaseModule):
         if self.reshape:
             x = x.reshape(x.shape[0], -1)  # We expect a batch of vectors
         for layer in self.layers:
-            x = self.activation(layer(x))
+            x = self.activation(layer(x.float()))
         if self.out_size:
             x = self.predict(x)
         return x
