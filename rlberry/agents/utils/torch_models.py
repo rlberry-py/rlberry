@@ -217,6 +217,8 @@ def activation_factory(activation_type):
         return F.relu
     elif activation_type == "TANH":
         return torch.tanh
+    elif activation_type == "ELU":
+        return nn.ELU()
     else:
         raise ValueError("Unknown activation_type: {}".format(activation_type))
 
