@@ -2,8 +2,73 @@ import logging
 import numpy as np
 from rlberry.agents import Agent
 from gym.spaces import Discrete
+from rlberry.utils.writers import PeriodicWriter
+from rlberry.utils.jit_setup import numba_jit
+
 
 logger = logging.getLogger(__name__)
+
+
+@numba_jit
+def run_lsvi_jit(dim, horizon, bonus_factor, lambda_mat_inv,
+                 reward_hist, gamma, feat_hist, n_actions,
+                 feat_ns_all_actions, v_max,
+                 total_time_steps):
+    """
+    Parameters
+    ----------
+    dim : int
+        Dimension of the features
+    horiton : int
+
+    bonus_factor : int
+
+    lambda_mat_inv : numpy array (dim, dim)
+        Inverse of the design matrix
+
+    reward_hist : numpy array (time,)
+
+    gamma : double
+
+    feat_hist : numpy array (time, dim)
+
+    n_actions : int
+
+    feat_ns_all_actions : numpy array (time, n_actions, dim)
+        History of next state features for all actions
+
+    vmax : double
+        Maximum value of the value function
+
+    total_time_steps : int
+        Current step count
+    """
+    # run value iteration
+    q_w = np.zeros(dim)
+    for _ in range(horizon - 1, -1, -1):
+        T = total_time_steps
+        b = np.zeros(dim)
+        for tt in range(T):
+            # compute q function at next state, q_ns
+            q_ns = np.zeros(n_actions)
+            for aa in range(n_actions):
+                #
+                feat_ns_aa = feat_ns_all_actions[tt, aa, :]
+                inverse_counts = \
+                    feat_ns_aa.dot(lambda_mat_inv.T.dot(feat_ns_aa))
+                bonus = bonus_factor * np.sqrt(inverse_counts)
+                #
+                q_ns[aa] = feat_ns_aa.dot(q_w) + bonus
+                q_ns[aa] = min(q_ns[aa], v_max)
+
+            # compute regretion targets
+            target = reward_hist[tt] + gamma*q_ns.max()
+            feat = feat_hist[tt, :]
+            b = b + target*feat
+
+        # solve M x = b, where x = q_w, and M = self.lambda_mat
+        q_w = lambda_mat_inv.T @ b
+    return q_w
 
 
 class LSVIUCBAgent(Agent):
@@ -12,8 +77,6 @@ class LSVIUCBAgent(Agent):
     proposed by Jin et al. (2020).
 
     If bonus_scale_factor is 0.0, performs random exploration.
-
-    TODO: Optimize using jit, improve logging.
 
     Parameters
     ----------
@@ -96,25 +159,39 @@ class LSVIUCBAgent(Agent):
         self.state_hist = None      # state history
         self.action_hist = None     # action history
         self.nstate_hist = None     # next state history
+
+        self.feat_hist = None             # feature history
+        self.feat_ns_all_actions = None   # next state features for all actions
         #
 
         # aux variables (init in reset() too)
         self._rewards = None
+
+        # default writer
+        self.writer = PeriodicWriter(self.name,
+                                     log_every=15)
+        # 5*logger.getEffectiveLevel()
 
         #
         self.reset()
 
     def reset(self, **kwargs):
         self.episode = 0
+        self.total_time_steps = 0
         self.lambda_mat = self.reg_factor * np.eye(self.dim)
         self.lambda_mat_inv = (1.0/self.reg_factor) * np.eye(self.dim)
         self.w_vec = np.zeros(self.dim)
-        self.reward_hist = []
+        self.reward_hist = np.zeros(self.n_episodes*self.horizon)
         self.state_hist = []
         self.action_hist = []
         self.nstate_hist = []
-        #
+        # episode rewards
         self._rewards = np.zeros(self.n_episodes)
+        #
+        self.feat_hist = np.zeros((self.n_episodes*self.horizon, self.dim))
+        self.feat_ns_all_actions = np.zeros((self.n_episodes*self.horizon,
+                                             self.env.action_space.n,
+                                             self.dim))
         #
         self.w_policy = None
 
@@ -122,8 +199,6 @@ class LSVIUCBAgent(Agent):
         info = {}
         for _ in range(self.n_episodes):
             self.run_episode()
-
-        self.log_info()
 
         self.w_policy = self._run_lsvi(bonus_factor=0.0)
 
@@ -164,10 +239,20 @@ class LSVIUCBAgent(Agent):
                 (inv @ outer_prod @ inv) / (1 + feat @ inv.T @ feat)
 
             # update history
-            self.reward_hist.append(reward)
+            self.reward_hist[self.episode] = reward
             self.state_hist.append(state)
             self.action_hist.append(action)
             self.nstate_hist.append(next_state)
+
+            #
+            tt = self.total_time_steps
+            self.feat_hist[tt, :] = self.feature_map.map(state, action)
+            for aa in range(self.env.action_space.n):
+                self.feat_ns_all_actions[tt, aa, :] = \
+                    self.feature_map.map(next_state, aa)
+
+            # increments
+            self.total_time_steps += 1
             episode_rewards += reward
 
             #
@@ -184,6 +269,11 @@ class LSVIUCBAgent(Agent):
 
         # update ep
         self.episode += 1
+
+        #
+        if self.writer is not None:
+            self.writer.add_scalar("episode", self.episode, None)
+            self.writer.add_scalar("ep reward", episode_rewards)
 
         return episode_rewards
 
@@ -204,37 +294,17 @@ class LSVIUCBAgent(Agent):
             q_vec[aa] = self._compute_q(q_w, state, aa, bonus_factor)
         return q_vec
 
-    def _compute_targets(self, q_w, bonus_factor):
-        T = len(self.reward_hist)
-        b = np.zeros(self.dim)
-        for tt in range(T):
-            q_ns = self._compute_q_vec(q_w,
-                                       self.nstate_hist[tt],
-                                       bonus_factor)
-            target = self.reward_hist[tt] + self.gamma*q_ns.max()
-            feat = self.feature_map.map(self.state_hist[tt],
-                                        self.action_hist[tt])
-            b = b + target*feat
-        return b
-
     def _run_lsvi(self, bonus_factor):
         # run value iteration
-        q_w = np.zeros(self.dim)
-        for _ in range(self.horizon - 1, -1, -1):
-            # solve M x = b, where x = q_w, and M = self.lambda_mat
-            b = self._compute_targets(q_w, bonus_factor)
-            q_w = self.lambda_mat_inv.T @ b
+        q_w = run_lsvi_jit(self.dim,
+                           self.horizon,
+                           bonus_factor,
+                           self.lambda_mat_inv,
+                           self.reward_hist,
+                           self.gamma,
+                           self.feat_hist,
+                           self.env.action_space.n,
+                           self.feat_ns_all_actions,
+                           self.v_max,
+                           self.total_time_steps)
         return q_w
-
-    #
-    # Logging
-    #
-    def log_info(self):
-        episode = self.episode
-        avg_over = 10
-        reward_per_ep = \
-            self._rewards[max(0, episode-avg_over):episode + 1].mean()
-        message = "[{}] episode = {}/{} ".format(self.name, episode+1,
-                                                 self.n_episodes) \
-            + "| reward/ep = {:0.2f} ".format(reward_per_ep)
-        logger.debug(message)

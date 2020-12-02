@@ -29,14 +29,14 @@ def feature_map_fn():
     return OneHotFeatureMap(env.observation_space.n, env.action_space.n)
 
 
-params = {'n_episodes': 200,
+params = {'n_episodes': 1000,
           'feature_map_fn': feature_map_fn,
           'horizon': 10,
           'bonus_scale_factor': 0.1,
           'gamma': 0.99
           }
 
-params_greedy = {'n_episodes': 200,
+params_greedy = {'n_episodes': 3000,
                  'feature_map_fn': feature_map_fn,
                  'horizon': 10,
                  'bonus_scale_factor': 0.0,
@@ -48,11 +48,11 @@ params_oracle = {
                     'gamma': 0.99
                     }
 
-stats = AgentStats(LSVIUCBAgent,
-                   env,
-                   eval_horizon=10,
-                   init_kwargs=params,
-                   n_fit=1)
+# stats = AgentStats(LSVIUCBAgent,
+#                    env,
+#                    eval_horizon=10,
+#                    init_kwargs=params,
+#                    n_fit=4)
 
 stats_random = AgentStats(LSVIUCBAgent,
                           env,
@@ -67,9 +67,9 @@ oracle_stats = AgentStats(ValueIterationAgent,
                           init_kwargs=params_oracle,
                           n_fit=1)
 
-
-plot_episode_rewards([stats, stats_random], cumulative=True, show=False)
-compare_policies([stats, stats_random, oracle_stats], show=True)
+# plot_episode_rewards([stats, stats_random], cumulative=True, show=False)
+# compare_policies([stats, stats_random, oracle_stats], show=True)
+compare_policies([stats_random, oracle_stats], show=True)
 
 
 # stats.fit()

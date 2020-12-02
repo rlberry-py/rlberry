@@ -64,8 +64,11 @@ class PeriodicWriter:
                     " | {} = {:0.3f}".format(tag,
                                              last_value)
         # append time per log
-        logs_per_ms = self.log_every / max(1, time_elapsed)
-        message += " | freq = {:0.3f} logs/ms".format(logs_per_ms)
+        if time_elapsed > 0:
+            logs_per_ms = self.log_every / time_elapsed
+            message += " | freq = {:0.3f} logs/ms".format(logs_per_ms)
+        else:
+            message += " | freq = N.A. logs/ms"
 
         logger.info(message)
 
