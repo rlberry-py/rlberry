@@ -12,16 +12,16 @@ seeding.set_global_seed(1234)
 # --------------------------------
 # Define train and evaluation envs
 # --------------------------------
-train_env = get_benchmark_env(level=5)
+train_env = get_benchmark_env(level=1)
 d_train_env = DiscretizeStateWrapper(train_env, 20)
 
 
 # -----------------------------
 # Parameters
 # -----------------------------
-N_EPISODES = 500
+N_EPISODES = 1000
 GAMMA = 0.99
-HORIZON = 50
+HORIZON = 30
 
 params_oracle = {
     "n_samples": 20,  # samples per state-action
