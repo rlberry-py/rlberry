@@ -86,7 +86,6 @@ class A2CAgent(IncrementalAgent):
         #
         self.policy_net_fn = policy_net_fn \
             or (lambda: default_policy_net_fn(self.env))
-
         self.value_net_fn = value_net_fn \
             or (lambda: default_value_net_fn(self.env))
 
@@ -231,7 +230,7 @@ class A2CAgent(IncrementalAgent):
             # evaluate old actions and values
             action_dist = self.cat_policy(old_states)
             logprobs = action_dist.log_prob(old_actions)
-            state_values = self.value_net(old_states)
+            state_values = torch.squeeze(self.value_net(old_states))
             dist_entropy = action_dist.entropy()
 
             # normalize the advantages

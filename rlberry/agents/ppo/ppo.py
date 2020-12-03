@@ -244,7 +244,7 @@ class PPOAgent(IncrementalAgent):
             # evaluate old actions and values
             action_dist = self.cat_policy(old_states)
             logprobs = action_dist.log_prob(old_actions)
-            state_values = self.value_net(old_states)
+            state_values = torch.squeeze(self.value_net(old_states))
             dist_entropy = action_dist.entropy()
 
             # find ratio (pi_theta / pi_theta__old)
