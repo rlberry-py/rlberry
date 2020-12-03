@@ -1,15 +1,16 @@
 import numpy as np
 from rlberry.agents.cem import CEMAgent
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
+from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
 import rlberry.seeding as seeding
 
-seeding.set_global_seed(123)
+seeding.set_global_seed(1234)
 
-env = PBall2D(p=np.inf, reward_smoothness=np.array([0.8]),
-              reward_centers=[np.array([0.4, 0.4])])
-n_episodes = 500
-batch_size = 100
-horizon = 25
+env = get_benchmark_env(level=1)
+
+n_episodes = 700
+batch_size = 50
+horizon = 30
 gamma = 0.99
 
 agent = CEMAgent(env, n_episodes, horizon, gamma, batch_size,

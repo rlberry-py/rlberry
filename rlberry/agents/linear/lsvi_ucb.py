@@ -44,8 +44,8 @@ def run_lsvi_jit(dim, horizon, bonus_factor, lambda_mat_inv,
         Current step count
     """
     # run value iteration
-    q_w = np.zeros(dim)
-    for _ in range(horizon - 1, -1, -1):
+    q_w = np.zeros((horizon+1, dim))
+    for hh in range(horizon - 1, -1, -1):
         T = total_time_steps
         b = np.zeros(dim)
         for tt in range(T):
@@ -56,9 +56,10 @@ def run_lsvi_jit(dim, horizon, bonus_factor, lambda_mat_inv,
                 feat_ns_aa = feat_ns_all_actions[tt, aa, :]
                 inverse_counts = \
                     feat_ns_aa.dot(lambda_mat_inv.T.dot(feat_ns_aa))
-                bonus = bonus_factor * np.sqrt(inverse_counts)
+                bonus = bonus_factor * np.sqrt(inverse_counts) \
+                    + v_max * inverse_counts * (bonus_factor > 0.0)
                 #
-                q_ns[aa] = feat_ns_aa.dot(q_w) + bonus
+                q_ns[aa] = feat_ns_aa.dot(q_w[hh+1, :]) + bonus
                 q_ns[aa] = min(q_ns[aa], v_max)
 
             # compute regretion targets
@@ -67,7 +68,7 @@ def run_lsvi_jit(dim, horizon, bonus_factor, lambda_mat_inv,
             b = b + target*feat
 
         # solve M x = b, where x = q_w, and M = self.lambda_mat
-        q_w = lambda_mat_inv.T @ b
+        q_w[hh, :] = lambda_mat_inv.T @ b
     return q_w
 
 
@@ -113,7 +114,7 @@ class LSVIUCBAgent(Agent):
                  n_episodes=100,
                  gamma=0.99,
                  bonus_scale_factor=1.0,
-                 reg_factor=0.01,
+                 reg_factor=0.1,
                  **kwargs):
         Agent.__init__(self, env, **kwargs)
 
@@ -180,7 +181,7 @@ class LSVIUCBAgent(Agent):
         self.total_time_steps = 0
         self.lambda_mat = self.reg_factor * np.eye(self.dim)
         self.lambda_mat_inv = (1.0/self.reg_factor) * np.eye(self.dim)
-        self.w_vec = np.zeros(self.dim)
+        self.w_vec = np.zeros((self.horizon+1, self.dim))
         self.reward_hist = np.zeros(self.n_episodes*self.horizon)
         self.state_hist = []
         self.action_hist = []
@@ -197,10 +198,13 @@ class LSVIUCBAgent(Agent):
 
     def fit(self, **kwargs):
         info = {}
-        for _ in range(self.n_episodes):
+        for ep in range(self.n_episodes):
             self.run_episode()
+            if self.bonus_scale_factor > 0.0 or ep == self.n_episodes - 1:
+                # update Q function representation
+                self.w_vec = self._run_lsvi(self.bonus_scale_factor)
 
-        self.w_policy = self._run_lsvi(bonus_factor=0.0)
+        self.w_policy = self._run_lsvi(bonus_factor=0.0)[0, :]
 
         info['n_episodes'] = self.n_episodes
         info['episode_rewards'] = self._rewards
@@ -213,19 +217,20 @@ class LSVIUCBAgent(Agent):
         q_vec = self._compute_q_vec(q_w, observation, 0.0)
         return q_vec.argmax()
 
-    def _optimistic_policy(self, observation):
-        q_w = self.w_vec
+    def _optimistic_policy(self, observation, hh):
+        q_w = self.w_vec[hh, :]
         q_vec = self._compute_q_vec(q_w, observation, self.bonus_scale_factor)
         return q_vec.argmax()
 
     def run_episode(self):
         state = self.env.reset()
         episode_rewards = 0
-        for _ in range(self.horizon):
+        for hh in range(self.horizon):
             if self.bonus_scale_factor == 0.0:
                 action = self.env.action_space.sample()
             else:
-                action = self._optimistic_policy(state)
+                action = self._optimistic_policy(state, hh)
+
             next_state, reward, is_terminal, _ = self.env.step(action)
 
             feat = self.feature_map.map(state, action)
@@ -239,7 +244,7 @@ class LSVIUCBAgent(Agent):
                 (inv @ outer_prod @ inv) / (1 + feat @ inv.T @ feat)
 
             # update history
-            self.reward_hist[self.episode] = reward
+            self.reward_hist[self.total_time_steps] = reward
             self.state_hist.append(state)
             self.action_hist.append(action)
             self.nstate_hist.append(next_state)
@@ -258,11 +263,7 @@ class LSVIUCBAgent(Agent):
             #
             state = next_state
             if is_terminal:
-                state = self.env.reset()
                 break
-
-        # update Q function representation
-        self.w_vec = self._run_lsvi(self.bonus_scale_factor)
 
         # store data
         self._rewards[self.episode] = episode_rewards
@@ -281,17 +282,22 @@ class LSVIUCBAgent(Agent):
         """q_w is the vector representation of the Q function."""
         feat = self.feature_map.map(state, action)
         inverse_counts = feat @ (self.lambda_mat_inv.T @ feat)
-        bonus = bonus_factor * np.sqrt(inverse_counts)
-
+        bonus = bonus_factor * np.sqrt(inverse_counts) \
+            + self.v_max * inverse_counts * (bonus_factor > 0.0)
         q = feat.dot(q_w) + bonus
-        q = min(q, self.v_max)
         return q
 
     def _compute_q_vec(self, q_w, state, bonus_factor):
         A = self.env.action_space.n
         q_vec = np.zeros(A)
         for aa in range(A):
-            q_vec[aa] = self._compute_q(q_w, state, aa, bonus_factor)
+            # q_vec[aa] = self._compute_q(q_w, state, aa, bonus_factor)
+            feat = self.feature_map.map(state, aa)
+            inverse_counts = feat @ (self.lambda_mat_inv.T @ feat)
+            bonus = bonus_factor * np.sqrt(inverse_counts) \
+                + self.v_max * inverse_counts * (bonus_factor > 0.0)
+            q_vec[aa] = feat.dot(q_w) + bonus
+            # q_vec[aa] = min(q_vec[aa], self.v_max)   # !!!!!!!!!
         return q_vec
 
     def _run_lsvi(self, bonus_factor):

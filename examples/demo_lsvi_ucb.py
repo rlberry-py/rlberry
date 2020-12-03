@@ -8,7 +8,7 @@ from rlberry.agents.linear import LSVIUCBAgent
 
 
 # Define environment
-env = GridWorld(nrows=2, ncols=3, walls=(), success_probability=1.0)
+env = GridWorld(nrows=2, ncols=4, walls=(), success_probability=1.0)
 
 
 # Create feature map
@@ -29,14 +29,14 @@ def feature_map_fn():
     return OneHotFeatureMap(env.observation_space.n, env.action_space.n)
 
 
-params = {'n_episodes': 1000,
+params = {'n_episodes': 500,
           'feature_map_fn': feature_map_fn,
           'horizon': 10,
-          'bonus_scale_factor': 0.1,
+          'bonus_scale_factor': 0.01,
           'gamma': 0.99
           }
 
-params_greedy = {'n_episodes': 3000,
+params_greedy = {'n_episodes': 500,
                  'feature_map_fn': feature_map_fn,
                  'horizon': 10,
                  'bonus_scale_factor': 0.0,
@@ -48,17 +48,17 @@ params_oracle = {
                     'gamma': 0.99
                     }
 
-# stats = AgentStats(LSVIUCBAgent,
-#                    env,
-#                    eval_horizon=10,
-#                    init_kwargs=params,
-#                    n_fit=4)
+stats = AgentStats(LSVIUCBAgent,
+                   env,
+                   eval_horizon=10,
+                   init_kwargs=params,
+                   n_fit=4)
 
 stats_random = AgentStats(LSVIUCBAgent,
                           env,
                           eval_horizon=10,
                           init_kwargs=params_greedy,
-                          n_fit=2,
+                          n_fit=1,
                           agent_name='LSVI-random-expl')
 
 oracle_stats = AgentStats(ValueIterationAgent,
@@ -67,14 +67,6 @@ oracle_stats = AgentStats(ValueIterationAgent,
                           init_kwargs=params_oracle,
                           n_fit=1)
 
-# plot_episode_rewards([stats, stats_random], cumulative=True, show=False)
-# compare_policies([stats, stats_random, oracle_stats], show=True)
-compare_policies([stats_random, oracle_stats], show=True)
+plot_episode_rewards([stats, stats_random], cumulative=True, show=False)
+compare_policies([stats, stats_random, oracle_stats], show=True)
 
-
-# stats.fit()
-# agent_eval = stats.fitted_agents[0]
-
-# # visualize
-# agent_eval = stats.fitted_agents[0]
-# state = env.reset()
