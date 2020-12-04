@@ -17,6 +17,8 @@ logger = logging.getLogger(__name__)
 
 class REINFORCEAgent(IncrementalAgent):
     """
+    REINFORCE with entropy regularization.
+
     Parameters
     ----------
     env : Model
@@ -29,6 +31,8 @@ class REINFORCEAgent(IncrementalAgent):
         Horizon.
     gamma : double
         Discount factor in [0, 1].
+    entr_coef : double
+        Entropy coefficient.
     learning_rate : double
         Learning rate.
     normalize: bool
@@ -55,6 +59,7 @@ class REINFORCEAgent(IncrementalAgent):
                  batch_size=8,
                  horizon=256,
                  gamma=0.99,
+                 entr_coef=0.01,
                  learning_rate=0.0001,
                  normalize=False,
                  optimizer_type='ADAM',
@@ -66,6 +71,7 @@ class REINFORCEAgent(IncrementalAgent):
         self.batch_size = batch_size
         self.horizon = horizon
         self.gamma = gamma
+        self.entr_coef = entr_coef
         self.learning_rate = learning_rate
         self.normalize = normalize
 
@@ -112,14 +118,6 @@ class REINFORCEAgent(IncrementalAgent):
         action_dist = self.policy_net(state)
         action = action_dist.sample().item()
         return action
-
-    def fit(self, **kwargs):
-        for _ in range(self.n_episodes):
-            self._run_episode()
-
-        info = {"n_episodes": self.episode,
-                "episode_rewards": self._rewards[:self.episode]}
-        return info
 
     def partial_fit(self, fraction: float, **kwargs):
         assert 0.0 < fraction <= 1.0
@@ -198,9 +196,10 @@ class REINFORCEAgent(IncrementalAgent):
         # evaluate logprobs
         action_dist = self.policy_net(states)
         logprobs = action_dist.log_prob(actions)
+        dist_entropy = action_dist.entropy()
 
         # compute loss
-        loss = -logprobs * rewards
+        loss = -logprobs * rewards - self.entr_coef * dist_entropy
 
         # take gradient step
         self.policy_optimizer.zero_grad()
@@ -215,9 +214,16 @@ class REINFORCEAgent(IncrementalAgent):
     @classmethod
     def sample_parameters(cls, trial):
         batch_size = trial.suggest_categorical('batch_size',
-                                               [1, 4, 8, 16, 32, 64])
+                                               [1, 4, 8, 16, 32])
+        gamma = trial.suggest_categorical('gamma',
+                                          [0.9, 0.95, 0.99])
         learning_rate = trial.suggest_loguniform('learning_rate', 1e-5, 1)
+
+        entr_coef = trial.suggest_loguniform('entr_coef', 1e-8, 0.1)
+
         return {
                 'batch_size': batch_size,
+                'gamma': gamma,
                 'learning_rate': learning_rate,
+                'entr_coef': entr_coef,
                 }

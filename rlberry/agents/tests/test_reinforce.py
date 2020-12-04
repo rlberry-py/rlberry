@@ -4,14 +4,14 @@ from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
 
 def test_reinforce_agent():
     env = get_benchmark_env(level=1)
-    n_episodes = 5
+    n_episodes = 50
     horizon = 30
 
     agent = REINFORCEAgent(env,
-                     n_episodes=n_episodes,
-                     horizon=horizon,
-                     gamma=0.99,
-                     learning_rate=0.001)
+                           n_episodes=n_episodes,
+                           horizon=horizon,
+                           gamma=0.99,
+                           learning_rate=0.001)
     agent._log_interval = 0
     agent.fit()
     agent.policy(env.observation_space.sample())
@@ -23,10 +23,10 @@ def test_reinforce_agent_partial_fit():
     horizon = 30
 
     agent = REINFORCEAgent(env,
-                     n_episodes=n_episodes,
-                     horizon=horizon,
-                     gamma=0.99,
-                     learning_rate=0.001)
+                           n_episodes=n_episodes,
+                           horizon=horizon,
+                           gamma=0.99,
+                           learning_rate=0.001)
     agent._log_interval = 0
 
     agent.partial_fit(0.5)

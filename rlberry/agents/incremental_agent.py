@@ -18,6 +18,9 @@ class IncrementalAgent(Agent):
         """
         Agent.__init__(self, env, **kwargs)
 
+    def fit(self, **kwargs):
+        return self.partial_fit(1.0, **kwargs)
+
     @abstractmethod
     def partial_fit(self, fraction, **kwargs):
         """Partially fits the agent, according to the fraction parameter.
