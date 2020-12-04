@@ -52,12 +52,16 @@ class DQNAgent(AbstractDQNAgent):
         If true, use double Q-learning.
     learning_rate : double
         Optimizer learning rate.
+    epsilon_init : double
+        Initial value of epsilon in epsilon-greedy exploration
+    epsilon_final : double
+        Final value of epsilon in epsilon-greedy exploration
+    epsilon_decay : int
+        After `epsilon_decay` steps, epsilon approaches `epsilon_final`.
     optimizer_type: str
         Type of optimizer. 'ADAM' by defaut.
-    exploration_kwargs : dict
-        Parameters of exploration policy.
-    memory_kwargs : dict
-        Parameters of the replay buffer: capacity (int) and n_steps (int)
+    memory_capacity : int
+        Capacity of the replay buffer (in number of transitions).
     """
     name = 'DQN'
     fit_info = ("n_episodes", "episode_rewards")
@@ -72,15 +76,26 @@ class DQNAgent(AbstractDQNAgent):
                  device="cuda:best",
                  target_update=1,
                  learning_rate=0.001,
+                 epsilon_init=1.0,
+                 epsilon_final=0.1,
+                 epsilon_decay=5000,
                  optimizer_type='ADAM',
                  qvalue_net_fn=None,
                  double=True,
-                 exploration_kwargs=None,
-                 memory_kwargs=None,
+                 memory_capacity=10000,
                  **kwargs):
         # Wrap arguments and initialize base class
-        memory_kwargs = memory_kwargs or {}
-        memory_kwargs['gamma'] = gamma
+        memory_kwargs = {
+                        'capacity': memory_capacity,
+                        'n_steps': 1,
+                        'gamma': gamma
+                        }
+        exploration_kwargs = {
+                             'method': "EpsilonGreedy",
+                             'temperature': epsilon_init,
+                             'final_temperature': epsilon_final,
+                             'tau': epsilon_decay,
+                            }
         base_args = (env, horizon, exploration_kwargs, memory_kwargs,
                      n_episodes, batch_size, target_update, double)
         AbstractDQNAgent.__init__(self, *base_args, **kwargs)
@@ -99,8 +114,8 @@ class DQNAgent(AbstractDQNAgent):
         #
         self.target_net.load_state_dict(self.value_net.state_dict())
         self.target_net.eval()
-        logger.debug("Number of trainable parameters: {}"
-                     .format(trainable_parameters(self.value_net)))
+        logger.info("Number of trainable parameters: {}"
+                    .format(trainable_parameters(self.value_net)))
         self.device = choose_device(self.device)
         self.value_net.to(self.device)
         self.target_net.to(self.device)
@@ -204,3 +219,31 @@ class DQNAgent(AbstractDQNAgent):
         self.writer.add_graph(self.value_net, input_to_model=(model_input,))
         self.writer.add_scalar("agent/trainable_parameters",
                                trainable_parameters(self.value_net), 0)
+
+    #
+    # For hyperparameter optimization
+    #
+    @classmethod
+    def sample_parameters(cls, trial):
+        batch_size = trial.suggest_categorical('batch_size',
+                                               [32, 64, 128, 256, 512])
+        gamma = trial.suggest_categorical('gamma',
+                                          [0.95, 0.99])
+        learning_rate = trial.suggest_loguniform('learning_rate', 1e-5, 1)
+
+        target_update = trial.suggest_categorical('target_update',
+                                                  [1, 250, 500, 1000])
+
+        epsilon_final = trial.suggest_loguniform('epsilon_final', 1e-2, 1e-1)
+
+        epsilon_decay = trial.suggest_categorical('target_update',
+                                                  [1000, 5000, 10000])
+
+        return {
+                'batch_size': batch_size,
+                'gamma': gamma,
+                'learning_rate': learning_rate,
+                'target_update': target_update,
+                'epsilon_final': epsilon_final,
+                'epsilon_decay': epsilon_decay,
+                }

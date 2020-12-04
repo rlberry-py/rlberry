@@ -109,12 +109,12 @@ def test_lsvi_without_bonus():
             agent.total_time_steps += 1
             count += 1
 
-    env = GridWorld(nrows=3, ncols=3, walls=(), success_probability=0.95)
+    env = GridWorld(nrows=2, ncols=2, walls=(), success_probability=0.95)
 
     def feature_map_fn():
         return OneHotFeatureMap(env.observation_space.n, env.action_space.n)
 
-    agent = LSVIUCBAgent(env, n_episodes=1000,
+    agent = LSVIUCBAgent(env, n_episodes=100,
                          feature_map_fn=feature_map_fn,
                          horizon=20,
                          gamma=0.99,

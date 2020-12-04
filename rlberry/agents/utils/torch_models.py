@@ -242,7 +242,6 @@ class DuelingNetwork(BaseModule):
 
     def forward(self, x):
         x = self.base_module(x)
-        print(x)
         value = self.value(x).expand(-1, self.out_size)
         advantage = self.advantage(x)
         return value + advantage \

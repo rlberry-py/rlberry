@@ -173,14 +173,6 @@ class AVECPPOAgent(IncrementalAgent):
 
         return action
 
-    def fit(self, **kwargs):
-        for _ in range(self.n_episodes):
-            self._run_episode()
-
-        info = {"n_episodes": self.episode,
-                "episode_rewards": self._rewards[:self.episode]}
-        return info
-
     def partial_fit(self, fraction: float, **kwargs):
         assert 0.0 < fraction <= 1.0
         n_episodes_to_run = int(np.ceil(fraction * self.n_episodes))
@@ -322,9 +314,24 @@ class AVECPPOAgent(IncrementalAgent):
     @classmethod
     def sample_parameters(cls, trial):
         batch_size = trial.suggest_categorical('batch_size',
-                                               [1, 4, 8, 16, 32, 64])
+                                               [1, 4, 8, 16, 32])
+        gamma = trial.suggest_categorical('gamma',
+                                          [0.9, 0.95, 0.99])
         learning_rate = trial.suggest_loguniform('learning_rate', 1e-5, 1)
+
+        entr_coef = trial.suggest_loguniform('entr_coef', 1e-8, 0.1)
+
+        eps_clip = trial.suggest_categorical('eps_clip',
+                                             [0.1, 0.2, 0.3])
+
+        k_epochs = trial.suggest_categorical('k_epochs',
+                                             [1, 5, 10, 20])
+
         return {
-            'batch_size': batch_size,
-            'learning_rate': learning_rate,
-        }
+                'batch_size': batch_size,
+                'gamma': gamma,
+                'learning_rate': learning_rate,
+                'entr_coef': entr_coef,
+                'eps_clip': eps_clip,
+                'k_epochs': k_epochs,
+                }

@@ -47,7 +47,8 @@ class AbstractDQNAgent(IncrementalAgent, ABC):
     def partial_fit(self, fraction, **kwargs):
         episode_rewards = []
         for episode in range(int(fraction * self.n_episodes)):
-            logger.debug(f"episode {episode+1}/{self.n_episodes}")
+            if episode % 20 == 0:
+                logger.info(f"episode {episode+1}/{self.n_episodes}")
             total_reward = self._run_episode()
             if self.writer:
                 self.writer.add_scalar("fit/total_reward",
