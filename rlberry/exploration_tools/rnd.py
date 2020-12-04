@@ -11,23 +11,26 @@ from rlberry.agents.utils.torch_models import MultiLayerPerceptron
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
-def get_network(shape):
+def get_network(shape, embedding_dim):
     if len(shape) == 3:
         H, W, C = shape
         return ConvolutionalNetwork(in_channels=C,
                                     in_width=W,
                                     in_height=H,
-                                    activation="ELU").to(device=device)
+                                    activation="ELU",
+                                    out_size=embedding_dim).to(device=device)
     elif len(shape) == 2:
         H, W = shape
         return ConvolutionalNetwork(in_channels=1,
                                     in_width=W,
                                     in_height=H,
-                                    activation="ELU").to(device=device)
+                                    activation="ELU",
+                                    out_size=embedding_dim).to(device=device)
 
     elif len(shape) == 1:
         return MultiLayerPerceptron(in_size=shape[0],
-                                    activation="RELU").to(device=device)
+                                    activation="RELU",
+                                    out_size=embedding_dim).to(device=device)
 
     else:
         raise ValueError("Incompatible observation shape: {}"
@@ -47,18 +50,22 @@ class RandomNetworkDistillation(UncertaintyEstimator):
                  observation_space,
                  action_space,
                  learning_rate=0.001,
-                 update_period=10,
+                 update_period=100,
+                 embedding_dim=10,
                  **kwargs):
         assert isinstance(observation_space, spaces.Box)
         UncertaintyEstimator.__init__(self, observation_space, action_space)
         self.learning_rate = learning_rate
         self.loss_fn = F.mse_loss
         self.update_period = update_period
+        self.embedding_dim = embedding_dim
         self.reset()
 
     def reset(self, **kwargs):
-        self.random_target_network = get_network(self.observation_space.shape)
-        self.predictor_network = get_network(self.observation_space.shape)
+        self.random_target_network = get_network(self.observation_space.shape,
+                                                 self.embedding_dim)
+        self.predictor_network = get_network(self.observation_space.shape,
+                                             self.embedding_dim)
         self.rnd_optimizer = torch.optim.Adam(
                                 self.predictor_network.parameters(),
                                 lr=self.learning_rate,
@@ -73,7 +80,12 @@ class RandomNetworkDistillation(UncertaintyEstimator):
         predicted_embedding = self.predictor_network.forward(state_tensor)
         return random_embedding, predicted_embedding
 
-    def update(self, state, action, next_state, reward, **kwargs):
+    def update(self,
+               state,
+               action=None,
+               next_state=None,
+               reward=None,
+               **kwargs):
         random_embedding, predicted_embedding \
             = self._get_embeddings(state)
 
@@ -88,7 +100,7 @@ class RandomNetworkDistillation(UncertaintyEstimator):
             self.rnd_optimizer.step()
             self.loss = torch.tensor(0.0)
 
-    def measure(self, state, action, **kwargs):
+    def measure(self, state, action=None, **kwargs):
         random_embedding, predicted_embedding \
             = self._get_embeddings(state)
 

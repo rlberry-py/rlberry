@@ -9,7 +9,8 @@ rnd = RandomNetworkDistillation(
     env.observation_space,
     env.action_space,
     learning_rate=0.1,
-    update_period=100)
+    update_period=100,
+    embedding_dim=2)
 
 # Test
 state = env.reset()
