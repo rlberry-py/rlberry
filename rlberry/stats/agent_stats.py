@@ -329,7 +329,7 @@ class AgentStats:
                              pruner_method='halving',
                              continue_previous=False,
                              partial_fit_fraction=0.25,
-                             sampler_kwargs={}):
+                             sampler_kwargs=None):
         """
         Run hyperparameter optimization and updates init_kwargs with the
         best hyperparameters found.
@@ -371,7 +371,7 @@ class AgentStats:
             (allows pruning of trials).
             Only used for agents that implement partial_fit()
             (IncrementalAgent interface).
-        sampler_kwargs : dict
+        sampler_kwargs : dict or None
             Allows users to use different Optuna samplers with
             personalized arguments.
         """
@@ -394,6 +394,8 @@ class AgentStats:
             study = self.study
 
         else:
+            if sampler_kwargs is None:
+                sampler_kwargs = {}
             # get sampler
             if sampler_method == 'random':
                 optuna_seed = self.rng.integers(2**16)
