@@ -258,24 +258,25 @@ class AgentStats:
                                  + ".json")
             _safe_serialize_json(self.best_hyperparams, fname)
         # save fit_statistics that can be aggregated in a pandas DataFrame
-        for entry in self.fit_statistics:
-            # gather data for entry
-            all_data = {}
-            for run, data in enumerate(self.fit_statistics[entry]):
-                all_data[f'run_{run}'] = data
-            try:
-                output = pd.DataFrame(all_data)
-                # save
-                fname = os.path.join(output_dir,
-                                     'stats_'
-                                     + str(entry)
-                                     + '_'
-                                     + self.agent_name
-                                     + ".csv")
-                output.to_csv(fname, index=None)
-            except Exception:
-                logger.warning(f"Could not save entry [{entry}]"
-                               + " of fit_statistics.")
+        if self.fit_statistics is not None:
+            for entry in self.fit_statistics:
+                # gather data for entry
+                all_data = {}
+                for run, data in enumerate(self.fit_statistics[entry]):
+                    all_data[f'run_{run}'] = data
+                try:
+                    output = pd.DataFrame(all_data)
+                    # save
+                    fname = os.path.join(output_dir,
+                                         'stats_'
+                                         + str(entry)
+                                         + '_'
+                                         + self.agent_name
+                                         + ".csv")
+                    output.to_csv(fname, index=None)
+                except Exception:
+                    logger.warning(f"Could not save entry [{entry}]"
+                                   + " of fit_statistics.")
 
     def save(self, filename=None, **kwargs):
         """
