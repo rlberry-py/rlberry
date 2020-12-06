@@ -166,7 +166,7 @@ class CEMAgent(IncrementalAgent):
             episode_actions.append(action)
 
             # increment rewards
-            episode_rewards += reward*np.power(self.gamma, hh)
+            episode_rewards += reward
 
             if done:
                 break

@@ -61,7 +61,7 @@ class REINFORCEAgent(IncrementalAgent):
                  gamma=0.99,
                  entr_coef=0.01,
                  learning_rate=0.0001,
-                 normalize=False,
+                 normalize=True,
                  optimizer_type='ADAM',
                  policy_net_fn=None,
                  **kwargs):
