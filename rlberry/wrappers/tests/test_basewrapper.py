@@ -1,5 +1,5 @@
 from rlberry.envs.interface import Model
-from rlberry.wrappers import Wrapper
+from rlberry.envs import Wrapper
 from rlberry.envs import GridWorld
 import gym
 

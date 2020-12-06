@@ -2,11 +2,15 @@ import numpy as np
 import pytest
 import rlberry.seeding as seeding
 
+from rlberry.exploration_tools.discrete_counter import DiscreteCounter
+
 from rlberry.envs.classic_control import MountainCar
-from rlberry.envs.finite import FiniteMDP
+from rlberry.envs.finite import FiniteMDP, GridWorld
 from rlberry.wrappers.discretize_state import DiscretizeStateWrapper
 from rlberry.wrappers.rescale_reward import RescaleRewardWrapper
 from rlberry.wrappers.autoreset import AutoResetWrapper
+from rlberry.wrappers.uncertainty_estimator_wrapper import \
+    UncertaintyEstimatorWrapper
 
 
 @pytest.mark.parametrize("n_bins", list(range(1, 10)))
@@ -129,3 +133,23 @@ def test_autoreset(horizon):
         next_s, reward, done, info = env.step(action)
         if (tt+1) % horizon == 0:
             assert next_s == 3
+
+
+def test_uncertainty_est_wrapper():
+    env = GridWorld()
+
+    def uncertainty_est_fn():
+        return DiscreteCounter(env.observation_space,
+                               env.action_space)
+
+    w_env = UncertaintyEstimatorWrapper(
+                env,
+                uncertainty_est_fn,
+                bonus_scale_factor=1.0)
+
+    for ii in range(10):
+        w_env.reset()
+        _, reward, _, _ = w_env.step(0)
+        nn = w_env.uncertainty_estimator.count(0, 0)
+        assert nn == ii+1
+        assert reward == 1.0/np.sqrt(nn)

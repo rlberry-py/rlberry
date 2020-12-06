@@ -1,5 +1,5 @@
 import numpy as np
-from rlberry.wrappers import Wrapper
+from rlberry.envs import Wrapper
 
 
 class RescaleRewardWrapper(Wrapper):

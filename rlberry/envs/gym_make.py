@@ -1,5 +1,5 @@
 import gym
-from rlberry.wrappers import Wrapper
+from rlberry.envs.basewrapper import Wrapper
 
 
 def gym_make(env_name):

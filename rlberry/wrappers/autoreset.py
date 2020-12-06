@@ -1,4 +1,4 @@
-from rlberry.wrappers import Wrapper
+from rlberry.envs import Wrapper
 
 
 class AutoResetWrapper(Wrapper):

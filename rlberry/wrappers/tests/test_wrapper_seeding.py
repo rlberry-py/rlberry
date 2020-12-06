@@ -7,7 +7,8 @@ from rlberry.envs.classic_control import MountainCar, Acrobot
 from rlberry.envs.finite import Chain
 from rlberry.envs.finite import GridWorld
 from rlberry.envs.benchmarks.ball_exploration import PBall2D, SimplePBallND
-from rlberry.wrappers import Wrapper, RescaleRewardWrapper
+from rlberry.envs import Wrapper
+from rlberry.wrappers import RescaleRewardWrapper
 
 
 _GYM_INSTALLED = True
