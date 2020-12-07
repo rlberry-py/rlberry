@@ -2,7 +2,7 @@ from rlberry.agents.mbqvi import MBQVIAgent
 from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
 from rlberry.wrappers.discretize_state import DiscretizeStateWrapper
 
-env = get_benchmark_env(level=0)
+env = get_benchmark_env(level=5)
 env = DiscretizeStateWrapper(env, 25)
 
 params = {}

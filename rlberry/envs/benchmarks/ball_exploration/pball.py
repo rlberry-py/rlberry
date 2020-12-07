@@ -191,7 +191,7 @@ does not make true projections onto the lp ball.")
         return next_s, reward, done, info
 
     def compute_reward_at(self, x):
-        reward = 0
+        reward = 0.0
         for ii, b_ii in enumerate(self.reward_amplitudes):
             c_ii = self.reward_smoothness[ii]
             x_ii = self.reward_centers[ii]
