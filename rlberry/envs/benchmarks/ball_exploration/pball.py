@@ -145,11 +145,12 @@ does not make true projections onto the lp ball.")
         # reward range
         assert len(self.reward_amplitudes) == len(self.reward_smoothness)
         assert len(self.reward_amplitudes) == len(self.reward_centers)
-        assert self.reward_amplitudes.max() <= 1.0 and \
-            self.reward_amplitudes.min() >= 0.0, \
-            "reward amplitudes b_i must be in [0, 1]"
-        assert self.reward_smoothness.min() > 0.0, \
-            "reward smoothness c_i must be > 0"
+        if len(self.reward_amplitudes) > 0:
+            assert self.reward_amplitudes.max() <= 1.0 and \
+                self.reward_amplitudes.min() >= 0.0, \
+                "reward amplitudes b_i must be in [0, 1]"
+            assert self.reward_smoothness.min() > 0.0, \
+                "reward smoothness c_i must be > 0"
         self.reward_range = (0, 1.0)
 
         #

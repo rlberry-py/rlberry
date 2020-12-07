@@ -16,7 +16,10 @@ from rlberry.envs.benchmarks.ball_exploration.pball import PBall2D
 
 
 def get_benchmark_env(level=1):
-    if level == 1:
+    if level == 0:
+        env = _get_autoreset_env(BallLevel0())
+        return env
+    elif level == 1:
         env = _get_autoreset_env(BallLevel1())
         return env
     elif level == 2:
@@ -38,6 +41,46 @@ def get_benchmark_env(level=1):
 def _get_autoreset_env(env):
     horizon = env.horizon
     return AutoResetWrapper(env, horizon)
+
+
+#
+# Level 0 (reward free!)
+#
+class BallLevel0(PBall2D):
+    """
+    Reward-free (0 reward)
+    """
+    def __init__(self):
+        self.horizon = 30
+        #
+        self.p = 2
+        self.action_list = [np.array([0.0, 0.0]),
+                            0.05 * np.array([1.0, 0.0]),
+                            -0.05 * np.array([1.0, 0.0]),
+                            0.05 * np.array([0.0, 1.0]),
+                            -0.05 * np.array([0.0, 1.0])]
+
+        self.reward_amplitudes = []
+        self.reward_smoothness = []
+        self.reward_centers = []
+        self.A = np.eye(2)
+        self.B = np.eye(2)
+        self.sigma = 0.01
+        self.sigma_init = 0.001
+        self.mu_init = np.array([0.0, 0.0])
+
+        PBall2D.__init__(self,
+                         self.p,
+                         self.action_list,
+                         self.reward_amplitudes,
+                         self.reward_smoothness,
+                         self.reward_centers,
+                         self.A,
+                         self.B,
+                         self.sigma,
+                         self.sigma_init,
+                         self.mu_init)
+        self.name = "Ball Exploration Benchmark - Level 0 (Reward-Free)"
 
 
 #
