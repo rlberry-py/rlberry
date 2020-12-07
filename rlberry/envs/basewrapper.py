@@ -27,6 +27,7 @@ class Wrapper(Model):
         self.observation_space = self.env.observation_space
         self.action_space = self.env.action_space
         self.reward_range = self.env.reward_range
+        self.metadata = self.env.metadata
 
         # If gym environment, reseeding is necessary here for
         # reproducibility.
@@ -81,8 +82,8 @@ class Wrapper(Model):
     def sample(self, state, action):
         return self.env.sample(state, action)
 
-    def render(self):
-        return self.env.render()
+    def render(self, mode='human', **kwargs):
+        return self.env.render(mode=mode, **kwargs)
 
     def close(self):
         return self.env.close()

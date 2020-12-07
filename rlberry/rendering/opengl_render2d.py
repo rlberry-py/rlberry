@@ -150,9 +150,11 @@ class OpenGLRender2D:
             glVertex2f(vertex[0], vertex[1])
         glEnd()
 
-    def run_graphics(self, debug_mode=False):
+    def run_graphics(self, loop=True):
         """
         Sequentially displays scenes in self.data
+
+        If loop is True, keep rendering until user closes the window.
         """
         global _IMPORT_SUCESSFUL
 
@@ -173,8 +175,8 @@ class OpenGLRender2D:
                 pg.display.flip()
                 pg.time.wait(self.refresh_interval)
 
-                # in debug mode, stop
-                if debug_mode:
+                # if not loop, stop
+                if not loop:
                     pg.quit()
                     return
         else:

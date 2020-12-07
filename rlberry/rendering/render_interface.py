@@ -19,7 +19,6 @@ class RenderInterface(ABC):
 
     def __init__(self):
         self._rendering_enabled = False
-        self._debug_mode = False  # for testing and debug only
 
     def is_render_enabled(self):
         return self._rendering_enabled
@@ -105,7 +104,7 @@ class RenderInterface2D(RenderInterface):
             scenes.append(scene)
         return background, scenes
 
-    def render(self, **kwargs):
+    def render(self, loop=True, **kwargs):
         """
         Function to render an environment that implements the interface.
         """
@@ -126,7 +125,7 @@ class RenderInterface2D(RenderInterface):
             renderer.set_clipping_area(self._clipping_area)
             renderer.set_data(data)
             renderer.set_background(background)
-            renderer.run_graphics(self._debug_mode)
+            renderer.run_graphics(loop)
             return 0
         else:
             logger.info("Rendering not enabled for the environment.")

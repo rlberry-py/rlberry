@@ -10,6 +10,8 @@ from rlberry.envs.finite import GridWorld
 from rlberry.envs.benchmarks.ball_exploration import PBall2D, SimplePBallND
 from rlberry.rendering import RenderInterface
 from rlberry.rendering import RenderInterface2D
+from rlberry.envs import Wrapper
+
 
 try:
     display = Display(visible=0, size=(1400, 900))
@@ -42,7 +44,6 @@ def test_instantiation(ModelClass):
 @pytest.mark.parametrize("ModelClass", classes)
 def test_render2d_interface(ModelClass):
     env = ModelClass()
-    env._debug_mode = True       # rendering debug
 
     if isinstance(env, RenderInterface2D):
         env.enable_rendering()
@@ -55,7 +56,7 @@ def test_render2d_interface(ModelClass):
                     action = env.action_space.sample()
                     next_s, _, _, _ = env.step(action)
                     state = next_s
-                env.render()
+                env.render(loop=False)
             env.save_video('test_video.mp4')
             env.clear_render_buffer()
         try:
@@ -63,3 +64,25 @@ def test_render2d_interface(ModelClass):
         except Exception:
             pass
 
+
+@pytest.mark.parametrize("ModelClass", classes)
+def test_render2d_interface_wrapped(ModelClass):
+    env = Wrapper(ModelClass())
+
+    if isinstance(env.env, RenderInterface2D):
+        env.enable_rendering()
+        if env.is_online():
+            for _ in range(2):
+                state = env.reset()
+                for _ in range(5):
+                    assert env.observation_space.contains(state)
+                    action = env.action_space.sample()
+                    next_s, _, _, _ = env.step(action)
+                    state = next_s
+                env.render(loop=False)
+            env.save_video('test_video.mp4')
+            env.clear_render_buffer()
+        try:
+            os.remove('test_video.mp4')
+        except Exception:
+            pass

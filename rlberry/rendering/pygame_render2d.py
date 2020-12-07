@@ -121,7 +121,7 @@ class PyGameRender2D:
                 "Shape type %s not implemented in pygame renderer."
                 % shape.type)
 
-    def run_graphics(self, debug_mode=False):
+    def run_graphics(self, loop=True):
         """
         Sequentially displays scenes in self.data
         """
@@ -143,8 +143,8 @@ class PyGameRender2D:
                 pg.display.flip()
                 pg.time.wait(self.refresh_interval)
 
-                # in debug mode, stop
-                if debug_mode:
+                # if not loop, stop
+                if not loop:
                     pg.quit()
                     return
         else:
