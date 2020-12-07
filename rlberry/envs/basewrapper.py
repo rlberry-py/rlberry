@@ -37,6 +37,14 @@ class Wrapper(Model):
     def unwrapped(self):
         return self.env.unwrapped
 
+    @property
+    def spec(self):
+        return self.env.spec
+
+    @classmethod
+    def class_name(cls):
+        return cls.__name__
+
     def __getattr__(self, attr):
         """
         The first condition is to avoid infinite recursion when deep copying.
@@ -76,6 +84,15 @@ class Wrapper(Model):
     def render(self):
         return self.env.render()
 
+    def close(self):
+        return self.env.close()
+
+    def seed(self, seed=None):
+        return self.env.seed(seed)
+
+    def compute_reward(self, achieved_goal, desired_goal, info):
+        return self.env.compute_reward(achieved_goal, desired_goal, info)
+
     def is_online(self):
         try:
             self.env.reset()
@@ -91,6 +108,9 @@ class Wrapper(Model):
             return True
         except Exception:
             return False
+
+    def __repr__(self):
+        return str(self)
 
     def __str__(self):
         return '<{}{}>'.format(type(self).__name__, self.env)
