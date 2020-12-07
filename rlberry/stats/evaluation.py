@@ -47,7 +47,7 @@ available for %s." % agent_stats.agent_name)
 
 def compare_policies(agent_stats_list, eval_env=None, eval_horizon=None,
                      stationary_policy=True, n_sim=10, fignum=None,
-                     show=True, plot=True):
+                     show=True, plot=True, **kwargs):
     """
     Compare the policies of each of the agents in agent_stats_list.
     Each element of the agent_stats_list contains a list of fitted agents.
@@ -152,7 +152,7 @@ def compare_policies(agent_stats_list, eval_env=None, eval_horizon=None,
         plt.figure(fignum)
 
         with sns.axes_style("whitegrid"):
-            ax = sns.boxplot(data=output, notch=True)
+            ax = sns.boxplot(data=output, **kwargs)
             ax.set_xlabel("agent")
             ax.set_ylabel("rewards in one episode")
             plt.title("Environment = %s" % eval_env.unwrapped.name)
