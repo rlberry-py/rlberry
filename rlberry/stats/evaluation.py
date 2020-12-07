@@ -152,7 +152,7 @@ def compare_policies(agent_stats_list, eval_env=None, eval_horizon=None,
         plt.figure(fignum)
 
         with sns.axes_style("whitegrid"):
-            ax = sns.boxplot(data=output)
+            ax = sns.boxplot(data=output, notch=True)
             ax.set_xlabel("agent")
             ax.set_ylabel("rewards in one episode")
             plt.title("Environment = %s" % eval_env.unwrapped.name)
@@ -160,3 +160,4 @@ def compare_policies(agent_stats_list, eval_env=None, eval_horizon=None,
                 plt.show()
 
     return output
+
