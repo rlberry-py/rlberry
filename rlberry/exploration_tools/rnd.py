@@ -105,4 +105,4 @@ class RandomNetworkDistillation(UncertaintyEstimator):
             = self._get_embeddings(state)
 
         diff = predicted_embedding.detach() - random_embedding.detach()
-        return torch.norm(diff, p=2)
+        return torch.norm(diff, p=2).item()
