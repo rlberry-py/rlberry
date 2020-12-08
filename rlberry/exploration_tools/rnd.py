@@ -72,7 +72,7 @@ class RandomNetworkDistillation(UncertaintyEstimator):
                                 betas=(0.9, 0.999))
 
         self.count = 0
-        self.loss = torch.tensor(0.0)
+        self.loss = torch.tensor(0.0).to(device)
 
     def _get_embeddings(self, state):
         state_tensor = torch.from_numpy(state).unsqueeze(0).to(device)
@@ -98,7 +98,7 @@ class RandomNetworkDistillation(UncertaintyEstimator):
             self.rnd_optimizer.zero_grad()
             self.loss.backward()
             self.rnd_optimizer.step()
-            self.loss = torch.tensor(0.0)
+            self.loss = torch.tensor(0.0).to(device)
 
     def measure(self, state, action=None, **kwargs):
         random_embedding, predicted_embedding \
