@@ -57,9 +57,6 @@ class GridWorld(RenderInterface2D, FiniteMDP):
         # Default config
         if reward_at is not None:
             self.reward_at = reward_at
-            if isinstance(next(iter(self.reward_at.keys())), str):
-                self.reward_at = {eval(key): value for key, value
-                                  in self.reward_at.items()}
         else:
             self.reward_at = {(nrows - 1, ncols - 1): 1}
         if walls is not None:
@@ -116,9 +113,8 @@ class GridWorld(RenderInterface2D, FiniteMDP):
         state_coord = self.index2coord[state]
         return state_coord in self.terminal_states
 
-    def reset(self, state=None):
-        if state is None:
-            state = self.coord2index[self.start_coord]
+    def reset(self):
+        state = self.coord2index[self.start_coord]
         self.state = state
         return state
 

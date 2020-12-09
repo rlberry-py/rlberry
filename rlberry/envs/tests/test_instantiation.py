@@ -6,6 +6,7 @@ from rlberry.envs.finite import Chain
 from rlberry.envs.finite import GridWorld
 from rlberry.envs.benchmarks.ball_exploration import PBall2D, SimplePBallND
 from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
+from rlberry.envs.benchmarks.grid_exploration.four_room import FourRoom
 from rlberry.rendering.render_interface import RenderInterface2D
 
 
@@ -16,7 +17,8 @@ classes = [
     PBall2D,
     SimplePBallND,
     Acrobot,
-    Pendulum
+    Pendulum,
+    FourRoom
 ]
 
 
@@ -73,3 +75,34 @@ def test_pball_env(p):
     env.get_reward_lipschitz_constant()
     env.get_transitions_lipschitz_constant()
 
+
+@pytest.mark.parametrize("reward_free, difficulty, array_observation",
+                         [
+                             (True, 0, False),
+                             (False, 0, False),
+                             (False, 0, True),
+                             (False, 1, False),
+                             (False, 1, True),
+                             (False, 2, False),
+                             (False, 2, True),
+                         ])
+def test_four_room(reward_free, difficulty, array_observation):
+    env = FourRoom(reward_free=reward_free,
+                   difficulty=difficulty,
+                   array_observation=array_observation)
+
+    initial_state = env.reset()
+    next_state, reward, _, _ = env.step(1)
+
+    assert env.observation_space.contains(initial_state)
+    assert env.observation_space.contains(next_state)
+
+    if reward_free:
+        assert env.reward_at == {}
+
+    if difficulty == 2:
+        assert reward < 0.0
+
+    if array_observation:
+        assert isinstance(initial_state, np.ndarray)
+        assert isinstance(next_state, np.ndarray)
