@@ -149,7 +149,7 @@ def test_uncertainty_est_wrapper():
 
     for ii in range(10):
         w_env.reset()
-        _, reward, _, _ = w_env.step(0)
+        _, _, _, info = w_env.step(0)
         nn = w_env.uncertainty_estimator.count(0, 0)
         assert nn == ii+1
-        assert reward == 1.0/np.sqrt(nn)
+        assert info['exploration_bonus'] == 1.0/np.sqrt(nn)

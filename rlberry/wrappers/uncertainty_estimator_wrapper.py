@@ -6,8 +6,16 @@ logger = logging.getLogger(__name__)
 
 class UncertaintyEstimatorWrapper(Wrapper):
     """
-    Adds exploration bonuses to the reward, according to an
-    instance of UncertaintyEstimator
+    Adds exploration bonuses to the info output of env.step(), according to an
+    instance of UncertaintyEstimator.
+
+    Example
+    -------
+
+    ```
+    observation, reward, done, info = env.step(action)
+    bonus = info['exploration_bonus']
+    ```
 
     Parameters
     ----------
@@ -52,8 +60,16 @@ class UncertaintyEstimatorWrapper(Wrapper):
         #
         self.previous_obs = observation
 
-        # add bonus
-        reward += bonus
+        # add bonus to info
+        if info is None:
+            info = {}
+        else:
+            if 'exploration_bonus' in info:
+                logger.error("UncertaintyEstimatorWrapper Error: info has" +
+                             "  already a key named exploration_bonus!")
+
+        info['exploration_bonus'] = bonus
+
         return observation, reward, done, info
 
     def sample(self, state, action):

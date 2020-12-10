@@ -19,6 +19,7 @@ class AbstractDQNAgent(IncrementalAgent, ABC):
                  batch_size=100,
                  target_update=1,
                  double=True,
+                 use_bonus_if_available=False,
                  **kwargs):
         ABC.__init__(self)
         IncrementalAgent.__init__(self, env, **kwargs)
@@ -29,6 +30,7 @@ class AbstractDQNAgent(IncrementalAgent, ABC):
         self.batch_size = batch_size
         self.target_update = target_update
         self.double = double
+        self.use_bonus_if_available = use_bonus_if_available
 
         assert isinstance(env.action_space, spaces.Discrete), \
             "Only compatible with Discrete action spaces."
@@ -67,7 +69,16 @@ class AbstractDQNAgent(IncrementalAgent, ABC):
             self.exploration_policy.step_time()
             action = self.policy(state)
             next_state, reward, done, info = self.env.step(action)
-            self.record(state, action, reward, next_state, done, info)
+
+            # check whether to use bonus
+            bonus = 0.0
+            if self.use_bonus_if_available:
+                if info is not None and 'exploration_bonus' in info:
+                    bonus = info['exploration_bonus']
+
+            # add bonus here
+            self.record(state, action, reward+bonus, next_state, done, info)
+            #
             state = next_state
             total_reward += reward
             if done:

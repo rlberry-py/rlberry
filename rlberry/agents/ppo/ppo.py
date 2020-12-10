@@ -49,7 +49,9 @@ class PPOAgent(IncrementalAgent):
     value_net_fn : function
         Function that returns an instance of a value network (pytorch).
         If None, a default net is used.
-
+    use_bonus_if_available : bool, default = False
+        If true, check if environment info has entry 'exploration_bonus'
+        and add it to the reward. See also UncertaintyEstimatorWrapper.
 
     References
     ----------
@@ -78,6 +80,7 @@ class PPOAgent(IncrementalAgent):
                  k_epochs=5,
                  policy_net_fn=None,
                  value_net_fn=None,
+                 use_bonus_if_available=False,
                  **kwargs):
         IncrementalAgent.__init__(self, env, **kwargs)
 
@@ -90,6 +93,7 @@ class PPOAgent(IncrementalAgent):
         self.learning_rate = learning_rate
         self.eps_clip = eps_clip
         self.k_epochs = k_epochs
+        self.use_bonus_if_available = use_bonus_if_available
 
         self.state_dim = self.env.observation_space.shape[0]
         self.action_dim = self.env.action_space.n
@@ -179,10 +183,16 @@ class PPOAgent(IncrementalAgent):
         for _ in range(self.horizon):
             # running policy_old
             action = self._select_action(state)
-            next_state, reward, done, _ = self.env.step(action)
+            next_state, reward, done, info = self.env.step(action)
+
+            # check whether to use bonus
+            bonus = 0.0
+            if self.use_bonus_if_available:
+                if info is not None and 'exploration_bonus' in info:
+                    bonus = info['exploration_bonus']
 
             # save in batch
-            self.memory.rewards.append(reward)
+            self.memory.rewards.append(reward+bonus)  # bonus added here
             self.memory.is_terminals.append(done)
             episode_rewards += reward
 

@@ -42,6 +42,9 @@ class REINFORCEAgent(IncrementalAgent):
     policy_net_fn : function
         Function that returns an instance of a policy network (pytorch).
         If None, a default net is used.
+    use_bonus_if_available : bool, default = False
+        If true, check if environment info has entry 'exploration_bonus'
+        and add it to the reward. See also UncertaintyEstimatorWrapper.
 
     References
     ----------
@@ -64,6 +67,7 @@ class REINFORCEAgent(IncrementalAgent):
                  normalize=True,
                  optimizer_type='ADAM',
                  policy_net_fn=None,
+                 use_bonus_if_available=False,
                  **kwargs):
         IncrementalAgent.__init__(self, env, **kwargs)
 
@@ -77,6 +81,7 @@ class REINFORCEAgent(IncrementalAgent):
 
         self.state_dim = self.env.observation_space.shape[0]
         self.action_dim = self.env.action_space.n
+        self.use_bonus_if_available = use_bonus_if_available
 
         #
         self.policy_net_fn = policy_net_fn \
@@ -138,12 +143,18 @@ class REINFORCEAgent(IncrementalAgent):
         for _ in range(self.horizon):
             # running policy
             action = self.policy(state)
-            next_state, reward, done, _ = self.env.step(action)
+            next_state, reward, done, info = self.env.step(action)
+
+            # check whether to use bonus
+            bonus = 0.0
+            if self.use_bonus_if_available:
+                if info is not None and 'exploration_bonus' in info:
+                    bonus = info['exploration_bonus']
 
             # save in batch
             self.memory.states.append(state)
             self.memory.actions.append(action)
-            self.memory.rewards.append(reward)
+            self.memory.rewards.append(reward+bonus)  # add bonus here
             self.memory.is_terminals.append(done)
             episode_rewards += reward
 
