@@ -9,12 +9,10 @@ from rlberry.agents.utils.memories import Memory
 from rlberry.agents.utils.torch_training import optimizer_factory
 from rlberry.agents.utils.torch_models import default_policy_net_fn
 from rlberry.agents.utils.torch_models import default_value_net_fn
+from rlberry.utils.torch import choose_device
 from rlberry.utils.writers import PeriodicWriter
 
 logger = logging.getLogger(__name__)
-
-# choose device
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 class PPOAgent(IncrementalAgent):
@@ -53,6 +51,8 @@ class PPOAgent(IncrementalAgent):
         kwargs for policy_net_fn
     value_net_kwargs : dict
         kwargs for value_net_fn
+    device: str
+        Device to put the tensors on
     use_bonus_if_available : bool, default = False
         If true, check if environment info has entry 'exploration_bonus'
         and add it to the reward. See also UncertaintyEstimatorWrapper.
@@ -88,6 +88,7 @@ class PPOAgent(IncrementalAgent):
                  value_net_fn=None,
                  policy_net_kwargs=None,
                  value_net_kwargs=None,
+                 device="cuda:best",
                  use_bonus_if_available=False,
                  **kwargs):
         IncrementalAgent.__init__(self, env, **kwargs)
@@ -115,6 +116,8 @@ class PPOAgent(IncrementalAgent):
         self.policy_net_fn = policy_net_fn or default_policy_net_fn
         self.value_net_fn = value_net_fn or default_value_net_fn
 
+        self.device = choose_device(device)
+
         self.optimizer_kwargs = {'optimizer_type': optimizer_type,
                                  'lr': learning_rate}
 
@@ -131,7 +134,7 @@ class PPOAgent(IncrementalAgent):
         self.cat_policy = self.policy_net_fn(
                                 self.env,
                                 **self.policy_net_kwargs
-                                ).to(device)
+                                ).to(self.device)
         self.policy_optimizer = optimizer_factory(
                                     self.cat_policy.parameters(),
                                     **self.optimizer_kwargs)
@@ -139,7 +142,7 @@ class PPOAgent(IncrementalAgent):
         self.value_net = self.value_net_fn(
                                 self.env,
                                 **self.value_net_kwargs
-                                ).to(device)
+                                ).to(self.device)
         self.value_optimizer = optimizer_factory(
                                     self.value_net.parameters(),
                                     **self.optimizer_kwargs)
@@ -147,7 +150,7 @@ class PPOAgent(IncrementalAgent):
         self.cat_policy_old = self.policy_net_fn(
                                 self.env,
                                 **self.policy_net_kwargs
-                                ).to(device)
+                                ).to(self.device)
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
 
         self.MseLoss = nn.MSELoss()
@@ -166,7 +169,7 @@ class PPOAgent(IncrementalAgent):
 
     def policy(self, state, **kwargs):
         assert self.cat_policy is not None
-        state = torch.from_numpy(state).float().to(device)
+        state = torch.from_numpy(state).float().to(self.device)
         action_dist = self.cat_policy_old(state)
         action = action_dist.sample().item()
         return action
@@ -184,7 +187,7 @@ class PPOAgent(IncrementalAgent):
         return info
 
     def _select_action(self, state):
-        state = torch.from_numpy(state).float().to(device)
+        state = torch.from_numpy(state).float().to(self.device)
         action_dist = self.cat_policy_old(state)
         action = action_dist.sample()
         action_logprob = action_dist.log_prob(action)
@@ -254,9 +257,9 @@ class PPOAgent(IncrementalAgent):
             rewards.insert(0, discounted_reward)
 
         # convert list to tensor
-        old_states = torch.stack(self.memory.states).to(device).detach()
-        old_actions = torch.stack(self.memory.actions).to(device).detach()
-        old_logprobs = torch.stack(self.memory.logprobs).to(device).detach()
+        old_states = torch.stack(self.memory.states).to(self.device).detach()
+        old_actions = torch.stack(self.memory.actions).to(self.device).detach()
+        old_logprobs = torch.stack(self.memory.logprobs).to(self.device).detach()
 
         # optimize policy for K epochs
         for _ in range(self.k_epochs):
@@ -290,12 +293,12 @@ class PPOAgent(IncrementalAgent):
                     advantages[t] = advantages[t] * self.gae_lambda * self.gamma * (1 - self.memory.is_terminals[t]) + td_error
 
             # normalizing the rewards
-            rewards = torch.tensor(rewards).to(device).float()
+            rewards = torch.tensor(rewards).to(self.device).float()
             # rewards = (rewards - rewards.mean()) / (rewards.std() + 1e-5)
 
             # convert to pytorch tensors and move to gpu if available
-            returns = torch.from_numpy(returns).float().to(device).view(-1, )
-            advantages = torch.from_numpy(advantages).float().to(device).view(-1, )
+            returns = torch.from_numpy(returns).float().to(self.device).view(-1, )
+            advantages = torch.from_numpy(advantages).float().to(self.device).view(-1, )
             advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-10)
 
             # normalize the advantages

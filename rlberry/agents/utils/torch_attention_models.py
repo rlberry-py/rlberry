@@ -1,13 +1,12 @@
 #
 # Attention models
 #
-
-
 import torch
 import torch.nn as nn
 import numpy as np
 from torch.nn import functional as F
-from rlberry.agents.utils.torch_models import BaseModule, model_factory
+from rlberry.agents.utils.torch_models import BaseModule
+from rlberry.agents.utils.torch_training import model_factory
 
 
 class EgoAttention(BaseModule):
@@ -149,6 +148,8 @@ class EgoAttentionNetwork(BaseModule):
         embedding_layer_kwargs = embedding_layer_kwargs or {}
         if not embedding_layer_kwargs.get("in_size", None):
             embedding_layer_kwargs["in_size"] = in_size
+        self.ego_embedding = model_factory(**embedding_layer_kwargs)
+        self.embedding = model_factory(**embedding_layer_kwargs)
 
         attention_layer_kwargs = attention_layer_kwargs or {}
         self.attention_layer = EgoAttention(**attention_layer_kwargs)
@@ -156,9 +157,7 @@ class EgoAttentionNetwork(BaseModule):
         output_layer_kwargs = output_layer_kwargs or {}
         output_layer_kwargs["in_size"] = self.attention_layer.feature_size
         output_layer_kwargs["out_size"] = self.out_size
-
-        self.embedding = model_factory(self.embedding_layer)
-        self.output_layer = model_factory(self.output_layer)
+        self.output_layer = model_factory(**output_layer_kwargs)
 
     def forward(self, x):
         ego_embedded_att, _ = self.forward_attention(x)
@@ -166,6 +165,8 @@ class EgoAttentionNetwork(BaseModule):
 
     def split_input(self, x, mask=None):
         # Dims: batch, entities, features
+        if len(x.shape) == 2:
+            x = x.unsqueeze(axis=0)
         ego = x[:, 0:1, :]
         others = x[:, 1:, :]
         if mask is None:
@@ -175,7 +176,8 @@ class EgoAttentionNetwork(BaseModule):
 
     def forward_attention(self, x):
         ego, others, mask = self.split_input(x)
-        ego, others = self.embedding(ego), self.embedding(others)
+        ego = self.ego_embedding(ego)
+        others = self.embedding(others)
         return self.attention_layer(ego, others, mask)
 
     def get_attention_matrix(self, x):

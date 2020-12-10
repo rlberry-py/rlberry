@@ -1,4 +1,5 @@
 import torch
+from torch import nn as nn
 from torch.nn import functional as F
 
 
@@ -22,3 +23,21 @@ def optimizer_factory(params, optimizer_type="ADAM", **kwargs):
         return torch.optim.RMSprop(params=params, **kwargs)
     else:
         raise ValueError("Unknown optimizer type: {}".format(optimizer_type))
+
+
+def model_factory(type="MultiLayerPerceptron", **kwargs) -> nn.Module:
+    from rlberry.agents.utils.torch_attention_models import EgoAttentionNetwork
+    from rlberry.agents.utils.torch_models import MultiLayerPerceptron, DuelingNetwork, ConvolutionalNetwork, \
+        PolicyConvolutionalNetwork
+    if type == "MultiLayerPerceptron":
+        return MultiLayerPerceptron(**kwargs)
+    elif type == "DuelingNetwork":
+        return DuelingNetwork(**kwargs)
+    elif type == "ConvolutionalNetwork":
+        return ConvolutionalNetwork(**kwargs)
+    elif type == "PolicyConvolutionalNetwork":
+        return PolicyConvolutionalNetwork(**kwargs)
+    elif type == "EgoAttentionNetwork":
+        return EgoAttentionNetwork(**kwargs)
+    else:
+        raise ValueError("Unknown model type")

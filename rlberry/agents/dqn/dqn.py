@@ -2,9 +2,9 @@ import logging
 import torch
 from gym import spaces
 
-from rlberry.agents.utils.torch_models import size_model_config, model_factory
+from rlberry.agents.utils.torch_models import size_model_config
 from rlberry.agents.utils.torch_models import trainable_parameters
-from rlberry.agents.utils.torch_training import loss_function_factory
+from rlberry.agents.utils.torch_training import loss_function_factory, model_factory
 from rlberry.agents.utils.torch_training import optimizer_factory
 from rlberry.agents.dqn.abstract import AbstractDQNAgent
 from rlberry.agents.utils.memories import Transition

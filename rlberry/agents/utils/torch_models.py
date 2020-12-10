@@ -14,6 +14,8 @@ from torch.nn import functional as F
 #
 # Utility functions
 #
+from rlberry.agents.utils.torch_training import model_factory
+
 
 def default_policy_net_fn(env):
     """
@@ -176,7 +178,7 @@ class MultiLayerPerceptron(BaseModule):
     def __init__(self,
                  in_size=None,
                  layer_sizes=None,
-                 reshape="True",
+                 reshape=True,
                  out_size=None,
                  activation="RELU",
                  is_policy=False,
@@ -338,14 +340,3 @@ def size_model_config(env,
     return model_config
 
 
-def model_factory(type="MultiLayerPerceptron", **kwargs) -> nn.Module:
-    if type == "MultiLayerPerceptron":
-        return MultiLayerPerceptron(**kwargs)
-    elif type == "DuelingNetwork":
-        return DuelingNetwork(**kwargs)
-    elif type == "ConvolutionalNetwork":
-        return ConvolutionalNetwork(**kwargs)
-    elif type == "PolicyConvolutionalNetwork":
-        return PolicyConvolutionalNetwork(**kwargs)
-    else:
-        raise ValueError("Unknown model type")
