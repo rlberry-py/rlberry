@@ -19,13 +19,9 @@ _env = get_benchmark_env(level=4)
 eval_env = get_benchmark_env(level=4)
 
 
-def uncertainty_estimator_fn(env):
-    # counter = OnlineDiscretizationCounter(
-    #                           deepcopy(eval_env.observation_space),
-    #                           deepcopy(eval_env.action_space),
-    #                           min_dist=0.1)
-    counter = DiscreteCounter(deepcopy(eval_env.observation_space),
-                              deepcopy(eval_env.action_space),
+def uncertainty_estimator_fn(obs_space, act_space):
+    counter = DiscreteCounter(obs_space,
+                              act_space,
                               n_bins_obs=20)
     return counter
 

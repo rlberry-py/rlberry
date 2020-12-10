@@ -19,7 +19,8 @@ class UncertaintyEstimatorWrapper(Wrapper):
 
     Parameters
     ----------
-    uncertainty_estimator_fn : function(env, **kwargs)
+    uncertainty_estimator_fn : function(observation_space,
+                                        action_space, **kwargs)
         Function that gives an instance of UncertaintyEstimator,
         used to compute bonus.
     uncertainty_estimator_kwargs:
@@ -38,7 +39,8 @@ class UncertaintyEstimatorWrapper(Wrapper):
         self.bonus_scale_factor = bonus_scale_factor
         uncertainty_estimator_kwargs = uncertainty_estimator_kwargs or {}
         self.uncertainty_estimator = uncertainty_estimator_fn(
-                                        env,
+                                        env.observation_space,
+                                        env.action_space,
                                         **uncertainty_estimator_kwargs)
         self.previous_obs = None
 
