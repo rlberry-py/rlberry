@@ -58,12 +58,16 @@ class AVECPPOAgent(IncrementalAgent):
         PPO clipping range (epsilon).
     k_epochs : int
         Number of epochs per update.
-    policy_net_fn : function
+    policy_net_fn : function(env, **kwargs)
         Function that returns an instance of a policy network (pytorch).
         If None, a default net is used.
-    value_net_fn : function
+    value_net_fn : function(env, **kwargs)
         Function that returns an instance of a value network (pytorch).
         If None, a default net is used.
+    policy_net_kwargs : dict
+        kwargs for policy_net_fn
+    value_net_kwargs : dict
+        kwargs for value_net_fn
     use_bonus_if_available : bool, default = False
         If true, check if environment info has entry 'exploration_bonus'
         and add it to the reward. See also UncertaintyEstimatorWrapper.
@@ -103,6 +107,8 @@ class AVECPPOAgent(IncrementalAgent):
                  k_epochs=10,
                  policy_net_fn=None,
                  value_net_fn=None,
+                 policy_net_kwargs=None,
+                 value_net_kwargs=None,
                  use_bonus_if_available=False,
                  **kwargs):
         IncrementalAgent.__init__(self, env, **kwargs)
@@ -119,15 +125,15 @@ class AVECPPOAgent(IncrementalAgent):
         self.batch_size = batch_size
         self.use_bonus_if_available = use_bonus_if_available
 
+        self.policy_net_kwargs = policy_net_kwargs or {}
+        self.value_net_kwargs = value_net_kwargs or {}
+
         self.state_dim = self.env.observation_space.shape[0]
         self.action_dim = self.env.action_space.n
 
         #
-        self.policy_net_fn = policy_net_fn \
-            or (lambda: default_policy_net_fn(self.env))
-
-        self.value_net_fn = value_net_fn \
-            or (lambda: default_value_net_fn(self.env))
+        self.policy_net_fn = policy_net_fn or default_policy_net_fn
+        self.value_net_fn = value_net_fn or default_value_net_fn
 
         self.optimizer_kwargs = {'optimizer_type': optimizer_type,
                                  'lr': learning_rate}
@@ -142,17 +148,26 @@ class AVECPPOAgent(IncrementalAgent):
         self.reset()
 
     def reset(self, **kwargs):
-        self.cat_policy = self.policy_net_fn().to(device)
+        self.cat_policy = self.policy_net_fn(
+                            self.env,
+                            **self.policy_net_kwargs
+                            ).to(device)
         self.policy_optimizer = optimizer_factory(
                                     self.cat_policy.parameters(),
                                     **self.optimizer_kwargs)
 
-        self.value_net = self.value_net_fn().to(device)
+        self.value_net = self.value_net_fn(
+                            self.env,
+                            **self.value_net_kwargs
+                            ).to(device)
         self.value_optimizer = optimizer_factory(
                                     self.value_net.parameters(),
                                     **self.optimizer_kwargs)
 
-        self.cat_policy_old = self.policy_net_fn().to(device)
+        self.cat_policy_old = self.policy_net_fn(
+                                self.env,
+                                **self.policy_net_kwargs
+                                ).to(device)
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
 
         self.MseLoss = nn.MSELoss()

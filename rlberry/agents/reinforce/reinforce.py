@@ -39,9 +39,11 @@ class REINFORCEAgent(IncrementalAgent):
         If True normalize rewards
     optimizer_type: str
         Type of optimizer. 'ADAM' by defaut.
-    policy_net_fn : function
+    policy_net_fn : function(env, **kwargs)
         Function that returns an instance of a policy network (pytorch).
         If None, a default net is used.
+    policy_net_kwargs : dict
+        kwargs for policy_net_fn
     use_bonus_if_available : bool, default = False
         If true, check if environment info has entry 'exploration_bonus'
         and add it to the reward. See also UncertaintyEstimatorWrapper.
@@ -67,6 +69,7 @@ class REINFORCEAgent(IncrementalAgent):
                  normalize=True,
                  optimizer_type='ADAM',
                  policy_net_fn=None,
+                 policy_net_kwargs=None,
                  use_bonus_if_available=False,
                  **kwargs):
         IncrementalAgent.__init__(self, env, **kwargs)
@@ -83,9 +86,10 @@ class REINFORCEAgent(IncrementalAgent):
         self.action_dim = self.env.action_space.n
         self.use_bonus_if_available = use_bonus_if_available
 
+        self.policy_net_kwargs = policy_net_kwargs or {}
+
         #
-        self.policy_net_fn = policy_net_fn \
-            or (lambda: default_policy_net_fn(self.env))
+        self.policy_net_fn = policy_net_fn or default_policy_net_fn
 
         self.optimizer_kwargs = {'optimizer_type': optimizer_type,
                                  'lr': learning_rate}
@@ -100,7 +104,10 @@ class REINFORCEAgent(IncrementalAgent):
         self.reset()
 
     def reset(self, **kwargs):
-        self.policy_net = self.policy_net_fn().to(device)
+        self.policy_net = self.policy_net_fn(
+                            self.env,
+                            **self.policy_net_kwargs,
+                        ).to(device)
         self.policy_optimizer = optimizer_factory(
                                     self.policy_net.parameters(),
                                     **self.optimizer_kwargs)

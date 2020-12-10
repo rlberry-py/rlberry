@@ -36,10 +36,12 @@ class DQNAgent(AbstractDQNAgent):
         Maximum lenght of an episode.
     gamma : double
         Discount factor
-    qvalue_net_fn : function
+    qvalue_net_fn : function(env, **kwargs)
         Function that returns an instance of a network representing
         the Q function.
         If none, a default network is used.
+    qvalue_net_kwargs:
+        kwargs for qvalue_net_fn
     loss_function : str
         Type of loss function. Possibilities: 'l2', 'l1', 'smooth_l1'
     batch_size : int
@@ -84,6 +86,7 @@ class DQNAgent(AbstractDQNAgent):
                  epsilon_decay=5000,
                  optimizer_type='ADAM',
                  qvalue_net_fn=None,
+                 qvalue_net_kwargs=None,
                  double=True,
                  memory_capacity=10000,
                  use_bonus_if_available=False,
@@ -112,10 +115,11 @@ class DQNAgent(AbstractDQNAgent):
         self.loss_function = loss_function
         self.gamma = gamma
         #
-        qvalue_net_fn = qvalue_net_fn \
-            or (lambda: default_qvalue_net_fn(self.env))
-        self.value_net = qvalue_net_fn()
-        self.target_net = qvalue_net_fn()
+        qvalue_net_kwargs = qvalue_net_kwargs or {}
+
+        qvalue_net_fn = qvalue_net_fn or default_qvalue_net_fn
+        self.value_net = qvalue_net_fn(self.env, **qvalue_net_kwargs)
+        self.target_net = qvalue_net_fn(self.env, **qvalue_net_kwargs)
         #
         self.target_net.load_state_dict(self.value_net.state_dict())
         self.target_net.eval()

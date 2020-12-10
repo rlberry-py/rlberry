@@ -138,7 +138,7 @@ def test_autoreset(horizon):
 def test_uncertainty_est_wrapper():
     env = GridWorld()
 
-    def uncertainty_est_fn():
+    def uncertainty_est_fn(env):
         return DiscreteCounter(env.observation_space,
                                env.action_space)
 

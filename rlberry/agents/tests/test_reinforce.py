@@ -12,7 +12,7 @@ def test_reinforce_agent():
     horizon = 30
 
     #
-    def uncertainty_estimator_fn():
+    def uncertainty_estimator_fn(_env):
         counter = DiscreteCounter(deepcopy(_env.observation_space),
                                   deepcopy(_env.action_space),
                                   n_bins_obs=20)

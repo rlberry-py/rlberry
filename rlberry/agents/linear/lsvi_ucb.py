@@ -85,9 +85,11 @@ class LSVIUCBAgent(Agent):
         Online model of an environment.
     horizon : int
         Maximum length of each episode.
-    feature_map_fn : function
+    feature_map_fn : function(env, kwargs)
         Function that returns a feature map instance
         (rlberry.agents.features.FeatureMap class).
+    feature_map_kwargs:
+        kwargs for feature_map_fn
     n_episodes : int
         number of episodes
     gamma : double
@@ -111,6 +113,7 @@ class LSVIUCBAgent(Agent):
                  env,
                  horizon,
                  feature_map_fn,
+                 feature_map_kwargs=None,
                  n_episodes=100,
                  gamma=0.99,
                  bonus_scale_factor=1.0,
@@ -119,11 +122,12 @@ class LSVIUCBAgent(Agent):
         Agent.__init__(self, env, **kwargs)
 
         self.horizon = horizon
-        self.feature_map = feature_map_fn()
         self.n_episodes = n_episodes
         self.gamma = gamma
         self.bonus_scale_factor = bonus_scale_factor
         self.reg_factor = reg_factor
+        feature_map_kwargs = feature_map_kwargs or {}
+        self.feature_map = feature_map_fn(self.env, **feature_map_kwargs)
 
         #
         if self.bonus_scale_factor == 0.0:

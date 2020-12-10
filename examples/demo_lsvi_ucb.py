@@ -25,7 +25,7 @@ class OneHotFeatureMap(FeatureMap):
 
 
 # Function that returns an instance of a feature map
-def feature_map_fn():
+def feature_map_fn(env):
     return OneHotFeatureMap(env.observation_space.n, env.action_space.n)
 
 

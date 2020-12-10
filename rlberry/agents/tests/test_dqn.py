@@ -11,7 +11,7 @@ def test_dqn_agent():
     _env = gym_make("CartPole-v0")
 
     #
-    def uncertainty_estimator_fn():
+    def uncertainty_estimator_fn(_env):
         counter = OnlineDiscretizationCounter(
                                   deepcopy(_env.observation_space),
                                   deepcopy(_env.action_space),

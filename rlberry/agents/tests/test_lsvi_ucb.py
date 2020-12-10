@@ -35,8 +35,8 @@ class RandomFeatMap(FeatureMap):
 def test_lsvi_ucb_matrix_inversion(FeatMapClass):
     env = GridWorld(nrows=3, ncols=3, walls=())
 
-    def feature_map_fn():
-        return FeatMapClass(env.observation_space.n, env.action_space.n)
+    def feature_map_fn(_env):
+        return FeatMapClass(_env.observation_space.n, _env.action_space.n)
 
     reg_factor = 0.1
     agent = LSVIUCBAgent(env, n_episodes=50,
@@ -111,8 +111,8 @@ def test_lsvi_without_bonus():
 
     env = GridWorld(nrows=2, ncols=2, walls=(), success_probability=0.95)
 
-    def feature_map_fn():
-        return OneHotFeatureMap(env.observation_space.n, env.action_space.n)
+    def feature_map_fn(_env):
+        return OneHotFeatureMap(_env.observation_space.n, _env.action_space.n)
 
     agent = LSVIUCBAgent(env, n_episodes=100,
                          feature_map_fn=feature_map_fn,
@@ -143,8 +143,8 @@ def test_lsvi_without_bonus():
 def test_lsvi_random_exploration():
     env = GridWorld(nrows=2, ncols=2, walls=(), success_probability=0.95)
 
-    def feature_map_fn():
-        return OneHotFeatureMap(env.observation_space.n, env.action_space.n)
+    def feature_map_fn(_env):
+        return OneHotFeatureMap(_env.observation_space.n, _env.action_space.n)
 
     agent = LSVIUCBAgent(env, n_episodes=250,
                          feature_map_fn=feature_map_fn,
@@ -176,8 +176,8 @@ def test_lsvi_random_exploration():
 def test_lsvi_optimism():
     env = GridWorld(nrows=2, ncols=2, walls=())
 
-    def feature_map_fn():
-        return OneHotFeatureMap(env.observation_space.n, env.action_space.n)
+    def feature_map_fn(_env):
+        return OneHotFeatureMap(_env.observation_space.n, _env.action_space.n)
 
     agent = LSVIUCBAgent(env, n_episodes=250, gamma=0.99,
                          feature_map_fn=feature_map_fn,

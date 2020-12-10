@@ -19,18 +19,27 @@ class UncertaintyEstimatorWrapper(Wrapper):
 
     Parameters
     ----------
-    uncertainty_estimator_fn : function
-            Function that gives an instance of UncertaintyEstimator,
-            used to compute bonus.
+    uncertainty_estimator_fn : function(env, **kwargs)
+        Function that gives an instance of UncertaintyEstimator,
+        used to compute bonus.
+    uncertainty_estimator_kwargs:
+        kwargs for uncertainty_estimator_fn
     bonus_scale_factor : double
             Scale factor for the bonus.
     """
 
-    def __init__(self, env, uncertainty_estimator_fn, bonus_scale_factor=1.0):
+    def __init__(self,
+                 env,
+                 uncertainty_estimator_fn,
+                 uncertainty_estimator_kwargs=None,
+                 bonus_scale_factor=1.0):
         Wrapper.__init__(self, env)
 
         self.bonus_scale_factor = bonus_scale_factor
-        self.uncertainty_estimator = uncertainty_estimator_fn()
+        uncertainty_estimator_kwargs = uncertainty_estimator_kwargs or {}
+        self.uncertainty_estimator = uncertainty_estimator_fn(
+                                        env,
+                                        **uncertainty_estimator_kwargs)
         self.previous_obs = None
 
     def reset(self):

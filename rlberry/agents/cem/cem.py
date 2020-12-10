@@ -39,9 +39,11 @@ class CEMAgent(IncrementalAgent):
         Type of optimizer. 'ADAM' by defaut.
     on_policy : bool
         If True, updates are done only with on-policy data.
-    policy_net_fn : function
+    policy_net_fn : function(env, **kwargs)
         Function that returns an instance of a policy network (pytorch).
         If None, a default net is used.
+    policy_net_kwargs : dict
+        kwargs for policy_net_fn
     """
 
     name = "CrossEntropyAgent"
@@ -59,6 +61,7 @@ class CEMAgent(IncrementalAgent):
                  optimizer_type='ADAM',
                  on_policy=False,
                  policy_net_fn=None,
+                 policy_net_kwargs=None,
                  **kwargs):
         IncrementalAgent.__init__(self, env, **kwargs)
 
@@ -76,9 +79,10 @@ class CEMAgent(IncrementalAgent):
         self.horizon = horizon
         self.on_policy = on_policy
 
+        self.policy_net_kwargs = policy_net_kwargs or {}
+
         #
-        self.policy_net_fn = policy_net_fn \
-            or (lambda: default_policy_net_fn(self.env))
+        self.policy_net_fn = policy_net_fn or default_policy_net_fn
 
         self.optimizer_kwargs = {'optimizer_type': optimizer_type,
                                  'lr': learning_rate}
@@ -87,7 +91,10 @@ class CEMAgent(IncrementalAgent):
 
     def reset(self, **kwargs):
         # policy net
-        self.policy_net = self.policy_net_fn().to(device)
+        self.policy_net = self.policy_net_fn(
+                            self.env,
+                            **self.policy_net_kwargs
+                            ).to(device)
 
         # loss function and optimizer
         self.loss_fn = nn.CrossEntropyLoss()
