@@ -1,3 +1,5 @@
+from functools import partial
+
 import torch
 import gym.spaces as spaces
 from torch.nn import functional as F
@@ -5,10 +7,7 @@ from rlberry.exploration_tools.uncertainty_estimator \
     import UncertaintyEstimator
 from rlberry.agents.utils.torch_models import ConvolutionalNetwork
 from rlberry.agents.utils.torch_models import MultiLayerPerceptron
-
-
-# choose device
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+from rlberry.utils.torch import choose_device
 
 
 def get_network(shape, embedding_dim):
@@ -52,6 +51,7 @@ class RandomNetworkDistillation(UncertaintyEstimator):
                  learning_rate=0.001,
                  update_period=100,
                  embedding_dim=10,
+                 net_fn=None,
                  device="cuda:best",
                  **kwargs):
         assert isinstance(observation_space, spaces.Box)
@@ -60,14 +60,13 @@ class RandomNetworkDistillation(UncertaintyEstimator):
         self.loss_fn = F.mse_loss
         self.update_period = update_period
         self.embedding_dim = embedding_dim
+        self.net_fn = net_fn or partial(get_network, shape=observation_space.shape, embedding_dim=embedding_dim)
         self.device = choose_device(device)
         self.reset()
 
     def reset(self, **kwargs):
-        self.random_target_network = get_network(self.observation_space.shape,
-                                                 self.embedding_dim)
-        self.predictor_network = get_network(self.observation_space.shape,
-                                             self.embedding_dim)
+        self.random_target_network = self.net_fn().to(self.device)
+        self.predictor_network = self.net_fn().to(self.device)
         self.rnd_optimizer = torch.optim.Adam(
                                 self.predictor_network.parameters(),
                                 lr=self.learning_rate,
