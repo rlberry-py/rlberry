@@ -155,7 +155,7 @@ def compare_policies(agent_stats_list, eval_env=None, eval_horizon=None,
             ax = sns.boxplot(data=output, **kwargs)
             ax.set_xlabel("agent")
             ax.set_ylabel("rewards in one episode")
-            plt.title("Environment = %s" % eval_env.unwrapped.name)
+            plt.title("Environment = %s" % getattr(eval_env.unwrapped, "name", eval_env.unwrapped.__class__.__name__))
             if show:
                 plt.show()
 

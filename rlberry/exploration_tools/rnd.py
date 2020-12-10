@@ -1,5 +1,3 @@
-from functools import partial
-
 import torch
 import gym.spaces as spaces
 from torch.nn import functional as F
@@ -7,7 +5,10 @@ from rlberry.exploration_tools.uncertainty_estimator \
     import UncertaintyEstimator
 from rlberry.agents.utils.torch_models import ConvolutionalNetwork
 from rlberry.agents.utils.torch_models import MultiLayerPerceptron
-from rlberry.utils.torch import choose_device
+
+
+# choose device
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 def get_network(shape, embedding_dim):
