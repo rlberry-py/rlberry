@@ -226,8 +226,10 @@ class PPOAgent(IncrementalAgent):
 
         #
         if self.writer is not None:
-            self.writer.add_scalar("episode", self.episode, None)
-            self.writer.add_scalar("ep reward", episode_rewards)
+            self.writer.add_scalar("episode", self.episode,
+                                   global_step=self.episode)
+            self.writer.add_scalar("ep reward", episode_rewards,
+                                   global_step=self.episode)
 
         #
         if self.episode % self.batch_size == 0:

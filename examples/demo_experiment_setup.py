@@ -72,7 +72,7 @@ def run_experiment(params,
                               output_dir=fs_observer.dir)
 
     # uncomment to disable writer of the 2nd PPO thread
-    # stats['ppo'].set_writer(None, 1)
+    # stats['ppo'].set_writer(1, None)
 
     stats['a2c'] = AgentStats(A2CAgent,
                               env,
@@ -82,7 +82,7 @@ def run_experiment(params,
                               output_dir=fs_observer.dir)
 
     # uncomment to disable writer of the 1st A2C thread
-    # stats['a2c'].set_writer(None, 0)
+    # stats['a2c'].set_writer(0, None)
 
     agent_stats_list = stats.values()
 

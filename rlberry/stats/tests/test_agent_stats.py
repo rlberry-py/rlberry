@@ -113,8 +113,8 @@ def test_agent_stats_2():
     agent_stats_list = [stats_agent1, stats_agent2]
 
     # set some writers
-    stats_agent1.set_writer(None, 1)
-    stats_agent1.set_writer(None, 2)
+    stats_agent1.set_writer(1, None)
+    stats_agent1.set_writer(2, None)
 
     # compare final policies
     compare_policies(agent_stats_list, n_sim=10, show=False)
@@ -161,8 +161,8 @@ def test_agent_stats_partial_fit():
                        init_kwargs=params, n_fit=4, eval_horizon=10)
 
     # set some writers
-    stats.set_writer(None, 0)
-    stats.set_writer(None, 3)
+    stats.set_writer(0, None)
+    stats.set_writer(3, None)
 
     # Run partial fit
     stats.partial_fit(0.1)

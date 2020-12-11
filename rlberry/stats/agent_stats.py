@@ -129,7 +129,7 @@ class AgentStats:
                 self.train_env_set.append(_env)
 
             # Create list of writers for each agent that will be trained
-            self.writers = ['default' for _ in range(n_fit)]
+            self.writers = [('default', None) for _ in range(n_fit)]
 
             #
             self.fitted_agents = None
@@ -147,7 +147,7 @@ class AgentStats:
             self.default_filename = os.path.join(self.output_dir,
                                                  self.identifier)
 
-    def set_writer(self, writer, idx):
+    def set_writer(self, idx, writer_fn, writer_kwargs=None):
         """
         Note
         -----
@@ -155,11 +155,13 @@ class AgentStats:
 
         Parameters
         ----------
-        writer : object, 'default' or None
-            Writer for an agent, e.g. tensorboard SummaryWriter,
+        writer_fn : callable, None or 'default'
+            Returns a writer for an agent, e.g. tensorboard SummaryWriter,
             rlberry PeriodicWriter.
             If 'default', use the default writer in the Agent class.
             If None, disable any writer
+        writer_kwargs : dict or None
+            kwargs for writer_fn
         idx : int
             Index of the agent to set the writer (0 <= idx < `n_fit`).
             AgentStats fits `n_fit` agents, the writer of each one of them
@@ -167,7 +169,8 @@ class AgentStats:
         """
         assert idx >= 0 and idx < self.n_fit, \
             "Invalid index sent to AgentStats.set_writer()"
-        self.writers[idx] = writer
+        writer_kwargs = writer_kwargs or {}
+        self.writers[idx] = (writer_fn, writer_kwargs)
 
     def fit(self):
         """
@@ -213,8 +216,12 @@ class AgentStats:
                 agent = self.agent_class(train_env, copy_env=False,
                                          reseed_env=False, **init_kwargs)
                 # set agent writer
-                if self.writers[idx] != 'default':
-                    agent.set_writer(self.writers[idx])
+                if self.writers[idx][0] is None:
+                    agent.set_writer(None)
+                elif self.writers[idx][0] != 'default':
+                    writer_fn = self.writers[idx][0]
+                    writer_kwargs = self.writers[idx][1]
+                    agent.set_writer(writer_fn(**writer_kwargs))
                 #
                 self.fitted_agents.append(agent)
                 #
@@ -553,10 +560,18 @@ def _fit_worker(args):
     agent = agent_class(train_env, copy_env=False,
                         reseed_env=False, **init_kwargs)
     # set writer
-    if writer != 'default':
-        agent.set_writer(writer)
+    if writer[0] is None:
+        agent.set_writer(None)
+    elif writer[0] != 'default':
+        writer_fn = writer[0]
+        writer_kwargs = writer[1]
+        agent.set_writer(writer_fn(**writer_kwargs))
     # fit agent
     info = agent.fit(**fit_kwargs)
+
+    # Remove writer after fit (prevent pickle problems)
+    agent.set_writer(None)
+
     return agent, info
 
 
