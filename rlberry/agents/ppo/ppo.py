@@ -82,6 +82,8 @@ class PPOAgent(IncrementalAgent):
                  optimizer_type='ADAM',
                  eps_clip=0.2,
                  k_epochs=5,
+                 use_gae=True,
+                 gae_lambda=0.95,
                  policy_net_fn=None,
                  value_net_fn=None,
                  policy_net_kwargs=None,
@@ -99,6 +101,8 @@ class PPOAgent(IncrementalAgent):
         self.learning_rate = learning_rate
         self.eps_clip = eps_clip
         self.k_epochs = k_epochs
+        self.use_gae = use_gae
+        self.gae_lambda = gae_lambda
         self.use_bonus_if_available = use_bonus_if_available
 
         self.policy_net_kwargs = policy_net_kwargs or {}
@@ -249,10 +253,6 @@ class PPOAgent(IncrementalAgent):
             discounted_reward = reward + (self.gamma * discounted_reward)
             rewards.insert(0, discounted_reward)
 
-        # normalizing the rewards
-        rewards = torch.tensor(rewards).to(device).float()
-        rewards = (rewards - rewards.mean()) / (rewards.std() + 1e-5)
-
         # convert list to tensor
         old_states = torch.stack(self.memory.states).to(device).detach()
         old_actions = torch.stack(self.memory.actions).to(device).detach()
@@ -268,6 +268,35 @@ class PPOAgent(IncrementalAgent):
 
             # find ratio (pi_theta / pi_theta__old)
             ratios = torch.exp(logprobs - old_logprobs.detach())
+
+            returns = np.zeros_like(rewards)
+            advantages = np.zeros_like(rewards)
+
+            if not self.use_gae:
+                for t in reversed(range(self.horizon)):
+                    if t == self.horizon - 1:
+                        returns[t] = rewards[t] + self.gamma * (1 - self.memory.is_terminals[t]) * state_values[-1]
+                    else:
+                        returns[t] = rewards[t] + self.gamma * (1 - self.memory.is_terminals[t]) * returns[t + 1]
+                    advantages[t] = returns[t] - state_values[t]
+            else:
+                for t in reversed(range(self.horizon)):
+                    if t == self.horizon - 1:
+                        returns[t] = rewards[t] + self.gamma * (1 - self.memory.is_terminals[t]) * state_values[-1]
+                        td_error = returns[t] - state_values[t]
+                    else:
+                        returns[t] = rewards[t] + self.gamma * (1 - self.memory.is_terminals[t]) * returns[t + 1]
+                        td_error = rewards[t] + self.gamma * (1 - self.memory.is_terminals[t]) * state_values[t + 1] - state_values[t]
+                    advantages[t] = advantages[t] * self.gae_lambda * self.gamma * (1 - self.memory.is_terminals[t]) + td_error
+
+            # normalizing the rewards
+            rewards = torch.tensor(rewards).to(device).float()
+            # rewards = (rewards - rewards.mean()) / (rewards.std() + 1e-5)
+
+            # convert to pytorch tensors and move to gpu if available
+            returns = torch.from_numpy(returns).float().to(device).view(-1, )
+            advantages = torch.from_numpy(advantages).float().to(device).view(-1, )
+            advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-10)
 
             # normalize the advantages
             advantages = rewards - state_values.detach()
