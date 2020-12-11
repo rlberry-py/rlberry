@@ -9,15 +9,6 @@ Modifications:
 
 [1] https://github.com/openai/gym/blob/master/gym/
 envs/classic_control/acrobot.py
-
-In [1], the credits are given to:
-
-Copyright 2013, RLPy http://acl.mit.edu/RLPy
-Alborz Geramifard, Robert H. Klein, Christoph Dann, William Dabney,
-Jonathan P. How
-License: BSD 3-Clause
-Author = Christoph Dann <cdann@cdann.de>
-SOURCE: https://github.com/rlpy/rlpy/blob/master/rlpy/Domains/Acrobot.py
 """
 
 import numpy as np
@@ -38,14 +29,14 @@ __author__ = "Christoph Dann <cdann@cdann.de>"
 
 class Acrobot(RenderInterface2D, Model):
     """
-    Description:
-        Acrobot is a 2-link pendulum with only the second joint actuated.
-        Initially, both links point downwards. The goal is to swing the
-        end-effector at a height at least the length of one link above the base.
-        Both links can swing freely and can pass by each other, i.e., they don't
-        collide when they have the same angle.
+    Acrobot is a 2-link pendulum with only the second joint actuated.
+    Initially, both links point downwards. The goal is to swing the
+    end-effector at a height at least the length of one link above the base.
+    Both links can swing freely and can pass by each other, i.e., they don't
+    collide when they have the same angle.
 
     State:
+    -----
         The state consists of the sin() and cos() of the two rotational joint
         angles and the joint angular velocities:
         [cos(theta1) sin(theta1) cos(theta2) sin(theta2) thetaDot1 thetaDot2].
