@@ -7,6 +7,7 @@ from rlberry.envs.finite import GridWorld
 from rlberry.envs.benchmarks.ball_exploration import PBall2D, SimplePBallND
 from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
 from rlberry.envs.benchmarks.grid_exploration.four_room import FourRoom
+from rlberry.envs.benchmarks.grid_exploration.six_room import SixRoom
 from rlberry.rendering.render_interface import RenderInterface2D
 
 
@@ -18,7 +19,8 @@ classes = [
     SimplePBallND,
     Acrobot,
     Pendulum,
-    FourRoom
+    FourRoom,
+    SixRoom
 ]
 
 
@@ -102,6 +104,30 @@ def test_four_room(reward_free, difficulty, array_observation):
 
     if difficulty == 2:
         assert reward < 0.0
+
+    if array_observation:
+        assert isinstance(initial_state, np.ndarray)
+        assert isinstance(next_state, np.ndarray)
+
+
+@pytest.mark.parametrize("reward_free, array_observation",
+                         [
+                             (False, False),
+                             (False, True),
+                             (True, False),
+                             (True, True),
+                         ])
+def test_six_room(reward_free, array_observation):
+    env = SixRoom(reward_free=reward_free, array_observation=array_observation)
+
+    initial_state = env.reset()
+    next_state, reward, _, _ = env.step(1)
+
+    assert env.observation_space.contains(initial_state)
+    assert env.observation_space.contains(next_state)
+
+    if reward_free:
+        assert env.reward_at == {}
 
     if array_observation:
         assert isinstance(initial_state, np.ndarray)

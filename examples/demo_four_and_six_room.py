@@ -1,10 +1,12 @@
 from rlberry.envs.benchmarks.grid_exploration.four_room import FourRoom
+from rlberry.envs.benchmarks.grid_exploration.six_room import SixRoom
 from rlberry.agents.dynprog import ValueIterationAgent
 
 
-env = FourRoom(reward_free=True, difficulty=0, array_observation=False)
+# env = FourRoom(reward_free=False, difficulty=0, array_observation=False)
+env = SixRoom(reward_free=False, array_observation=False)
 
-agent = ValueIterationAgent(env, gamma=0.99)
+agent = ValueIterationAgent(env, gamma=0.9)
 info = agent.fit()
 print(info)
 

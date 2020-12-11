@@ -319,10 +319,11 @@ class GridWorld(RenderInterface2D, FiniteMDP):
         for (y, x) in self.reward_at:
             flag = GeometricPrimitive("POLYGON")
             rwd = self.reward_at[(y, x)]
+            color = 0.5*np.abs(rwd)/self.reward_range[1]
             if rwd > 0:
-                flag.set_color((0.0, 0.5, 0.0))
+                flag.set_color((0.0, color, 0.0))
             if rwd < 0:
-                flag.set_color((0.5, 0.0, 0.0))
+                flag.set_color((color, 0.0, 0.0))
 
             x += 0.5
             y += 0.25
