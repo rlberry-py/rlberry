@@ -11,12 +11,6 @@ class SixRoom(GridWorld):
     """
     GridWorld with six rooms.
 
-    Note
-    -----
-    The function env.sample() does not handle conversions to array states
-    when array_observation is True. Only the functions env.reset() and
-    env.step() are covered.
-
     Parameters
     ----------
     reward_free : bool, default=False
@@ -24,6 +18,12 @@ class SixRoom(GridWorld):
     array_observation:
         If true, the observations are converted to an array (x, y)
         instead of a discrete index.
+
+    Notes
+    -----
+    The function env.sample() does not handle conversions to array states
+    when array_observation is True. Only the functions env.reset() and
+    env.step() are covered.
     """
     name = "SixRoom"
 

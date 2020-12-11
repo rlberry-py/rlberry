@@ -1,10 +1,8 @@
 """
 Pendulum environment adapted from OpenAI gym [1].
 
-
 Modifications:
 * render function follows the rlberry rendering interface
-
 
 [1] https://github.com/openai/gym/blob/master/gym/
 envs/classic_control/pendulum.py
@@ -24,7 +22,6 @@ class Pendulum(RenderInterface2D, Model):
     the pendulum starts in a random position, and the goal
     is to swing it up so it stays upright.
     """
-
     name = "Pendulum"
 
     def __init__(self):

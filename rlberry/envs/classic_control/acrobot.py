@@ -1,11 +1,9 @@
 """
 Acrobot environment adapted from OpenAI gym [1].
 
-
 Modifications:
 * define reward_range
 * render function follows the rlberry rendering interface.
-
 
 [1] https://github.com/openai/gym/blob/master/gym/
 envs/classic_control/acrobot.py
@@ -35,8 +33,9 @@ class Acrobot(RenderInterface2D, Model):
     Both links can swing freely and can pass by each other, i.e., they don't
     collide when they have the same angle.
 
-    State:
+    Notes
     -----
+    State:
         The state consists of the sin() and cos() of the two rotational joint
         angles and the joint angular velocities:
         [cos(theta1) sin(theta1) cos(theta2) sin(theta2) thetaDot1 thetaDot2].
@@ -71,6 +70,7 @@ class Acrobot(RenderInterface2D, Model):
         than the original version which employs Euler integration,
         see the AcrobotLegacy class.
     """
+    name = "Acrobot"
 
     dt = .2
 
@@ -94,8 +94,6 @@ class Acrobot(RenderInterface2D, Model):
     action_arrow = None
     domain_fig = None
     actions_num = 3
-
-    name = "Acrobot"
 
     def __init__(self):
         # init base classes

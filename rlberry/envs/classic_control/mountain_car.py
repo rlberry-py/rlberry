@@ -21,11 +21,12 @@ from rlberry.rendering import Scene, GeometricPrimitive, RenderInterface2D
 
 class MountainCar(RenderInterface2D, Model):
     """
-    Description:
-        The agent (a car) is started at the bottom of a valley. For any given
-        state the agent may choose to accelerate to the left, right or cease
-        any acceleration.
+    The agent (a car) is started at the bottom of a valley. For any given
+    state the agent may choose to accelerate to the left, right or cease
+    any acceleration.
 
+    Notes
+    -----
     Source:
         The environment appeared first in Andrew Moore's PhD Thesis (1990).
 
@@ -58,7 +59,6 @@ class MountainCar(RenderInterface2D, Model):
     Episode Termination:
         The car position is more than 0.5
     """
-
     name = "MountainCar"
 
     def __init__(self, goal_velocity=0):
@@ -190,3 +190,4 @@ class MountainCar(RenderInterface2D, Model):
 
         scene.add_shape(agent)
         return scene
+
