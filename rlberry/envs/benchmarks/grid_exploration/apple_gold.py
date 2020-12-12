@@ -43,25 +43,25 @@ class AppleGold(GridWorld):
         # Common parameters
         nrows = 13
         ncols = 17
-        start_coord = (1, 5)
+        start_coord = (5, 1)
         terminal_states = ((7, 7),)
         success_probability = 0.95
         #
         walls = ()
-        for jj in range(13):
-            walls += ((0, jj),)
-            walls += ((16, jj),)
-        for ii in range(17):
+        for ii in range(13):
             walls += ((ii, 0),)
-            walls += ((ii, 12),)
-        for jj in range(13):
-            if jj not in [1, 11]:
-                walls += ((6, jj),)
-                walls += ((10, jj),)
-        walls += ((6, 11),)
-        for ii in range(17):
-            if ii not in [1, 15]:
+            walls += ((ii, 16),)
+        for jj in range(17):
+            walls += ((0, jj),)
+            walls += ((12, jj),)
+        for ii in range(13):
+            if ii not in [1, 11]:
                 walls += ((ii, 6),)
+                walls += ((ii, 10),)
+        walls += ((11, 6),)
+        for jj in range(17):
+            if jj not in [1, 15]:
+                walls += ((6, jj),)
 
         # Default reward according to the difficulty
         default_reward = 0
@@ -72,12 +72,12 @@ class AppleGold(GridWorld):
         else:
             reward_at = {
                         (7, 7): 10.0,
-                        (2, 8): 1.0,
-                        (3, 10): 1.0
+                        (8, 2): 1.0,
+                        (10, 3): 1.0
                         }
-            for ii in range(7, 16):
-                for jj in range(1, 12):
-                    if ((ii, jj),) not in walls:
+            for jj in range(7, 16):
+                for ii in range(1, 12):
+                    if (ii, jj) not in walls and (ii, jj) != (7, 7):
                         reward_at[(ii, jj)] = -0.05
 
         # Init base class
@@ -149,19 +149,28 @@ class AppleGold(GridWorld):
 
         # rewards
         for (y, x) in self.reward_at:
-            flag = GeometricPrimitive("POLYGON")
             rwd = self.reward_at[(y, x)]
-            if rwd == 10:
-                flag.set_color((0.0, 0.5, 0.0))
-            elif rwd == 1:
-                flag.set_color((0.0, 0.0, 0.5))
+            if rwd == -0.05:
+                rock = GeometricPrimitive("POLYGON")
+                rock.set_color((0.5, 0.0, 0.0))
+                rock.add_vertex((x, y))
+                rock.add_vertex((x + 0.5, y))
+                rock.add_vertex((x + 0.5, y + 0.5))
+                rock.add_vertex((x, y + 0.5))
+                bg.add_shape(rock)
+            else:
+                flag = GeometricPrimitive("POLYGON")
+                if rwd == 10:
+                    flag.set_color((0.0, 0.5, 0.0))
+                elif rwd == 1:
+                    flag.set_color((0.0, 0.0, 0.5))
 
-            x += 0.5
-            y += 0.25
-            flag.add_vertex((x, y))
-            flag.add_vertex((x + 0.25, y + 0.5))
-            flag.add_vertex((x - 0.25, y + 0.5))
-            bg.add_shape(flag)
+                x += 0.5
+                y += 0.25
+                flag.add_vertex((x, y))
+                flag.add_vertex((x + 0.25, y + 0.5))
+                flag.add_vertex((x - 0.25, y + 0.5))
+                bg.add_shape(flag)
 
         return bg
 

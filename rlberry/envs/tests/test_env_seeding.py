@@ -6,6 +6,9 @@ from copy import deepcopy
 from rlberry.envs.classic_control import MountainCar, Acrobot, Pendulum
 from rlberry.envs.finite import Chain
 from rlberry.envs.finite import GridWorld
+from rlberry.envs.benchmarks.grid_exploration.four_room import FourRoom
+from rlberry.envs.benchmarks.grid_exploration.six_room import SixRoom
+from rlberry.envs.benchmarks.grid_exploration.apple_gold import AppleGold
 from rlberry.envs.benchmarks.ball_exploration import PBall2D, SimplePBallND
 
 
@@ -16,7 +19,10 @@ classes = [
     PBall2D,
     SimplePBallND,
     Acrobot,
-    Pendulum
+    Pendulum,
+    FourRoom,
+    SixRoom,
+    AppleGold
 ]
 
 
@@ -70,3 +76,4 @@ def test_copy_reseeding(ModelClass):
         traj1 = get_env_trajectory(env, 500)
         traj2 = get_env_trajectory(c_env, 500)
         assert not compare_trajectories(traj1, traj2)
+

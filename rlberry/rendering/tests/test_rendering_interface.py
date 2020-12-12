@@ -7,6 +7,9 @@ from rlberry.envs.classic_control import Acrobot
 from rlberry.envs.classic_control import Pendulum
 from rlberry.envs.finite import Chain
 from rlberry.envs.finite import GridWorld
+from rlberry.envs.benchmarks.grid_exploration.four_room import FourRoom
+from rlberry.envs.benchmarks.grid_exploration.six_room import SixRoom
+from rlberry.envs.benchmarks.grid_exploration.apple_gold import AppleGold
 from rlberry.envs.benchmarks.ball_exploration import PBall2D, SimplePBallND
 from rlberry.rendering import RenderInterface
 from rlberry.rendering import RenderInterface2D
@@ -26,7 +29,10 @@ classes = [
     GridWorld,
     Chain,
     PBall2D,
-    SimplePBallND
+    SimplePBallND,
+    FourRoom,
+    SixRoom,
+    AppleGold
 ]
 
 
@@ -86,3 +92,4 @@ def test_render2d_interface_wrapped(ModelClass):
             os.remove('test_video.mp4')
         except Exception:
             pass
+

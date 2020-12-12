@@ -143,3 +143,4 @@ class SixRoom(GridWorld):
             bg.add_shape(flag)
 
         return bg
+
