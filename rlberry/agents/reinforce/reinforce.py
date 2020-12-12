@@ -190,8 +190,7 @@ class REINFORCEAgent(IncrementalAgent):
 
         return episode_rewards
 
-    @classmethod
-    def _normalize(x):
+    def _normalize(self, x):
         return (x-x.mean())/(x.std()+1e-5)
 
     def _update(self):

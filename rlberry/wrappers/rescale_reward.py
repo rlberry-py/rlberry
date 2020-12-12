@@ -18,7 +18,6 @@ class RescaleRewardWrapper(Wrapper):
         assert reward_range[0] < reward_range[1]
         assert reward_range[0] > -np.inf and reward_range[1] < np.inf
 
-    @staticmethod
     def _linear_rescaling(x, x0, x1, u0, u1):
         """
         For x a value in [x0, x1], maps x linearly to the interval [u0, u1].
