@@ -43,3 +43,5 @@ Please provide details about the tests you run to prove the effectiveness and co
 - [ ] New and existing unit tests pass locally with my changes
 - [ ] Any dependent changes have been merged and published in downstream modules
 - [ ] I have checked my code and corrected any misspellings
+
+### Credits: Templated orginally created by https://github.com/embeddedartistry/templates/blob/master/oss_docs/PULL_REQUEST_TEMPLATE.md

@@ -11,9 +11,7 @@ logger = logging.getLogger(__name__)
 class GridWorld(RenderInterface2D, FiniteMDP):
     """
     Simple GridWorld environment.
-
-    Note: terminal states are not set to be absorbing in the transition array P
-
+ 
     Parameters
     -----------
     nrows : int
@@ -34,8 +32,11 @@ class GridWorld(RenderInterface2D, FiniteMDP):
         ((row_0, col_0), (row_1, col_1), ...) = coordinates of walls
     default_reward : double
         reward received at states not in  'reward_at'
-    """
 
+    Notes
+    -----
+    Terminal states are not set to be absorbing in the transition array P
+    """
     name = "GridWorld"
 
     def __init__(self,

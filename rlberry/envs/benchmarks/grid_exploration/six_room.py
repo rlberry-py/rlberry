@@ -43,7 +43,6 @@ class SixRoom(GridWorld):
             if ii not in [2, 8]:
                 walls += ((ii, 5),)
                 walls += ((ii, 11),)
-
         for jj in range(17):
             if jj != 15:
                 walls += ((5, jj),)

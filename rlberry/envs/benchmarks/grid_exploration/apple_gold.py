@@ -29,45 +29,56 @@ class AppleGold(GridWorld):
     Reference
     ---------
     .. seaalso::
-        Guo et al.: Self-imitation learning via
-        trajectory-conditioned policy
-        for hard-exploration tasks
+        Guo et al.: Self-Imitation Learning via
+        Trajectory-Conditioned Policy
+        for Hard-Exploration Tasks
         arXiv preprint arXiv:1907.10247
     """
-    name = "SixRoom"
+    name = "AppleGold"
 
     def __init__(self, reward_free=False, array_observation=False):
         self.reward_free = reward_free
         self.array_observation = array_observation
 
         # Common parameters
-        nrows = 11
+        nrows = 13
         ncols = 17
-        start_coord = (0, 0)
-        terminal_states = ((10, 0),)
+        start_coord = (1, 5)
+        terminal_states = ((7, 7),)
         success_probability = 0.95
         #
         walls = ()
-        for ii in range(11):
-            if ii not in [2, 8]:
-                walls += ((ii, 5),)
-                walls += ((ii, 11),)
-
-        for jj in range(17):
-            if jj != 15:
-                walls += ((5, jj),)
+        for jj in range(13):
+            walls += ((0, jj),)
+            walls += ((16, jj),)
+        for ii in range(17):
+            walls += ((ii, 0),)
+            walls += ((ii, 12),)
+        for jj in range(13):
+            if jj not in [1, 11]:
+                walls += ((6, jj),)
+                walls += ((10, jj),)
+        walls += ((6, 11),)
+        for ii in range(17):
+            if ii not in [1, 15]:
+                walls += ((ii, 6),)
 
         # Default reward according to the difficulty
-        default_reward = -0.001
+        default_reward = 0
 
         # Rewards according to the difficulty
         if self.reward_free:
             reward_at = {}
         else:
             reward_at = {
-                        (10, 0): 10.0,
-                        (4, 4): 0.1,
+                        (7, 7): 10.0,
+                        (2, 8): 1.0,
+                        (3, 10): 1.0
                         }
+            for ii in range(7, 16):
+                for jj in range(1, 12):
+                    if ((ii, jj),) not in walls:
+                        reward_at[(ii, jj)] = -0.05
 
         # Init base class
         GridWorld.__init__(self,
@@ -142,7 +153,7 @@ class AppleGold(GridWorld):
             rwd = self.reward_at[(y, x)]
             if rwd == 10:
                 flag.set_color((0.0, 0.5, 0.0))
-            else:
+            elif rwd == 1:
                 flag.set_color((0.0, 0.0, 0.5))
 
             x += 0.5
@@ -153,3 +164,4 @@ class AppleGold(GridWorld):
             bg.add_shape(flag)
 
         return bg
+

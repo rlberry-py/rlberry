@@ -8,6 +8,7 @@ from rlberry.envs.benchmarks.ball_exploration import PBall2D, SimplePBallND
 from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
 from rlberry.envs.benchmarks.grid_exploration.four_room import FourRoom
 from rlberry.envs.benchmarks.grid_exploration.six_room import SixRoom
+from rlberry.envs.benchmarks.grid_exploration.apple_gold import AppleGold
 from rlberry.rendering.render_interface import RenderInterface2D
 
 
@@ -20,7 +21,8 @@ classes = [
     Acrobot,
     Pendulum,
     FourRoom,
-    SixRoom
+    SixRoom,
+    AppleGold
 ]
 
 
@@ -132,3 +134,27 @@ def test_six_room(reward_free, array_observation):
     if array_observation:
         assert isinstance(initial_state, np.ndarray)
         assert isinstance(next_state, np.ndarray)
+
+
+@pytest.mark.parametrize("reward_free, array_observation",
+                         [
+                             (False, False),
+                             (False, True),
+                             (True, False),
+                             (True, True),
+                         ])
+def test_apple_gold(reward_free, array_observation):
+    env = AppleGold(reward_free=reward_free, array_observation=array_observation)
+
+    initial_state = env.reset()
+    next_state, reward, _, _ = env.step(1)
+    assert env.observation_space.contains(initial_state)
+    assert env.observation_space.contains(next_state)
+
+    if reward_free:
+        assert env.reward_at == {}
+
+    if array_observation:
+        assert isinstance(initial_state, np.ndarray)
+        assert isinstance(next_state, np.ndarray)
+
