@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 class GridWorld(RenderInterface2D, FiniteMDP):
     """
     Simple GridWorld environment.
- 
+
     Parameters
     -----------
     nrows : int

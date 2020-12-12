@@ -43,7 +43,7 @@ def video_write(fn, images, framerate=60, vcodec='libx264'):
 
         if not isinstance(images, np.ndarray):
             images = np.asarray(images)
-        n, height, width, channels = images.shape
+        _, height, width, channels = images.shape
         process = (
             ffmpeg
             .input('pipe:', format='rawvideo', pix_fmt='rgb24',
@@ -64,3 +64,4 @@ def video_write(fn, images, framerate=60, vcodec='libx264'):
     except Exception as ex:
         logger.warning("Not possible to save \
 video, due to exception: {}".format(str(ex)))
+

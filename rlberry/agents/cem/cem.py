@@ -163,7 +163,7 @@ class CEMAgent(IncrementalAgent):
         episode_states = []
         episode_actions = []
         state = self.env.reset()
-        for hh in range(self.horizon):
+        for _ in range(self.horizon):
             # take action according to policy_net
             action = self.policy(state)
             next_state, reward, done, _ = self.env.step(action)

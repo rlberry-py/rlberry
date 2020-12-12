@@ -190,7 +190,8 @@ class REINFORCEAgent(IncrementalAgent):
 
         return episode_rewards
 
-    def _normalize(self, x):
+    @classmethod
+    def _normalize(x):
         return (x-x.mean())/(x.std()+1e-5)
 
     def _update(self):
@@ -245,3 +246,4 @@ class REINFORCEAgent(IncrementalAgent):
                 'learning_rate': learning_rate,
                 'entr_coef': entr_coef,
                 }
+
