@@ -233,10 +233,7 @@ class PPOAgent(IncrementalAgent):
 
         #
         if self.writer is not None:
-            self.writer.add_scalar("episode", self.episode,
-                                   global_step=self.episode)
-            self.writer.add_scalar("ep reward", episode_rewards,
-                                   global_step=self.episode)
+            self.writer.add_scalar("fit/total_reward", episode_rewards, self.episode)
 
         #
         if self.episode % self.batch_size == 0:
@@ -309,7 +306,8 @@ class PPOAgent(IncrementalAgent):
             surr1 = ratios * advantages
             surr2 = torch.clamp(ratios, 1 - self.eps_clip,
                                 1 + self.eps_clip) * advantages
-            loss = -torch.min(surr1, surr2) \
+            surr_loss = torch.min(surr1, surr2)
+            loss = - surr_loss \
                 + self.vf_coef * self.MseLoss(state_values, rewards) \
                 - self.entr_coef * dist_entropy
 
@@ -321,6 +319,9 @@ class PPOAgent(IncrementalAgent):
 
             self.policy_optimizer.step()
             self.value_optimizer.step()
+
+        self.writer.add_scalar("fit/surrogate_loss", surr_loss.mean().cpu().detach().numpy(), self.episode)
+        self.writer.add_scalar("fit/entropy_loss", dist_entropy.mean().cpu().detach().numpy(), self.episode)
 
         # copy new weights into old policy
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
