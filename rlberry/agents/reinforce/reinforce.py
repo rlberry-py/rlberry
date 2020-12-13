@@ -7,10 +7,8 @@ from rlberry.agents import IncrementalAgent
 from rlberry.agents.utils.memories import Memory
 from rlberry.agents.utils.torch_training import optimizer_factory
 from rlberry.agents.utils.torch_models import default_policy_net_fn
+from rlberry.utils.torch import choose_device
 from rlberry.utils.writers import PeriodicWriter
-
-# choose device
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 logger = logging.getLogger(__name__)
 
@@ -47,6 +45,8 @@ class REINFORCEAgent(IncrementalAgent):
     use_bonus_if_available : bool, default = False
         If true, check if environment info has entry 'exploration_bonus'
         and add it to the reward. See also UncertaintyEstimatorWrapper.
+    device: str
+        Device to put the tensors on
 
     References
     ----------
@@ -71,6 +71,7 @@ class REINFORCEAgent(IncrementalAgent):
                  policy_net_fn=None,
                  policy_net_kwargs=None,
                  use_bonus_if_available=False,
+                 device="cuda:best",
                  **kwargs):
         IncrementalAgent.__init__(self, env, **kwargs)
 
@@ -81,10 +82,11 @@ class REINFORCEAgent(IncrementalAgent):
         self.entr_coef = entr_coef
         self.learning_rate = learning_rate
         self.normalize = normalize
+        self.use_bonus_if_available = use_bonus_if_available
+        self.device = choose_device(device)
 
         self.state_dim = self.env.observation_space.shape[0]
         self.action_dim = self.env.action_space.n
-        self.use_bonus_if_available = use_bonus_if_available
 
         self.policy_net_kwargs = policy_net_kwargs or {}
 
@@ -107,7 +109,8 @@ class REINFORCEAgent(IncrementalAgent):
         self.policy_net = self.policy_net_fn(
                             self.env,
                             **self.policy_net_kwargs,
-                        ).to(device)
+                        ).to(self.device)
+
         self.policy_optimizer = optimizer_factory(
                                     self.policy_net.parameters(),
                                     **self.optimizer_kwargs)
@@ -126,7 +129,7 @@ class REINFORCEAgent(IncrementalAgent):
 
     def policy(self, state, **kwargs):
         assert self.policy_net is not None
-        state = torch.from_numpy(state).float().to(device)
+        state = torch.from_numpy(state).float().to(self.device)
         action_dist = self.policy_net(state)
         action = action_dist.sample().item()
         return action
@@ -205,9 +208,9 @@ class REINFORCEAgent(IncrementalAgent):
             rewards.insert(0, discounted_reward)
 
         # convert list to tensor
-        states = torch.FloatTensor(self.memory.states).to(device)
-        actions = torch.LongTensor(self.memory.actions).to(device)
-        rewards = torch.FloatTensor(rewards).to(device)
+        states = torch.FloatTensor(self.memory.states).to(self.device)
+        actions = torch.LongTensor(self.memory.actions).to(self.device)
+        rewards = torch.FloatTensor(rewards).to(self.device)
         if self.normalize:
             rewards = self._normalize(rewards)
 

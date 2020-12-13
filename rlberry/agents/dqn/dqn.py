@@ -111,7 +111,7 @@ class DQNAgent(AbstractDQNAgent):
         # init
         self.optimizer_kwargs = {'optimizer_type': optimizer_type,
                                  'lr': learning_rate}
-        self.device = device
+        self.device = choose_device(device)
         self.loss_function = loss_function
         self.gamma = gamma
         #
@@ -125,7 +125,6 @@ class DQNAgent(AbstractDQNAgent):
         self.target_net.eval()
         logger.info("Number of trainable parameters: {}"
                     .format(trainable_parameters(self.value_net)))
-        self.device = choose_device(self.device)
         self.value_net.to(self.device)
         self.target_net.to(self.device)
         self.loss_function = loss_function_factory(self.loss_function)

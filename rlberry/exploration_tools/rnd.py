@@ -17,19 +17,19 @@ def get_network(shape, embedding_dim):
                                     in_width=W,
                                     in_height=H,
                                     activation="ELU",
-                                    out_size=embedding_dim).to(device=device)
+                                    out_size=embedding_dim)
     elif len(shape) == 2:
         H, W = shape
         return ConvolutionalNetwork(in_channels=1,
                                     in_width=W,
                                     in_height=H,
                                     activation="ELU",
-                                    out_size=embedding_dim).to(device=device)
+                                    out_size=embedding_dim)
 
     elif len(shape) == 1:
         return MultiLayerPerceptron(in_size=shape[0],
                                     activation="RELU",
-                                    out_size=embedding_dim).to(device=device)
+                                    out_size=embedding_dim)
 
     else:
         raise ValueError("Incompatible observation shape: {}"

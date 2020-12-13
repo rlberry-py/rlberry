@@ -8,11 +8,10 @@ from rlberry.agents import IncrementalAgent
 from rlberry.agents.utils.memories import CEMMemory
 from rlberry.agents.utils.torch_training import optimizer_factory
 from rlberry.agents.utils.torch_models import default_policy_net_fn
+from rlberry.utils.torch import choose_device
 from rlberry.utils.writers import PeriodicWriter
 
 logger = logging.getLogger(__name__)
-# choose device
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 class CEMAgent(IncrementalAgent):
@@ -44,6 +43,8 @@ class CEMAgent(IncrementalAgent):
         If None, a default net is used.
     policy_net_kwargs : dict
         kwargs for policy_net_fn
+    device : str
+        Device to put the tensors on
     """
 
     name = "CrossEntropyAgent"
@@ -62,6 +63,7 @@ class CEMAgent(IncrementalAgent):
                  on_policy=False,
                  policy_net_fn=None,
                  policy_net_kwargs=None,
+                 device="cuda:best",
                  **kwargs):
         IncrementalAgent.__init__(self, env, **kwargs)
 
@@ -78,15 +80,11 @@ class CEMAgent(IncrementalAgent):
         self.learning_rate = learning_rate
         self.horizon = horizon
         self.on_policy = on_policy
-
         self.policy_net_kwargs = policy_net_kwargs or {}
-
-        #
         self.policy_net_fn = policy_net_fn or default_policy_net_fn
-
         self.optimizer_kwargs = {'optimizer_type': optimizer_type,
                                  'lr': learning_rate}
-        #
+        self.device = choose_device(device)
         self.reset()
 
     def reset(self, **kwargs):
@@ -94,7 +92,7 @@ class CEMAgent(IncrementalAgent):
         self.policy_net = self.policy_net_fn(
                             self.env,
                             **self.policy_net_kwargs
-                            ).to(device)
+                            ).to(self.device)
 
         # loss function and optimizer
         self.loss_fn = nn.CrossEntropyLoss()
@@ -127,7 +125,7 @@ class CEMAgent(IncrementalAgent):
         return info
 
     def policy(self, observation, **kwargs):
-        state = torch.from_numpy(observation).float().to(device)
+        state = torch.from_numpy(observation).float().to(self.device)
         action_dist = self.policy_net(state)
         action = action_dist.sample().item()
         return action
@@ -147,12 +145,12 @@ class CEMAgent(IncrementalAgent):
             train_states.extend(self.memory.states[ii])
             train_actions.extend(self.memory.actions[ii])
 
-        train_states_tensor = torch.FloatTensor(train_states).to(device)
-        train_actions_tensor = torch.LongTensor(train_actions).to(device)
+        train_states_tensor = torch.FloatTensor(train_states).to(self.device)
+        train_actions_tensor = torch.LongTensor(train_actions).to(self.device)
 
         # states in last trajectory
         last_states = self.memory.states[-1]
-        last_states_tensor = torch.FloatTensor(last_states).to(device)
+        last_states_tensor = torch.FloatTensor(last_states).to(self.device)
 
         return train_states_tensor, train_actions_tensor, \
             reward_bound, reward_mean, last_states_tensor

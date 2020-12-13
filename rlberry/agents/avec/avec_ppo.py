@@ -9,10 +9,10 @@ from rlberry.agents.utils.memories import Memory
 from rlberry.agents.utils.torch_training import optimizer_factory
 from rlberry.agents.utils.torch_models import default_policy_net_fn
 from rlberry.agents.utils.torch_models import default_value_net_fn
+from rlberry.utils.torch import choose_device
 from rlberry.utils.writers import PeriodicWriter
 
 logger = logging.getLogger(__name__)
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 class AVECPPOAgent(IncrementalAgent):
@@ -71,6 +71,8 @@ class AVECPPOAgent(IncrementalAgent):
     use_bonus_if_available : bool, default = False
         If true, check if environment info has entry 'exploration_bonus'
         and add it to the reward. See also UncertaintyEstimatorWrapper.
+    device : str
+        Device to put the tensors on
 
     References
     ----------
@@ -110,6 +112,7 @@ class AVECPPOAgent(IncrementalAgent):
                  policy_net_kwargs=None,
                  value_net_kwargs=None,
                  use_bonus_if_available=False,
+                 device="cuda:best",
                  **kwargs):
         IncrementalAgent.__init__(self, env, **kwargs)
 
@@ -124,6 +127,7 @@ class AVECPPOAgent(IncrementalAgent):
         self.n_episodes = n_episodes
         self.batch_size = batch_size
         self.use_bonus_if_available = use_bonus_if_available
+        self.device = choose_device(device)
 
         self.policy_net_kwargs = policy_net_kwargs or {}
         self.value_net_kwargs = value_net_kwargs or {}
@@ -151,7 +155,7 @@ class AVECPPOAgent(IncrementalAgent):
         self.cat_policy = self.policy_net_fn(
                             self.env,
                             **self.policy_net_kwargs
-                            ).to(device)
+                            ).to(self.device)
         self.policy_optimizer = optimizer_factory(
                                     self.cat_policy.parameters(),
                                     **self.optimizer_kwargs)
@@ -159,7 +163,7 @@ class AVECPPOAgent(IncrementalAgent):
         self.value_net = self.value_net_fn(
                             self.env,
                             **self.value_net_kwargs
-                            ).to(device)
+                            ).to(self.device)
         self.value_optimizer = optimizer_factory(
                                     self.value_net.parameters(),
                                     **self.optimizer_kwargs)
@@ -167,7 +171,7 @@ class AVECPPOAgent(IncrementalAgent):
         self.cat_policy_old = self.policy_net_fn(
                                 self.env,
                                 **self.policy_net_kwargs
-                                ).to(device)
+                                ).to(self.device)
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
 
         self.MseLoss = nn.MSELoss()
@@ -186,7 +190,7 @@ class AVECPPOAgent(IncrementalAgent):
 
     def policy(self, state, **kwargs):
         assert self.cat_policy is not None
-        state = torch.from_numpy(state).float().to(device)
+        state = torch.from_numpy(state).float().to(self.device)
         action_dist = self.cat_policy_old(state)
         action = action_dist.sample().item()
 
@@ -205,7 +209,7 @@ class AVECPPOAgent(IncrementalAgent):
         return info
 
     def _select_action(self, state):
-        state = torch.from_numpy(state).float().to(device)
+        state = torch.from_numpy(state).float().to(self.device)
         action_dist = self.cat_policy_old(state)
         action = action_dist.sample()
         action_logprob = action_dist.log_prob(action)
@@ -273,13 +277,13 @@ class AVECPPOAgent(IncrementalAgent):
             rewards.insert(0, discounted_reward)
 
         # normalizing the rewards
-        rewards = torch.tensor(rewards).to(device).float()
+        rewards = torch.tensor(rewards).to(self.device).float()
         rewards = (rewards - rewards.mean()) / (rewards.std() + 1e-5)
 
         # convert list to tensor
-        old_states = torch.stack(self.memory.states).to(device).detach()
-        old_actions = torch.stack(self.memory.actions).to(device).detach()
-        old_logprobs = torch.stack(self.memory.logprobs).to(device).detach()
+        old_states = torch.stack(self.memory.states).to(self.device).detach()
+        old_actions = torch.stack(self.memory.actions).to(self.device).detach()
+        old_logprobs = torch.stack(self.memory.logprobs).to(self.device).detach()
 
         # optimize policy for K epochs
         for _ in range(self.k_epochs):
