@@ -60,21 +60,15 @@ def test_a2c_agent_partial_fit():
 
 
 def test_ppo_agent():
-    _env = get_benchmark_env(level=1)
+    env = get_benchmark_env(level=1)
     n_episodes = 5
     horizon = 30
 
-    #
     def uncertainty_estimator_fn(observation_space, action_space):
         counter = DiscreteCounter(observation_space,
                                   action_space,
                                   n_bins_obs=20)
         return counter
-
-    env = UncertaintyEstimatorWrapper(_env,
-                                      uncertainty_estimator_fn,
-                                      bonus_scale_factor=1.0)
-    #
 
     agent = PPOAgent(env,
                      n_episodes=n_episodes,
@@ -83,7 +77,11 @@ def test_ppo_agent():
                      learning_rate=0.001,
                      eps_clip=0.2,
                      k_epochs=4,
-                     use_bonus=True)
+                     use_bonus=True,
+                     uncertainty_estimator_kwargs=dict(
+                         uncertainty_estimator_fn=uncertainty_estimator_fn,
+                         bonus_scale_factor=1
+                     ))
     agent._log_interval = 0
     agent.fit()
     agent.policy(env.observation_space.sample())
