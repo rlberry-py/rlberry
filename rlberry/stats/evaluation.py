@@ -1,13 +1,12 @@
 import logging
 import numpy as np
 import matplotlib
-matplotlib.rcParams['text.usetex'] = True
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-
 import rlberry.seeding as seeding
 
+matplotlib.rcParams['text.usetex'] = True
 logger = logging.getLogger(__name__)
 
 
@@ -155,9 +154,10 @@ def compare_policies(agent_stats_list, eval_env=None, eval_horizon=None,
             ax = sns.boxplot(data=output, **kwargs)
             ax.set_xlabel("agent")
             ax.set_ylabel("rewards in one episode")
-            plt.title("Environment = %s" % getattr(eval_env.unwrapped, "name", eval_env.unwrapped.__class__.__name__))
+            plt.title("Environment = %s" %
+                      getattr(eval_env.unwrapped, "name",
+                              eval_env.unwrapped.__class__.__name__))
             if show:
                 plt.show()
 
     return output
-
