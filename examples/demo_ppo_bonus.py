@@ -15,7 +15,7 @@ seeding.set_global_seed(12345)
 # --------------------------------
 # Define train env
 # --------------------------------
-_env = get_benchmark_env(level=4)
+env = get_benchmark_env(level=4)
 eval_env = get_benchmark_env(level=4)
 
 
@@ -25,10 +25,6 @@ def uncertainty_estimator_fn(obs_space, act_space):
                               n_bins_obs=20)
     return counter
 
-
-env = UncertaintyEstimatorWrapper(_env,
-                                  uncertainty_estimator_fn,
-                                  bonus_scale_factor=1.0)
 
 # -----------------------------
 # Parameters
@@ -58,7 +54,10 @@ params_ppo_bonus = {
               'k_epochs': 10,
               'eps_clip': 0.2,
               'learning_rate': 0.03,
-              'use_bonus_if_available': True,
+              'use_bonus': True,
+              'uncertainty_estimator_kwargs': {
+                  'uncertainty_estimator_fn': uncertainty_estimator_fn
+              }
               }
 
 

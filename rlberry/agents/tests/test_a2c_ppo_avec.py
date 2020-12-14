@@ -83,7 +83,7 @@ def test_ppo_agent():
                      learning_rate=0.001,
                      eps_clip=0.2,
                      k_epochs=4,
-                     use_bonus_if_available=True)
+                     use_bonus=True)
     agent._log_interval = 0
     agent.fit()
     agent.policy(env.observation_space.sample())
@@ -102,7 +102,7 @@ def test_ppo_agent_partial_fit():
                      eps_clip=0.2,
                      k_epochs=4,
                      batch_size=1,
-                     use_bonus_if_available=False)
+                     use_bonus=False)
     agent._log_interval = 0
 
     agent.partial_fit(0.5)

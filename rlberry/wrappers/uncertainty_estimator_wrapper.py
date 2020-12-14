@@ -1,6 +1,8 @@
 from rlberry.envs import Wrapper
 import logging
 
+from rlberry.utils.factory import load
+
 logger = logging.getLogger(__name__)
 
 
@@ -38,6 +40,9 @@ class UncertaintyEstimatorWrapper(Wrapper):
 
         self.bonus_scale_factor = bonus_scale_factor
         uncertainty_estimator_kwargs = uncertainty_estimator_kwargs or {}
+
+        uncertainty_estimator_fn = load(uncertainty_estimator_fn) if isinstance(uncertainty_estimator_fn, str) else \
+            uncertainty_estimator_fn
         self.uncertainty_estimator = uncertainty_estimator_fn(
                                         env.observation_space,
                                         env.action_space,

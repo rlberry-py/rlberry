@@ -11,6 +11,7 @@ from rlberry.agents.utils.torch_models import default_policy_net_fn
 from rlberry.agents.utils.torch_models import default_value_net_fn
 from rlberry.utils.torch import choose_device
 from rlberry.utils.writers import PeriodicWriter
+from rlberry.wrappers.uncertainty_estimator_wrapper import UncertaintyEstimatorWrapper
 
 logger = logging.getLogger(__name__)
 
@@ -53,9 +54,11 @@ class PPOAgent(IncrementalAgent):
         kwargs for value_net_fn
     device: str
         Device to put the tensors on
-    use_bonus_if_available : bool, default = False
-        If true, check if environment info has entry 'exploration_bonus'
+    use_bonus : bool, default = False
+        If true, compute the environment 'exploration_bonus'
         and add it to the reward. See also UncertaintyEstimatorWrapper.
+    uncertainty_estimator_kwargs : dict
+        kwargs for UncertaintyEstimatorWrapper
 
     References
     ----------
@@ -89,8 +92,13 @@ class PPOAgent(IncrementalAgent):
                  policy_net_kwargs=None,
                  value_net_kwargs=None,
                  device="cuda:best",
-                 use_bonus_if_available=False,
+                 use_bonus=False,
+                 uncertainty_estimator_kwargs=None,
                  **kwargs):
+        self.use_bonus = use_bonus
+        if self.use_bonus:
+            env = UncertaintyEstimatorWrapper(env,
+                                              **uncertainty_estimator_kwargs)
         IncrementalAgent.__init__(self, env, **kwargs)
 
         self.n_episodes = n_episodes
@@ -104,7 +112,6 @@ class PPOAgent(IncrementalAgent):
         self.k_epochs = k_epochs
         self.use_gae = use_gae
         self.gae_lambda = gae_lambda
-        self.use_bonus_if_available = use_bonus_if_available
 
         self.policy_net_kwargs = policy_net_kwargs or {}
         self.value_net_kwargs = value_net_kwargs or {}
@@ -129,6 +136,12 @@ class PPOAgent(IncrementalAgent):
 
         # initialize
         self.reset()
+
+    @classmethod
+    def from_config(cls, **kwargs):
+        kwargs["policy_net_fn"] = eval(kwargs["policy_net_fn"])
+        kwargs["value_net_fn"] = eval(kwargs["value_net_fn"])
+        return cls(**kwargs)
 
     def reset(self, **kwargs):
         self.cat_policy = self.policy_net_fn(
@@ -209,7 +222,7 @@ class PPOAgent(IncrementalAgent):
 
             # check whether to use bonus
             bonus = 0.0
-            if self.use_bonus_if_available:
+            if self.use_bonus:
                 if info is not None and 'exploration_bonus' in info:
                     bonus = info['exploration_bonus']
 
