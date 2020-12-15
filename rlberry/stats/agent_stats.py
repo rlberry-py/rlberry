@@ -147,6 +147,18 @@ class AgentStats:
             self.default_filename = os.path.join(self.output_dir,
                                                  self.identifier)
 
+    def set_output_dir(self, output_dir):
+        """
+        Change output directory.
+
+        Parameters
+        -----------
+        output_dir : str
+        """
+        self.output_dir = output_dir
+        self.default_filename = os.path.join(self.output_dir,
+                                             self.identifier)
+
     def set_writer(self, idx, writer_fn, writer_kwargs=None):
         """
         Note
