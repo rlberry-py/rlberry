@@ -2,12 +2,12 @@ import logging
 import torch
 from gym import spaces
 
-from rlberry.agents.utils.torch_models import size_model_config
-from rlberry.agents.utils.torch_models import trainable_parameters
-from rlberry.agents.utils.torch_training import loss_function_factory, model_factory
+from rlberry.agents.utils.torch_training import loss_function_factory, model_factory, size_model_config, \
+    trainable_parameters
 from rlberry.agents.utils.torch_training import optimizer_factory
 from rlberry.agents.dqn.abstract import AbstractDQNAgent
 from rlberry.agents.utils.memories import Transition
+from rlberry.utils.factory import load
 from rlberry.utils.torch import choose_device
 
 logger = logging.getLogger(__name__)
@@ -120,7 +120,8 @@ class DQNAgent(AbstractDQNAgent):
         #
         qvalue_net_kwargs = qvalue_net_kwargs or {}
 
-        qvalue_net_fn = qvalue_net_fn or default_qvalue_net_fn
+        qvalue_net_fn = load(qvalue_net_fn) if isinstance(qvalue_net_fn, str) else \
+            qvalue_net_fn or default_qvalue_net_fn
         self.value_net = qvalue_net_fn(self.env, **qvalue_net_kwargs)
         self.target_net = qvalue_net_fn(self.env, **qvalue_net_kwargs)
         #
