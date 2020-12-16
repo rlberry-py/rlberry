@@ -11,6 +11,7 @@ from rlberry.agents.utils.torch_models import default_policy_net_fn
 from rlberry.agents.utils.torch_models import default_value_net_fn
 from rlberry.utils.torch import choose_device
 from rlberry.utils.writers import PeriodicWriter
+from rlberry.wrappers.uncertainty_estimator_wrapper import UncertaintyEstimatorWrapper
 
 logger = logging.getLogger(__name__)
 
@@ -68,9 +69,11 @@ class AVECPPOAgent(IncrementalAgent):
         kwargs for policy_net_fn
     value_net_kwargs : dict
         kwargs for value_net_fn
-    use_bonus_if_available : bool, default = False
-        If true, check if environment info has entry 'exploration_bonus'
-        and add it to the reward. See also UncertaintyEstimatorWrapper.
+    use_bonus : bool, default = False
+        If true, compute an 'exploration_bonus' and add it to the reward.
+        See also UncertaintyEstimatorWrapper.
+    uncertainty_estimator_kwargs : dict
+        Arguments for the UncertaintyEstimatorWrapper
     device : str
         Device to put the tensors on
 
@@ -111,9 +114,14 @@ class AVECPPOAgent(IncrementalAgent):
                  value_net_fn=None,
                  policy_net_kwargs=None,
                  value_net_kwargs=None,
-                 use_bonus_if_available=False,
+                 use_bonus=False,
+                 uncertainty_estimator_kwargs=None,
                  device="cuda:best",
                  **kwargs):
+        self.use_bonus = use_bonus
+        if self.use_bonus:
+            env = UncertaintyEstimatorWrapper(env,
+                                              **uncertainty_estimator_kwargs)
         IncrementalAgent.__init__(self, env, **kwargs)
 
         self.learning_rate = learning_rate
@@ -126,7 +134,6 @@ class AVECPPOAgent(IncrementalAgent):
         self.horizon = horizon
         self.n_episodes = n_episodes
         self.batch_size = batch_size
-        self.use_bonus_if_available = use_bonus_if_available
         self.device = choose_device(device)
 
         self.policy_net_kwargs = policy_net_kwargs or {}
@@ -231,7 +238,7 @@ class AVECPPOAgent(IncrementalAgent):
 
             # check whether to use bonus
             bonus = 0.0
-            if self.use_bonus_if_available:
+            if self.use_bonus:
                 if info is not None and 'exploration_bonus' in info:
                     bonus = info['exploration_bonus']
 

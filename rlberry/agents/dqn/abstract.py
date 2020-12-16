@@ -5,6 +5,7 @@ import logging
 from rlberry.agents import IncrementalAgent
 from rlberry.agents.dqn.exploration import exploration_factory
 from rlberry.agents.utils.memories import ReplayMemory, Transition
+from rlberry.wrappers.uncertainty_estimator_wrapper import UncertaintyEstimatorWrapper
 
 logger = logging.getLogger(__name__)
 
@@ -19,8 +20,13 @@ class AbstractDQNAgent(IncrementalAgent, ABC):
                  batch_size=100,
                  target_update=1,
                  double=True,
-                 use_bonus_if_available=False,
+                 use_bonus=False,
+                 uncertainty_estimator_kwargs=None,
                  **kwargs):
+        self.use_bonus = use_bonus
+        if self.use_bonus:
+            env = UncertaintyEstimatorWrapper(env,
+                                              **uncertainty_estimator_kwargs)
         ABC.__init__(self)
         IncrementalAgent.__init__(self, env, **kwargs)
         self.horizon = horizon
@@ -30,7 +36,6 @@ class AbstractDQNAgent(IncrementalAgent, ABC):
         self.batch_size = batch_size
         self.target_update = target_update
         self.double = double
-        self.use_bonus_if_available = use_bonus_if_available
 
         assert isinstance(env.action_space, spaces.Discrete), \
             "Only compatible with Discrete action spaces."
@@ -72,7 +77,7 @@ class AbstractDQNAgent(IncrementalAgent, ABC):
 
             # check whether to use bonus
             bonus = 0.0
-            if self.use_bonus_if_available:
+            if self.use_bonus:
                 if info is not None and 'exploration_bonus' in info:
                     bonus = info['exploration_bonus']
 

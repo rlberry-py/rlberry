@@ -8,9 +8,8 @@ from rlberry.wrappers.uncertainty_estimator_wrapper import \
 
 
 def test_dqn_agent():
-    _env = gym_make("CartPole-v0")
+    env = gym_make("CartPole-v0")
 
-    #
     def uncertainty_estimator_fn(observation_space, action_space):
         counter = OnlineDiscretizationCounter(
                                   observation_space,
@@ -18,11 +17,12 @@ def test_dqn_agent():
                                   min_dist=0.25)
         return counter
 
-    env = UncertaintyEstimatorWrapper(_env,
-                                      uncertainty_estimator_fn,
-                                      bonus_scale_factor=1.0)
-    #
-    params = {"n_episodes": 10, 'use_bonus_if_available': True}
-    agent = DQNAgent(env, **params)
+    agent = DQNAgent(env,
+                     n_episodes=10,
+                     use_bonus=True,
+                     uncertainty_estimator_kwargs=dict(
+                         uncertainty_estimator_fn=uncertainty_estimator_fn,
+                         bonus_scale_factor=1.0
+                     ))
     agent.fit()
     agent.policy(env.observation_space.sample())

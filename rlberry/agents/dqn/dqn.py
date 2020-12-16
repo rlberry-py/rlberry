@@ -64,9 +64,11 @@ class DQNAgent(AbstractDQNAgent):
         Type of optimizer. 'ADAM' by defaut.
     memory_capacity : int
         Capacity of the replay buffer (in number of transitions).
-    use_bonus_if_available : bool, default = False
-        If true, check if environment info has entry 'exploration_bonus'
-        and add it to the reward. See also UncertaintyEstimatorWrapper.
+    use_bonus : bool, default = False
+        If true, compute an 'exploration_bonus' and add it to the reward.
+        See also UncertaintyEstimatorWrapper.
+    uncertainty_estimator_kwargs : dict
+        Arguments for the UncertaintyEstimatorWrapper
     """
     name = 'DQN'
     fit_info = ("n_episodes", "episode_rewards")
@@ -89,7 +91,8 @@ class DQNAgent(AbstractDQNAgent):
                  qvalue_net_kwargs=None,
                  double=True,
                  memory_capacity=10000,
-                 use_bonus_if_available=False,
+                 use_bonus=False,
+                 uncertainty_estimator_kwargs=None,
                  **kwargs):
         # Wrap arguments and initialize base class
         memory_kwargs = {
@@ -105,7 +108,7 @@ class DQNAgent(AbstractDQNAgent):
                             }
         base_args = (env, horizon, exploration_kwargs, memory_kwargs,
                      n_episodes, batch_size, target_update, double,
-                     use_bonus_if_available)
+                     use_bonus, uncertainty_estimator_kwargs)
         AbstractDQNAgent.__init__(self, *base_args, **kwargs)
 
         # init
