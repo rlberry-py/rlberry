@@ -1,12 +1,10 @@
 import logging
 import numpy as np
-import matplotlib
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 import rlberry.seeding as seeding
 
-matplotlib.rcParams['text.usetex'] = True
 logger = logging.getLogger(__name__)
 
 
