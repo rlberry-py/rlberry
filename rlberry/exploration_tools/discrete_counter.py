@@ -6,9 +6,28 @@ from rlberry.utils.space_discretizer import Discretizer
 
 
 class DiscreteCounter(UncertaintyEstimator):
-    def __init__(self, observation_space, action_space, n_bins_obs=10,
-                 n_bins_actions=10, **kwargs):
+    """
+    Parameters
+    ----------
+    observation_space : spaces.Box or spaces.Discrete
+    action_space : spaces.Box or spaces.Discrete
+    n_bins_obs: int
+        number of bins to discretize observation space
+    n_bins_actions: int
+        number of bins to discretize action space
+    fast_rate : bool
+        If true, returns bonuses in 1/n instead of 1/sqrt(n).
+    """
+    def __init__(self,
+                 observation_space,
+                 action_space,
+                 n_bins_obs=10,
+                 n_bins_actions=10,
+                 fast_rate=False,
+                 **kwargs):
         UncertaintyEstimator.__init__(self, observation_space, action_space)
+
+        self.fast_rate = fast_rate
 
         self.continuous_state = False
         self.continuous_action = False
@@ -48,6 +67,8 @@ class DiscreteCounter(UncertaintyEstimator):
     def measure(self, state, action, **kwargs):
         state, action = self._preprocess(state, action)
         n = np.maximum(1.0, self.N_sa[state, action])
+        if self.fast_rate:
+            return 1.0/n
         return 1.0/np.sqrt(n)
 
     def count(self, state, action):

@@ -65,6 +65,8 @@ class OnlineDiscretizationCounter(UncertaintyEstimator):
         Maximum number of representative states.
         If None, it is set to  (sqrt(d)/min_dist)**d, where d
         is the dimension of the state space
+    fast_rate : bool
+        If true, returns bonuses in 1/n instead of 1/sqrt(n).
     """
     def __init__(self,
                  observation_space,
@@ -73,6 +75,7 @@ class OnlineDiscretizationCounter(UncertaintyEstimator):
                  min_dist=0.1,
                  max_repr=1000,
                  scaling=None,
+                 fast_rate=False,
                  **kwargs):
         UncertaintyEstimator.__init__(self, observation_space, action_space)
 
@@ -84,6 +87,7 @@ class OnlineDiscretizationCounter(UncertaintyEstimator):
         self.max_repr = max_repr
         self.state_dim = self.observation_space.shape[0]
         self.n_actions = self.action_space.n
+        self.fast_rate = fast_rate
 
         # compute scaling, if it is None
         if scaling is None:
@@ -139,6 +143,8 @@ the maximum number of representative states.")
 
     def measure(self, state, action, **kwargs):
         n = np.maximum(1.0, self.count(state, action))
+        if self.fast_rate:
+            return 1.0/n
         return 1.0/np.sqrt(n)
 
     def count(self, state, action):

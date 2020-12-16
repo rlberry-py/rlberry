@@ -1,13 +1,15 @@
+import pytest
+import numpy as np
 from rlberry.envs import GridWorld
 from rlberry.envs import MountainCar
 from rlberry.exploration_tools.discrete_counter import DiscreteCounter
-from rlberry.exploration_tools.online_discretization_counter \
-    import OnlineDiscretizationCounter
+from rlberry.exploration_tools.online_discretization_counter import OnlineDiscretizationCounter
 
 
-def test_discrete_env():
+@pytest.mark.parametrize("fast_rate", [True, False])
+def test_discrete_env(fast_rate):
     env = GridWorld()
-    counter = DiscreteCounter(env.observation_space, env.action_space)
+    counter = DiscreteCounter(env.observation_space, env.action_space, fast_rate=fast_rate)
 
     for N in range(10, 20):
         for ss in range(env.observation_space.n):
@@ -17,12 +19,17 @@ def test_discrete_env():
                     counter.update(ss, aa, ns, rr)
                 assert counter.N_sa[ss, aa] == N
                 assert counter.count(ss, aa) == N
+                if fast_rate:
+                    assert np.allclose(counter.measure(ss, aa), 1.0/N)
+                else:
+                    assert np.allclose(counter.measure(ss, aa), np.sqrt(1.0/N))
         counter.reset()
 
 
-def test_continuous_state_env():
+@pytest.mark.parametrize("fast_rate", [True, False])
+def test_continuous_state_env(fast_rate):
     env = MountainCar()
-    counter = DiscreteCounter(env.observation_space, env.action_space)
+    counter = DiscreteCounter(env.observation_space, env.action_space, fast_rate=fast_rate)
 
     for N in [10, 20, 30]:
         for _ in range(100):
@@ -35,13 +42,19 @@ def test_continuous_state_env():
             dss = counter.state_discretizer.discretize(ss)
             assert counter.N_sa[dss, aa] == N
             assert counter.count(ss, aa) == N
+            if fast_rate:
+                assert np.allclose(counter.measure(ss, aa), 1.0/N)
+            else:
+                assert np.allclose(counter.measure(ss, aa), np.sqrt(1.0/N))
             counter.reset()
 
 
-def test_continuous_state_env_2():
+@pytest.mark.parametrize("fast_rate", [True, False])
+def test_continuous_state_env_2(fast_rate):
     env = MountainCar()
     counter = OnlineDiscretizationCounter(env.observation_space,
-                                          env.action_space)
+                                          env.action_space,
+                                          fast_rate=fast_rate)
 
     for N in [10, 20, 30]:
         for _ in range(100):
@@ -51,5 +64,8 @@ def test_continuous_state_env_2():
                 ns, rr, _, _ = env.sample(ss, aa)
                 counter.update(ss, aa, ns, rr)
             assert counter.count(ss, aa) == N
+            if fast_rate:
+                assert np.allclose(counter.measure(ss, aa), 1.0/N)
+            else:
+                assert np.allclose(counter.measure(ss, aa), np.sqrt(1.0/N))
             counter.reset()
-
