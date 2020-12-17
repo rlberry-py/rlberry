@@ -145,9 +145,9 @@ class RSUCBVIAgent(IncrementalAgent):
 
         # maximum value
         r_range = self.env.reward_range[1] - self.env.reward_range[0]
-        if r_range == np.inf:
-            logger.warning("{}: Reward range is infinity. ".format(self.name)
-                           + "Clipping it to 1.")
+        if r_range == np.inf or r_range == 0.0:
+            logger.warning("{}: Reward range is  zero or infinity. ".format(self.name)
+                           + "Setting it to 1.")
             r_range = 1.0
 
         if self.gamma == 1.0:
