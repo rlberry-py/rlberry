@@ -152,11 +152,11 @@ class AppleGold(GridWorld):
             rwd = self.reward_at[(y, x)]
             if rwd == -0.05:
                 rock = GeometricPrimitive("POLYGON")
-                rock.set_color((0.5, 0.0, 0.0))
+                rock.set_color((0.6, 0.6, 0.6))
                 rock.add_vertex((x, y))
-                rock.add_vertex((x + 0.5, y))
-                rock.add_vertex((x + 0.5, y + 0.5))
-                rock.add_vertex((x, y + 0.5))
+                rock.add_vertex((x + 1, y))
+                rock.add_vertex((x + 1, y + 1))
+                rock.add_vertex((x, y + 1))
                 bg.add_shape(rock)
             else:
                 flag = GeometricPrimitive("POLYGON")
