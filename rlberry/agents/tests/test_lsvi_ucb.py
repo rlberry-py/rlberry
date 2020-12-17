@@ -137,7 +137,7 @@ def test_lsvi_without_bonus():
     print("-------")
     print(np.abs(Q-Q_est))
     # Check error
-    assert np.abs(Q-Q_est).max() < 0.1
+    assert Q_est == pytest.approx(Q, rel=0.01)
 
 
 def test_lsvi_random_exploration():
