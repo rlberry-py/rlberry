@@ -2,7 +2,7 @@ import logging
 import numpy as np
 
 import gym.spaces as spaces
-from rlberry.agents import Agent
+from rlberry.agents import IncrementalAgent
 from rlberry.agents.dynprog.utils import backward_induction
 from rlberry.agents.dynprog.utils import backward_induction_in_place
 from rlberry.agents.kernel_based.common import map_to_representative
@@ -12,7 +12,7 @@ from rlberry.utils.writers import PeriodicWriter
 logger = logging.getLogger(__name__)
 
 
-class RSUCBVIAgent(Agent):
+class RSUCBVIAgent(IncrementalAgent):
     """
     Value iteration with exploration bonuses for continuous-state environments,
     using a online discretization strategy:
@@ -59,9 +59,11 @@ class RSUCBVIAgent(Agent):
         Constant by which to multiply the exploration bonus, controls
         the level of exploration.
     bonus_type : string
-            Type of exploration bonus. Currently, only "simplified_bernstein"
-            is implemented.
-
+        Type of exploration bonus. Currently, only "simplified_bernstein"
+        is implemented. If `reward_free` is true, this parameter is ignored
+        and the algorithm uses 1/n bonuses.
+    reward_free : bool
+        If true, ignores rewards and uses only 1/n bonuses.
 
     References
     ----------
@@ -97,9 +99,10 @@ class RSUCBVIAgent(Agent):
                  max_repr=1000,
                  bonus_scale_factor=1.0,
                  bonus_type="simplified_bernstein",
+                 reward_free=False,
                  **kwargs):
         # init base class
-        Agent.__init__(self, env, **kwargs)
+        IncrementalAgent.__init__(self, env, **kwargs)
 
         self.n_episodes = n_episodes
         self.gamma = gamma
@@ -108,6 +111,7 @@ class RSUCBVIAgent(Agent):
         self.min_dist = min_dist
         self.bonus_scale_factor = bonus_scale_factor
         self.bonus_type = bonus_type
+        self.reward_free = reward_free
 
         # check environment
         assert self.env.is_online()
@@ -194,6 +198,10 @@ class RSUCBVIAgent(Agent):
 
         self.episode = 0
 
+        # info
+        self._rewards = np.zeros(self.n_episodes)
+        self._cumul_rewards = np.zeros(self.n_episodes)
+
         # default writer
         self.writer = PeriodicWriter(self.name,
                                      log_every=5*logger.getEffectiveLevel())
@@ -208,20 +216,21 @@ class RSUCBVIAgent(Agent):
         # discounted
         return self.Q_policy[0, repr_state, :].argmax()
 
-    def fit(self, **kwargs):
-        info = {}
-        self._rewards = np.zeros(self.n_episodes)
-        self._cumul_rewards = np.zeros(self.n_episodes)
-        for _ in range(self.n_episodes):
+    def partial_fit(self, fraction, **kwargs):
+        assert 0.0 < fraction <= 1.0
+        n_episodes_to_run = int(np.ceil(fraction*self.n_episodes))
+        count = 0
+        while count < n_episodes_to_run and self.episode < self.n_episodes:
             self._run_episode()
+            count += 1
 
         # compute Q function for the recommended policy
         self.Q_policy, _ = backward_induction(self.R_hat[:self.M, :],
                                               self.P_hat[:self.M, :, :self.M],
                                               self.horizon, self.gamma)
 
-        info["n_episodes"] = self.n_episodes
-        info["episode_rewards"] = self._rewards
+        info = {"n_episodes": self.episode,
+                "episode_rewards": self._rewards[:self.episode]}
         return info
 
     def _map_to_repr(self, state, accept_new_repr=True):
@@ -253,6 +262,12 @@ class RSUCBVIAgent(Agent):
             self._compute_bonus(self.N_sa[repr_state, action])
 
     def _compute_bonus(self, n):
+        # reward-free
+        if self.reward_free:
+            bonus = 1.0 / n
+            return bonus
+
+        # not reward-free
         if self.bonus_type == "simplified_bernstein":
             bonus = self.bonus_scale_factor * np.sqrt(1.0 / n) + self.v_max / n
             bonus = min(bonus, self.v_max)
@@ -278,10 +293,14 @@ class RSUCBVIAgent(Agent):
         for hh in range(self.horizon):
             action = self._get_action(state, hh)
             next_state, reward, done, _ = self.env.step(action)
-            self._update(state, action, next_state, reward)
-            state = next_state
-            episode_rewards += reward
+            episode_rewards += reward  # used for logging only
 
+            if self.reward_free:
+                reward = 0.0  # set to zero before update if reward_free
+
+            self._update(state, action, next_state, reward)
+
+            state = next_state
             if done:
                 break
 

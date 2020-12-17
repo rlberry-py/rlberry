@@ -42,3 +42,17 @@ def test_rs_ucbvi():
     agent._log_interval = 0
     agent.fit()
     agent.policy(env.observation_space.sample())
+
+
+def test_rs_ucbvi_reward_free():
+    env = get_benchmark_env(level=1)
+    agent = RSUCBVIAgent(env,
+                         n_episodes=5,
+                         gamma=0.99,
+                         horizon=30,
+                         bonus_scale_factor=0.1,
+                         reward_free=True)
+    agent._log_interval = 0
+    agent.fit()
+    agent.policy(env.observation_space.sample())
+    assert agent.R_hat.sum() == 0.0
