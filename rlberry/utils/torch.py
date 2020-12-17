@@ -38,7 +38,10 @@ def choose_device(preferred_device, default_device="cpu"):
             preferred_device = least_used_device()
         except RuntimeError:
             logger.info(f"Could not find least used device (nvidia-smi might be missing), use cuda:0 instead")
-            return choose_device("cuda:0")
+            if torch.cuda.is_available():
+                return choose_device("cuda:0")
+            else:
+                return choose_device("cpu")
     try:
         torch.zeros((1,), device=preferred_device)  # Test availability
     except (RuntimeError, AssertionError) as e:
