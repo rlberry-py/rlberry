@@ -54,12 +54,15 @@ class AbstractDQNAgent(IncrementalAgent, ABC):
     def partial_fit(self, fraction, **kwargs):
         episode_rewards = []
         for episode in range(int(fraction * self.n_episodes)):
-            total_reward, length = self._run_episode()
+            total_reward, total_bonus, length = self._run_episode()
             if episode % 20 == 0:
                 logger.info(f"Episode {episode+1}/{self.n_episodes}, total reward {total_reward}")
             if self.writer:
                 self.writer.add_scalar("episode/total_reward",
                                        total_reward,
+                                       episode)
+                self.writer.add_scalar("episode/total_bonus",
+                                       total_bonus,
                                        episode)
                 self.writer.add_scalar("episode/length",
                                        length,
@@ -71,9 +74,9 @@ class AbstractDQNAgent(IncrementalAgent, ABC):
         }
 
     def _run_episode(self):
-        total_reward = t = 0
+        total_reward = total_bonus = time = 0
         state = self.env.reset()
-        for t in range(self.horizon):
+        for time in range(self.horizon):
             self.exploration_policy.step_time()
             action = self.policy(state)
             next_state, reward, done, info = self.env.step(action)
@@ -89,9 +92,10 @@ class AbstractDQNAgent(IncrementalAgent, ABC):
             #
             state = next_state
             total_reward += reward
+            total_bonus += bonus
             if done:
                 break
-        return total_reward, t+1
+        return total_reward, total_bonus, time+1
 
     def record(self, state, action, reward, next_state, done, info):
         """
