@@ -33,15 +33,19 @@ cannot select device with most least memory used.")
 
 
 def choose_device(preferred_device, default_device="cpu"):
-    try:
-        if preferred_device == "cuda:best":
+    if preferred_device == "cuda:best":
+        try:
             preferred_device = least_used_device()
+        except RuntimeError:
+            logger.info(f"Could not find least used device (nvidia-smi might be missing), use cuda:0 instead")
+            return choose_device("cuda:0")
+    try:
         torch.zeros((1,), device=preferred_device)  # Test availability
-        return preferred_device
-    except (RuntimeError, AssertionError):
+    except RuntimeError:
         logger.info(f"Preferred device {preferred_device} unavailable, "
                     f"switching to default {default_device}")
         return default_device
+    return preferred_device
 
 
 def get_memory(pid=None):
