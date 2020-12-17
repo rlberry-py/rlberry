@@ -184,6 +184,10 @@ class EgoAttentionNetwork(BaseModule):
         _, attention_matrix = self.forward_attention(x)
         return attention_matrix
 
+    def action_scores(self, x):
+        ego_embedded_att, _ = self.forward_attention(x)
+        return self.output_layer.action_scores(ego_embedded_att)
+
 
 def attention(query, key, value, mask=None, dropout=None):
     """
