@@ -282,8 +282,9 @@ class PPOAgent(IncrementalAgent):
             # find ratio (pi_theta / pi_theta__old)
             ratios = torch.exp(logprobs - old_logprobs.detach())
 
-            returns = np.zeros_like(rewards)
-            advantages = np.zeros_like(rewards)
+            rewards = torch.tensor(rewards).to(self.device).float()
+            returns = torch.zeros(rewards.shape).to(self.device)
+            advantages = torch.zeros(rewards.shape).to(self.device)
 
             if not self.use_gae:
                 for t in reversed(range(self.horizon)):
@@ -303,18 +304,14 @@ class PPOAgent(IncrementalAgent):
                     advantages[t] = advantages[t] * self.gae_lambda * self.gamma * (1 - self.memory.is_terminals[t]) + td_error
 
             # normalizing the rewards
-            rewards = torch.tensor(rewards).to(self.device).float()
             # rewards = (rewards - rewards.mean()) / (rewards.std() + 1e-5)
 
             # convert to pytorch tensors and move to gpu if available
-            returns = torch.from_numpy(returns).float().to(self.device).view(-1, )
-            advantages = torch.from_numpy(advantages).float().to(self.device).view(-1, )
-            advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-10)
+            advantages = advantages.view(-1, )
 
             # normalize the advantages
-            advantages = rewards - state_values.detach()
-            advantages = (advantages - advantages.mean()) / \
-                (advantages.std() + 1e-8)
+            advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-10)
+
             # find surrogate loss
             surr1 = ratios * advantages
             surr2 = torch.clamp(ratios, 1 - self.eps_clip,
