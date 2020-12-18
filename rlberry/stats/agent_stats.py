@@ -9,6 +9,8 @@ dill[1] is required to extend pickle (see https://stackoverflow.com/a/25353243)
 
 from copy import deepcopy
 from datetime import datetime
+from pathlib import Path
+
 from joblib import Parallel, delayed
 import json
 import logging
@@ -267,14 +269,10 @@ class AgentStats:
         # use default self.output_dir if another one is not provided.
         output_dir = output_dir or self.output_dir
         # create dir if it does not exist
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
+        output_dir.mkdir(parents=True, exist_ok=True)
         # save optimized hyperparameters
         if self.best_hyperparams is not None:
-            fname = os.path.join(output_dir,
-                                 'best_hyperparams_'
-                                 + self.agent_name
-                                 + ".json")
+            fname = Path(output_dir) / f'best_hyperparams_{self.agent_name}.json'
             _safe_serialize_json(self.best_hyperparams, fname)
         # save fit_statistics that can be aggregated in a pandas DataFrame
         if self.fit_statistics is not None:
@@ -286,12 +284,7 @@ class AgentStats:
                 try:
                     output = pd.DataFrame(all_data)
                     # save
-                    fname = os.path.join(output_dir,
-                                         'stats_'
-                                         + str(entry)
-                                         + '_'
-                                         + self.agent_name
-                                         + ".csv")
+                    fname = Path(output_dir) / f'stats_{entry}_{self.agent_name}.csv'
                     output.to_csv(fname, index=None)
                 except Exception:
                     logger.warning(f"Could not save entry [{entry}]"
@@ -316,24 +309,17 @@ class AgentStats:
             Filename with .pickle extension.
             If None, default_filename attribute is used.
         """
-        if filename is None:
-            filename = self.default_filename
-            if not os.path.exists(self.output_dir):
-                os.makedirs(self.output_dir)
-
-        if filename[-7:] != '.pickle':
-            filename += '.pickle'
-
-        with open(filename, 'wb') as ff:
+        filename = Path(filename if filename else self.default_filename).with_suffix('.pickle')
+        filename.parent.mkdir(parents=True, exist_ok=True)
+        with filename.open("wb") as ff:
             dill.dump(self.__dict__, ff)
 
     @classmethod
     def load(cls, filename):
-        if filename[-7:] != '.pickle':
-            filename += '.pickle'
+        filename = Path(filename).with_suffix('.pickle')
 
         obj = cls(None, None)
-        with open(filename, 'rb') as ff:
+        with filename.open('rb') as ff:
             tmp_dict = dill.load(ff)
         obj.__dict__.clear()
         obj.__dict__.update(tmp_dict)
