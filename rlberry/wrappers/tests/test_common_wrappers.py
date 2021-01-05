@@ -8,9 +8,11 @@ from rlberry.envs.classic_control import MountainCar
 from rlberry.envs.finite import FiniteMDP, GridWorld
 from rlberry.wrappers.discretize_state import DiscretizeStateWrapper
 from rlberry.wrappers.rescale_reward import RescaleRewardWrapper
+from rlberry.agents import RSUCBVIAgent
 from rlberry.wrappers.autoreset import AutoResetWrapper
 from rlberry.wrappers.uncertainty_estimator_wrapper import \
     UncertaintyEstimatorWrapper
+from rlberry.wrappers.vis2d import Vis2dWrapper
 
 
 @pytest.mark.parametrize("n_bins", list(range(1, 10)))
@@ -153,3 +155,14 @@ def test_uncertainty_est_wrapper():
         nn = w_env.uncertainty_estimator.count(0, 0)
         assert nn == ii+1
         assert info['exploration_bonus'] == 1.0/np.sqrt(nn)
+
+
+def test_vis2dwrapper():
+    env = MountainCar()
+    env = Vis2dWrapper(env, n_bins_obs=20, memory_size=200)
+
+    agent = RSUCBVIAgent(env, n_episodes=15, gamma=0.99, horizon=200,
+                         bonus_scale_factor=0.1, copy_env=False, min_dist=0.1)
+
+    agent.fit()
+    env.plot(show=False)
