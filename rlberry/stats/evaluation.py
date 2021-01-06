@@ -48,7 +48,7 @@ def mc_policy_evaluation(agent,
     [1] http://incompleteideas.net/book/first/ebook/node50.html
     """
     rng = seeding.get_rng()
-    if type(agent) is not list:
+    if not isinstance(agent, list):
         agents = [agent]
     else:
         agents = agent
