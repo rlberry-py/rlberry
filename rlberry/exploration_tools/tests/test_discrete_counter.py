@@ -2,6 +2,7 @@ import pytest
 import numpy as np
 from rlberry.envs import GridWorld
 from rlberry.envs import MountainCar
+from rlberry.envs.benchmarks.grid_exploration.nroom import NRoom
 from rlberry.exploration_tools.discrete_counter import DiscreteCounter
 from rlberry.exploration_tools.online_discretization_counter import OnlineDiscretizationCounter
 
@@ -12,6 +13,9 @@ def test_discrete_env(fast_rate):
     counter = DiscreteCounter(env.observation_space, env.action_space, fast_rate=fast_rate)
 
     for N in range(10, 20):
+        assert counter.get_n_visited_states() == 0
+        assert counter.get_entropy() == 0.0
+
         for ss in range(env.observation_space.n):
             for aa in range(env.action_space.n):
                 for _ in range(N):
@@ -23,6 +27,10 @@ def test_discrete_env(fast_rate):
                     assert np.allclose(counter.measure(ss, aa), 1.0/N)
                 else:
                     assert np.allclose(counter.measure(ss, aa), np.sqrt(1.0/N))
+
+        assert counter.get_n_visited_states() == env.observation_space.n
+        assert np.allclose(counter.get_entropy(), np.log2(env.observation_space.n))
+
         counter.reset()
 
 
@@ -69,3 +77,30 @@ def test_continuous_state_env_2(fast_rate):
             else:
                 assert np.allclose(counter.measure(ss, aa), np.sqrt(1.0/N))
             counter.reset()
+
+
+def test_continuous_state_env_3():
+    env = NRoom(nrooms=5, array_observation=True)
+    counter = OnlineDiscretizationCounter(env.observation_space,
+                                          env.action_space,
+                                          fast_rate=False,
+                                          min_dist=0.0)
+
+    for N in range(10, 20):
+        assert counter.get_n_visited_states() == 0
+        assert counter.get_entropy() == 0.0
+
+        for ss in range(env.discrete_observation_space.n):
+            for aa in range(env.action_space.n):
+                for _ in range(N):
+                    ns, rr, _, _ = env.sample(ss, aa)
+                    continuous_ss = env._convert_index_to_float_coord(ss)
+                    counter.update(continuous_ss, aa, None, rr)
+                assert counter.N_sa[ss, aa] == N
+                assert counter.count(continuous_ss, aa) == N
+                assert np.allclose(counter.measure(continuous_ss, aa), np.sqrt(1.0/N))
+
+        assert counter.get_n_visited_states() == env.discrete_observation_space.n
+        assert np.allclose(counter.get_entropy(), np.log2(env.discrete_observation_space.n))
+
+        counter.reset()

@@ -74,3 +74,26 @@ class DiscreteCounter(UncertaintyEstimator):
     def count(self, state, action):
         state, action = self._preprocess(state, action)
         return self.N_sa[state, action]
+
+    def get_n_visited_states(self):
+        """
+        Returns the number of different states sent to the .update() function.
+        For continuous state spaces, counts the number of different discretized states.
+        """
+        n_visited_states = (self.N_sa.sum(axis=1) > 0).sum()
+        return n_visited_states
+
+    def get_entropy(self):
+        """
+        Returns the entropy of the empirical distribution over states, induced by the state counts.
+        Uses log2.
+        """
+        visited = self.N_sa.sum(axis=1) > 0
+        if visited.sum() == 0.0:
+            return 0.0
+        # number of visits of visited states only
+        n_visits = self.N_sa[visited, :].sum(axis=1)
+        # empirical distribution
+        dist = n_visits/n_visits.sum()
+        entropy = (-dist*np.log2(dist)).sum()
+        return entropy

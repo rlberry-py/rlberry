@@ -26,6 +26,7 @@ class NRoom(GridWorld):
     array_observation:
         If true, the observations are converted to an array (x, y)
         instead of a discrete index.
+        The underlying discrete space is saved in env.discrete_observation_space.
     room_size : int
         Dimension of each room.
 
@@ -124,7 +125,7 @@ class NRoom(GridWorld):
         success_probability = 0.95
         if self.reward_free:
             reward_at = {}
-        else: 
+        else:
             reward_at = {
                             terminal_state: 1.0,
                             start_coord: 0.01,
@@ -144,6 +145,7 @@ class NRoom(GridWorld):
 
         # spaces
         if self.array_observation:
+            self.discrete_observation_space = self.observation_space
             self.observation_space = spaces.Box(0.0, 1.0, shape=(2,))
 
     def _convert_room_coord_to_global(self, room_row, room_col, room_coord_row, room_coord_col):
