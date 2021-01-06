@@ -165,6 +165,7 @@ class Vis2dWrapper(Wrapper):
         ylim = [self.env.observation_space.low[1],  self.env.observation_space.high[1]]
 
         fig = plt.figure(fignum, figsize=figsize)
+        fig.clf()
         canvas = FigureCanvas(fig)
         images = []
         ax = fig.gca()
