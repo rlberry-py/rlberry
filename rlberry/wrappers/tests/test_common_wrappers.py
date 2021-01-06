@@ -165,4 +165,5 @@ def test_vis2dwrapper():
                          bonus_scale_factor=0.1, copy_env=False, min_dist=0.1)
 
     agent.fit()
-    env.plot(show=False)
+    env.plot_trajectories(show=False)
+    env.plot_trajectory_actions(show=False)

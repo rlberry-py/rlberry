@@ -13,7 +13,7 @@ from rlberry.agents import RSUCBVIAgent
 env = MountainCar()
 env = Vis2dWrapper(env, n_bins_obs=20, memory_size=200)
 
-agent = RSUCBVIAgent(env, n_episodes=2000, gamma=0.99, horizon=200,
+agent = RSUCBVIAgent(env, n_episodes=500, gamma=0.99, horizon=200,
                      bonus_scale_factor=0.1, copy_env=False, min_dist=0.1)
 
 agent.fit()
@@ -27,4 +27,5 @@ for ep in range(3):
         state = next_s
 
 # agent.env.render()
-agent.env.plot(video_filename='test.mp4', n_skip=5, dot_scale_factor=15)
+# agent.env.plot_trajectories(video_filename='test.mp4', n_skip=5, dot_scale_factor=15)
+agent.env.plot_trajectory_actions()
