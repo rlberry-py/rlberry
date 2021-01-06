@@ -120,7 +120,7 @@ class GridWorld(RenderInterface2D, FiniteMDP):
         return state
 
     def reward_fn(self, state, action, next_state):
-        row, col = self.index2coord[next_state]
+        row, col = self.index2coord[state]
         if (row, col) in self.reward_at:
             return self.reward_at[(row, col)]
         if (row, col) in self.walls:
