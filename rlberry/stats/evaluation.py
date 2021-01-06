@@ -8,8 +8,66 @@ import rlberry.seeding as seeding
 logger = logging.getLogger(__name__)
 
 
+def mc_policy_evaluation(agent,
+                         eval_env,
+                         eval_horizon=10**5,
+                         n_sim=10,
+                         gamma=1.0,
+                         policy_kwargs=None,
+                         stationary_policy=True):
+    """
+    Monte-Carlo Policy evaluation [1] of an agent to estimate the value at the initial state.
+
+    Parameters
+    ----------
+    agent : Agent
+        Trained agent.
+    eval_env : Env
+        Evaluation environment.
+    eval_horizon : int, default: 10**5
+        Horizon, maximum episode length.
+    n_sim : int, default: 10
+        Number of Monte Carlo simulations.
+    gamma : double, default: 1.0
+        Discount factor.
+    policy_kwargs : dict or None
+        Optional kwargs for agent.policy() method.
+    stationary_policy : bool, default: True
+        If False, the time step h (0<= h <= eval_horizon) is sent as argument
+        to agent.policy() for policy evaluation.
+
+    Return
+    ------
+    Numpy array of shape (n_sim, ) containing the sum of rewards in each simulation.
+
+    References
+    ----------
+    [1] http://incompleteideas.net/book/first/ebook/node50.html
+    """
+    policy_kwargs = policy_kwargs or {}
+
+    episode_rewards = np.zeros(n_sim)
+    for sim in range(n_sim):
+        observation = eval_env.reset()
+        for hh in range(eval_horizon):
+            if stationary_policy:
+                action = agent.policy(observation, **policy_kwargs)
+            else:
+                action = agent.policy(observation, hh, **policy_kwargs)
+            observation, reward, done, _ = eval_env.step(action)
+            episode_rewards[sim] += reward * np.power(gamma, hh)
+            if done:
+                break
+
+    return episode_rewards
+
+
 def plot_episode_rewards(agent_stats_list, cumulative=False,
                          fignum=None, show=True):
+    """
+    Given a list of AgentStats, plot the rewards obtained in each episode.
+    The dictionary returned by agents' .fit() method must contain a key 'episode_rewards'.
+    """
     plt.figure(fignum)
     for agent_stats in agent_stats_list:
         if 'episode_rewards' not in agent_stats.fit_info:
@@ -66,7 +124,7 @@ def compare_policies(agent_stats_list, eval_env=None, eval_horizon=None,
         Number of time steps for policy evaluation.
         If None, it is taken from AgentStats.
     stationary_policy : bool
-        If False, the time step h (0<= h <= eval_horizon) is sent as input
+        If False, the time step h (0<= h <= eval_horizon) is sent as argument
         to agent.policy() for policy evaluation.
     n_sim : int
         Number of simulations to evaluate each policy.
