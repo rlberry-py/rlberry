@@ -18,10 +18,13 @@ def mc_policy_evaluation(agent,
     """
     Monte-Carlo Policy evaluation [1] of an agent to estimate the value at the initial state.
 
+    If a list of agents is provided as input, for each evaluation, one of the agents is sampled
+    uniformly at random.
+
     Parameters
     ----------
-    agent : Agent
-        Trained agent.
+    agent : Agent or list of agents.
+        Trained agent(s).
     eval_env : Env
         Evaluation environment.
     eval_horizon : int, default: 10**5
@@ -44,16 +47,24 @@ def mc_policy_evaluation(agent,
     ----------
     [1] http://incompleteideas.net/book/first/ebook/node50.html
     """
+    rng = seeding.get_rng()
+    if type(agent) is not list:
+        agents = [agent]
+    else:
+        agents = agent
+
     policy_kwargs = policy_kwargs or {}
 
     episode_rewards = np.zeros(n_sim)
     for sim in range(n_sim):
+        idx = rng.integers(len(agents))
+
         observation = eval_env.reset()
         for hh in range(eval_horizon):
             if stationary_policy:
-                action = agent.policy(observation, **policy_kwargs)
+                action = agents[idx].policy(observation, **policy_kwargs)
             else:
-                action = agent.policy(observation, hh, **policy_kwargs)
+                action = agents[idx].policy(observation, hh, **policy_kwargs)
             observation, reward, done, _ = eval_env.step(action)
             episode_rewards[sim] += reward * np.power(gamma, hh)
             if done:

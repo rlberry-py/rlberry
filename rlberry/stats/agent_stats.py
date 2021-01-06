@@ -21,6 +21,7 @@ import rlberry.seeding as seeding
 from rlberry.agents import IncrementalAgent
 from rlberry.stats.evaluation import compare_policies
 from rlberry.utils.logging import configure_logging
+from rlberry.stats.evaluation import mc_policy_evaluation
 
 
 _OPTUNA_INSTALLED = True
@@ -335,7 +336,9 @@ class AgentStats:
                              pruner_method='halving',
                              continue_previous=False,
                              partial_fit_fraction=0.25,
-                             sampler_kwargs=None):
+                             sampler_kwargs=None,
+                             evaluation_function=None,
+                             evaluation_function_kwargs=None):
         """
         Run hyperparameter optimization and updates init_kwargs with the
         best hyperparameters found.
@@ -380,7 +383,15 @@ class AgentStats:
         sampler_kwargs : dict or None
             Allows users to use different Optuna samplers with
             personalized arguments.
+        evaluation_function : callable(agent_list, eval_env, **kwargs)->double, default: None
+            Function to maximize, that takes a list of agents and an environment as input, and returns a double.
+            If None, search for hyperparameters that maximize the mean reward.
+        evaluation_function_kwargs : dict or None
+            kwargsfor evaluation_function
         """
+        #
+        # setup
+        #
         global _OPTUNA_INSTALLED
         if not _OPTUNA_INSTALLED:
             logging.error("Optuna not installed.")
@@ -391,6 +402,17 @@ class AgentStats:
             "eval_horizon must be given to AgentStats."
 
         assert partial_fit_fraction > 0.0 and partial_fit_fraction <= 1.0
+
+        evaluation_function_kwargs = evaluation_function_kwargs or {}
+        if evaluation_function is None:
+            evaluation_function = mc_policy_evaluation
+            evaluation_function_kwargs = {
+                'eval_horizon': self.eval_horizon,
+                'n_sim': n_sim,
+                'gamma': 1.0,
+                'policy_kwargs': self.policy_kwargs,
+                'stationary_policy': True,
+            }
 
         #
         # Create optuna study
@@ -475,18 +497,15 @@ class AgentStats:
                 while fraction_complete < 1.0:
                     #
                     params_stats.partial_fit(partial_fit_fraction)
-                    # Get rewards
-                    eval_result = compare_policies(
-                                [params_stats],
-                                eval_env=params_eval_env,
-                                eval_horizon=self.eval_horizon,
-                                stationary_policy=True,
-                                n_sim=n_sim,
-                                plot=False)
+                    # Evaluate params
+                    eval_result = evaluation_function(params_stats.fitted_agents,
+                                                      params_eval_env,
+                                                      **evaluation_function_kwargs)
 
-                    rewards = eval_result['optim'].values.mean()
+                    eval_value = eval_result.mean()
+
                     # Report intermediate objective value
-                    trial.report(rewards, step)
+                    trial.report(eval_value, step)
 
                     #
                     fraction_complete += partial_fit_fraction
@@ -504,18 +523,14 @@ class AgentStats:
                 # Fit and evaluate params_stats
                 params_stats.fit()
 
-                # Get rewards
-                eval_result = compare_policies(
-                            [params_stats],
-                            eval_env=params_eval_env,
-                            eval_horizon=self.eval_horizon,
-                            stationary_policy=True,
-                            n_sim=n_sim,
-                            plot=False)
+                # Evaluate params
+                eval_result = evaluation_function(params_stats.fitted_agents,
+                                                  params_eval_env,
+                                                  **evaluation_function_kwargs)
 
-                rewards = eval_result['optim'].values.mean()
+                eval_value = eval_result.mean()
 
-            return rewards
+            return eval_value
 
         try:
             study.optimize(objective,

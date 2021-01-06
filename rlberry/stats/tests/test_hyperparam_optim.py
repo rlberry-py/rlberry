@@ -2,6 +2,7 @@ import numpy as np
 import rlberry.seeding as seeding
 from rlberry.envs import GridWorld
 from rlberry.agents import IncrementalAgent
+from rlberry.agents.dynprog.value_iteration import ValueIterationAgent
 from rlberry.stats import AgentStats
 from optuna.samplers import TPESampler
 
@@ -121,3 +122,29 @@ def test_hyperparam_optim_cmaes():
     # test hyperparameter optimization with CMA-ES sampler
     stats_agent.optimize_hyperparams(sampler_method="cmaes")
 
+
+def test_discount_optimization():
+    seeding.set_global_seed(42)
+
+    class ValueIterationAgentToOptimize(ValueIterationAgent):
+        @classmethod
+        def sample_parameters(cls, trial):
+            """
+            Sample hyperparameters for hyperparam optimization using Optuna (https://optuna.org/)
+            """
+            gamma = trial.suggest_categorical('gamma', [0.1, 0.99])
+            return {'gamma': gamma}
+
+    env = GridWorld(nrows=3, ncols=10,
+                    reward_at={(1, 1): 0.1, (2, 9): 1.0},
+                    walls=((1, 4), (2, 4), (1, 5)),
+                    success_probability=0.9)
+
+    vi_params = {'gamma': 0.1, 'epsilon': 1e-3}
+
+    vi_stats = AgentStats(ValueIterationAgentToOptimize, env, eval_horizon=20, init_kwargs=vi_params, n_fit=4, n_jobs=1)
+
+    vi_stats.optimize_hyperparams(n_trials=5, timeout=30, n_sim=5, n_fit=1, n_jobs=1,
+                                  sampler_method='random', pruner_method='none')
+
+    assert vi_stats.best_hyperparams['gamma'] == 0.99
