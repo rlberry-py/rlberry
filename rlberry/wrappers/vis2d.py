@@ -5,7 +5,6 @@ from rlberry.rendering.utils import video_write
 import gym.spaces as spaces
 import logging
 import matplotlib.pyplot as plt
-import matplotlib.cm as cm
 import numpy as np
 
 
