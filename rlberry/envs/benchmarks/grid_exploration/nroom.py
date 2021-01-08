@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 class NRoom(GridWorld):
     """
-    GridWorld with N rooms of size LxL. The agent starts in the middle room.
+    GridWorld with N rooms of size L x L. The agent starts in the middle room.
 
     There is one small and easy reward in the first room,
     one big reward in the last room and zero reward elsewhere.
@@ -28,7 +28,12 @@ class NRoom(GridWorld):
         instead of a discrete index.
         The underlying discrete space is saved in env.discrete_observation_space.
     room_size : int
-        Dimension of each room.
+        Dimension (L) of each room (L x L).
+    success_probability : double, default: 0.95
+        Sucess probability of an action. A failure is going to the wrong direction.
+    remove_walls : bool, default: False
+        If True, remove walls. Useful for debug.
+
 
     Notes
     -----
@@ -38,7 +43,13 @@ class NRoom(GridWorld):
     """
     name = "N-Room"
 
-    def __init__(self, nrooms=7, reward_free=False, array_observation=False, room_size=5):
+    def __init__(self,
+                 nrooms=7,
+                 reward_free=False,
+                 array_observation=False,
+                 room_size=5,
+                 success_probability=0.95,
+                 remove_walls=False):
 
         assert nrooms > 0, "nrooms must be > 0"
         self.reward_free = reward_free
@@ -121,8 +132,6 @@ class NRoom(GridWorld):
 
         terminal_states = (terminal_state,)
 
-        # sucess prob (stochastic transitions)
-        success_probability = 0.95
         if self.reward_free:
             reward_at = {}
         else:
@@ -131,6 +140,10 @@ class NRoom(GridWorld):
                             start_coord: 0.01,
                             (self.room_size//2, self.room_size//2): 0.1
                         }
+
+        # Check remove_walls
+        if remove_walls:
+            walls = ()
 
         # Init base class
         GridWorld.__init__(self,

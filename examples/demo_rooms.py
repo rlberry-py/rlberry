@@ -6,7 +6,7 @@ from rlberry.agents.dynprog import ValueIterationAgent
 
 # env = FourRoom(reward_free=False, difficulty=0, array_observation=False)
 # env = SixRoom(reward_free=False, array_observation=False)
-env = NRoom(nrooms=7)
+env = NRoom(nrooms=3, remove_walls=False, room_size=16)
 horizon = env.observation_space.n
 
 agent = ValueIterationAgent(env, gamma=0.999, horizon=horizon)
