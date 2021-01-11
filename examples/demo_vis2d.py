@@ -1,20 +1,22 @@
-from rlberry.envs.benchmarks.grid_exploration.nroom import NRoom
+from rlberry.envs.benchmarks.grid_exploration.nroom import NRoom, get_nroom_state_coord
 from rlberry.envs.classic_control import MountainCar
 from rlberry.wrappers.vis2d import Vis2dWrapper
 from rlberry.agents import RSUCBVIAgent
+from rlberry.agents.dynprog import ValueIterationAgent
 
+CHOICE = 1
 
-# env = NRoom(nrooms=10, array_observation=True, reward_free=True)
-# env = Vis2dWrapper(env, n_bins_obs=20, memory_size=100)
+if CHOICE == 0:
+    env = NRoom(nrooms=5, array_observation=False, reward_free=True)
+    env = Vis2dWrapper(env, n_bins_obs=20, memory_size=100, state_preprocess_fn=get_nroom_state_coord)
+    agent = ValueIterationAgent(env.unwrapped, gamma=0.99, horizon=200, copy_env=False)
 
-# agent = RSUCBVIAgent(env, n_episodes=500, gamma=0.99, horizon=200,
-#                      bonus_scale_factor=0.1, copy_env=False, min_dist=0.0)
+else:
+    env = MountainCar()
+    env = Vis2dWrapper(env, n_bins_obs=20, memory_size=200)
 
-env = MountainCar()
-env = Vis2dWrapper(env, n_bins_obs=20, memory_size=200)
-
-agent = RSUCBVIAgent(env, n_episodes=500, gamma=0.99, horizon=200,
-                     bonus_scale_factor=0.1, copy_env=False, min_dist=0.1)
+    agent = RSUCBVIAgent(env, n_episodes=100, gamma=0.99, horizon=200,
+                         bonus_scale_factor=0.1, copy_env=False, min_dist=0.1)
 
 agent.fit()
 
@@ -26,6 +28,13 @@ for ep in range(3):
         next_s, _, _, _ = env.step(action)
         state = next_s
 
-# agent.env.render()
-# agent.env.plot_trajectories(video_filename='test.mp4', n_skip=5, dot_scale_factor=15)
-agent.env.plot_trajectory_actions()
+try:
+    xlim = [env.observation_space.low[0], env.observation_space.high[0]]
+    ylim = [env.observation_space.low[1], env.observation_space.high[1]]
+except Exception:
+    xlim = None
+    ylim = None
+
+# env.render()
+env.plot_trajectories(n_skip=5, dot_scale_factor=15, xlim=xlim, ylim=ylim)
+env.plot_trajectory_actions(xlim=xlim, ylim=ylim)

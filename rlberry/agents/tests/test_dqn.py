@@ -1,5 +1,5 @@
 from copy import deepcopy
-from rlberry.envs import gym_make
+from rlberry.envs import MountainCar
 from rlberry.agents.dqn import DQNAgent
 from rlberry.exploration_tools.online_discretization_counter import \
     OnlineDiscretizationCounter
@@ -8,7 +8,7 @@ from rlberry.wrappers.uncertainty_estimator_wrapper import \
 
 
 def test_dqn_agent():
-    env = gym_make("CartPole-v0")
+    env = MountainCar()
 
     def uncertainty_estimator_fn(observation_space, action_space):
         counter = OnlineDiscretizationCounter(

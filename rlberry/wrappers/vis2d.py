@@ -55,6 +55,10 @@ class TrajectoryMemory:
         return self.n_trajectories > 0
 
 
+def identity(state, env, **kwargs):
+    return state
+
+
 class Vis2dWrapper(Wrapper):
     """
     Stores and visualizes the trajectories environments with 2d box observation spaces
@@ -69,14 +73,25 @@ class Vis2dWrapper(Wrapper):
     memory_size : int, default = 100
         Maximum number of trajectories to keep in memory.
         The most recent ones are kept.
+    state_preprocess_fn : callable(state, env, **kwargs)-> np.ndarray, default: None
+        Function that converts the state to a 2d array
+    state_preprocess_kwargs : dict, default: None
+        kwargs for state_preprocess_fn
     """
     def __init__(self,
                  env,
                  n_bins_obs=10,
-                 memory_size=100):
+                 memory_size=100,
+                 state_preprocess_fn=None,
+                 state_preprocess_kwargs=None):
         Wrapper.__init__(self, env)
-        assert isinstance(env.observation_space, spaces.Box)
+
+        if state_preprocess_fn is None:
+            assert isinstance(env.observation_space, spaces.Box)
         assert isinstance(env.action_space, spaces.Discrete)
+
+        self.state_preprocess_fn = state_preprocess_fn or identity
+        self.state_preprocess_kwargs = state_preprocess_kwargs or {}
 
         self.memory = TrajectoryMemory(memory_size)
         self.total_visit_counter = DiscreteCounter(self.env.observation_space,
@@ -106,7 +121,9 @@ class Vis2dWrapper(Wrapper):
         self.total_visit_counter.update(ss, aa, ns, reward)
         self.episode_visit_counter.update(ss, aa, ns, reward)
         # store transition
-        transition = Transition(ss, aa, reward,
+        transition = Transition(self.state_preprocess_fn(ss, self.env, **self.state_preprocess_kwargs),
+                                aa,
+                                reward,
                                 self.total_visit_counter.count(ss, aa),
                                 self.episode_visit_counter.count(ss, aa))
         self.memory.append(transition)
@@ -124,7 +141,9 @@ class Vis2dWrapper(Wrapper):
                           framerate=15,
                           n_skip=1,
                           dot_scale_factor=2.5,
-                          alpha=0.25):
+                          alpha=0.25,
+                          xlim=None,
+                          ylim=None):
         """
         Plot history of trajectories in a scatter plot.
         Colors distinguish recent and old trajectories, the size of the dots represent
@@ -156,6 +175,10 @@ class Vis2dWrapper(Wrapper):
             Scale factor for scatter plot points.
         alpha : float, default: 0.25
             The alpha blending value, between 0 (transparent) and 1 (opaque).
+        xlim: list, default: None
+            x plot limits, set to [0, 1] if None
+        ylim: list, default: None
+            y plot limits, set to [0, 1] if None
         """
         logger.info("Plotting...")
 
@@ -163,13 +186,16 @@ class Vis2dWrapper(Wrapper):
         colormap_fn = plt.get_cmap(colormap_name)
 
         # discretizer
-        discretizer = self.episode_visit_counter.state_discretizer
-        epsilon = min(discretizer._bins[0][1] - discretizer._bins[0][0],
-                      discretizer._bins[1][1] - discretizer._bins[1][0])
+        try:
+            discretizer = self.episode_visit_counter.state_discretizer
+            epsilon = min(discretizer._bins[0][1] - discretizer._bins[0][0],
+                          discretizer._bins[1][1] - discretizer._bins[1][0])
+        except Exception:
+            epsilon = 0.01
 
         # figure setup
-        xlim = [self.env.observation_space.low[0],  self.env.observation_space.high[0]]
-        ylim = [self.env.observation_space.low[1],  self.env.observation_space.high[1]]
+        xlim = xlim or [0.0, 1.0]
+        ylim = ylim or [0.0, 1.0]
 
         fig = plt.figure(fignum, figsize=figsize)
         fig.clf()
@@ -230,7 +256,9 @@ class Vis2dWrapper(Wrapper):
                                 n_skip=1,
                                 dot_scale_factor=2.5,
                                 alpha=1.0,
-                                action_description=None):
+                                action_description=None,
+                                xlim=None,
+                                ylim=None):
         """
         Plot actions (one action = one color) chosen in recent trajectories.
 
@@ -265,6 +293,10 @@ class Vis2dWrapper(Wrapper):
         action_description : list or None (optional)
             List (of strings) containing a description of each action.
             For instance, ['left', 'right', 'up', 'down'].
+        xlim: list, default: None
+            x plot limits, set to [0, 1] if None
+        ylim: list, default: None
+            y plot limits, set to [0, 1] if None
         """
         logger.info("Plotting...")
 
@@ -273,13 +305,16 @@ class Vis2dWrapper(Wrapper):
         action_description = action_description or list(range(self.env.action_space.n))
 
         # discretizer
-        discretizer = self.episode_visit_counter.state_discretizer
-        epsilon = min(discretizer._bins[0][1] - discretizer._bins[0][0],
-                      discretizer._bins[1][1] - discretizer._bins[1][0])
+        try:
+            discretizer = self.episode_visit_counter.state_discretizer
+            epsilon = min(discretizer._bins[0][1] - discretizer._bins[0][0],
+                          discretizer._bins[1][1] - discretizer._bins[1][0])
+        except Exception:
+            epsilon = 0.01
 
         # figure setup
-        xlim = [self.env.observation_space.low[0],  self.env.observation_space.high[0]]
-        ylim = [self.env.observation_space.low[1],  self.env.observation_space.high[1]]
+        xlim = xlim or [0.0, 1.0]
+        ylim = ylim or [0.0, 1.0]
 
         # indices to visualize
         if video_filename is None:
