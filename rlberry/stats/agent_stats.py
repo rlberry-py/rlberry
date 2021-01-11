@@ -4,6 +4,8 @@ Notes
 
 dill[1] is required to extend pickle (see https://stackoverflow.com/a/25353243)
 
+If possible, pickle is prefered (since it is faster).
+
 [1] https://github.com/uqfoundation/dill
 """
 
@@ -16,10 +18,10 @@ import json
 import logging
 import os
 import dill
+import pickle
 import pandas as pd
 import rlberry.seeding as seeding
 from rlberry.agents import IncrementalAgent
-from rlberry.stats.evaluation import compare_policies
 from rlberry.utils.logging import configure_logging
 from rlberry.stats.evaluation import mc_policy_evaluation
 
@@ -187,6 +189,15 @@ class AgentStats:
         writer_kwargs = writer_kwargs or {}
         self.writers[idx] = (writer_fn, writer_kwargs)
 
+    def disable_writers(self):
+        """
+        Set all writers to None.
+        """
+        self.writers = [('default', None) for _ in range(self.n_fit)]
+        if self.fitted_agents is not None:
+            for agent in self.fitted_agents:
+                agent.set_writer(None)
+
     def fit(self):
         """
         Fit the agent instances in parallel.
@@ -296,6 +307,8 @@ class AgentStats:
         Pickle the AgentStats object completely, so that
         it can be loaded and continued later.
 
+        Removes writers, since they usually cannot be pickled.
+
         This is useful, for instance:
         * If we want to run hyperparameter optimization for
         a few minutes/hours, save the results, then continue
@@ -310,18 +323,35 @@ class AgentStats:
             Filename with .pickle extension.
             If None, default_filename attribute is used.
         """
+        # remove writers
+        self.disable_writers()
+
+        # save
         filename = Path(filename if filename else self.default_filename).with_suffix('.pickle')
         filename.parent.mkdir(parents=True, exist_ok=True)
-        with filename.open("wb") as ff:
-            dill.dump(self.__dict__, ff)
+        try:
+            with filename.open("wb") as ff:
+                pickle.dump(self.__dict__, ff)
+            logger.info("Saved AgentStats({}) using pickle.".format(self.agent_name))
+        except Exception:
+            with filename.open("wb") as ff:
+                dill.dump(self.__dict__, ff)
+            logger.info("Saved AgentStats({}) using dill.".format(self.agent_name))
 
     @classmethod
     def load(cls, filename):
         filename = Path(filename).with_suffix('.pickle')
 
         obj = cls(None, None)
-        with filename.open('rb') as ff:
-            tmp_dict = dill.load(ff)
+        try:
+            with filename.open('rb') as ff:
+                tmp_dict = pickle.load(ff)
+            logger.info("Loaded AgentStats using pickle.")
+        except Exception:
+            with filename.open('rb') as ff:
+                tmp_dict = dill.load(ff)
+            logger.info("Loaded AgentStats using dill.")
+
         obj.__dict__.clear()
         obj.__dict__.update(tmp_dict)
         return obj
