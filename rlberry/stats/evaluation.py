@@ -228,3 +228,41 @@ def compare_policies(agent_stats_list, eval_env=None, eval_horizon=None,
                 plt.show()
 
     return output
+
+
+def plot_fit_info(agent_stats_list,
+                  info,
+                  fignum=None,
+                  show=True):
+    """
+    Given a list of AgentStats, plot data (corresponding to info) obtained in each episode.
+    The dictionary returned by agents' .fit() method must contain a key equal to `info`.
+
+    Parameters
+    ----------
+    info : str
+    """
+    plt.figure(fignum)
+    for agent_stats in agent_stats_list:
+        if info not in agent_stats.fit_info:
+            logger.warning("{} not available for {}.".format(info, agent_stats.agent_name))
+            continue
+        else:
+            # train agents if they are not already trained
+            if agent_stats.fitted_agents is None:
+                agent_stats.fit()
+            # get data and plot them
+            data = np.array(agent_stats.fit_statistics[info])
+            mean_data = data.mean(axis=0)
+            std_data = data.std(axis=0)
+            episodes = np.arange(1, data.shape[1]+1)
+
+            plt.plot(episodes, mean_data, label=agent_stats.agent_name)
+            plt.fill_between(episodes, mean_data-std_data, mean_data+std_data, alpha=0.2)
+            plt.legend()
+            plt.xlabel("episodes")
+            plt.ylabel(info)
+            plt.grid(True, alpha=0.75)
+
+    if show:
+        plt.show()

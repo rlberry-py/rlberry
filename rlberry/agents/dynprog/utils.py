@@ -3,7 +3,7 @@ from rlberry.utils.jit_setup import numba_jit
 
 
 @numba_jit
-def backward_induction_ns(R, P, gamma=1.0, vmax=np.inf, qmax=np.inf):
+def backward_induction_ns(R, P, gamma=1.0, vmax=np.inf):
     """
     Backward induction to compute Q and V functions in the finite horizon
     setting.
@@ -21,9 +21,6 @@ def backward_induction_ns(R, P, gamma=1.0, vmax=np.inf, qmax=np.inf):
         discount factor
     vmax : double, default: np.inf
         maximum possible value in V
-    qmax : double, default: np.inf
-        maximum possible value in Q
-
 
     Returns
     --------
@@ -47,9 +44,6 @@ def backward_induction_ns(R, P, gamma=1.0, vmax=np.inf, qmax=np.inf):
                 if q_aa > max_q:
                     max_q = q_aa
                 Q[hh, ss, aa] = q_aa
-                # clip Q
-                if Q[hh, ss, aa] > qmax:
-                    Q[hh, ss, aa] = qmax
             V[hh, ss] = max_q
             # clip V
             if V[hh, ss] > vmax:
@@ -72,11 +66,10 @@ def backward_induction(R, P, horizon, gamma=1.0, vmax=np.inf):
         arriving at ns by taking action a in state s.
     horizon : int
         problem horizon
-    gamma : double
-        discount factor, default = 1.0
-    vmax : double
+    gamma : double, default: 1.0
+        discount factor
+    vmax : double, default: np.inf
         maximum possible value in V
-        default = np.inf
 
     Returns
     --------
