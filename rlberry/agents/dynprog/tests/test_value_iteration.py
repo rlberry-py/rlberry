@@ -5,6 +5,7 @@ import rlberry.seeding as seeding
 from rlberry.agents.dynprog import ValueIterationAgent
 from rlberry.agents.dynprog.utils import backward_induction
 from rlberry.agents.dynprog.utils import backward_induction_in_place
+from rlberry.agents.dynprog.utils import backward_induction_ns
 from rlberry.agents.dynprog.utils import bellman_operator
 from rlberry.agents.dynprog.utils import value_iteration
 from rlberry.envs.finite import FiniteMDP
@@ -114,6 +115,34 @@ def test_backward_induction(horizon, S, A):
         backward_induction_in_place(Q2, V2, R, P, horizon, vmax=1.0)
         assert np.array_equal(Q, Q2)
         assert np.array_equal(V, V2)
+
+
+@pytest.mark.parametrize("horizon, S, A",
+                         [
+                             (10, 5, 4),
+                             (20, 10, 4)
+                         ])
+def test_backward_induction_ns(horizon, S, A):
+    """
+    Test stage-dependent MDPs
+    """
+    for sim in range(5):
+        # generate random MDP
+        Rstat, Pstat = get_random_mdp(S, A)
+        R = np.zeros((horizon, S, A))
+        P = np.zeros((horizon, S, A, S))
+        for ii in range(horizon):
+            R[ii, :, :] = Rstat
+            P[ii, :, :, :] = Pstat
+
+        # run backward induction in stationary MDP
+        Qstat, Vstat = backward_induction(Rstat, Pstat, horizon)
+
+        # run backward induction in statage-dependent MDP
+        Q, V = backward_induction_ns(R, P)
+
+        assert np.array_equal(Q, Qstat)
+        assert np.array_equal(V, Vstat)
 
 
 @pytest.mark.parametrize("horizon, gamma, S, A",
