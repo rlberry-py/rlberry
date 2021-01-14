@@ -171,6 +171,20 @@ class BaseModule(torch.nn.Module):
         self.apply(self._init_weights)
 
 
+class Table(torch.nn.Module):
+    def __init__(self, state_size, action_size):
+        super().__init__()
+        self.policy = nn.Embedding.from_pretrained(torch.zeros(state_size, action_size), freeze=False)
+        self.softmax = nn.Softmax(dim=-1)
+
+    def forward(self, x):
+        action_probs = self.softmax(self.action_scores(x))
+        return Categorical(action_probs)
+
+    def action_scores(self, x):
+        return self.policy(x.long())
+
+
 class MultiLayerPerceptron(BaseModule):
     def __init__(self,
                  in_size=None,

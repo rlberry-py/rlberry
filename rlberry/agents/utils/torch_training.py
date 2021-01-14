@@ -30,7 +30,7 @@ def optimizer_factory(params, optimizer_type="ADAM", **kwargs):
 def model_factory(type="MultiLayerPerceptron", **kwargs) -> nn.Module:
     from rlberry.agents.utils.torch_attention_models import EgoAttentionNetwork
     from rlberry.agents.utils.torch_models import MultiLayerPerceptron, DuelingNetwork, ConvolutionalNetwork, \
-        PolicyConvolutionalNetwork
+        PolicyConvolutionalNetwork, Table
     if type == "MultiLayerPerceptron":
         return MultiLayerPerceptron(**kwargs)
     elif type == "DuelingNetwork":
@@ -41,6 +41,8 @@ def model_factory(type="MultiLayerPerceptron", **kwargs) -> nn.Module:
         return PolicyConvolutionalNetwork(**kwargs)
     elif type == "EgoAttentionNetwork":
         return EgoAttentionNetwork(**kwargs)
+    elif type == "Table":
+        return Table(**kwargs)
     else:
         raise ValueError("Unknown model type")
 
@@ -70,6 +72,9 @@ def size_model_config(env,
         obs_shape = env.observation_space.shape
     elif isinstance(env.observation_space, spaces.Tuple):
         obs_shape = env.observation_space.spaces[0].shape
+    elif isinstance(env.observation_space, spaces.Discrete):
+        return model_config
+
     # Assume CHW observation space
     if model_config["type"] == "ConvolutionalNetwork":
         model_config["in_channels"] = int(obs_shape[0])
