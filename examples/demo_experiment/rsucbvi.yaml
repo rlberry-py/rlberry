@@ -1,0 +1,7 @@
+agent_class: 'rlberry.agents.kernel_based.rs_ucbvi.RSUCBVIAgent'
+gamma: 1.0
+lp_metric: 2
+min_dist: 0.0
+max_repr: 800
+bonus_scale_factor: 1.0
+reward_free: True

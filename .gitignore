@@ -7,8 +7,9 @@
 # test coverage folder 
 cov_html/*
 
-# dev folder
+# dev and results folder
 dev/*
+results/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
