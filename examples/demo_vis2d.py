@@ -36,5 +36,5 @@ except Exception:
     ylim = None
 
 # env.render()
-env.plot_trajectories(n_skip=5, dot_scale_factor=15, xlim=xlim, ylim=ylim)
+env.plot_trajectories(n_skip=5, dot_scale_factor=15, xlim=xlim, ylim=ylim, dot_size_means='total_visits')
 env.plot_trajectory_actions(xlim=xlim, ylim=ylim)

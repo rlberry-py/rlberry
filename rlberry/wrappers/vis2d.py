@@ -12,7 +12,8 @@ logger = logging.getLogger(__name__)
 
 
 class Transition:
-    def __init__(self, state, action, reward, n_total_visits, n_episode_visits):
+    def __init__(self, raw_state, state, action, reward, n_total_visits, n_episode_visits):
+        self.raw_state = raw_state
         self.state = state
         self.action = action
         self.reward = reward
@@ -121,7 +122,8 @@ class Vis2dWrapper(Wrapper):
         self.total_visit_counter.update(ss, aa, ns, reward)
         self.episode_visit_counter.update(ss, aa, ns, reward)
         # store transition
-        transition = Transition(self.state_preprocess_fn(ss, self.env, **self.state_preprocess_kwargs),
+        transition = Transition(ss,
+                                self.state_preprocess_fn(ss, self.env, **self.state_preprocess_kwargs),
                                 aa,
                                 reward,
                                 self.total_visit_counter.count(ss, aa),
@@ -143,11 +145,12 @@ class Vis2dWrapper(Wrapper):
                           dot_scale_factor=2.5,
                           alpha=0.25,
                           xlim=None,
-                          ylim=None):
+                          ylim=None,
+                          dot_size_means='episode_visits'):
         """
         Plot history of trajectories in a scatter plot.
         Colors distinguish recent and old trajectories, the size of the dots represent
-        the number of visits of a state during the episode.
+        the number of visits to a state.
 
         If video_filename is given, a video file is saved. Otherwise,
         plot only the final frame.
@@ -179,6 +182,9 @@ class Vis2dWrapper(Wrapper):
             x plot limits, set to [0, 1] if None
         ylim: list, default: None
             y plot limits, set to [0, 1] if None
+        dot_size_means : str, {'episode_visits' or 'total_visits'}, default: 'episode_visits'
+            Whether to scale the dot size with the number of visits in an episode
+            or the total number of visits during the whole interaction.
         """
         logger.info("Plotting...")
 
@@ -219,9 +225,20 @@ class Vis2dWrapper(Wrapper):
 
             states = np.array([traj[ii].state for ii in range(len(traj))])
 
-            sizes = np.array(
-                [traj[ii].n_episode_visits for ii in range(len(traj))]
-            )
+            if dot_size_means == 'episode_visits':
+                sizes = np.array(
+                    [traj[ii].n_episode_visits for ii in range(len(traj))]
+                )
+            elif dot_size_means == 'total_visits':
+                raw_states = [traj[ii].raw_state for ii in range(len(traj))]
+                sizes = np.array(
+                    [
+                        np.sum([self.total_visit_counter.count(ss, aa) for aa in range(self.env.action_space.n)])
+                        for ss in raw_states
+                    ]
+                )
+            else:
+                raise ValueError()
 
             sizes = 1 + sizes
             sizes = (dot_scale_factor**2) * 100 * epsilon * sizes / sizes.max()
