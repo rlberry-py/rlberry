@@ -67,7 +67,9 @@ class AgentStats:
         Number of jobs to train the agents in parallel using joblib.
     output_dir : str
         Directory where to store data by default.
-    thread_logging_level : str, default = 'INFO'
+    joblib_backend: str, {'threading', 'loky' or 'multiprocessing'}, default: 'threading'
+        Backend for joblib Parallel.
+    thread_logging_level : str, default: 'INFO'
         Logging level in each of the threads used to fit agents.
     """
 
@@ -83,6 +85,7 @@ class AgentStats:
                  n_fit=4,
                  n_jobs=4,
                  output_dir=None,
+                 joblib_backend='threading',
                  thread_logging_level='INFO'):
         # agent_class should only be None when the constructor is called
         # by the class method AgentStats.load(), since the agent class
@@ -115,6 +118,7 @@ class AgentStats:
             self.policy_kwargs = deepcopy(policy_kwargs)
             self.n_fit = n_fit
             self.n_jobs = n_jobs
+            self.joblib_backend = joblib_backend
             self.thread_logging_level = thread_logging_level
 
             # output dir
@@ -209,7 +213,9 @@ class AgentStats:
                 for thread_idx, (train_env, writer)
                 in enumerate(zip(self.train_env_set, self.writers))]
 
-        workers_output = Parallel(n_jobs=self.n_jobs, verbose=5)(
+        workers_output = Parallel(n_jobs=self.n_jobs,
+                                  verbose=5,
+                                  backend=self.joblib_backend)(
             delayed(_fit_worker)(arg) for arg in args)
 
         self.fitted_agents, stats = (
