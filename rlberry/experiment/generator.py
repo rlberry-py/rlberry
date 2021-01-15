@@ -11,15 +11,21 @@ Options:
   --n_jobs=<nj>  Number of jobs used to fit each agent [default: 4].
   --output_dir=<dir>  Directory to save the results [default: results].
 """
+import logging
 from docopt import docopt
 from pathlib import Path
 from datetime import datetime
-from torch.utils.tensorboard import SummaryWriter
 from rlberry.experiment.yaml_utils import parse_experiment_config
 from rlberry.seeding.seeding import set_global_seed
 
+_TENSORBOARD_INSTALLED = True
+try:
+    from torch.utils.tensorboard import SummaryWriter
+except ImportError:
+    _TENSORBOARD_INSTALLED = False
 
-doc = __doc__
+
+logger = logging.getLogger(__name__)
 
 
 def experiment_generator():
@@ -35,9 +41,12 @@ def experiment_generator():
                 output_base_dir=args["--output_dir"]):
         set_global_seed(seed)
         if args["--writer"]:
-            writer_fn = lambda logdir: SummaryWriter(logdir)
-            for idx in range(agent_stats.n_fit):
-                logdir = agent_stats.output_dir / f"run_{idx + 1}_{datetime.now().strftime('%b%d_%H-%M-%S')}"
-                agent_stats.set_writer(idx=idx, writer_fn=writer_fn, writer_kwargs=dict(logdir=logdir))
+            if _TENSORBOARD_INSTALLED:
+                writer_fn = lambda logdir: SummaryWriter(logdir)
+                for idx in range(agent_stats.n_fit):
+                    logdir = agent_stats.output_dir / f"run_{idx + 1}_{datetime.now().strftime('%b%d_%H-%M-%S')}"
+                    agent_stats.set_writer(idx=idx, writer_fn=writer_fn, writer_kwargs=dict(logdir=logdir))
+            else:
+                logger.warning('Option --writer is not available: tensorboard is not installed.')
 
         yield agent_stats
