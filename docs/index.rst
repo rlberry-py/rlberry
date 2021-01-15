@@ -1,5 +1,5 @@
 .. rlberry documentation master file, created by
-   sphinx-quickstart on Tue Nov 24 03:38:55 2020.
+   sphinx-quickstart on Sat Jan 16 00:20:04 2021.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
