@@ -191,3 +191,16 @@ Infos, errors and warnings are printed using the `logging` library.
     *   `reseed` (rlberry) should be called instead of `seed` (gym). `seed` keeps compatilibity with gym, whereas `reseed` uses the unified seeding mechanism of `rlberry`.
 
 ## Citing rlberry
+
+If you use `rlberry` in your work, please consider citing it:
+
+```bibtex
+@misc{rlberry,
+author =  Domingues, Omar Darwiche and ‪Flet-Berliac, Yannis and Leurent, Edouard and M{\'e}nard, Pierre and Shang, Xuedong and Valko, Michal},
+title = {{rlberry - A Reinforcement Learning Library for Research and Education}},
+year = {2021},
+publisher = {GitHub},
+journal = {GitHub repository},
+howpublished = {\url{https://github.com/rlberry-py/rlberry}},
+}
+```
