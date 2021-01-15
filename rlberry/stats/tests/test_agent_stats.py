@@ -83,12 +83,15 @@ def test_agent_stats_1():
             assert agent.fitted
 
     # test saving/loading
-    stats_agent1.save('test_agent_stats_file.pickle')
-    loaded_stats = AgentStats.load('test_agent_stats_file.pickle')
+    dirname = stats_agent1.output_dir
+    fname = dirname / 'stats'
+    stats_agent1.save()
+    loaded_stats = AgentStats.load(fname)
     assert stats_agent1.identifier == loaded_stats.identifier
 
     # delete file
-    os.remove('test_agent_stats_file.pickle')
+    os.remove(fname.with_suffix('.pickle'))
+    dirname.rmdir()
 
     # test hyperparemeter optimization
     loaded_stats.optimize_hyperparams()
@@ -131,12 +134,15 @@ def test_agent_stats_2():
             assert agent.fitted
 
     # test saving/loading
+    dirname = stats_agent1.output_dir
+    fname = dirname / 'stats'
     stats_agent1.save()
-    loaded_stats = AgentStats.load(stats_agent1.default_filename)
+    loaded_stats = AgentStats.load(fname)
     assert stats_agent1.identifier == loaded_stats.identifier
 
     # delete file
-    os.remove(stats_agent1.default_filename+'.pickle')
+    os.remove(fname.with_suffix('.pickle'))
+    dirname.rmdir()
 
     # test hyperparemeter optimization
     loaded_stats.optimize_hyperparams()
@@ -181,3 +187,6 @@ def test_agent_stats_partial_fit():
     compare_policies([stats], eval_env,
                      eval_horizon=horizon, n_sim=10, show=False)
 
+
+
+test_agent_stats_2()

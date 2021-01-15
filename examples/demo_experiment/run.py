@@ -15,4 +15,4 @@ for agent_stats in experiment_generator():
     print(agent_stats)
     agent_stats.fit()
     agent_stats.save_results()
-    agent_stats.save(Path(agent_stats.output_dir) / 'stats')
+    agent_stats.save('stats')

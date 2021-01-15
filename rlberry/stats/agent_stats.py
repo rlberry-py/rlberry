@@ -16,7 +16,6 @@ from pathlib import Path
 from joblib import Parallel, delayed
 import json
 import logging
-import os
 import dill
 import pickle
 import pandas as pd
@@ -83,7 +82,7 @@ class AgentStats:
                  agent_name=None,
                  n_fit=4,
                  n_jobs=4,
-                 output_dir='stats_data',
+                 output_dir=None,
                  thread_logging_level='INFO'):
         # agent_class should only be None when the constructor is called
         # by the class method AgentStats.load(), since the agent class
@@ -116,8 +115,11 @@ class AgentStats:
             self.policy_kwargs = deepcopy(policy_kwargs)
             self.n_fit = n_fit
             self.n_jobs = n_jobs
-            self.output_dir = output_dir
             self.thread_logging_level = thread_logging_level
+
+            # output dir
+            output_dir = output_dir or self.identifier
+            self.output_dir = Path(output_dir)
 
             if init_kwargs is None:
                 self.init_kwargs = {}
@@ -148,10 +150,6 @@ class AgentStats:
             # optuna study
             self.study = None
 
-            # default filename to save data
-            self.default_filename = os.path.join(self.output_dir,
-                                                 self.identifier)
-
     def set_output_dir(self, output_dir):
         """
         Change output directory.
@@ -160,9 +158,7 @@ class AgentStats:
         -----------
         output_dir : str
         """
-        self.output_dir = output_dir
-        self.default_filename = os.path.join(self.output_dir,
-                                             self.identifier)
+        self.output_dir = Path(output_dir)
 
     def set_writer(self, idx, writer_fn, writer_kwargs=None):
         """
@@ -280,11 +276,13 @@ class AgentStats:
         """
         # use default self.output_dir if another one is not provided.
         output_dir = output_dir or self.output_dir
+        output_dir = Path(output_dir)
+
         # create dir if it does not exist
         output_dir.mkdir(parents=True, exist_ok=True)
         # save optimized hyperparameters
         if self.best_hyperparams is not None:
-            fname = Path(output_dir) / f'best_hyperparams_{self.agent_name}.json'
+            fname = Path(output_dir) / 'best_hyperparams.json'
             _safe_serialize_json(self.best_hyperparams, fname)
         # save fit_statistics that can be aggregated in a pandas DataFrame
         if self.fit_statistics is not None:
@@ -296,13 +294,13 @@ class AgentStats:
                 try:
                     output = pd.DataFrame(all_data)
                     # save
-                    fname = Path(output_dir) / f'stats_{entry}_{self.agent_name}.csv'
+                    fname = Path(output_dir) / f'stats_{entry}.csv'
                     output.to_csv(fname, index=None)
                 except Exception:
                     logger.warning(f"Could not save entry [{entry}]"
                                    + " of fit_statistics.")
 
-    def save(self, filename=None, **kwargs):
+    def save(self, filename='stats', **kwargs):
         """
         Pickle the AgentStats object completely, so that
         it can be loaded and continued later.
@@ -321,13 +319,14 @@ class AgentStats:
         ----------
         filename : string
             Filename with .pickle extension.
-            If None, default_filename attribute is used.
+            Saves to output_dir / filename
         """
         # remove writers
         self.disable_writers()
 
         # save
-        filename = Path(filename if filename else self.default_filename).with_suffix('.pickle')
+        filename = Path(filename).with_suffix('.pickle')
+        filename = self.output_dir / filename
         filename.parent.mkdir(parents=True, exist_ok=True)
         try:
             with filename.open("wb") as ff:
