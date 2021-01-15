@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import Generator, Tuple
 import yaml
 
+from rlberry.seeding.seeding import set_global_seed
 from rlberry.stats import AgentStats
 from rlberry.utils.factory import load
 
@@ -84,7 +85,7 @@ def parse_experiment_config(path: Path,
                             n_jobs: int = 4,
                             output_base_dir: str = 'results') -> Generator[Tuple[int, AgentStats], None, None]:
     """
-    Read .yaml files and convert to AgentStats instances.
+    Read .yaml files. set global seed and convert to AgentStats instances.
 
     Exemple of experiment config:
 
@@ -124,8 +125,12 @@ def parse_experiment_config(path: Path,
         eval_env = read_env_config(config["eval_env"])
         n_fit = n_fit
         n_jobs = n_jobs
-        seed = config["seed"]
+
         for agent_path in config["agents"]:
+            # set seed before creating AgentStats
+            seed = config["seed"]
+            set_global_seed(seed)
+
             agent_name = Path(agent_path).stem
             agent_class, agent_kwargs = read_agent_config(agent_path)
             agent_kwargs.update({

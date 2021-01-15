@@ -16,7 +16,7 @@ from docopt import docopt
 from pathlib import Path
 from datetime import datetime
 from rlberry.experiment.yaml_utils import parse_experiment_config
-from rlberry.seeding.seeding import set_global_seed
+
 
 _TENSORBOARD_INSTALLED = True
 try:
@@ -30,22 +30,20 @@ logger = logging.getLogger(__name__)
 
 def experiment_generator():
     """
-    Parse command line arguments, set global seed and yields
-    AgentStats instances.
+    Parse command line arguments and yields AgentStats instances.
     """
     args = docopt(__doc__)
-    for (seed, agent_stats) in parse_experiment_config(
+    for (_, agent_stats) in parse_experiment_config(
                 Path(args["<experiment_path>"]),
                 n_fit=int(args["--n_fit"]),
                 n_jobs=int(args["--n_jobs"]),
                 output_base_dir=args["--output_dir"]):
-        set_global_seed(seed)
         if args["--writer"]:
             if _TENSORBOARD_INSTALLED:
-                writer_fn = lambda logdir: SummaryWriter(logdir)
+                # writer_fn = lambda logdir: SummaryWriter(logdir)
                 for idx in range(agent_stats.n_fit):
                     logdir = agent_stats.output_dir / f"run_{idx + 1}_{datetime.now().strftime('%b%d_%H-%M-%S')}"
-                    agent_stats.set_writer(idx=idx, writer_fn=writer_fn, writer_kwargs=dict(logdir=logdir))
+                    agent_stats.set_writer(idx=idx, writer_fn=SummaryWriter, writer_kwargs={'log_dir': logdir})
             else:
                 logger.warning('Option --writer is not available: tensorboard is not installed.')
 

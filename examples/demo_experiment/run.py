@@ -8,11 +8,18 @@ To see more options:
 $ python examples/demo_experiment/run.py
 """
 
-from pathlib import Path
 from rlberry.experiment import experiment_generator
+from rlberry.stats.multiple_stats import MultipleStats
+
+mstats = MultipleStats()
 
 for agent_stats in experiment_generator():
-    print(agent_stats)
-    agent_stats.fit()
-    agent_stats.save_results()
-    agent_stats.save('stats')
+    mstats.append(agent_stats)
+
+    # Alternatively:
+    # agent_stats.fit()
+    # agent_stats.save_results()
+    # agent_stats.save()
+
+mstats.run()
+mstats.save()

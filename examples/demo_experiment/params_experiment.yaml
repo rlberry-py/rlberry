@@ -1,5 +1,5 @@
 description: 'RSUCBVI in NRoom'
-seed: 42
+seed: 123
 n_episodes: 100
 horizon: 50
 train_env: 'examples/demo_experiment/room.yaml'
