@@ -8,8 +8,11 @@ To see more options:
 $ python examples/demo_experiment/run.py
 """
 
-from rlberry.experiment import main, doc
-from docopt import docopt
+from pathlib import Path
+from rlberry.experiment import experiment_generator
 
-arguments = docopt(doc)
-main(arguments)
+for agent_stats in experiment_generator():
+    print(agent_stats)
+    agent_stats.fit()
+    agent_stats.save_results()
+    agent_stats.save(Path(agent_stats.output_dir) / 'stats')

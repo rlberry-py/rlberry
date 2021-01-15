@@ -15,19 +15,24 @@ from docopt import docopt
 from pathlib import Path
 from datetime import datetime
 from torch.utils.tensorboard import SummaryWriter
-from rlberry.experiment.config import parse_experiment_config
+from rlberry.experiment.yaml_utils import parse_experiment_config
 from rlberry.seeding.seeding import set_global_seed
 
 
 doc = __doc__
 
 
-def main(args):
+def experiment_generator():
+    """
+    Parse command line arguments, set global seed and yields
+    AgentStats instances.
+    """
+    args = docopt(__doc__)
     for (seed, agent_stats) in parse_experiment_config(
-            Path(args["<experiment_path>"]),
-            n_fit=int(args["--n_fit"]),
-            n_jobs=int(args["--n_jobs"]),
-            output_base_dir=args["--output_dir"]):
+                Path(args["<experiment_path>"]),
+                n_fit=int(args["--n_fit"]),
+                n_jobs=int(args["--n_jobs"]),
+                output_base_dir=args["--output_dir"]):
         set_global_seed(seed)
         if args["--writer"]:
             writer_fn = lambda logdir: SummaryWriter(logdir)
@@ -35,12 +40,4 @@ def main(args):
                 logdir = agent_stats.output_dir / f"run_{idx + 1}_{datetime.now().strftime('%b%d_%H-%M-%S')}"
                 agent_stats.set_writer(idx=idx, writer_fn=writer_fn, writer_kwargs=dict(logdir=logdir))
 
-        agent_stats.fit()
-
-        agent_stats.save_results()
-        agent_stats.save(Path(agent_stats.output_dir) / 'stats')
-
-
-if __name__ == '__main__':
-    arguments = docopt(__doc__)
-    main(arguments)
+        yield agent_stats

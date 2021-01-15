@@ -1,0 +1,2 @@
+base_config: 'examples/demo_experiment/rsucbvi.yaml'
+gamma: 0.9
