@@ -3,55 +3,6 @@ from rlberry.utils.jit_setup import numba_jit
 
 
 @numba_jit
-def backward_induction_ns(R, P, gamma=1.0, vmax=np.inf):
-    """
-    Backward induction to compute Q and V functions in the finite horizon
-    setting.
-    Assumes R and P are stage-dependent.
-
-    Parameters
-    ----------
-    R : numpy.ndarray
-        array of shape (H, S, A) contaning the rewards, where S is the number
-        of states and A is the number of actions
-    P : numpy.ndarray
-        array of shape (H, S, A, S) such that P[h, s, a, ns] is the probability of
-        arriving at ns by taking action a in state s at stage h.
-    gamma : double, default: 1.0
-        discount factor
-    vmax : double, default: np.inf
-        maximum possible value in V
-
-    Returns
-    --------
-    tuple (Q, V) containing the Q and V functions, of shapes (H, S, A)
-    and (H, S), respectively.
-    """
-    H, S, A = R.shape
-    V = np.zeros((H, S))
-    Q = np.zeros((H, S, A))
-    for hh in range(H - 1, -1, -1):
-        for ss in range(S):
-            max_q = -np.inf
-            for aa in range(A):
-                q_aa = R[hh, ss, aa]
-                if hh < H - 1:
-                    # not using .dot instead of loop to avoid scipy dependency
-                    # (numba seems to require scipy for linear
-                    # algebra operations in numpy)
-                    for ns in range(S):
-                        q_aa += gamma * P[hh, ss, aa, ns] * V[hh + 1, ns]
-                if q_aa > max_q:
-                    max_q = q_aa
-                Q[hh, ss, aa] = q_aa
-            V[hh, ss] = max_q
-            # clip V
-            if V[hh, ss] > vmax:
-                V[hh, ss] = vmax
-    return Q, V
-
-
-@numba_jit
 def backward_induction(R, P, horizon, gamma=1.0, vmax=np.inf):
     """Backward induction to compute Q and V functions in the finite horizon
     setting.
@@ -125,11 +76,6 @@ def backward_induction_in_place(Q, V, R, P, horizon, gamma=1.0, vmax=np.inf):
     vmax : double
         maximum possible value in V
         default = np.inf
-
-    Returns
-    --------
-    tuple (Q, V) containing the Q and V functions, of shapes (horizon, S, A)
-    and (horizon, S), respectively.
     """
     S, A = R.shape
     for hh in range(horizon - 1, -1, -1):
@@ -150,6 +96,52 @@ def backward_induction_in_place(Q, V, R, P, horizon, gamma=1.0, vmax=np.inf):
             if V[hh, ss] > vmax:
                 V[hh, ss] = vmax
 
+
+@numba_jit
+def backward_induction_sd(Q, V, R, P, gamma=1.0, vmax=np.inf):
+    """
+    In-place implementation of backward induction to compute Q and V functions
+    in the finite horizon setting.
+
+    Assumes R and P are stage-dependent.
+
+    Parameters
+    ----------
+    Q:  numpy.ndarray
+        array of shape (H, S, A) where to store the Q function
+    V:  numpy.ndarray
+        array of shape (H, S) where to store the V function
+    R : numpy.ndarray
+        array of shape (H, S, A) contaning the rewards, where S is the number
+        of states and A is the number of actions
+    P : numpy.ndarray
+        array of shape (H, S, A, S) such that P[h, s, a, ns] is the probability of
+        arriving at ns by taking action a in state s at stage h.
+    gamma : double, default: 1.0
+        discount factor
+    vmax : double, default: np.inf
+        maximum possible value in V
+
+    """
+    H, S, A = R.shape
+    for hh in range(H - 1, -1, -1):
+        for ss in range(S):
+            max_q = -np.inf
+            for aa in range(A):
+                q_aa = R[hh, ss, aa]
+                if hh < H - 1:
+                    # not using .dot instead of loop to avoid scipy dependency
+                    # (numba seems to require scipy for linear
+                    # algebra operations in numpy)
+                    for ns in range(S):
+                        q_aa += gamma * P[hh, ss, aa, ns] * V[hh + 1, ns]
+                if q_aa > max_q:
+                    max_q = q_aa
+                Q[hh, ss, aa] = q_aa
+            V[hh, ss] = max_q
+            # clip V
+            if V[hh, ss] > vmax:
+                V[hh, ss] = vmax
 
 @numba_jit
 def value_iteration(R, P, gamma, epsilon=1e-6):

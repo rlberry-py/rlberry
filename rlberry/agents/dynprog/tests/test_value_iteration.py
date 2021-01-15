@@ -5,7 +5,7 @@ import rlberry.seeding as seeding
 from rlberry.agents.dynprog import ValueIterationAgent
 from rlberry.agents.dynprog.utils import backward_induction
 from rlberry.agents.dynprog.utils import backward_induction_in_place
-from rlberry.agents.dynprog.utils import backward_induction_ns
+from rlberry.agents.dynprog.utils import backward_induction_sd
 from rlberry.agents.dynprog.utils import bellman_operator
 from rlberry.agents.dynprog.utils import value_iteration
 from rlberry.envs.finite import FiniteMDP
@@ -122,7 +122,7 @@ def test_backward_induction(horizon, S, A):
                              (10, 5, 4),
                              (20, 10, 4)
                          ])
-def test_backward_induction_ns(horizon, S, A):
+def test_backward_induction_sd(horizon, S, A):
     """
     Test stage-dependent MDPs
     """
@@ -139,7 +139,9 @@ def test_backward_induction_ns(horizon, S, A):
         Qstat, Vstat = backward_induction(Rstat, Pstat, horizon)
 
         # run backward induction in statage-dependent MDP
-        Q, V = backward_induction_ns(R, P)
+        Q = np.zeros((horizon, S, A))
+        V = np.zeros((horizon, S))
+        backward_induction_sd(Q, V, R, P)
 
         assert np.array_equal(Q, Qstat)
         assert np.array_equal(V, Vstat)
