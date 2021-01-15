@@ -8,7 +8,7 @@ from rlberry.utils.factory import load
 
 def read_yaml(path):
     with open(path) as file:
-        return yaml.load(file, Loader=yaml.FullLoader)
+        return yaml.safe_load(file)
 
 
 def read_agent_config(config_path):
@@ -73,7 +73,7 @@ def read_env_config(config_path):
     Environment instance
     """
     with open(config_path) as file:
-        env_config = yaml.load(file, Loader=yaml.FullLoader)
+        env_config = yaml.safe_load(file)
         if "module_import" in env_config:
             __import__(env_config.pop("module_import"))
         return load(env_config["constructor"])(**env_config["params"])
@@ -148,9 +148,9 @@ def parse_experiment_config(path: Path,
             except FileNotFoundError:
                 subdirs = []
 
-            for dir in subdirs:
+            for dd in subdirs:
                 try:
-                    idx = int(dir.stem)
+                    idx = int(dd.stem)
                 except ValueError:
                     continue
                 if idx > last:
