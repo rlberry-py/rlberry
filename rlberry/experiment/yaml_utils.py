@@ -119,7 +119,7 @@ def parse_experiment_config(path: Path,
         the Agent Stats to fit
     """
     with path.open() as file:
-        config = yaml.load(file, Loader=yaml.FullLoader)
+        config = yaml.safe_load(file)
         train_env = read_env_config(config["train_env"])
         eval_env = read_env_config(config["eval_env"])
         n_fit = n_fit

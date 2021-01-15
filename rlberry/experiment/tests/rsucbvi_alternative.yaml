@@ -1,0 +1,2 @@
+base_config: 'rlberry/experiment/tests/rsucbvi.yaml'
+gamma: 0.9
