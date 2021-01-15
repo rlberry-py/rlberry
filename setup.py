@@ -11,6 +11,7 @@ install_requires = [
     'pandas',
     'gym',
     'dill',
+    'docopt',
 ]
 
 tests_require = [
