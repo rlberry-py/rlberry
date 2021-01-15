@@ -11,6 +11,10 @@ class FiniteMDP(Model):
     """
     Base class for a finite MDP.
 
+    Terminal states are set to be absorbing, and
+    are determined by the is_terminal() method,
+    which can be overriden (and returns false by default).
+
     Parameters
     ----------
     R : numpy.ndarray
@@ -50,6 +54,7 @@ class FiniteMDP(Model):
         self._actions = np.arange(A)
 
         self.reset()
+        self._process_terminal_states()
         self._check()
 
     def reset(self):
@@ -62,6 +67,16 @@ class FiniteMDP(Model):
         else:
             self.state = self.initial_state_distribution
         return self.state
+
+    def _process_terminal_states(self):
+        """
+        Adapt transition array P so that terminal states
+        are absorbing.
+        """
+        for ss in range(self.S):
+            if self.is_terminal(ss):
+                self.P[ss, :, :] = 0.0
+                self.P[ss, :, ss] = 1.0
 
     def _check(self):
         """
@@ -102,8 +117,7 @@ class FiniteMDP(Model):
         self.state = next_state
         return next_state, reward, done, info
 
-    @staticmethod
-    def is_terminal(state):
+    def is_terminal(self, state):
         """
         Returns true if a state is terminal.
         """
