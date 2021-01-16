@@ -61,7 +61,6 @@ class UCBVIAgent(IncrementalAgent):
           https://papers.nips.cc/paper/2019/file/25caef3a545a1fff2ff4055484f0e758-Paper.pdf
     """
     name = "UCBVI"
-    fit_info = ("n_episodes", "episode_rewards")
 
     def __init__(self,
                  env,

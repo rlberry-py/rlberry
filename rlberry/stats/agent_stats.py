@@ -101,7 +101,6 @@ class AgentStats:
             self.identifier = 'stats_{}_{}'.format(self.agent_name,
                                                    str(int(timestamp)))
 
-            self.fit_info = agent_class.fit_info
             self.agent_class = agent_class
             self.train_env = train_env
             if eval_env is None:
@@ -147,6 +146,9 @@ class AgentStats:
             self.fit_kwargs_list = None  # keep in memory for partial_fit()
             self.fit_statistics = None
             self.best_hyperparams = None
+
+            #  fit info is initialized at _process_fit_statistics()
+            self.fit_info = None
 
             #
             self.rng = seeding.get_rng()
@@ -264,6 +266,11 @@ class AgentStats:
 
     def _process_fit_statistics(self, stats):
         """Gather stats in a dictionary"""
+        assert len(stats) > 0
+
+        ref_stats = stats[0] or {}
+        self.fit_info = tuple(ref_stats.keys())
+
         self.fit_statistics = {}
         for entry in self.fit_info:
             self.fit_statistics[entry] = []

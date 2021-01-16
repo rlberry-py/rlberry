@@ -48,7 +48,6 @@ class CEMAgent(IncrementalAgent):
     """
 
     name = "CrossEntropyAgent"
-    fit_info = ("n_episodes", "episode_rewards")
 
     def __init__(self,
                  env,

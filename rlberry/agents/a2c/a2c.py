@@ -65,7 +65,6 @@ class A2CAgent(IncrementalAgent):
     """
 
     name = "A2C"
-    fit_info = ("n_episodes", "episode_rewards")
 
     def __init__(self, env,
                  n_episodes=4000,

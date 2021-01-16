@@ -26,7 +26,6 @@ class ValueIterationAgent(Agent):
     """
 
     name = "ValueIteration"
-    fit_info = ("n_iterations", "precision")
 
     def __init__(self, env, gamma=0.95, horizon=None, epsilon=1e-6, **kwargs):
         # initialize base class

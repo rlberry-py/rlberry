@@ -16,7 +16,6 @@ The example below shows how to create an agent.
     class MyAgent(Agent):
 
         name = "MyAgent"
-        fit_info = ("episode_rewards",)
 
         def __init__(self,
                      env,

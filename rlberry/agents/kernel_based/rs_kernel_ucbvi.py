@@ -145,7 +145,6 @@ class RSKernelUCBVIAgent(Agent):
     """
 
     name = "RSKernelUCBVI"
-    fit_info = ("n_episodes", "episode_rewards")
 
     def __init__(self, env,
                  n_episodes=1000,

@@ -40,7 +40,6 @@ class MBQVIAgent(Agent):
     """
 
     name = "MBQVI"
-    fit_info = ("n_samples", "total_samples", "n_iterations", "precision")
 
     def __init__(self, env,
                  n_samples=10,

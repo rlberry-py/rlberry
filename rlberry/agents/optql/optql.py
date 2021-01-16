@@ -38,7 +38,6 @@ class OptQLAgent(IncrementalAgent):
         https://arxiv.org/abs/1807.03765
     """
     name = "OptQL"
-    fit_info = ("n_episodes", "episode_rewards")
 
     def __init__(self,
                  env,

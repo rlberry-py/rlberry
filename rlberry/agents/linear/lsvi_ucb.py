@@ -107,7 +107,6 @@ class LSVIUCBAgent(Agent):
     """
 
     name = 'LSVI-UCB'
-    fit_info = ("n_episodes", "episode_rewards")
 
     def __init__(self,
                  env,
