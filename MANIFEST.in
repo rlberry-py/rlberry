@@ -1,0 +1,3 @@
+include pyproject.toml
+
+recursive-include assets *.svg
