@@ -33,9 +33,6 @@ class GridWorld(RenderInterface2D, FiniteMDP):
     default_reward : double
         reward received at states not in  'reward_at'
 
-    Notes
-    -----
-    Terminal states are not set to be absorbing in the transition array P
     """
     name = "GridWorld"
 
