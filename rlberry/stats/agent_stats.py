@@ -602,11 +602,12 @@ def _fit_worker(args):
     agent_class, train_env, init_kwargs, \
         fit_kwargs, writer, thread_logging_level, thread_id = args
     # logging level in thread
-    configure_logging(thread_logging_level,
-                      default_msg=f"[worker {thread_id}]")
+    configure_logging(thread_logging_level)
     # create agent
     agent = agent_class(train_env, copy_env=False,
                         reseed_env=False, **init_kwargs)
+    agent.name += f"(worker {thread_id})"
+
     # set writer
     if writer[0] is None:
         agent.set_writer(None)

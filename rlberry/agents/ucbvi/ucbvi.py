@@ -316,16 +316,3 @@ class UCBVIAgent(IncrementalAgent):
         info = {"n_episodes": self.episode,
                 "episode_rewards": self._rewards[:self.episode]}
         return info
-
-
-if __name__ == '__main__':
-    from rlberry.envs.finite import GridWorld
-    env = GridWorld(walls=(), nrows=5, ncols=10)
-    agent = UCBVIAgent(env,
-                       n_episodes=50000,
-                       horizon=16,
-                       stage_dependent=True,
-                       gamma=0.99,
-                       real_time_dp=True,
-                       bonus_scale_factor=0.1)
-    agent.fit()

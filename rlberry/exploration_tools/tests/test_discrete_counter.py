@@ -39,8 +39,8 @@ def test_continuous_state_env(fast_rate):
     env = MountainCar()
     counter = DiscreteCounter(env.observation_space, env.action_space, fast_rate=fast_rate)
 
-    for N in [10, 20, 30]:
-        for _ in range(100):
+    for N in [10, 20]:
+        for _ in range(50):
             ss = env.observation_space.sample()
             aa = env.action_space.sample()
             for _ in range(N):
@@ -64,8 +64,8 @@ def test_continuous_state_env_2(fast_rate):
                                           env.action_space,
                                           fast_rate=fast_rate)
 
-    for N in [10, 20, 30]:
-        for _ in range(100):
+    for N in [10, 20]:
+        for _ in range(50):
             ss = env.observation_space.sample()
             aa = env.action_space.sample()
             for nn in range(N):
@@ -80,7 +80,7 @@ def test_continuous_state_env_2(fast_rate):
 
 
 def test_continuous_state_env_3():
-    env = NRoom(nrooms=5, array_observation=True)
+    env = NRoom(nrooms=3, array_observation=True)
     counter = OnlineDiscretizationCounter(env.observation_space,
                                           env.action_space,
                                           fast_rate=False,

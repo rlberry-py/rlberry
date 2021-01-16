@@ -25,3 +25,7 @@ class MultipleStats:
         for stats in self.instances:
             stats.save_results()
             stats.save()
+
+    @property
+    def allstats(self):
+        return self.instances

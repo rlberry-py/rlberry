@@ -172,14 +172,3 @@ class OptQLAgent(IncrementalAgent):
         info = {"n_episodes": self.episode,
                 "episode_rewards": self._rewards[:self.episode]}
         return info
-
-
-if __name__ == '__main__':
-    from rlberry.envs.finite import GridWorld
-    env = GridWorld(walls=(), nrows=10, ncols=10)
-    agent = OptQLAgent(env,
-                       n_episodes=50000,
-                       horizon=21,
-                       gamma=0.99,
-                       bonus_scale_factor=0.1)
-    agent.fit()
