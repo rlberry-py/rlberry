@@ -1,6 +1,6 @@
 <!-- Logo -->
 <p align="center">
-   <img src="https://raw.githubusercontent.com/rlberry-py/rlberry/main/assets/logo_square.svg" width="50%">
+   <img src="https://raw.githubusercontent.com/rlberry-py/rlberry/main/assets/logo_wide.svg" width="50%">
 </p>
 
 <!-- Short description -->
