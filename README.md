@@ -42,62 +42,29 @@
 
 <!-- Table of content -->
 
+
+
+## What is `rlberry`? 
+
+**Writing reinforcement learning algorithms is fun!** *But after the fun, we have lots of boring things to implement*: run our agents in parallel, average and plot results, optimize hyperparameters, compare to baselines, create tricky environments etc etc!
+
+`rlberry` **is a Python library that makes your life easier** by doing all these things with a few lines of code, so that you can spend most of your time developing agents.
+
+Check our [documentation](https://rlberry.readthedocs.io/en/latest/) or our [getting started section](#getting-started) to see how!
+
+
+## Contents
+
+<center>
+
 | Section | Description |
 |-|-|
-| [Introduction](#introduction) | The philosophy of `rlberry` |
-| [Citation](#citing-rlberry) | How to cite this work |
 | [Getting started](#getting-started) | A quick usage guide of `rlberry` |
+| [Citation](#citing-rlberry) | How to cite this work |
 | [Installation](#installation) | How to install `rlberry` |
-| [Documentation](#documentation) | A link to the documentation |
 | [Contributing](#contributing) | A guide for contributing |
 
-
-## Introduction
-
-The goal of `rlberry`to make **Reinforcement Learning** (RL) research and teaching easier. For that purpose, `rlberry` provides several interfaces that allow users to create their own experimental pipeline in a fast, clear and reproducible way. `rlberry` comprises the following major components and main features:
-
-*   An interface for agents, that
-    *   puts minimal constraints on the agent code (=> making it easy to include new algorithms and modify existing ones);
-
-    *   allows comparison between agents using a simple and unified evaluation interface (=> making it easy, for instance, to compare deep and "traditional" RL algorithms);
-
-    *   includes detailed documentation and comprehensible tutorial/examples (Jupyter Notebook) for each implemented agents (=> making it easy for education).
-
-*   An interface for environments, that
-    *   allows to create novel environments easily (=> making it possible to add your own environments);
-
-    *   totally adapts to [`OpenAI Gym`](https://gym.openai.com/) (=> making it easy to use any existing environments from `gym`).
-
-*   An interface for rendering, that
-    *   provides simple and clear visualization of your experiments.
-
-*   Several important features include
-    *   a unified seeding mechanism: define only one global seed, from which all other seeds will inherit, enforcing independence of the random number generators;
-
-    *   an interface to [`Optuna`](https://optuna.org/) that allows automatic hyperparameter optimization;
-
-    *   compatibility with [`Sacred`](https://sacred.readthedocs.io/en/stable/quickstart.html) that facilitates configuration, organization, logging and reproducing of computational experiments.
-
-<p align="center">
-   <img src="assets/rlberry.svg" width="70%">
-</p>
-
-
-## Citing rlberry
-
-If you use `rlberry` in scientific publications, we would appreciate citations using the following Bibtex entry:
-
-```bibtex
-@misc{rlberry,
-author = {Domingues, Omar Darwiche and ‪Flet-Berliac, Yannis and Leurent, Edouard and M{\'e}nard, Pierre and Shang, Xuedong and Valko, Michal},
-title = {{rlberry - A Reinforcement Learning Library for Research and Education}},
-year = {2021},
-publisher = {GitHub},
-journal = {GitHub repository},
-howpublished = {\url{https://github.com/rlberry-py/rlberry}},
-}
-```
-
+</center>
 
 ## Getting started
 
@@ -148,6 +115,21 @@ rng.normal()
 
 ```
 
+## Citing rlberry
+
+If you use `rlberry` in scientific publications, we would appreciate citations using the following Bibtex entry:
+
+```bibtex
+@misc{rlberry,
+author = {Domingues, Omar Darwiche and ‪Flet-Berliac, Yannis and Leurent, Edouard and M{\'e}nard, Pierre and Shang, Xuedong and Valko, Michal},
+title = {{rlberry - A Reinforcement Learning Library for Research and Education}},
+year = {2021},
+publisher = {GitHub},
+journal = {GitHub repository},
+howpublished = {\url{https://github.com/rlberry-py/rlberry}},
+}
+```
+
 ## Installation
 
 ### Cloning & creating virtual environment
@@ -182,17 +164,12 @@ which includes:
 *   [`Numba`](https://github.com/numba/numba) for just-in-time compilation of algorithms based on dynamic programming
 *   [`PyTorch`](https://pytorch.org/) for Deep RL agents
 *   [`Optuna`](https://optuna.org/#installation) for hyperparameter optimization
-*   [`Sacred`](https://github.com/IDSIA/sacred) for handling experiment configurations
 *   [`ffmpeg-python`](https://github.com/kkroening/ffmpeg-python) for saving videos
 *   [`PyOpenGL`](https://pypi.org/project/PyOpenGL/) for more rendering options
 
 ### Tests
 
 To run tests, install test dependencies with `pip install -e .[test]` and run `pytest`. To run tests with coverage, install test dependencies and run `bash run_testscov.sh`. See coverage report in `cov_html/index.html`.
-
-## Documentation
-
-The documentation is under construction and will be available [here](https://rlberry.readthedocs.io/en/latest/).
 
 ## Contributing
 
