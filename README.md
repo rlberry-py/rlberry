@@ -45,11 +45,12 @@
 | Section | Description |
 |-|-|
 | [Introduction](#introduction) | The philosophy of `rlberry` |
+| [Citation](#citing-rlberry) | How to cite this work |
 | [Getting started](#getting-started) | A quick usage guide of `rlberry` |
 | [Installation](#installation) | How to install `rlberry` |
 | [Documentation](#documentation) | A link to the documentation |
 | [Contributing](#contributing) | A guide for contributing |
-| [Citation](#citing-rlberry) | How to cite this work |
+
 
 ## Introduction
 
@@ -88,7 +89,7 @@ If you use `rlberry` in scientific publications, we would appreciate citations u
 
 ```bibtex
 @misc{rlberry,
-author =  Domingues, Omar Darwiche and ‪Flet-Berliac, Yannis and Leurent, Edouard and M{\'e}nard, Pierre and Shang, Xuedong and Valko, Michal},
+author = {Domingues, Omar Darwiche and ‪Flet-Berliac, Yannis and Leurent, Edouard and M{\'e}nard, Pierre and Shang, Xuedong and Valko, Michal},
 title = {{rlberry - A Reinforcement Learning Library for Research and Education}},
 year = {2021},
 publisher = {GitHub},
