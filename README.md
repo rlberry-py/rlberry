@@ -82,6 +82,22 @@ The goal of `rlberry`to make **Reinforcement Learning** (RL) research and teachi
 </p>
 
 
+## Citing rlberry
+
+If you use `rlberry` in scientific publications, we would appreciate citations using the following Bibtex entry:
+
+```bibtex
+@misc{rlberry,
+author =  Domingues, Omar Darwiche and ‪Flet-Berliac, Yannis and Leurent, Edouard and M{\'e}nard, Pierre and Shang, Xuedong and Valko, Michal},
+title = {{rlberry - A Reinforcement Learning Library for Research and Education}},
+year = {2021},
+publisher = {GitHub},
+journal = {GitHub repository},
+howpublished = {\url{https://github.com/rlberry-py/rlberry}},
+}
+```
+
+
 ## Getting started
 
 We provide a handful of notebooks on [Google colab](https://colab.research.google.com/) as examples to show you how to use `rlberry`.
@@ -189,20 +205,3 @@ Infos, errors and warnings are printed using the `logging` library.
 
 *   From `gym` to `rlberry`:
     *   `reseed` (rlberry) should be called instead of `seed` (gym). `seed` keeps compatilibity with gym, whereas `reseed` uses the unified seeding mechanism of `rlberry`.
-
-## Citing rlberry
-
-If you use `rlberry` in scientific publications, we would appreciate citations using the following Bibtex entry:
-
-```bibtex
-@misc{rlberry,
-author =  Domingues, Omar Darwiche and ‪Flet-Berliac, Yannis and Leurent, Edouard and M{\'e}nard, Pierre and Shang, Xuedong and Valko, Michal},
-title = {{rlberry - A Reinforcement Learning Library for Research and Education}},
-year = {2021},
-publisher = {GitHub},
-journal = {GitHub repository},
-howpublished = {\url{https://github.com/rlberry-py/rlberry}},
-}
-```
-
-We would like to thank all contributors.
