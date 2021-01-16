@@ -11,8 +11,8 @@
 .. _rlberry: https://github.com/rlberry-py/rlberry
 
 
-A RL Library for Research and Education
-===================================
+An RL Library for Research and Education
+========================================
 
 **Writing reinforcement learning algorithms is fun!** *But after the fun, we have
 lots of boring things to implement*: run our agents in parallel, average and plot results, 

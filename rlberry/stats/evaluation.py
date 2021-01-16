@@ -79,6 +79,9 @@ def plot_episode_rewards(agent_stats_list, cumulative=False,
     Given a list of AgentStats, plot the rewards obtained in each episode.
     The dictionary returned by agents' .fit() method must contain a key 'episode_rewards'.
     """
+    if not isinstance(agent_stats_list, list):
+        agent_stats_list = [agent_stats_list]
+
     plt.figure(fignum)
     for agent_stats in agent_stats_list:
         # train agents if they are not already trained

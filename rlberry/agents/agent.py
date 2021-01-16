@@ -14,7 +14,10 @@ class Agent(ABC):
     reseed_env : bool
         If true, reseeds the environment.
 
-    .. note:: Classes that implement this interface should send **kwargs to :code:`Agent.__init__()`
+
+    .. note::
+        Classes that implement this interface should send **kwargs to :code:`Agent.__init__()`
+
 
     Attributes
     ----------

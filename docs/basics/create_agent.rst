@@ -8,6 +8,7 @@ two methods to implement: :code:`fit()` and :code:`policy()`.
 
 The example below shows how to create an agent. 
 
+
 .. code-block:: python
 
     import numpy as np
@@ -56,3 +57,7 @@ The example below shows how to create an agent.
 
 
 .. note:: It's important that you agent accepts optional `**kwargs` and pass it to the base class as :code:`Agent.__init__(self, env, **kwargs)`. 
+
+
+.. seealso::
+    Documentation of the :class:`~rlberry.agents.agent.Agent` class.
