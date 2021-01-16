@@ -1,7 +1,7 @@
 #!/bin/bash
 
 cd docs/
-sphinx-apidoc -o _source/ ../rlberry
+sphinx-apidoc -o source/ ../rlberry
 make html
 cd ..
 
