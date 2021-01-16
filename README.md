@@ -25,8 +25,23 @@
    <a href="https://codecov.io/gh/rlberry-py/rlberry">
       <img alt="codecov" src="https://codecov.io/gh/rlberry-py/rlberry/branch/main/graph/badge.svg?token=TIFP7RUD75">
    </a>
+</p>
+
+<p align="center">
    <a href="https://pypi.org/project/rlberry/">
       <img alt="PyPI" src="https://img.shields.io/pypi/v/rlberry">
+   </a>
+   <a href="https://img.shields.io/pypi/pyversions/rlberry">
+      <img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/rlberry">
+   </a>
+   <a href="https://img.shields.io/pypi/wheel/rlberry">
+      <img alt="PyPI - Wheel" src="https://img.shields.io/pypi/wheel/rlberry">
+   </a>
+   <a href="https://img.shields.io/pypi/status/rlberry">
+      <img alt="PyPI - Status" src="https://img.shields.io/pypi/status/rlberry">
+   </a>
+   <a href="https://img.shields.io/pypi/dm/rlberry">
+      <img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/rlberry">
    </a>
 </p>
 
