@@ -192,7 +192,7 @@ Infos, errors and warnings are printed using the `logging` library.
 
 ## Citing rlberry
 
-If you use `rlberry` in your work, please consider citing it:
+If you use `rlberry` in scientific publications, we would appreciate citations using the following Bibtex entry:
 
 ```bibtex
 @misc{rlberry,
@@ -204,3 +204,5 @@ journal = {GitHub repository},
 howpublished = {\url{https://github.com/rlberry-py/rlberry}},
 }
 ```
+
+We would like to thank all contributors.
