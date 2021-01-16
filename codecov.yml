@@ -21,4 +21,6 @@ comment:
 
 ignore:
   - "./rlberry/rendering/opengl_render2d.py"
+  - "./rlberry/rendering/pygame_render2d.py"
+
 
