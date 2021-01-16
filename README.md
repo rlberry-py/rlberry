@@ -55,8 +55,6 @@ Check our [documentation](https://rlberry.readthedocs.io/en/latest/) or our [get
 
 ## Contents
 
-<center>
-
 | Section | Description |
 |-|-|
 | [Getting started](#getting-started) | A quick usage guide of `rlberry` |
@@ -64,7 +62,6 @@ Check our [documentation](https://rlberry.readthedocs.io/en/latest/) or our [get
 | [Installation](#installation) | How to install `rlberry` |
 | [Contributing](#contributing) | A guide for contributing |
 
-</center>
 
 ## Getting started
 
