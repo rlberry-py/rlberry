@@ -67,20 +67,20 @@ class RSUCBVIAgent(IncrementalAgent):
 
     References
     ----------
-    Azar, Mohammad Gheshlaghi, Ian Osband, and Rémi Munos.
+    .. [1] Azar, Mohammad Gheshlaghi, Ian Osband, and Rémi Munos.
     "Minimax regret bounds for reinforcement learning."
     Proceedings of the 34th ICML, 2017.
 
-    Strehl, Alexander L., and Michael L. Littman.
+    .. [2] Strehl, Alexander L., and Michael L. Littman.
     "An analysis of model-based interval estimation for Markov decision
     processes."
      Journal of Computer and System Sciences 74.8 (2008): 1309-1331.
 
-    Kveton, Branislav, and Georgios Theocharous.
+    .. [3] Kveton, Branislav, and Georgios Theocharous.
     "Kernel-Based Reinforcement Learning on Representative States."
     AAAI, 2012.
 
-    Domingues, O. D., Ménard, P., Pirotta, M., Kaufmann, E., & Valko, M.(2020).
+    .. [4] Domingues, O. D., Ménard, P., Pirotta, M., Kaufmann, E., & Valko, M.(2020).
     A kernel-based approach to non-stationary reinforcement learning in metric
     spaces.
     arXiv preprint arXiv:2007.05078.
@@ -91,8 +91,8 @@ class RSUCBVIAgent(IncrementalAgent):
 
     def __init__(self, env,
                  n_episodes=1000,
-                 gamma=0.95,
-                 horizon=None,
+                 gamma=0.99,
+                 horizon=100,
                  lp_metric=2,
                  scaling=None,
                  min_dist=0.1,
@@ -114,7 +114,6 @@ class RSUCBVIAgent(IncrementalAgent):
         self.reward_free = reward_free
 
         # check environment
-        assert self.env.is_online()
         assert isinstance(self.env.observation_space, spaces.Box)
         assert isinstance(self.env.action_space, spaces.Discrete)
 

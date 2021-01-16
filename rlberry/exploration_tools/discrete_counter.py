@@ -60,7 +60,7 @@ class DiscreteCounter(UncertaintyEstimator):
     def reset(self):
         self.N_sa = np.zeros((self.n_states, self.n_actions))
 
-    def update(self, state, action, next_state, reward, **kwargs):
+    def update(self, state, action, next_state=None, reward=None, **kwargs):
         state, action = self._preprocess(state, action)
         self.N_sa[state, action] += 1
 

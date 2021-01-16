@@ -67,7 +67,7 @@ class Model(gym.Env):
         action : object
             action to take in the environment
 
-        Returns:
+        Returns
         -------
         observation : object
         reward : float
