@@ -56,7 +56,7 @@ The example below shows how to create an agent.
             return self.env.action_space.sample()
 
 
-.. note:: It's important that you agent accepts optional `**kwargs` and pass it to the base class as :code:`Agent.__init__(self, env, **kwargs)`. 
+.. note:: It's important that your agent accepts optional `**kwargs` and pass it to the base class as :code:`Agent.__init__(self, env, **kwargs)`. 
 
 
 .. seealso::
