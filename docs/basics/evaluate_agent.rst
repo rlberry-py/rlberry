@@ -75,3 +75,23 @@ For :class:`~rlberry.agents.reinforce.reinforce.REINFORCEAgent`, this method loo
                 }
 
 
+Now we can use the :meth:`optimize_hyperparams` method 
+of :class:`~rlberry.stats.agent_stats.AgentStats` to find good parameters for our agent:
+
+.. code-block:: python
+
+    # Run optimization and print results
+    stats.optimize_hyperparams(
+        n_trials=100,
+        timeout=10,   # stop after 10 seconds
+        n_sim=5,
+        n_fit=2,
+        n_jobs=2,
+        sampler_method='optuna_default'
+        )
+
+    print(stats.best_hyperparams)
+
+    # Calling fit() again will train the agent with the optimized parameters
+    stats.fit()
+    plot_episode_rewards(stats)
