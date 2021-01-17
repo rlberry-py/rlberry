@@ -66,7 +66,7 @@
 `rlberry` **is a Python library that makes your life easier** by doing all these things with a few lines of code, so that you can spend most of your time developing agents.
 `rlberry` also provides implementations of several RL agents, benchmark environments and many other useful tools.
 
-Check our [documentation](https://rlberry.readthedocs.io/en/latest/) and our [getting started section](#getting-started) to see how!
+Check our [documentation](https://rlberry.readthedocs.io/en/latest/) and our [getting started section](#getting-started)!
 
 
 ## Getting started

@@ -14,6 +14,21 @@
 An RL Library for Research and Education
 ========================================
 
+.. image:: https://api.codacy.com/project/badge/Grade/27e91674d18a4ac49edf91c339af1502
+    :alt: codacy
+
+.. image:: https://codecov.io/gh/rlberry-py/rlberry/branch/main/graph/badge.svg?token=TIFP7RUD75
+    :alt: codecov
+
+.. image:: https://img.shields.io/pypi/pyversions/rlberry
+    :alt: PyPI - Python Version
+
+.. image:: https://img.shields.io/pypi/status/rlberry
+    :alt: PyPI - Status
+
+.. image:: https://github.com/rlberry-py/rlberry/workflows/test/badge.svg
+    :alt: tests
+
 **Writing reinforcement learning algorithms is fun!** *But after the fun, we have
 lots of boring things to implement*: run our agents in parallel, average and plot results, 
 optimize hyperparameters, compare to baselines, create tricky environments etc etc!
