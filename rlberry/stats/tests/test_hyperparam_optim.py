@@ -12,8 +12,6 @@ seeding.set_global_seed(1234)
 
 
 class DummyAgent(IncrementalAgent):
-    fit_info = ("episode_rewards",)
-
     def __init__(self,
                  env,
                  n_episodes,

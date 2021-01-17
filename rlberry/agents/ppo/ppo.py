@@ -72,7 +72,6 @@ class PPOAgent(IncrementalAgent):
     """
 
     name = "PPO"
-    fit_info = ("n_episodes", "episode_rewards")
 
     def __init__(self, env,
                  n_episodes=4000,

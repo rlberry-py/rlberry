@@ -14,15 +14,15 @@ class Agent(ABC):
     reseed_env : bool
         If true, reseeds the environment.
 
-    .. note:: Classes that implement this interface should send **kwargs to :code:`Agent.__init__()`
+
+    .. note::
+        Classes that implement this interface should send **kwargs to :code:`Agent.__init__()`
+
 
     Attributes
     ----------
     name : string
         Agent identifier
-    fit_info : tuple
-        Tuple of strings containing the keys in the dictionary
-        returned by :code:`fit()`
     env : Model
         Environment on which to train the agent.
     writer : object, default: None
@@ -30,7 +30,6 @@ class Agent(ABC):
     """
 
     name = ""
-    fit_info = ()
 
     def __init__(self,
                  env,
@@ -58,7 +57,7 @@ class Agent(ABC):
         Returns
         -------
         info: dict
-            Dictionary whose keys are in the tuple :attr:`Agent.fit_info`
+            Dictionary with useful info.
         """
         pass
 

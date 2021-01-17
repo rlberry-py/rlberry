@@ -27,7 +27,6 @@ The template below gives the general structure that the Agent code must follow. 
 
 class MyAgent(Agent):
     name = "MyAgent"
-    fit_info = ('episode_rewards',)   # tuple of strings containing the keys in the dictionary returned by fit()
 
     def __init__(self,
                  env,

@@ -6,7 +6,6 @@ class IncrementalAgent(Agent):
     """Basic interface for agents that can be trained incrementally."""
 
     name = ""
-    fit_info = ()
 
     def __init__(self, env, **kwargs):
         """

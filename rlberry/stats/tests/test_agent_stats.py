@@ -11,7 +11,6 @@ seeding.set_global_seed(1234)
 
 
 class DummyAgent(IncrementalAgent):
-    fit_info = ("episode_rewards",)
 
     def __init__(self, env, n_episodes, hyperparameter=0, **kwargs):
         IncrementalAgent.__init__(self, env, **kwargs)
@@ -75,6 +74,9 @@ def test_agent_stats_1():
     compare_policies(agent_stats_list, eval_env,
                      eval_horizon=horizon,
                      n_sim=10, show=False, stationary_policy=False)
+
+    for st in agent_stats_list:
+        assert 'episode_rewards' in st.fit_statistics
 
     # check if fitted
     for agent_stats in agent_stats_list:

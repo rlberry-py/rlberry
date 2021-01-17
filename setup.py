@@ -60,7 +60,6 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     author='Omar Darwiche Domingues, Yannis Flet-Berliac, Edouard Leurent, Pierre Menard, Xuedong Shang',
-    author_email='omar.drwch@gmail.com',
     url='https://github.com/rlberry-py',
     license='MIT',
     packages=packages,

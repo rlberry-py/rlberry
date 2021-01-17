@@ -79,33 +79,36 @@ def plot_episode_rewards(agent_stats_list, cumulative=False,
     Given a list of AgentStats, plot the rewards obtained in each episode.
     The dictionary returned by agents' .fit() method must contain a key 'episode_rewards'.
     """
+    if not isinstance(agent_stats_list, list):
+        agent_stats_list = [agent_stats_list]
+
     plt.figure(fignum)
     for agent_stats in agent_stats_list:
-        if 'episode_rewards' not in agent_stats.fit_info:
-            logger.warning("episode_rewards not \
-available for %s." % agent_stats.agent_name)
-            continue
-        else:
-            # train agents if they are not already trained
-            if agent_stats.fitted_agents is None:
-                agent_stats.fit()
-            # get reward statistics and plot them
-            rewards = np.array(agent_stats.fit_statistics['episode_rewards'])
-            if cumulative:
-                rewards = np.cumsum(rewards, axis=1)
-            mean_r = rewards.mean(axis=0)
-            std_r = rewards.std(axis=0)
-            episodes = np.arange(1, rewards.shape[1]+1)
+        # train agents if they are not already trained
+        if agent_stats.fitted_agents is None:
+            agent_stats.fit()
 
-            plt.plot(episodes, mean_r, label=agent_stats.agent_name)
-            plt.fill_between(episodes, mean_r-std_r, mean_r+std_r, alpha=0.2)
-            plt.legend()
-            plt.xlabel("episodes")
-            if not cumulative:
-                plt.ylabel("reward in one episode")
-            else:
-                plt.ylabel("total reward")
-            plt.grid(True, alpha=0.75)
+        if 'episode_rewards' not in agent_stats.fit_info:
+            logger.warning("episode_rewards not available for %s." % agent_stats.agent_name)
+            continue
+
+        # get reward statistics and plot them
+        rewards = np.array(agent_stats.fit_statistics['episode_rewards'])
+        if cumulative:
+            rewards = np.cumsum(rewards, axis=1)
+        mean_r = rewards.mean(axis=0)
+        std_r = rewards.std(axis=0)
+        episodes = np.arange(1, rewards.shape[1]+1)
+
+        plt.plot(episodes, mean_r, label=agent_stats.agent_name)
+        plt.fill_between(episodes, mean_r-std_r, mean_r+std_r, alpha=0.2)
+        plt.legend()
+        plt.xlabel("episodes")
+        if not cumulative:
+            plt.ylabel("reward in one episode")
+        else:
+            plt.ylabel("total reward")
+        plt.grid(True, alpha=0.75)
 
     if show:
         plt.show()
@@ -244,25 +247,26 @@ def plot_fit_info(agent_stats_list,
     """
     plt.figure(fignum)
     for agent_stats in agent_stats_list:
+        # train agents if they are not already trained
+        if agent_stats.fitted_agents is None:
+            agent_stats.fit()
+
         if info not in agent_stats.fit_info:
             logger.warning("{} not available for {}.".format(info, agent_stats.agent_name))
             continue
-        else:
-            # train agents if they are not already trained
-            if agent_stats.fitted_agents is None:
-                agent_stats.fit()
-            # get data and plot them
-            data = np.array(agent_stats.fit_statistics[info])
-            mean_data = data.mean(axis=0)
-            std_data = data.std(axis=0)
-            episodes = np.arange(1, data.shape[1]+1)
 
-            plt.plot(episodes, mean_data, label=agent_stats.agent_name)
-            plt.fill_between(episodes, mean_data-std_data, mean_data+std_data, alpha=0.2)
-            plt.legend()
-            plt.xlabel("episodes")
-            plt.ylabel(info)
-            plt.grid(True, alpha=0.75)
+        # get data and plot them
+        data = np.array(agent_stats.fit_statistics[info])
+        mean_data = data.mean(axis=0)
+        std_data = data.std(axis=0)
+        episodes = np.arange(1, data.shape[1]+1)
+
+        plt.plot(episodes, mean_data, label=agent_stats.agent_name)
+        plt.fill_between(episodes, mean_data-std_data, mean_data+std_data, alpha=0.2)
+        plt.legend()
+        plt.xlabel("episodes")
+        plt.ylabel(info)
+        plt.grid(True, alpha=0.75)
 
     if show:
         plt.show()

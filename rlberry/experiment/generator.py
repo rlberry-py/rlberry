@@ -40,7 +40,6 @@ def experiment_generator():
                 output_base_dir=args["--output_dir"]):
         if args["--writer"]:
             if _TENSORBOARD_INSTALLED:
-                # writer_fn = lambda logdir: SummaryWriter(logdir)
                 for idx in range(agent_stats.n_fit):
                     logdir = agent_stats.output_dir / f"run_{idx + 1}_{datetime.now().strftime('%b%d_%H-%M-%S')}"
                     agent_stats.set_writer(idx=idx, writer_fn=SummaryWriter, writer_kwargs={'log_dir': logdir})

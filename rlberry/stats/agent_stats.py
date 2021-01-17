@@ -101,7 +101,6 @@ class AgentStats:
             self.identifier = 'stats_{}_{}'.format(self.agent_name,
                                                    str(int(timestamp)))
 
-            self.fit_info = agent_class.fit_info
             self.agent_class = agent_class
             self.train_env = train_env
             if eval_env is None:
@@ -111,7 +110,19 @@ class AgentStats:
                 self.eval_env = deepcopy(eval_env)
                 self.eval_env.reseed()
 
+            # check kwargs
+            init_kwargs = init_kwargs or {}
+            fit_kwargs = fit_kwargs or {}
+            policy_kwargs = policy_kwargs or {}
+
+            # evaluation horizon
             self.eval_horizon = eval_horizon
+            if eval_horizon is None:
+                try:
+                    self.eval_horizon = init_kwargs['horizon']
+                except KeyError:
+                    pass
+
             # init and fit kwargs are deep copied in fit()
             self.init_kwargs = deepcopy(init_kwargs)
             self.fit_kwargs = fit_kwargs
@@ -124,13 +135,6 @@ class AgentStats:
             # output dir
             output_dir = output_dir or self.identifier
             self.output_dir = Path(output_dir)
-
-            if init_kwargs is None:
-                self.init_kwargs = {}
-            if fit_kwargs is None:
-                self.fit_kwargs = {}
-            if policy_kwargs is None:
-                self.policy_kwargs = {}
 
             # Create environment copies for training
             self.train_env_set = []
@@ -147,6 +151,9 @@ class AgentStats:
             self.fit_kwargs_list = None  # keep in memory for partial_fit()
             self.fit_statistics = None
             self.best_hyperparams = None
+
+            #  fit info is initialized at _process_fit_statistics()
+            self.fit_info = None
 
             #
             self.rng = seeding.get_rng()
@@ -264,6 +271,11 @@ class AgentStats:
 
     def _process_fit_statistics(self, stats):
         """Gather stats in a dictionary"""
+        assert len(stats) > 0
+
+        ref_stats = stats[0] or {}
+        self.fit_info = tuple(ref_stats.keys())
+
         self.fit_statistics = {}
         for entry in self.fit_info:
             self.fit_statistics[entry] = []
