@@ -3,5 +3,6 @@
 # disable JIT to get complete coverage report
 export NUMBA_DISABLE_JIT=1
 
-# run pytest 
+# run pytest
+cd ..
 pytest --cov=rlberry --cov-report html:cov_html
