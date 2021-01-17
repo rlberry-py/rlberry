@@ -171,15 +171,3 @@ class AdaptiveQLAgent(IncrementalAgent):
         info = {"n_episodes": self.episode,
                 "episode_rewards": self._rewards[:self.episode]}
         return info
-
-
-if __name__ == '__main__':
-    import matplotlib.pyplot as plt
-    from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
-    env = get_benchmark_env(level=2)
-
-    agent = AdaptiveQLAgent(env, n_episodes=100, horizon=30)
-    agent.fit()
-
-    agent.Qtree.plot(0, 20)
-    plt.show()

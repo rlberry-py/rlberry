@@ -238,8 +238,8 @@ class QFunctionTreePartition:
             node.split()
         return node
 
-    def plot(self, aa, hh):
+    def plot(self, a, h):
         """
-        Visualize Q_hh(x, aa)
+        Visualize Q_h(x, a)
         """
-        self.trees[hh][aa].plot(max_value=self.horizon-hh)
+        self.trees[h][a].plot(max_value=self.horizon-h)
