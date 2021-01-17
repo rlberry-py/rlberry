@@ -3,6 +3,19 @@
 Setup and run experiments using yaml config files
 ##################################################
 
+
+To setup an experiment with rlberry, you can use yaml files. You'll need:
+
+* An **experiment.yaml** with some global parameters: seed, number of episodes, horizon, environments (for training and evaluation) and a list of agents to run.
+
+* yaml files describing the environments and the agents
+
+* A main python script that reads the files and generates :class:`~rlberry.stats.agent_stats.AgentStats` instances to run each agent.
+
+
+This can be done very succinctly as in the example below:
+
+
 **experiment.yaml**
 
 .. code-block:: yaml
