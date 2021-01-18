@@ -90,7 +90,7 @@ class RandomNetworkDistillation(UncertaintyEstimator):
         self.loss = torch.tensor(0.0).to(self.device)
 
     def _get_embeddings(self, state):
-        state_tensor = torch.from_numpy(state).to(self.device)
+        state_tensor = torch.from_numpy(state).unsqueeze(0).to(self.device)
         random_embedding = self.random_target_network(state_tensor)
         predicted_embedding = self.predictor_network.forward(state_tensor)
         return random_embedding, predicted_embedding
