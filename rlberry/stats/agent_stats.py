@@ -361,10 +361,13 @@ class AgentStats:
                 pickle.dump(self.__dict__, ff)
             logger.info("Saved AgentStats({}) using pickle.".format(self.agent_name))
         except Exception:
-            with filename.open("wb") as ff:
-                dill.dump(self.__dict__, ff)
-            logger.info("Saved AgentStats({}) using dill.".format(self.agent_name))
-
+            try:
+                with filename.open("wb") as ff:
+                    dill.dump(self.__dict__, ff)
+                logger.info("Saved AgentStats({}) using dill.".format(self.agent_name))
+            except Exception as ex:
+                logger.warning("[AgentStats] Instance cannot be pickled: " + str(ex))
+     
     @classmethod
     def load(cls, filename):
         filename = Path(filename).with_suffix('.pickle')
