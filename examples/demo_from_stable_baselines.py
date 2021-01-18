@@ -93,22 +93,41 @@ for i in range(1000):
 env.close()
 
 #
-# Traning several agents with AgentStats
+# Traning several agents and comparing different hyperparams
 #
-from rlberry.stats import AgentStats, compare_policies
+from rlberry.stats import AgentStats, MultipleStats, agent_stats, compare_policies
 
 stats = AgentStats(
     A2CAgent,
     env,
     eval_horizon=200,
+    agent_name='A2C baseline',
     init_kwargs={'policy': 'MlpPolicy', 'verbose': 1},
     fit_kwargs={'total_timesteps': 1000},
     policy_kwargs={'deterministic': True},
     n_fit=4,
     n_jobs=4,
-    joblib_backend='threading')   # we need threading here, since stable baselines creates processes
+    joblib_backend='loky')   # we might need 'threading' here, since stable baselines creates processes
+                             # 'multiprocessing' does not work, 'loky' seems good
 
-stats.fit()
+stats_alternative = AgentStats(
+    A2CAgent,
+    env,
+    eval_horizon=200,
+    agent_name='A2C high learning rate',
+    init_kwargs={'policy': 'MlpPolicy', 'verbose': 1, 'learning_rate': 0.01},
+    fit_kwargs={'total_timesteps': 1000},
+    policy_kwargs={'deterministic': True},
+    n_fit=4,
+    n_jobs=4,
+    joblib_backend='loky')
 
-# Evaluate policy learned by the agent
-compare_policies([stats])
+# Fit everything in parallel
+mstats = MultipleStats()
+mstats.append(stats)
+mstats.append(stats_alternative)
+
+mstats.run()
+
+# Plot policy evaluation
+compare_policies(mstats.allstats)
