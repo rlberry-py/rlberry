@@ -30,15 +30,13 @@ def optimizer_factory(params, optimizer_type="ADAM", **kwargs):
 def model_factory(type="MultiLayerPerceptron", **kwargs) -> nn.Module:
     from rlberry.agents.utils.torch_attention_models import EgoAttentionNetwork
     from rlberry.agents.utils.torch_models import MultiLayerPerceptron, DuelingNetwork, ConvolutionalNetwork, \
-        PolicyConvolutionalNetwork, Table
+        Table
     if type == "MultiLayerPerceptron":
         return MultiLayerPerceptron(**kwargs)
     elif type == "DuelingNetwork":
         return DuelingNetwork(**kwargs)
     elif type == "ConvolutionalNetwork":
         return ConvolutionalNetwork(**kwargs)
-    elif type == "PolicyConvolutionalNetwork":
-        return PolicyConvolutionalNetwork(**kwargs)
     elif type == "EgoAttentionNetwork":
         return EgoAttentionNetwork(**kwargs)
     elif type == "Table":

@@ -13,12 +13,22 @@ from rlberry.utils.torch import choose_device
 
 def get_network(shape, embedding_dim):
     if len(shape) == 3:
-        H, W, C = shape
+        if shape[2] < shape[0] and shape[2] < shape[1]:
+            W, H, C = shape
+            transpose_obs = True
+        elif shape[0] < shape[1] and shape[0] < shape[2]:
+            C, H, W = shape
+            transpose_obs = False
+        else:
+            raise ValueError("Unknown image convention")
+
         return ConvolutionalNetwork(in_channels=C,
                                     in_width=W,
                                     in_height=H,
+                                    out_size=embedding_dim,
                                     activation="ELU",
-                                    out_size=embedding_dim)
+                                    transpose_obs=transpose_obs,
+                                    is_policy=False)
     elif len(shape) == 2:
         H, W = shape
         return ConvolutionalNetwork(in_channels=1,
@@ -80,7 +90,7 @@ class RandomNetworkDistillation(UncertaintyEstimator):
         self.loss = torch.tensor(0.0).to(self.device)
 
     def _get_embeddings(self, state):
-        state_tensor = torch.from_numpy(state).unsqueeze(0).to(self.device)
+        state_tensor = torch.from_numpy(state).to(self.device)
         random_embedding = self.random_target_network(state_tensor)
         predicted_embedding = self.predictor_network.forward(state_tensor)
         return random_embedding, predicted_embedding
