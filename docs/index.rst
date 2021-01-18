@@ -126,7 +126,7 @@ Documentation Contents
 
   installation
   quickstart
-  other
+  external
   source/modules
 
 
