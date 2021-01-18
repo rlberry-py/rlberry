@@ -12,6 +12,8 @@ If possible, pickle is prefered (since it is faster).
 from copy import deepcopy
 from datetime import datetime
 from pathlib import Path
+
+from torch.random import seed
 from rlberry.seeding.seeding import safe_reseed
 
 from joblib import Parallel, delayed
@@ -216,15 +218,16 @@ class AgentStats:
         Fit the agent instances in parallel.
         """
         logger.info(f"Training AgentStats for {self.agent_name}... ")
+        seed_sequences = seeding.spawn(self.n_fit)
         args = [(self.agent_class,
                 train_env,
                 deepcopy(self.init_kwargs),
                 deepcopy(self.fit_kwargs),
                 writer,
                 self.thread_logging_level,
-                thread_idx)
-                for thread_idx, (train_env, writer)
-                in enumerate(zip(self.train_env_set, self.writers))]
+                thread_seed_seq)
+                for (thread_seed_seq, train_env, writer)
+                in zip(seed_sequences, self.train_env_set, self.writers)]
 
         workers_output = Parallel(n_jobs=self.n_jobs,
                                   verbose=5,
@@ -643,7 +646,9 @@ def _fit_worker(args):
     Create and fit an agent instance
     """
     agent_class, train_env, init_kwargs, \
-        fit_kwargs, writer, thread_logging_level, thread_id = args
+        fit_kwargs, writer, thread_logging_level, thread_seed_seq = args
+    # set thread seed sequence
+    seeding.set_global_seed(thread_seed_seq)
     # preprocess train_env
     train_env = _preprocess_env(train_env)
 
@@ -652,7 +657,7 @@ def _fit_worker(args):
     # create agent
     agent = agent_class(train_env, copy_env=False,
                         reseed_env=False, **init_kwargs)
-    agent.name += f"(worker {thread_id})"
+    agent.name += f"(spawn_key{thread_seed_seq.spawn_key})"
 
     # set writer
     if writer[0] is None:

@@ -1,7 +1,8 @@
+import numpy as np
 from numpy.random import SeedSequence, default_rng
 
 # Define global seed sequence
-_GLOBAL_SEED = None
+_GLOBAL_ENTROPY = None
 _GLOBAL_SEED_SEQ = None
 
 # Global rng
@@ -24,33 +25,39 @@ except Exception:
 # Seeding functions
 #
 
-def set_global_seed(seed=42):
+def set_global_seed(entropy=42):
     """
     rlberry has a global seed from which we can obtain different random number
     generators with (close to) independent outcomes.
 
     Important:
 
-    If the global seed is altered by the user, it should be done only once,
-    after importing rlberry for the first time. This is to ensure that all
-    random number generators are children of the same SeedSequence.
+    In each new process/thread, set_global_seed must be called with a new seed.
 
     To do:
         Check (torch seeding):
         https://github.com/pytorch/pytorch/issues/7068#issuecomment-487907668
-    """
-    global _GLOBAL_SEED, _GLOBAL_SEED_SEQ, _GLOBAL_RNG
-    _GLOBAL_SEED = seed
-    _GLOBAL_SEED_SEQ = SeedSequence(_GLOBAL_SEED)
-    _GLOBAL_RNG = get_rng()
 
-    # get state (for seeding)
-    # rng_libs = get_rng()
-    # state = rng_libs.__getstate__()['state']['state']
+    Parameters
+    ---------
+    entropy: int, SeedSequence optional
+        The entropy for creating the global SeedSequence, or a SeedSequence
+    """
+    global _GLOBAL_ENTROPY, _GLOBAL_SEED_SEQ, _GLOBAL_RNG
+
+    if isinstance(entropy, SeedSequence):
+        seedseq = entropy
+        _GLOBAL_ENTROPY = seedseq.entropy
+        _GLOBAL_SEED_SEQ = seedseq
+    else:
+        _GLOBAL_ENTROPY = entropy
+        _GLOBAL_SEED_SEQ = SeedSequence(entropy)
+
+    _GLOBAL_RNG = get_rng()
 
     # seed torch
     if _TORCH_INSTALLED:
-        torch.manual_seed(seed)
+        torch.manual_seed(_GLOBAL_SEED_SEQ.generate_state(1, dtype=np.uint32)[0])
 
 
 def generate_uniform_seed():
@@ -58,6 +65,13 @@ def generate_uniform_seed():
     Return a seed value using a global random number generator.
     """
     return _GLOBAL_RNG.integers(2**32).item()
+
+
+def global_rng():
+    """
+    Returns the global random number generator.
+    """
+    return _GLOBAL_RNG
 
 
 def safe_reseed(object):
@@ -81,6 +95,22 @@ def safe_reseed(object):
             return True
         except AttributeError:
             return False
+
+
+def spawn(n):
+    """
+    Spawn a list of SeedSequence from the global seed sequence.
+
+    Parameters
+    ----------
+    n : int
+        Number of seed sequences to spawn
+    Returns
+    -------
+    seed_seq : list
+        List of spawned seed sequences
+    """
+    return _GLOBAL_SEED_SEQ.spawn(n)
 
 
 def get_rng():
