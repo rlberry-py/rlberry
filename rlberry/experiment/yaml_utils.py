@@ -7,9 +7,20 @@ from rlberry.stats import AgentStats
 from rlberry.utils.factory import load
 
 
+_AGENT_KEYS = ('init_kwargs', 'fit_kwargs', 'policy_kwargs')
+
+
 def read_yaml(path):
     with open(path) as file:
         return yaml.safe_load(file)
+
+
+def process_agent_yaml(path):
+    config = read_yaml(path)
+    for key in _AGENT_KEYS:
+        if key not in config:
+            config[key] = {}
+    return config
 
 
 def read_agent_config(config_path):
@@ -38,12 +49,24 @@ def read_agent_config(config_path):
 
     Returns
     -------
-    Agent class and dictionary with its init_kwargs
+    agent_class
+    base_config : dict
+        dictionary whose keys are ('init_kwargs', 'fit_kwargs', 'policy_kwargs')
     """
-    agent_config = read_yaml(config_path)
-    base_config = agent_config.pop("base_config", None)
-    base_config = read_yaml(base_config) if base_config else {}
-    base_config.update(agent_config)  # TODO: recursive update
+    agent_config = process_agent_yaml(config_path)
+    base_config_yaml = agent_config.pop("base_config", None)
+
+    # TODO: recursive update
+    if base_config_yaml is None:
+        base_config = agent_config
+    else:
+        base_config = process_agent_yaml(base_config_yaml)
+        for key in _AGENT_KEYS:
+            try:
+                base_config[key].update(agent_config[key])
+            except KeyError:
+                base_config[key] = agent_config[key]
+
     agent_class = load(base_config.pop("agent_class"))
     return agent_class, base_config
 
@@ -132,17 +155,7 @@ def parse_experiment_config(path: Path,
             set_global_seed(seed)
 
             agent_name = Path(agent_path).stem
-            agent_class, agent_kwargs = read_agent_config(agent_path)
-            agent_kwargs.update({
-                "horizon": config["horizon"],
-                "n_episodes": config["n_episodes"]
-            })
-
-            # check if eval_horizon is given
-            if "eval_horizon" in config:
-                eval_horizon = config["eval_horizon"]
-            else:
-                eval_horizon = config["horizon"]
+            agent_class, agent_config = read_agent_config(agent_path)
 
             # Process output dir, avoid erasing previous results
             output_dir = Path(output_base_dir) / path.stem / agent_name
@@ -161,11 +174,32 @@ def parse_experiment_config(path: Path,
                 if idx > last:
                     last = idx
 
+            # kwargs
+            init_kwargs = agent_config['init_kwargs']
+            fit_kwargs = agent_config['fit_kwargs']
+            policy_kwargs = agent_config['policy_kwargs']
+
+            # check if there are global kwargs
+            if 'global_init_kwargs' in config:
+                init_kwargs.update(config['global_init_kwargs'])
+            if 'global_fit_kwargs' in config:
+                init_kwargs.update(config['global_fit_kwargs'])
+            if 'global_policy_kwargs' in config:
+                init_kwargs.update(config['global_policy_kwargs'])
+
+            # check eval_horizon
+            if 'eval_horizon' in config:
+                eval_horizon = config['eval_horizon']
+            else:
+                eval_horizon = None
+
             # append run index to dir
             output_dir = output_dir / str(last+1)
 
             yield seed, AgentStats(agent_class=agent_class,
-                                   init_kwargs=agent_kwargs,
+                                   init_kwargs=init_kwargs,
+                                   fit_kwargs=fit_kwargs,
+                                   policy_kwargs=policy_kwargs,
                                    agent_name=agent_name,
                                    train_env=train_env,
                                    eval_env=eval_env,

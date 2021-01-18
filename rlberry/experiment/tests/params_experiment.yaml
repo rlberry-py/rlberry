@@ -1,7 +1,9 @@
 description: 'RSUCBVI in NRoom'
 seed: 4575458
-n_episodes: 100
-horizon: 50
+eval_horizon: 51
+global_init_kwargs:
+  n_episodes: 100
+  horizon: 50
 train_env: 'rlberry/experiment/tests/room.yaml'
 eval_env: 'rlberry/experiment/tests/room.yaml'
 agents:

@@ -85,7 +85,7 @@ class AgentStats:
                  n_fit=4,
                  n_jobs=4,
                  output_dir=None,
-                 joblib_backend='multiprocessing',
+                 joblib_backend='loky',
                  thread_logging_level='INFO'):
         # agent_class should only be None when the constructor is called
         # by the class method AgentStats.load(), since the agent class
