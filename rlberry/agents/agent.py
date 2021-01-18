@@ -1,5 +1,9 @@
 from abc import ABC, abstractmethod
 from copy import deepcopy
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 class Agent(ABC):
@@ -40,12 +44,19 @@ class Agent(ABC):
         assert kwargs == {}, \
             'Unknown parameters sent to agent:' + str(kwargs.keys())
 
+        self.env = env
+
         if copy_env:
-            self.env = deepcopy(env)
-        else:
-            self.env = env
+            try:
+                self.env = deepcopy(env)
+            except Exception as ex:
+                logger.warning("[Agent] Not possible to deepcopy env: " + str(ex))
+
         if reseed_env:
-            self.env.reseed()
+            try:
+                self.env.reseed()
+            except AttributeError as ex:
+                logger.warning("[Agent] Not possible to reseed env, reseed() not available: " + str(ex))
 
         #
         self.writer = None
