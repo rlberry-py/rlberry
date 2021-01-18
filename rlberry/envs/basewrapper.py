@@ -60,8 +60,7 @@ class Wrapper(Model):
     def reseed(self):
         self.rng = seeding.get_rng()
         # seed gym.Env that is not a rlberry Model
-        if isinstance(self.env, gym.Env) \
-                and not isinstance(self.env, Model):
+        if not isinstance(self.env, Model):
             # get a seed for gym environment
             seed = self.rng.integers(2**16).item()
             self.env.seed(seed)

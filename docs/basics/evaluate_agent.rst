@@ -1,7 +1,10 @@
 .. _rlberry: https://github.com/rlberry-py/rlberry
 
+.. _evaluate_agent:
+
+
 Evaluate an agent and optimize its hyperparameters
-##############################################
+==================================================
 
 With rlberry_, once you created your agent, it is very easy to train in parallel
 several instances of it, analyze the results and optimize hyperparameters. 

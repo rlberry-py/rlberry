@@ -1,7 +1,10 @@
 .. _rlberry: https://github.com/rlberry-py/rlberry
 
+.. _create_agent:
+
+
 Create an agent
-###############
+===============
 
 rlberry_ requires you to use a **very simple interface** to write agents, with basically
 two methods to implement: :code:`fit()` and :code:`policy()`.

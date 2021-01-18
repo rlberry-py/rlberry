@@ -20,7 +20,7 @@ class Agent(ABC):
 
 
     .. note::
-        Classes that implement this interface should send **kwargs to :code:`Agent.__init__()`
+        Classes that implement this interface should send ``**kwargs`` to :code:`Agent.__init__()`
 
 
     Attributes
@@ -58,7 +58,6 @@ class Agent(ABC):
             except AttributeError as ex:
                 logger.warning("[Agent] Not possible to reseed env, reseed() not available: " + str(ex))
 
-        #
         self.writer = None
 
     @abstractmethod

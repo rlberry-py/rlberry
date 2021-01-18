@@ -42,10 +42,10 @@ class PPOAgent(IncrementalAgent):
         PPO clipping range (epsilon).
     k_epochs : int
         Number of epochs per update.
-    policy_net_fn : function(env, **kwargs)
+    policy_net_fn : function(env, \*\*kwargs)
         Function that returns an instance of a policy network (pytorch).
         If None, a default net is used.
-    value_net_fn : function(env, **kwargs)
+    value_net_fn : function(env, \*\*kwargs)
         Function that returns an instance of a value network (pytorch).
         If None, a default net is used.
     policy_net_kwargs : dict

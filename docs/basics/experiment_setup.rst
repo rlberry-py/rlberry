@@ -1,7 +1,10 @@
 .. _rlberry: https://github.com/rlberry-py/rlberry
 
+.. _experiment_setup:
+
+
 Setup and run experiments using yaml config files
-##################################################
+=================================================
 
 
 To setup an experiment with rlberry, you can use yaml files. You'll need:

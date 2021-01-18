@@ -36,40 +36,30 @@ optimize hyperparameters, compare to baselines, create tricky environments etc e
 rlberry_ **is here to make your life easier** by doing all these things with a few lines of code,
 so that you can spend most of your time developing agents!
 
-In **a few minutes of reading**, you can learn how to:
 
+In **a few minutes of reading**, you will learn how to:
 
-.. toctree::
-   :maxdepth: 3
-
-   basics/installation
-   basics/create_agent
-   basics/evaluate_agent
-   basics/compare_agents
-   basics/experiment_setup
+- :ref:`Install rlberry <installation>`;
+- :ref:`Create an agent <create_agent>`;
+- :ref:`Evaluate an agent and optimize its hyperparameters <evaluate_agent>`;
+- :ref:`Compare different agents <compare_agents>`;
+- :ref:`Setup and run experiments using yaml config files <experiment_setup>`.
 
 In addition, rlberry_: 
 
 * Provides **implementations of several RL agents** for you to use as a starting point or as baselines;
 * Provides a set of **benchmark environments**, very useful to debug and challenge your algorithms;
 * Handles all random seeds for you, ensuring **reproducibility** of your results;
-* Is **fully compatible with** `OpenAI gym <https://gym.openai.com/>`_.
+* Is **fully compatible with** several commonly used RL libraries like `OpenAI gym <https://gym.openai.com/>`_ and `Stable Baselines <https://stable-baselines.readthedocs.io/en/master/>`_.
 
 
-Compatibility with OpenAI Gym
-=============================
+Compatibility with External Libraries
+=====================================
 
-If you want to use gym environments with rlberry, simply do the following:
+We provide examples to show you how to use rlberry_ with:
 
-.. code-block:: python
-
-   from rlberry.envs import gym_make  #  wraps gym.make
-
-   # for example, let's take CartPole
-   env = gym_make('CartPole-v1')
-
-This way, :code:`env` **behaves exactly the same as the gym environment**, we simply replace the seeding
-function by :meth:`env.reseed`, which ensures unified seeding and reproducibility when using rlberry.
+- :ref:`OpenAI Gym <gym>`;
+- :ref:`Stable Baselines <stable_baselines>`.
 
 
 Seeding & Reproducibility
@@ -112,14 +102,6 @@ It works as follows:
    ouputs with rlberry_ by calling :func:`set_global_seed` available in :mod:`rlberry.seeding`.
 
 
-Other Resources
-===============
-
-.. toctree::
-   :maxdepth: 3
-
-   other/using_stable_baselines
-
 Citing rlberry_
 ===============
 
@@ -137,11 +119,20 @@ If you use rlberry in scientific publications, we would appreciate citations usi
    }
 
 
-Indices and tables
+Documentation Contents
+======================
+
+.. toctree::
+  :maxdepth: 2
+
+  installation
+  quickstart
+  external
+  source/modules
+
+
+Indices and Tables
 ==================
 
-* :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
-

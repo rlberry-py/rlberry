@@ -24,13 +24,27 @@ def default_policy_net_fn(env):
         obs_shape = env.observation_space.spaces[0].shape
     else:
         raise ValueError("Incompatible observation space: {}".format(env.observation_space))
-    # Assume CHW observation space
+
     if len(obs_shape) == 3:
-        model_config = {"type": "PolicyConvolutionalNetwork", "in_channels": int(obs_shape[0]),
-                        "in_height": int(obs_shape[1]),
-                        "in_width": int(obs_shape[2])}
+        if obs_shape[0] < obs_shape[1] and obs_shape[0] < obs_shape[1]:
+            # Assume CHW observation space
+            model_config = {"type": "ConvolutionalNetwork",
+                            "is_policy": True,
+                            "in_channels": int(obs_shape[0]),
+                            "in_height": int(obs_shape[1]),
+                            "in_width": int(obs_shape[2])}
+        elif obs_shape[2] < obs_shape[0] and obs_shape[2] < obs_shape[1]:
+            # Assume WHC observation space
+            model_config = {"type": "ConvolutionalNetwork",
+                            "is_policy": True,
+                            "transpose_obs": True,
+                            "in_channels": int(obs_shape[2]),
+                            "in_height": int(obs_shape[1]),
+                            "in_width": int(obs_shape[0])}
     elif len(obs_shape) == 2:
-        model_config = {"type": "PolicyConvolutionalNetwork", "in_channels": int(1),
+        model_config = {"type": "ConvolutionalNetwork",
+                        "is_policy": True,
+                        "in_channels": int(1),
                         "in_height": int(obs_shape[0]),
                         "in_width": int(obs_shape[1])}
     elif len(obs_shape) == 1:
@@ -75,60 +89,6 @@ def default_value_net_fn(env):
     model_config["out_size"] = 1
 
     return model_factory(**model_config)
-
-
-#
-# Classes
-#
-
-class PolicyConvolutionalNetwork(nn.Module):
-    def __init__(self,
-                 activation="RELU",
-                 in_channels=None,
-                 in_height=None,
-                 in_width=None,
-                 head_mlp_kwargs=None,
-                 out_size=None,
-                 **kwargs):
-        super().__init__()
-        self.activation = activation_factory(activation)
-        self.conv1 = nn.Conv2d(in_channels, 16, kernel_size=2, stride=2)
-        self.conv2 = nn.Conv2d(16, 32, kernel_size=2, stride=2)
-        self.conv3 = nn.Conv2d(32, 64, kernel_size=2, stride=2)
-        self.softmax = nn.Softmax(dim=-1)
-
-        # MLP Head
-        # Number of Linear input connections depends on output of conv2d layers
-        # and therefore the input image size, so compute it.
-        def conv2d_size_out(size, kernel_size=2, stride=2):
-            return (size - (kernel_size - 1) - 1) // stride + 1
-
-        convw = conv2d_size_out(conv2d_size_out(conv2d_size_out(in_width)))
-        convh = conv2d_size_out(conv2d_size_out(conv2d_size_out(in_height)))
-        assert convh > 0 and convw > 0
-        self.head_mlp_kwargs = head_mlp_kwargs or {}
-        self.head_mlp_kwargs["in_size"] = convw * convh * 64
-        self.head_mlp_kwargs["out_size"] = out_size
-        self.head = model_factory(**self.head_mlp_kwargs)
-
-    def forward(self, x):
-        """
-            Forward convolutional network
-        :param x: tensor of shape BCHW
-        """
-        x = self.activation((self.conv1(torch.squeeze(x))))
-        x = self.activation((self.conv2(x)))
-        x = self.activation((self.conv3(x)))
-        action_probs = self.softmax(self.head(x))
-        dist = Categorical(action_probs)
-        return dist
-
-    def action_scores(self, x):
-        x = self.activation((self.conv1(x)))
-        x = self.activation((self.conv2(x)))
-        x = self.activation((self.conv3(x)))
-        action_scores = self.head(x)
-        return action_scores
 
 
 class Net(nn.Module):
@@ -269,6 +229,8 @@ class ConvolutionalNetwork(nn.Module):
                  in_width=None,
                  head_mlp_kwargs=None,
                  out_size=None,
+                 is_policy=False,
+                 transpose_obs=False,
                  **kwargs):
         super().__init__()
         self.activation = activation_factory(activation)
@@ -288,16 +250,32 @@ class ConvolutionalNetwork(nn.Module):
         self.head_mlp_kwargs = head_mlp_kwargs or {}
         self.head_mlp_kwargs["in_size"] = convw * convh * 64
         self.head_mlp_kwargs["out_size"] = out_size
+        self.head_mlp_kwargs["is_policy"] = is_policy
         self.head = model_factory(**self.head_mlp_kwargs)
+
+        self.is_policy = is_policy
+        self.transpose_obs = transpose_obs
+
+    def convolutions(self, x):
+        x = x.float()
+        if len(x.shape) == 3:
+            x = x.unsqueeze(0)
+        if self.transpose_obs:
+            x = torch.transpose(x, -1, -3)
+        x = self.activation((self.conv1(x)))
+        x = self.activation((self.conv2(x)))
+        x = self.activation((self.conv3(x)))
+        return x
 
     def forward(self, x):
         """
             Forward convolutional network
         :param x: tensor of shape BCHW
         """
-        x = self.activation((self.conv1(x)))
-        x = self.activation((self.conv2(x)))
-        x = self.activation((self.conv3(x)))
-        return self.head(x)
+        return self.head(self.convolutions(x))
+
+    def action_scores(self, x):
+        return self.head.action_scores(self.convolutions(x))
+
 
 

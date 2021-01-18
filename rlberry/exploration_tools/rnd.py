@@ -13,12 +13,22 @@ from rlberry.utils.torch import choose_device
 
 def get_network(shape, embedding_dim):
     if len(shape) == 3:
-        H, W, C = shape
+        if shape[2] < shape[0] and shape[2] < shape[1]:
+            W, H, C = shape
+            transpose_obs = True
+        elif shape[0] < shape[1] and shape[0] < shape[2]:
+            C, H, W = shape
+            transpose_obs = False
+        else:
+            raise ValueError("Unknown image convention")
+
         return ConvolutionalNetwork(in_channels=C,
                                     in_width=W,
                                     in_height=H,
+                                    out_size=embedding_dim,
                                     activation="ELU",
-                                    out_size=embedding_dim)
+                                    transpose_obs=transpose_obs,
+                                    is_policy=False)
     elif len(shape) == 2:
         H, W = shape
         return ConvolutionalNetwork(in_channels=1,
