@@ -47,7 +47,6 @@ class Agent(ABC):
         if reseed_env:
             self.env.reseed()
 
-        #
         self.writer = None
 
     @abstractmethod

@@ -36,17 +36,13 @@ optimize hyperparameters, compare to baselines, create tricky environments etc e
 rlberry_ **is here to make your life easier** by doing all these things with a few lines of code,
 so that you can spend most of your time developing agents!
 
-In **a few minutes of reading**, you can learn how to:
+In **a few minutes of reading**, you will learn how to:
 
-
-.. toctree::
-   :maxdepth: 3
-
-   basics/installation
-   basics/create_agent
-   basics/evaluate_agent
-   basics/compare_agents
-   basics/experiment_setup
+1. :ref:`Install rlberry <installation>`;
+2. :ref:`Create an agent <basics/create_agent>`;
+3. :ref:`Evaluate an agent and optimize its hyperparameters <basics/evaluate_agent>`;
+4. :ref:`Compare different agents <basics/compare_agents>`;
+5. :ref:`Setup and run experiments using yaml config files <basics/experiment_setup>`.
 
 In addition, rlberry_: 
 
@@ -129,10 +125,18 @@ If you use rlberry in scientific publications, we would appreciate citations usi
    }
 
 
-Indices and tables
+Documentation Contents
+======================
+
+.. toctree::
+  :maxdepth: 2
+
+  installation
+  quickstart
+
+
+Indices and Tables
 ==================
 
 * :ref:`modindex`
 * :ref:`search`
-
-

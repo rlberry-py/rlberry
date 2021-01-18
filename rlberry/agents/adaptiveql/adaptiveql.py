@@ -21,7 +21,7 @@ class AdaptiveQLAgent(IncrementalAgent):
     env : gym.Env
         Environment with discrete states and actions.
     n_episodes : int
-        Number of episodes
+        Number of episodes.
     gamma : double, default: 1.0
         Discount factor in [0, 1].
     horizon : int

@@ -2,8 +2,9 @@
 
 .. _rlberry: https://github.com/rlberry-py/rlberry
 
-Install rlberry_
-#################
+============
+Installation
+============
 
 First, we suggest you to create a virtual environment using 
 `Miniconda <https://docs.conda.io/en/latest/miniconda.html>`_.
