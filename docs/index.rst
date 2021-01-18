@@ -39,7 +39,7 @@ so that you can spend most of your time developing agents!
 In **a few minutes of reading**, you will learn how to:
 
 1. :ref:`Install rlberry <installation>`;
-2. :ref:`Create an agent <basics/create_agent>`;
+2. :ref:`Create an agent <create_agent>`;
 3. :ref:`Evaluate an agent and optimize its hyperparameters <basics/evaluate_agent>`;
 4. :ref:`Compare different agents <basics/compare_agents>`;
 5. :ref:`Setup and run experiments using yaml config files <basics/experiment_setup>`.
@@ -49,23 +49,16 @@ In addition, rlberry_:
 * Provides **implementations of several RL agents** for you to use as a starting point or as baselines;
 * Provides a set of **benchmark environments**, very useful to debug and challenge your algorithms;
 * Handles all random seeds for you, ensuring **reproducibility** of your results;
-* Is **fully compatible with** `OpenAI gym <https://gym.openai.com/>`_.
+* Is **fully compatible with** several commonly used RL libraries like `OpenAI gym <https://gym.openai.com/>`_ and `Stable Baselines <https://stable-baselines.readthedocs.io/en/master/>`_.
 
 
-Compatibility with OpenAI Gym
-=============================
+Compatibility with Other Resources
+==================================
 
-If you want to use gym environments with rlberry, simply do the following:
+We provide examples to show you how to use rlberry_ with:
 
-.. code-block:: python
-
-   from rlberry.envs import gym_make  #  wraps gym.make
-
-   # for example, let's take CartPole
-   env = gym_make('CartPole-v1')
-
-This way, :code:`env` **behaves exactly the same as the gym environment**, we simply replace the seeding
-function by :meth:`env.reseed`, which ensures unified seeding and reproducibility when using rlberry.
+- :ref:`OpenAI Gym <gym>`;
+- :ref:`Stable Baselines <stable_baselines>`.
 
 
 Seeding & Reproducibility
@@ -108,14 +101,6 @@ It works as follows:
    ouputs with rlberry_ by calling :func:`set_global_seed` available in :mod:`rlberry.seeding`.
 
 
-Other Resources
-===============
-
-.. toctree::
-   :maxdepth: 3
-
-   other/using_stable_baselines
-
 Citing rlberry_
 ===============
 
@@ -141,6 +126,8 @@ Documentation Contents
 
   installation
   quickstart
+  other
+  source/modules
 
 
 Indices and Tables

@@ -1,9 +1,11 @@
 .. _rlberry: https://github.com/rlberry-py/rlberry
 .. _`Stable Baselines`: https://github.com/DLR-RM/stable-baselines3
 
+.. _stable_baselines:
+
 
 Using rlberry_ and `Stable Baselines`_
-#######################################
+======================================
 
 `Stable Baselines`_ provides implementations of several Deep RL agents.
 It is very easy to train their agents with rlberry_, which we can use to

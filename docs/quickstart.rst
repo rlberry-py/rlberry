@@ -2,7 +2,7 @@
 
 .. _rlberry: https://github.com/rlberry-py/rlberry
 
-===============
+
 Getting Started
 ===============
 
