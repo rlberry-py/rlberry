@@ -67,7 +67,7 @@ class AgentStats:
         Number of jobs to train the agents in parallel using joblib.
     output_dir : str
         Directory where to store data by default.
-    joblib_backend: str, {'threading', 'loky' or 'multiprocessing'}, default: 'threading'
+    joblib_backend: str, {'threading', 'loky' or 'multiprocessing'}, default: 'multiprocessing'
         Backend for joblib Parallel.
     thread_logging_level : str, default: 'INFO'
         Logging level in each of the threads used to fit agents.
@@ -85,7 +85,7 @@ class AgentStats:
                  n_fit=4,
                  n_jobs=4,
                  output_dir=None,
-                 joblib_backend='threading',
+                 joblib_backend='multiprocessing',
                  thread_logging_level='INFO'):
         # agent_class should only be None when the constructor is called
         # by the class method AgentStats.load(), since the agent class
