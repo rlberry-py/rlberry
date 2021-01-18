@@ -3,7 +3,7 @@ from stable_baselines3 import A2C as A2CStableBaselines
 from stable_baselines3.common.cmd_util import make_atari_env
 from stable_baselines3.common.vec_env import VecFrameStack
 from rlberry.agents import Agent
-from rlberry.stats import AgentStats, MultipleStats, agent_stats, compare_policies
+from rlberry.stats import AgentStats, MultipleStats
 
 import rlberry.seeding as seeding
 
@@ -120,3 +120,5 @@ mstats = MultipleStats()
 mstats.append(stats)
 mstats.append(stats_alternative)
 mstats.run()
+
+mstats.save()

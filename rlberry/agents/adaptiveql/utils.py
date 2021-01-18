@@ -14,7 +14,7 @@ def bounds_contains(bounds, x):
     bounds : numpy.ndarray
         Array of shape (d, 2).
         Bounds of each dimension [ [x0, y0], [x1, y1], ..., [xd, yd] ],
-        representing the cartesian product in R^d:
+        representing the following cartesian product in R^d:
         [x0, y0] X [x1, y1] X ... X [xd, yd].
     x : numpy.ndarray
         Array of shape (d,)
@@ -68,8 +68,11 @@ class TreeNode:
     """
     Node representing an l-infinity ball in R^d, that points
     to sub-balls (node children).
+    Stores a value, a number of visits, and (possibly) rewards and transition probability
+    to a list of other nodes.
 
-    Stores a value and a number of visits.
+    This class is used to represent (and store data about)
+    a tuple (state, action, stage) = (x, a, h).
 
     Parameters
     ----------
@@ -93,6 +96,18 @@ class TreeNode:
         self.n_visits = n_visits
         self.children = []
 
+        #
+        # For AdaMB
+        #
+
+        # Reward estimate
+        self.reward_est = 0.0
+        # Dictionary node_id -> transition_prob
+        # node_id = id(node), where id() is a built-in python function
+        self.transition_probs = {}
+        # Dictionary node_id -> node
+        self.transition_nodes = {}
+
     def is_leaf(self):
         return len(self.children) == 0
 
@@ -109,10 +124,11 @@ class TreeNode:
             )
 
 
-class FunctionTreePartition:
+class TreePartition:
     """
-    Partition-based representation of a function
-    whose domain is an l-infinity ball in R^d.
+    Tree-based partition of an l-infinity ball in R^d.
+
+    Each node is of type TreeNode.
 
     Parameters
     ----------
@@ -169,7 +185,7 @@ class FunctionTreePartition:
         Shows the hierarchical partition.
         """
         if root:
-            assert self.dim == 2, "FunctionTreePartition plot only available for 2-dimensional spaces."
+            assert self.dim == 2, "TreePartition plot only available for 2-dimensional spaces."
             node = self.root
             plt.figure(fignum)
 
@@ -202,8 +218,8 @@ class QFunctionTreePartition:
         for hh in range(horizon):
             self.trees.append({})
             for aa in range(self.n_actions):
-                self.trees[hh][aa] = FunctionTreePartition(observation_space,
-                                                           initial_value=horizon-hh)
+                self.trees[hh][aa] = TreePartition(observation_space,
+                                                   initial_value=horizon-hh)
 
         self.dmax = self.trees[0][0].dmax
 

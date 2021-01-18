@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from copy import deepcopy
 import logging
+from rlberry.seeding import seeding
 
 
 logger = logging.getLogger(__name__)
@@ -53,9 +54,8 @@ class Agent(ABC):
                 logger.warning("[Agent] Not possible to deepcopy env: " + str(ex))
 
         if reseed_env:
-            try:
-                self.env.reseed()
-            except AttributeError as ex:
+            reseeded = seeding.safe_reseed(self.env)
+            if not reseeded:
                 logger.warning("[Agent] Not possible to reseed env, reseed() not available: " + str(ex))
 
         self.writer = None
