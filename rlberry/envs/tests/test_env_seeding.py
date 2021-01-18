@@ -36,6 +36,9 @@ def get_env_trajectory(env, horizon):
 
 
 def compare_trajectories(traj1, traj2):
+    """
+    returns true if trajectories are equal
+    """
     for ss1, ss2 in zip(traj1, traj2):
         if not np.array_equal(ss1, ss2):
             return False
@@ -54,13 +57,21 @@ def test_env_seeding(ModelClass):
     seeding.set_global_seed(123)
     env3 = ModelClass()
 
+    seeding.set_global_seed(123)
+    env4 = ModelClass()
+    seeding.safe_reseed(env4)
+
     if deepcopy(env1).is_online():
         traj1 = get_env_trajectory(env1, 500)
         traj2 = get_env_trajectory(env2, 500)
         traj3 = get_env_trajectory(env3, 500)
+        traj4 = get_env_trajectory(env4, 500)
 
         assert not compare_trajectories(traj1, traj2)
         assert compare_trajectories(traj1, traj3)
+        assert not compare_trajectories(traj3, traj4)
+
+
 
 
 @pytest.mark.parametrize("ModelClass", classes)

@@ -56,7 +56,7 @@ class Agent(ABC):
         if reseed_env:
             reseeded = seeding.safe_reseed(self.env)
             if not reseeded:
-                logger.warning("[Agent] Not possible to reseed env, reseed() not available: " + str(ex))
+                logger.warning("[Agent] Not possible to reseed env, seed() and reseed() are not available.")
 
         self.writer = None
 
