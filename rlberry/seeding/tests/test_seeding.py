@@ -13,7 +13,7 @@ def test_seeding():
     assert seeding._GLOBAL_SEED_SEQ.entropy == seed
 
     _ = seeding.get_rng()
-    assert seeding._GLOBAL_SEED_SEQ.n_children_spawned == 1
+    assert seeding._GLOBAL_SEED_SEQ.n_children_spawned == 2  # counting the global rng generated automatically
 
     # check that reimports do not cause problems
     import rlberry
@@ -22,7 +22,7 @@ def test_seeding():
     #
 
     _ = seeding.get_rng()
-    assert seeding._GLOBAL_SEED_SEQ.n_children_spawned == 2
+    assert seeding._GLOBAL_SEED_SEQ.n_children_spawned == 3
 
 
 def test_random_numbers():

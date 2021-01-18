@@ -4,6 +4,9 @@ from numpy.random import SeedSequence, default_rng
 _GLOBAL_SEED = None
 _GLOBAL_SEED_SEQ = None
 
+# Global rng
+_GLOBAL_RNG = None
+
 
 #
 # Seeding other libraries
@@ -36,9 +39,10 @@ def set_global_seed(seed=42):
         Check (torch seeding):
         https://github.com/pytorch/pytorch/issues/7068#issuecomment-487907668
     """
-    global _GLOBAL_SEED, _GLOBAL_SEED_SEQ
+    global _GLOBAL_SEED, _GLOBAL_SEED_SEQ, _GLOBAL_RNG
     _GLOBAL_SEED = seed
     _GLOBAL_SEED_SEQ = SeedSequence(_GLOBAL_SEED)
+    _GLOBAL_RNG = get_rng()
 
     # get state (for seeding)
     # rng_libs = get_rng()
@@ -47,6 +51,36 @@ def set_global_seed(seed=42):
     # seed torch
     if _TORCH_INSTALLED:
         torch.manual_seed(seed)
+
+
+def generate_uniform_seed():
+    """
+    Return a seed value using a global random number generator.
+    """
+    return _GLOBAL_RNG.integers(2**32).item()
+
+
+def safe_reseed(object):
+    """
+    Calls object.reseed() method if available;
+    If a object.seed() method is available, call object.seed(seed_val), where seed_val is returned by
+    generate_uniform_seed().
+    Otherwise, does nothing.
+
+    Returns
+    -------
+    True if reseeding was done, False otherwise.
+    """
+    try:
+        object.reseed()
+        return True
+    except AttributeError:
+        seed_val = generate_uniform_seed()
+        try:
+            object.seed(seed_val)
+            return True
+        except AttributeError:
+            return False
 
 
 def get_rng():
