@@ -26,6 +26,8 @@ def test_mock_args(monkeypatch):
         assert agent_stats.init_kwargs['bonus_scale_factor'] == 1.0
         assert agent_stats.init_kwargs['reward_free'] is True
 
+        assert agent_stats.eval_horizon == 51
+
         assert agent_stats.train_env.reward_free is False
         assert agent_stats.train_env.array_observation is True
 

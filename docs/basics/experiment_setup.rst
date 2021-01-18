@@ -20,15 +20,18 @@ This can be done very succinctly as in the example below:
 
 .. code-block:: yaml
 
-    description: 'RSUCBVI in NRoom Environment'
+    description: 'RSUCBVI in NRoom'
     seed: 123
+    train_env: 'examples/demo_experiment/room.yaml'
+    eval_env: 'examples/demo_experiment/room.yaml'
+    global_init_kwargs:
     n_episodes: 100
     horizon: 50
-    train_env: 'room.yaml'
-    eval_env: 'room.yaml'
     agents:
-        - 'rsucbvi.yaml'
-        - 'rsucbvi_alternative.yaml'
+    - 'examples/demo_experiment/rsucbvi.yaml'
+    - 'examples/demo_experiment/rsucbvi_alternative.yaml'
+
+
 
 
 **room.yaml**
@@ -45,20 +48,21 @@ This can be done very succinctly as in the example below:
 .. code-block:: yaml
 
     agent_class: 'rlberry.agents.kernel_based.rs_ucbvi.RSUCBVIAgent'
-    gamma: 1.0
-    lp_metric: 2
-    min_dist: 0.0
-    max_repr: 800
-    bonus_scale_factor: 1.0
-    reward_free: True
-
+    init_kwargs:
+        gamma: 1.0
+        lp_metric: 2
+        min_dist: 0.0
+        max_repr: 800
+        bonus_scale_factor: 1.0
+        reward_free: True
 
 **rsucbvi_alternative.yaml**
 
 .. code-block:: yaml
 
-    base_config: 'rsucbvi.yaml'
-    gamma: 0.9
+    base_config: 'examples/demo_experiment/rsucbvi.yaml'
+    init_kwargs:
+        gamma: 0.9
 
 
 

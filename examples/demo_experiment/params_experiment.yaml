@@ -1,9 +1,10 @@
 description: 'RSUCBVI in NRoom'
 seed: 123
-n_episodes: 100
-horizon: 50
 train_env: 'examples/demo_experiment/room.yaml'
 eval_env: 'examples/demo_experiment/room.yaml'
+global_init_kwargs:
+  n_episodes: 100
+  horizon: 50
 agents:
   - 'examples/demo_experiment/rsucbvi.yaml'
   - 'examples/demo_experiment/rsucbvi_alternative.yaml'
