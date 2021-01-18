@@ -1,6 +1,6 @@
-.. _create_agent:
-
 .. _rlberry: https://github.com/rlberry-py/rlberry
+
+.. _create_agent:
 
 
 Create an agent

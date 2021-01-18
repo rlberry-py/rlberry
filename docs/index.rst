@@ -36,13 +36,14 @@ optimize hyperparameters, compare to baselines, create tricky environments etc e
 rlberry_ **is here to make your life easier** by doing all these things with a few lines of code,
 so that you can spend most of your time developing agents!
 
+
 In **a few minutes of reading**, you will learn how to:
 
-1. :ref:`Install rlberry <installation>`;
-2. :ref:`Create an agent <create_agent>`;
-3. :ref:`Evaluate an agent and optimize its hyperparameters <basics/evaluate_agent>`;
-4. :ref:`Compare different agents <basics/compare_agents>`;
-5. :ref:`Setup and run experiments using yaml config files <basics/experiment_setup>`.
+- :ref:`Install rlberry <installation>`;
+- :ref:`Create an agent <create_agent>`;
+- :ref:`Evaluate an agent and optimize its hyperparameters <evaluate_agent>`;
+- :ref:`Compare different agents <compare_agents>`;
+- :ref:`Setup and run experiments using yaml config files <experiment_setup>`.
 
 In addition, rlberry_: 
 
@@ -52,8 +53,8 @@ In addition, rlberry_:
 * Is **fully compatible with** several commonly used RL libraries like `OpenAI gym <https://gym.openai.com/>`_ and `Stable Baselines <https://stable-baselines.readthedocs.io/en/master/>`_.
 
 
-Compatibility with Other Resources
-==================================
+Compatibility with External Libraries
+=====================================
 
 We provide examples to show you how to use rlberry_ with:
 

@@ -1,7 +1,10 @@
 .. _rlberry: https://github.com/rlberry-py/rlberry
 
+.. _compare_agents:
+
+
 Compare different agents
-#########################
+========================
 
 
 Two or more agents can be compared using the classes 

@@ -1,6 +1,6 @@
-.. _installation:
-
 .. _rlberry: https://github.com/rlberry-py/rlberry
+
+.. _installation:
 
 
 Installation
