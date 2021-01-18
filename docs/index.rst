@@ -132,7 +132,6 @@ If you use rlberry in scientific publications, we would appreciate citations usi
 Indices and tables
 ==================
 
-* :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
 

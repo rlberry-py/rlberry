@@ -16,7 +16,7 @@ class Agent(ABC):
 
 
     .. note::
-        Classes that implement this interface should send **kwargs to :code:`Agent.__init__()`
+        Classes that implement this interface should send ``**kwargs`` to :code:`Agent.__init__()`
 
 
     Attributes
