@@ -108,6 +108,14 @@ It works as follows:
    ouputs with rlberry_ by calling :func:`set_global_seed` available in :mod:`rlberry.seeding`.
 
 
+Other Resources
+===============
+
+.. toctree::
+   :maxdepth: 3
+
+   other/using_stable_baselines
+
 Citing rlberry_
 ===============
 
