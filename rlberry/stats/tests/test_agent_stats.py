@@ -25,6 +25,8 @@ class DummyAgent(IncrementalAgent):
         info = {}
         info["episode_rewards"] = np.arange(self.n_episodes)
         self.fitted = True
+        self.env.reset()
+        self.env.step(self.env.action_space.sample())
         return info
 
     def partial_fit(self, fraction, **kwargs):
@@ -150,24 +152,19 @@ def test_agent_stats_2():
     loaded_stats.optimize_hyperparams()
 
 
-def test_agent_stats_partial_fit():
+def test_agent_stats_partial_fit_and_tuple_env():
     # Define train and evaluation envs
-    train_env = GridWorld()
-    eval_env = GridWorld()
+    train_env = (GridWorld, None)  # tuple (constructor, kwargs) must also work in AgentStats
 
     # Parameters
     params = {"n_episodes": 500}
     horizon = 20
 
-    # Check DummyAgent
-    agent = DummyAgent(train_env, **params)
-    agent.fit()
-    agent.policy(None)
-
     # Run AgentStats
     stats = AgentStats(DummyAgent, train_env,
                        init_kwargs=params, n_fit=4, eval_horizon=10)
-
+    stats2 = AgentStats(DummyAgent, train_env,
+                        init_kwargs=params, n_fit=4, eval_horizon=10)
     # set some writers
     stats.set_writer(0, None)
     stats.set_writer(3, None)
@@ -182,9 +179,12 @@ def test_agent_stats_partial_fit():
         for agent in stats.fitted_agents:
             assert agent.fraction_fitted == 1.0
 
+    # Run fit
+    stats2.fit()
+
     # learning curves
     plot_episode_rewards([stats], cumulative=True, show=False)
 
     # compare final policies
-    compare_policies([stats], eval_env,
+    compare_policies([stats],
                      eval_horizon=horizon, n_sim=10, show=False)

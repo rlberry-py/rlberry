@@ -12,6 +12,7 @@ If possible, pickle is prefered (since it is faster).
 from copy import deepcopy
 from datetime import datetime
 from pathlib import Path
+from rlberry.seeding.seeding import safe_reseed
 
 from joblib import Parallel, delayed
 import json
@@ -48,7 +49,7 @@ class AgentStats:
     ----------
     agent_class
         Class of the agent.
-    train_env : Model
+    train_env : Model or tuple (constructor, kwargs)
         Enviroment used to initialize/train the agent.
     eval_env : Model
         Environment used to evaluate the agent. If None, set to a
@@ -104,11 +105,16 @@ class AgentStats:
             self.agent_class = agent_class
             self.train_env = train_env
             if eval_env is None:
-                self.eval_env = deepcopy(train_env)
-                self.eval_env.reseed()
-            else:
+                eval_env = train_env
+            try:
                 self.eval_env = deepcopy(eval_env)
-                self.eval_env.reseed()
+                seeding.safe_reseed(self.eval_env)
+            except Exception:
+                logger.warning('[AgentStats]: Not possible to deepcopy or reseed eval_env')
+                self.eval_env = eval_env
+
+            # preprocess eval_env, in case it is a tuple
+            self.eval_env = _preprocess_env(self.eval_env)
 
             # check kwargs
             init_kwargs = init_kwargs or {}
@@ -140,7 +146,7 @@ class AgentStats:
             self.train_env_set = []
             for _ in range(n_fit):
                 _env = deepcopy(train_env)
-                _env.reseed()
+                seeding.safe_reseed(_env)
                 self.train_env_set.append(_env)
 
             # Create list of writers for each agent that will be trained
@@ -247,6 +253,10 @@ class AgentStats:
             self.fit_kwargs_list = []
             for idx, train_env in enumerate(self.train_env_set):
                 init_kwargs = deepcopy(self.init_kwargs)
+
+                # preprocess train_env
+                train_env = _preprocess_env(train_env)
+
                 # create agent instance
                 agent = self.agent_class(train_env, copy_env=False,
                                          reseed_env=False, **init_kwargs)
@@ -610,9 +620,30 @@ class AgentStats:
 # Aux functions
 #
 
+def _preprocess_env(env):
+    """
+    If env is a tuple (constructor, kwargs), creates an instance
+    and reseeds it.
+    Otherwise, does nothing.
+    """
+    if isinstance(env, tuple):
+        constructor, kwargs = env
+        kwargs = kwargs or {}
+        env = constructor(**kwargs)
+        reseeded = safe_reseed(env)
+        assert reseeded
+    return env
+
+
 def _fit_worker(args):
+    """
+    Create and fit an agent instance
+    """
     agent_class, train_env, init_kwargs, \
         fit_kwargs, writer, thread_logging_level, thread_id = args
+    # preprocess train_env
+    train_env = _preprocess_env(train_env)
+
     # logging level in thread
     configure_logging(thread_logging_level)
     # create agent
