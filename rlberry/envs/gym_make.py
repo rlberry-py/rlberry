@@ -2,12 +2,19 @@ import gym
 from rlberry.envs.basewrapper import Wrapper
 
 
-def gym_make(env_name):
+def gym_make(env_name, **kwargs):
     """
     Same as gym.make, but wraps the environment
     to ensure unified seeding with rlberry.
     """
-    return Wrapper(gym.make(env_name))
+    env = gym.make(env_name)
+    try:
+        env.configure(kwargs)
+        env.reset()
+    except AttributeError:
+        pass
+    return Wrapper(env)
+
 
 def atari_make(env_name, **kwargs):
     from stable_baselines3.common.env_util import make_atari_env
