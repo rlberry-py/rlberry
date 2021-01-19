@@ -37,9 +37,11 @@ def load_experiment_results(output_dir, experiment_name):
     Returns
     -------
     output_data: dict
-        dictionary such that :code:`output_data[agent_name] = (agent_stats, dataframes)`,
-        a tuple containing an AgentStats instance and a dict of pandas data frames
-        from the last run of an experiment.
+        dictionary such that
+
+        output_data[agent_name]['stats'] = fitted AgentStats
+        output_data[agent_name]['dataframes'] = dict of pandas data frames from the last run of the experiment
+        output_data[agent_name]['data_dir'] = directory from which the results were loaded
     """
     results_dir = Path(output_dir) / Path(experiment_name).stem
     # Subdirectories with data for each agent
@@ -53,20 +55,26 @@ def load_experiment_results(output_dir, experiment_name):
     # Load data from each subdir
     output_data = {}
     for agent_name in data_dirs:
+        output_data[agent_name] = {}
+
+        # store data_dir
+        output_data[agent_name]['data_dir'] = data_dirs[agent_name]
+
+        # store AgentStats
+        output_data[agent_name]['stats'] = None
         fname = data_dirs[agent_name] / 'stats.pickle'
         try:
-            stats = AgentStats.load(fname)
+            output_data[agent_name]['stats'] = AgentStats.load(fname)
         except Exception:
             pass
-
         logger.info("... loaded " + str(fname))
 
+        # store data frames
         dataframes = {}
         csv_files = [f for f in data_dirs[agent_name].iterdir() if f.suffix == '.csv']
         for ff in csv_files:
             dataframes[ff.stem] = pd.read_csv(ff)
             logger.info("... loaded " + str(ff))
-
-        output_data[agent_name] = (stats, dataframes)
+        output_data[agent_name]['dataframes'] = dataframes
 
     return output_data

@@ -30,3 +30,4 @@ del mstats
 from rlberry.experiment import load_experiment_results
 
 data = load_experiment_results('results', 'params_experiment')
+print(data)
