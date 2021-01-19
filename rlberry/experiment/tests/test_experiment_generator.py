@@ -28,8 +28,9 @@ def test_mock_args(monkeypatch):
 
         assert agent_stats.eval_horizon == 51
 
-        assert agent_stats.train_env.reward_free is False
-        assert agent_stats.train_env.array_observation is True
+        train_env = agent_stats.train_env[0](**agent_stats.train_env[1])
+        assert train_env.reward_free is False
+        assert train_env.array_observation is True
 
         if agent_stats.agent_name == 'rsucbvi':
             assert agent_stats.init_kwargs['gamma'] == 1.0
