@@ -95,9 +95,9 @@ class GridWorld(RenderInterface2D, FiniteMDP):
 
         # Build
         self._build()
-        init_state_coord = self.coord2index[start_coord]
+        init_state_idx = self.coord2index[start_coord]
         FiniteMDP.__init__(self, self.R, self.P,
-                           initial_state_distribution=init_state_coord)
+                           initial_state_distribution=init_state_idx)
         RenderInterface2D.__init__(self)
         self.reset()
         self.reward_range = (self.R.min(), self.R.max())
@@ -110,11 +110,6 @@ class GridWorld(RenderInterface2D, FiniteMDP):
     def is_terminal(self, state):
         state_coord = self.index2coord[state]
         return state_coord in self.terminal_states
-
-    def reset(self):
-        state = self.coord2index[self.start_coord]
-        self.state = state
-        return state
 
     def reward_fn(self, state, action, next_state):
         row, col = self.index2coord[state]

@@ -161,18 +161,24 @@ def test_apple_gold(reward_free, array_observation):
         assert isinstance(next_state, np.ndarray)
 
 
-@pytest.mark.parametrize("reward_free, array_observation",
+@pytest.mark.parametrize("reward_free, array_observation, initial_state_distribution", 
                          [
-                             (False, False),
-                             (False, True),
-                             (True, False),
-                             (True, True),
+                             (False, False, 'center'),
+                             (False, True, 'center'),
+                             (True, False, 'center'),
+                             (True, True, 'center'),
+                             (True, False, 'uniform'),
                          ])
-def test_n_room(reward_free, array_observation):
-    env = NRoom(reward_free=reward_free, array_observation=array_observation)
+def test_n_room(reward_free, array_observation, initial_state_distribution):
+    env = NRoom(reward_free=reward_free,
+                array_observation=array_observation,
+                initial_state_distribution=initial_state_distribution)
 
     initial_state = env.reset()
     next_state, reward, _, _ = env.step(1)
+
+    if initial_state_distribution == 'uniform':
+        assert env.initial_state_distribution[0] == 1.0 / env.observation_space.n
 
     assert env.observation_space.contains(initial_state)
     assert env.observation_space.contains(next_state)

@@ -78,16 +78,19 @@ class FiniteMDP(Model):
                 self.P[ss, :, :] = 0.0
                 self.P[ss, :, ss] = 1.0
 
-    def _check(self):
-        """
-        Check consistency of the MDP
-        """
-        # Check initial_state_distribution
+    def _check_init_distribution(self):
         if isinstance(self.initial_state_distribution, np.ndarray):
             assert abs(self.initial_state_distribution.sum() - 1.0) < 1e-15
         else:
             assert self.initial_state_distribution >= 0
             assert self.initial_state_distribution < self.S
+
+    def _check(self):
+        """
+        Check consistency of the MDP
+        """
+        # Check initial_state_distribution
+        self._check_init_distribution()
 
         # Check that P[s,a, :] is a probability distribution
         for s in self._states:
@@ -99,6 +102,17 @@ class FiniteMDP(Model):
         S2, A2, S3 = self.P.shape
         assert S1 == S2 == S3
         assert A1 == A2
+
+    def set_initial_state_distribution(self, distribution):
+        """
+        Parameters
+        ----------
+        distribution : numpy.ndarray or int
+            array of size (S,) containing the initial state distribution
+            or an integer representing the initial/default state
+        """
+        self.initial_state_distribution = distribution
+        self._check_init_distribution()
 
     def sample(self, state, action):
         """

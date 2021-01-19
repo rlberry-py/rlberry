@@ -44,7 +44,9 @@ class NRoom(GridWorld):
         Sucess probability of an action. A failure is going to the wrong direction.
     remove_walls : bool, default: False
         If True, remove walls. Useful for debug.
-
+    initial_state_distribution: {'center', 'uniform'}
+        If 'center', always start at the center.
+        If 'uniform', start anywhere with uniform probability.
 
     Notes
     -----
@@ -60,9 +62,12 @@ class NRoom(GridWorld):
                  array_observation=False,
                  room_size=5,
                  success_probability=0.95,
-                 remove_walls=False):
+                 remove_walls=False,
+                 initial_state_distribution='center'):
 
         assert nrooms > 0, "nrooms must be > 0"
+        assert initial_state_distribution in ('center', 'uniform')
+
         self.reward_free = reward_free
         self.array_observation = array_observation
         self.nrooms = nrooms
@@ -167,6 +172,11 @@ class NRoom(GridWorld):
                            walls=walls,
                            default_reward=0.0)
 
+        # Check initial distribution
+        if initial_state_distribution == 'uniform':
+            distr = np.ones(self.observation_space.n) / self.observation_space.n
+            self.set_initial_state_distribution(distr)
+
         # spaces
         if self.array_observation:
             self.discrete_observation_space = self.observation_space
@@ -192,7 +202,7 @@ class NRoom(GridWorld):
         return np.array([xx, yy])
 
     def reset(self):
-        self.state = self.coord2index[self.start_coord]
+        self.state = GridWorld.reset(self)
         state_to_return = self.state
         if self.array_observation:
             state_to_return = self._convert_index_to_float_coord(self.state)
