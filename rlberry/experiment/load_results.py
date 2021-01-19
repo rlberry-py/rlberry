@@ -39,11 +39,21 @@ def load_experiment_results(output_dir, experiment_name):
     output_data: dict
         dictionary such that
 
-        output_data[agent_name]['stats'] = fitted AgentStats
-        output_data[agent_name]['dataframes'] = dict of pandas data frames from the last run of the experiment
-        output_data[agent_name]['data_dir'] = directory from which the results were loaded
+        output_data['experiment_dir'] = path to experiment directory (output_dir/experiment_name)
+        output_data['agent_list'] = list containing the names of the agents in the experiment
+        output_data['stats'][agent_name] = fitted AgentStats for agent_name
+        output_data['dataframes'][agent_name] = dict of pandas data frames from the last run of the experiment
+        output_data['data_dir'][agent_name] = directory from which the results were loaded
     """
+    output_data = {}
+    output_data['agent_list'] = []
+    output_data['stats'] = {}
+    output_data['dataframes'] = {}
+    output_data['data_dir'] = {}
+
     results_dir = Path(output_dir) / Path(experiment_name).stem
+    output_data['experiment_dir'] = results_dir
+
     # Subdirectories with data for each agent
     subdirs = [f for f in results_dir.iterdir() if f.is_dir()]
 
@@ -53,18 +63,17 @@ def load_experiment_results(output_dir, experiment_name):
         data_dirs[dd.name] = _get_most_recent_path([f for f in dd.iterdir() if f.is_dir()])
 
     # Load data from each subdir
-    output_data = {}
     for agent_name in data_dirs:
-        output_data[agent_name] = {}
+        output_data['agent_list'].append(agent_name)
 
         # store data_dir
-        output_data[agent_name]['data_dir'] = data_dirs[agent_name]
+        output_data['data_dir'][agent_name] = data_dirs[agent_name]
 
         # store AgentStats
-        output_data[agent_name]['stats'] = None
+        output_data['stats'][agent_name] = None
         fname = data_dirs[agent_name] / 'stats.pickle'
         try:
-            output_data[agent_name]['stats'] = AgentStats.load(fname)
+            output_data['stats'][agent_name] = AgentStats.load(fname)
         except Exception:
             pass
         logger.info("... loaded " + str(fname))
@@ -75,6 +84,6 @@ def load_experiment_results(output_dir, experiment_name):
         for ff in csv_files:
             dataframes[ff.stem] = pd.read_csv(ff)
             logger.info("... loaded " + str(ff))
-        output_data[agent_name]['dataframes'] = dataframes
+        output_data['dataframes'][agent_name] = dataframes
 
     return output_data
