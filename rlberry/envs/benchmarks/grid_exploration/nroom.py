@@ -47,7 +47,8 @@ class NRoom(GridWorld):
     initial_state_distribution: {'center', 'uniform'}
         If 'center', always start at the center.
         If 'uniform', start anywhere with uniform probability.
-
+    include_traps: bool, default: False
+        If true, each room will have a terminal state (a "trap").
     Notes
     -----
     The function env.sample() does not handle conversions to array states
@@ -63,7 +64,8 @@ class NRoom(GridWorld):
                  room_size=5,
                  success_probability=0.95,
                  remove_walls=False,
-                 initial_state_distribution='center'):
+                 initial_state_distribution='center',
+                 include_traps=False):
 
         assert nrooms > 0, "nrooms must be > 0"
         assert initial_state_distribution in ('center', 'uniform')
@@ -103,6 +105,7 @@ class NRoom(GridWorld):
         # process each room
         start_coord = None
         terminal_state = None
+        self.traps = []
         count = 0
         for room_r in range(self.room_nrows):
             if room_r % 2 == 0:
@@ -137,16 +140,23 @@ class NRoom(GridWorld):
                 # start coord
                 if count == nrooms // 2:
                     start_coord = self._convert_room_coord_to_global(
-                                                                room_r, room_c,
-                                                                self.room_size//2, self.room_size//2)
+                                                room_r, room_c,
+                                                self.room_size//2, self.room_size//2)
                 # terminal state
                 if count == nrooms - 1:
                     terminal_state = self._convert_room_coord_to_global(
-                                                                room_r, room_c,
-                                                                self.room_size//2, self.room_size//2)
+                                                room_r, room_c,
+                                                self.room_size//2, self.room_size//2)
+                # trap
+                if include_traps:
+                    self.traps.append(
+                        self._convert_room_coord_to_global(
+                                room_r, room_c,
+                                self.room_size//2+1, self.room_size//2+1)
+                    )
                 count += 1
 
-        terminal_states = (terminal_state,)
+        terminal_states = (terminal_state,) + tuple(self.traps)
 
         if self.reward_free:
             reward_at = {}
@@ -230,6 +240,16 @@ class NRoom(GridWorld):
         Returne a scene (list of shapes) representing the background
         """
         bg = Scene()
+
+        # traps
+        for (y, x) in self.traps:
+            shape = GeometricPrimitive("POLYGON")
+            shape.set_color((0.5, 0.0, 0.0))
+            shape.add_vertex((x, y))
+            shape.add_vertex((x + 1, y))
+            shape.add_vertex((x + 1, y + 1))
+            shape.add_vertex((x, y + 1))
+            bg.add_shape(shape)
 
         # walls
         for wall in self.walls:
