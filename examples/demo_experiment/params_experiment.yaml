@@ -8,4 +8,3 @@ global_init_kwargs:
 agents:
   - 'examples/demo_experiment/rsucbvi.yaml'
   - 'examples/demo_experiment/rsucbvi_alternative.yaml'
-

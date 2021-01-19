@@ -1,8 +1,9 @@
 # videos
 *.mp4
 
-# pickled objects
+# pickled objects and csv
 *.pickle
+*.csv
 
 # test coverage folder 
 cov_html/*

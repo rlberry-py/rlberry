@@ -89,16 +89,17 @@ def env_constructor(n_envs=4):
 # Traning several agents and comparing different hyperparams
 #
 
+
 stats = AgentStats(
     A2CAgent,
     (env_constructor, None),
     eval_horizon=200,
     agent_name='A2C baseline',
-    init_kwargs={'policy': 'MlpPolicy', 'verbose': 1},
-    fit_kwargs={'total_timesteps': 100},
+    init_kwargs={'policy': 'CnnPolicy', 'verbose': 10},
+    fit_kwargs={'total_timesteps': 1000},
     policy_kwargs={'deterministic': True},
     n_fit=4,
-    n_jobs=1,
+    n_jobs=4,
     joblib_backend='threading')
 
 
@@ -107,8 +108,8 @@ stats_alternative = AgentStats(
     (env_constructor, None),
     eval_horizon=200,
     agent_name='A2C high learning rate',
-    init_kwargs={'policy': 'MlpPolicy', 'verbose': 1, 'learning_rate': 0.01},
-    fit_kwargs={'total_timesteps': 100},
+    init_kwargs={'policy': 'CnnPolicy', 'verbose': 10, 'learning_rate': 0.01},
+    fit_kwargs={'total_timesteps': 1000},
     policy_kwargs={'deterministic': True},
     n_fit=4,
     n_jobs=4,
@@ -120,5 +121,4 @@ mstats = MultipleStats()
 mstats.append(stats)
 mstats.append(stats_alternative)
 mstats.run()
-
 mstats.save()

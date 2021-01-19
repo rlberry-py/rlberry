@@ -39,11 +39,14 @@ mstats.append(
     AgentStats(RSUCBVIAgent, env, init_kwargs=params['rsucbvi'], n_fit=2)
 )
 
-mstats.run(save=True)
-# agent = mstats.allstats[0].fit()
+mstats.run(save=False)
 
 plot_episode_rewards(mstats.allstats, cumulative=True)
 
-agent = mstats.allstats[0].fitted_agents[0]
-agent.Qtree.plot(0, 25)
+for stats in mstats.allstats:
+    agent = stats.fitted_agents[0]
+    try:
+        agent.Qtree.plot(0, 25)
+    except AttributeError:
+        pass
 plt.show()

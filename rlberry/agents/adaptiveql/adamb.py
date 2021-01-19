@@ -2,8 +2,8 @@ import logging
 import gym.spaces as spaces
 import numpy as np
 from rlberry.agents import IncrementalAgent
+from rlberry.agents.adaptiveql.tree import MDPTreePartition
 from rlberry.utils.writers import PeriodicWriter
-from rlberry.agents.adaptiveql.utils import QFunctionTreePartition
 
 
 logger = logging.getLogger(__name__)
@@ -11,10 +11,11 @@ logger = logging.getLogger(__name__)
 
 class AdaMBAgent(IncrementalAgent):
     """
-    Model-Based Reinforcement Learning with Adaptive Partitioning  [1]_ 
-    implemented for enviroments with continuous (Box) states and **discrete actions**.
+    Model-Based Reinforcement Learning with Adaptive Partitioning  [1]_
 
-    .. todo:: Handle continuous actios too.
+    .. warning::
+        TO BE IMPLEMENTED, initially for enviroments with continuous (Box) states
+        and **discrete actions**.
 
     Parameters
     ----------
@@ -47,7 +48,7 @@ class AdaMBAgent(IncrementalAgent):
     Uses the metric induced by the l-infinity norm.
     """
 
-    name = 'AdaptiveQLearning'
+    name = 'AdaMBAgent'
 
     def __init__(self,
                  env,
@@ -83,9 +84,10 @@ class AdaMBAgent(IncrementalAgent):
         self.reset()
 
     def reset(self):
-        self.Qtree = QFunctionTreePartition(self.env.observation_space,
-                                            self.env.action_space,
-                                            self.horizon)
+        # stores Q function and MDP model.
+        self.model = MDPTreePartition(self.env.observation_space,
+                                      self.env.action_space,
+                                      self.horizon)
 
         # info
         self._rewards = np.zeros(self.n_episodes)
@@ -96,33 +98,10 @@ class AdaMBAgent(IncrementalAgent):
                                      log_every=5*logger.getEffectiveLevel())
 
     def policy(self, observation, hh=0, **kwargs):
-        action, _ = self.Qtree.get_argmax_and_node(observation, hh)
-        return action
-
-    def _get_action_and_node(self, observation, hh):
-        action, node = self.Qtree.get_argmax_and_node(observation, hh)
-        return action, node
+        return 0
 
     def _update(self, node, state, action, next_state, reward, hh):
-        self.Qtree.update(state, action, hh)
-        tt = node.n_visits  # number of visits to the selected state-action node
-
-        # value at next_state
-        value_next_state = 0
-        if hh < self.horizon-1:
-            value_next_state = min(
-                self.v_max[hh+1],
-                self.Qtree.get_argmax_and_node(next_state, hh+1)[1].value
-            )
-
-        # learning rate
-        alpha = (self.horizon+1.0)/(self.horizon + tt)
-
-        bonus = self._compute_bonus(tt, hh)
-        target = reward + bonus + self.gamma*value_next_state
-
-        # update
-        node.value = (1-alpha)*node.value + alpha*target
+        pass
 
     def _compute_bonus(self, n, hh):
         if self.bonus_type == "simplified_bernstein":
@@ -138,11 +117,11 @@ class AdaMBAgent(IncrementalAgent):
         episode_rewards = 0
         state = self.env.reset()
         for hh in range(self.horizon):
-            action, node = self._get_action_and_node(state, hh)
+            action = 0    # TODO
             next_state, reward, done, _ = self.env.step(action)
             episode_rewards += reward
 
-            self._update(node, state, action, next_state, reward, hh)
+            # self._update(node, state, action, next_state, reward, hh)
 
             state = next_state
             if done:
@@ -171,3 +150,12 @@ class AdaMBAgent(IncrementalAgent):
         info = {"n_episodes": self.episode,
                 "episode_rewards": self._rewards[:self.episode]}
         return info
+
+
+if __name__ == '__main__':
+    from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
+
+    env = get_benchmark_env(level=2)
+    agent = AdaMBAgent(env, n_episodes=50, horizon=30)
+    agent.fit()
+    agent.policy(env.observation_space.sample())

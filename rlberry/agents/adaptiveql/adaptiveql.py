@@ -3,7 +3,7 @@ import gym.spaces as spaces
 import numpy as np
 from rlberry.agents import IncrementalAgent
 from rlberry.utils.writers import PeriodicWriter
-from rlberry.agents.adaptiveql.utils import QFunctionTreePartition
+from rlberry.agents.adaptiveql.tree import MDPTreePartition
 
 
 logger = logging.getLogger(__name__)
@@ -83,9 +83,9 @@ class AdaptiveQLAgent(IncrementalAgent):
         self.reset()
 
     def reset(self):
-        self.Qtree = QFunctionTreePartition(self.env.observation_space,
-                                            self.env.action_space,
-                                            self.horizon)
+        self.Qtree = MDPTreePartition(self.env.observation_space,
+                                      self.env.action_space,
+                                      self.horizon)
 
         # info
         self._rewards = np.zeros(self.n_episodes)
@@ -104,7 +104,12 @@ class AdaptiveQLAgent(IncrementalAgent):
         return action, node
 
     def _update(self, node, state, action, next_state, reward, hh):
-        self.Qtree.update(state, action, hh)
+        # split node if necessary
+        node_to_check = self.Qtree.update_counts(state, action, hh)
+        if node_to_check.n_visits >= (self.Qtree.dmax/node_to_check.radius)**2.0:
+            node_to_check.split()
+        assert id(node_to_check) == id(node)
+
         tt = node.n_visits  # number of visits to the selected state-action node
 
         # value at next_state
@@ -112,7 +117,7 @@ class AdaptiveQLAgent(IncrementalAgent):
         if hh < self.horizon-1:
             value_next_state = min(
                 self.v_max[hh+1],
-                self.Qtree.get_argmax_and_node(next_state, hh+1)[1].value
+                self.Qtree.get_argmax_and_node(next_state, hh+1)[1].qvalue
             )
 
         # learning rate
@@ -121,8 +126,8 @@ class AdaptiveQLAgent(IncrementalAgent):
         bonus = self._compute_bonus(tt, hh)
         target = reward + bonus + self.gamma*value_next_state
 
-        # update
-        node.value = (1-alpha)*node.value + alpha*target
+        # update Q
+        node.qvalue = (1-alpha)*node.qvalue + alpha*target
 
     def _compute_bonus(self, n, hh):
         if self.bonus_type == "simplified_bernstein":
