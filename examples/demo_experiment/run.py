@@ -23,3 +23,10 @@ for agent_stats in experiment_generator():
 
 mstats.run()
 mstats.save()
+
+
+# Reading the results
+del mstats
+from rlberry.experiment import load_experiment_results
+
+data = load_experiment_results('results', 'params_experiment')
