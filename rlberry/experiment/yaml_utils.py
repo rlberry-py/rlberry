@@ -106,7 +106,8 @@ def read_env_config(config_path):
 def parse_experiment_config(path: Path,
                             n_fit: int = 4,
                             n_jobs: int = 4,
-                            output_base_dir: str = 'results') -> Generator[Tuple[int, AgentStats], None, None]:
+                            output_base_dir: str = 'results',
+                            joblib_backend: str = 'loky') -> Generator[Tuple[int, AgentStats], None, None]:
     """
     Read .yaml files. set global seed and convert to AgentStats instances.
 
@@ -206,7 +207,8 @@ def parse_experiment_config(path: Path,
                                    eval_horizon=eval_horizon,
                                    n_fit=n_fit,
                                    n_jobs=n_jobs,
-                                   output_dir=output_dir)
+                                   output_dir=output_dir,
+                                   joblib_backend=joblib_backend)
 
 
 if __name__ == '__main__':
