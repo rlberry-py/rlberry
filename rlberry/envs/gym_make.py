@@ -21,5 +21,6 @@ def atari_make(env_name, **kwargs):
     from stable_baselines3.common.vec_env import VecFrameStack
     env = make_atari_env(env_id=env_name, **kwargs)
     env = VecFrameStack(env, n_stack=4)
-    return Wrapper(env)
+    return env
+
 
