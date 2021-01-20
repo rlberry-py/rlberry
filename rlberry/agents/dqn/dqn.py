@@ -5,6 +5,7 @@ import numpy as np
 
 from rlberry.agents import IncrementalAgent
 from rlberry.agents.utils.memories import ReplayMemory, Transition, PrioritizedReplayMemory
+from rlberry.rendering.env_representation_render2d import representation_2d
 from rlberry.wrappers.uncertainty_estimator_wrapper import UncertaintyEstimatorWrapper
 from rlberry.agents.dqn.exploration import exploration_factory
 from rlberry.agents.utils.torch_training import loss_function_factory, model_factory, size_model_config, \
@@ -172,6 +173,7 @@ class DQNAgent(IncrementalAgent):
             total_reward, total_bonus, total_success, length = self._run_episode()
             if self.episode % 20 == 0:
                 logger.info(f"Episode {self.episode + 1}/{self.n_episodes}, total reward {total_reward}")
+            self.plot_memory()
             if self.writer:
                 self.writer.add_scalar("episode/total_reward", total_reward, self.episode)
                 self.writer.add_scalar("episode/total_bonus", total_bonus, self.episode)
@@ -462,6 +464,29 @@ class DQNAgent(IncrementalAgent):
             self.writer.add_scalar("agent/trainable_parameters",
                                    trainable_parameters(self.value_net), 0)
 
+    def plot_memory(self, frequency=20):
+        if not self.writer:
+            return
+        if not self.episode % frequency == 0:
+            return
+        if self.memory.is_empty():
+            return
+        if representation_2d(self.memory.memory[0].state, self.env) is False:
+            return
+        import matplotlib.pyplot as plt
+        fig = plt.figure()
+        positions = np.array([representation_2d(transition.state, self.env) for transition in self.memory.memory])
+        next_positions = np.array([representation_2d(transition.next_state, self.env) for transition in self.memory.memory])
+        delta = next_positions - positions
+        color = np.mod(np.arange(len(self.memory)), self.memory.position)
+        plt.quiver(positions[:, 0], positions[:, 1], delta[:, 0], delta[:, 1], color, cmap="plasma",
+                   angles='xy', scale_units='xy', scale=1, alpha=0.3)
+
+        fig.canvas.draw()
+        data = np.fromstring(fig.canvas.tostring_rgb(), dtype=np.uint8, sep='')
+        data = np.rollaxis(data.reshape(fig.canvas.get_width_height()[::-1] + (3,)), 2, 0)
+        self.writer.add_image("episode/memory", data, self.episode)
+        plt.close()
     #
     # For hyperparameter optimization
     #
