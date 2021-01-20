@@ -1,12 +1,14 @@
-import logging
 import torch
 from gym import spaces
+import logging
+import numpy as np
 
+from rlberry.agents import IncrementalAgent
+from rlberry.agents.utils.memories import ReplayMemory, Transition, PrioritizedReplayMemory
+from rlberry.wrappers.uncertainty_estimator_wrapper import UncertaintyEstimatorWrapper
+from rlberry.agents.dqn.exploration import exploration_factory
 from rlberry.agents.utils.torch_training import loss_function_factory, model_factory, size_model_config, \
-    trainable_parameters
-from rlberry.agents.utils.torch_training import optimizer_factory
-from rlberry.agents.dqn.abstract import AbstractDQNAgent
-from rlberry.agents.utils.memories import Transition
+    trainable_parameters, optimizer_factory
 from rlberry.utils.factory import load
 from rlberry.utils.torch import choose_device
 
@@ -22,7 +24,7 @@ def default_qvalue_net_fn(env):
     return model_factory(**model_config)
 
 
-class DQNAgent(AbstractDQNAgent):
+class DQNAgent(IncrementalAgent):
     """
     Deep Q Learning Agent.
 
@@ -92,6 +94,7 @@ class DQNAgent(AbstractDQNAgent):
                  memory_capacity=10000,
                  use_bonus=False,
                  uncertainty_estimator_kwargs=None,
+                 prioritized_replay=True,
                  **kwargs):
         # Wrap arguments and initialize base class
         memory_kwargs = {
@@ -105,25 +108,45 @@ class DQNAgent(AbstractDQNAgent):
                              'final_temperature': epsilon_final,
                              'tau': epsilon_decay,
                             }
-        base_args = (env, horizon, exploration_kwargs, memory_kwargs,
-                     n_episodes, batch_size, target_update, double,
-                     use_bonus, uncertainty_estimator_kwargs)
-        AbstractDQNAgent.__init__(self, *base_args, **kwargs)
+        self.use_bonus = use_bonus
+        if self.use_bonus:
+            env = UncertaintyEstimatorWrapper(env,
+                                              **uncertainty_estimator_kwargs)
+        IncrementalAgent.__init__(self, env, **kwargs)
+        self.horizon = horizon
+        self.exploration_kwargs = exploration_kwargs or {}
+        self.memory_kwargs = memory_kwargs or {}
+        self.n_episodes = n_episodes
+        self.batch_size = batch_size
+        self.target_update = target_update
+        self.double = double
 
-        # init
+        assert isinstance(env.action_space, spaces.Discrete), \
+            "Only compatible with Discrete action spaces."
+
+        self.prioritized_replay = prioritized_replay
+        memory_class = PrioritizedReplayMemory if prioritized_replay else ReplayMemory
+        self.memory = memory_class(**self.memory_kwargs)
+        self.exploration_policy = \
+            exploration_factory(self.env.action_space,
+                                **self.exploration_kwargs)
+        self.training = True
+        self.steps = 0
+        self.episode = 0
+        self.writer = None
+
         self.optimizer_kwargs = {'optimizer_type': optimizer_type,
                                  'lr': learning_rate}
         self.device = choose_device(device)
         self.loss_function = loss_function
         self.gamma = gamma
-        #
-        qvalue_net_kwargs = qvalue_net_kwargs or {}
 
+        qvalue_net_kwargs = qvalue_net_kwargs or {}
         qvalue_net_fn = load(qvalue_net_fn) if isinstance(qvalue_net_fn, str) else \
             qvalue_net_fn or default_qvalue_net_fn
         self.value_net = qvalue_net_fn(self.env, **qvalue_net_kwargs)
         self.target_net = qvalue_net_fn(self.env, **qvalue_net_kwargs)
-        #
+
         self.target_net.load_state_dict(self.value_net.state_dict())
         self.target_net.eval()
         logger.info("Number of trainable parameters: {}"
@@ -135,6 +158,116 @@ class DQNAgent(AbstractDQNAgent):
                                            **self.optimizer_kwargs)
         self.steps = 0
 
+    def fit(self, **kwargs):
+        return self.partial_fit(fraction=1, **kwargs)
+
+    def partial_fit(self, fraction, **kwargs):
+        episode_rewards = []
+        for self.episode in range(int(fraction * self.n_episodes)):
+            if self.writer:
+                state = self.env.reset()
+                values = self.get_state_action_values(state)
+                for i, value in enumerate(values):
+                    self.writer.add_scalar(f"agent/action_value_{i}", value, self.episode)
+            total_reward, total_bonus, total_success, length = self._run_episode()
+            if self.episode % 20 == 0:
+                logger.info(f"Episode {self.episode + 1}/{self.n_episodes}, total reward {total_reward}")
+            if self.writer:
+                self.writer.add_scalar("episode/total_reward", total_reward, self.episode)
+                self.writer.add_scalar("episode/total_bonus", total_bonus, self.episode)
+                self.writer.add_scalar("episode/total_success", total_success, self.episode)
+                self.writer.add_scalar("episode/length", length, self.episode)
+            episode_rewards.append(total_reward)
+        return {
+            "n_episodes": int(fraction * self.n_episodes),
+            "episode_rewards": episode_rewards
+        }
+
+    def _run_episode(self):
+        total_reward = total_bonus = total_success = time = 0
+        state = self.env.reset()
+        for time in range(self.horizon):
+            self.exploration_policy.step_time()
+            action = self.policy(state)
+            next_state, reward, done, info = self.env.step(action)
+
+            # bonus used only for logging, here
+            bonus = 0.0
+            if self.use_bonus:
+                if info is not None and 'exploration_bonus' in info:
+                    bonus = info['exploration_bonus']
+
+            self.record(state, action, reward, next_state, done, info)
+            state = next_state
+            total_reward += reward
+            total_bonus += bonus
+            total_success += info.get("is_success", 0)
+            if done:
+                break
+        return total_reward, total_bonus, total_success, time+1
+
+    def record(self, state, action, reward, next_state, done, info):
+        """
+        Record a transition by performing a Deep Q-Network iteration
+
+        - push the transition into memory
+        - sample a minibatch
+        - compute the bellman residual loss over the minibatch
+        - perform one gradient descent step
+        - slowly track the policy network with the target network
+
+        Parameters
+        ----------
+        state : object
+        action : object
+        reward : double
+        next_state : object
+        done : bool
+        """
+        if not self.training:
+            return
+        self.memory.push(state, action, reward, next_state, done, info)
+        self.update()
+
+    def update(self):
+        batch, weights, indexes = self.sample_minibatch()
+        if batch:
+            losses = self.compute_bellman_residual(batch)
+            self.step_optimizer(losses.mean())
+            if self.prioritized_replay:
+                new_priorities = losses.abs().detach().cpu().numpy() + 1e-6
+                self.memory.update_priorities(indexes, new_priorities)
+            self.update_target_network()
+
+    def policy(self, observation, **kwargs):
+        """
+        Act according to the state-action value model and an exploration
+        policy
+
+        Parameters
+
+        :param observation: current obs
+        :return: an action
+        """
+        values = self.get_state_action_values(observation)
+        self.exploration_policy.update(values)
+        return self.exploration_policy.sample()
+
+    def sample_minibatch(self):
+        if len(self.memory) < self.batch_size:
+            return None, None, None
+        if self.prioritized_replay:
+            transitions, weights, indexes = self.memory.sample(self.batch_size)
+        else:
+            transitions = self.memory.sample(self.batch_size)
+            weights, indexes = np.ones((self.batch_size,)), None
+        return transitions, weights, indexes
+
+    def update_target_network(self):
+        self.steps += 1
+        if self.steps % self.target_update == 0:
+            self.target_net.load_state_dict(self.value_net.state_dict())
+
     def step_optimizer(self, loss):
         # Optimize the model
         self.optimizer.zero_grad()
@@ -143,22 +276,42 @@ class DQNAgent(AbstractDQNAgent):
             param.grad.data.clamp_(-1, 1)
         self.optimizer.step()
 
-    def compute_bellman_residual(self, batch, target_state_action_value=None):
-        # Compute concatenate the batch elements
-        if not isinstance(batch.state, torch.Tensor):
-            # logger.info("Casting the batch to torch.tensor")
-            state = torch.cat(tuple(torch.tensor([batch.state],
-                              dtype=torch.float))).to(self.device)
-            action = torch.tensor(batch.action,
-                                  dtype=torch.long).to(self.device)
-            reward = torch.tensor(batch.reward,
-                                  dtype=torch.float).to(self.device)
-            next_state = torch.cat(tuple(torch.tensor([batch.next_state],
-                                   dtype=torch.float))).to(self.device)
-            terminal = torch.tensor(batch.terminal,
-                                    dtype=torch.bool).to(self.device)
-            batch = Transition(state, action, reward,
-                               next_state, terminal, batch.info)
+    def compute_bellman_residual(self, batch):
+        """
+        Compute the Bellman Residuals over a batch
+
+        Parameters
+        ----------
+        batch
+            batch of transitions
+        target_state_action_value
+            if provided, acts as a target (s,a)-value
+            if not, it will be computed from batch and model
+            (Double DQN target)
+
+        Returns
+        -------
+        The residuals over the batch, and the computed target.
+        """
+        # Concatenate the batch elements
+        state = torch.cat(tuple(torch.tensor([batch.state],
+                          dtype=torch.float))).to(self.device)
+        action = torch.tensor(batch.action,
+                              dtype=torch.long).to(self.device)
+        reward = torch.tensor(batch.reward,
+                              dtype=torch.float).to(self.device)
+        if self.use_bonus:
+            bonus = self.env.uncertainty_estimator.measure(state, action, batch=True)
+            bonus *= self.env.bonus_scale_factor
+            if self.writer:
+                self.writer.add_scalar("debug/minibatch_mean_bonus", bonus.mean().item(), self.episode)
+                self.writer.add_scalar("debug/minibatch_mean_reward", reward.mean().item(), self.episode)
+            reward += bonus
+        next_state = torch.cat(tuple(torch.tensor([batch.next_state],
+                               dtype=torch.float))).to(self.device)
+        terminal = torch.tensor(batch.terminal,
+                                dtype=torch.bool).to(self.device)
+        batch = Transition(state, action, reward, next_state, terminal, batch.info)
 
         # Compute Q(s_t, a) - the model computes Q(s_t), then we select the
         # columns of actions taken
@@ -166,43 +319,116 @@ class DQNAgent(AbstractDQNAgent):
         state_action_values = \
             state_action_values.gather(1, batch.action.unsqueeze(1)).squeeze(1)
 
-        if target_state_action_value is None:
-            with torch.no_grad():
-                # Compute V(s_{t+1}) for all next states.
-                next_state_values = \
-                    torch.zeros(batch.reward.shape).to(self.device)
-                if self.double:
-                    # Double Q-learning: pick best actions from policy network
-                    _, best_actions = self.value_net(batch.next_state).max(1)
-                    # Double Q-learning: estimate action values
-                    # from target network
-                    best_values = self.target_net(
-                                    batch.next_state
-                                    ).gather(1, best_actions.unsqueeze(1))\
-                                     .squeeze(1)
-                else:
-                    best_values, _ = self.target_net(batch.next_state).max(1)
-                next_state_values[~batch.terminal] \
-                    = best_values[~batch.terminal]
-                # Compute the expected Q values
-                target_state_action_value = batch.reward \
-                    + self.gamma * next_state_values
+        with torch.no_grad():
+            # Compute V(s_{t+1}) for all next states.
+            next_state_values = \
+                torch.zeros(batch.reward.shape).to(self.device)
+            if self.double:
+                # Double Q-learning: pick best actions from policy network
+                _, best_actions = self.value_net(batch.next_state).max(1)
+                # Double Q-learning: estimate action values
+                # from target network
+                best_values = self.target_net(
+                                batch.next_state
+                                ).gather(1, best_actions.unsqueeze(1))\
+                                 .squeeze(1)
+            else:
+                best_values, _ = self.target_net(batch.next_state).max(1)
+            next_state_values[~batch.terminal] \
+                = best_values[~batch.terminal]
+            # Compute the expected Q values
+            target_state_action_value = batch.reward \
+                + self.gamma * next_state_values
 
-        # Compute loss
-        loss = self.loss_function(state_action_values,
-                                  target_state_action_value)
-        return loss, target_state_action_value, batch
+        # Compute residuals
+        residuals = self.loss_function(state_action_values, target_state_action_value, reduction='none')
+        return residuals
 
     def get_batch_state_values(self, states):
+        """
+        Get the state values of several states
+
+        Parameters
+        ----------
+        states : array
+            [s1; ...; sN] an array of states
+
+        Returns
+        -------
+        values, actions:
+            * [V1; ...; VN] the array of the state values for each state
+            * [a1*; ...; aN*] the array of corresponding optimal action
+            indexes for each state
+        """
         values, actions = self.value_net(torch.tensor(states,
                                          dtype=torch.float)
                                          .to(self.device)).max(1)
         return values.data.cpu().numpy(), actions.data.cpu().numpy()
 
     def get_batch_state_action_values(self, states):
+        """
+        Get the state-action values of several states
+
+        Parameters
+        ----------
+        states : array
+            [s1; ...; sN] an array of states
+
+        Returns
+        -------
+        values:[[Q11, ..., Q1n]; ...] the array of all action values
+        for each state
+        """
         return self.value_net(torch.tensor(states,
                               dtype=torch.float)
                               .to(self.device)).data.cpu().numpy()
+
+    def get_state_value(self, state):
+        """
+        Parameters
+        ----------
+        state : object
+            s, an environment state
+        Returns
+        -------
+        V, its state-value
+        """
+        values, actions = self.get_batch_state_values([state])
+        return values[0], actions[0]
+
+    def get_state_action_values(self, state):
+        """
+        Parameters
+        ----------
+        state : object
+            s, an environment state
+
+        Returns
+        -------
+            The array of its action-values for each actions.
+        """
+        return self.get_batch_state_action_values([state])[0]
+
+    def seed(self, seed=None):
+        return self.exploration_policy.seed(seed)
+
+    def reset(self, **kwargs):
+        self.episode = 0
+
+    def action_distribution(self, state):
+        values = self.get_state_action_values(state)
+        self.exploration_policy.update(values)
+        return self.exploration_policy.get_distribution()
+
+    def set_time(self, time):
+        self.exploration_policy.set_time(time)
+
+    def eval(self):
+        self.training = False
+        self.exploration_kwargs['method'] = "Greedy"
+        self.exploration_policy = \
+            exploration_factory(self.env.action_space,
+                                **self.exploration_kwargs)
 
     def save(self, filename, **kwargs):
         state = {'state_dict': self.value_net.state_dict(),
@@ -221,7 +447,11 @@ class DQNAgent(AbstractDQNAgent):
         self.value_net.reset()
 
     def set_writer(self, writer):
-        super().set_writer(writer)
+        self.writer = writer
+        try:
+            self.exploration_policy.set_writer(writer)
+        except AttributeError:
+            pass
         if self.writer:
             obs_shape = self.env.observation_space.shape \
                 if isinstance(self.env.observation_space, spaces.Box) else \

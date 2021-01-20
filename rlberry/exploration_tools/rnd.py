@@ -89,8 +89,11 @@ class RandomNetworkDistillation(UncertaintyEstimator):
         self.count = 0
         self.loss = torch.tensor(0.0).to(self.device)
 
-    def _get_embeddings(self, state):
-        state_tensor = torch.from_numpy(state).unsqueeze(0).to(self.device)
+    def _get_embeddings(self, state, batch=False):
+        state_tensor = state if isinstance(state, torch.Tensor) else torch.from_numpy(state)
+        state_tensor = state_tensor.to(self.device)
+        if not batch:
+            state_tensor = state_tensor.unsqueeze(0)
         random_embedding = self.random_target_network(state_tensor)
         predicted_embedding = self.predictor_network.forward(state_tensor)
         return random_embedding, predicted_embedding
@@ -115,9 +118,12 @@ class RandomNetworkDistillation(UncertaintyEstimator):
             self.rnd_optimizer.step()
             self.loss = torch.tensor(0.0).to(self.device)
 
-    def measure(self, state, action=None, **kwargs):
+    def measure(self, state, action=None, batch=False, **kwargs):
         random_embedding, predicted_embedding \
-            = self._get_embeddings(state)
+            = self._get_embeddings(state, batch=batch)
 
         diff = predicted_embedding.detach() - random_embedding.detach()
-        return torch.norm(diff, p=2).item()
+        measure = torch.norm(diff, p=2, dim=1)
+        if not batch:
+            measure = measure.item()
+        return measure

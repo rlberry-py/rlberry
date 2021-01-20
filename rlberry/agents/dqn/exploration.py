@@ -117,7 +117,7 @@ class Greedy(DiscreteDistribution):
     Always use the optimal action
     """
 
-    def __init__(self, action_space):
+    def __init__(self, action_space, **kwargs):
         super().__init__()
         self.action_space = action_space
         if isinstance(self.action_space, spaces.Tuple):
