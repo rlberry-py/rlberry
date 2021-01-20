@@ -1,5 +1,6 @@
 import rlberry.seeding as seeding
 import gym
+import numpy as np
 from rlberry.envs.interface import Model
 
 
@@ -26,8 +27,12 @@ class Wrapper(Model):
 
         self.observation_space = self.env.observation_space
         self.action_space = self.env.action_space
-        self.reward_range = self.env.reward_range
         self.metadata = self.env.metadata
+
+        try:
+            self.reward_range = self.env.reward_range
+        except AttributeError:
+            self.reward_range = (-np.inf, np.inf)
 
         # If gym environment, reseeding is necessary here for
         # reproducibility.
