@@ -124,14 +124,14 @@ class RandomNetworkDistillation(UncertaintyEstimator):
     @preprocess_args(expected_type='torch')
     def measure(self, state, actions=None, **kwargs):
         random_embedding, predicted_embedding = self._get_embeddings(state, batch=False)
-        error = torch.norm(predicted_embedding.detach() - random_embedding.detach(), p=2, dim=1).item()
-        return torch.pow(error, 2 * self.rate_power)
+        error = torch.norm(predicted_embedding.detach() - random_embedding.detach(), p=2, dim=1)
+        return error.pow(2 * self.rate_power).item()
 
     @preprocess_args(expected_type='torch')
     def measure_batch(self, states, actions, **kwargs):
         random_embedding, predicted_embedding = self._get_embeddings(states, batch=True)
         error = torch.norm(predicted_embedding.detach() - random_embedding.detach(), p=2, dim=1)
-        return torch.pow(error, 2 * self.rate_power)
+        return error.pow(2 * self.rate_power)
 
 
 class RandomNetworkDistillationWithAction(UncertaintyEstimator):
