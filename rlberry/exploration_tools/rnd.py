@@ -152,6 +152,7 @@ class RandomNetworkDistillationWithAction(UncertaintyEstimator):
                  net_fn=None,
                  net_kwargs=None,
                  device="cuda:best",
+                 rate_power=0.5,
                  **kwargs):
         assert isinstance(observation_space, spaces.Box)
         UncertaintyEstimator.__init__(self, observation_space, action_space)
@@ -165,6 +166,7 @@ class RandomNetworkDistillationWithAction(UncertaintyEstimator):
                                                   observation_space.shape[-1]+action_space.n) , embedding_dim=embedding_dim)
         self.net_kwargs = net_kwargs or {}
         self.device = choose_device(device)
+        self.rate_power = rate_power
         self.reset()
 
     def reset(self, **kwargs):
@@ -216,9 +218,11 @@ class RandomNetworkDistillationWithAction(UncertaintyEstimator):
     @preprocess_args(expected_type='torch')
     def measure(self, state, actions, **kwargs):
         random_embedding, predicted_embedding = self._get_embeddings(state, actions, batch=False)
-        return torch.norm(predicted_embedding.detach() - random_embedding.detach(), p=2, dim=1).item()
+        error = torch.norm(predicted_embedding.detach() - random_embedding.detach(), p=2, dim=1)
+        return error.pow(2 * self.rate_power).item()
 
     @preprocess_args(expected_type='torch')
     def measure_batch(self, states, actions, **kwargs):
         random_embedding, predicted_embedding = self._get_embeddings(states, actions, batch=True)
-        return torch.norm(predicted_embedding.detach() - random_embedding.detach(), p=2, dim=1)
+        error = torch.norm(predicted_embedding.detach() - random_embedding.detach(), p=2, dim=1)
+        return error.pow(2 * self.rate_power)
