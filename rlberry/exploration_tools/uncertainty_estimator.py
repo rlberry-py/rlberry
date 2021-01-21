@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from rlberry.exploration_tools.typing import _get_type
 import numpy as np
 
 
@@ -20,4 +21,8 @@ class UncertaintyEstimator(ABC):
         pass
 
     def measure_batch(self, states, actions, **kwargs):
-        return np.array([self.measure(s, a, **kwargs) for s, a in zip(states, actions)])
+        batch = [self.measure(s, a, **kwargs) for s, a in zip(states, actions)]
+        if _get_type(batch[0]) == 'torch':
+            import torch
+            return torch.FloatTensor(batch)
+        return np.array(batch)

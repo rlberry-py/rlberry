@@ -3,8 +3,8 @@ from functools import partial
 import torch
 import gym.spaces as spaces
 from torch.nn import functional as F
-from rlberry.exploration_tools.uncertainty_estimator \
-    import UncertaintyEstimator
+from rlberry.exploration_tools.uncertainty_estimator import UncertaintyEstimator
+from rlberry.exploration_tools.typing import preprocess_args
 from rlberry.agents.utils.torch_models import ConvolutionalNetwork
 from rlberry.agents.utils.torch_models import MultiLayerPerceptron
 from rlberry.utils.factory import load
@@ -98,6 +98,7 @@ class RandomNetworkDistillation(UncertaintyEstimator):
         predicted_embedding = self.predictor_network.forward(state_tensor)
         return random_embedding, predicted_embedding
 
+    @preprocess_args(expected_type='torch')
     def update(self,
                state,
                action=None,
@@ -118,10 +119,12 @@ class RandomNetworkDistillation(UncertaintyEstimator):
             self.rnd_optimizer.step()
             self.loss = torch.tensor(0.0).to(self.device)
 
+    @preprocess_args(expected_type='torch')
     def measure(self, state, action=None, **kwargs):
         random_embedding, predicted_embedding = self._get_embeddings(state, batch=False)
         return torch.norm(predicted_embedding.detach() - random_embedding.detach(), p=2, dim=1).item()
 
+    @preprocess_args(expected_type='torch')
     def measure_batch(self, states, actions, **kwargs):
         random_embedding, predicted_embedding = self._get_embeddings(states, batch=True)
         return torch.norm(predicted_embedding.detach() - random_embedding.detach(), p=2, dim=1)
