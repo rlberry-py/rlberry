@@ -65,6 +65,7 @@ class RandomNetworkDistillation(UncertaintyEstimator):
                  net_fn=None,
                  net_kwargs=None,
                  device="cuda:best",
+                 fast_rate=False,
                  **kwargs):
         assert isinstance(observation_space, spaces.Box)
         UncertaintyEstimator.__init__(self, observation_space, action_space)
@@ -76,6 +77,7 @@ class RandomNetworkDistillation(UncertaintyEstimator):
             net_fn or partial(get_network, shape=observation_space.shape, embedding_dim=embedding_dim)
         self.net_kwargs = net_kwargs or {}
         self.device = choose_device(device)
+        self.fast_rate = fast_rate
         self.reset()
 
     def reset(self, **kwargs):
@@ -122,12 +124,14 @@ class RandomNetworkDistillation(UncertaintyEstimator):
     @preprocess_args(expected_type='torch')
     def measure(self, state, action=None, **kwargs):
         random_embedding, predicted_embedding = self._get_embeddings(state, batch=False)
-        return torch.norm(predicted_embedding.detach() - random_embedding.detach(), p=2, dim=1).item()
+        mes = torch.norm(predicted_embedding.detach() - random_embedding.detach(), p=2, dim=1).item()
+        return mes**2 if self.fast_rate else mes
 
     @preprocess_args(expected_type='torch')
     def measure_batch(self, states, actions, **kwargs):
         random_embedding, predicted_embedding = self._get_embeddings(states, batch=True)
-        return torch.norm(predicted_embedding.detach() - random_embedding.detach(), p=2, dim=1)
+        mes = torch.norm(predicted_embedding.detach() - random_embedding.detach(), p=2, dim=1)
+        return mes**2 if self.fast_rate else mes
 
 
 class RandomNetworkDistillationWithAction(UncertaintyEstimator):
@@ -218,3 +222,4 @@ class RandomNetworkDistillationWithAction(UncertaintyEstimator):
     def measure_batch(self, states, actions, **kwargs):
         random_embedding, predicted_embedding = self._get_embeddings(states, action, batch=True)
         return torch.norm(predicted_embedding.detach() - random_embedding.detach(), p=2, dim=1)
+
