@@ -72,6 +72,8 @@ class DQNAgent(IncrementalAgent):
         See also UncertaintyEstimatorWrapper.
     uncertainty_estimator_kwargs : dict
         Arguments for the UncertaintyEstimatorWrapper
+    prioritized_replay: bool
+        Use prioritized replay.
     """
     name = 'DQN'
 
@@ -477,18 +479,14 @@ class DQNAgent(IncrementalAgent):
         fig = plt.figure()
         positions = np.array([representation_2d(transition.state, self.env) for transition in self.memory.memory])
         next_positions = np.array([representation_2d(transition.next_state, self.env) for transition in self.memory.memory])
-        # positions = np.roll(positions, -self.memory.position)
-        # next_positions = np.roll(next_positions, len(self.memory)-self.memory.position)
+        positions = np.roll(positions, len(self.memory)-self.memory.position, axis=0)
+        next_positions = np.roll(next_positions, len(self.memory)-self.memory.position, axis=0)
         delta = next_positions - positions
         color = np.arange(len(self.memory))
         plt.quiver(positions[:, 0], positions[:, 1], delta[:, 0], delta[:, 1], color, cmap="plasma",
                    angles='xy', scale_units='xy', scale=1, alpha=0.3)
 
-        fig.canvas.draw()
-        data = np.fromstring(fig.canvas.tostring_rgb(), dtype=np.uint8, sep='')
-        data = np.rollaxis(data.reshape(fig.canvas.get_width_height()[::-1] + (3,)), 2, 0)
-        self.writer.add_image("episode/memory", data, self.episode)
-        plt.close()
+        self.writer.add_figure("episode/memory", fig, self.episode, close=True)
     #
     # For hyperparameter optimization
     #
