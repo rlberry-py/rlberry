@@ -303,7 +303,7 @@ class DQNAgent(IncrementalAgent):
         reward = torch.tensor(batch.reward,
                               dtype=torch.float).to(self.device)
         if self.use_bonus:
-            bonus = self.env.uncertainty_estimator.measure(state, action, batch=True)
+            bonus = self.env.uncertainty_estimator.measure_batch(state, action)
             bonus *= self.env.bonus_scale_factor
             if self.writer:
                 self.writer.add_scalar("debug/minibatch_mean_bonus", bonus.mean().item(), self.episode)
@@ -477,8 +477,10 @@ class DQNAgent(IncrementalAgent):
         fig = plt.figure()
         positions = np.array([representation_2d(transition.state, self.env) for transition in self.memory.memory])
         next_positions = np.array([representation_2d(transition.next_state, self.env) for transition in self.memory.memory])
+        # positions = np.roll(positions, -self.memory.position)
+        # next_positions = np.roll(next_positions, len(self.memory)-self.memory.position)
         delta = next_positions - positions
-        color = np.mod(np.arange(len(self.memory)), self.memory.position)
+        color = np.arange(len(self.memory))
         plt.quiver(positions[:, 0], positions[:, 1], delta[:, 0], delta[:, 1], color, cmap="plasma",
                    angles='xy', scale_units='xy', scale=1, alpha=0.3)
 

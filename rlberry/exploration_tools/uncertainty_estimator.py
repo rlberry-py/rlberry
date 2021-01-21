@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+import numpy as np
 
 
 class UncertaintyEstimator(ABC):
@@ -17,3 +18,6 @@ class UncertaintyEstimator(ABC):
     @abstractmethod
     def measure(self, state, action, **kwargs):
         pass
+
+    def measure_batch(self, states, actions, **kwargs):
+        return np.array([self.measure(s, a, **kwargs) for s, a in zip(states, actions)])
