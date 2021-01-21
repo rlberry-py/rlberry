@@ -303,8 +303,9 @@ class DQNAgent(IncrementalAgent):
         reward = torch.tensor(batch.reward,
                               dtype=torch.float).to(self.device)
         if self.use_bonus:
-            bonus = self.env.uncertainty_estimator.measure_batch(state, action)
-            bonus *= self.env.bonus_scale_factor
+            bonus = self.env.uncertainty_estimator.measure_batch(state.detach().cpu().numpy(),
+                                                                 action.detach().cpu().numpy())
+            bonus = torch.tensor(bonus, dtype=torch.float).to(self.device) * self.env.bonus_scale_factor
             if self.writer:
                 self.writer.add_scalar("debug/minibatch_mean_bonus", bonus.mean().item(), self.episode)
                 self.writer.add_scalar("debug/minibatch_mean_reward", reward.mean().item(), self.episode)
