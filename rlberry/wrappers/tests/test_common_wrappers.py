@@ -154,7 +154,7 @@ def test_uncertainty_est_wrapper():
         _, _, _, info = w_env.step(0)
         nn = w_env.uncertainty_estimator.count(0, 0)
         assert nn == ii+1
-        assert info['exploration_bonus'] == 1.0/np.sqrt(nn)
+        assert info['exploration_bonus'] == pytest.approx(1/np.sqrt(nn))
 
 
 def test_vis2dwrapper():
