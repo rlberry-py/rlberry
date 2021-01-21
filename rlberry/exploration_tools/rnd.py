@@ -122,7 +122,7 @@ class RandomNetworkDistillation(UncertaintyEstimator):
             self.loss = torch.tensor(0.0).to(self.device)
 
     @preprocess_args(expected_type='torch')
-    def measure(self, state, action=None, **kwargs):
+    def measure(self, state, actions=None, **kwargs):
         random_embedding, predicted_embedding = self._get_embeddings(state, batch=False)
         error = torch.norm(predicted_embedding.detach() - random_embedding.detach(), p=2, dim=1).item()
         return torch.pow(error, 2 * self.rate_power)
@@ -187,7 +187,7 @@ class RandomNetworkDistillationWithAction(UncertaintyEstimator):
         if not batch:
             state_tensor = state_tensor.unsqueeze(0)
             action_tensor = action_tensor.unsqueeze(0)
-        state_action_tensor = torch.cat((state_tensor, action_tensor.unsqueeze(0).unsqueeze(0).repeat(1, 84, 84, 1)), -1)
+        state_action_tensor = torch.cat((state_tensor, action_tensor.unsqueeze(1).unsqueeze(1).repeat(1, 84, 84, 1)), -1)
         random_embedding = self.random_target_network(state_action_tensor)
         predicted_embedding = self.predictor_network.forward(state_action_tensor)
         return random_embedding, predicted_embedding
@@ -214,12 +214,11 @@ class RandomNetworkDistillationWithAction(UncertaintyEstimator):
             self.loss = torch.tensor(0.0).to(self.device)
 
     @preprocess_args(expected_type='torch')
-    def measure(self, state, action, **kwargs):
-        random_embedding, predicted_embedding = self._get_embeddings(state, action, batch=False)
+    def measure(self, state, actions, **kwargs):
+        random_embedding, predicted_embedding = self._get_embeddings(state, actions, batch=False)
         return torch.norm(predicted_embedding.detach() - random_embedding.detach(), p=2, dim=1).item()
 
     @preprocess_args(expected_type='torch')
     def measure_batch(self, states, actions, **kwargs):
-        random_embedding, predicted_embedding = self._get_embeddings(states, action, batch=True)
+        random_embedding, predicted_embedding = self._get_embeddings(states, actions, batch=True)
         return torch.norm(predicted_embedding.detach() - random_embedding.detach(), p=2, dim=1)
-
