@@ -1,6 +1,6 @@
 import numpy as np
-from rlberry.exploration_tools.uncertainty_estimator \
-    import UncertaintyEstimator
+from rlberry.exploration_tools.uncertainty_estimator import UncertaintyEstimator
+from rlberry.exploration_tools.typing import preprocess_args
 from rlberry.spaces import Discrete
 from rlberry.utils.space_discretizer import Discretizer
 
@@ -60,10 +60,12 @@ class DiscreteCounter(UncertaintyEstimator):
     def reset(self):
         self.N_sa = np.zeros((self.n_states, self.n_actions))
 
+    @preprocess_args(expected_type='numpy')
     def update(self, state, action, next_state=None, reward=None, **kwargs):
         state, action = self._preprocess(state, action)
         self.N_sa[state, action] += 1
 
+    @preprocess_args(expected_type='numpy')
     def measure(self, state, action, **kwargs):
         state, action = self._preprocess(state, action)
         n = np.maximum(1.0, self.N_sa[state, action])

@@ -3,8 +3,8 @@ from functools import partial
 import torch
 import gym.spaces as spaces
 from torch.nn import functional as F
-from rlberry.exploration_tools.uncertainty_estimator \
-    import UncertaintyEstimator
+from rlberry.exploration_tools.uncertainty_estimator import UncertaintyEstimator
+from rlberry.exploration_tools.typing import preprocess_args
 from rlberry.agents.utils.torch_models import ConvolutionalNetwork
 from rlberry.agents.utils.torch_models import MultiLayerPerceptron
 from rlberry.utils.factory import load
@@ -98,6 +98,7 @@ class RandomNetworkDistillation(UncertaintyEstimator):
         predicted_embedding = self.predictor_network.forward(state_tensor)
         return random_embedding, predicted_embedding
 
+    @preprocess_args(expected_type='torch')
     def update(self,
                state,
                action=None,
@@ -118,15 +119,15 @@ class RandomNetworkDistillation(UncertaintyEstimator):
             self.rnd_optimizer.step()
             self.loss = torch.tensor(0.0).to(self.device)
 
-    def measure(self, state, action=None, batch=False, **kwargs):
-        random_embedding, predicted_embedding \
-            = self._get_embeddings(state, batch=batch)
+    @preprocess_args(expected_type='torch')
+    def measure(self, state, action=None, **kwargs):
+        random_embedding, predicted_embedding = self._get_embeddings(state, batch=False)
+        return torch.norm(predicted_embedding.detach() - random_embedding.detach(), p=2, dim=1).item()
 
-        diff = predicted_embedding.detach() - random_embedding.detach()
-        measure = torch.norm(diff, p=2, dim=1)
-        if not batch:
-            measure = measure.item()
-        return measure
+    @preprocess_args(expected_type='torch')
+    def measure_batch(self, states, actions, **kwargs):
+        random_embedding, predicted_embedding = self._get_embeddings(states, batch=True)
+        return torch.norm(predicted_embedding.detach() - random_embedding.detach(), p=2, dim=1)
 
 
 class RandomNetworkDistillationWithAction(UncertaintyEstimator):
@@ -182,12 +183,12 @@ class RandomNetworkDistillationWithAction(UncertaintyEstimator):
         if not batch:
             state_tensor = state_tensor.unsqueeze(0)
             action_tensor = action_tensor.unsqueeze(0)
-
         state_action_tensor = torch.cat((state_tensor, action_tensor.unsqueeze(0).unsqueeze(0).repeat(1, 84, 84, 1)), -1)
         random_embedding = self.random_target_network(state_action_tensor)
         predicted_embedding = self.predictor_network.forward(state_action_tensor)
         return random_embedding, predicted_embedding
 
+    @preprocess_args(expected_type='torch')
     def update(self,
                state,
                action,
@@ -208,12 +209,12 @@ class RandomNetworkDistillationWithAction(UncertaintyEstimator):
             self.rnd_optimizer.step()
             self.loss = torch.tensor(0.0).to(self.device)
 
-    def measure(self, state, action, batch=False, **kwargs):
-        random_embedding, predicted_embedding \
-            = self._get_embeddings(state, action, batch=batch)
+    @preprocess_args(expected_type='torch')
+    def measure(self, state, action, **kwargs):
+        random_embedding, predicted_embedding = self._get_embeddings(state, action, batch=False)
+        return torch.norm(predicted_embedding.detach() - random_embedding.detach(), p=2, dim=1).item()
 
-        diff = predicted_embedding.detach() - random_embedding.detach()
-        measure = torch.norm(diff, p=2, dim=1)
-        if not batch:
-            measure = measure.item()
-        return measure
+    @preprocess_args(expected_type='torch')
+    def measure_batch(self, states, actions, **kwargs):
+        random_embedding, predicted_embedding = self._get_embeddings(states, action, batch=True)
+        return torch.norm(predicted_embedding.detach() - random_embedding.detach(), p=2, dim=1)

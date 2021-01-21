@@ -1,8 +1,8 @@
 import logging
 import numpy as np
 from rlberry.utils.jit_setup import numba_jit
-from rlberry.exploration_tools.uncertainty_estimator \
-    import UncertaintyEstimator
+from rlberry.exploration_tools.uncertainty_estimator import UncertaintyEstimator
+from rlberry.exploration_tools.typing import preprocess_args
 from gym.spaces import Box, Discrete
 from rlberry.utils.metrics import metric_lp
 
@@ -137,10 +137,12 @@ the maximum number of representative states.")
 
         return state_idx, dist_to_closest
 
-    def update(self, state, action, next_state, reward, **kwargs):
+    @preprocess_args(expected_type='numpy')
+    def update(self, state, action, next_state=None, reward=None, **kwargs):
         state_idx, _ = self._get_representative_state(state)
         self.N_sa[state_idx, action] += 1
 
+    @preprocess_args(expected_type='numpy')
     def measure(self, state, action, **kwargs):
         n = np.maximum(1.0, self.count(state, action))
         if self.fast_rate:
