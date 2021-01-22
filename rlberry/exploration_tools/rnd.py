@@ -3,6 +3,8 @@ from functools import partial
 import torch
 import gym.spaces as spaces
 from torch.nn import functional as F
+
+from rlberry.agents.utils.memories import ReplayMemory
 from rlberry.exploration_tools.uncertainty_estimator import UncertaintyEstimator
 from rlberry.exploration_tools.typing import preprocess_args
 from rlberry.agents.utils.torch_models import ConvolutionalNetwork
@@ -66,6 +68,8 @@ class RandomNetworkDistillation(UncertaintyEstimator):
                  net_kwargs=None,
                  device="cuda:best",
                  rate_power=0.5,
+                 batch_size=10,
+                 memory_size=10000,
                  **kwargs):
         assert isinstance(observation_space, spaces.Box)
         UncertaintyEstimator.__init__(self, observation_space, action_space)
@@ -78,6 +82,8 @@ class RandomNetworkDistillation(UncertaintyEstimator):
         self.net_kwargs = net_kwargs or {}
         self.device = choose_device(device)
         self.rate_power = rate_power
+        self.batch_size = batch_size
+        self.memory = ReplayMemory(capacity=memory_size)
         self.reset()
 
     def reset(self, **kwargs):
@@ -107,8 +113,14 @@ class RandomNetworkDistillation(UncertaintyEstimator):
                next_state=None,
                reward=None,
                **kwargs):
-        random_embedding, predicted_embedding \
-            = self._get_embeddings(state)
+
+        batch = [state]
+        if self.batch_size > 0:
+            batch += self.memory.sample(self.batch_size)
+            self.memory.push(state)
+        batch = torch.stack(batch)
+
+        random_embedding, predicted_embedding = self._get_embeddings(batch, batch=True)
 
         self.loss += self.loss_fn(random_embedding.detach(),
                                   predicted_embedding)

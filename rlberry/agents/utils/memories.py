@@ -17,18 +17,35 @@ class ReplayMemory(object):
         self.memory = []
         self.position = 0
 
-    @classmethod
-    def default_config(cls):
-        return dict()
-
-    def push(self, *args):
-        """Saves a transition."""
+    def push(self, item):
+        """Saves a thing."""
         if len(self.memory) < self.capacity:
-            self.memory.append(Transition(*args))
+            self.memory.append(item)
         else:
-            self.memory[self.position] = Transition(*args)
+            self.memory[self.position] = item
         # Faster than append and pop
         self.position = (self.position + 1) % self.capacity
+
+    def _encode_sample(self, idxes):
+        return [self.memory[idx] for idx in idxes]
+
+    def sample(self, batch_size):
+        idxes = np.random.choice(len(self.memory), size=batch_size)
+        return self._encode_sample(idxes)
+
+    def __len__(self):
+        return len(self.memory)
+
+    def is_full(self):
+        return len(self.memory) == self.capacity
+
+    def is_empty(self):
+        return len(self.memory) == 0
+
+
+class TransitionReplayMemory(ReplayMemory):
+    def push(self, *args):
+        super().push(Transition(*args))
 
     def _encode_sample(self, idxes):
         states, actions, rewards, next_states, dones = [], [], [], [], []
@@ -47,40 +64,8 @@ class ReplayMemory(object):
                           np.array(dones),
                           {})
 
-    def sample(self, batch_size):
-        """Sample a batch of experiences.
-        Parameters
-        ----------
-        batch_size: int
-            How many transitions to sample.
-        Returns
-        -------
-        obs_batch: np.array
-            batch of observations
-        act_batch: np.array
-            batch of actions executed given obs_batch
-        rew_batch: np.array
-            rewards received as results of executing act_batch
-        next_obs_batch: np.array
-            next set of observations seen after executing act_batch
-        done_mask: np.array
-            done_mask[i] = 1 if executing act_batch[i] resulted in
-            the end of an episode and 0 otherwise.
-        """
-        idxes = np.random.choice(len(self.memory), size=batch_size)
-        return self._encode_sample(idxes)
 
-    def __len__(self):
-        return len(self.memory)
-
-    def is_full(self):
-        return len(self.memory) == self.capacity
-
-    def is_empty(self):
-        return len(self.memory) == 0
-
-
-class PrioritizedReplayMemory(ReplayMemory):
+class PrioritizedReplayMemory(TransitionReplayMemory):
     """Code from https://github.com/openai/baselines/blob/master/baselines/deepq/replay_buffer.py"""
     def __init__(self,
                  capacity=10000,
