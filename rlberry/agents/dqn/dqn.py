@@ -4,7 +4,7 @@ import logging
 import numpy as np
 
 from rlberry.agents import IncrementalAgent
-from rlberry.agents.utils.memories import ReplayMemory, Transition, PrioritizedReplayMemory
+from rlberry.agents.utils.memories import Transition, PrioritizedReplayMemory, TransitionReplayMemory
 from rlberry.rendering.env_representation_render2d import representation_2d
 from rlberry.wrappers.uncertainty_estimator_wrapper import UncertaintyEstimatorWrapper
 from rlberry.agents.dqn.exploration import exploration_factory
@@ -128,7 +128,7 @@ class DQNAgent(IncrementalAgent):
             "Only compatible with Discrete action spaces."
 
         self.prioritized_replay = prioritized_replay
-        memory_class = PrioritizedReplayMemory if prioritized_replay else ReplayMemory
+        memory_class = PrioritizedReplayMemory if prioritized_replay else TransitionReplayMemory
         self.memory = memory_class(**self.memory_kwargs)
         self.exploration_policy = \
             exploration_factory(self.env.action_space,
@@ -176,6 +176,7 @@ class DQNAgent(IncrementalAgent):
             if self.episode % 20 == 0:
                 logger.info(f"Episode {self.episode + 1}/{self.n_episodes}, total reward {total_reward}")
             self.plot_memory()
+            self.plot_bonuses()
             if self.writer:
                 self.writer.add_scalar("episode/total_reward", total_reward, self.episode)
                 self.writer.add_scalar("episode/total_bonus", total_bonus, self.episode)
@@ -305,8 +306,7 @@ class DQNAgent(IncrementalAgent):
         reward = torch.tensor(batch.reward,
                               dtype=torch.float).to(self.device)
         if self.use_bonus:
-            bonus = self.env.uncertainty_estimator.measure_batch(state, action)
-            bonus *= self.env.bonus_scale_factor
+            bonus = self.env.bonus_batch(state, action)
             if self.writer:
                 self.writer.add_scalar("debug/minibatch_mean_bonus", bonus.mean().item(), self.episode)
                 self.writer.add_scalar("debug/minibatch_mean_reward", reward.mean().item(), self.episode)
@@ -483,10 +483,34 @@ class DQNAgent(IncrementalAgent):
         next_positions = np.roll(next_positions, len(self.memory)-self.memory.position, axis=0)
         delta = next_positions - positions
         color = np.arange(len(self.memory))
+        # plt.scatter(positions[:, 0], positions[:, 1], c=color, cmap="plasma", alpha=0.3)
         plt.quiver(positions[:, 0], positions[:, 1], delta[:, 0], delta[:, 1], color, cmap="plasma",
                    angles='xy', scale_units='xy', scale=1, alpha=0.3)
-
         self.writer.add_figure("episode/memory", fig, self.episode, close=True)
+
+    def plot_bonuses(self, frequency=20):
+        if not self.writer:
+            return
+        if not self.use_bonus:
+            return
+        if not self.episode % frequency == 0:
+            return
+        from rlberry.envs.benchmarks.grid_exploration.nroom import NRoom
+        import matplotlib
+        import matplotlib.pyplot as plt
+        if isinstance(self.env.unwrapped, NRoom):
+            states = [self.env.unwrapped._convert_index_to_float_coord(idx)
+                          for idx in range(max(self.env.unwrapped.index2coord.keys()))]
+        else:
+            states = [transition.state for transition in self.memory.memory]
+        fig = plt.figure()
+        bonuses = np.array([self.env.bonus(state) for state in states])
+        positions = np.array([representation_2d(state, self.env) for state in states])
+        plt.scatter(positions[:, 0], positions[:, 1],
+                    c=bonuses, norm=matplotlib.colors.LogNorm(), alpha=0.3)
+        plt.colorbar()
+        self.writer.add_figure("episode/bonuses", fig, self.episode, close=True)
+
     #
     # For hyperparameter optimization
     #

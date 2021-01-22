@@ -1,6 +1,8 @@
+import torch
+
 from rlberry.envs import Wrapper
 import logging
-
+import numpy as np
 from rlberry.utils.factory import load
 
 logger = logging.getLogger(__name__)
@@ -35,10 +37,12 @@ class UncertaintyEstimatorWrapper(Wrapper):
                  env,
                  uncertainty_estimator_fn,
                  uncertainty_estimator_kwargs=None,
-                 bonus_scale_factor=1.0):
+                 bonus_scale_factor=1.0,
+                 bonus_max=np.inf):
         Wrapper.__init__(self, env)
 
         self.bonus_scale_factor = bonus_scale_factor
+        self.bonus_max = bonus_max
         uncertainty_estimator_kwargs = uncertainty_estimator_kwargs or {}
 
         uncertainty_estimator_fn = load(uncertainty_estimator_fn) if isinstance(uncertainty_estimator_fn, str) else \
@@ -93,3 +97,11 @@ class UncertaintyEstimatorWrapper(Wrapper):
             '[UncertaintyEstimatorWrapper]: sample()'
             + ' method does not consider nor update bonuses.')
         return self.env.sample(state, action)
+
+    def bonus(self, state, action=None):
+        bonus = self.bonus_scale_factor * self.uncertainty_estimator.measure(state, action)
+        return max(bonus, self.bonus_max)
+
+    def bonus_batch(self, states, actions=None):
+        bonus = self.bonus_scale_factor * self.uncertainty_estimator.measure_batch(states, actions)
+        return np.clip(bonus, 0, self.bonus_max) if isinstance(bonus, np.ndarray) else torch.clamp(bonus, 0, self.bonus_max)
