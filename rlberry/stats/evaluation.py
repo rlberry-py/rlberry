@@ -16,7 +16,7 @@ def mc_policy_evaluation(agent,
                          policy_kwargs=None,
                          stationary_policy=True):
     """
-    Monte-Carlo Policy evaluation [1] of an agent to estimate the value at the initial state.
+    Monte-Carlo Policy evaluation [1]_ of an agent to estimate the value at the initial state.
 
     If a list of agents is provided as input, for each evaluation, one of the agents is sampled
     uniformly at random.
@@ -45,7 +45,7 @@ def mc_policy_evaluation(agent,
 
     References
     ----------
-    [1] http://incompleteideas.net/book/first/ebook/node50.html
+    .. [1] http://incompleteideas.net/book/first/ebook/node50.html
     """
     rng = seeding.get_rng()
     if not isinstance(agent, list):
@@ -73,50 +73,83 @@ def mc_policy_evaluation(agent,
     return episode_rewards
 
 
-def plot_episode_rewards(agent_stats_list, cumulative=False,
-                         fignum=None, show=True):
+def plot_episode_rewards(agent_stats,
+                         cumulative=False,
+                         fignum=None,
+                         show=True,
+                         max_value=None,
+                         plot_regret=False):
     """
     Given a list of AgentStats, plot the rewards obtained in each episode.
     The dictionary returned by agents' .fit() method must contain a key 'episode_rewards'.
+
+    Parameters
+    ----------
+    agent_stats : AgentStats, or list of AgentStats
+    cumulative : bool, default: False
+        If true, plot cumulative rewards.
+    fignum: string or int
+        Identifier of plot figure.
+    show: bool
+        If true, calls plt.show().
+    max_value: double, default: None
+        Maximum reward achievable in one episode.
+    plot_regret: bool, default: False
+        If true, plots the regret. Requires max_val to be given.
     """
+    agent_stats_list = agent_stats
     if not isinstance(agent_stats_list, list):
         agent_stats_list = [agent_stats_list]
 
-    plt.figure(fignum)
-    for agent_stats in agent_stats_list:
-        # train agents if they are not already trained
-        if agent_stats.fitted_agents is None:
-            agent_stats.fit()
+    if plot_regret and max_value is None:
+        raise ValueError("max_value must be provided for regret plot")
 
-        if 'episode_rewards' not in agent_stats.fit_info:
-            logger.warning("episode_rewards not available for %s." % agent_stats.agent_name)
+    plt.figure(fignum)
+    for stats in agent_stats_list:
+        # train agents if they are not already trained
+        if stats.fitted_agents is None:
+            stats.fit()
+
+        if 'episode_rewards' not in stats.fit_info:
+            logger.warning("episode_rewards not available for %s." % stats.agent_name)
             continue
 
         # get reward statistics and plot them
-        rewards = np.array(agent_stats.fit_statistics['episode_rewards'])
-        if cumulative:
-            rewards = np.cumsum(rewards, axis=1)
-        mean_r = rewards.mean(axis=0)
-        std_r = rewards.std(axis=0)
-        episodes = np.arange(1, rewards.shape[1]+1)
+        rewards = np.array(stats.fit_statistics['episode_rewards'])
+        if cumulative and (not plot_regret):
+            data = np.cumsum(rewards, axis=1)
+            label = "total reward"
+        elif plot_regret:
+            data = np.cumsum(max_value-rewards, axis=1)
+            label = "regret"
+        else:
+            data = rewards
+            label = "reward in one episode"
 
-        plt.plot(episodes, mean_r, label=agent_stats.agent_name)
-        plt.fill_between(episodes, mean_r-std_r, mean_r+std_r, alpha=0.2)
+        mean_r = data.mean(axis=0)
+        std_r = data.std(axis=0)
+        episodes = np.arange(1, data.shape[1]+1)
+
+        plt.plot(episodes, mean_r, label=stats.agent_name)
+        plt.fill_between(episodes, mean_r-std_r, mean_r+std_r, alpha=0.4)
         plt.legend()
         plt.xlabel("episodes")
-        if not cumulative:
-            plt.ylabel("reward in one episode")
-        else:
-            plt.ylabel("total reward")
+        plt.ylabel(label)
         plt.grid(True, alpha=0.75)
 
     if show:
         plt.show()
 
 
-def compare_policies(agent_stats_list, eval_env=None, eval_horizon=None,
-                     stationary_policy=True, n_sim=10, fignum=None,
-                     show=True, plot=True, **kwargs):
+def compare_policies(agent_stats_list,
+                     eval_env=None,
+                     eval_horizon=None,
+                     stationary_policy=True,
+                     n_sim=10,
+                     fignum=None,
+                     show=True,
+                     plot=True,
+                     **kwargs):
     """
     Compare the policies of each of the agents in agent_stats_list.
     Each element of the agent_stats_list contains a list of fitted agents.
@@ -124,9 +157,6 @@ def compare_policies(agent_stats_list, eval_env=None, eval_horizon=None,
         * choose one of the fitted agents uniformly at random
         * run its policy in eval_env for eval_horizon time steps
 
-    To do
-    ------
-    Paralellize evaluations of each agent.
 
     Parameters
     ----------
@@ -143,11 +173,13 @@ def compare_policies(agent_stats_list, eval_env=None, eval_horizon=None,
     n_sim : int
         Number of simulations to evaluate each policy.
     fignum: string or int
-        Identifier of plot figure
+        Identifier of plot figure.
     show: bool
-        If true, calls plt.show()
+        If true, calls plt.show().
     plot: bool
         If false, do not plot.
+    kwargs:
+        Extra parameters for sns.boxplot
     """
     #
     # evaluation
@@ -233,7 +265,7 @@ def compare_policies(agent_stats_list, eval_env=None, eval_horizon=None,
     return output
 
 
-def plot_fit_info(agent_stats_list,
+def plot_fit_info(agent_stats,
                   info,
                   fignum=None,
                   show=True):
@@ -243,26 +275,35 @@ def plot_fit_info(agent_stats_list,
 
     Parameters
     ----------
+    agent_stats : AgentStats, or list of AgentStats
     info : str
+        Info (returned by Agent.fit()) to plot.
+    fignum: string or int
+        Identifier of plot figure.
+    show: bool
+        If true, calls plt.show().
     """
+    agent_stats_list = agent_stats
+    if not isinstance(agent_stats_list, list):
+        agent_stats_list = [agent_stats_list]
     plt.figure(fignum)
-    for agent_stats in agent_stats_list:
+    for stats in agent_stats_list:
         # train agents if they are not already trained
-        if agent_stats.fitted_agents is None:
-            agent_stats.fit()
+        if stats.fitted_agents is None:
+            stats.fit()
 
-        if info not in agent_stats.fit_info:
-            logger.warning("{} not available for {}.".format(info, agent_stats.agent_name))
+        if info not in stats.fit_info:
+            logger.warning("{} not available for {}.".format(info, stats.agent_name))
             continue
 
         # get data and plot them
-        data = np.array(agent_stats.fit_statistics[info])
+        data = np.array(stats.fit_statistics[info])
         mean_data = data.mean(axis=0)
         std_data = data.std(axis=0)
         episodes = np.arange(1, data.shape[1]+1)
 
-        plt.plot(episodes, mean_data, label=agent_stats.agent_name)
-        plt.fill_between(episodes, mean_data-std_data, mean_data+std_data, alpha=0.2)
+        plt.plot(episodes, mean_data, label=stats.agent_name)
+        plt.fill_between(episodes, mean_data-std_data, mean_data+std_data, alpha=0.4)
         plt.legend()
         plt.xlabel("episodes")
         plt.ylabel(info)
