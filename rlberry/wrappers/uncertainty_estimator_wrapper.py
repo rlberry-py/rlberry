@@ -100,7 +100,7 @@ class UncertaintyEstimatorWrapper(Wrapper):
 
     def bonus(self, state, action=None):
         bonus = self.bonus_scale_factor * self.uncertainty_estimator.measure(state, action)
-        return max(bonus, self.bonus_max)
+        return np.clip(bonus, 0, self.bonus_max)
 
     def bonus_batch(self, states, actions=None):
         bonus = self.bonus_scale_factor * self.uncertainty_estimator.measure_batch(states, actions)
