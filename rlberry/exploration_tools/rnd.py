@@ -42,8 +42,8 @@ def get_network(shape, embedding_dim):
     elif len(shape) == 1:
         return MultiLayerPerceptron(in_size=shape[0],
                                     activation="RELU",
+                                    layer_sizes=[64, 64],
                                     out_size=embedding_dim)
-
     else:
         raise ValueError("Incompatible observation shape: {}"
                          .format(shape))
@@ -115,7 +115,7 @@ class RandomNetworkDistillation(UncertaintyEstimator):
                **kwargs):
 
         batch = [state]
-        if self.batch_size > 0:
+        if self.batch_size > 0 and not self.memory.is_empty():
             batch += self.memory.sample(self.batch_size)
             self.memory.push(state)
         batch = torch.stack(batch)
