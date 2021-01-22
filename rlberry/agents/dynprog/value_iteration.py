@@ -70,7 +70,7 @@ class ValueIterationAgent(Agent):
             stage when action is taken (for finite horizon problems,
             the optimal policy depends on hh) not used if horizon is None.
         """
-        assert self.env.observation_space.contains(state)
+        # assert self.env.observation_space.contains(state)
         if self.horizon is None:
             return self.Q[state, :].argmax()
         else:
