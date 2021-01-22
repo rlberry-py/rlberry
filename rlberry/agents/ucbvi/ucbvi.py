@@ -158,6 +158,10 @@ class UCBVIAgent(IncrementalAgent):
         # info
         self._rewards = np.zeros(self.n_episodes)
 
+        # update name
+        if self.real_time_dp:
+            self.name = 'UCBVI-RTDP'
+
         # default writer
         self.writer = PeriodicWriter(self.name,
                                      log_every=5*logger.getEffectiveLevel())
