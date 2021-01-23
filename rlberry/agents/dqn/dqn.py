@@ -466,7 +466,7 @@ class DQNAgent(IncrementalAgent):
             self.writer.add_scalar("agent/trainable_parameters",
                                    trainable_parameters(self.value_net), 0)
 
-    def plot_memory(self, frequency=20):
+    def plot_memory(self, frequency=100):
         if not self.writer:
             return
         if not self.episode % frequency == 0:
@@ -488,7 +488,7 @@ class DQNAgent(IncrementalAgent):
                    angles='xy', scale_units='xy', scale=1, alpha=0.3)
         self.writer.add_figure("episode/memory", fig, self.episode, close=True)
 
-    def plot_bonuses(self, frequency=20):
+    def plot_bonuses(self, frequency=100):
         if not self.writer:
             return
         if not self.use_bonus:
