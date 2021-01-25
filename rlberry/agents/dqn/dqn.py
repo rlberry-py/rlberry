@@ -503,13 +503,16 @@ class DQNAgent(IncrementalAgent):
         if isinstance(self.env.unwrapped, NRoom):
             states = [self.env.unwrapped._convert_index_to_float_coord(idx)
                           for idx in range(max(self.env.unwrapped.index2coord.keys()))]
+            actions = np.repeat(np.arange(self.env.action_space.n), len(states))
+            states = states * self.env.action_space.n
         else:
-            states = self.memory.sample(states_count)[0].state
+            sample = self.memory.sample(states_count)[0]
+            states, actions = sample.state, sample.action
         states = torch.from_numpy(np.array(states)).to(self.device)
-        actions = None
+        actions = torch.from_numpy(np.array(actions)).to(self.device)
         bonuses = self.env.bonus_batch(states, actions).cpu().numpy()
-        fig = plt.figure()
         positions = np.array([representation_2d(state, self.env) for state in states])
+        fig = plt.figure()
         plt.scatter(positions[:, 0], positions[:, 1],
                     c=bonuses, norm=matplotlib.colors.LogNorm(), alpha=0.3)
         plt.colorbar()
