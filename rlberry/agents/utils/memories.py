@@ -30,8 +30,9 @@ class ReplayMemory(object):
         return [self.memory[idx] for idx in idxes]
 
     def sample(self, batch_size):
+        batch_size = min(batch_size, len(self))
         idxes = np.random.choice(len(self.memory), size=batch_size)
-        return self._encode_sample(idxes)
+        return self._encode_sample(idxes), idxes
 
     def __len__(self):
         return len(self.memory)
@@ -145,6 +146,7 @@ class PrioritizedReplayMemory(TransitionReplayMemory):
         """
         assert self._beta > 0
 
+        batch_size = min(batch_size, len(self))
         idxes = self._sample_proportional(batch_size)
 
         weights = []

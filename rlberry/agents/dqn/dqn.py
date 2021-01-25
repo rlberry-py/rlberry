@@ -177,6 +177,7 @@ class DQNAgent(IncrementalAgent):
                 logger.info(f"Episode {self.episode + 1}/{self.n_episodes}, total reward {total_reward}")
             self.plot_memory()
             self.plot_bonuses()
+            self.plot_value()
             if self.writer:
                 self.writer.add_scalar("episode/total_reward", total_reward, self.episode)
                 self.writer.add_scalar("episode/total_bonus", total_bonus, self.episode)
@@ -237,7 +238,7 @@ class DQNAgent(IncrementalAgent):
     def update(self):
         batch, weights, indexes = self.sample_minibatch()
         if batch:
-            losses = self.compute_bellman_residual(batch)
+            losses, target = self.compute_bellman_residual(batch)
             self.step_optimizer(losses.mean())
             if self.prioritized_replay:
                 new_priorities = losses.abs().detach().cpu().numpy() + 1e-6
@@ -264,8 +265,8 @@ class DQNAgent(IncrementalAgent):
         if self.prioritized_replay:
             transitions, weights, indexes = self.memory.sample(self.batch_size)
         else:
-            transitions = self.memory.sample(self.batch_size)
-            weights, indexes = np.ones((self.batch_size,)), None
+            transitions, indexes = self.memory.sample(self.batch_size)
+            weights = np.ones((self.batch_size,))
         return transitions, weights, indexes
 
     def update_target_network(self):
@@ -346,7 +347,7 @@ class DQNAgent(IncrementalAgent):
 
         # Compute residuals
         residuals = self.loss_function(state_action_values, target_state_action_value, reduction='none')
-        return residuals
+        return residuals, target_state_action_value
 
     def get_batch_state_values(self, states):
         """
@@ -466,7 +467,7 @@ class DQNAgent(IncrementalAgent):
             self.writer.add_scalar("agent/trainable_parameters",
                                    trainable_parameters(self.value_net), 0)
 
-    def plot_memory(self, frequency=100):
+    def plot_memory(self, frequency=100, states_count=20000):
         if not self.writer:
             return
         if not self.episode % frequency == 0:
@@ -477,18 +478,19 @@ class DQNAgent(IncrementalAgent):
             return
         import matplotlib.pyplot as plt
         fig = plt.figure()
-        positions = np.array([representation_2d(transition.state, self.env) for transition in self.memory.memory])
-        next_positions = np.array([representation_2d(transition.next_state, self.env) for transition in self.memory.memory])
-        positions = np.roll(positions, len(self.memory)-self.memory.position, axis=0)
-        next_positions = np.roll(next_positions, len(self.memory)-self.memory.position, axis=0)
+        samples, idx = self.memory.sample(states_count)
+        states = samples[0].state if self.prioritized_replay else samples.state
+        next_states = samples[0].next_state if self.prioritized_replay else samples.next_state
+        positions = np.array([representation_2d(state, self.env) for state in states])
+        next_positions = np.array([representation_2d(next_state, self.env) for next_state in next_states])
         delta = next_positions - positions
-        color = np.arange(len(self.memory))
+        color = np.mod(self.memory.position - idx, len(self.memory))
         # plt.scatter(positions[:, 0], positions[:, 1], c=color, cmap="plasma", alpha=0.3)
         plt.quiver(positions[:, 0], positions[:, 1], delta[:, 0], delta[:, 1], color, cmap="plasma",
                    angles='xy', scale_units='xy', scale=1, alpha=0.3)
         self.writer.add_figure("episode/memory", fig, self.episode, close=True)
 
-    def plot_bonuses(self, frequency=100):
+    def plot_bonuses(self, frequency=100, states_count=20000):
         if not self.writer:
             return
         if not self.use_bonus:
@@ -502,14 +504,38 @@ class DQNAgent(IncrementalAgent):
             states = [self.env.unwrapped._convert_index_to_float_coord(idx)
                           for idx in range(max(self.env.unwrapped.index2coord.keys()))]
         else:
-            states = [transition.state for transition in self.memory.memory]
+            states = self.memory.sample(states_count)[0].state
+        states = torch.from_numpy(np.array(states)).to(self.device)
+        actions = None
+        bonuses = self.env.bonus_batch(states, actions).cpu().numpy()
         fig = plt.figure()
-        bonuses = np.array([self.env.bonus(state) for state in states])
         positions = np.array([representation_2d(state, self.env) for state in states])
         plt.scatter(positions[:, 0], positions[:, 1],
                     c=bonuses, norm=matplotlib.colors.LogNorm(), alpha=0.3)
         plt.colorbar()
         self.writer.add_figure("episode/bonuses", fig, self.episode, close=True)
+
+    def plot_value(self, frequency=100, states_count=20000):
+        if not self.writer:
+            return
+        if not self.episode % frequency == 0:
+            return
+        from rlberry.envs.benchmarks.grid_exploration.nroom import NRoom
+        import matplotlib
+        import matplotlib.pyplot as plt
+        if isinstance(self.env.unwrapped, NRoom):
+            states = [self.env.unwrapped._convert_index_to_float_coord(idx)
+                          for idx in range(max(self.env.unwrapped.index2coord.keys()))]
+        else:
+            states = self.memory.sample(states_count)[0].state
+        states = torch.from_numpy(np.array(states)).to(self.device)
+        values = self.value_net(states).max(1)[0].detach().cpu().numpy()
+        fig = plt.figure()
+        positions = np.array([representation_2d(state, self.env) for state in states])
+        plt.scatter(positions[:, 0], positions[:, 1],
+                    c=values, norm=matplotlib.colors.LogNorm(), alpha=0.3)
+        plt.colorbar()
+        self.writer.add_figure("episode/values", fig, self.episode, close=True)
 
     #
     # For hyperparameter optimization
