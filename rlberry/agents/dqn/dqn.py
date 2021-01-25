@@ -484,7 +484,7 @@ class DQNAgent(IncrementalAgent):
         positions = np.array([representation_2d(state, self.env) for state in states])
         next_positions = np.array([representation_2d(next_state, self.env) for next_state in next_states])
         delta = next_positions - positions
-        color = np.mod(self.memory.position - idx, len(self.memory))
+        color = np.mod(idx - self.memory.position, len(self.memory))
         # plt.scatter(positions[:, 0], positions[:, 1], c=color, cmap="plasma", alpha=0.3)
         plt.quiver(positions[:, 0], positions[:, 1], delta[:, 0], delta[:, 1], color, cmap="plasma",
                    angles='xy', scale_units='xy', scale=1, alpha=0.3)
