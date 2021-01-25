@@ -28,10 +28,10 @@ def load_experiment_results(output_dir, experiment_name):
     """
     Parameters
     ----------
-    output_dir : str or Path
-        directory where experiment results are stored
+    output_dir : str or Path, or list
+        directory (or list of directories) where experiment results are stored
         (command line argument --output_dir when running the eperiment)
-    experiment_name : str or Path
+    experiment_name : str or Path, or list
         name of yaml file describing the experiment.
 
     Returns
@@ -39,7 +39,7 @@ def load_experiment_results(output_dir, experiment_name):
     output_data: dict
         dictionary such that
 
-        output_data['experiment_dir'] = path to experiment directory (output_dir/experiment_name)
+        output_data['experiment_dirs'] = list of paths to experiment directory (output_dir/experiment_name)
         output_data['agent_list'] = list containing the names of the agents in the experiment
         output_data['stats'][agent_name] = fitted AgentStats for agent_name
         output_data['dataframes'][agent_name] = dict of pandas data frames from the last run of the experiment
@@ -51,11 +51,27 @@ def load_experiment_results(output_dir, experiment_name):
     output_data['dataframes'] = {}
     output_data['data_dir'] = {}
 
-    results_dir = Path(output_dir) / Path(experiment_name).stem
-    output_data['experiment_dir'] = results_dir
+    # preprocess input
+    if not isinstance(output_dir, list):
+        output_dir = [output_dir]
+    if not isinstance(experiment_name, list):
+        experiment_name = [experiment_name]
+    ndirs = len(output_dir)
+
+    if ndirs > 1:
+        assert len(experiment_name) == ndirs, "Number of experiment names must match the number of output_dirs "
+    else:
+        output_dir = len(experiment_name)*output_dir
+
+    results_dirs = []
+    for dd, exper in zip(output_dir, experiment_name):
+        results_dirs.append(Path(dd) / Path(exper).stem)
+    output_data['experiment_dirs'] = results_dirs
 
     # Subdirectories with data for each agent
-    subdirs = [f for f in results_dir.iterdir() if f.is_dir()]
+    subdirs = []
+    for dd in results_dirs:
+        subdirs.extend([f for f in dd.iterdir() if f.is_dir()])
 
     # Create dictionary dict[agent_name] = most recent result dir
     data_dirs = {}
