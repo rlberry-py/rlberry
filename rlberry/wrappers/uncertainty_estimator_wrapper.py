@@ -65,9 +65,7 @@ class UncertaintyEstimatorWrapper(Wrapper):
                                           action,
                                           next_state,
                                           reward)
-        bonus = self.uncertainty_estimator.measure(state, action)
-        bonus = self.bonus_scale_factor*bonus
-        return bonus
+        return self.bonus(state, action)
 
     def step(self, action):
         observation, reward, done, info = self.env.step(action)
