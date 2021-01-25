@@ -17,6 +17,7 @@ def kernel_func(z, kernel_type):
     "triweight"    : (1-z^2)^3 *(abs(z) <= 1)
     "tricube"      : (1-abs(z)^3)^3 *(abs(z) <= 1)
     "cosine"       : cos( z * (pi/2) ) *(abs(z) <= 1)
+    "exp-n"        : exp(-abs(z)^n/2), for n integer
 
     Parameters
     ----------
@@ -39,5 +40,19 @@ def kernel_func(z, kernel_type):
         return np.power((1.0 - np.power(np.abs(z), 3.0)), 3.0)*(np.abs(z) <= 1)
     elif kernel_type == "cosine":
         return np.cos(z*np.pi/2)*(np.abs(z) <= 1)
+    elif "exp-" in kernel_type:
+        exponent = _str_to_int(kernel_type.split("-")[1])
+        return np.exp(-np.power(np.abs(z), exponent) / 2.0)
     else:
         raise NotImplementedError("Unknown kernel type.")
+
+
+@numba_jit
+def _str_to_int(s):
+    """
+    Source: https://github.com/numba/numba/issues/5650#issuecomment-623511109
+    """
+    final_index, result = len(s) - 1, 0
+    for i, v in enumerate(s):
+        result += (ord(v) - 48) * (10 ** (final_index - i))
+    return result

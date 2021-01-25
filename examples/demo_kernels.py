@@ -14,7 +14,8 @@ kernel_types = [
                 "quartic",
                 "triweight",
                 "tricube",
-                "cosine"
+                "cosine",
+                "exp-4"
                 ]
 
 z = np.linspace(-2, 2, 100)

@@ -1,6 +1,7 @@
 import pytest
 from rlberry.agents.kernel_based import RSKernelUCBVIAgent
 from rlberry.agents.kernel_based import RSUCBVIAgent
+from rlberry.agents.kernel_based.kernels import _str_to_int
 from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
 
 
@@ -12,7 +13,8 @@ from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
                 "quartic",
                 "triweight",
                 "tricube",
-                "cosine"
+                "cosine",
+                "exp-2"
 ])
 def test_rs_kernel_ucbvi(kernel_type):
     for horizon in [None, 30]:
@@ -30,6 +32,11 @@ def test_rs_kernel_ucbvi(kernel_type):
         agent._log_interval = 0
         agent.fit()
         agent.policy(env.observation_space.sample())
+
+
+def test_str_to_int():
+    for ii in range(100):
+        assert _str_to_int(str(ii)) == ii
 
 
 def test_rs_ucbvi():
