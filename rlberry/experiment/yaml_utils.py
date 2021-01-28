@@ -98,9 +98,7 @@ def read_env_config(config_path):
     """
     with open(config_path) as file:
         env_config = yaml.safe_load(file)
-        if "module_import" in env_config:
-            __import__(env_config.pop("module_import"))
-        return (load(env_config["constructor"]), env_config["params"])
+        return load(env_config["constructor"]), env_config["params"]
 
 
 def parse_experiment_config(path: Path,
