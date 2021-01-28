@@ -78,11 +78,9 @@ class RandomNetworkDistillation(UncertaintyEstimator):
         self.loss_fn = F.mse_loss
         self.update_period = update_period
         self.embedding_dim = embedding_dim
-
-        input_shape = tuple(list(observation_space.shape[:-1]) + [observation_space.shape[-1]+action_space.n]) \
-            if with_action else observation_space.shape
+        out_size = embedding_dim * action_space.n if with_action else embedding_dim
         self.net_fn = load(net_fn) if isinstance(net_fn, str) else \
-            net_fn or partial(get_network, shape=input_shape, embedding_dim=embedding_dim)
+            net_fn or partial(get_network, shape=observation_space.shape, embedding_dim=out_size)
         self.net_kwargs = net_kwargs or {}
         self.device = choose_device(device)
         self.rate_power = rate_power
@@ -103,24 +101,23 @@ class RandomNetworkDistillation(UncertaintyEstimator):
         self.loss = torch.tensor(0.0).to(self.device)
 
     def _get_embeddings(self, state, action=None, batch=False):
-        input_tensor = state.to(self.device)
+        state = state.to(self.device)
         if not batch:
-            input_tensor = input_tensor.unsqueeze(0)
-        if self.with_action:
-            action = torch.nn.functional.one_hot(action, num_classes=self.action_space.n).double().to(self.device)
-            if not batch:
-                action = action.unsqueeze(0) if self.with_action else None
-            # Assume state tensor is of shape (B,..., C) where B is batch and C is channel
-            # and action tensor is of shape (B, A) where B is batch and A is one-hot actions
-            # Concat the action to the channels layer, resulting in shape (B, ..., C+A)
-            state_shape, action_shape = input_tensor.shape, action.shape
-            action_shape_view = tuple([action_shape[0]] + [1] * len(state_shape[1:-1]) + [action_shape[1]])
-            action_shape_repeat = tuple([1] + list(state_shape[1:-1]) + [1])
-            action = action.view(action_shape_view).repeat(action_shape_repeat)
-            input_tensor = torch.cat((input_tensor, action), -1)
+            state = state.unsqueeze(0)
 
-        random_embedding = self.random_target_network(input_tensor)
-        predicted_embedding = self.predictor_network.forward(input_tensor)
+        random_embedding = self.random_target_network(state)
+        predicted_embedding = self.predictor_network(state)
+
+        if self.with_action:
+            action = action.to(self.device)
+            if not batch:
+                action = action.unsqueeze(0)
+
+            random_embedding = random_embedding.view((action.shape[0], self.action_space.n, -1))
+            predicted_embedding = predicted_embedding.view((action.shape[0], self.action_space.n, -1))
+            action = action.unsqueeze(1).repeat(1, random_embedding.shape[-1]).unsqueeze(1)
+            random_embedding = random_embedding.gather(1, action).squeeze(1)
+            predicted_embedding = predicted_embedding.gather(1, action).squeeze(1)
         return random_embedding, predicted_embedding
 
     @preprocess_args(expected_type='torch')
