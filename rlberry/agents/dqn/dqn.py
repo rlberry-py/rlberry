@@ -5,6 +5,8 @@ import numpy as np
 
 from rlberry.agents import IncrementalAgent
 from rlberry.agents.utils.memories import Transition, PrioritizedReplayMemory, TransitionReplayMemory
+from rlberry.exploration_tools.discrete_counter import DiscreteCounter
+from rlberry.exploration_tools.online_discretization_counter import OnlineDiscretizationCounter
 from rlberry.rendering.env_representation_render2d import representation_2d
 from rlberry.wrappers.uncertainty_estimator_wrapper import UncertaintyEstimatorWrapper
 from rlberry.agents.dqn.exploration import exploration_factory
@@ -98,6 +100,7 @@ class DQNAgent(IncrementalAgent):
                  use_bonus=False,
                  uncertainty_estimator_kwargs=None,
                  prioritized_replay=True,
+                 update_frequency=1,
                  **kwargs):
         # Wrap arguments and initialize base class
         memory_kwargs = {
@@ -159,6 +162,7 @@ class DQNAgent(IncrementalAgent):
         self.loss_function = loss_function_factory(self.loss_function)
         self.optimizer = optimizer_factory(self.value_net.parameters(),
                                            **self.optimizer_kwargs)
+        self.update_frequency = update_frequency
         self.steps = 0
 
     def fit(self, **kwargs):
@@ -183,6 +187,12 @@ class DQNAgent(IncrementalAgent):
                 self.writer.add_scalar("episode/total_bonus", total_bonus, self.episode)
                 self.writer.add_scalar("episode/total_success", total_success, self.episode)
                 self.writer.add_scalar("episode/length", length, self.episode)
+                if self.use_bonus and \
+                        (isinstance(self.env.uncertainty_estimator, OnlineDiscretizationCounter) or
+                         isinstance(self.env.uncertainty_estimator, DiscreteCounter)):
+                    n_visited_states = (self.env.uncertainty_estimator.N_sa.sum(axis=1) > 0).sum()
+                    self.writer.add_scalar("debug/n_visited_states", n_visited_states, self.episode)
+
             episode_rewards.append(total_reward)
         return {
             "n_episodes": int(fraction * self.n_episodes),
@@ -233,7 +243,8 @@ class DQNAgent(IncrementalAgent):
         if not self.training:
             return
         self.memory.push(state, action, reward, next_state, done, info)
-        self.update()
+        if self.memory.position % self.update_frequency == 0:
+            self.update()
 
     def update(self):
         batch, weights, indexes = self.sample_minibatch()
@@ -307,7 +318,7 @@ class DQNAgent(IncrementalAgent):
         reward = torch.tensor(batch.reward,
                               dtype=torch.float).to(self.device)
         if self.use_bonus:
-            bonus = self.env.bonus_batch(state, action)
+            bonus = self.env.bonus_batch(state, action).to(self.device) * self.exploration_policy.epsilon
             if self.writer:
                 self.writer.add_scalar("debug/minibatch_mean_bonus", bonus.mean().item(), self.episode)
                 self.writer.add_scalar("debug/minibatch_mean_reward", reward.mean().item(), self.episode)
@@ -478,11 +489,10 @@ class DQNAgent(IncrementalAgent):
             return
         import matplotlib.pyplot as plt
         fig = plt.figure()
-        samples, idx = self.memory.sample(states_count)
-        states = samples[0].state if self.prioritized_replay else samples.state
-        next_states = samples[0].next_state if self.prioritized_replay else samples.next_state
-        positions = np.array([representation_2d(state, self.env) for state in states])
-        next_positions = np.array([representation_2d(next_state, self.env) for next_state in next_states])
+        res = self.memory.sample(states_count)
+        samples, idx = res if not self.prioritized_replay else (res[0], res[2])
+        positions = np.array([representation_2d(state, self.env) for state in samples.state])
+        next_positions = np.array([representation_2d(next_state, self.env) for next_state in samples.next_state])
         delta = next_positions - positions
         color = np.mod(idx - self.memory.position, len(self.memory))
         # plt.scatter(positions[:, 0], positions[:, 1], c=color, cmap="plasma", alpha=0.3)
@@ -511,7 +521,7 @@ class DQNAgent(IncrementalAgent):
         states = torch.from_numpy(np.array(states)).to(self.device)
         actions = torch.from_numpy(np.array(actions)).to(self.device)
         bonuses = self.env.bonus_batch(states, actions).cpu().numpy()
-        positions = np.array([representation_2d(state, self.env) for state in states])
+        positions = np.array([representation_2d(state, self.env) for state in states.cpu().numpy()])
         fig = plt.figure()
         plt.scatter(positions[:, 0], positions[:, 1],
                     c=bonuses, norm=matplotlib.colors.LogNorm(), alpha=0.3)
@@ -534,7 +544,7 @@ class DQNAgent(IncrementalAgent):
         states = torch.from_numpy(np.array(states)).to(self.device)
         values = self.value_net(states).max(1)[0].detach().cpu().numpy()
         fig = plt.figure()
-        positions = np.array([representation_2d(state, self.env) for state in states])
+        positions = np.array([representation_2d(state, self.env) for state in states.cpu().numpy()])
         plt.scatter(positions[:, 0], positions[:, 1],
                     c=values, norm=matplotlib.colors.LogNorm(), alpha=0.3)
         plt.colorbar()
