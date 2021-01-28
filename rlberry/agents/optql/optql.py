@@ -30,6 +30,9 @@ class OptQLAgent(IncrementalAgent):
     bonus_type : {"simplified_bernstein"}
         Type of exploration bonus. Currently, only "simplified_bernstein"
         is implemented.
+    add_bonus_after_update : bool, default: False
+        If True, add bonus to the Q function after performing the update,
+        instead of adding it to the update target.
 
     References
     ----------
@@ -46,6 +49,7 @@ class OptQLAgent(IncrementalAgent):
                  horizon=100,
                  bonus_scale_factor=1.0,
                  bonus_type="simplified_bernstein",
+                 add_bonus_after_update=False,
                  **kwargs):
         # init base class
         IncrementalAgent.__init__(self, env, **kwargs)
@@ -55,6 +59,7 @@ class OptQLAgent(IncrementalAgent):
         self.horizon = horizon
         self.bonus_scale_factor = bonus_scale_factor
         self.bonus_type = bonus_type
+        self.add_bonus_after_update = add_bonus_after_update
 
         # check environment
         assert isinstance(self.env.observation_space, spaces.Discrete)
@@ -86,8 +91,10 @@ class OptQLAgent(IncrementalAgent):
         # Value functions
         self.V = np.zeros((H+1, S))
         self.Q = np.ones((H, S, A))
+        self.Q_bar = np.ones((H, S, A))
         for hh in range(self.horizon):
             self.Q[hh, :, :] *= (self.horizon-hh)
+            self.Q_bar[hh, :, :] *= (self.horizon-hh)
         # ep counter
         self.episode = 0
 
@@ -104,11 +111,11 @@ class OptQLAgent(IncrementalAgent):
 
     def policy(self, state, hh=0, **kwargs):
         """ Recommended policy. """
-        return self.Q[hh, state, :].argmax()
+        return self.Q_bar[hh, state, :].argmax()
 
     def _get_action(self, state, hh=0):
         """ Sampling policy. """
-        return self.Q[hh, state, :].argmax()
+        return self.Q_bar[hh, state, :].argmax()
 
     def _compute_bonus(self, n, hh):
         if self.bonus_type == "simplified_bernstein":
@@ -126,9 +133,19 @@ class OptQLAgent(IncrementalAgent):
         # learning rate
         alpha = (self.horizon+1.0)/(self.horizon + nn)
         bonus = self._compute_bonus(nn, hh)
-        target = reward + bonus + self.gamma*self.V[hh+1, next_state]
-        self.Q[hh, state, action] = (1-alpha)*self.Q[hh, state, action] + alpha * target
-        self.V[hh, state] = min(self.v_max[hh], self.Q[hh, state, :].max())
+
+        # bonus in the update
+        if not self.add_bonus_after_update:
+            target = reward + bonus + self.gamma*self.V[hh+1, next_state]
+            self.Q[hh, state, action] = (1-alpha)*self.Q[hh, state, action] + alpha * target
+            self.V[hh, state] = min(self.v_max[hh], self.Q[hh, state, :].max())
+            self.Q_bar[hh, state, action] = self.Q[hh, state, action]
+        # bonus outside the update
+        else:
+            target = reward + self.gamma*self.V[hh+1, next_state]                  # bonus not here
+            self.Q[hh, state, action] = (1-alpha)*self.Q[hh, state, action] + alpha * target
+            self.Q_bar[hh, state, action] = self.Q[hh, state, action] + bonus      # bonus here
+            self.V[hh, state] = min(self.v_max[hh], self.Q_bar[hh, state, :].max())
 
     def _run_episode(self):
         # interact for H steps
