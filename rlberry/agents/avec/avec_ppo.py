@@ -79,10 +79,10 @@ class AVECPPOAgent(IncrementalAgent):
 
     References
     ----------
-    Flet-Berliac, Y., Ouhamma, R., Maillard, O. A., & Preux, P. (2020).
+    Flet-Berliac, Y., Ouhamma, R., Maillard, O. A., & Preux, P. (2021).
     "Is Standard Deviation the New Standard? Revisiting the Critic in Deep
     Policy Gradients."
-    arXiv preprint arXiv:2010.04440.
+    In International Conference on Learning Representations.
 
     [1] Ilyas, A., Engstrom, L., Santurkar, S., Tsipras, D., Janoos, F.,
     Rudolph, L. & Madry, A. (2020).
