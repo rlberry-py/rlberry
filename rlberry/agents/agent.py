@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from copy import deepcopy
 import logging
+from inspect import signature
+
 from rlberry.seeding import seeding
 
 
@@ -90,6 +92,14 @@ class Agent(ABC):
 
     def set_writer(self, writer):
         self.writer = writer
+
+        if self.writer:
+            init_args = signature(self.__init__).parameters
+            kwargs = [f"| {key} | {getattr(self, key, None)} |" for key in init_args]
+            writer.add_text(
+                "Hyperparameters",
+                "| Parameter | Value |\n|-------|-------|\n" + "\n".join(kwargs),
+            )
 
     @classmethod
     def sample_parameters(cls, trial):
