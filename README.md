@@ -85,12 +85,12 @@ If you use `rlberry` in scientific publications, we would appreciate citations u
 
 ```bibtex
 @misc{rlberry,
-author = {Domingues, Omar Darwiche and ‪Flet-Berliac, Yannis and Leurent, Edouard and M{\'e}nard, Pierre and Shang, Xuedong and Valko, Michal},
+author = {Domingues, Omar Darwiche and Flet-Berliac, Yannis and Leurent, Edouard and M{\'e}nard, Pierre and Shang, Xuedong and Valko, Michal},
 title = {{rlberry - A Reinforcement Learning Library for Research and Education}},
 year = {2021},
 publisher = {GitHub},
 journal = {GitHub repository},
-howpublished = {\url{https://github.com/rlberry-py/rlberry}},
+howpublished = {\url{https://github.com/rlberry-py/rlberry}}
 }
 ```
 
