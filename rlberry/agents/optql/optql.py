@@ -89,12 +89,17 @@ class OptQLAgent(IncrementalAgent):
         self.N_sa = np.zeros((H, S, A))
 
         # Value functions
-        self.V = np.zeros((H+1, S))
+        self.V = np.ones((H+1, S))
         self.Q = np.ones((H, S, A))
         self.Q_bar = np.ones((H, S, A))
         for hh in range(self.horizon):
+            self.V[hh, :] *= (self.horizon-hh)
             self.Q[hh, :, :] *= (self.horizon-hh)
             self.Q_bar[hh, :, :] *= (self.horizon-hh)
+
+        if self.add_bonus_after_update:
+            self.Q *= 0.0
+
         # ep counter
         self.episode = 0
 
