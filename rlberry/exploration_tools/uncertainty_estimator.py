@@ -26,3 +26,6 @@ class UncertaintyEstimator(ABC):
             import torch
             return torch.FloatTensor(batch)
         return np.array(batch)
+
+    def measure_batch_all_actions(self, states):
+        return np.array([[self.measure(s, a) for a in range(self.action_space.n)] for s in states])
