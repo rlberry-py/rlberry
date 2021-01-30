@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 import rlberry.seeding as seeding
+from itertools import cycle
+
 
 logger = logging.getLogger(__name__)
 
@@ -104,6 +106,10 @@ def plot_episode_rewards(agent_stats,
     if plot_regret and max_value is None:
         raise ValueError("max_value must be provided for regret plot")
 
+    # line style
+    lines = ["-", "--", "-.", ":"]
+    linecycler = cycle(lines)
+
     plt.figure(fignum)
     for stats in agent_stats_list:
         # train agents if they are not already trained
@@ -130,7 +136,7 @@ def plot_episode_rewards(agent_stats,
         std_r = data.std(axis=0)
         episodes = np.arange(1, data.shape[1]+1)
 
-        plt.plot(episodes, mean_r, label=stats.agent_name)
+        plt.plot(episodes, mean_r, next(linecycler), label=stats.agent_name)
         plt.fill_between(episodes, mean_r-std_r, mean_r+std_r, alpha=0.4)
         plt.legend()
         plt.xlabel("episodes")
@@ -286,6 +292,10 @@ def plot_fit_info(agent_stats,
     agent_stats_list = agent_stats
     if not isinstance(agent_stats_list, list):
         agent_stats_list = [agent_stats_list]
+
+    # line style
+    lines = ["-", "--", "-.", ":"]
+    linecycler = cycle(lines)
     plt.figure(fignum)
     for stats in agent_stats_list:
         # train agents if they are not already trained
@@ -302,7 +312,7 @@ def plot_fit_info(agent_stats,
         std_data = data.std(axis=0)
         episodes = np.arange(1, data.shape[1]+1)
 
-        plt.plot(episodes, mean_data, label=stats.agent_name)
+        plt.plot(episodes, mean_data, next(linecycler), label=stats.agent_name)
         plt.fill_between(episodes, mean_data-std_data, mean_data+std_data, alpha=0.4)
         plt.legend()
         plt.xlabel("episodes")
