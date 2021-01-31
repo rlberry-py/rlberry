@@ -50,7 +50,8 @@ def test_multithread_seeding(give_seed):
 #     'loky': global seed is reset to default (42); outputs are the same for all workers.
 #     'threading': global seed is the same (123) for both workers; outputs are different,
 #     so the seeding module is shared.
-#     'multiprocessing': global seed is the same (123) for both workers; outputs are equal.
+#     'multiprocessing': global seed is the same (123) for both workers; outputs are equal,
+#      so the seeding module is copied.
 
 #     Conclusion: threading is ok for automatic seeding; the other backends are not!
 #     """

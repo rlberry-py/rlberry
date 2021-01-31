@@ -13,7 +13,6 @@ from copy import deepcopy
 from datetime import datetime
 from pathlib import Path
 
-from torch.random import seed
 from rlberry.seeding.seeding import safe_reseed
 
 from joblib import Parallel, delayed

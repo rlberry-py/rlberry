@@ -90,6 +90,7 @@ class OptQLAgent(IncrementalAgent):
 
         # Value functions
         self.V = np.ones((H+1, S))
+        self.V[H, :] = 0
         self.Q = np.ones((H, S, A))
         self.Q_bar = np.ones((H, S, A))
         for hh in range(self.horizon):
