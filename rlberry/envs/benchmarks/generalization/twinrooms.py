@@ -55,7 +55,7 @@ class TwinRooms(RenderInterface2D, Model):
         self.wall_eps = 0.05
 
         # base reward position
-        self.base_reward_pos = np.array([0.8, 0.8])
+        self.base_reward_pos = np.array([0.1, 0.8])
 
         # rendering info
         self.set_clipping_area((0, 2, 0, 1))
@@ -68,16 +68,16 @@ class TwinRooms(RenderInterface2D, Model):
     def reset(self):
         self.current_room = self.rng.integers(2)
         if self.current_room == 0:
-            self.state = np.array([0.1, 0.1])
+            self.state = np.array([0.9, 0.1])
         else:
-            self.state = np.array([1.1, 0.0])
+            self.state = np.array([1.1, 0.1])
         return self.state.copy()
 
     def _reward_fn(self, state):
         # max reward at (x, y) = reward_pos
         reward_pos = self.base_reward_pos
         if self.current_room == 1:
-            reward_pos = reward_pos + np.array([1.0, 0.0])
+            reward_pos = reward_pos + np.array([1.8, 0.0])
         xr, yr = reward_pos
 
         dist = np.sqrt((state[0]-xr)**2.0 + (state[1]-yr)**2.0)
@@ -152,7 +152,7 @@ class TwinRooms(RenderInterface2D, Model):
         bg.add_shape(shape)
 
         # rewards
-        for (x, y) in [self.base_reward_pos, self.base_reward_pos+np.array([1.0, 0.0])]:
+        for (x, y) in [self.base_reward_pos, self.base_reward_pos+np.array([1.8, 0.0])]:
             reward = circle_shape((x, y), 0.1, n_points=50)
             reward.type = "POLYGON"
             reward.set_color((0.0, 0.5, 0.0))

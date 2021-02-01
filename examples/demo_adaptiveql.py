@@ -3,11 +3,13 @@ from rlberry.agents import RSUCBVIAgent
 from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
 from rlberry.stats import MultipleStats, AgentStats, plot_episode_rewards
 import matplotlib.pyplot as plt
+from rlberry.envs.benchmarks.generalization.twinrooms import TwinRooms
 
 
-env = get_benchmark_env(level=2)
+env = TwinRooms()
+# env = get_benchmark_env(level=2)
 
-N_EP = 2000
+N_EP = 20000
 HORIZON = 30
 
 params = {}

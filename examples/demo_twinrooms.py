@@ -1,4 +1,3 @@
-from rlberry import agents
 from rlberry.envs.benchmarks.generalization.twinrooms import TwinRooms
 from rlberry.agents.mbqvi import MBQVIAgent
 from rlberry.wrappers.discretize_state import DiscretizeStateWrapper
@@ -6,7 +5,7 @@ from rlberry.wrappers.discretize_state import DiscretizeStateWrapper
 
 env = TwinRooms()
 env = DiscretizeStateWrapper(env, n_bins=20)
-horizon = 25
+horizon = 20
 agent = MBQVIAgent(env, n_samples=10, gamma=1.0, horizon=horizon)
 agent.fit()
 
