@@ -82,8 +82,8 @@ class RandomNetworkDistillation(UncertaintyEstimator):
         self.net_fn = load(net_fn) if isinstance(net_fn, str) else \
             net_fn or partial(get_network, shape=observation_space.shape, embedding_dim=out_size)
         self.net_kwargs = net_kwargs or {}
-        if "out_size" in net_kwargs:
-            net_kwargs["out_size"] = out_size
+        if "out_size" in self.net_kwargs:
+            self.net_kwargs["out_size"] = out_size
         self.device = choose_device(device)
         self.rate_power = rate_power
         self.batch_size = batch_size
