@@ -75,7 +75,8 @@ class PPOAgent(IncrementalAgent):
 
     def __init__(self, env,
                  n_episodes=4000,
-                 batch_size=8,
+                 batch_size=64,
+                 update_frequency=8,
                  horizon=256,
                  gamma=0.99,
                  entr_coef=0.01,
@@ -93,25 +94,40 @@ class PPOAgent(IncrementalAgent):
                  device="cuda:best",
                  use_bonus=False,
                  uncertainty_estimator_kwargs=None,
-                 **kwargs):
+                 **kwargs):  # TODO: sort arguments
+
+        # bonus
         self.use_bonus = use_bonus
         if self.use_bonus:
-            env = UncertaintyEstimatorWrapper(env,
-                                              **uncertainty_estimator_kwargs)
+            env = UncertaintyEstimatorWrapper(env, **uncertainty_estimator_kwargs)
         IncrementalAgent.__init__(self, env, **kwargs)
 
-        self.n_episodes = n_episodes
-        self.batch_size = batch_size
-        self.horizon = horizon
+        # algorithm parameters
         self.gamma = gamma
-        self.entr_coef = entr_coef
-        self.vf_coef = vf_coef
+        self.horizon = horizon
+        self.n_episodes = n_episodes
+
         self.learning_rate = learning_rate
-        self.eps_clip = eps_clip
+        self.batch_size = batch_size
         self.k_epochs = k_epochs
+        self.update_frequency = update_frequency
+
+        self.eps_clip = eps_clip
+        self.vf_coef = vf_coef
+        self.entr_coef = entr_coef
+
+        # options
+        # TODO: add reward normalization option
+        #       add observation normalization option
+        #       add orthogonal weight initialization option
+        #       add value function clip option
+        #       add ... ?
+        self.normalize_advantages = True  # TODO: turn into argument
+
         self.use_gae = use_gae
         self.gae_lambda = gae_lambda
 
+        # function approximators
         self.policy_net_kwargs = policy_net_kwargs or {}
         self.value_net_kwargs = value_net_kwargs or {}
 
@@ -143,31 +159,20 @@ class PPOAgent(IncrementalAgent):
         return cls(**kwargs)
 
     def reset(self, **kwargs):
-        self.cat_policy = self.policy_net_fn(
-                                self.env,
-                                **self.policy_net_kwargs
-                                ).to(self.device)
-        self.policy_optimizer = optimizer_factory(
-                                    self.cat_policy.parameters(),
-                                    **self.optimizer_kwargs)
+        self.cat_policy = self.policy_net_fn(self.env, **self.policy_net_kwargs).to(self.device)
+        self.policy_optimizer = optimizer_factory(self.cat_policy.parameters(), **self.optimizer_kwargs)
 
-        self.value_net = self.value_net_fn(
-                                self.env,
-                                **self.value_net_kwargs
-                                ).to(self.device)
-        self.value_optimizer = optimizer_factory(
-                                    self.value_net.parameters(),
-                                    **self.optimizer_kwargs)
+        self.value_net = self.value_net_fn(self.env, **self.value_net_kwargs).to(self.device)
+        self.value_optimizer = optimizer_factory(self.value_net.parameters(), **self.optimizer_kwargs)
 
-        self.cat_policy_old = self.policy_net_fn(
-                                self.env,
-                                **self.policy_net_kwargs
-                                ).to(self.device)
+        self.cat_policy_old = self.policy_net_fn(self.env, **self.policy_net_kwargs).to(self.device)
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
 
-        self.MseLoss = nn.MSELoss()
+        self.MseLoss = nn.MSELoss()  # TODO: turn into argument
 
-        self.memory = Memory()
+        self.memory = Memory()  # TODO: Improve memory to include returns and advantages
+        self.returns = []  # TODO: add to memory
+        self.advantages = []  # TODO: add to memory
 
         self.episode = 0
 
@@ -176,8 +181,7 @@ class PPOAgent(IncrementalAgent):
         self._cumul_rewards = np.zeros(self.n_episodes)
 
         # default writer
-        self.writer = PeriodicWriter(self.name,
-                                     log_every=5*logger.getEffectiveLevel())
+        self.writer = PeriodicWriter(self.name, log_every=5*logger.getEffectiveLevel())
 
     def policy(self, state, **kwargs):
         assert self.cat_policy is not None
@@ -198,26 +202,29 @@ class PPOAgent(IncrementalAgent):
                 "episode_rewards": self._rewards[:self.episode]}
         return info
 
-    def _select_action(self, state):
-        state = torch.from_numpy(state).float().to(self.device)
-        action_dist = self.cat_policy_old(state)
-        action = action_dist.sample()
-        action_logprob = action_dist.log_prob(action)
-
-        self.memory.states.append(state)
-        self.memory.actions.append(action)
-        self.memory.logprobs.append(action_logprob)
-
-        return action.item()
-
     def _run_episode(self):
+
+        # to store transitions
+        states = []
+        actions = []
+        action_logprobs = []
+        rewards = []
+        is_terminals = []
+
         # interact for H steps
         episode_rewards = 0
         state = self.env.reset()
+
         for _ in range(self.horizon):
             # running policy_old
-            action = self._select_action(state)
-            next_state, reward, done, info = self.env.step(action)
+            state = torch.from_numpy(state).float().to(self.device)
+
+            action_dist = self.cat_policy_old(state)
+            action = action_dist.sample()
+            action_logprob = action_dist.log_prob(action)
+            action = action
+
+            next_state, reward, done, info = self.env.step(action.item())
 
             # check whether to use bonus
             bonus = 0.0
@@ -225,9 +232,13 @@ class PPOAgent(IncrementalAgent):
                 if info is not None and 'exploration_bonus' in info:
                     bonus = info['exploration_bonus']
 
-            # save in batch
-            self.memory.rewards.append(reward+bonus)  # bonus added here
-            self.memory.is_terminals.append(done)
+            # save transition
+            states.append(state)
+            actions.append(action)
+            action_logprobs.append(action_logprob)
+            rewards.append(reward + bonus)  # bonus added here
+            is_terminals.append(done)
+
             episode_rewards += reward
 
             if done:
@@ -236,104 +247,151 @@ class PPOAgent(IncrementalAgent):
             # update state
             state = next_state
 
-        # update
+        # compute returns and advantages
+        state_values = self.value_net(torch.stack(states).to(self.device)).detach()
+        state_values = torch.squeeze(state_values).tolist()
+
+        # TODO: add the option to normalize before computing returns/advantages?
+        returns, advantages = self._compute_returns_avantages(rewards, is_terminals, state_values)
+
+        # save in batch
+        self.memory.states.extend(states)
+        self.memory.actions.extend(actions)
+        self.memory.logprobs.extend(action_logprobs)
+        self.memory.rewards.extend(rewards)
+        self.memory.is_terminals.extend(is_terminals)
+
+        self.returns.extend(returns)  # TODO: add to memory (cf reset)
+        self.advantages.extend(advantages)  # TODO: add to memory (cf reset)
+
+        # save episodic rewards and cumulative rewards
         ep = self.episode
         self._rewards[ep] = episode_rewards
-        self._cumul_rewards[ep] = episode_rewards \
-            + self._cumul_rewards[max(0, ep - 1)]
+        self._cumul_rewards[ep] = episode_rewards + self._cumul_rewards[max(0, ep - 1)]
         self.episode += 1
 
-        #
+        # log
         if self.writer is not None:
             self.writer.add_scalar("fit/total_reward", episode_rewards, self.episode)
 
-        #
-        if self.episode % self.batch_size == 0:
+        # update
+        if self.episode % self.update_frequency == 0:  # TODO: maybe change to update in function of n_steps instead
             self._update()
             self.memory.clear_memory()
+            del self.returns[:]  # TODO: add to memory (cf reset)
+            del self.advantages[:]  # TODO: add to memory (cf reset)
 
         return episode_rewards
 
     def _update(self):
-        # monte carlo estimate of rewards
-        rewards = []
-        discounted_reward = 0
-        for reward, is_terminal in zip(reversed(self.memory.rewards),
-                                       reversed(self.memory.is_terminals)):
-            if is_terminal:
-                discounted_reward = 0
-            discounted_reward = reward + (self.gamma * discounted_reward)
-            rewards.insert(0, discounted_reward)
 
         # convert list to tensor
-        old_states = torch.stack(self.memory.states).to(self.device).detach()
-        old_actions = torch.stack(self.memory.actions).to(self.device).detach()
-        old_logprobs = torch.stack(self.memory.logprobs).to(self.device).detach()
+        full_old_states = torch.stack(self.memory.states).to(self.device).detach()
+        full_old_actions = torch.stack(self.memory.actions).to(self.device).detach()
+        full_old_logprobs = torch.stack(self.memory.logprobs).to(self.device).detach()
+        full_old_returns = torch.stack(self.returns).to(self.device).detach()
+        full_old_advantages = torch.stack(self.advantages).to(self.device).detach()
 
         # optimize policy for K epochs
+        n_samples = full_old_actions.size(0)
+        n_batches = n_samples // self.batch_size
+
         for _ in range(self.k_epochs):
-            # evaluate old actions and values
-            action_dist = self.cat_policy(old_states)
-            logprobs = action_dist.log_prob(old_actions)
-            state_values = torch.squeeze(self.value_net(old_states))
-            dist_entropy = action_dist.entropy()
 
-            # find ratio (pi_theta / pi_theta__old)
-            ratios = torch.exp(logprobs - old_logprobs.detach())
+            # shuffle samples
+            rd_indices = np.random.choice(n_samples, size=n_samples, replace=False)
+            shuffled_states = full_old_states[rd_indices]
+            shuffled_actions = full_old_actions[rd_indices]
+            shuffled_logprobs = full_old_logprobs[rd_indices]
+            shuffled_returns = full_old_returns[rd_indices]
+            shuffled_advantages = full_old_advantages[rd_indices]
 
-            rewards = torch.tensor(rewards).to(self.device).float()
-            returns = torch.zeros(rewards.shape).to(self.device)
-            advantages = torch.zeros(rewards.shape).to(self.device)
+            for k in range(n_batches):
 
-            if not self.use_gae:
-                for t in reversed(range(self.horizon)):
-                    if t == self.horizon - 1:
-                        returns[t] = rewards[t] + self.gamma * (1 - self.memory.is_terminals[t]) * state_values[-1]
-                    else:
-                        returns[t] = rewards[t] + self.gamma * (1 - self.memory.is_terminals[t]) * returns[t + 1]
-                    advantages[t] = returns[t] - state_values[t]
-            else:
-                for t in reversed(range(self.horizon)):
-                    if t == self.horizon - 1:
-                        returns[t] = rewards[t] + self.gamma * (1 - self.memory.is_terminals[t]) * state_values[-1]
-                        td_error = returns[t] - state_values[t]
-                    else:
-                        returns[t] = rewards[t] + self.gamma * (1 - self.memory.is_terminals[t]) * returns[t + 1]
-                        td_error = rewards[t] + self.gamma * (1 - self.memory.is_terminals[t]) * state_values[t + 1] - state_values[t]
-                    advantages[t] = advantages[t] * self.gae_lambda * self.gamma * (1 - self.memory.is_terminals[t]) + td_error
+                # sample batch
+                batch_idx = np.arange(k * self.batch_size, min((k + 1) * self.batch_size, n_samples))
+                old_states = shuffled_states[batch_idx]
+                old_actions = shuffled_actions[batch_idx]
+                old_logprobs = shuffled_logprobs[batch_idx]
+                old_returns = shuffled_returns[batch_idx]
+                old_advantages = shuffled_advantages[batch_idx]
 
-            # normalizing the rewards
-            # rewards = (rewards - rewards.mean()) / (rewards.std() + 1e-5)
+                # evaluate old actions and values
+                action_dist = self.cat_policy(old_states)
+                logprobs = action_dist.log_prob(old_actions)
+                state_values = torch.squeeze(self.value_net(old_states))
+                dist_entropy = action_dist.entropy()
 
-            # convert to pytorch tensors and move to gpu if available
-            advantages = advantages.view(-1, )
+                # find ratio (pi_theta / pi_theta__old)
+                ratios = torch.exp(logprobs - old_logprobs)
 
-            # normalize the advantages
-            advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-10)
+                # TODO: add this option
+                # normalizing the rewards
+                # rewards = (rewards - rewards.mean()) / (rewards.std() + 1e-5)
 
-            # find surrogate loss
-            surr1 = ratios * advantages
-            surr2 = torch.clamp(ratios, 1 - self.eps_clip,
-                                1 + self.eps_clip) * advantages
-            surr_loss = torch.min(surr1, surr2)
-            loss = - surr_loss \
-                + self.vf_coef * self.MseLoss(state_values, rewards) \
-                - self.entr_coef * dist_entropy
+                # normalize the advantages
+                old_advantages = old_advantages.view(-1, )
 
-            # take gradient step
-            self.policy_optimizer.zero_grad()
-            self.value_optimizer.zero_grad()
+                if self.normalize_advantages:
+                    old_advantages = (old_advantages - old_advantages.mean()) / (old_advantages.std() + 1e-10)
 
-            loss.mean().backward()
+                # compute surrogate loss
+                surr1 = ratios * old_advantages
+                surr2 = torch.clamp(ratios, 1 - self.eps_clip, 1 + self.eps_clip) * old_advantages
+                surr_loss = torch.min(surr1, surr2)
 
-            self.policy_optimizer.step()
-            self.value_optimizer.step()
+                # compute value function loss
+                loss_vf = self.vf_coef * self.MseLoss(state_values, old_returns)
 
+                # compute entropy loss
+                loss_entropy = self.entr_coef * dist_entropy
+
+                # compute total loss
+                loss = - surr_loss + loss_vf - loss_entropy
+
+                # take gradient step
+                self.policy_optimizer.zero_grad()
+                self.value_optimizer.zero_grad()
+
+                loss.mean().backward()
+
+                self.policy_optimizer.step()
+                self.value_optimizer.step()
+
+        # log
         self.writer.add_scalar("fit/surrogate_loss", surr_loss.mean().cpu().detach().numpy(), self.episode)
         self.writer.add_scalar("fit/entropy_loss", dist_entropy.mean().cpu().detach().numpy(), self.episode)
 
         # copy new weights into old policy
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
+
+    def _compute_returns_avantages(self, rewards, is_terminals, state_values):
+
+        returns = torch.zeros(self.horizon).to(self.device)
+        advantages = torch.zeros(self.horizon).to(self.device)
+
+        if not self.use_gae:
+            for t in reversed(range(self.horizon)):
+                if t == self.horizon - 1:
+                    returns[t] = rewards[t] + self.gamma * (1 - is_terminals[t]) * state_values[-1]
+                else:
+                    returns[t] = rewards[t] + self.gamma * (1 - is_terminals[t]) * returns[t + 1]
+
+                advantages[t] = returns[t] - state_values[t]
+        else:
+            last_adv = 0
+            for t in reversed(range(self.horizon)):
+                if t == self.horizon - 1:
+                    returns[t] = rewards[t] + self.gamma * (1 - is_terminals[t]) * state_values[-1]
+                    td_error = returns[t] - state_values[t]
+                else:
+                    returns[t] = rewards[t] + self.gamma * (1 - is_terminals[t]) * returns[t + 1]
+                    td_error = rewards[t] + self.gamma * (1 - is_terminals[t]) * state_values[t + 1] - state_values[t]
+
+                last_adv = self.gae_lambda * self.gamma * (1 - is_terminals[t]) * last_adv + td_error
+                advantages[t] = last_adv
+
+        return returns, advantages
 
     #
     # For hyperparameter optimization

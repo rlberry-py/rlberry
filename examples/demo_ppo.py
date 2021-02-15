@@ -8,10 +8,14 @@ seeding.set_global_seed(1223)
 
 for env, n_episodes, horizon in zip([PBall2D(), MountainCar()],
                                     [400, 40000], [256, 512]):
-    print("Running PPO on %s" % env.name)
-    agent = PPOAgent(env, n_episodes=n_episodes, horizon=horizon,
-                     gamma=0.99, learning_rate=0.001,
-                     eps_clip=0.2, k_epochs=4)
+    print(f'Running PPO on {env.name}')
+    agent = PPOAgent(env,
+                     n_episodes=n_episodes,
+                     horizon=horizon,
+                     gamma=0.99,
+                     learning_rate=0.001,
+                     eps_clip=0.2,
+                     k_epochs=4)
     agent.fit()
 
     if render:
