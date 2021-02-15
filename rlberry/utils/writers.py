@@ -56,9 +56,9 @@ class PeriodicWriter:
             last_value, last_step = self.data[tag][-1]
             if last_step is not None:
                 message += \
-                    " | step ={}, {} = {:0.3f}".format(last_step,
-                                                       tag,
-                                                       last_value)
+                    " | step = {}, {} = {:0.3f}".format(last_step,
+                                                        tag,
+                                                        last_value)
             else:
                 message += \
                     " | {} = {:0.3f}".format(tag,
