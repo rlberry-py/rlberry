@@ -80,7 +80,8 @@ def plot_episode_rewards(agent_stats,
                          fignum=None,
                          show=True,
                          max_value=None,
-                         plot_regret=False):
+                         plot_regret=False,
+                         grid=True):
     """
     Given a list of AgentStats, plot the rewards obtained in each episode.
     The dictionary returned by agents' .fit() method must contain a key 'episode_rewards'.
@@ -98,6 +99,8 @@ def plot_episode_rewards(agent_stats,
         Maximum reward achievable in one episode.
     plot_regret: bool, default: False
         If true, plots the regret. Requires max_val to be given.
+    grid: bool, default: True
+        If False, disable grid in plot.
     """
     agent_stats_list = agent_stats
     if not isinstance(agent_stats_list, list):
@@ -141,7 +144,8 @@ def plot_episode_rewards(agent_stats,
         plt.legend()
         plt.xlabel("episodes")
         plt.ylabel(label)
-        plt.grid(True, alpha=0.75)
+        if grid:
+            plt.grid(True, alpha=0.75)
 
     if show:
         plt.show()
@@ -274,7 +278,8 @@ def compare_policies(agent_stats_list,
 def plot_fit_info(agent_stats,
                   info,
                   fignum=None,
-                  show=True):
+                  show=True,
+                  grid=True):
     """
     Given a list of AgentStats, plot data (corresponding to info) obtained in each episode.
     The dictionary returned by agents' .fit() method must contain a key equal to `info`.
@@ -288,6 +293,8 @@ def plot_fit_info(agent_stats,
         Identifier of plot figure.
     show: bool
         If true, calls plt.show().
+    grid: bool, default: True
+        If False, disable grid in plot.
     """
     agent_stats_list = agent_stats
     if not isinstance(agent_stats_list, list):
@@ -317,7 +324,8 @@ def plot_fit_info(agent_stats,
         plt.legend()
         plt.xlabel("episodes")
         plt.ylabel(info)
-        plt.grid(True, alpha=0.75)
+        if grid:
+            plt.grid(True, alpha=0.75)
 
     if show:
         plt.show()
