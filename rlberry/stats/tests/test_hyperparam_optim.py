@@ -1,14 +1,9 @@
 import numpy as np
-import rlberry.seeding as seeding
 from rlberry.envs import GridWorld
 from rlberry.agents import IncrementalAgent
 from rlberry.agents.dynprog.value_iteration import ValueIterationAgent
 from rlberry.stats import AgentStats
 from optuna.samplers import TPESampler
-
-
-# global seed
-seeding.set_global_seed(1234)
 
 
 class DummyAgent(IncrementalAgent):
@@ -122,8 +117,6 @@ def test_hyperparam_optim_cmaes():
 
 
 def test_discount_optimization():
-    seeding.set_global_seed(42)
-
     class ValueIterationAgentToOptimize(ValueIterationAgent):
         @classmethod
         def sample_parameters(cls, trial):
@@ -140,7 +133,13 @@ def test_discount_optimization():
 
     vi_params = {'gamma': 0.1, 'epsilon': 1e-3}
 
-    vi_stats = AgentStats(ValueIterationAgentToOptimize, env, eval_horizon=20, init_kwargs=vi_params, n_fit=4, n_jobs=1)
+    vi_stats = AgentStats(ValueIterationAgentToOptimize,
+                          env,
+                          eval_horizon=20,
+                          init_kwargs=vi_params,
+                          n_fit=4,
+                          n_jobs=1,
+                          seed=123)
 
     vi_stats.optimize_hyperparams(n_trials=5, timeout=30, n_sim=5, n_fit=1, n_jobs=1,
                                   sampler_method='random', pruner_method='none')

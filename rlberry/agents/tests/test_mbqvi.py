@@ -1,14 +1,14 @@
 import numpy as np
 import pytest
 
-import rlberry.seeding as seeding
+from rlberry.seeding import Seeder
 from rlberry.agents.mbqvi import MBQVIAgent
 from rlberry.envs.finite import FiniteMDP
 
 
 @pytest.mark.parametrize("S, A", [(5, 2), (10, 4)])
 def test_mbqvi(S, A):
-    rng = seeding.get_rng()
+    rng = Seeder(123).rng
 
     for sim in range(5):
         # generate random MDP with deterministic transitions

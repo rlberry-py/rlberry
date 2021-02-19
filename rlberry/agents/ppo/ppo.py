@@ -12,7 +12,6 @@ from rlberry.agents.utils.torch_models import default_value_net_fn
 from rlberry.utils.torch import choose_device
 from rlberry.utils.writers import PeriodicWriter
 from rlberry.wrappers.uncertainty_estimator_wrapper import UncertaintyEstimatorWrapper
-from rlberry.seeding import seeding
 
 logger = logging.getLogger(__name__)
 
@@ -149,7 +148,6 @@ class PPOAgent(IncrementalAgent):
         assert isinstance(self.env.action_space, spaces.Discrete)
 
         self.cat_policy = None  # categorical policy function
-        self.rng = seeding.get_rng()
 
         # initialize
         self.reset()

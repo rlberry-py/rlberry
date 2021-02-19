@@ -11,7 +11,7 @@ from rlberry.agents.dynprog.utils import value_iteration
 from rlberry.envs.finite import FiniteMDP
 
 
-_rng = seeding.Seeder(123)
+_rng = seeding.Seeder(123).rng
 
 
 def get_random_mdp(S, A):

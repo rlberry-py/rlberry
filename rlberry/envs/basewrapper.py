@@ -66,13 +66,11 @@ class Wrapper(Model):
         if not isinstance(self.env, Model):
             # get a seed for gym environment
             safe_reseed(self.env, self.seeder)
-            safe_reseed(self.observation_space, self.seeder)
-            safe_reseed(self.action_space, self.seeder)
         # seed rlberry Model
         else:
             self.env.reseed(self.seeder)
-            self.observation_space.reseed(self.seeder.seed_seq)
-            self.action_space.reseed(self.seeder.seed_seq)
+        safe_reseed(self.observation_space, self.seeder)
+        safe_reseed(self.action_space, self.seeder)
 
     def reset(self):
         return self.env.reset()

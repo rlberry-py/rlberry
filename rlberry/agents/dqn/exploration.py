@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 from gym import spaces
 
-from rlberry.seeding import seeding
+from rlberry.seeding import Seeder
 
 
 class DiscreteDistribution(ABC):
@@ -29,11 +29,11 @@ class DiscreteDistribution(ABC):
                     list(distribution.keys()), 1,
                     p=np.array(list(distribution.values())))[0]
 
-    def seed(self):
+    def seed(self, seed=None):
         """
         Seed the policy randomness source
         """
-        self.np_random = seeding.get_rng()
+        self.np_random = Seeder(seed).rng
 
     def set_time(self, time):
         """

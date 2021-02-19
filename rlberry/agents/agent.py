@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from copy import deepcopy
 import logging
 from inspect import signature
+from rlberry.seeding.seeder import Seeder
 
 logger = logging.getLogger(__name__)
 
@@ -28,6 +29,8 @@ class Agent(ABC):
         Environment on which to train the agent.
     writer : object, default: None
         Writer object (e.g. tensorboard SummaryWriter).
+    seeder : rlberry.seeding.Seeder
+        Object for random number generation.
     """
 
     name = ""
@@ -49,6 +52,8 @@ class Agent(ABC):
                 logger.warning("[Agent] Not possible to deepcopy env: " + str(ex))
 
         self.writer = None
+
+        self.seeder = Seeder()
 
     @abstractmethod
     def fit(self, **kwargs):
@@ -103,3 +108,26 @@ class Agent(ABC):
         trial: optuna.trial
         """
         raise NotImplementedError("agent.sample_parameters() not implemented.")
+
+    @property
+    def rng(self):
+        """ Random number generator. """
+        return self.seeder.rng
+
+    def reseed(self, seed_seq=None):
+        """
+        Get new random number generator for the model.
+
+        Parameters
+        ----------
+        seed_seq : np.random.SeedSequence, rlberry.seeding.Seeder or int, default : None
+            Seed sequence from which to spawn the random number generator.
+            If None, generate random seed.
+            If int, use as entropy for SeedSequence.
+            If seeder, use seeder.seed_seq
+        """
+        # self.seeder
+        if seed_seq is None:
+            self.seeder = self.seeder.spawn()
+        else:
+            self.seeder = Seeder(seed_seq)
