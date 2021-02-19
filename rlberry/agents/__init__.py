@@ -9,7 +9,6 @@ from .cem import *
 from .dqn import *
 from .dynprog import *
 from .kernel_based import *
-from .kovi import *
 from .linear import *
 from .mbqvi import *
 from .optql import *
