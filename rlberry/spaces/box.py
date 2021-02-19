@@ -1,9 +1,9 @@
 import gym
 import numpy as np
-from rlberry.spaces import SpaceSeeder
+from rlberry.seeding import Seeder
 
 
-class Box(gym.spaces.Box, SpaceSeeder):
+class Box(gym.spaces.Box, Seeder):
     """
     Class that represents a space that is a cartesian product in R^n:
 
@@ -27,7 +27,7 @@ class Box(gym.spaces.Box, SpaceSeeder):
     """
     def __init__(self, low, high, shape=None, dtype=np.float64):
         gym.spaces.Box.__init__(self, low, high, shape=shape, dtype=dtype)
-        SpaceSeeder.__init__(self)
+        Seeder.__init__(self)
 
     def sample(self):
         """

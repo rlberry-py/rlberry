@@ -1,45 +1,17 @@
-import rlberry.seeding as seeding
+from rlberry.seeding import Seeder
 
 
-def test_seeding():
-    seed = 123
-    seeding.set_global_seed(seed)
+def test_seeder():
+    seeder1 = Seeder(43)
+    data1 = seeder1.rng.integers(100, size=1000)
 
-    # check that reimports do not cause problems
-    import rlberry
-    import rlberry.seeding
-    #
+    seeder2 = Seeder(44)
+    data2 = seeder2.rng.integers(100, size=1000)
 
-    assert seeding._GLOBAL_SEED_SEQ.entropy == seed
-
-    _ = seeding.get_rng()
-    assert seeding._GLOBAL_SEED_SEQ.n_children_spawned == 2  # counting the global rng generated automatically
-
-    # check that reimports do not cause problems
-    import rlberry
-    import rlberry.seeding
-    assert seeding._GLOBAL_SEED_SEQ.entropy == seed
-    #
-
-    _ = seeding.get_rng()
-    assert seeding._GLOBAL_SEED_SEQ.n_children_spawned == 3
-
-
-def test_random_numbers():
-    seed = 43
-    seeding.set_global_seed(seed)
-    rng1 = seeding.get_rng()
-    data1 = rng1.integers(100, size=1000)
-
-    seed = 44
-    seeding.set_global_seed(seed)
-    rng2 = seeding.get_rng()
-    data2 = rng2.integers(100, size=1000)
-
-    seed = 44
-    seeding.set_global_seed(seed)
-    rng3 = seeding.get_rng()
-    data3 = rng3.integers(100, size=1000)
+    seeder3 = Seeder(44)
+    data3 = seeder3.rng.integers(100, size=1000)
 
     assert (data1 != data2).sum() > 5
     assert (data2 != data3).sum() == 0
+    assert seeder2.spawn(1).generate_state(1)[0] == seeder3.spawn(1).generate_state(1)[0]
+    assert seeder1.spawn(1).generate_state(1)[0] != seeder3.spawn(1).generate_state(1)[0]

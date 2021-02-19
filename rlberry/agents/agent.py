@@ -3,9 +3,6 @@ from copy import deepcopy
 import logging
 from inspect import signature
 
-from rlberry.seeding import seeding
-
-
 logger = logging.getLogger(__name__)
 
 
@@ -18,9 +15,6 @@ class Agent(ABC):
         Environment used to fit the agent.
     copy_env : bool
         If true, makes a deep copy of the environment.
-    reseed_env : bool
-        If true, reseeds the environment.
-
 
     .. note::
         Classes that implement this interface should send ``**kwargs`` to :code:`Agent.__init__()`
@@ -41,7 +35,6 @@ class Agent(ABC):
     def __init__(self,
                  env,
                  copy_env=True,
-                 reseed_env=True,
                  **kwargs):
         # Check if wrong parameters have been sent to an agent.
         assert kwargs == {}, \
@@ -54,11 +47,6 @@ class Agent(ABC):
                 self.env = deepcopy(env)
             except Exception as ex:
                 logger.warning("[Agent] Not possible to deepcopy env: " + str(ex))
-
-        if reseed_env:
-            reseeded = seeding.safe_reseed(self.env)
-            if not reseeded:
-                logger.warning("[Agent] Not possible to reseed env, seed() and reseed() are not available.")
 
         self.writer = None
 

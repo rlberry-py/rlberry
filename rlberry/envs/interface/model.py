@@ -1,7 +1,8 @@
 import gym
 import numpy as np
 import logging
-from rlberry.seeding import seeding
+from rlberry.seeding import Seeder
+
 
 logger = logging.getLogger(__name__)
 
@@ -20,13 +21,13 @@ class Model(gym.Env):
         action space
     reward_range : tuple
         tuple (r_min, r_max) containing the minimum and the maximum reward
-    rng : numpy.random._generator.Generator
-        random number generator provided by rlberry.seeding
+    seeder : rlberry.seeding.Seeder
+        Seeder, containing random number generator.
 
     Methods
     -------
-    reseed()
-        get new random number generator
+    reseed(seed_seq)
+        get new Seeder
     reset()
         puts the environment in a default state and returns this state
     step(action)
@@ -46,15 +47,28 @@ class Model(gym.Env):
         self.action_space = None
         self.reward_range: tuple = (-np.inf, np.inf)
         # random number generator
-        self.rng = seeding.get_rng()
+        self.seeder = Seeder()
 
-    def reseed(self):
+    def reseed(self, seed_seq=None):
         """
         Get new random number generator for the model.
+
+        Parameters
+        ----------
+        seed_seq : np.random.SeedSequence, rlberry.seeding.Seeder or int, default : None
+            Seed sequence from which to spawn the random number generator.
+            If None, generate random seed.
+            If int, use as entropy for SeedSequence.
+            If seeder, use seeder.seed_seq
         """
-        self.rng = seeding.get_rng()
-        self.observation_space.rng = self.rng
-        self.action_space.rng = self.rng
+        # self.seeder
+        if seed_seq is None:
+            self.seeder = self.seeder.spawn()
+        else:
+            self.seeder = Seeder(seed_seq)
+        # spaces
+        self.observation_space.reseed(self.seeder.seed_seq)
+        self.action_space.reseed(self.seeder.seed_seq)
 
     def sample(self, state, action):
         """
@@ -105,3 +119,8 @@ generative calls sample() method.")
     @property
     def unwrapped(self):
         return self
+
+    @property
+    def rng(self):
+        """ Random number generator. """
+        return self.seeder.rng

@@ -11,7 +11,7 @@ from rlberry.agents.dynprog.utils import value_iteration
 from rlberry.envs.finite import FiniteMDP
 
 
-_rng = seeding.get_rng()
+_rng = seeding.Seeder(123)
 
 
 def get_random_mdp(S, A):
@@ -42,7 +42,7 @@ def get_random_mdp(S, A):
                              (0.999, 20, 4)
                          ])
 def test_bellman_operator_monotonicity_and_contraction(gamma, S, A):
-    rng = seeding.get_rng()
+    rng = seeding.Seeder(123).rng
     vmax = 1.0 / (1.0 - gamma)
     for _ in range(10):
         # generate random MDP

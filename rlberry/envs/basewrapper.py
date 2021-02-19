@@ -1,5 +1,4 @@
-import rlberry.seeding as seeding
-import gym
+from rlberry.seeding import Seeder, safe_reseed
 import numpy as np
 from rlberry.envs.interface import Model
 
@@ -34,11 +33,6 @@ class Wrapper(Model):
         except AttributeError:
             self.reward_range = (-np.inf, np.inf)
 
-        # If gym environment, reseeding is necessary here for
-        # reproducibility.
-        if isinstance(env, gym.Env):
-            self.reseed()
-
     @property
     def unwrapped(self):
         return self.env.unwrapped
@@ -62,19 +56,23 @@ class Wrapper(Model):
             return getattr(self, attr)
         return getattr(self.env, attr)
 
-    def reseed(self):
-        self.rng = seeding.get_rng()
+    def reseed(self, seed_seq=None):
+        # self.seeder
+        if seed_seq is None:
+            self.seeder = self.seeder.spawn()
+        else:
+            self.seeder = Seeder(seed_seq)
         # seed gym.Env that is not a rlberry Model
         if not isinstance(self.env, Model):
             # get a seed for gym environment
-            seeding.safe_reseed(self.env)
-            seeding.safe_reseed(self.observation_space)
-            seeding.safe_reseed(self.action_space)
+            safe_reseed(self.env, self.seeder)
+            safe_reseed(self.observation_space, self.seeder)
+            safe_reseed(self.action_space, self.seeder)
         # seed rlberry Model
         else:
-            self.env.reseed()
-            self.observation_space.rng = self.env.rng
-            self.action_space.rng = self.env.rng
+            self.env.reseed(self.seeder)
+            self.observation_space.reseed(self.seeder.seed_seq)
+            self.action_space.reseed(self.seeder.seed_seq)
 
     def reset(self):
         return self.env.reset()

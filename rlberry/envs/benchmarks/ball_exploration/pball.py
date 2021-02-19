@@ -164,7 +164,7 @@ does not make true projections onto the lp ball.")
             self.state = state
         else:
             self.state = self.mu_init \
-                + self.sigma_init * self.rng.normal(size=self.d)
+                + self.sigma_init * self.seeder.rng.normal(size=self.d)
             # projection to unit ball
         self.state = projection_to_pball(self.state, self.p)
         return self.state.copy()

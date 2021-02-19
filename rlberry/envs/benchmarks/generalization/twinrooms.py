@@ -66,7 +66,7 @@ class TwinRooms(RenderInterface2D, Model):
         self.reset()
 
     def reset(self):
-        self.current_room = self.rng.integers(2)
+        self.current_room = self.seeder.rng.integers(2)
         if self.current_room == 0:
             self.state = np.array([0.1, 0.1])
         else:

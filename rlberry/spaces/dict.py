@@ -1,8 +1,8 @@
 import gym
-from rlberry.spaces import SpaceSeeder
+from rlberry.seeding import Seeder
 
 
-class Dict(gym.spaces.Dict, SpaceSeeder):
+class Dict(gym.spaces.Dict, Seeder):
     """
 
     Inherited from gym.spaces.Dict for compatibility with gym.
@@ -22,7 +22,7 @@ class Dict(gym.spaces.Dict, SpaceSeeder):
     """
     def __init__(self, spaces=None, **spaces_kwargs):
         gym.spaces.Dict.__init__(self, spaces, **spaces_kwargs)
-        SpaceSeeder.__init__(self)
+        Seeder.__init__(self)
 
-    def reseed(self):
-        _ = [space.reseed() for space in self.spaces.values()]
+    def reseed(self, seed_seq=None):
+        _ = [space.reseed(seed_seq) for space in self.spaces.values()]

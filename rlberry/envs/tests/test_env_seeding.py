@@ -47,38 +47,46 @@ def compare_trajectories(traj1, traj2):
 
 @pytest.mark.parametrize("ModelClass", classes)
 def test_env_seeding(ModelClass):
-
-    seeding.set_global_seed(123)
     env1 = ModelClass()
+    seeder1 = seeding.Seeder(123)
+    env1.reseed(seeder1)
 
-    seeding.set_global_seed(456)
     env2 = ModelClass()
+    seeder2 = seeder1.spawn()
+    env2.reseed(seeder2)
 
-    seeding.set_global_seed(123)
     env3 = ModelClass()
+    seeder3 = seeding.Seeder(123)
+    env3.reseed(seeder3)
 
-    seeding.set_global_seed(123)
     env4 = ModelClass()
-    seeding.safe_reseed(env4)
+    seeder4 = seeding.Seeder(123)
+    env4.reseed(seeder4)
+
+    env5 = ModelClass()
+    env5.reseed(seeder1)  # same seeder as env1, but different trajectories. This is expected.
+
+    seeding.safe_reseed(env4, seeder4)
 
     if deepcopy(env1).is_online():
         traj1 = get_env_trajectory(env1, 500)
         traj2 = get_env_trajectory(env2, 500)
         traj3 = get_env_trajectory(env3, 500)
         traj4 = get_env_trajectory(env4, 500)
+        traj5 = get_env_trajectory(env5, 500)
 
         assert not compare_trajectories(traj1, traj2)
         assert compare_trajectories(traj1, traj3)
         assert not compare_trajectories(traj3, traj4)
-
-
+        assert not compare_trajectories(traj1, traj5)
 
 
 @pytest.mark.parametrize("ModelClass", classes)
 def test_copy_reseeding(ModelClass):
 
-    seeding.set_global_seed(123)
+    seeder = seeding.Seeder(123)
     env = ModelClass()
+    env.reseed(seeder)
 
     c_env = deepcopy(env)
     c_env.reseed()
@@ -87,4 +95,3 @@ def test_copy_reseeding(ModelClass):
         traj1 = get_env_trajectory(env, 500)
         traj2 = get_env_trajectory(c_env, 500)
         assert not compare_trajectories(traj1, traj2)
-

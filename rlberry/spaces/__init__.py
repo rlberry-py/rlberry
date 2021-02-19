@@ -1,4 +1,3 @@
-from .space_seeder import SpaceSeeder
 from .discrete import Discrete
 from .box import Box
 from .tuple import Tuple
