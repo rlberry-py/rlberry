@@ -13,7 +13,7 @@ def test_mock_args(monkeypatch):
     random_numbers = []
 
     for agent_stats in experiment_generator():
-        rng = sd.get_rng()
+        rng = agent_stats.seeder.rng
         random_numbers.append(rng.uniform(size=10))
 
         assert agent_stats.agent_class is RSUCBVIAgent
