@@ -77,7 +77,7 @@ class TRPOAgent(IncrementalAgent):
 
     def __init__(self, env,
                  n_episodes=4000,
-                 batch_size=8,
+                 batch_size=64,
                  horizon=256,
                  gamma=0.99,
                  entr_coef=0.01,
