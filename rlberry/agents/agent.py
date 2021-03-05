@@ -133,5 +133,3 @@ class Agent(ABC):
             self.seeder = self.seeder.spawn()
         else:
             self.seeder = Seeder(seed_seq)
-
-        # self.env

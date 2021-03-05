@@ -48,13 +48,23 @@ def safe_reseed(object, seeder):
     -------
     True if reseeding was done, False otherwise.
     """
+    reseeded = False
     try:
         object.reseed(seeder)
-        return True
+        reseeded = True
     except AttributeError:
         seed_val = seeder.rng.integers(2**32).item()
         try:
             object.seed(seed_val)
-            return True
+            reseeded = True
         except AttributeError:
-            return False
+            reseeded = False
+
+    # check if the object has observation and action spaces to be reseeded.
+    try:
+        safe_reseed(object.observation_space, seeder)
+        safe_reseed(object.action_space, seeder)
+    except AttributeError:
+        pass
+
+    return reseeded
