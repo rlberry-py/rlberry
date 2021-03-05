@@ -1,10 +1,8 @@
 import numpy as np
 from rlberry.seeding.seeder import Seeder
-from numpy.random import default_rng
 
 
 _TORCH_INSTALLED = True
-
 try:
     import torch
 except Exception:

@@ -3,6 +3,8 @@ from copy import deepcopy
 import logging
 from inspect import signature
 from rlberry.seeding.seeder import Seeder
+from rlberry.seeding import safe_reseed
+
 
 logger = logging.getLogger(__name__)
 
@@ -116,7 +118,7 @@ class Agent(ABC):
 
     def reseed(self, seed_seq=None):
         """
-        Get new random number generator for the model.
+        Get new random number generator for the agent.
 
         Parameters
         ----------
@@ -131,3 +133,5 @@ class Agent(ABC):
             self.seeder = self.seeder.spawn()
         else:
             self.seeder = Seeder(seed_seq)
+
+        # self.env

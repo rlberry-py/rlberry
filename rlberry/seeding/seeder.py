@@ -19,7 +19,7 @@ class Seeder:
         get new random number generator
     """
 
-    def __init__(self, seed_seq=None):
+    def __init__(self, seed_seq=None, spawn_seed_seq=True):
         """
         Parameters
         ----------
@@ -28,20 +28,27 @@ class Seeder:
             If None, generate random seed.
             If int, use as entropy for SeedSequence.
             If seeder, use seeder.seed_seq
+        spawn_seed_seq : bool, default : True
+            If True, uses seed_seq to spawn a new seed sequence (strongly recommended) for the Seeder.
+            If False, uses the input seed_seq to define the Seeder.
+            Warning: Setting to false can lead to unexpect behavior. This argument is only used internally
+            in rlberry, in Seeder.spawn(), to avoid unnecessary spawning.
         """
         super().__init__()
         if seed_seq is None:
             seed_seq = SeedSequence()
         elif isinstance(seed_seq, SeedSequence):
-            seed_seq = seed_seq.spawn(1)[0]
+            seed_seq = seed_seq
         elif isinstance(seed_seq, Seeder):
-            seed_seq = seed_seq.seed_seq.spawn(1)[0]
+            seed_seq = seed_seq.seed_seq
         else:  # integer
             seed_seq = SeedSequence(seed_seq)
-        self.seed_seq = seed_seq
 
-        child_seed = self.seed_seq.spawn(1)
-        self.rng = default_rng(child_seed[0])
+        if spawn_seed_seq:
+            seed_seq = seed_seq.spawn(1)[0]
+
+        self.seed_seq = seed_seq
+        self.rng = default_rng(self.seed_seq)
 
     def reseed(self, seed_seq=None):
         """
@@ -55,18 +62,22 @@ class Seeder:
             If int, use as entropy for SeedSequence.
             If seeder, use seeder.seed_seq
         """
-        # new seed sequence if None
+        # if None, new seed sequence
         if seed_seq is None:
             seed_seq = SeedSequence()
-        # spawn if SeedSequence
+        # if SeedSequence, do nothing
         elif isinstance(seed_seq, SeedSequence):
-            seed_seq = seed_seq.spawn(1)[0]
-        # spawn if Seeder
+            seed_seq = seed_seq
+        # if Seeder, get Seeder.seed_seq
         elif isinstance(seed_seq, Seeder):
-            seed_seq = seed_seq.seed_seq.spawn(1)[0]
-        # new SeedSequence if integer
+            seed_seq = seed_seq.seed_seq
+        # if integer, new SeedSequence
         else:
             seed_seq = SeedSequence(seed_seq)
+
+        # spawn
+        seed_seq = seed_seq.spawn(1)[0]
+
         self.seed_seq = seed_seq
         self.rng = default_rng(self.seed_seq)
 
@@ -84,10 +95,13 @@ class Seeder:
             List of spawned seed sequences, or a single Seeder if n=1.
         """
         seed_seq_list = self.seed_seq.spawn(n)
-        spawned_seeders = [Seeder(seq) for seq in seed_seq_list]
+        spawned_seeders = [Seeder(seq, spawn_seed_seq=False) for seq in seed_seq_list]
         if len(spawned_seeders) == 1:
             spawned_seeders = spawned_seeders[0]
         return spawned_seeders
 
     def generate_state(self, n):
         return self.seed_seq.generate_state(n)
+
+    def __str__(self):
+        return f"Seeder object with: {self.seed_seq.__str__()}"
