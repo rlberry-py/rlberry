@@ -556,7 +556,8 @@ class AgentStats:
                 agent_name='optim',
                 n_fit=n_fit,
                 n_jobs=n_jobs,
-                thread_logging_level='WARNING')
+                thread_logging_level='WARNING',
+                seed=self.seeder)
             params_stats._eval_env = None  # make sure _eval_env is not used in this instance
 
             # Evaluation environment copy
