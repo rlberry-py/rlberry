@@ -3,6 +3,7 @@ import concurrent.futures
 import pytest
 from joblib import Parallel, delayed
 
+
 def get_random_number_setting_seed(seeder):
     return seeder.rng.integers(2**32)
 

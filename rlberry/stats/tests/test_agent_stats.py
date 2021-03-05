@@ -92,7 +92,7 @@ def test_agent_stats_1():
     os.remove(fname.with_suffix('.pickle'))
     dirname.rmdir()
 
-    # test hyperparemeter optimization
+    # test hyperparameter optimization call
     loaded_stats.optimize_hyperparams()
     loaded_stats.optimize_hyperparams(continue_previous=True)
 

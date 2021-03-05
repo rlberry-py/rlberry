@@ -13,7 +13,7 @@ from copy import deepcopy
 from datetime import datetime
 from pathlib import Path
 
-from rlberry.seeding import safe_reseed
+from rlberry.seeding import safe_reseed, set_external_seed
 from rlberry.seeding import Seeder
 
 from joblib import Parallel, delayed
@@ -110,19 +110,20 @@ class AgentStats:
             self.identifier = 'stats_{}_{}'.format(self.agent_name,
                                                    str(int(timestamp)))
 
+            # Agent class
             self.agent_class = agent_class
-            self.train_env = train_env
-            if eval_env is None:
-                eval_env = train_env
-            try:
-                self.eval_env = deepcopy(eval_env)
-                safe_reseed(self.eval_env, self.seeder)
-            except Exception:
-                logger.warning('[AgentStats]: Not possible to deepcopy or reseed eval_env')
-                self.eval_env = eval_env
 
-            # preprocess eval_env, in case it is a tuple
-            self.eval_env = _preprocess_env(self.eval_env, self.seeder)
+            # Train env
+            self.train_env = train_env
+
+            # Check eval_env
+            if eval_env is None:
+                try:
+                    eval_env = deepcopy(train_env)
+                except Exception:
+                    raise ValueError("eval_env is None, and train_env cannot be deep copied." +
+                                     " Try setting train_env as a tuple (constructor, kwargs)")
+            self._eval_env = eval_env
 
             # check kwargs
             init_kwargs = init_kwargs or {}
@@ -171,6 +172,13 @@ class AgentStats:
 
             # optuna study
             self.study = None
+
+    @property
+    def eval_env(self):
+        """
+        Instantiated and reseeded evaluation environment.
+        """
+        return _preprocess_env(self._eval_env, self.seeder)
 
     def set_output_dir(self, output_dir):
         """
@@ -549,10 +557,10 @@ class AgentStats:
                 n_fit=n_fit,
                 n_jobs=n_jobs,
                 thread_logging_level='WARNING')
+            params_stats._eval_env = None  # make sure _eval_env is not used in this instance
 
             # Evaluation environment copy
-            params_eval_env = deepcopy(self.eval_env)
-            params_eval_env.reseed()
+            params_eval_env = _preprocess_env(self._eval_env, self.seeder)
 
             #
             # Case 1: partial fit, that allows pruning
@@ -632,16 +640,18 @@ class AgentStats:
 
 def _preprocess_env(env, seeder):
     """
-    If env is a tuple (constructor, kwargs), creates an instance
-    and reseeds it.
-    Otherwise, does nothing.
+    If env is a tuple (constructor, kwargs), creates an instance.
+
+    Reseeds the env before returning.
     """
     if isinstance(env, tuple):
         constructor, kwargs = env
         kwargs = kwargs or {}
         env = constructor(**kwargs)
-        reseeded = safe_reseed(env, seeder)
-        assert reseeded
+
+    reseeded = safe_reseed(env, seeder)
+    assert reseeded
+
     return env
 
 
@@ -651,7 +661,11 @@ def _fit_worker(args):
     """
     agent_class, train_env, init_kwargs, \
         fit_kwargs, writer, thread_logging_level, seeder = args
-    # preprocess train_env
+
+    # reseed external libraries
+    set_external_seed(seeder)
+
+    # preprocess and train_env
     train_env = _preprocess_env(train_env, seeder)
 
     # logging level in thread
