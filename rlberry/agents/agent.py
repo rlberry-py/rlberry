@@ -3,7 +3,6 @@ from copy import deepcopy
 import logging
 from inspect import signature
 from rlberry.seeding.seeder import Seeder
-from rlberry.seeding import safe_reseed
 
 
 logger = logging.getLogger(__name__)

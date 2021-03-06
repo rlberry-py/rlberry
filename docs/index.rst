@@ -104,7 +104,7 @@ It works as follows:
     print("random sample from agent rng: ", agent.rng.normal())
 
 
-    # A seeder can spawn other seeders that are independent from it
+    # A seeder can spawn other seeders that are independent from it.
     # This is useful to seed two different threads, using seeder1
     # in the first thread, and seeder2 in the second thread.
     seeder1, seeder2 = seeder.spawn(2)
