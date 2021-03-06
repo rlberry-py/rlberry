@@ -1,16 +1,9 @@
 
-import rlberry.seeding as seeding
-from copy import deepcopy
 from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
 from rlberry.agents.ppo import PPOAgent
 from rlberry.stats import AgentStats, plot_episode_rewards, compare_policies
-from rlberry.exploration_tools.online_discretization_counter import OnlineDiscretizationCounter
 from rlberry.exploration_tools.discrete_counter import DiscreteCounter
-from rlberry.wrappers.uncertainty_estimator_wrapper import UncertaintyEstimatorWrapper
 
-
-# global seed
-seeding.set_global_seed(12345)
 
 # --------------------------------
 # Define train env

@@ -1,12 +1,9 @@
 
-import rlberry.seeding as seeding
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
 from rlberry.agents import RSKernelUCBVIAgent, RSUCBVIAgent
 from rlberry.agents.ppo import PPOAgent
 from rlberry.stats import AgentStats, plot_episode_rewards, compare_policies
 
-# global seed
-seeding.set_global_seed(1234)
 
 # --------------------------------
 # Define train and evaluation envs
@@ -18,7 +15,7 @@ eval_env = PBall2D()
 # -----------------------------
 # Parameters
 # -----------------------------
-N_EPISODES = 500
+N_EPISODES = 100
 GAMMA = 0.99
 HORIZON = 50
 BONUS_SCALE_FACTOR = 0.1

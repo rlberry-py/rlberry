@@ -5,8 +5,6 @@ from stable_baselines3.common.vec_env import VecFrameStack
 from rlberry.agents import Agent
 from rlberry.stats import AgentStats, MultipleStats
 
-import rlberry.seeding as seeding
-
 
 class A2CAgent(Agent):
 
@@ -36,8 +34,10 @@ class A2CAgent(Agent):
                  _init_setup_model: bool = True,
                  **kwargs):
 
+        # init rlberry base class
+        Agent.__init__(self, env, **kwargs)
+
         # Generate seed for A2CStableBaselines using rlberry seeding
-        self.rng = seeding.get_rng()
         seed = self.rng.integers(2**32).item()
 
         # init stable baselines class
@@ -63,9 +63,6 @@ class A2CAgent(Agent):
             seed,
             device,
             _init_setup_model)
-
-        # init rlberry base class
-        Agent.__init__(self, env, **kwargs)
 
     def fit(self, **kwargs):
         result = self.wrapped.learn(**kwargs)

@@ -5,8 +5,10 @@ from rlberry.wrappers.discretize_state import DiscretizeStateWrapper
 
 env = TwinRooms()
 env = DiscretizeStateWrapper(env, n_bins=20)
+env.reseed(41)
 horizon = 20
 agent = MBQVIAgent(env, n_samples=10, gamma=1.0, horizon=horizon)
+agent.reseed(42)
 agent.fit()
 
 state = env.reset()

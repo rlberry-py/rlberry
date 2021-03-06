@@ -37,7 +37,6 @@ full_requires = [
     'PyOpenGL',
     'PyOpenGL_accelerate',
     'pyvirtualdisplay',
-    'sacred',
 ]
 
 extras_require = {

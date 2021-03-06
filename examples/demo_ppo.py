@@ -1,10 +1,8 @@
 from rlberry.agents import PPOAgent
 from rlberry.envs.classic_control import MountainCar
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
-from rlberry.seeding import seeding
 
 render = False
-seeding.set_global_seed(1223)
 
 for env, n_episodes, horizon in zip([PBall2D(), MountainCar()],
                                     [400, 40000], [256, 512]):
