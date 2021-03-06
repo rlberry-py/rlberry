@@ -70,6 +70,15 @@ class A2CAgent(Agent):
         action, _state = self.wrapped.predict(observation, **kwargs)
         return action
 
+    #
+    # For hyperparameter optimization
+    #
+    @classmethod
+    def sample_parameters(cls, trial):
+        learning_rate = trial.suggest_loguniform('learning_rate', 1e-5, 1)
+
+        return {'learning_rate': learning_rate}
+
 
 #
 # Traning one agent
@@ -128,3 +137,7 @@ mstats.run()
 
 # Plot policy evaluation
 compare_policies(mstats.allstats)
+
+# Test hyperparam optim
+print("testint a call to hyperparam optim")
+mstats.allstats[0].optimize_hyperparams(timeout=60)

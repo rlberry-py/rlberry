@@ -1,9 +1,14 @@
-from rlberry.envs import gym_make, Wrapper
+"""
+WARNING:
+Atari environments are not thread safe, hence we always need n_jobs=1 for AgentStats.
+"""
+
 from stable_baselines3 import A2C as A2CStableBaselines
 from stable_baselines3.common.cmd_util import make_atari_env
 from stable_baselines3.common.vec_env import VecFrameStack
 from rlberry.agents import Agent
 from rlberry.stats import AgentStats, MultipleStats
+from rlberry.wrappers.scalarize import ScalarizeEnvWrapper
 
 
 class A2CAgent(Agent):
@@ -73,6 +78,15 @@ class A2CAgent(Agent):
         action, _state = self.wrapped.predict(observation, **kwargs)
         return action
 
+    #
+    # For hyperparameter optimization
+    #
+    @classmethod
+    def sample_parameters(cls, trial):
+        learning_rate = trial.suggest_loguniform('learning_rate', 1e-5, 1)
+
+        return {'learning_rate': learning_rate}
+
 
 #
 # Traning one agent
@@ -80,6 +94,16 @@ class A2CAgent(Agent):
 def env_constructor(n_envs=4):
     env = make_atari_env('MontezumaRevenge-v0', n_envs=n_envs)
     env = VecFrameStack(env, n_stack=4)
+    return env
+
+
+def eval_env_constructor(n_envs=1):
+    """
+    Evaluation should be in a scalar environment.
+    """
+    env = make_atari_env('MontezumaRevenge-v0', n_envs=n_envs)
+    env = VecFrameStack(env, n_stack=4)
+    env = ScalarizeEnvWrapper(env)
     return env
 
 #
@@ -90,26 +114,28 @@ def env_constructor(n_envs=4):
 stats = AgentStats(
     A2CAgent,
     (env_constructor, None),
+    eval_env=(eval_env_constructor, None),
     eval_horizon=200,
     agent_name='A2C baseline',
     init_kwargs={'policy': 'CnnPolicy', 'verbose': 10},
     fit_kwargs={'total_timesteps': 1000},
     policy_kwargs={'deterministic': True},
-    n_fit=4,
-    n_jobs=4,
+    n_fit=1,
+    n_jobs=1,
     joblib_backend='threading')
 
 
 stats_alternative = AgentStats(
     A2CAgent,
     (env_constructor, None),
+    eval_env=(eval_env_constructor, None),
     eval_horizon=200,
     agent_name='A2C high learning rate',
     init_kwargs={'policy': 'CnnPolicy', 'verbose': 10, 'learning_rate': 0.01},
     fit_kwargs={'total_timesteps': 1000},
     policy_kwargs={'deterministic': True},
-    n_fit=4,
-    n_jobs=4,
+    n_fit=1,
+    n_jobs=1,
     joblib_backend='threading')
 
 
@@ -119,3 +145,8 @@ mstats.append(stats)
 mstats.append(stats_alternative)
 mstats.run()
 mstats.save()
+
+
+# Test hyperparam optim
+print("testint a call to hyperparam optim")
+mstats.allstats[0].optimize_hyperparams(timeout=60, n_fit=2, n_jobs=1)

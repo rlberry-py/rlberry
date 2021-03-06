@@ -309,7 +309,7 @@ class AgentStats:
 
     def save_results(self, output_dir=None, **kwargs):
         """
-        Save the results obtained by optimize_hyperparameters(),
+        Save the results obtained by optimize_hyperparams(),
         fit() and partial_fit() to a directory.
 
         Parameters
@@ -557,6 +557,7 @@ class AgentStats:
                 n_fit=n_fit,
                 n_jobs=n_jobs,
                 thread_logging_level='WARNING',
+                joblib_backend='threading',
                 seed=self.seeder)
             params_stats._eval_env = None  # make sure _eval_env is not used in this instance
 

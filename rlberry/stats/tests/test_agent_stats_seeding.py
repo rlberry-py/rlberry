@@ -1,4 +1,3 @@
-from rlberry import stats
 from rlberry.envs.tests.test_env_seeding import get_env_trajectory, compare_trajectories
 from rlberry.envs import gym_make
 from rlberry.envs.classic_control import MountainCar
