@@ -561,7 +561,12 @@ class AgentStats:
             params_stats._eval_env = None  # make sure _eval_env is not used in this instance
 
             # Evaluation environment copy
-            params_eval_env = _preprocess_env(self._eval_env, self.seeder)
+            try:
+                temp_eval_env = deepcopy(self._eval_env)
+            except Exception:
+                raise ValueError("Cannot deep copy eval_env in optimize_hyperparams." +
+                                 " Try setting train_env or eval_env as a tuple (constructor, kwargs)")
+            params_eval_env = _preprocess_env(temp_eval_env, self.seeder)
 
             #
             # Case 1: partial fit, that allows pruning
