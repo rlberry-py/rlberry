@@ -65,32 +65,54 @@ We provide examples to show you how to use rlberry_ with:
 Seeding & Reproducibility
 ==========================
 
-In rlberry_, only one global seed is defined, and all the random number generators used
-in the library inherit from this seed, ensuring reproducibility and 
-independence between the generators 
-(see `NumPy SeedSequence <https://numpy.org/doc/stable/reference/random/parallel.html>`_).
+rlberry_ has a class :class:`~rlberry.seeding.seeder.Seeder` that conveniently wraps a `NumPy SeedSequence <https://numpy.org/doc/stable/reference/random/parallel.html>`_,
+and allows us to create independent random number generators for different objects and threads, using a single
+:class:`~rlberry.seeding.seeder.Seeder` instance.
 
 It works as follows:
 
 
 .. code-block:: python
 
-   import rlberry.seeding as seeding
+    from rlberry.seeding import Seeder
 
-   seeding.set_global_seed(seed=123)
+    seeder = Seeder(123)
 
-   # From now on, no more seeds are defined by the user, and all the results are reproducible.
-   ...
+    # Each Seeder instance has a random number generator (rng)
+    # See https://numpy.org/doc/stable/reference/random/generator.html to check the
+    # methods available in rng.
+    seeder.rng.integers(5)
+    seeder.rng.normal()
+    print(type(seeder.rng))
+    # etc
 
-   # If you need a random number generator (rng), call:
-   rng = seeding.get_rng()   
+    # Environments and agents should be seeded using a single seeder,
+    # to ensure that their random number generators are independent.
+    from rlberry.envs import gym_make
+    from rlberry.agents import RSUCBVIAgent
+    env = gym_make('MountainCar-v0')
+    env.reseed(seeder)
 
-   # which gives a numpy Generator (https://numpy.org/doc/stable/reference/random/generator.html) 
-   # that is independent of all the previous generators created by seeding.get_rng()
-   rng.integers(5)
-   rng.normal()
-   # etc
+    agent = RSUCBVIAgent(env)
+    agent.reseed(seeder)
 
+
+    # Environments and Agents have their own seeder and rng!
+    print("env seeder: ", env.seeder)
+    print("random sample from env rng: ", env.rng.normal())
+    print("agent seeder: ", agent.seeder)
+    print("random sample from agent rng: ", agent.rng.normal())
+
+
+    # A seeder can spawn other seeders that are independent from it
+    # This is useful to seed two different threads, using seeder1
+    # in the first thread, and seeder2 in the second thread.
+    seeder1, seeder2 = seeder.spawn(2)
+
+
+.. note:: 
+    The class :class:`~rlberry.stats.agent_stats.AgentStats` provides a :code:`seed` parameter in its constructor,
+    and handles automatically the seeding of all environments and agents used by it.
 
 .. note:: 
 
@@ -98,8 +120,7 @@ It works as follows:
    :class:`~rlberry.stats.agent_stats.AgentStats` uses the `Optuna <https://optuna.org/>`_ 
    library for hyperparameter optimization and is **inherently non-deterministic**
    (see `Optuna FAQ <https://optuna.readthedocs.io/en/stable/faq.html#how-can-i-obtain-reproducible-optimization-results>`_).
-   After using this method and fixing the hyperparameter, you can obtain deterministic 
-   ouputs with rlberry_ by calling :func:`set_global_seed` available in :mod:`rlberry.seeding`.
+
 
 
 Citing rlberry_
