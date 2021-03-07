@@ -1,3 +1,6 @@
+# tensorboard runs
+runs/
+
 # videos
 *.mp4
 
