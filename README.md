@@ -76,7 +76,6 @@ We provide a handful of notebooks on [Google colab](https://colab.research.googl
 | Content | Description | Link |
 |-|-|-|
 | Introduction to `rlberry` | How to create an agent, optimize its hyperparameters and compare to a baseline. | <a href="https://colab.research.google.com/github/rlberry-py/rlberry/blob/main/notebooks/introduction_to_rlberry.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg"></a> |
-| RL Experimental Pipeline | How to define a configuration, run experiments in parallel and save a `config.json` for reproducibility. | <a href="https://colab.research.google.com/github/rlberry-py/rlberry/blob/main/notebooks/experimental_pipeline_with_rlberry.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg"></a> |
 
 
 ## Citing rlberry

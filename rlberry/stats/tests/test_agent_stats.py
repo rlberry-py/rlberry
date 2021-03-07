@@ -1,13 +1,8 @@
 import numpy as np
 import os
-import rlberry.seeding as seeding
 from rlberry.envs import GridWorld
 from rlberry.agents import IncrementalAgent
 from rlberry.stats import AgentStats, plot_episode_rewards, compare_policies
-
-
-# global seed
-seeding.set_global_seed(1234)
 
 
 class DummyAgent(IncrementalAgent):
@@ -62,9 +57,9 @@ def test_agent_stats_1():
 
     # Run AgentStats
     stats_agent1 = AgentStats(DummyAgent, train_env,
-                              init_kwargs=params, n_fit=4, eval_horizon=10)
+                              init_kwargs=params, n_fit=4, eval_horizon=10, seed=123)
     stats_agent2 = AgentStats(DummyAgent, train_env,
-                              init_kwargs=params, n_fit=4, eval_horizon=10)
+                              init_kwargs=params, n_fit=4, eval_horizon=10, seed=123)
     agent_stats_list = [stats_agent1, stats_agent2]
 
     # learning curves
@@ -97,7 +92,7 @@ def test_agent_stats_1():
     os.remove(fname.with_suffix('.pickle'))
     dirname.rmdir()
 
-    # test hyperparemeter optimization
+    # test hyperparameter optimization call
     loaded_stats.optimize_hyperparams()
     loaded_stats.optimize_hyperparams(continue_previous=True)
 
@@ -113,10 +108,10 @@ def test_agent_stats_2():
     # Run AgentStats
     stats_agent1 = AgentStats(DummyAgent, train_env, eval_env=eval_env,
                               init_kwargs=params, n_fit=4, eval_horizon=10,
-                              n_jobs=1)
+                              n_jobs=1, seed=123)
     stats_agent2 = AgentStats(DummyAgent, train_env, eval_env=eval_env,
                               init_kwargs=params, n_fit=4, eval_horizon=10,
-                              n_jobs=1)
+                              n_jobs=1, seed=123)
     agent_stats_list = [stats_agent1, stats_agent2]
 
     # set some writers
@@ -162,9 +157,9 @@ def test_agent_stats_partial_fit_and_tuple_env():
 
     # Run AgentStats
     stats = AgentStats(DummyAgent, train_env,
-                       init_kwargs=params, n_fit=4, eval_horizon=10)
+                       init_kwargs=params, n_fit=4, eval_horizon=10, seed=123)
     stats2 = AgentStats(DummyAgent, train_env,
-                        init_kwargs=params, n_fit=4, eval_horizon=10)
+                        init_kwargs=params, n_fit=4, eval_horizon=10, seed=123)
     # set some writers
     stats.set_writer(0, None)
     stats.set_writer(3, None)

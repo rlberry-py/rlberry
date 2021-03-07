@@ -2,8 +2,7 @@ from abc import ABC, abstractmethod
 from copy import deepcopy
 import logging
 from inspect import signature
-
-from rlberry.seeding import seeding
+from rlberry.seeding.seeder import Seeder
 
 
 logger = logging.getLogger(__name__)
@@ -18,9 +17,6 @@ class Agent(ABC):
         Environment used to fit the agent.
     copy_env : bool
         If true, makes a deep copy of the environment.
-    reseed_env : bool
-        If true, reseeds the environment.
-
 
     .. note::
         Classes that implement this interface should send ``**kwargs`` to :code:`Agent.__init__()`
@@ -34,6 +30,8 @@ class Agent(ABC):
         Environment on which to train the agent.
     writer : object, default: None
         Writer object (e.g. tensorboard SummaryWriter).
+    seeder : rlberry.seeding.Seeder
+        Object for random number generation.
     """
 
     name = ""
@@ -41,7 +39,6 @@ class Agent(ABC):
     def __init__(self,
                  env,
                  copy_env=True,
-                 reseed_env=True,
                  **kwargs):
         # Check if wrong parameters have been sent to an agent.
         assert kwargs == {}, \
@@ -55,12 +52,9 @@ class Agent(ABC):
             except Exception as ex:
                 logger.warning("[Agent] Not possible to deepcopy env: " + str(ex))
 
-        if reseed_env:
-            reseeded = seeding.safe_reseed(self.env)
-            if not reseeded:
-                logger.warning("[Agent] Not possible to reseed env, seed() and reseed() are not available.")
-
         self.writer = None
+
+        self.seeder = Seeder()
 
     @abstractmethod
     def fit(self, **kwargs):
@@ -115,3 +109,26 @@ class Agent(ABC):
         trial: optuna.trial
         """
         raise NotImplementedError("agent.sample_parameters() not implemented.")
+
+    @property
+    def rng(self):
+        """ Random number generator. """
+        return self.seeder.rng
+
+    def reseed(self, seed_seq=None):
+        """
+        Get new random number generator for the agent.
+
+        Parameters
+        ----------
+        seed_seq : np.random.SeedSequence, rlberry.seeding.Seeder or int, default : None
+            Seed sequence from which to spawn the random number generator.
+            If None, generate random seed.
+            If int, use as entropy for SeedSequence.
+            If seeder, use seeder.seed_seq
+        """
+        # self.seeder
+        if seed_seq is None:
+            self.seeder = self.seeder.spawn()
+        else:
+            self.seeder = Seeder(seed_seq)

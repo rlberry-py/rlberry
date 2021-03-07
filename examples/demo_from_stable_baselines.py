@@ -2,8 +2,6 @@ from rlberry.envs import gym_make
 from stable_baselines3 import A2C as A2CStableBaselines
 from rlberry.agents import Agent
 
-import rlberry.seeding as seeding
-
 
 class A2CAgent(Agent):
 
@@ -33,8 +31,10 @@ class A2CAgent(Agent):
                  _init_setup_model: bool = True,
                  **kwargs):
 
+        # init rlberry base class
+        Agent.__init__(self, env, **kwargs)
+
         # Generate seed for A2CStableBaselines using rlberry seeding
-        self.rng = seeding.get_rng()
         seed = self.rng.integers(2**32).item()
 
         # init stable baselines class
@@ -61,9 +61,6 @@ class A2CAgent(Agent):
             device,
             _init_setup_model)
 
-        # init rlberry base class
-        Agent.__init__(self, env, **kwargs)
-
     def fit(self, **kwargs):
         result = self.wrapped.learn(**kwargs)
         info = {}  # possibly store something from results
@@ -73,9 +70,18 @@ class A2CAgent(Agent):
         action, _state = self.wrapped.predict(observation, **kwargs)
         return action
 
+    #
+    # For hyperparameter optimization
+    #
+    @classmethod
+    def sample_parameters(cls, trial):
+        learning_rate = trial.suggest_loguniform('learning_rate', 1e-5, 1)
+
+        return {'learning_rate': learning_rate}
+
 
 #
-# Traning one agent
+# Training one agent
 #
 
 
@@ -93,9 +99,9 @@ for i in range(1000):
 env.close()
 
 #
-# Traning several agents and comparing different hyperparams
+# Training several agents and comparing different hyperparams
 #
-from rlberry.stats import AgentStats, MultipleStats, agent_stats, compare_policies
+from rlberry.stats import AgentStats, MultipleStats, compare_policies
 
 stats = AgentStats(
     A2CAgent,
@@ -131,3 +137,7 @@ mstats.run()
 
 # Plot policy evaluation
 compare_policies(mstats.allstats)
+
+# Test hyperparam optim
+print("testint a call to hyperparam optim")
+mstats.allstats[0].optimize_hyperparams(timeout=60)

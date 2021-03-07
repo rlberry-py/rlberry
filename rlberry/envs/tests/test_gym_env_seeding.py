@@ -1,6 +1,8 @@
+from rlberry.seeding.seeding import safe_reseed
+import gym
 import numpy as np
 import pytest
-import rlberry.seeding as seeding
+from rlberry.seeding import Seeder
 from rlberry.envs import gym_make
 
 
@@ -35,14 +37,17 @@ def compare_trajectories(traj1, traj2):
 @pytest.mark.parametrize("env_name", gym_envs)
 def test_env_seeding(env_name):
 
-    seeding.set_global_seed(123)
+    seeder1 = Seeder(123)
     env1 = gym_make(env_name)
+    env1.reseed(seeder1)
 
-    seeding.set_global_seed(456)
+    seeder2 = Seeder(456)
     env2 = gym_make(env_name)
+    env2.reseed(seeder2)
 
-    seeding.set_global_seed(123)
+    seeder3 = Seeder(123)
     env3 = gym_make(env_name)
+    env3.reseed(seeder3)
 
     if deepcopy(env1).is_online():
         traj1 = get_env_trajectory(env1, 500)
@@ -56,8 +61,9 @@ def test_env_seeding(env_name):
 @pytest.mark.parametrize("env_name", gym_envs)
 def test_copy_reseeding(env_name):
 
-    seeding.set_global_seed(123)
+    seeder = Seeder(123)
     env = gym_make(env_name)
+    env.reseed(seeder)
 
     c_env = deepcopy(env)
     c_env.reseed()
@@ -66,3 +72,23 @@ def test_copy_reseeding(env_name):
         traj1 = get_env_trajectory(env, 500)
         traj2 = get_env_trajectory(c_env, 500)
         assert not compare_trajectories(traj1, traj2)
+
+
+@pytest.mark.parametrize("env_name", gym_envs)
+def test_gym_safe_reseed(env_name):
+    seeder = Seeder(123)
+    seeder_aux = Seeder(123)
+
+    env1 = gym.make(env_name)
+    env2 = gym.make(env_name)
+    env3 = gym.make(env_name)
+
+    safe_reseed(env1, seeder)
+    safe_reseed(env2, seeder)
+    safe_reseed(env3, seeder_aux)
+
+    traj1 = get_env_trajectory(env1, 500)
+    traj2 = get_env_trajectory(env2, 500)
+    traj3 = get_env_trajectory(env3, 500)
+    assert not compare_trajectories(traj1, traj2)
+    assert compare_trajectories(traj1, traj3)

@@ -1,14 +1,23 @@
 from rlberry.seeding.seeder import Seeder
+from rlberry.seeding import set_external_seed
 import concurrent.futures
 import pytest
 from joblib import Parallel, delayed
 
 
-def get_random_number_setting_seed(seeder):
-    return seeder.rng.integers(2**32)
+_TORCH_INSTALLED = True
+try:
+    import torch
+except Exception:
+    _TORCH_INSTALLED = False
 
 
-def test_multithread_seeding():
+def get_torch_random_number_setting_seed(seeder):
+    set_external_seed(seeder)
+    return torch.randint(2**32, (1,))[0].item()
+
+
+def test_torch_multithread_seeding():
     """
     Checks that different seeds are given to different threads
     """
@@ -19,7 +28,7 @@ def test_multithread_seeding():
                 futures = []
                 for seed in main_seeder.spawn(2):
                     futures.append(
-                        executor.submit(get_random_number_setting_seed, seed)
+                        executor.submit(get_torch_random_number_setting_seed, seed)
                     )
 
                 results = []
@@ -31,7 +40,7 @@ def test_multithread_seeding():
 
 
 @pytest.mark.parametrize("backend", ['loky', 'threading', 'multiprocessing'])
-def test_joblib_seeding_giving_seed(backend):
+def test_torch_joblib_seeding_giving_seed(backend):
     """
     Checks that different seeds are given to different joblib workers
     """
@@ -39,5 +48,5 @@ def test_joblib_seeding_giving_seed(backend):
     workers_output = Parallel(n_jobs=4,
                               verbose=5,
                               backend=backend)(
-            delayed(get_random_number_setting_seed)(seed) for seed in main_seeder.spawn(2))
+            delayed(get_torch_random_number_setting_seed)(seed) for seed in main_seeder.spawn(2))
     assert workers_output[0] != workers_output[1]

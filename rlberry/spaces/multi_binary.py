@@ -1,8 +1,8 @@
 import gym
-from rlberry.spaces import SpaceSeeder
+from rlberry.seeding import Seeder
 
 
-class MultiBinary(gym.spaces.MultiBinary, SpaceSeeder):
+class MultiBinary(gym.spaces.MultiBinary, Seeder):
     """
 
     Inherited from gym.spaces.MultiBinary for compatibility with gym.
@@ -22,7 +22,7 @@ class MultiBinary(gym.spaces.MultiBinary, SpaceSeeder):
     """
     def __init__(self, n):
         gym.spaces.MultiBinary.__init__(self, n)
-        SpaceSeeder.__init__(self)
+        Seeder.__init__(self)
 
     def sample(self):
         return self.rng.integers(low=0, high=2,

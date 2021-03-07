@@ -1,8 +1,8 @@
 import gym
-from rlberry.spaces import SpaceSeeder
+from rlberry.seeding import Seeder
 
 
-class MultiDiscrete(gym.spaces.MultiDiscrete, SpaceSeeder):
+class MultiDiscrete(gym.spaces.MultiDiscrete, Seeder):
     """
 
     Inherited from gym.spaces.MultiDiscrete for compatibility with gym.
@@ -22,7 +22,7 @@ class MultiDiscrete(gym.spaces.MultiDiscrete, SpaceSeeder):
     """
     def __init__(self, nvec):
         gym.spaces.MultiDiscrete.__init__(self, nvec)
-        SpaceSeeder.__init__(self)
+        Seeder.__init__(self)
 
     def sample(self):
         sample = self.rng.random(self.nvec.shape)*self.nvec

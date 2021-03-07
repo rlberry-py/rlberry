@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-import rlberry.seeding as seeding
+from rlberry.seeding import Seeder
 
 from rlberry.exploration_tools.discrete_counter import DiscreteCounter
 
@@ -41,7 +41,7 @@ def test_rescale_reward():
     # tolerance
     tol = 1e-14
 
-    rng = seeding.get_rng()
+    rng = Seeder(123).rng
 
     for _ in range(10):
         # generate random MDP

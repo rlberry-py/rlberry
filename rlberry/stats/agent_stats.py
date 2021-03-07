@@ -13,7 +13,8 @@ from copy import deepcopy
 from datetime import datetime
 from pathlib import Path
 
-from rlberry.seeding.seeding import safe_reseed
+from rlberry.seeding import safe_reseed, set_external_seed
+from rlberry.seeding import Seeder
 
 from joblib import Parallel, delayed
 import json
@@ -21,7 +22,6 @@ import logging
 import dill
 import pickle
 import pandas as pd
-import rlberry.seeding as seeding
 from rlberry.agents import IncrementalAgent
 from rlberry.utils.logging import configure_logging
 from rlberry.stats.evaluation import mc_policy_evaluation
@@ -73,6 +73,11 @@ class AgentStats:
         Backend for joblib Parallel.
     thread_logging_level : str, default: 'INFO'
         Logging level in each of the threads used to fit agents.
+    seed : np.random.SeedSequence, rlberry.seeding.Seeder or int, default : None
+        Seed sequence from which to spawn the random number generator.
+        If None, generate random seed.
+        If int, use as entropy for SeedSequence.
+        If seeder, use seeder.seed_seq
     """
 
     def __init__(self,
@@ -88,11 +93,13 @@ class AgentStats:
                  n_jobs=4,
                  output_dir=None,
                  joblib_backend='loky',
-                 thread_logging_level='INFO'):
+                 thread_logging_level='INFO',
+                 seed=None):
         # agent_class should only be None when the constructor is called
         # by the class method AgentStats.load(), since the agent class
         # will be loaded.
         if agent_class is not None:
+            self.seeder = Seeder(seed)
 
             self.agent_name = agent_name
             if agent_name is None:
@@ -103,19 +110,20 @@ class AgentStats:
             self.identifier = 'stats_{}_{}'.format(self.agent_name,
                                                    str(int(timestamp)))
 
+            # Agent class
             self.agent_class = agent_class
-            self.train_env = train_env
-            if eval_env is None:
-                eval_env = train_env
-            try:
-                self.eval_env = deepcopy(eval_env)
-                seeding.safe_reseed(self.eval_env)
-            except Exception:
-                logger.warning('[AgentStats]: Not possible to deepcopy or reseed eval_env')
-                self.eval_env = eval_env
 
-            # preprocess eval_env, in case it is a tuple
-            self.eval_env = _preprocess_env(self.eval_env)
+            # Train env
+            self.train_env = train_env
+
+            # Check eval_env
+            if eval_env is None:
+                try:
+                    eval_env = deepcopy(train_env)
+                except Exception:
+                    raise ValueError("eval_env is None, and train_env cannot be deep copied." +
+                                     " Try setting train_env as a tuple (constructor, kwargs)")
+            self._eval_env = eval_env
 
             # check kwargs
             init_kwargs = init_kwargs or {}
@@ -147,7 +155,7 @@ class AgentStats:
             self.train_env_set = []
             for _ in range(n_fit):
                 _env = deepcopy(train_env)
-                seeding.safe_reseed(_env)
+                safe_reseed(_env, self.seeder)
                 self.train_env_set.append(_env)
 
             # Create list of writers for each agent that will be trained
@@ -162,11 +170,15 @@ class AgentStats:
             #  fit info is initialized at _process_fit_statistics()
             self.fit_info = None
 
-            #
-            self.rng = seeding.get_rng()
-
             # optuna study
             self.study = None
+
+    @property
+    def eval_env(self):
+        """
+        Instantiated and reseeded evaluation environment.
+        """
+        return _preprocess_env(self._eval_env, self.seeder)
 
     def set_output_dir(self, output_dir):
         """
@@ -217,16 +229,18 @@ class AgentStats:
         Fit the agent instances in parallel.
         """
         logger.info(f"Training AgentStats for {self.agent_name}... ")
-        seed_sequences = seeding.spawn(self.n_fit)
+        seeders = self.seeder.spawn(self.n_fit)
+        if not isinstance(seeders, list):
+            seeders = [seeders]
         args = [(self.agent_class,
                 train_env,
                 deepcopy(self.init_kwargs),
                 deepcopy(self.fit_kwargs),
                 writer,
                 self.thread_logging_level,
-                thread_seed_seq)
-                for (thread_seed_seq, train_env, writer)
-                in zip(seed_sequences, self.train_env_set, self.writers)]
+                seeder)
+                for (seeder, train_env, writer)
+                in zip(seeders, self.train_env_set, self.writers)]
 
         workers_output = Parallel(n_jobs=self.n_jobs,
                                   verbose=5,
@@ -257,11 +271,14 @@ class AgentStats:
                 init_kwargs = deepcopy(self.init_kwargs)
 
                 # preprocess train_env
-                train_env = _preprocess_env(train_env)
+                train_env = _preprocess_env(train_env, self.seeder)
 
                 # create agent instance
-                agent = self.agent_class(train_env, copy_env=False,
-                                         reseed_env=False, **init_kwargs)
+                agent = self.agent_class(train_env, copy_env=False, **init_kwargs)
+
+                # seed agent
+                agent.reseed(self.seeder)
+
                 # set agent writer
                 if self.writers[idx][0] is None:
                     agent.set_writer(None)
@@ -296,7 +313,7 @@ class AgentStats:
 
     def save_results(self, output_dir=None, **kwargs):
         """
-        Save the results obtained by optimize_hyperparameters(),
+        Save the results obtained by optimize_hyperparams(),
         fit() and partial_fit() to a directory.
 
         Parameters
@@ -369,7 +386,7 @@ class AgentStats:
                 logger.info("Saved AgentStats({}) using dill.".format(self.agent_name))
             except Exception as ex:
                 logger.warning("[AgentStats] Instance cannot be pickled: " + str(ex))
-     
+
     @classmethod
     def load(cls, filename):
         filename = Path(filename).with_suffix('.pickle')
@@ -488,7 +505,7 @@ class AgentStats:
                 sampler_kwargs = {}
             # get sampler
             if sampler_method == 'random':
-                optuna_seed = self.rng.integers(2**16)
+                optuna_seed = self.seeder.rng.integers(2**16)
                 sampler = optuna.samplers.RandomSampler(seed=optuna_seed)
             elif sampler_method == 'grid':
                 assert sampler_kwargs is not None, \
@@ -496,7 +513,7 @@ class AgentStats:
                     "a search_space dictionary must be provided."
                 sampler = optuna.samplers.GridSampler(**sampler_kwargs)
             elif sampler_method == 'cmaes':
-                optuna_seed = self.rng.integers(2**16)
+                optuna_seed = self.seeder.rng.integers(2**16)
                 sampler_kwargs['seed'] = optuna_seed
                 sampler = optuna.samplers.CmaEsSampler(**sampler_kwargs)
             elif sampler_method == 'optuna_default':
@@ -543,11 +560,18 @@ class AgentStats:
                 agent_name='optim',
                 n_fit=n_fit,
                 n_jobs=n_jobs,
-                thread_logging_level='WARNING')
+                thread_logging_level='WARNING',
+                joblib_backend='threading',
+                seed=self.seeder)
+            params_stats._eval_env = None  # make sure _eval_env is not used in this instance
 
             # Evaluation environment copy
-            params_eval_env = deepcopy(self.eval_env)
-            params_eval_env.reseed()
+            try:
+                temp_eval_env = deepcopy(self._eval_env)
+            except Exception:
+                raise ValueError("Cannot deep copy eval_env in optimize_hyperparams." +
+                                 " Try setting train_env or eval_env as a tuple (constructor, kwargs)")
+            params_eval_env = _preprocess_env(temp_eval_env, self.seeder)
 
             #
             # Case 1: partial fit, that allows pruning
@@ -625,18 +649,20 @@ class AgentStats:
 # Aux functions
 #
 
-def _preprocess_env(env):
+def _preprocess_env(env, seeder):
     """
-    If env is a tuple (constructor, kwargs), creates an instance
-    and reseeds it.
-    Otherwise, does nothing.
+    If env is a tuple (constructor, kwargs), creates an instance.
+
+    Reseeds the env before returning.
     """
     if isinstance(env, tuple):
         constructor, kwargs = env
         kwargs = kwargs or {}
         env = constructor(**kwargs)
-        reseeded = safe_reseed(env)
-        assert reseeded
+
+    reseeded = safe_reseed(env, seeder)
+    assert reseeded
+
     return env
 
 
@@ -645,18 +671,22 @@ def _fit_worker(args):
     Create and fit an agent instance
     """
     agent_class, train_env, init_kwargs, \
-        fit_kwargs, writer, thread_logging_level, thread_seed_seq = args
-    # set thread seed sequence
-    seeding.set_global_seed(thread_seed_seq)
-    # preprocess train_env
-    train_env = _preprocess_env(train_env)
+        fit_kwargs, writer, thread_logging_level, seeder = args
+
+    # reseed external libraries
+    set_external_seed(seeder)
+
+    # preprocess and train_env
+    train_env = _preprocess_env(train_env, seeder)
 
     # logging level in thread
     configure_logging(thread_logging_level)
     # create agent
-    agent = agent_class(train_env, copy_env=False,
-                        reseed_env=False, **init_kwargs)
-    agent.name += f"(spawn_key{thread_seed_seq.spawn_key})"
+    agent = agent_class(train_env, copy_env=False, **init_kwargs)
+    agent.name += f"(spawn_key{seeder.seed_seq.spawn_key})"
+
+    # seed agent
+    agent.reseed(seeder)
 
     # set writer
     if writer[0] is None:

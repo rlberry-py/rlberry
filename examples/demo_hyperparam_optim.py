@@ -1,10 +1,7 @@
-import rlberry.seeding as seeding
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
 from rlberry.agents.ppo import PPOAgent
 from rlberry.stats import AgentStats
 
-# global seed
-seeding.set_global_seed(1234)
 
 # --------------------------------
 # Define train and evaluation envs
@@ -32,7 +29,8 @@ params_ppo = {"n_episodes": N_EPISODES,
 # Run AgentStats and save results
 # --------------------------------
 ppo_stats = AgentStats(PPOAgent, train_env, eval_horizon=HORIZON,
-                       init_kwargs=params_ppo, n_fit=4)
+                       init_kwargs=params_ppo, n_fit=4,
+                       output_dir='ppo_stats_backup')
 
 
 # hyperparam optim
@@ -44,11 +42,11 @@ best_trial, data = ppo_stats.optimize_hyperparams(
 initial_n_trials = len(ppo_stats.study.trials)
 
 # save
-ppo_stats.save('ppo_stats_backup')
+ppo_stats.save()
 del ppo_stats
 
 # load
-ppo_stats = AgentStats.load('ppo_stats_backup')
+ppo_stats = AgentStats.load('ppo_stats_backup/stats.pickle')
 
 # continue previous optimization, now with 5s of timeout
 best_trial, data = ppo_stats.optimize_hyperparams(

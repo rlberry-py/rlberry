@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-import rlberry.seeding as seeding
+from rlberry.seeding import Seeder
 
 from copy import deepcopy
 from rlberry.envs.classic_control import MountainCar, Acrobot
@@ -47,14 +47,17 @@ def compare_trajectories(traj1, traj2):
 @pytest.mark.parametrize("ModelClass", classes)
 def test_wrapper_seeding(ModelClass):
 
-    seeding.set_global_seed(123)
     env1 = Wrapper(ModelClass())
+    seeder = Seeder(123)
+    env1.reseed(seeder)
 
-    seeding.set_global_seed(456)
     env2 = Wrapper(ModelClass())
+    seeder = Seeder(456)
+    env2.reseed(seeder)
 
-    seeding.set_global_seed(123)
     env3 = Wrapper(ModelClass())
+    seeder = Seeder(123)
+    env3.reseed(seeder)
 
     if deepcopy(env1).is_online():
         traj1 = get_env_trajectory(env1, 500)
@@ -68,14 +71,17 @@ def test_wrapper_seeding(ModelClass):
 @pytest.mark.parametrize("ModelClass", classes)
 def test_rescale_wrapper_seeding(ModelClass):
 
-    seeding.set_global_seed(123)
     env1 = RescaleRewardWrapper(ModelClass(), (0, 1))
+    seeder = Seeder(123)
+    env1.reseed(seeder)
 
-    seeding.set_global_seed(456)
     env2 = RescaleRewardWrapper(ModelClass(), (0, 1))
+    seeder = Seeder(456)
+    env2.reseed(seeder)
 
-    seeding.set_global_seed(123)
     env3 = RescaleRewardWrapper(ModelClass(), (0, 1))
+    seeder = Seeder(123)
+    env3.reseed(seeder)
 
     if deepcopy(env1).is_online():
         traj1 = get_env_trajectory(env1, 500)
@@ -89,8 +95,9 @@ def test_rescale_wrapper_seeding(ModelClass):
 @pytest.mark.parametrize("ModelClass", classes)
 def test_wrapper_copy_reseeding(ModelClass):
 
-    seeding.set_global_seed(123)
     env = Wrapper(ModelClass())
+    seeder = Seeder(123)
+    env.reseed(seeder)
 
     c_env = deepcopy(env)
     c_env.reseed()
@@ -104,8 +111,9 @@ def test_wrapper_copy_reseeding(ModelClass):
 @pytest.mark.parametrize("ModelClass", classes)
 def test_double_wrapper_copy_reseeding(ModelClass):
 
-    seeding.set_global_seed(123)
     env = Wrapper(Wrapper(ModelClass()))
+    seeder = Seeder(123)
+    env.reseed(seeder)
 
     c_env = deepcopy(env)
     c_env.reseed()
@@ -117,10 +125,11 @@ def test_double_wrapper_copy_reseeding(ModelClass):
 
 
 def test_gym_copy_reseeding():
-    seeding.set_global_seed(123)
+    seeder = Seeder(123)
     if _GYM_INSTALLED:
         gym_env = gym.make('Acrobot-v1')
         env = Wrapper(gym_env)
+        env.reseed(seeder)
 
         c_env = deepcopy(env)
         c_env.reseed()
@@ -132,11 +141,12 @@ def test_gym_copy_reseeding():
 
 
 def test_gym_copy_reseeding_2():
-    seeding.set_global_seed(123)
+    seeder = Seeder(123)
     if _GYM_INSTALLED:
         gym_env = gym.make('Acrobot-v1')
         # nested wrapping
         env = RescaleRewardWrapper(Wrapper(Wrapper(gym_env)), (0, 1))
+        env.reseed(seeder)
 
         c_env = deepcopy(env)
         c_env.reseed()

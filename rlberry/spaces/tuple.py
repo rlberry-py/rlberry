@@ -1,8 +1,8 @@
 import gym
-from rlberry.spaces import SpaceSeeder
+from rlberry.seeding import Seeder
 
 
-class Tuple(gym.spaces.Tuple, SpaceSeeder):
+class Tuple(gym.spaces.Tuple, Seeder):
     """
 
     Inherited from gym.spaces.Tuple for compatibility with gym.
@@ -22,7 +22,7 @@ class Tuple(gym.spaces.Tuple, SpaceSeeder):
     """
     def __init__(self, spaces):
         gym.spaces.Tuple.__init__(self, spaces)
-        SpaceSeeder.__init__(self)
+        Seeder.__init__(self)
 
-    def reseed(self):
-        _ = [space.reseed() for space in self.spaces]
+    def reseed(self, seed_seq=None):
+        _ = [space.reseed(seed_seq) for space in self.spaces]

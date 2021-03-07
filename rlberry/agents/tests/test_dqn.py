@@ -1,11 +1,11 @@
-from rlberry.envs import MountainCar
+from rlberry.envs import gym_make
 from rlberry.agents.dqn import DQNAgent
 from rlberry.exploration_tools.online_discretization_counter import OnlineDiscretizationCounter
 from rlberry.exploration_tools.rnd import RandomNetworkDistillation
 
 
 def test_dqn_agent():
-    env = MountainCar()
+    env = gym_make("CartPole-v0")
 
     def uncertainty_estimator_fn(observation_space, action_space):
         counter = OnlineDiscretizationCounter(
@@ -26,7 +26,7 @@ def test_dqn_agent():
 
 
 def test_dqn_agent_rnd():
-    env = MountainCar()
+    env = gym_make("CartPole-v0")
 
     def uncertainty_estimator_fn(observation_space, action_space):
         counter = RandomNetworkDistillation(observation_space, action_space)

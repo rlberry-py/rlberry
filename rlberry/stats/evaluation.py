@@ -49,11 +49,12 @@ def mc_policy_evaluation(agent,
     ----------
     .. [1] http://incompleteideas.net/book/first/ebook/node50.html
     """
-    rng = seeding.get_rng()
     if not isinstance(agent, list):
         agents = [agent]
     else:
         agents = agent
+
+    rng = agents[0].seeder.rng
 
     policy_kwargs = policy_kwargs or {}
 
@@ -197,7 +198,8 @@ def compare_policies(agent_stats_list,
     use_eval_from_agent_stats = (eval_env is None)
     use_horizon_from_agent_stats = (eval_horizon is None)
 
-    rng = seeding.get_rng()
+    rng = agent_stats_list[0].seeder.rng
+
     agents_rewards = []
     for agent_stats in agent_stats_list:
         # train agents if they are not already trained

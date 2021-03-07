@@ -1,8 +1,8 @@
 import gym
-from rlberry.spaces import SpaceSeeder
+from rlberry.seeding import Seeder
 
 
-class Discrete(gym.spaces.Discrete, SpaceSeeder):
+class Discrete(gym.spaces.Discrete, Seeder):
     """
     Class that represents discrete spaces.
 
@@ -31,7 +31,7 @@ class Discrete(gym.spaces.Discrete, SpaceSeeder):
             number of elements in the space
         """
         assert n >= 0, "The number of elements in Discrete must be >= 0"
-        SpaceSeeder.__init__(self)
+        Seeder.__init__(self)
         gym.spaces.Discrete.__init__(self, n)
 
     def sample(self):
