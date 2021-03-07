@@ -78,6 +78,9 @@ Also, we provide a handful of notebooks on [Google colab](https://colab.research
 | Content | Description | Link |
 |-|-|-|
 | Introduction to `rlberry` | How to create an agent, optimize its hyperparameters and compare to a baseline. | <a href="https://colab.research.google.com/github/rlberry-py/rlberry/blob/main/notebooks/introduction_to_rlberry.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg"></a> |
+| Evaluating and optimizing agents  | Train a REINFORCE agent and optimize its hyperparameters |  <a href="https://colab.research.google.com/github/rlberry-py/rlberry/blob/main/notebooks/rlberry_evaluate_and_optimize_agent.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg"></a>
+
+
 
 
 ## Citing rlberry
