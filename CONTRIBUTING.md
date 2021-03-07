@@ -91,7 +91,7 @@ __Remark__: For a faster hyperparameter optimization, it is recommended to imple
 
 ### Implementation notes
 
-*   When inheriting from the `Agent` class, make sure to call `Agent.__init__(self, env, **kwargs)` using `**kwargs` in case new features are added to the base class, and to make sure that `copy_env` and `reseed_env` are always an option to any agent. 
+*   When inheriting from the `Agent` class, make sure to call `Agent.__init__(self, env, **kwargs)` using `**kwargs` in case new features are added to the base class.
 
 Infos, errors and warnings are printed using the `logging` library.
 
