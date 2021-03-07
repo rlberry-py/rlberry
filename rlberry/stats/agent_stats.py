@@ -275,6 +275,10 @@ class AgentStats:
 
                 # create agent instance
                 agent = self.agent_class(train_env, copy_env=False, **init_kwargs)
+
+                # seed agent
+                agent.reseed(self.seeder)
+
                 # set agent writer
                 if self.writers[idx][0] is None:
                     agent.set_writer(None)
@@ -680,6 +684,9 @@ def _fit_worker(args):
     # create agent
     agent = agent_class(train_env, copy_env=False, **init_kwargs)
     agent.name += f"(spawn_key{seeder.seed_seq.spawn_key})"
+
+    # seed agent
+    agent.reseed(seeder)
 
     # set writer
     if writer[0] is None:
