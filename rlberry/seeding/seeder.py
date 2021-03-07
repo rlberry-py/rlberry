@@ -31,7 +31,7 @@ class Seeder:
         spawn_seed_seq : bool, default : True
             If True, uses seed_seq to spawn a new seed sequence (strongly recommended) for the Seeder.
             If False, uses the input seed_seq to define the Seeder.
-            Warning: Setting to false can lead to unexpect behavior. This argument is only used internally
+            Warning: Setting to false can lead to unexpected behavior. This argument is only used internally
             in rlberry, in Seeder.spawn(), to avoid unnecessary spawning.
         """
         super().__init__()

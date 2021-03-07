@@ -89,7 +89,7 @@ class A2CAgent(Agent):
 
 
 #
-# Traning one agent
+# Training one agent
 #
 def env_constructor(n_envs=4):
     env = make_atari_env('MontezumaRevenge-v0', n_envs=n_envs)
@@ -107,7 +107,7 @@ def eval_env_constructor(n_envs=1):
     return env
 
 #
-# Traning several agents and comparing different hyperparams
+# Training several agents and comparing different hyperparams
 #
 
 

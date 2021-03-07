@@ -97,7 +97,11 @@ It works as follows:
     agent.reseed(seeder)
 
 
-    # Environments and Agents have their own seeder and rng!
+    # Environments and Agents have their own seeder and rng.
+    # When writing your own agents and inheriring from the Agent class,
+    # you should use agent.rng whenever you need to generate random numbers;
+    # the same applies to your environments.
+    # This is necessary to ensure reproducibility.
     print("env seeder: ", env.seeder)
     print("random sample from env rng: ", env.rng.normal())
     print("agent seeder: ", agent.seeder)

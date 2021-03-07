@@ -81,7 +81,7 @@ class A2CAgent(Agent):
 
 
 #
-# Traning one agent
+# Training one agent
 #
 
 
@@ -99,9 +99,9 @@ for i in range(1000):
 env.close()
 
 #
-# Traning several agents and comparing different hyperparams
+# Training several agents and comparing different hyperparams
 #
-from rlberry.stats import AgentStats, MultipleStats, agent_stats, compare_policies
+from rlberry.stats import AgentStats, MultipleStats, compare_policies
 
 stats = AgentStats(
     A2CAgent,
