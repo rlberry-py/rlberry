@@ -207,12 +207,7 @@ class RSUCBVIAgent(IncrementalAgent):
     def policy(self, state, hh=0, **kwargs):
         assert self.Q_policy is not None
         repr_state = self._map_to_repr(state, False)
-
-        # no discount
-        if self.gamma == 1.0:
-            return self.Q_policy[hh, repr_state, :].argmax()
-        # discounted
-        return self.Q_policy[0, repr_state, :].argmax()
+        return self.Q_policy[hh, repr_state, :].argmax()
 
     def partial_fit(self, fraction, **kwargs):
         assert 0.0 < fraction <= 1.0
@@ -277,12 +272,7 @@ class RSUCBVIAgent(IncrementalAgent):
     def _get_action(self, state, hh=0):
         assert self.Q is not None
         repr_state = self._map_to_repr(state, False)
-
-        # no discount
-        if self.gamma == 1.0:
-            return self.Q[hh, repr_state, :].argmax()
-        # discounted
-        return self.Q[0, repr_state, :].argmax()
+        return self.Q[hh, repr_state, :].argmax()
 
     def _run_episode(self):
         # interact for H steps

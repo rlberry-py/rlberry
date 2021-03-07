@@ -43,7 +43,7 @@ class MBQVIAgent(Agent):
 
     def __init__(self, env,
                  n_samples=10,
-                 gamma=0.95,
+                 gamma=0.99,
                  horizon=None,
                  epsilon=1e-6,
                  **kwargs):
