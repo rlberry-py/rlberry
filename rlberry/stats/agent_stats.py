@@ -569,7 +569,8 @@ class AgentStats:
             params_stats._eval_env = None  # make sure _eval_env is not used in this instance
 
             if disable_evaluation_writers:
-                params_stats.disable_writers()
+                for ii in range(params_stats.n_fit):
+                    params_stats.set_writer(ii, None, None)
 
             # Evaluation environment copy
             try:
