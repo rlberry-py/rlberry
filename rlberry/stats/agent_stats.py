@@ -417,7 +417,8 @@ class AgentStats:
                              partial_fit_fraction=0.25,
                              sampler_kwargs=None,
                              evaluation_function=None,
-                             evaluation_function_kwargs=None):
+                             evaluation_function_kwargs=None,
+                             disable_evaluation_writers=True):
         """
         Run hyperparameter optimization and updates init_kwargs with the
         best hyperparameters found.
@@ -466,7 +467,9 @@ class AgentStats:
             Function to maximize, that takes a list of agents and an environment as input, and returns a double.
             If None, search for hyperparameters that maximize the mean reward.
         evaluation_function_kwargs : dict or None
-            kwargsfor evaluation_function
+            kwargs for evaluation_function
+        disable_evaluation_writers : bool, default: True
+            If true, disable writers of agents used in the hyperparameter evaluation.
         """
         #
         # setup
@@ -564,6 +567,9 @@ class AgentStats:
                 joblib_backend='threading',
                 seed=self.seeder)
             params_stats._eval_env = None  # make sure _eval_env is not used in this instance
+
+            if disable_evaluation_writers:
+                params_stats.disable_writers()
 
             # Evaluation environment copy
             try:
