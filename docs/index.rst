@@ -34,8 +34,23 @@ lots of boring things to implement*: run our agents in parallel, average and plo
 optimize hyperparameters, compare to baselines, create tricky environments etc etc!
 
 rlberry_ **is here to make your life easier** by doing all these things with a few lines of code,
-so that you can spend most of your time developing agents!
+so that you can spend most of your time developing agents. **Check our** :ref:`getting-started` **section!**
 
+
+
+
+In addition, rlberry_: 
+
+* Provides **implementations of several RL agents** for you to use as a starting point or as baselines;
+* Provides a set of **benchmark environments**, very useful to debug and challenge your algorithms;
+* Handles all random seeds for you, ensuring **reproducibility** of your results;
+* Is **fully compatible with** several commonly used RL libraries like `OpenAI gym <https://gym.openai.com/>`_ and `Stable Baselines <https://stable-baselines.readthedocs.io/en/master/>`_.
+
+
+.. _getting-started:
+
+Getting Started
+===============
 
 In **a few minutes of reading**, you will learn how to:
 
@@ -44,13 +59,6 @@ In **a few minutes of reading**, you will learn how to:
 - :ref:`Evaluate an agent and optimize its hyperparameters <evaluate_agent>`;
 - :ref:`Compare different agents <compare_agents>`;
 - :ref:`Setup and run experiments using yaml config files <experiment_setup>`.
-
-In addition, rlberry_: 
-
-* Provides **implementations of several RL agents** for you to use as a starting point or as baselines;
-* Provides a set of **benchmark environments**, very useful to debug and challenge your algorithms;
-* Handles all random seeds for you, ensuring **reproducibility** of your results;
-* Is **fully compatible with** several commonly used RL libraries like `OpenAI gym <https://gym.openai.com/>`_ and `Stable Baselines <https://stable-baselines.readthedocs.io/en/master/>`_.
 
 
 Compatibility with External Libraries

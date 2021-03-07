@@ -35,7 +35,8 @@ extensions = ['sphinx.ext.doctest',
               'sphinx.ext.viewcode',
               'sphinx.ext.autodoc',
               'sphinx.ext.mathjax',
-              'sphinx.ext.napoleon']
+              'sphinx.ext.napoleon',
+              'sphinx.ext.autosectionlabel']
 
 # Napoleon settings
 napoleon_google_docstring = True
