@@ -36,3 +36,9 @@ print("random sample from agent rng: ", agent.rng.normal())
 # This is useful to seed two different threads, using seeder1
 # in the first thread, and seeder2 in the second thread.
 seeder1, seeder2 = seeder.spawn(2)
+
+
+# You can also use a seeder to seed external libraries (such as torch)
+# using the function set_external_seed
+from rlberry.seeding import set_external_seed
+set_external_seed(seeder)

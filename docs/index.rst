@@ -114,6 +114,12 @@ It works as follows:
     seeder1, seeder2 = seeder.spawn(2)
 
 
+    # You can also use a seeder to seed external libraries (such as torch)
+    # using the function set_external_seed
+    from rlberry.seeding import set_external_seed
+    set_external_seed(seeder)
+
+
 .. note:: 
     The class :class:`~rlberry.stats.agent_stats.AgentStats` provides a :code:`seed` parameter in its constructor,
     and handles automatically the seeding of all environments and agents used by it.
