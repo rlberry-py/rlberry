@@ -28,8 +28,8 @@ This can be done very succinctly as in the example below:
     train_env: 'examples/demo_experiment/room.yaml'
     eval_env: 'examples/demo_experiment/room.yaml'
     global_init_kwargs:
-    n_episodes: 100
-    horizon: 50
+        n_episodes: 100
+        horizon: 50
     agents:
     - 'examples/demo_experiment/rsucbvi.yaml'
     - 'examples/demo_experiment/rsucbvi_alternative.yaml'
