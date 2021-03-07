@@ -59,7 +59,7 @@ class REINFORCEAgent(IncrementalAgent):
     name = "REINFORCE"
 
     def __init__(self, env,
-                 n_episodes=4000,
+                 n_episodes=1000,
                  batch_size=8,
                  horizon=256,
                  gamma=0.99,

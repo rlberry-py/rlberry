@@ -74,7 +74,7 @@ class PPOAgent(IncrementalAgent):
     name = "PPO"
 
     def __init__(self, env,
-                 n_episodes=4000,
+                 n_episodes=1000,
                  batch_size=64,
                  update_frequency=8,
                  horizon=256,
