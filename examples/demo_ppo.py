@@ -1,4 +1,4 @@
-from rlberry.agents import PPOAgent
+from rlberry.agents.torch import PPOAgent
 from rlberry.envs.classic_control import MountainCar
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
 

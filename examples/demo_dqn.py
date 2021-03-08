@@ -2,7 +2,7 @@ from rlberry.envs import gym_make
 from pathlib import Path
 from torch.utils.tensorboard import SummaryWriter
 
-from rlberry.agents.dqn import DQNAgent
+from rlberry.agents.torch.dqn import DQNAgent
 from rlberry.utils.logging import configure_logging
 
 configure_logging(level="INFO")

@@ -6,9 +6,9 @@ import torch.nn as nn
 import gym.spaces as spaces
 from rlberry.agents import IncrementalAgent
 from rlberry.agents.utils.memories import Memory
-from rlberry.agents.utils.torch_training import optimizer_factory
-from rlberry.agents.utils.torch_models import default_policy_net_fn
-from rlberry.agents.utils.torch_models import default_value_net_fn
+from rlberry.agents.torch.utils.training import optimizer_factory
+from rlberry.agents.torch.utils.models import default_policy_net_fn
+from rlberry.agents.torch.utils.models import default_value_net_fn
 from rlberry.utils.torch import choose_device
 from rlberry.utils.writers import PeriodicWriter
 from rlberry.wrappers.uncertainty_estimator_wrapper import UncertaintyEstimatorWrapper

@@ -1,6 +1,6 @@
-from rlberry.agents import A2CAgent
-from rlberry.agents import PPOAgent
-from rlberry.agents import AVECPPOAgent
+from rlberry.agents.torch import A2CAgent
+from rlberry.agents.torch import PPOAgent
+from rlberry.agents.torch import AVECPPOAgent
 from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
 from rlberry.exploration_tools.discrete_counter import DiscreteCounter
 

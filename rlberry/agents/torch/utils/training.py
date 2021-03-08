@@ -28,8 +28,8 @@ def optimizer_factory(params, optimizer_type="ADAM", **kwargs):
 
 
 def model_factory(type="MultiLayerPerceptron", **kwargs) -> nn.Module:
-    from rlberry.agents.utils.torch_attention_models import EgoAttentionNetwork
-    from rlberry.agents.utils.torch_models import MultiLayerPerceptron, DuelingNetwork, ConvolutionalNetwork, \
+    from rlberry.agents.torch.utils.attention_models import EgoAttentionNetwork
+    from rlberry.agents.torch.utils.models import MultiLayerPerceptron, DuelingNetwork, ConvolutionalNetwork, \
         Table
     if type == "MultiLayerPerceptron":
         return MultiLayerPerceptron(**kwargs)

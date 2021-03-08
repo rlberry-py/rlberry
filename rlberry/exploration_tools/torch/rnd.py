@@ -7,8 +7,8 @@ from torch.nn import functional as F
 from rlberry.agents.utils.memories import ReplayMemory
 from rlberry.exploration_tools.uncertainty_estimator import UncertaintyEstimator
 from rlberry.exploration_tools.typing import preprocess_args
-from rlberry.agents.utils.torch_models import ConvolutionalNetwork
-from rlberry.agents.utils.torch_models import MultiLayerPerceptron
+from rlberry.agents.torch.utils.models import ConvolutionalNetwork
+from rlberry.agents.torch.utils.models import MultiLayerPerceptron
 from rlberry.utils.factory import load
 from rlberry.utils.torch import choose_device
 

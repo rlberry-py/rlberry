@@ -8,8 +8,8 @@ from rlberry.agents.utils.memories import Transition, PrioritizedReplayMemory, T
 from rlberry.exploration_tools.discrete_counter import DiscreteCounter
 from rlberry.exploration_tools.online_discretization_counter import OnlineDiscretizationCounter
 from rlberry.wrappers.uncertainty_estimator_wrapper import UncertaintyEstimatorWrapper
-from rlberry.agents.dqn.exploration import exploration_factory
-from rlberry.agents.utils.torch_training import loss_function_factory, model_factory, size_model_config, \
+from rlberry.agents.torch.dqn.exploration import exploration_factory
+from rlberry.agents.torch.utils.training import loss_function_factory, model_factory, size_model_config, \
     trainable_parameters, optimizer_factory
 from rlberry.seeding import Seeder
 from rlberry.utils.factory import load

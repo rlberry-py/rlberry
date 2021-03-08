@@ -5,8 +5,8 @@ import torch
 import torch.nn as nn
 import numpy as np
 from torch.nn import functional as F
-from rlberry.agents.utils.torch_models import BaseModule
-from rlberry.agents.utils.torch_training import model_factory
+from rlberry.agents.torch.utils.models import BaseModule
+from rlberry.agents.torch.utils.training import model_factory
 
 
 class EgoAttention(BaseModule):

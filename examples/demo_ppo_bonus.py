@@ -1,6 +1,6 @@
 
 from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
-from rlberry.agents.ppo import PPOAgent
+from rlberry.agents.torch.ppo import PPOAgent
 from rlberry.stats import AgentStats, plot_episode_rewards, compare_policies
 from rlberry.exploration_tools.discrete_counter import DiscreteCounter
 

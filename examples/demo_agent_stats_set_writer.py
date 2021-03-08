@@ -1,6 +1,6 @@
 
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
-from rlberry.agents.ppo import PPOAgent
+from rlberry.agents.torch.ppo import PPOAgent
 from rlberry.stats import AgentStats, plot_episode_rewards, compare_policies
 from torch.utils.tensorboard import SummaryWriter
 

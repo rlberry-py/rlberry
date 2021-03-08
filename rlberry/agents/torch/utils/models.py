@@ -11,7 +11,7 @@ from gym import spaces
 #
 # Utility functions
 #
-from rlberry.agents.utils.torch_training import model_factory, activation_factory
+from rlberry.agents.torch.utils.training import model_factory, activation_factory
 
 
 def default_policy_net_fn(env):

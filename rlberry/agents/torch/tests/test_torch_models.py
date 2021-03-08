@@ -3,10 +3,10 @@ TODO: Test attention modules
 """
 
 import torch
-from rlberry.agents.utils.torch_models import MultiLayerPerceptron
-from rlberry.agents.utils.torch_models import ConvolutionalNetwork
-from rlberry.agents.utils.torch_attention_models import EgoAttention
-from rlberry.agents.utils.torch_attention_models import SelfAttention
+from rlberry.agents.torch.utils.models import MultiLayerPerceptron
+from rlberry.agents.torch.utils.models import ConvolutionalNetwork
+from rlberry.agents.torch.utils.attention_models import EgoAttention
+from rlberry.agents.torch.utils.attention_models import SelfAttention
 
 
 def test_mlp():

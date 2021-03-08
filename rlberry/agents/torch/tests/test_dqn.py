@@ -1,7 +1,7 @@
 from rlberry.envs import gym_make
-from rlberry.agents.dqn import DQNAgent
+from rlberry.agents.torch.dqn import DQNAgent
 from rlberry.exploration_tools.online_discretization_counter import OnlineDiscretizationCounter
-from rlberry.exploration_tools.rnd import RandomNetworkDistillation
+from rlberry.exploration_tools.torch.rnd import RandomNetworkDistillation
 from rlberry.seeding import Seeder
 import numpy as np
 
