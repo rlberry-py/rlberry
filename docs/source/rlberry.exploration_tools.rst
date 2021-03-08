@@ -8,6 +8,7 @@ Subpackages
    :maxdepth: 4
 
    rlberry.exploration_tools.tests
+   rlberry.exploration_tools.torch
 
 Submodules
 ----------
@@ -28,10 +29,10 @@ rlberry.exploration\_tools.online\_discretization\_counter module
    :undoc-members:
    :show-inheritance:
 
-rlberry.exploration\_tools.rnd module
--------------------------------------
+rlberry.exploration\_tools.typing module
+----------------------------------------
 
-.. automodule:: rlberry.exploration_tools.rnd
+.. automodule:: rlberry.exploration_tools.typing
    :members:
    :undoc-members:
    :show-inheritance:

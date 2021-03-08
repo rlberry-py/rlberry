@@ -15,7 +15,7 @@ as shown in the examples below.
 .. code-block:: python
 
     from rlberry.envs import gym_make
-    from rlberry.agents.reinforce import REINFORCEAgent
+    from rlberry.agents.torch.reinforce import REINFORCEAgent
     from rlberry.stats import AgentStats, plot_episode_rewards
 
 

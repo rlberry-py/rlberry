@@ -1,14 +1,6 @@
 rlberry.agents.dynprog package
 ==============================
 
-Subpackages
------------
-
-.. toctree::
-   :maxdepth: 4
-
-   rlberry.agents.dynprog.tests
-
 Submodules
 ----------
 

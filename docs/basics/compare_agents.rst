@@ -15,7 +15,7 @@ Two or more agents can be compared using the classes
 .. code-block:: python
 
     from rlberry.envs.classic_control import MountainCar
-    from rlberry.agents.reinforce import REINFORCEAgent
+    from rlberry.agents.torch.reinforce import REINFORCEAgent
     from rlberry.agents.kernel_based.rs_kernel_ucbvi import RSKernelUCBVIAgent
     from rlberry.stats import AgentStats, MultipleStats, plot_episode_rewards
 

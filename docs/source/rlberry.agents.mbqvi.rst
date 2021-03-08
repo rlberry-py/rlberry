@@ -1,14 +1,6 @@
 rlberry.agents.mbqvi package
 ============================
 
-Subpackages
------------
-
-.. toctree::
-   :maxdepth: 4
-
-   rlberry.agents.mbqvi.tests
-
 Submodules
 ----------
 

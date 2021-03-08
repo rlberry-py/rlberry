@@ -52,14 +52,6 @@ rlberry.spaces.multi\_discrete module
    :undoc-members:
    :show-inheritance:
 
-rlberry.spaces.space\_seeder module
------------------------------------
-
-.. automodule:: rlberry.spaces.space_seeder
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 rlberry.spaces.tuple module
 ---------------------------
 
