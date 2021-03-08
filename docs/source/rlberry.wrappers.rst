@@ -44,6 +44,14 @@ rlberry.wrappers.rescale\_reward module
    :undoc-members:
    :show-inheritance:
 
+rlberry.wrappers.scalarize module
+---------------------------------
+
+.. automodule:: rlberry.wrappers.scalarize
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 rlberry.wrappers.uncertainty\_estimator\_wrapper module
 -------------------------------------------------------
 

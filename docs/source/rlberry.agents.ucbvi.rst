@@ -12,6 +12,14 @@ rlberry.agents.ucbvi.ucbvi module
    :undoc-members:
    :show-inheritance:
 
+rlberry.agents.ucbvi.utils module
+---------------------------------
+
+.. automodule:: rlberry.agents.ucbvi.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 

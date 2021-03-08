@@ -8,6 +8,7 @@ Subpackages
    :maxdepth: 4
 
    rlberry.envs.benchmarks.ball_exploration
+   rlberry.envs.benchmarks.generalization
    rlberry.envs.benchmarks.grid_exploration
 
 Module contents

@@ -12,6 +12,14 @@ Subpackages
 Submodules
 ----------
 
+rlberry.seeding.seeder module
+-----------------------------
+
+.. automodule:: rlberry.seeding.seeder
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 rlberry.seeding.seeding module
 ------------------------------
 

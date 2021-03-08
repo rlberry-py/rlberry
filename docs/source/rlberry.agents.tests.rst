@@ -4,26 +4,18 @@ rlberry.agents.tests package
 Submodules
 ----------
 
-rlberry.agents.tests.test\_a2c\_ppo\_avec module
-------------------------------------------------
+rlberry.agents.tests.test\_adaptiveql module
+--------------------------------------------
 
-.. automodule:: rlberry.agents.tests.test_a2c_ppo_avec
+.. automodule:: rlberry.agents.tests.test_adaptiveql
    :members:
    :undoc-members:
    :show-inheritance:
 
-rlberry.agents.tests.test\_cem module
--------------------------------------
+rlberry.agents.tests.test\_dynprog module
+-----------------------------------------
 
-.. automodule:: rlberry.agents.tests.test_cem
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-rlberry.agents.tests.test\_dqn module
--------------------------------------
-
-.. automodule:: rlberry.agents.tests.test_dqn
+.. automodule:: rlberry.agents.tests.test_dynprog
    :members:
    :undoc-members:
    :show-inheritance:
@@ -36,26 +28,26 @@ rlberry.agents.tests.test\_kernel\_based module
    :undoc-members:
    :show-inheritance:
 
-rlberry.agents.tests.test\_lsvi\_ucb module
--------------------------------------------
+rlberry.agents.tests.test\_mbqvi module
+---------------------------------------
 
-.. automodule:: rlberry.agents.tests.test_lsvi_ucb
+.. automodule:: rlberry.agents.tests.test_mbqvi
    :members:
    :undoc-members:
    :show-inheritance:
 
-rlberry.agents.tests.test\_reinforce module
--------------------------------------------
+rlberry.agents.tests.test\_optql module
+---------------------------------------
 
-.. automodule:: rlberry.agents.tests.test_reinforce
+.. automodule:: rlberry.agents.tests.test_optql
    :members:
    :undoc-members:
    :show-inheritance:
 
-rlberry.agents.tests.test\_torch\_models module
------------------------------------------------
+rlberry.agents.tests.test\_ucbvi module
+---------------------------------------
 
-.. automodule:: rlberry.agents.tests.test_torch_models
+.. automodule:: rlberry.agents.tests.test_ucbvi
    :members:
    :undoc-members:
    :show-inheritance:

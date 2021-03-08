@@ -1,4 +1,4 @@
-from rlberry.agents import AVECPPOAgent
+from rlberry.agents.torch import AVECPPOAgent
 from rlberry.envs.classic_control import MountainCar
 render = False
 

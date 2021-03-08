@@ -7,18 +7,15 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   rlberry.agents.a2c
-   rlberry.agents.avec
-   rlberry.agents.cem
-   rlberry.agents.dqn
+   rlberry.agents.adaptiveql
    rlberry.agents.dynprog
    rlberry.agents.features
    rlberry.agents.kernel_based
-   rlberry.agents.linear
    rlberry.agents.mbqvi
-   rlberry.agents.ppo
-   rlberry.agents.reinforce
+   rlberry.agents.optql
    rlberry.agents.tests
+   rlberry.agents.torch
+   rlberry.agents.ucbvi
    rlberry.agents.utils
 
 Submodules

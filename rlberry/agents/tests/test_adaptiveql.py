@@ -1,4 +1,4 @@
-from rlberry.agents.adaptiveql import AdaptiveQLAgent
+from rlberry.agents import AdaptiveQLAgent
 from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
 import matplotlib.pyplot as plt
 
