@@ -120,8 +120,8 @@ stats = AgentStats(
     init_kwargs={'policy': 'CnnPolicy', 'verbose': 10},
     fit_kwargs={'total_timesteps': 1000},
     policy_kwargs={'deterministic': True},
-    n_fit=1,
-    n_jobs=1,
+    n_fit=10,
+    n_jobs=6,
     joblib_backend='threading')
 
 
@@ -134,8 +134,8 @@ stats_alternative = AgentStats(
     init_kwargs={'policy': 'CnnPolicy', 'verbose': 10, 'learning_rate': 0.01},
     fit_kwargs={'total_timesteps': 1000},
     policy_kwargs={'deterministic': True},
-    n_fit=1,
-    n_jobs=1,
+    n_fit=10,
+    n_jobs=6,
     joblib_backend='threading')
 
 

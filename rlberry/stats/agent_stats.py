@@ -22,10 +22,12 @@ import logging
 import dill
 import pickle
 import pandas as pd
+import threading
 from rlberry.agents import IncrementalAgent
 from rlberry.utils.logging import configure_logging
 from rlberry.stats.evaluation import mc_policy_evaluation
 
+_LOCK = threading.Lock()
 
 _OPTUNA_INSTALLED = True
 try:
@@ -35,6 +37,7 @@ except Exception:
 
 
 logger = logging.getLogger(__name__)
+
 
 
 #
@@ -683,13 +686,15 @@ def _fit_worker(args):
     # reseed external libraries
     set_external_seed(seeder)
 
-    # preprocess and train_env
-    train_env = _preprocess_env(train_env, seeder)
-
     # logging level in thread
     configure_logging(thread_logging_level)
-    # create agent
-    agent = agent_class(train_env, copy_env=False, **init_kwargs)
+
+    with _LOCK:
+        # preprocess and train_env
+        train_env = _preprocess_env(train_env, seeder)
+        # create agent
+        agent = agent_class(train_env, copy_env=False, **init_kwargs)
+
     agent.name += f"(spawn_key{seeder.seed_seq.spawn_key})"
 
     # seed agent
