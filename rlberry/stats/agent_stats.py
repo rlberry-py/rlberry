@@ -27,6 +27,8 @@ from rlberry.agents import IncrementalAgent
 from rlberry.utils.logging import configure_logging
 from rlberry.stats.evaluation import mc_policy_evaluation
 
+# Using a lock when creating envs and agents, to avoid problems
+# as here: https://github.com/openai/gym/issues/281
 _LOCK = threading.Lock()
 
 _OPTUNA_INSTALLED = True

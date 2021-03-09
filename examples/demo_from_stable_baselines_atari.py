@@ -1,8 +1,3 @@
-"""
-WARNING:
-Atari environments are not thread safe, hence we always need n_jobs=1 for AgentStats.
-"""
-
 from stable_baselines3 import A2C as A2CStableBaselines
 from stable_baselines3.common.cmd_util import make_atari_env
 from stable_baselines3.common.vec_env import VecFrameStack
