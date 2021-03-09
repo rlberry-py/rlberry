@@ -3,7 +3,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-import rlberry.seeding as seeding
 from itertools import cycle
 
 
@@ -198,8 +197,6 @@ def compare_policies(agent_stats_list,
     use_eval_from_agent_stats = (eval_env is None)
     use_horizon_from_agent_stats = (eval_horizon is None)
 
-    rng = agent_stats_list[0].seeder.rng
-
     agents_rewards = []
     for agent_stats in agent_stats_list:
         # train agents if they are not already trained
@@ -215,6 +212,9 @@ def compare_policies(agent_stats_list,
             eval_horizon = agent_stats.eval_horizon
             assert eval_horizon is not None, \
                 "eval_horizon not in AgentStats %s" % agent_stats.agent_name
+
+        # get rng from agent_stats
+        rng = agent_stats.seeder.rng
 
         # evaluate agent
         episode_rewards = np.zeros(n_sim)
