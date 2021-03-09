@@ -30,7 +30,7 @@ class Agent(ABC):
         Environment on which to train the agent.
     writer : object, default: None
         Writer object (e.g. tensorboard SummaryWriter).
-    seeder : rlberry.seeding.Seeder
+    seeder : rlberry.seeding.Seeder, int, or None
         Object for random number generation.
     """
 
@@ -39,6 +39,7 @@ class Agent(ABC):
     def __init__(self,
                  env,
                  copy_env=True,
+                 seeder=None,
                  **kwargs):
         # Check if wrong parameters have been sent to an agent.
         assert kwargs == {}, \
@@ -54,7 +55,7 @@ class Agent(ABC):
 
         self.writer = None
 
-        self.seeder = Seeder()
+        self.seeder = Seeder(seeder)
 
     @abstractmethod
     def fit(self, **kwargs):

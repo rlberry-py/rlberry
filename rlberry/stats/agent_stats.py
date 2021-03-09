@@ -41,7 +41,6 @@ except Exception:
 logger = logging.getLogger(__name__)
 
 
-
 #
 # Main class
 #
@@ -57,7 +56,7 @@ class AgentStats:
         Class of the agent.
     train_env : Model or tuple (constructor, kwargs)
         Enviroment used to initialize/train the agent.
-    eval_env : Model
+    eval_env : Model or tuple (constructor, kwargs)
         Environment used to evaluate the agent. If None, set to a
         reseeded deep copy of train_env.
     init_kwargs : dict
@@ -279,10 +278,10 @@ class AgentStats:
                 train_env = _preprocess_env(train_env, self.seeder)
 
                 # create agent instance
-                agent = self.agent_class(train_env, copy_env=False, **init_kwargs)
-
-                # seed agent
-                agent.reseed(self.seeder)
+                agent = self.agent_class(train_env,
+                                         copy_env=False,
+                                         seeder=self.seeder,
+                                         **init_kwargs)
 
                 # set agent writer
                 if self.writers[idx][0] is None:
@@ -695,7 +694,7 @@ def _fit_worker(args):
         # preprocess and train_env
         train_env = _preprocess_env(train_env, seeder)
         # create agent
-        agent = agent_class(train_env, copy_env=False, **init_kwargs)
+        agent = agent_class(train_env, copy_env=False, seeder=seeder, **init_kwargs)
 
     agent.name += f"(spawn_key{seeder.seed_seq.spawn_key})"
 
