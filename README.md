@@ -71,7 +71,7 @@ Check our [getting started section](#getting-started)!
 
 ## Getting started
 
-In our [documentation](https://rlberry.readthedocs.io/en/latest/), you will find a **quick introduction** to the library.
+In our [documentation](https://rlberry.readthedocs.io/en/latest/), you will find a **quick tutorial** to the library.
 
 Also, we provide a handful of notebooks on [Google colab](https://colab.research.google.com/) as examples to show you how to use `rlberry`:
 

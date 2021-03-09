@@ -34,7 +34,7 @@ lots of boring things to implement*: run our agents in parallel, average and plo
 optimize hyperparameters, compare to baselines, create tricky environments etc etc!
 
 rlberry_ **is here to make your life easier** by doing all these things with a few lines of code,
-so that you can spend most of your time developing agents. **Check our** :ref:`getting-started` **section!**
+so that you can spend most of your time developing agents. **Check our** :ref:`quick-tutorial` **section!**
 
 
 
@@ -47,9 +47,9 @@ In addition, rlberry_:
 * Is **fully compatible with** several commonly used RL libraries like `OpenAI gym <https://gym.openai.com/>`_ and `Stable Baselines <https://stable-baselines.readthedocs.io/en/master/>`_.
 
 
-.. _getting-started:
+.. _quick-tutorial:
 
-Getting Started
+Quick Tutorial
 ===============
 
 In **a few minutes of reading**, you will learn how to:
