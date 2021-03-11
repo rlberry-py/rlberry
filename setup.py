@@ -54,7 +54,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='rlberry',
-    version='0.0.3.1',
+    version='0.0.4',
     description='An easy-to-use reinforcement learning library for research and education',
     long_description=long_description,
     long_description_content_type="text/markdown",
