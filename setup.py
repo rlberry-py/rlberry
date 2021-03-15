@@ -30,12 +30,10 @@ tests_require = [
 
 full_requires = [
     'numba',
-    'torch>=1.6.0',
     'tensorboard',
     'optuna',
     'ffmpeg-python',
     'PyOpenGL',
-    'PyOpenGL_accelerate',
     'pyvirtualdisplay',
 ]
 
