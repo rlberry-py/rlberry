@@ -22,7 +22,7 @@ copyright = '2021, rlberry team'
 author = 'rlberry team'
 
 # The full version, including alpha/beta/rc tags
-release = '0.1-beta'
+release = '0.1'
 
 
 # -- General configuration ---------------------------------------------------
