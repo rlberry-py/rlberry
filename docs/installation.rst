@@ -10,6 +10,7 @@ First, we suggest you to create a virtual environment using
 `Miniconda <https://docs.conda.io/en/latest/miniconda.html>`_.
 
 .. code:: bash
+
     $ conda create -n rlberry python=3.7
     $ conda activate rlberry
 
