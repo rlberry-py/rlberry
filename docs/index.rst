@@ -106,7 +106,7 @@ It works as follows:
 
 
     # Environments and Agents have their own seeder and rng.
-    # When writing your own agents and inheriring from the Agent class,
+    # When writing your own agents and inheriting from the Agent class,
     # you should use agent.rng whenever you need to generate random numbers;
     # the same applies to your environments.
     # This is necessary to ensure reproducibility.
