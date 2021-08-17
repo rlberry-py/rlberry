@@ -12,6 +12,7 @@ install_requires = [
     'gym',
     'dill',
     'docopt',
+    'pyyaml',
 ]
 
 tests_require = [
