@@ -1,12 +1,10 @@
 import numpy as np
+import rlberry.check_packages as check_packages
 from rlberry.seeding.seeder import Seeder
 
 
-_TORCH_INSTALLED = True
-try:
+if check_packages.TORCH_INSTALLED:
     import torch
-except Exception:
-    _TORCH_INSTALLED = False
 
 
 def set_external_seed(seeder):
@@ -26,7 +24,7 @@ def set_external_seed(seeder):
         seeder = Seeder(seeder)
 
     # seed torch
-    if _TORCH_INSTALLED:
+    if check_packages.TORCH_INSTALLED:
         torch.manual_seed(seeder.seed_seq.generate_state(1, dtype=np.uint32)[0])
 
 
