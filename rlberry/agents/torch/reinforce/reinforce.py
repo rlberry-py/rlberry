@@ -8,7 +8,7 @@ from rlberry.agents.utils.memories import Memory
 from rlberry.agents.torch.utils.training import optimizer_factory
 from rlberry.agents.torch.utils.models import default_policy_net_fn
 from rlberry.utils.torch import choose_device
-from rlberry.utils.writers import PeriodicWriter
+from rlberry.utils.writers import DefaultWriter
 
 logger = logging.getLogger(__name__)
 
@@ -123,8 +123,7 @@ class REINFORCEAgent(IncrementalAgent):
         self._cumul_rewards = np.zeros(self.n_episodes)
 
         # default writer
-        log_every = 5*logger.getEffectiveLevel()
-        self.writer = PeriodicWriter(self.name, log_every=log_every)
+        self.writer = DefaultWriter(self.name)
 
     def policy(self, state, **kwargs):
         assert self.policy_net is not None

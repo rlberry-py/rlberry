@@ -4,7 +4,7 @@ import numpy as np
 import gym.spaces as spaces
 from rlberry.agents import IncrementalAgent
 from rlberry.exploration_tools.discrete_counter import DiscreteCounter
-from rlberry.utils.writers import PeriodicWriter
+from rlberry.utils.writers import DefaultWriter
 
 
 logger = logging.getLogger(__name__)
@@ -112,8 +112,7 @@ class OptQLAgent(IncrementalAgent):
         self._rewards = np.zeros(self.n_episodes)
 
         # default writer
-        self.writer = PeriodicWriter(self.name,
-                                     log_every=5*logger.getEffectiveLevel())
+        self.writer = DefaultWriter(self.name)
 
     def policy(self, state, hh=0, **kwargs):
         """ Recommended policy. """

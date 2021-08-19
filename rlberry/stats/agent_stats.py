@@ -204,7 +204,7 @@ class AgentStats:
         ----------
         writer_fn : callable, None or 'default'
             Returns a writer for an agent, e.g. tensorboard SummaryWriter,
-            rlberry PeriodicWriter.
+            rlberry DefaultWriter.
             If 'default', use the default writer in the Agent class.
             If None, disable any writer
         writer_kwargs : dict or None

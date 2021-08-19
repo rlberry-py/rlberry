@@ -10,7 +10,7 @@ from rlberry.agents.torch.utils.training import optimizer_factory
 from rlberry.agents.torch.utils.models import default_policy_net_fn
 from rlberry.agents.torch.utils.models import default_value_net_fn
 from rlberry.utils.torch import choose_device
-from rlberry.utils.writers import PeriodicWriter
+from rlberry.utils.writers import DefaultWriter
 from rlberry.wrappers.uncertainty_estimator_wrapper import UncertaintyEstimatorWrapper
 
 logger = logging.getLogger(__name__)
@@ -191,8 +191,7 @@ class AVECPPOAgent(IncrementalAgent):
         self._cumul_rewards = np.zeros(self.n_episodes)
 
         # default writer
-        self.writer = PeriodicWriter(self.name,
-                                     log_every=5*logger.getEffectiveLevel())
+        self.writer = DefaultWriter(self.name)
 
     def policy(self, state, **kwargs):
         assert self.cat_policy is not None

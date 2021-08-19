@@ -10,7 +10,7 @@ from rlberry.agents.dynprog.utils import backward_induction_in_place
 from rlberry.utils.metrics import metric_lp
 from rlberry.agents.kernel_based.kernels import kernel_func
 from rlberry.agents.kernel_based.common import map_to_representative
-from rlberry.utils.writers import PeriodicWriter
+from rlberry.utils.writers import DefaultWriter
 
 
 logger = logging.getLogger(__name__)
@@ -258,8 +258,7 @@ class RSKernelUCBVIAgent(Agent):
         self.episode = 0
 
         # default writer
-        self.writer = PeriodicWriter(self.name,
-                                     log_every=5*logger.getEffectiveLevel())
+        self.writer = DefaultWriter(self.name)
 
     def policy(self, state, hh=0, **kwargs):
         assert self.Q_policy is not None

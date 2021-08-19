@@ -2,7 +2,7 @@ import logging
 import gym.spaces as spaces
 import numpy as np
 from rlberry.agents import IncrementalAgent
-from rlberry.utils.writers import PeriodicWriter
+from rlberry.utils.writers import DefaultWriter
 from rlberry.agents.adaptiveql.tree import MDPTreePartition
 
 
@@ -92,8 +92,7 @@ class AdaptiveQLAgent(IncrementalAgent):
         self.episode = 0
 
         # default writer
-        self.writer = PeriodicWriter(self.name,
-                                     log_every=5*logger.getEffectiveLevel())
+        self.writer = DefaultWriter(self.name)
 
     def policy(self, observation, hh=0, **kwargs):
         action, _ = self.Qtree.get_argmax_and_node(observation, hh)

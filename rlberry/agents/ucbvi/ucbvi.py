@@ -7,7 +7,7 @@ from rlberry.agents.ucbvi.utils import update_value_and_get_action, update_value
 from rlberry.exploration_tools.discrete_counter import DiscreteCounter
 from rlberry.agents.dynprog.utils import backward_induction_sd
 from rlberry.agents.dynprog.utils import backward_induction_in_place
-from rlberry.utils.writers import PeriodicWriter
+from rlberry.utils.writers import DefaultWriter
 
 
 logger = logging.getLogger(__name__)
@@ -163,8 +163,8 @@ class UCBVIAgent(IncrementalAgent):
             self.name = 'UCBVI-RTDP'
 
         # default writer
-        self.writer = PeriodicWriter(self.name,
-                                     log_every=5*logger.getEffectiveLevel())
+        self.writer = DefaultWriter(self.name)
+
 
     def policy(self, state, hh=0, **kwargs):
         """ Recommended policy. """
