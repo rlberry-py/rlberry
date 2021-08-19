@@ -1,0 +1,20 @@
+cff-version: 0.11
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Domingues"
+  given-names: "Omar Darwiche"
+- family-names: "Flet-Berliac"
+  given-names: "Yannis"
+- family-names: "Leurent"
+  given-names: "Edouard"
+- family-names: "Ménard"
+  given-names: "Pierre"
+- family-names: "Shang"
+  given-names: "Xuedong"
+- family-names: "Valko"
+  given-names: "Michal"
+title: "rlberry - A Reinforcement Learning Library for Research and Education"
+version: 0.11
+doi: 10.5281/zenodo.5223308
+date-released: 2021-08-19
+url: "https://github.com/rlberry-py/rlberry"
