@@ -1,4 +1,7 @@
 """
+TODO: handle global_steps when aggregating writer data
+
+
 Notes
 -----
 
@@ -24,8 +27,10 @@ import pickle
 import pandas as pd
 import threading
 from rlberry.agents import IncrementalAgent
-from rlberry.utils.logging import configure_logging
 from rlberry.stats.evaluation import mc_policy_evaluation
+from rlberry.utils.logging import configure_logging
+from rlberry.utils.writers import DefaultWriter
+
 
 # Using a lock when creating envs and agents, to avoid problems
 # as here: https://github.com/openai/gym/issues/281
@@ -168,11 +173,8 @@ class AgentStats:
             #
             self.fitted_agents = None
             self.fit_kwargs_list = None  # keep in memory for partial_fit()
-            self.fit_statistics = None
+            self.default_writer_data = None
             self.best_hyperparams = None
-
-            #  fit info is initialized at _process_fit_statistics()
-            self.fit_info = None
 
             # optuna study
             self.study = None
@@ -183,6 +185,12 @@ class AgentStats:
         Instantiated and reseeded evaluation environment.
         """
         return _preprocess_env(self._eval_env, self.seeder)
+
+    @property
+    def writer_data(self):
+        if self.default_writer_data is None:
+            return {}
+        return self.default_writer_data
 
     def set_output_dir(self, output_dir):
         """
@@ -251,14 +259,12 @@ class AgentStats:
                                   backend=self.joblib_backend)(
             delayed(_fit_worker)(arg) for arg in args)
 
-        self.fitted_agents, stats = (
-            [i for i, j in workers_output],
-            [j for i, j in workers_output])
+        self.fitted_agents = workers_output
 
         logger.info("... trained!")
 
         # gather all stats in a dictionary
-        self._process_fit_statistics(stats)
+        self._gather_default_writer_data()
 
     def partial_fit(self, fraction):
         """
@@ -296,24 +302,23 @@ class AgentStats:
                 self.fit_kwargs_list.append(deepcopy(self.fit_kwargs))
 
         # Run partial fit
-        stats = []
         for agent, fit_kwargs in zip(self.fitted_agents, self.fit_kwargs_list):
-            info = agent.partial_fit(fraction, **fit_kwargs)
-            stats.append(info)
-        self._process_fit_statistics(stats)
+            agent.partial_fit(fraction, **fit_kwargs)
+        self._gather_default_writer_data()
 
-    def _process_fit_statistics(self, stats):
-        """Gather stats in a dictionary"""
-        assert len(stats) > 0
+    def _gather_default_writer_data(self):
+        """Gather DefaultWriter data in a dictionary"""
+        assert self.fitted_agents is not None
+        assert len(self.fitted_agents) > 0
 
-        ref_stats = stats[0] or {}
-        self.fit_info = tuple(ref_stats.keys())
-
-        self.fit_statistics = {}
-        for entry in self.fit_info:
-            self.fit_statistics[entry] = []
-            for stat in stats:
-                self.fit_statistics[entry].append(stat[entry])
+        if isinstance(self.fitted_agents[0].writer, DefaultWriter):
+            self.default_writer_data = {}
+            keys = tuple(self.fitted_agents[0].writer.data.keys())
+            stats = [agent.writer.data for agent in self.fitted_agents]
+            for entry in keys:
+                self.default_writer_data[entry] = []
+                for stat in stats:
+                    self.default_writer_data[entry].append(stat[entry])
 
     def save_results(self, output_dir=None, **kwargs):
         """
@@ -335,12 +340,12 @@ class AgentStats:
         if self.best_hyperparams is not None:
             fname = Path(output_dir) / 'best_hyperparams.json'
             _safe_serialize_json(self.best_hyperparams, fname)
-        # save fit_statistics that can be aggregated in a pandas DataFrame
-        if self.fit_statistics is not None:
-            for entry in self.fit_statistics:
+        # save default_writer_data that can be aggregated in a pandas DataFrame
+        if self.default_writer_data is not None:
+            for entry in self.default_writer_data:
                 # gather data for entry
                 all_data = {}
-                for run, data in enumerate(self.fit_statistics[entry]):
+                for run, data in enumerate(self.default_writer_data[entry]):
                     all_data[f'run_{run}'] = data
                 try:
                     output = pd.DataFrame(all_data)
@@ -349,7 +354,7 @@ class AgentStats:
                     output.to_csv(fname, index=None)
                 except Exception:
                     logger.warning(f"Could not save entry [{entry}]"
-                                   + " of fit_statistics.")
+                                   + " of default_writer_data.")
 
     def save(self, filename='stats', **kwargs):
         """
@@ -709,12 +714,14 @@ def _fit_worker(args):
         writer_kwargs = writer[1]
         agent.set_writer(writer_fn(**writer_kwargs))
     # fit agent
-    info = agent.fit(**fit_kwargs)
+    agent.fit(**fit_kwargs)
 
-    # Remove writer after fit (prevent pickle problems)
-    agent.set_writer(None)
+    # Remove writer after fit (prevent pickle problems),
+    # unless the agent uses DefaultWriter
+    if not isinstance(agent.writer, DefaultWriter):
+        agent.set_writer(None)
 
-    return agent, info
+    return agent
 
 
 def _safe_serialize_json(obj, filename):

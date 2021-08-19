@@ -9,7 +9,7 @@ from rlberry.envs.benchmarks.generalization.twinrooms import TwinRooms
 env = TwinRooms()
 # env = get_benchmark_env(level=2)
 
-N_EP = 20000
+N_EP = 5
 HORIZON = 30
 
 params = {}

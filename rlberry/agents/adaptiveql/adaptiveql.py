@@ -88,7 +88,6 @@ class AdaptiveQLAgent(IncrementalAgent):
                                       self.horizon)
 
         # info
-        self._rewards = np.zeros(self.n_episodes)
         self.episode = 0
 
         # default writer
@@ -153,13 +152,11 @@ class AdaptiveQLAgent(IncrementalAgent):
                 break
 
         # update info
-        ep = self.episode
-        self._rewards[ep] = episode_rewards
         self.episode += 1
 
         # writer
         if self.writer is not None:
-            self.writer.add_scalar("ep reward", episode_rewards, self.episode)
+            self.writer.add_scalar("episode_rewards", episode_rewards, self.episode)
 
         # return sum of rewards collected in the episode
         return episode_rewards
@@ -171,7 +168,3 @@ class AdaptiveQLAgent(IncrementalAgent):
         while count < n_episodes_to_run and self.episode < self.n_episodes:
             self._run_episode()
             count += 1
-
-        info = {"n_episodes": self.episode,
-                "episode_rewards": self._rewards[:self.episode]}
-        return info

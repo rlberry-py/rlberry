@@ -176,7 +176,7 @@ class OptQLAgent(IncrementalAgent):
 
         # writer
         if self.writer is not None:
-            self.writer.add_scalar("ep reward", episode_rewards, self.episode)
+            self.writer.add_scalar("episode_rewards", episode_rewards, self.episode)
             self.writer.add_scalar("total reward", self._rewards[:ep].sum(), self.episode)
             self.writer.add_scalar("n_visited_states", self.counter.get_n_visited_states(), self.episode)
 
@@ -190,7 +190,3 @@ class OptQLAgent(IncrementalAgent):
         while count < n_episodes_to_run and self.episode < self.n_episodes:
             self._run_episode()
             count += 1
-
-        info = {"n_episodes": self.episode,
-                "episode_rewards": self._rewards[:self.episode]}
-        return info

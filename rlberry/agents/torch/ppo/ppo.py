@@ -198,12 +198,7 @@ class PPOAgent(IncrementalAgent):
             self._run_episode()
             count += 1
 
-        info = {"n_episodes": self.episode,
-                "episode_rewards": self._rewards[:self.episode]}
-        return info
-
     def _run_episode(self):
-
         # to store transitions
         states = []
         actions = []
@@ -272,7 +267,7 @@ class PPOAgent(IncrementalAgent):
 
         # log
         if self.writer is not None:
-            self.writer.add_scalar("fit/total_reward", episode_rewards, self.episode)
+            self.writer.add_scalar("episode_rewards", episode_rewards, self.episode)
 
         # update
         if self.episode % self.update_frequency == 0:  # TODO: maybe change to update in function of n_steps instead

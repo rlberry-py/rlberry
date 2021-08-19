@@ -278,12 +278,11 @@ class UCBVIAgent(IncrementalAgent):
 
         # update info
         ep = self.episode
-        self._rewards[ep] = episode_rewards
         self.episode += 1
 
         # writer
         if self.writer is not None:
-            self.writer.add_scalar("ep reward", episode_rewards, self.episode)
+            self.writer.add_scalar("episode_rewards", episode_rewards, self.episode)
             self.writer.add_scalar("n_visited_states", self.counter.get_n_visited_states(), self.episode)
 
         # return sum of rewards collected in the episode
@@ -315,7 +314,3 @@ class UCBVIAgent(IncrementalAgent):
                 self.horizon,
                 self.gamma,
                 self.v_max[0])
-
-        info = {"n_episodes": self.episode,
-                "episode_rewards": self._rewards[:self.episode]}
-        return info

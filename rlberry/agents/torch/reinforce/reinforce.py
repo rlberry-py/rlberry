@@ -118,10 +118,6 @@ class REINFORCEAgent(IncrementalAgent):
 
         self.episode = 0
 
-        # useful data
-        self._rewards = np.zeros(self.n_episodes)
-        self._cumul_rewards = np.zeros(self.n_episodes)
-
         # default writer
         self.writer = DefaultWriter(self.name)
 
@@ -139,10 +135,6 @@ class REINFORCEAgent(IncrementalAgent):
         while count < n_episodes_to_run and self.episode < self.n_episodes:
             self._run_episode()
             count += 1
-
-        info = {"n_episodes": self.episode,
-                "episode_rewards": self._rewards[:self.episode]}
-        return info
 
     def _run_episode(self):
         # interact for H steps
@@ -173,16 +165,11 @@ class REINFORCEAgent(IncrementalAgent):
             state = next_state
 
         # update
-        ep = self.episode
-        self._rewards[ep] = episode_rewards
-        self._cumul_rewards[ep] = episode_rewards \
-            + self._cumul_rewards[max(0, ep - 1)]
         self.episode += 1
 
         #
         if self.writer is not None:
-            self.writer.add_scalar("episode", self.episode, None)
-            self.writer.add_scalar("ep reward", episode_rewards)
+            self.writer.add_scalar("episode_rewards", episode_rewards, self.episode)
 
         #
         if self.episode % self.batch_size == 0:

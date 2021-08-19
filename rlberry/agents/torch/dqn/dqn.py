@@ -184,6 +184,7 @@ class DQNAgent(IncrementalAgent):
                 self.plot_memory()
                 self.plot_bonuses()
                 self.plot_value()
+                self.writer.add_scalar("episode_rewards", total_reward)
                 self.writer.add_scalar("episode/total_reward", total_reward, self.episode)
                 self.writer.add_scalar("episode/total_bonus", total_bonus, self.episode)
                 self.writer.add_scalar("episode/total_success", total_success, self.episode)
@@ -193,12 +194,6 @@ class DQNAgent(IncrementalAgent):
                          isinstance(self.env.uncertainty_estimator, DiscreteCounter)):
                     n_visited_states = (self.env.uncertainty_estimator.N_sa.sum(axis=1) > 0).sum()
                     self.writer.add_scalar("debug/n_visited_states", n_visited_states, self.episode)
-
-            episode_rewards.append(total_reward)
-        return {
-            "n_episodes": int(fraction * self.n_episodes),
-            "episode_rewards": episode_rewards
-        }
 
     def _run_episode(self):
         total_reward = total_bonus = total_success = time = 0

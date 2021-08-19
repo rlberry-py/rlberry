@@ -59,13 +59,7 @@ class Agent(ABC):
 
     @abstractmethod
     def fit(self, **kwargs):
-        """Train the agent using the provided environment.
-
-        Returns
-        -------
-        info: dict
-            Dictionary with useful info.
-        """
+        """Train the agent using the provided environment."""
         pass
 
     @abstractmethod

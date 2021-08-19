@@ -3,9 +3,12 @@ import os
 from rlberry.envs import GridWorld
 from rlberry.agents import IncrementalAgent
 from rlberry.stats import AgentStats, plot_episode_rewards, compare_policies
+from rlberry.utils.writers import DefaultWriter
 
 
 class DummyAgent(IncrementalAgent):
+
+    name = 'DummyAgent'
 
     def __init__(self, env, n_episodes, hyperparameter=0, **kwargs):
         IncrementalAgent.__init__(self, env, **kwargs)
@@ -13,12 +16,14 @@ class DummyAgent(IncrementalAgent):
         self.n_episodes = n_episodes
         self.fitted = False
         self.hyperparameter = hyperparameter
-
         self.fraction_fitted = 0.0
+        self.writer = DefaultWriter(name='DummyAgent')
 
     def fit(self, **kwargs):
         info = {}
-        info["episode_rewards"] = np.arange(self.n_episodes)
+        for ii in range(self.n_episodes):
+            if self.writer is not None:
+                self.writer.add_scalar('episode_reward', 1.0 * ii)
         self.fitted = True
         self.env.reset()
         self.env.step(self.env.action_space.sample())
@@ -28,8 +33,10 @@ class DummyAgent(IncrementalAgent):
         assert fraction > 0.0 and fraction <= 1.0
         self.fraction_fitted = min(1.0, self.fraction_fitted + fraction)
         info = {}
-        nn = int(np.ceil(fraction*self.n_episodes))
-        info["episode_rewards"] = np.arange(nn)
+        nn = int(np.ceil(fraction * self.n_episodes))
+        for ii in range(nn):
+            if self.writer is not None:
+                self.writer.add_scalar('episode_reward', 1.0 * ii)
         return info
 
     def policy(self, observation, time=0, **kwargs):
@@ -47,7 +54,7 @@ def test_agent_stats_1():
     eval_env = GridWorld()
 
     # Parameters
-    params = {"n_episodes": 500}
+    params = {"n_episodes": 5}
     horizon = 20
 
     # Check DummyAgent
@@ -73,7 +80,7 @@ def test_agent_stats_1():
                      n_sim=10, show=False, stationary_policy=False)
 
     for st in agent_stats_list:
-        assert 'episode_rewards' in st.fit_statistics
+        assert 'episode_reward' in st.writer_data
 
     # check if fitted
     for agent_stats in agent_stats_list:
@@ -103,7 +110,7 @@ def test_agent_stats_2():
     eval_env = GridWorld()
 
     # Parameters
-    params = {"n_episodes": 500}
+    params = {"n_episodes": 5}
 
     # Run AgentStats
     stats_agent1 = AgentStats(DummyAgent, train_env, eval_env=eval_env,
@@ -113,10 +120,6 @@ def test_agent_stats_2():
                               init_kwargs=params, n_fit=4, eval_horizon=10,
                               n_jobs=1, seed=123)
     agent_stats_list = [stats_agent1, stats_agent2]
-
-    # set some writers
-    stats_agent1.set_writer(1, None)
-    stats_agent1.set_writer(2, None)
 
     # compare final policies
     compare_policies(agent_stats_list, n_sim=10, show=False)
@@ -146,13 +149,17 @@ def test_agent_stats_2():
     # test hyperparemeter optimization
     loaded_stats.optimize_hyperparams()
 
+    # delete some writers
+    stats_agent1.set_writer(1, None)
+    stats_agent1.set_writer(2, None)
+
 
 def test_agent_stats_partial_fit_and_tuple_env():
     # Define train and evaluation envs
     train_env = (GridWorld, None)  # tuple (constructor, kwargs) must also work in AgentStats
 
     # Parameters
-    params = {"n_episodes": 500}
+    params = {"n_episodes": 5}
     horizon = 20
 
     # Run AgentStats
@@ -160,9 +167,6 @@ def test_agent_stats_partial_fit_and_tuple_env():
                        init_kwargs=params, n_fit=4, eval_horizon=10, seed=123)
     stats2 = AgentStats(DummyAgent, train_env,
                         init_kwargs=params, n_fit=4, eval_horizon=10, seed=123)
-    # set some writers
-    stats.set_writer(0, None)
-    stats.set_writer(3, None)
 
     # Run partial fit
     stats.partial_fit(0.1)
@@ -183,3 +187,7 @@ def test_agent_stats_partial_fit_and_tuple_env():
     # compare final policies
     compare_policies([stats],
                      eval_horizon=horizon, n_sim=10, show=False)
+
+    # delete some writers
+    stats.set_writer(0, None)
+    stats.set_writer(3, None)

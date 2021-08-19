@@ -34,9 +34,5 @@ class IncrementalAgent(Agent):
         ---------
         fraction: double, in [0,1]
             Fraction of the agent to fit.
-
-        Returns
-        -------
-        info : dict
         """
         raise NotImplementedError("agent.partial_fit() not implemented.")

@@ -221,10 +221,6 @@ class RSUCBVIAgent(IncrementalAgent):
                                               self.P_hat[:self.M, :, :self.M],
                                               self.horizon, self.gamma)
 
-        info = {"n_episodes": self.episode,
-                "episode_rewards": self._rewards[:self.episode]}
-        return info
-
     def _map_to_repr(self, state, accept_new_repr=True):
         repr_state = map_to_representative(state,
                                            self.lp_metric,
@@ -308,7 +304,7 @@ class RSUCBVIAgent(IncrementalAgent):
         if self.writer is not None:
             avg_reward = self._cumul_rewards[ep]/max(1, ep)
 
-            self.writer.add_scalar("ep reward", episode_rewards, self.episode)
+            self.writer.add_scalar("episode_rewards", episode_rewards, self.episode)
             self.writer.add_scalar("avg reward", avg_reward, self.episode)
             self.writer.add_scalar("representative states", self.M, self.episode)
 

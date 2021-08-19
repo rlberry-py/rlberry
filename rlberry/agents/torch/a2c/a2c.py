@@ -154,7 +154,6 @@ class A2CAgent(IncrementalAgent):
         # default writer
         self.writer = DefaultWriter(self.name)
 
-
     def policy(self, state, **kwargs):
         assert self.cat_policy is not None
         state = torch.from_numpy(state).float().to(self.device)
@@ -169,10 +168,6 @@ class A2CAgent(IncrementalAgent):
         while count < n_episodes_to_run and self.episode < self.n_episodes:
             self._run_episode()
             count += 1
-
-        info = {"n_episodes": self.episode,
-                "episode_rewards": self._rewards[:self.episode]}
-        return info
 
     def _select_action(self, state):
         state = torch.from_numpy(state).float().to(self.device)
@@ -221,7 +216,7 @@ class A2CAgent(IncrementalAgent):
         #
         if self.writer is not None:
             self.writer.add_scalar("episode", self.episode, None)
-            self.writer.add_scalar("ep reward", episode_rewards)
+            self.writer.add_scalar("episode_rewards", episode_rewards)
 
         #
         if self.episode % self.batch_size == 0:

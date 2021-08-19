@@ -119,12 +119,12 @@ def plot_episode_rewards(agent_stats,
         if stats.fitted_agents is None:
             stats.fit()
 
-        if 'episode_rewards' not in stats.fit_info:
+        if 'episode_rewards' not in stats.writer_data:
             logger.warning("episode_rewards not available for %s." % stats.agent_name)
             continue
 
         # get reward statistics and plot them
-        rewards = np.array(stats.fit_statistics['episode_rewards'])
+        rewards = np.array(stats.writer_data['episode_rewards'])
         if cumulative and (not plot_regret):
             data = np.cumsum(rewards, axis=1)
             label = "total reward"
@@ -277,11 +277,11 @@ def compare_policies(agent_stats_list,
     return output
 
 
-def plot_fit_info(agent_stats,
-                  info,
-                  fignum=None,
-                  show=True,
-                  grid=True):
+def plot_writer_data(agent_stats,
+                     tag,
+                     fignum=None,
+                     show=True,
+                     grid=True):
     """
     Given a list of AgentStats, plot data (corresponding to info) obtained in each episode.
     The dictionary returned by agents' .fit() method must contain a key equal to `info`.
@@ -289,8 +289,8 @@ def plot_fit_info(agent_stats,
     Parameters
     ----------
     agent_stats : AgentStats, or list of AgentStats
-    info : str
-        Info (returned by Agent.fit()) to plot.
+    tag : str
+        Tag of data to plot.
     fignum: string or int
         Identifier of plot figure.
     show: bool
@@ -311,12 +311,12 @@ def plot_fit_info(agent_stats,
         if stats.fitted_agents is None:
             stats.fit()
 
-        if info not in stats.fit_info:
-            logger.warning("{} not available for {}.".format(info, stats.agent_name))
+        if tag not in stats.writer_data:
+            logger.warning("{} not available for {}.".format(tag, stats.agent_name))
             continue
 
         # get data and plot them
-        data = np.array(stats.fit_statistics[info])
+        data = np.array(stats.writer_data[tag])
         mean_data = data.mean(axis=0)
         std_data = data.std(axis=0)
         episodes = np.arange(1, data.shape[1]+1)
@@ -325,7 +325,7 @@ def plot_fit_info(agent_stats,
         plt.fill_between(episodes, mean_data-std_data, mean_data+std_data, alpha=0.4)
         plt.legend()
         plt.xlabel("episodes")
-        plt.ylabel(info)
+        plt.ylabel(tag)
         if grid:
             plt.grid(True, alpha=0.75)
 

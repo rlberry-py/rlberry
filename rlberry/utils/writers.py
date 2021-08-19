@@ -34,6 +34,10 @@ class DefaultWriter:
         self._data_global_steps = dict()
         self._time_last_log = timer()
 
+    @property
+    def data(self):
+        return self._data
+
     def add_scalar(self, tag: str, scalar_value: float, global_step: Optional[int] = None):
         """
         Store scalar value.
