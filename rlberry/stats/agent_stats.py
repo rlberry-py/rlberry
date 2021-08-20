@@ -1,7 +1,4 @@
 """
-TODO: handle global_steps when aggregating writer data
-
-
 Notes
 -----
 
@@ -188,8 +185,6 @@ class AgentStats:
 
     @property
     def writer_data(self):
-        if self.default_writer_data is None:
-            return {}
         return self.default_writer_data
 
     def set_output_dir(self, output_dir):
@@ -313,12 +308,8 @@ class AgentStats:
 
         if isinstance(self.fitted_agents[0].writer, DefaultWriter):
             self.default_writer_data = {}
-            keys = tuple(self.fitted_agents[0].writer.data.keys())
-            stats = [agent.writer.data for agent in self.fitted_agents]
-            for entry in keys:
-                self.default_writer_data[entry] = []
-                for stat in stats:
-                    self.default_writer_data[entry].append(stat[entry])
+            for ii, agent in enumerate(self.fitted_agents):
+                self.default_writer_data[ii] = agent.writer.data
 
     def save_results(self, output_dir=None, **kwargs):
         """

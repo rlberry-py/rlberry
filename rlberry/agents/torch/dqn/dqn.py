@@ -184,7 +184,7 @@ class DQNAgent(IncrementalAgent):
                 self.plot_memory()
                 self.plot_bonuses()
                 self.plot_value()
-                self.writer.add_scalar("episode_rewards", total_reward)
+                self.writer.add_scalar("episode_rewards", total_reward, self.episode)
                 self.writer.add_scalar("episode/total_reward", total_reward, self.episode)
                 self.writer.add_scalar("episode/total_bonus", total_bonus, self.episode)
                 self.writer.add_scalar("episode/total_success", total_success, self.episode)

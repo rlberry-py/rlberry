@@ -256,8 +256,7 @@ class AVECPPOAgent(IncrementalAgent):
 
         #
         if self.writer is not None:
-            self.writer.add_scalar("episode", self.episode, None)
-            self.writer.add_scalar("episode_rewards", episode_rewards)
+            self.writer.add_scalar("episode_rewards", episode_rewards, self.episode)
 
         #
         if self.episode % self.batch_size == 0:

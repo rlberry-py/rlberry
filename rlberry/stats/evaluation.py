@@ -1,9 +1,9 @@
 import logging
+from os import stat
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-from itertools import cycle
 
 
 logger = logging.getLogger(__name__)
@@ -73,82 +73,6 @@ def mc_policy_evaluation(agent,
                 break
 
     return episode_rewards
-
-
-def plot_episode_rewards(agent_stats,
-                         cumulative=False,
-                         fignum=None,
-                         show=True,
-                         max_value=None,
-                         plot_regret=False,
-                         grid=True):
-    """
-    Given a list of AgentStats, plot the rewards obtained in each episode.
-    The dictionary returned by agents' .fit() method must contain a key 'episode_rewards'.
-
-    Parameters
-    ----------
-    agent_stats : AgentStats, or list of AgentStats
-    cumulative : bool, default: False
-        If true, plot cumulative rewards.
-    fignum: string or int
-        Identifier of plot figure.
-    show: bool
-        If true, calls plt.show().
-    max_value: double, default: None
-        Maximum reward achievable in one episode.
-    plot_regret: bool, default: False
-        If true, plots the regret. Requires max_val to be given.
-    grid: bool, default: True
-        If False, disable grid in plot.
-    """
-    agent_stats_list = agent_stats
-    if not isinstance(agent_stats_list, list):
-        agent_stats_list = [agent_stats_list]
-
-    if plot_regret and max_value is None:
-        raise ValueError("max_value must be provided for regret plot")
-
-    # line style
-    lines = ["-", "--", "-.", ":"]
-    linecycler = cycle(lines)
-
-    plt.figure(fignum)
-    for stats in agent_stats_list:
-        # train agents if they are not already trained
-        if stats.fitted_agents is None:
-            stats.fit()
-
-        if 'episode_rewards' not in stats.writer_data:
-            logger.warning("episode_rewards not available for %s." % stats.agent_name)
-            continue
-
-        # get reward statistics and plot them
-        rewards = np.array(stats.writer_data['episode_rewards'])
-        if cumulative and (not plot_regret):
-            data = np.cumsum(rewards, axis=1)
-            label = "total reward"
-        elif plot_regret:
-            data = np.cumsum(max_value-rewards, axis=1)
-            label = "regret"
-        else:
-            data = rewards
-            label = "reward in one episode"
-
-        mean_r = data.mean(axis=0)
-        std_r = data.std(axis=0)
-        episodes = np.arange(1, data.shape[1]+1)
-
-        plt.plot(episodes, mean_r, next(linecycler), label=stats.agent_name)
-        plt.fill_between(episodes, mean_r-std_r, mean_r+std_r, alpha=0.4)
-        plt.legend()
-        plt.xlabel("episodes")
-        plt.ylabel(label)
-        if grid:
-            plt.grid(True, alpha=0.75)
-
-    if show:
-        plt.show()
 
 
 def compare_policies(agent_stats_list,
@@ -252,7 +176,7 @@ def compare_policies(agent_stats_list,
         else:
             id_count[name] += 1
 
-        unique_ids.append(name + "*"*(id_count[name]-1))
+        unique_ids.append(name + "*" * (id_count[name] - 1))
 
     # convert output to DataFrame
     data = {}
@@ -281,7 +205,8 @@ def plot_writer_data(agent_stats,
                      tag,
                      fignum=None,
                      show=True,
-                     grid=True):
+                     preprocess_func=None,
+                     title=None):
     """
     Given a list of AgentStats, plot data (corresponding to info) obtained in each episode.
     The dictionary returned by agents' .fit() method must contain a key equal to `info`.
@@ -295,39 +220,50 @@ def plot_writer_data(agent_stats,
         Identifier of plot figure.
     show: bool
         If true, calls plt.show().
-    grid: bool, default: True
-        If False, disable grid in plot.
+    preprocess_func: Callable
+        Function to apply to 'tag' column before plot. For instance, if tag=episode_rewards,
+        setting preprocess_func=np.cumsum will plot cumulative rewards
+    title: str (Optional)
+        Optinal title to plot. If None, set to tag.
     """
+    plt.figure(fignum)
+    title = title or tag
+    if preprocess_func is not None:
+        ylabel = 'value'
+    else:
+        ylabel = tag
+    preprocess_func = preprocess_func or (lambda x: x)
     agent_stats_list = agent_stats
     if not isinstance(agent_stats_list, list):
         agent_stats_list = [agent_stats_list]
 
-    # line style
-    lines = ["-", "--", "-.", ":"]
-    linecycler = cycle(lines)
-    plt.figure(fignum)
+    # preprocess agent stats
+    data_list = []
     for stats in agent_stats_list:
         # train agents if they are not already trained
         if stats.fitted_agents is None:
             stats.fit()
 
-        if tag not in stats.writer_data:
-            logger.warning("{} not available for {}.".format(tag, stats.agent_name))
-            continue
+        if stats.writer_data is not None:
+            for idx in stats.writer_data:
+                df = stats.writer_data[idx]
+                df = pd.DataFrame(df[df['tag'] == tag])
+                df['value'] = preprocess_func(df['value'].values)
+                data_list.append(df)
 
-        # get data and plot them
-        data = np.array(stats.writer_data[tag])
-        mean_data = data.mean(axis=0)
-        std_data = data.std(axis=0)
-        episodes = np.arange(1, data.shape[1]+1)
+    all_writer_data = pd.concat(data_list, ignore_index=True)
 
-        plt.plot(episodes, mean_data, next(linecycler), label=stats.agent_name)
-        plt.fill_between(episodes, mean_data-std_data, mean_data+std_data, alpha=0.4)
-        plt.legend()
-        plt.xlabel("episodes")
-        plt.ylabel(tag)
-        if grid:
-            plt.grid(True, alpha=0.75)
+    data = all_writer_data[all_writer_data['tag'] == tag]
+    if data['global_step'].notnull().sum() > 0:
+        xx = 'global_step'
+        if data['global_step'].isna().sum() > 0:
+            logger.warning(f'Plotting {tag} vs global_step, but global_step might be missing for some agents.')
+    else:
+        xx = data.index
+
+    sns.lineplot(x=xx, y='value', hue='name', data=data)
+    plt.title(title)
+    plt.ylabel(ylabel)
 
     if show:
         plt.show()

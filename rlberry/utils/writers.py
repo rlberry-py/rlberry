@@ -1,4 +1,6 @@
 import logging
+import numpy as np
+import pandas as pd
 from typing import Optional
 from timeit import default_timer as timer
 
@@ -24,19 +26,20 @@ class DefaultWriter:
         self._name = name
         self._log_interval = log_interval
         self._data = None
-        self._data_global_steps = None
         self._time_last_log = None
         self.reset()
 
     def reset(self):
         """Clear all data."""
         self._data = dict()
-        self._data_global_steps = dict()
         self._time_last_log = timer()
 
     @property
     def data(self):
-        return self._data
+        df = pd.DataFrame(columns=('name', 'tag', 'value', 'global_step'))
+        for tag in self._data:
+            df = df.append(pd.DataFrame(self._data[tag]), ignore_index=True)
+        return df
 
     def add_scalar(self, tag: str, scalar_value: float, global_step: Optional[int] = None):
         """
@@ -53,14 +56,19 @@ class DefaultWriter:
         """
         # Update data structures
         if tag not in self._data:
-            self._data[tag] = []
-            self._data_global_steps[tag] = []
+            self._data[tag] = dict()
+            self._data[tag]['name'] = []
+            self._data[tag]['tag'] = []
+            self._data[tag]['value'] = []
+            self._data[tag]['global_step'] = []
 
-        self._data[tag].append(scalar_value)
-        if (self._data_global_steps[tag] is not None) and (global_step is not None):
-            self._data_global_steps[tag].append(global_step)
+        self._data[tag]['name'].append(self._name)  # used in plots, when aggregating several writers
+        self._data[tag]['tag'].append(tag)   # useful to convert all data to a single DataFrame
+        self._data[tag]['value'].append(scalar_value)
         if global_step is None:
-            self._data_global_steps[tag] = None
+            self._data[tag]['global_step'].append(np.nan)
+        else:
+            self._data[tag]['global_step'].append(global_step)
 
         # Log
         self._log()
@@ -75,11 +83,13 @@ class DefaultWriter:
             self._time_last_log = t_now
             message = ''
             for tag in self._data:
-                message += f'{tag} = {self._data[tag][-1]} | '
-                if self._data_global_steps[tag] is not None:
-                    max_global_step = max(max_global_step, self._data_global_steps[tag][-1])
+                val = self._data[tag]['value'][-1]
+                gstep = self._data[tag]['global_step'][-1]
+                message += f'{tag} = {val} | '
+                if not np.isnan(gstep):
+                    max_global_step = max(max_global_step, gstep)
 
-            message = f'[{self._name}] | step = {max_global_step} | ' + message
+            message = f'[{self._name}] | max_global_step = {max_global_step} | ' + message
             logger.info(message)
 
     def __getattr__(self, attr):

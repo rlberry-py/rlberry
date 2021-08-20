@@ -1,8 +1,10 @@
 
+from matplotlib.pyplot import title
+import numpy as np
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
 from rlberry.agents import RSKernelUCBVIAgent, RSUCBVIAgent
 from rlberry.agents.torch.ppo import PPOAgent
-from rlberry.stats import AgentStats, plot_episode_rewards, compare_policies
+from rlberry.stats import AgentStats, plot_writer_data, compare_policies
 
 
 # --------------------------------
@@ -57,7 +59,11 @@ ppo_stats = AgentStats(PPOAgent, train_env, init_kwargs=params_ppo, n_fit=4)
 agent_stats_list = [rsucbvi_stats, rskernel_stats, ppo_stats]
 
 # learning curves
-plot_episode_rewards(agent_stats_list, cumulative=True, show=False)
+plot_writer_data(agent_stats_list,
+                 tag='episode_rewards',
+                 preprocess_func=np.cumsum,
+                 title='cumulative rewards',
+                 show=False)
 
 # compare final policies
 output = compare_policies(agent_stats_list, eval_env,

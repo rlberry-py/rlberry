@@ -2,7 +2,7 @@ import numpy as np
 import os
 from rlberry.envs import GridWorld
 from rlberry.agents import IncrementalAgent
-from rlberry.stats import AgentStats, plot_episode_rewards, compare_policies
+from rlberry.stats import AgentStats, plot_writer_data, compare_policies
 from rlberry.utils.writers import DefaultWriter
 
 
@@ -70,7 +70,7 @@ def test_agent_stats_1():
     agent_stats_list = [stats_agent1, stats_agent2]
 
     # learning curves
-    plot_episode_rewards(agent_stats_list, cumulative=True, show=False)
+    plot_writer_data(agent_stats_list, tag='episode_rewards', show=False)
 
     # compare final policies
     compare_policies(agent_stats_list, eval_env,
@@ -78,9 +78,6 @@ def test_agent_stats_1():
     compare_policies(agent_stats_list, eval_env,
                      eval_horizon=horizon,
                      n_sim=10, show=False, stationary_policy=False)
-
-    for st in agent_stats_list:
-        assert 'episode_reward' in st.writer_data
 
     # check if fitted
     for agent_stats in agent_stats_list:
@@ -127,7 +124,7 @@ def test_agent_stats_2():
                      n_sim=10, show=False, stationary_policy=False)
 
     # learning curves
-    plot_episode_rewards(agent_stats_list, cumulative=True, show=False)
+    plot_writer_data(agent_stats_list, tag='episode_rewards', show=False)
 
     # check if fitted
     for agent_stats in agent_stats_list:
@@ -182,7 +179,7 @@ def test_agent_stats_partial_fit_and_tuple_env():
     stats2.fit()
 
     # learning curves
-    plot_episode_rewards([stats], cumulative=True, show=False)
+    plot_writer_data([stats], tag='episode_rewards', show=False, preprocess_func=np.cumsum)
 
     # compare final policies
     compare_policies([stats],

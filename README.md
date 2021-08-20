@@ -113,3 +113,8 @@ and coverage report in `cov_html/index.html`.
 ## Contributing
 
 Want to contribute to `rlberry`? Please check [our contribution guidelines](CONTRIBUTING.md). A list of interesting TODO's will be available soon. **If you want to add any new agents or environments, do not hesitate to [open an issue](https://github.com/rlberry-py/rlberry/issues/new/choose)!**
+
+
+## TODO
+
+* `stats.plot_episode_rewards()` was removed: examples and documentation must be adapted to use `plot_writer_data` instead (as in `demo_agent_stats.py`).

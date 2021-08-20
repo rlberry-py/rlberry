@@ -346,10 +346,9 @@ class RSKernelUCBVIAgent(Agent):
         if self.writer is not None:
             avg_reward = self._cumul_rewards[ep]/max(1, ep)
 
-            self.writer.add_scalar("episode", self.episode, None)
-            self.writer.add_scalar("episode_rewards", episode_rewards)
-            self.writer.add_scalar("avg reward", avg_reward)
-            self.writer.add_scalar("representative states", self.M)
+            self.writer.add_scalar("episode_rewards", episode_rewards, self.episode)
+            self.writer.add_scalar("avg reward", avg_reward, self.episode)
+            self.writer.add_scalar("representative states", self.M, self.episode)
 
         # return sum of rewards collected in the episode
         return episode_rewards
