@@ -1,7 +1,7 @@
-
+import numpy as np
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
 from rlberry.agents.torch.ppo import PPOAgent
-from rlberry.stats import AgentStats, plot_episode_rewards, compare_policies
+from rlberry.stats import AgentStats, plot_writer_data, compare_policies
 from torch.utils.tensorboard import SummaryWriter
 
 
@@ -36,10 +36,6 @@ agent_stats_list = [ppo_stats]
 
 agent_stats_list[0].fit()
 agent_stats_list[0].save()  # after fit, writers are set to None to avoid pickle problems.
-
-
-# learning curves
-plot_episode_rewards(agent_stats_list, cumulative=True, show=False)
 
 # compare final policies
 output = compare_policies(agent_stats_list, eval_env,

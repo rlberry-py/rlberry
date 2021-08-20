@@ -14,10 +14,11 @@ Two or more agents can be compared using the classes
 
 .. code-block:: python
 
+    import numpy as np
     from rlberry.envs.classic_control import MountainCar
     from rlberry.agents.torch.reinforce import REINFORCEAgent
     from rlberry.agents.kernel_based.rs_kernel_ucbvi import RSKernelUCBVIAgent
-    from rlberry.stats import AgentStats, MultipleStats, plot_episode_rewards
+    from rlberry.stats import AgentStats, MultipleStats, plot_writer_data
 
 
     # Environment
@@ -57,5 +58,5 @@ Two or more agents can be compared using the classes
 
     # Fit and plot
     mstats.run()
-    plot_episode_rewards(mstats.allstats)
+    plot_writer_data(mstats.allstats, tag=episode_rewards, preprocess_func=np.cumsum, title="Cumulative Rewards")
 

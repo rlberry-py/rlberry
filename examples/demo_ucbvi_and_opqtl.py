@@ -1,7 +1,8 @@
+import numpy as np
 from rlberry.agents.ucbvi import UCBVIAgent
 from rlberry.agents.optql import OptQLAgent
 from rlberry.envs.finite import GridWorld
-from rlberry.stats import AgentStats, plot_episode_rewards
+from rlberry.stats import AgentStats, plot_writer_data
 from rlberry.stats import MultipleStats
 
 
@@ -41,4 +42,6 @@ mstats.append(
 
 mstats.run()
 
-plot_episode_rewards(mstats.allstats, cumulative=True)
+plot_writer_data(mstats.allstats, tag='episode_rewards',
+                 preprocess_func=np.cumsum,
+                 title='Cumulative Rewards')

@@ -1,13 +1,11 @@
+import numpy as np
 from rlberry.agents import AdaptiveQLAgent
 from rlberry.agents import RSUCBVIAgent
 from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
-from rlberry.stats import MultipleStats, AgentStats, plot_episode_rewards
+from rlberry.stats import MultipleStats, AgentStats, plot_writer_data
 import matplotlib.pyplot as plt
-from rlberry.envs.benchmarks.generalization.twinrooms import TwinRooms
 
-
-env = TwinRooms()
-# env = get_benchmark_env(level=2)
+env = get_benchmark_env(level=2)
 
 N_EP = 5
 HORIZON = 30
@@ -43,7 +41,8 @@ mstats.append(
 
 mstats.run(save=False)
 
-plot_episode_rewards(mstats.allstats, cumulative=True)
+plot_writer_data(mstats.allstats, tag='episode_rewards',
+                 preprocess_func=np.cumsum, title='Cumulative Rewards')
 
 for stats in mstats.allstats:
     agent = stats.fitted_agents[0]

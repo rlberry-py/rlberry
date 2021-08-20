@@ -16,7 +16,7 @@ as shown in the examples below.
 
     from rlberry.envs import gym_make
     from rlberry.agents.torch.reinforce import REINFORCEAgent
-    from rlberry.stats import AgentStats, plot_episode_rewards
+    from rlberry.stats import AgentStats, plot_writer_data
 
 
     # Environment
@@ -37,12 +37,9 @@ as shown in the examples below.
     # Fit the 4 instances
     stats.fit()
 
-    # The fit() method of REINFORCEAgent returns
-    # a dictionary `info` such that info['episode_rewards']
-    # is a numpy array with the sum of rewards obtained in
-    # each episode.
-    # The method below can be used to plot it!
-    plot_episode_rewards(stats)
+    # The fit() method of REINFORCEAgent logs data to a :class:`~rlberry.utils.writers.DefaultWriter`
+    # object. The method below can be used to plot those data!
+    plot_writer_data(stats, tag='episode_rewards')
 
 
 To run hyperparameter optimization, the agent class needs to implement a
@@ -97,4 +94,4 @@ of :class:`~rlberry.stats.agent_stats.AgentStats` to find good parameters for ou
 
     # Calling fit() again will train the agent with the optimized parameters
     stats.fit()
-    plot_episode_rewards(stats)
+    plot_writer_data(stats, tag='episode_rewards')

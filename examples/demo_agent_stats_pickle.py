@@ -1,6 +1,7 @@
+import numpy as np
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
 from rlberry.agents.torch.ppo import PPOAgent
-from rlberry.stats import AgentStats, plot_episode_rewards, compare_policies
+from rlberry.stats import AgentStats, plot_writer_data, compare_policies
 
 
 # --------------------------------
@@ -37,12 +38,13 @@ del ppo_stats
 # Load and plot results
 # --------------------------------
 ppo_stats = AgentStats.load('ppo_stats/stats.pickle')
-agent_stats_list = [ppo_stats]
 
 # learning curves
-plot_episode_rewards(agent_stats_list, cumulative=True, show=False)
+plot_writer_data(ppo_stats, tag='episode_rewards',
+                 preprocess_func=np.cumsum,
+                 title='Cumulative Rewards', show=False)
 
 # compare final policies
-output = compare_policies(agent_stats_list, eval_env,
+output = compare_policies([ppo_stats], eval_env,
                           eval_horizon=HORIZON, n_sim=10)
 print(output)
