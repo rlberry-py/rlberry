@@ -3,7 +3,7 @@ from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
 from rlberry.agents import MBQVIAgent
 from rlberry.agents.torch.ppo import PPOAgent
 from rlberry.wrappers import DiscretizeStateWrapper
-from rlberry.stats import AgentStats, plot_writer_data, compare_policies
+from rlberry.stats import AgentStats, plot_writer_data, evaluate_policies
 
 
 # --------------------------------
@@ -48,5 +48,5 @@ plot_writer_data(agent_stats_list, tag='episode_rewards',
 
 
 # compare final policies
-output = compare_policies(agent_stats_list, eval_horizon=HORIZON, n_sim=10)
+output = evaluate_policies(agent_stats_list, eval_horizon=HORIZON, n_sim=10)
 print(output)

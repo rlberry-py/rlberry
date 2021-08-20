@@ -1,10 +1,9 @@
 
-from matplotlib.pyplot import title
 import numpy as np
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
 from rlberry.agents import RSKernelUCBVIAgent, RSUCBVIAgent
 from rlberry.agents.torch.ppo import PPOAgent
-from rlberry.stats import AgentStats, plot_writer_data, compare_policies
+from rlberry.stats import AgentStats, plot_writer_data, evaluate_policies
 
 
 # --------------------------------
@@ -66,6 +65,6 @@ plot_writer_data(agent_stats_list,
                  show=False)
 
 # compare final policies
-output = compare_policies(agent_stats_list, eval_env,
-                          eval_horizon=HORIZON, n_sim=10)
+output = evaluate_policies(agent_stats_list, eval_env,
+                           eval_horizon=HORIZON, n_sim=10)
 print(output)

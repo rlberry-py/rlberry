@@ -1,7 +1,7 @@
 import numpy as np
 from rlberry.agents.torch.ppo import PPOAgent
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
-from rlberry.stats import AgentStats, plot_writer_data, compare_policies
+from rlberry.stats import AgentStats, plot_writer_data, evaluate_policies
 
 env = PBall2D()
 n_episodes = 400
@@ -21,9 +21,9 @@ ppo_stats.partial_fit(0.3)
 plot_writer_data(ppo_stats, tag='episode_rewards',
                  preprocess_func=np.cumsum,
                  title='Cumulative Rewards', show=False)
-compare_policies([ppo_stats], show=False)
+evaluate_policies([ppo_stats], show=False)
 ppo_stats.partial_fit(0.2)
 plot_writer_data(ppo_stats, tag='episode_rewards',
                  preprocess_func=np.cumsum,
                  title='Cumulative Rewards', show=False)
-compare_policies([ppo_stats], show=True)
+evaluate_policies([ppo_stats], show=True)

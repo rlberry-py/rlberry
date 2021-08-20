@@ -2,7 +2,7 @@ import numpy as np
 import os
 from rlberry.envs import GridWorld
 from rlberry.agents import IncrementalAgent
-from rlberry.stats import AgentStats, plot_writer_data, compare_policies
+from rlberry.stats import AgentStats, plot_writer_data, evaluate_policies
 from rlberry.utils.writers import DefaultWriter
 
 
@@ -73,11 +73,11 @@ def test_agent_stats_1():
     plot_writer_data(agent_stats_list, tag='episode_rewards', show=False)
 
     # compare final policies
-    compare_policies(agent_stats_list, eval_env,
-                     eval_horizon=horizon, n_sim=10, show=False)
-    compare_policies(agent_stats_list, eval_env,
-                     eval_horizon=horizon,
-                     n_sim=10, show=False, stationary_policy=False)
+    evaluate_policies(agent_stats_list, eval_env,
+                      eval_horizon=horizon, n_sim=10, show=False)
+    evaluate_policies(agent_stats_list, eval_env,
+                      eval_horizon=horizon,
+                      n_sim=10, show=False, stationary_policy=False)
 
     # check if fitted
     for agent_stats in agent_stats_list:
@@ -119,9 +119,9 @@ def test_agent_stats_2():
     agent_stats_list = [stats_agent1, stats_agent2]
 
     # compare final policies
-    compare_policies(agent_stats_list, n_sim=10, show=False)
-    compare_policies(agent_stats_list,
-                     n_sim=10, show=False, stationary_policy=False)
+    evaluate_policies(agent_stats_list, n_sim=10, show=False)
+    evaluate_policies(agent_stats_list,
+                      n_sim=10, show=False, stationary_policy=False)
 
     # learning curves
     plot_writer_data(agent_stats_list, tag='episode_rewards', show=False)
@@ -182,8 +182,8 @@ def test_agent_stats_partial_fit_and_tuple_env():
     plot_writer_data([stats], tag='episode_rewards', show=False, preprocess_func=np.cumsum)
 
     # compare final policies
-    compare_policies([stats],
-                     eval_horizon=horizon, n_sim=10, show=False)
+    evaluate_policies([stats],
+                      eval_horizon=horizon, n_sim=10, show=False)
 
     # delete some writers
     stats.set_writer(0, None)

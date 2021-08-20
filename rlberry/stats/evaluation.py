@@ -1,5 +1,4 @@
 import logging
-from os import stat
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -75,17 +74,17 @@ def mc_policy_evaluation(agent,
     return episode_rewards
 
 
-def compare_policies(agent_stats_list,
-                     eval_env=None,
-                     eval_horizon=None,
-                     stationary_policy=True,
-                     n_sim=10,
-                     fignum=None,
-                     show=True,
-                     plot=True,
-                     **kwargs):
+def evaluate_policies(agent_stats_list,
+                      eval_env=None,
+                      eval_horizon=None,
+                      stationary_policy=True,
+                      n_sim=10,
+                      fignum=None,
+                      show=True,
+                      plot=True,
+                      **kwargs):
     """
-    Compare the policies of each of the agents in agent_stats_list.
+    Evaluate and compate the policies of each of the agents in agent_stats_list.
     Each element of the agent_stats_list contains a list of fitted agents.
     To evaluate the policy, we repeat n_sim times:
         * choose one of the fitted agents uniformly at random

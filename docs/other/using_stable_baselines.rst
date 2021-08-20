@@ -115,7 +115,7 @@ implementation of `Stable Baselines`_ and evaluate two hyperparameter configurat
     #
     # Traning several agents and comparing different hyperparams
     #
-    from rlberry.stats import AgentStats, MultipleStats, compare_policies
+    from rlberry.stats import AgentStats, MultipleStats, evaluate_policies
 
     stats = AgentStats(
         A2CAgent,
@@ -152,7 +152,7 @@ implementation of `Stable Baselines`_ and evaluate two hyperparameter configurat
     mstats.run()
 
     # Plot policy evaluation
-    compare_policies(mstats.allstats)
+    evaluate_policies(mstats.allstats)
 
 
 .. warning::

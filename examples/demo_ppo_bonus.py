@@ -1,7 +1,7 @@
 import numpy as np
 from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
 from rlberry.agents.torch.ppo import PPOAgent
-from rlberry.stats import AgentStats, plot_writer_data, compare_policies
+from rlberry.stats import AgentStats, plot_writer_data, evaluate_policies
 from rlberry.exploration_tools.discrete_counter import DiscreteCounter
 
 
@@ -69,5 +69,5 @@ plot_writer_data(agent_stats_list, tag='episode_rewards',
                  title='Cumulative Rewards', show=False)
 
 # compare final policies
-output = compare_policies(agent_stats_list, eval_horizon=HORIZON, n_sim=20)
+output = evaluate_policies(agent_stats_list, eval_horizon=HORIZON, n_sim=20)
 print(output)
