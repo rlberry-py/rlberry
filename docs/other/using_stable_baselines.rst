@@ -98,8 +98,8 @@ implementation of `Stable Baselines`_ and evaluate two hyperparameter configurat
     # Traning one agent
     #
 
-
-    env = gym.make('CartPole-v1')
+    # Environment (constructor, kwargs)
+    env = (gym.make, dict(id='CartPole-v1'))
     agent = A2CAgent(env, 'MlpPolicy', verbose=1)
     agent.fit(total_timesteps=100)
 

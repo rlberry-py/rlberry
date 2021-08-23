@@ -5,7 +5,7 @@ from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
 from rlberry.stats import MultipleStats, AgentStats, plot_writer_data
 import matplotlib.pyplot as plt
 
-env = get_benchmark_env(level=2)
+env = (get_benchmark_env, dict(level=2))
 
 N_EP = 5
 HORIZON = 30

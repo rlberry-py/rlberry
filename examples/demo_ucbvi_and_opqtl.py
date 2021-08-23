@@ -10,7 +10,7 @@ N_EP = 3000
 HORIZON = 20
 GAMMA = 1.0
 
-env = GridWorld(nrows=5, ncols=10)
+env = (GridWorld, dict(nrows=5, ncols=10))
 
 params = {}
 

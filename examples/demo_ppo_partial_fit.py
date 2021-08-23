@@ -3,7 +3,7 @@ from rlberry.agents.torch.ppo import PPOAgent
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
 from rlberry.stats import AgentStats, plot_writer_data, evaluate_policies
 
-env = PBall2D()
+env = (PBall2D, dict())
 n_episodes = 400
 horizon = 100
 

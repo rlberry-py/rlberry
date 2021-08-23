@@ -128,7 +128,7 @@ def evaluate_policies(agent_stats_list,
 
         # eval env and horizon
         if use_eval_from_agent_stats:
-            eval_env = agent_stats.eval_env
+            eval_env = agent_stats.build_eval_env()
             assert eval_env is not None, \
                 "eval_env not in AgentStats %s" % agent_stats.agent_name
         if use_horizon_from_agent_stats:

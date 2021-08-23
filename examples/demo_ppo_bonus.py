@@ -8,8 +8,7 @@ from rlberry.exploration_tools.discrete_counter import DiscreteCounter
 # --------------------------------
 # Define train env
 # --------------------------------
-env = get_benchmark_env(level=4)
-eval_env = get_benchmark_env(level=4)
+env = (get_benchmark_env, dict(level=4))
 
 
 def uncertainty_estimator_fn(obs_space, act_space):
@@ -57,9 +56,9 @@ params_ppo_bonus = {
 # -----------------------------
 # Run AgentStats
 # -----------------------------
-ppo_stats = AgentStats(PPOAgent, env, eval_env=eval_env, init_kwargs=params_ppo, n_fit=4, agent_name='PPO')
+ppo_stats = AgentStats(PPOAgent, env, init_kwargs=params_ppo, n_fit=4, agent_name='PPO')
 ppo_bonus_stats = AgentStats(
-    PPOAgent, env, eval_env=eval_env, init_kwargs=params_ppo_bonus, n_fit=4, agent_name='PPO-Bonus')
+    PPOAgent, env, init_kwargs=params_ppo_bonus, n_fit=4, agent_name='PPO-Bonus')
 
 agent_stats_list = [ppo_bonus_stats, ppo_stats]
 

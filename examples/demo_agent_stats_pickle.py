@@ -7,8 +7,8 @@ from rlberry.stats import AgentStats, plot_writer_data, evaluate_policies
 # --------------------------------
 # Define train and evaluation envs
 # --------------------------------
-train_env = PBall2D()
-eval_env = PBall2D()
+train_env = (PBall2D, dict())
+eval_env = (PBall2D, dict())
 
 
 # -----------------------------
@@ -45,6 +45,6 @@ plot_writer_data(ppo_stats, tag='episode_rewards',
                  title='Cumulative Rewards', show=False)
 
 # compare final policies
-output = evaluate_policies([ppo_stats], eval_env,
+output = evaluate_policies([ppo_stats], ppo_stats.build_eval_env(),
                            eval_horizon=HORIZON, n_sim=10)
 print(output)

@@ -50,15 +50,15 @@ class DummyAgent(IncrementalAgent):
 
 def test_agent_stats_1():
     # Define train and evaluation envs
-    train_env = GridWorld()
-    eval_env = GridWorld()
+    train_env = (GridWorld, {})
+    eval_env = (GridWorld, {})
 
     # Parameters
     params = {"n_episodes": 5}
     horizon = 20
 
     # Check DummyAgent
-    agent = DummyAgent(train_env, **params)
+    agent = DummyAgent(train_env[0](**train_env[1]), **params)
     agent.fit()
     agent.policy(None)
 
@@ -73,9 +73,9 @@ def test_agent_stats_1():
     plot_writer_data(agent_stats_list, tag='episode_rewards', show=False)
 
     # compare final policies
-    evaluate_policies(agent_stats_list, eval_env,
+    evaluate_policies(agent_stats_list,
                       eval_horizon=horizon, n_sim=10, show=False)
-    evaluate_policies(agent_stats_list, eval_env,
+    evaluate_policies(agent_stats_list,
                       eval_horizon=horizon,
                       n_sim=10, show=False, stationary_policy=False)
 
@@ -103,8 +103,8 @@ def test_agent_stats_1():
 
 def test_agent_stats_2():
     # Define train and evaluation envs
-    train_env = GridWorld()
-    eval_env = GridWorld()
+    train_env = (GridWorld, {})
+    eval_env = (GridWorld, {})
 
     # Parameters
     params = {"n_episodes": 5}

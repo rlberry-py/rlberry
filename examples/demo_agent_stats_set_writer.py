@@ -6,10 +6,9 @@ from torch.utils.tensorboard import SummaryWriter
 
 
 # --------------------------------
-# Define train and evaluation envs
+# Define training env
 # --------------------------------
-train_env = PBall2D()
-eval_env = PBall2D()
+train_env = (PBall2D, dict())
 
 
 # -----------------------------
@@ -38,6 +37,6 @@ agent_stats_list[0].fit()
 agent_stats_list[0].save()  # after fit, writers are set to None to avoid pickle problems.
 
 # compare final policies
-output = evaluate_policies(agent_stats_list, eval_env,
+output = evaluate_policies(agent_stats_list,
                            eval_horizon=HORIZON, n_sim=10)
 print(output)

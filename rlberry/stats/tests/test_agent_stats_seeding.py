@@ -10,11 +10,11 @@ import pytest
 
 @pytest.mark.parametrize("env, agent_class",
                          [
-                            (MountainCar(), RSUCBVIAgent),
-                            ((gym_make, {'env_name': 'MountainCar-v0'}), RSUCBVIAgent),
+                            ((MountainCar, {}), RSUCBVIAgent),
+                            ((gym_make, {'id': 'MountainCar-v0'}), RSUCBVIAgent),
                             ((gym.make, {'id': 'MountainCar-v0'}), RSUCBVIAgent),
-                            (MountainCar(), A2CAgent),
-                            ((gym_make, {'env_name': 'MountainCar-v0'}), A2CAgent),
+                            ((MountainCar, {}), A2CAgent),
+                            ((gym_make, {'id': 'MountainCar-v0'}), A2CAgent),
                             ((gym.make, {'id': 'MountainCar-v0'}), A2CAgent)
                          ])
 def test_agent_stats_and_multiple_stats_seeding(env, agent_class):

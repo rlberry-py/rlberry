@@ -18,7 +18,6 @@ for agent_stats in experiment_generator():
 
     # Alternatively:
     # agent_stats.fit()
-    # agent_stats.save_results()
     # agent_stats.save()
 
 mstats.run()

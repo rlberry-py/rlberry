@@ -93,7 +93,6 @@ This can be done very succinctly as in the example below:
 
         # Alternatively:
         # agent_stats.fit()
-        # agent_stats.save_results()
         # agent_stats.save()
 
     mstats.run()

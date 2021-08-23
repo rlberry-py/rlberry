@@ -9,9 +9,12 @@ from rlberry.stats import AgentStats, plot_writer_data, evaluate_policies
 # --------------------------------
 # Define train and evaluation envs
 # --------------------------------
-train_env = get_benchmark_env(level=1)
-d_train_env = DiscretizeStateWrapper(train_env, 20)
+env_ctor = get_benchmark_env
+env_kwargs = dict(level=1)
+discrete_env_ctor = lambda level: DiscretizeStateWrapper(env_ctor(level), 20)
 
+train_env = (env_ctor, env_kwargs)
+d_train_env = (discrete_env_ctor, env_kwargs)
 
 # -----------------------------
 # Parameters

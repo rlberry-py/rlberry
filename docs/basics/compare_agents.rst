@@ -21,8 +21,8 @@ Two or more agents can be compared using the classes
     from rlberry.stats import AgentStats, MultipleStats, plot_writer_data
 
 
-    # Environment
-    env = MountainCar()
+    # Environment constructor and kwargs
+    env = (MountainCar, {})
 
     # Parameters
     params = {}

@@ -51,7 +51,7 @@ class DummyAgent(IncrementalAgent):
 
 def test_hyperparam_optim_tpe():
     # Define trainenv
-    train_env = GridWorld()
+    train_env = (GridWorld, {})
 
     # Parameters
     params = {"n_episodes": 500}
@@ -68,7 +68,7 @@ def test_hyperparam_optim_tpe():
 
 def test_hyperparam_optim_random():
     # Define train env
-    train_env = GridWorld()
+    train_env = (GridWorld, {})
 
     # Parameters
     params = {"n_episodes": 500}
@@ -83,7 +83,7 @@ def test_hyperparam_optim_random():
 
 def test_hyperparam_optim_grid():
     # Define train env
-    train_env = GridWorld()
+    train_env = (GridWorld, {})
 
     # Parameters
     params = {"n_episodes": 500}
@@ -103,7 +103,7 @@ def test_hyperparam_optim_grid():
 
 def test_hyperparam_optim_cmaes():
     # Define train env
-    train_env = GridWorld()
+    train_env = (GridWorld, {})
 
     # Parameters
     params = {"n_episodes": 500}
@@ -126,10 +126,11 @@ def test_discount_optimization():
             gamma = trial.suggest_categorical('gamma', [0.1, 0.99])
             return {'gamma': gamma}
 
-    env = GridWorld(nrows=3, ncols=10,
-                    reward_at={(1, 1): 0.1, (2, 9): 1.0},
-                    walls=((1, 4), (2, 4), (1, 5)),
-                    success_probability=0.9)
+    env = (GridWorld, dict(
+            nrows=3, ncols=10,
+            reward_at={(1, 1): 0.1, (2, 9): 1.0},
+            walls=((1, 4), (2, 4), (1, 5)),
+            success_probability=0.9))
 
     vi_params = {'gamma': 0.1, 'epsilon': 1e-3}
 

@@ -27,6 +27,7 @@ from rlberry.agents import IncrementalAgent
 from rlberry.stats.evaluation import mc_policy_evaluation
 from rlberry.utils.logging import configure_logging
 from rlberry.utils.writers import DefaultWriter
+from typing import Tuple
 
 
 # Using a lock when creating envs and agents, to avoid problems
@@ -56,9 +57,9 @@ class AgentStats:
     ----------
     agent_class
         Class of the agent.
-    train_env : Model or tuple (constructor, kwargs)
+    train_env : Tuple (constructor, kwargs)
         Enviroment used to initialize/train the agent.
-    eval_env : Model or tuple (constructor, kwargs)
+    eval_env : Tuple (constructor, kwargs)
         Environment used to evaluate the agent. If None, set to a
         reseeded deep copy of train_env.
     init_kwargs : dict
@@ -104,82 +105,80 @@ class AgentStats:
         # agent_class should only be None when the constructor is called
         # by the class method AgentStats.load(), since the agent class
         # will be loaded.
-        if agent_class is not None:
-            self.seeder = Seeder(seed)
 
-            self.agent_name = agent_name
-            if agent_name is None:
-                self.agent_name = agent_class.name
+        if agent_class is None:
+            return None  # Must only happen when load() method is called.
 
-            # create oject identifier
-            timestamp = datetime.timestamp(datetime.now())
-            self.identifier = 'stats_{}_{}'.format(self.agent_name,
-                                                   str(int(timestamp)))
+        self.seeder = Seeder(seed)
 
-            # Agent class
-            self.agent_class = agent_class
+        self.agent_name = agent_name
+        if agent_name is None:
+            self.agent_name = agent_class.name
 
-            # Train env
-            self.train_env = train_env
+        # Check train_env and eval_env
+        assert isinstance(
+            train_env, Tuple), "[AgentStats]train_env must be Tuple (constructor, kwargs)"
+        if eval_env is not None:
+            assert isinstance(
+                eval_env, Tuple), "[AgentStats]train_env must be Tuple (constructor, kwargs)"
 
-            # Check eval_env
-            if eval_env is None:
-                try:
-                    eval_env = deepcopy(train_env)
-                except Exception:
-                    raise ValueError("eval_env is None, and train_env cannot be deep copied." +
-                                     " Try setting train_env as a tuple (constructor, kwargs)")
-            self._eval_env = eval_env
+        # create oject identifier
+        timestamp = datetime.timestamp(datetime.now())
+        self.identifier = f'stats_{self.agent_name}_{str(int(timestamp))}'
 
-            # check kwargs
-            init_kwargs = init_kwargs or {}
-            fit_kwargs = fit_kwargs or {}
-            policy_kwargs = policy_kwargs or {}
+        # Agent class
+        self.agent_class = agent_class
 
-            # evaluation horizon
-            self.eval_horizon = eval_horizon
-            if eval_horizon is None:
-                try:
-                    self.eval_horizon = init_kwargs['horizon']
-                except KeyError:
-                    pass
+        # Train env
+        self.train_env = train_env
 
-            # init and fit kwargs are deep copied in fit()
-            self.init_kwargs = deepcopy(init_kwargs)
-            self.fit_kwargs = fit_kwargs
-            self.policy_kwargs = deepcopy(policy_kwargs)
-            self.n_fit = n_fit
-            self.n_jobs = n_jobs
-            self.joblib_backend = joblib_backend
-            self.thread_logging_level = thread_logging_level
+        # Check eval_env
+        if eval_env is None:
+            eval_env = deepcopy(train_env)
 
-            # output dir
-            output_dir = output_dir or self.identifier
-            self.output_dir = Path(output_dir)
+        self._eval_env = eval_env
 
-            # Create environment copies for training
-            self.train_env_set = []
-            for _ in range(n_fit):
-                _env = deepcopy(train_env)
-                safe_reseed(_env, self.seeder)
-                self.train_env_set.append(_env)
+        # check kwargs
+        init_kwargs = init_kwargs or {}
+        fit_kwargs = fit_kwargs or {}
+        policy_kwargs = policy_kwargs or {}
 
-            # Create list of writers for each agent that will be trained
-            self.writers = [('default', None) for _ in range(n_fit)]
+        # evaluation horizon
+        self.eval_horizon = eval_horizon
+        if eval_horizon is None:
+            try:
+                self.eval_horizon = init_kwargs['horizon']
+            except KeyError:
+                pass
 
-            #
-            self.fitted_agents = None
-            self.fit_kwargs_list = None  # keep in memory for partial_fit()
-            self.default_writer_data = None
-            self.best_hyperparams = None
+        # init and fit kwargs are deep copied in fit()
+        self.init_kwargs = deepcopy(init_kwargs)
+        self.fit_kwargs = fit_kwargs
+        self.policy_kwargs = deepcopy(policy_kwargs)
+        self.n_fit = n_fit
+        self.n_jobs = n_jobs
+        self.joblib_backend = joblib_backend
+        self.thread_logging_level = thread_logging_level
 
-            # optuna study
-            self.study = None
+        # output dir
+        output_dir = output_dir or self.identifier
+        self.output_dir = Path(output_dir)
 
-    @property
-    def eval_env(self):
+        # Create list of writers for each agent that will be trained
+        self.writers = [('default', None) for _ in range(n_fit)]
+
+        #
+        self.fitted_agents = None
+        self.fit_kwargs_list = None  # keep in memory for partial_fit()
+        self.default_writer_data = None
+        self.best_hyperparams = None
+
+        # optuna study
+        self.study = None
+
+    def build_eval_env(self):
         """
-        Instantiated and reseeded evaluation environment.
+        Return an instantiated and reseeded evaluation environment.
         """
         return _preprocess_env(self._eval_env, self.seeder)
 
@@ -240,14 +239,14 @@ class AgentStats:
         if not isinstance(seeders, list):
             seeders = [seeders]
         args = [(self.agent_class,
-                train_env,
+                self.train_env,
                 deepcopy(self.init_kwargs),
                 deepcopy(self.fit_kwargs),
                 writer,
                 self.thread_logging_level,
                 seeder)
-                for (seeder, train_env, writer)
-                in zip(seeders, self.train_env_set, self.writers)]
+                for (seeder, writer)
+                in zip(seeders, self.writers)]
 
         workers_output = Parallel(n_jobs=self.n_jobs,
                                   verbose=5,
@@ -272,14 +271,14 @@ class AgentStats:
         if self.fitted_agents is None:
             self.fitted_agents = []
             self.fit_kwargs_list = []
-            for idx, train_env in enumerate(self.train_env_set):
+            for idx in range(self.n_fit):
                 init_kwargs = deepcopy(self.init_kwargs)
 
                 # preprocess train_env
-                train_env = _preprocess_env(train_env, self.seeder)
+                train_env_instance = _preprocess_env(self.train_env, self.seeder)
 
                 # create agent instance
-                agent = self.agent_class(train_env,
+                agent = self.agent_class(train_env_instance,
                                          copy_env=False,
                                          seeder=self.seeder,
                                          **init_kwargs)
@@ -311,10 +310,10 @@ class AgentStats:
             for ii, agent in enumerate(self.fitted_agents):
                 self.default_writer_data[ii] = agent.writer.data
 
-    def save_results(self, output_dir=None, **kwargs):
+    def save(self, output_dir=None):
         """
-        Save the results obtained by optimize_hyperparams(),
-        fit() and partial_fit() to a directory.
+        Save AgentStats data to a folder. The data can be
+        later loaded to recreate an AgentStats instance.
 
         Parameters
         ----------
@@ -347,33 +346,15 @@ class AgentStats:
                     logger.warning(f"Could not save entry [{entry}]"
                                    + " of default_writer_data.")
 
-    def save(self, filename='stats', **kwargs):
-        """
-        Pickle the AgentStats object completely, so that
-        it can be loaded and continued later.
+        #
+        # Pickle AgentStats instance
+        #
 
-        Removes writers, since they usually cannot be pickled.
-
-        This is useful, for instance:
-        * If we want to run hyperparameter optimization for
-        a few minutes/hours, save the results, then continue
-        the optimization later.
-        * If we ran some experiments and we want to reload
-        the trained agents to visualize their policies
-        policy in a rendered environment and create videos.
-
-        Parameters
-        ----------
-        filename : string
-            Filename with .pickle extension.
-            Saves to output_dir / filename
-        """
         # remove writers
         self.disable_writers()
-
         # save
-        filename = Path(filename).with_suffix('.pickle')
-        filename = self.output_dir / filename
+        filename = Path('stats').with_suffix('.pickle')
+        filename = output_dir / filename
         filename.parent.mkdir(parents=True, exist_ok=True)
         try:
             with filename.open("wb") as ff:
@@ -528,9 +509,9 @@ class AgentStats:
             # get pruner
             if pruner_method == 'halving':
                 pruner = optuna.pruners.SuccessiveHalvingPruner(
-                            min_resource=1,
-                            reduction_factor=4,
-                            min_early_stopping_rate=0)
+                    min_resource=1,
+                    reduction_factor=4,
+                    min_early_stopping_rate=0)
             elif pruner_method == 'none':
                 pruner = None
             else:
@@ -556,7 +537,7 @@ class AgentStats:
             # Create AgentStats with hyperparams
             params_stats = AgentStats(
                 self.agent_class,
-                deepcopy(self.train_env),
+                self.train_env,
                 init_kwargs=kwargs,   # kwargs are being optimized
                 fit_kwargs=deepcopy(self.fit_kwargs),
                 policy_kwargs=deepcopy(self.policy_kwargs),
@@ -572,13 +553,8 @@ class AgentStats:
                 for ii in range(params_stats.n_fit):
                     params_stats.set_writer(ii, None, None)
 
-            # Evaluation environment copy
-            try:
-                temp_eval_env = deepcopy(self._eval_env)
-            except Exception:
-                raise ValueError("Cannot deep copy eval_env in optimize_hyperparams." +
-                                 " Try setting train_env or eval_env as a tuple (constructor, kwargs)")
-            params_eval_env = _preprocess_env(temp_eval_env, self.seeder)
+            # Create evaluation environment instance
+            params_eval_env = _preprocess_env(self._eval_env, self.seeder)
 
             #
             # Case 1: partial fit, that allows pruning
@@ -688,9 +664,9 @@ def _fit_worker(args):
 
     with _LOCK:
         # preprocess and train_env
-        train_env = _preprocess_env(train_env, seeder)
+        train_env_instance = _preprocess_env(train_env, seeder)
         # create agent
-        agent = agent_class(train_env, copy_env=False, seeder=seeder, **init_kwargs)
+        agent = agent_class(train_env_instance, copy_env=False, seeder=seeder, **init_kwargs)
 
     agent.name += f"(spawn_key{seeder.seed_seq.spawn_key})"
 

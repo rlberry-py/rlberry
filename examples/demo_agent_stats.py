@@ -9,8 +9,8 @@ from rlberry.stats import AgentStats, plot_writer_data, evaluate_policies
 # --------------------------------
 # Define train and evaluation envs
 # --------------------------------
-train_env = PBall2D()
-eval_env = PBall2D()
+train_env = (PBall2D, dict())
+eval_env = (PBall2D, dict())
 
 
 # -----------------------------
@@ -65,6 +65,6 @@ plot_writer_data(agent_stats_list,
                  show=False)
 
 # compare final policies
-output = evaluate_policies(agent_stats_list, eval_env,
+output = evaluate_policies(agent_stats_list,
                            eval_horizon=HORIZON, n_sim=10)
 print(output)

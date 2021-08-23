@@ -19,8 +19,8 @@ as shown in the examples below.
     from rlberry.stats import AgentStats, plot_writer_data
 
 
-    # Environment
-    env = gym_make('CartPole-v1')
+    # Environment (constructor, kwargs)
+    env = (gym_make, dict(id='CartPole-v1'))
 
     # Initial set of parameters
     params = {"n_episodes": 400,

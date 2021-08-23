@@ -83,9 +83,9 @@ class A2CAgent(Agent):
 #
 # Training one agent
 #
-
-
-env = gym_make('CartPole-v1')
+env_ctor = gym_make
+env_kwargs = dict(id='CartPole-v1')
+env = env_ctor(**env_kwargs)
 agent = A2CAgent(env, 'MlpPolicy', verbose=1)
 agent.fit(total_timesteps=1000)
 
@@ -105,7 +105,7 @@ from rlberry.stats import AgentStats, MultipleStats, evaluate_policies
 
 stats = AgentStats(
     A2CAgent,
-    env,
+    (env_ctor, env_kwargs),
     eval_horizon=200,
     agent_name='A2C baseline',
     init_kwargs={'policy': 'MlpPolicy', 'verbose': 1},
@@ -118,7 +118,7 @@ stats = AgentStats(
 
 stats_alternative = AgentStats(
     A2CAgent,
-    env,
+    (env_ctor, env_kwargs),
     eval_horizon=200,
     agent_name='A2C high learning rate',
     init_kwargs={'policy': 'MlpPolicy', 'verbose': 1, 'learning_rate': 0.01},

@@ -6,9 +6,7 @@ from rlberry.stats import AgentStats
 # --------------------------------
 # Define train and evaluation envs
 # --------------------------------
-train_env = PBall2D()
-eval_env = PBall2D()
-
+train_env = (PBall2D, None)
 
 # -----------------------------
 # Parameters
@@ -30,7 +28,7 @@ params_ppo = {"n_episodes": N_EPISODES,
 # --------------------------------
 ppo_stats = AgentStats(PPOAgent, train_env, eval_horizon=HORIZON,
                        init_kwargs=params_ppo, n_fit=4,
-                       output_dir='ppo_stats_backup')
+                       output_dir='dev/ppo_stats_backup')
 
 
 # hyperparam optim
@@ -46,7 +44,7 @@ ppo_stats.save()
 del ppo_stats
 
 # load
-ppo_stats = AgentStats.load('ppo_stats_backup/stats.pickle')
+ppo_stats = AgentStats.load('dev/ppo_stats_backup/stats.pickle')
 
 # continue previous optimization, now with 5s of timeout
 best_trial, data = ppo_stats.optimize_hyperparams(

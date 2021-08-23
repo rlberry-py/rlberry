@@ -4,7 +4,6 @@ import concurrent.futures
 def fit_stats(stats, save):
     stats.fit()
     if save:
-        stats.save_results()
         stats.save()
     return stats
 
@@ -38,7 +37,7 @@ class MultipleStats:
 
         save: bool, default: False
             If true, save AgentStats intances immediately after fitting.
-            AgentStats.save() and AgentStats.save_results() are called.
+            AgentStats.save() is called.
         """
         with concurrent.futures.ThreadPoolExecutor() as executor:
             futures = []
@@ -63,7 +62,6 @@ class MultipleStats:
         The output folder is defined in each of the AgentStats instances.
         """
         for stats in self.instances:
-            stats.save_results()
             stats.save()
 
     @property
