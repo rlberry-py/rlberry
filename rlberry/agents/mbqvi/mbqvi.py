@@ -1,14 +1,14 @@
 import numpy as np
 import logging
 
-from rlberry.agents import Agent
+from rlberry.agents import AgentWithSimplePolicy
 from rlberry.agents.dynprog.utils import backward_induction, value_iteration
 from gym.spaces import Discrete
 
 logger = logging.getLogger(__name__)
 
 
-class MBQVIAgent(Agent):
+class MBQVIAgent(AgentWithSimplePolicy):
     """
     Model-Basel Q-Value iteration (MBQVI).
 
@@ -54,7 +54,7 @@ class MBQVIAgent(Agent):
             "MBQVI requires a finite state space."
         assert isinstance(env.action_space, Discrete), \
             "MBQVI requires a finite action space."
-        Agent.__init__(self, env, **kwargs)
+        AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
         #
         self.n_samples = n_samples
@@ -76,7 +76,7 @@ class MBQVIAgent(Agent):
         self.N_sas[state, action, next_state] += 1
         self.S_sa[state, action] += reward
 
-    def fit(self, **kwargs):
+    def fit(self, budget=None):
         """Build empirical MDP and run value iteration."""
         S = self.env.observation_space.n
         A = self.env.action_space.n
@@ -133,7 +133,7 @@ class MBQVIAgent(Agent):
             info["precision"] = 0.0
         return info
 
-    def policy(self, state, hh=0, **kwargs):
+    def policy(self, state, hh=0):
         """
         Parameters
         -----------

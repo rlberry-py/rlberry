@@ -6,5 +6,7 @@ init_kwargs:
   max_repr: 800
   bonus_scale_factor: 1.0
   reward_free: True
-  n_episodes: 123  # ignored, set by experiment.yaml
-  horizon: 123  # ignored, set by experiment.yaml
+  horizon: 50
+fit_budget: 10
+eval_kwargs:
+  horizon: 50

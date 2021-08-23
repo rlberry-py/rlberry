@@ -1,7 +1,7 @@
 import numpy as np
 from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
 from rlberry.agents.torch.ppo import PPOAgent
-from rlberry.stats import AgentStats, plot_writer_data, evaluate_policies
+from rlberry.stats import AgentStats, plot_writer_data, evaluate_agents
 from rlberry.exploration_tools.discrete_counter import DiscreteCounter
 
 
@@ -28,7 +28,6 @@ BONUS_SCALE_FACTOR = 0.1
 MIN_DIST = 0.1
 
 params_ppo = {
-    'n_episodes': N_EPISODES,
     'gamma': GAMMA,
     'horizon': HORIZON,
     'batch_size': 16,
@@ -39,7 +38,6 @@ params_ppo = {
 }
 
 params_ppo_bonus = {
-    'n_episodes': N_EPISODES,
     'gamma': GAMMA,
     'horizon': HORIZON,
     'batch_size': 16,
@@ -52,13 +50,18 @@ params_ppo_bonus = {
         'uncertainty_estimator_fn': uncertainty_estimator_fn}
 }
 
+eval_kwargs = dict(eval_horizon=HORIZON, n_simulations=20)
 
 # -----------------------------
 # Run AgentStats
 # -----------------------------
-ppo_stats = AgentStats(PPOAgent, env, init_kwargs=params_ppo, n_fit=4, agent_name='PPO')
+ppo_stats = AgentStats(PPOAgent, env, fit_budget=N_EPISODES,
+                       init_kwargs=params_ppo, eval_kwargs=eval_kwargs,
+                       n_fit=4, agent_name='PPO')
 ppo_bonus_stats = AgentStats(
-    PPOAgent, env, init_kwargs=params_ppo_bonus, n_fit=4, agent_name='PPO-Bonus')
+    PPOAgent, env, fit_budget=N_EPISODES, 
+    init_kwargs=params_ppo_bonus, eval_kwargs=eval_kwargs,
+    n_fit=4, agent_name='PPO-Bonus')
 
 agent_stats_list = [ppo_bonus_stats, ppo_stats]
 
@@ -68,5 +71,5 @@ plot_writer_data(agent_stats_list, tag='episode_rewards',
                  title='Cumulative Rewards', show=False)
 
 # compare final policies
-output = evaluate_policies(agent_stats_list, eval_horizon=HORIZON, n_sim=20)
+output = evaluate_agents(agent_stats_list)
 print(output)

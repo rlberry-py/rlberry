@@ -16,16 +16,15 @@ def test_mock_args(monkeypatch):
         random_numbers.append(rng.uniform(size=10))
 
         assert agent_stats.agent_class is RSUCBVIAgent
-        assert agent_stats.init_kwargs['n_episodes'] == 100
         assert agent_stats.init_kwargs['horizon'] == 50
+        assert agent_stats.fit_budget == 10
+        assert agent_stats.eval_kwargs['horizon'] == 50
 
         assert agent_stats.init_kwargs['lp_metric'] == 2
         assert agent_stats.init_kwargs['min_dist'] == 0.0
         assert agent_stats.init_kwargs['max_repr'] == 800
         assert agent_stats.init_kwargs['bonus_scale_factor'] == 1.0
         assert agent_stats.init_kwargs['reward_free'] is True
-
-        assert agent_stats.eval_horizon == 51
 
         train_env = agent_stats.train_env[0](**agent_stats.train_env[1])
         assert train_env.reward_free is False

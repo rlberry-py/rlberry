@@ -3,7 +3,7 @@ from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
 from rlberry.agents import MBQVIAgent
 from rlberry.agents.torch.ppo import PPOAgent
 from rlberry.wrappers import DiscretizeStateWrapper
-from rlberry.stats import AgentStats, plot_writer_data, evaluate_policies
+from rlberry.stats import AgentStats, plot_writer_data, evaluate_agents
 
 
 # --------------------------------
@@ -29,17 +29,22 @@ params_oracle = {
     "horizon": HORIZON
 }
 
-params_ppo = {"n_episodes": N_EPISODES,
-              "gamma": GAMMA,
+params_ppo = {"gamma": GAMMA,
               "horizon": HORIZON,
               "learning_rate": 0.0003}
+
+eval_kwargs = dict(eval_horizon=HORIZON, n_simulations=20)
 
 # -----------------------------
 # Run AgentStats
 # -----------------------------
-oracle_stats = AgentStats(MBQVIAgent, d_train_env, init_kwargs=params_oracle,
+oracle_stats = AgentStats(MBQVIAgent, d_train_env, fit_budget=None,
+                          init_kwargs=params_oracle,
+                          eval_kwargs=eval_kwargs,
                           n_fit=4, agent_name="Oracle")
-ppo_stats = AgentStats(PPOAgent, train_env, init_kwargs=params_ppo,
+ppo_stats = AgentStats(PPOAgent, train_env, fit_budget=N_EPISODES,
+                       init_kwargs=params_ppo,
+                       eval_kwargs=eval_kwargs,
                        n_fit=4, agent_name="PPO")
 
 agent_stats_list = [oracle_stats, ppo_stats]
@@ -51,5 +56,5 @@ plot_writer_data(agent_stats_list, tag='episode_rewards',
 
 
 # compare final policies
-output = evaluate_policies(agent_stats_list, eval_horizon=HORIZON, n_sim=10)
+output = evaluate_agents(agent_stats_list)
 print(output)

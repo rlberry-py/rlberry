@@ -1,9 +1,8 @@
 import logging
-import numpy as np
 import torch
 
 import gym.spaces as spaces
-from rlberry.agents import IncrementalAgent
+from rlberry.agents import AgentWithSimplePolicy
 from rlberry.agents.utils.memories import Memory
 from rlberry.agents.torch.utils.training import optimizer_factory
 from rlberry.agents.torch.utils.models import default_policy_net_fn
@@ -13,7 +12,7 @@ from rlberry.utils.writers import DefaultWriter
 logger = logging.getLogger(__name__)
 
 
-class REINFORCEAgent(IncrementalAgent):
+class REINFORCEAgent(AgentWithSimplePolicy):
     """
     REINFORCE with entropy regularization.
 
@@ -21,8 +20,6 @@ class REINFORCEAgent(IncrementalAgent):
     ----------
     env : Model
         Online model with continuous (Box) state space and discrete actions
-    n_episodes : int
-        Number of episodes
     batch_size : int
         Number of episodes to wait before updating the policy.
     horizon : int
@@ -59,7 +56,6 @@ class REINFORCEAgent(IncrementalAgent):
     name = "REINFORCE"
 
     def __init__(self, env,
-                 n_episodes=1000,
                  batch_size=8,
                  horizon=256,
                  gamma=0.99,
@@ -72,9 +68,8 @@ class REINFORCEAgent(IncrementalAgent):
                  use_bonus_if_available=False,
                  device="cuda:best",
                  **kwargs):
-        IncrementalAgent.__init__(self, env, **kwargs)
+        Agent.__init__(self, env, **kwargs)
 
-        self.n_episodes = n_episodes
         self.batch_size = batch_size
         self.horizon = horizon
         self.gamma = gamma
@@ -121,18 +116,17 @@ class REINFORCEAgent(IncrementalAgent):
         # default writer
         self.writer = DefaultWriter(self.name)
 
-    def policy(self, state, **kwargs):
+    def policy(self, state):
         assert self.policy_net is not None
         state = torch.from_numpy(state).float().to(self.device)
         action_dist = self.policy_net(state)
         action = action_dist.sample().item()
         return action
 
-    def partial_fit(self, fraction: float, **kwargs):
-        assert 0.0 < fraction <= 1.0
-        n_episodes_to_run = int(np.ceil(fraction*self.n_episodes))
+    def fit(self, budget: int):
+        n_episodes_to_run = budget
         count = 0
-        while count < n_episodes_to_run and self.episode < self.n_episodes:
+        while count < n_episodes_to_run:
             self._run_episode()
             count += 1
 
@@ -154,7 +148,7 @@ class REINFORCEAgent(IncrementalAgent):
             # save in batch
             self.memory.states.append(state)
             self.memory.actions.append(action)
-            self.memory.rewards.append(reward+bonus)  # add bonus here
+            self.memory.rewards.append(reward + bonus)  # add bonus here
             self.memory.is_terminals.append(done)
             episode_rewards += reward
 

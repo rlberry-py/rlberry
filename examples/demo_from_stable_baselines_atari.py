@@ -1,3 +1,7 @@
+"""
+TODO: update according to new interface
+"""
+
 from stable_baselines3 import A2C as A2CStableBaselines
 from stable_baselines3.common.cmd_util import make_atari_env
 from stable_baselines3.common.vec_env import VecFrameStack
@@ -66,8 +70,6 @@ class A2CAgent(Agent):
 
     def fit(self, **kwargs):
         result = self.wrapped.learn(**kwargs)
-        info = {}  # possibly store something from results
-        return info
 
     def policy(self, observation, **kwargs):
         action, _state = self.wrapped.predict(observation, **kwargs)

@@ -117,4 +117,5 @@ Want to contribute to `rlberry`? Please check [our contribution guidelines](CONT
 
 ## TODO
 
-* `stats.plot_episode_rewards()` was removed: examples and documentation must be adapted to use `plot_writer_data` instead (as in `demo_agent_stats.py`).
+* Update docs and examples after updates in the interface.
+* Solve TODO tags in the code.

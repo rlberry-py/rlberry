@@ -3,6 +3,7 @@ from copy import deepcopy
 import dill
 import pickle
 import logging
+import numpy as np
 from inspect import signature
 from pathlib import Path
 from rlberry.seeding.seeder import Seeder
@@ -61,17 +62,39 @@ class Agent(ABC):
         self.seeder = Seeder(seeder)
 
     @abstractmethod
-    def fit(self, **kwargs):
-        """Train the agent using the provided environment."""
+    def fit(self, budget: int):
+        """Train the agent using the provided environment.
+
+        Ideally, calling
+
+        .. code-block:: python
+
+            fit(budget1)
+            fit(budget2)
+
+        should be equivalent to one call fit(budget1+budget2).
+        This property is required to reduce the time required for hyperparam
+        optimization (by allowing early stopping), but it is not strictly required
+        elsewhere in the library.
+
+        Parameters
+        ----------
+        budget: int
+            Computational (or sample complexity) budget.
+        """
         pass
 
     @abstractmethod
-    def policy(self, observation, **kwargs):
-        """Returns an action, given an observation."""
-        pass
+    def eval(self, eval_env, **kwargs):
+        """Returns a float measuring the quality of the agent (e.g. MC policy evaluation).
 
-    def reset(self, **kwargs):
-        """Put the agent in default setup."""
+        Parameters
+        ----------
+        eval_env: object
+            Environment for evaluation.
+        **kwargs: dict
+            Extra parameters.
+        """
         pass
 
     def set_writer(self, writer):
@@ -140,7 +163,7 @@ class Agent(ABC):
         ----------
         filename: Path or str
             File in which to save the Agent.
-        
+
         Returns
         -------
         If save() is successful, a Path object corresponding to the filename is returned.
@@ -197,3 +220,55 @@ class Agent(ABC):
         obj.__dict__.clear()
         obj.__dict__.update(tmp_dict)
         return obj
+
+
+class AgentWithSimplePolicy(Agent):
+    """A subclass of Agent implementing a policy() method, and a simple evaluation
+    method (Monte-Carlo policy evaluation).
+
+    The policy() method takes an observation as input and returns an action.
+    """
+    @abstractmethod
+    def policy(self, observation, **kwargs):
+        """Returns an action, given an observation."""
+        pass
+
+    def eval(self,
+             eval_env,
+             eval_horizon=10**5,
+             n_simimulations=10,
+             gamma=1.0,
+             **kwargs):
+        """
+        Monte-Carlo policy evaluation [1]_ of an agent to estimate the value at the initial state.
+
+        Parameters
+        ----------
+        eval_env : Env
+            Evaluation environment.
+        eval_horizon : int, default: 10**5
+            Horizon, maximum episode length.
+        n_simimulations : int, default: 10
+            Number of Monte Carlo simulations.
+        gamma : double, default: 1.0
+            Discount factor.
+
+        Return
+        ------
+        Mean over the n simulations of the sum of rewards in each simulation.
+
+        References
+        ----------
+        .. [1] http://incompleteideas.net/book/first/ebook/node50.html
+            """
+        del kwargs  # unused
+        episode_rewards = np.zeros(n_simimulations)
+        for sim in range(n_simimulations):
+            observation = eval_env.reset()
+            for hh in range(eval_horizon):
+                action = self.policy(observation)
+                observation, reward, done, _ = eval_env.step(action)
+                episode_rewards[sim] += reward * np.power(gamma, hh)
+                if done:
+                    break
+        return episode_rewards.mean()

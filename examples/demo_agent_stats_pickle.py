@@ -1,7 +1,7 @@
 import numpy as np
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
 from rlberry.agents.torch.ppo import PPOAgent
-from rlberry.stats import AgentStats, plot_writer_data, evaluate_policies
+from rlberry.stats import AgentStats, plot_writer_data, evaluate_agents
 
 
 # --------------------------------
@@ -21,15 +21,22 @@ BONUS_SCALE_FACTOR = 0.1
 MIN_DIST = 0.1
 
 
-params_ppo = {"n_episodes": N_EPISODES,
-              "gamma": GAMMA,
+params_ppo = {"gamma": GAMMA,
               "horizon": HORIZON,
               "learning_rate": 0.0003}
+
+eval_kwargs = dict(eval_horizon=HORIZON, n_simulations=20)
 
 # -------------------------------
 # Run AgentStats and save results
 # --------------------------------
-ppo_stats = AgentStats(PPOAgent, train_env, init_kwargs=params_ppo, n_fit=4, output_dir='ppo_stats')
+ppo_stats = AgentStats(PPOAgent,
+                       train_env,
+                       fit_budget=N_EPISODES,
+                       init_kwargs=params_ppo,
+                       eval_kwargs=eval_kwargs,
+                       n_fit=4,
+                       output_dir='ppo_stats')
 ppo_stats.fit()  # fit the 4 agents
 ppo_stats.save()
 del ppo_stats
@@ -45,6 +52,5 @@ plot_writer_data(ppo_stats, tag='episode_rewards',
                  title='Cumulative Rewards', show=False)
 
 # compare final policies
-output = evaluate_policies([ppo_stats], ppo_stats.build_eval_env(),
-                           eval_horizon=HORIZON, n_sim=10)
+output = evaluate_agents([ppo_stats])
 print(output)

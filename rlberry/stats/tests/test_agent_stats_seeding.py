@@ -20,12 +20,14 @@ import pytest
 def test_agent_stats_and_multiple_stats_seeding(env, agent_class):
     agent_stats = AgentStats(agent_class,
                              env,
-                             init_kwargs={'n_episodes': 2, 'horizon': 10},
+                             fit_budget=2,
+                             init_kwargs={'horizon': 10},
                              n_fit=6,
                              seed=3456)
     agent_stats_test = AgentStats(agent_class,
                                   env,
-                                  init_kwargs={'n_episodes': 2, 'horizon': 10},
+                                  fit_budget=2,
+                                  init_kwargs={'horizon': 10},
                                   n_fit=6,
                                   seed=3456)
 

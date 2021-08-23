@@ -3,7 +3,7 @@ from gym import spaces
 import logging
 import numpy as np
 
-from rlberry.agents import IncrementalAgent
+from rlberry.agents import AgentWithSimplePolicy
 from rlberry.agents.utils.memories import Transition, PrioritizedReplayMemory, TransitionReplayMemory
 from rlberry.exploration_tools.discrete_counter import DiscreteCounter
 from rlberry.exploration_tools.online_discretization_counter import OnlineDiscretizationCounter
@@ -28,7 +28,7 @@ def default_qvalue_net_fn(env):
     return model_factory(**model_config)
 
 
-class DQNAgent(IncrementalAgent):
+class DQNAgent(AgentWithSimplePolicy):
     """
     Deep Q Learning Agent.
 
@@ -36,8 +36,6 @@ class DQNAgent(IncrementalAgent):
     ----------
     env: gym.Env
         Environment
-    n_episodes : int
-        Number of episodes to train the algorithm
     horizon : int
         Maximum lenght of an episode.
     gamma : double
@@ -82,7 +80,6 @@ class DQNAgent(IncrementalAgent):
 
     def __init__(self,
                  env,
-                 n_episodes=1000,
                  horizon=256,
                  gamma=0.99,
                  loss_function="l2",
@@ -119,11 +116,10 @@ class DQNAgent(IncrementalAgent):
         if self.use_bonus:
             env = UncertaintyEstimatorWrapper(env,
                                               **uncertainty_estimator_kwargs)
-        IncrementalAgent.__init__(self, env, **kwargs)
+        AgentWithSimplePolicy.__init__(self, env, **kwargs)
         self.horizon = horizon
         self.exploration_kwargs = exploration_kwargs or {}
         self.memory_kwargs = memory_kwargs or {}
-        self.n_episodes = n_episodes
         self.batch_size = batch_size
         self.target_update = target_update
         self.double = double
@@ -166,12 +162,8 @@ class DQNAgent(IncrementalAgent):
         self.update_frequency = update_frequency
         self.steps = 0
 
-    def fit(self, **kwargs):
-        return self.partial_fit(fraction=1, **kwargs)
-
-    def partial_fit(self, fraction, **kwargs):
-        episode_rewards = []
-        for self.episode in range(int(fraction * self.n_episodes)):
+    def fit(self, budget: int):
+        for self.episode in range(budget):
             if self.writer:
                 state = self.env.reset()
                 values = self.get_state_action_values(state)
@@ -179,7 +171,7 @@ class DQNAgent(IncrementalAgent):
                     self.writer.add_scalar(f"agent/action_value_{i}", value, self.episode)
             total_reward, total_bonus, total_success, length = self._run_episode()
             if self.episode % 20 == 0:
-                logger.info(f"Episode {self.episode + 1}/{self.n_episodes}, total reward {total_reward}")
+                logger.info(f"Episode {self.episode + 1}/{budget}, total reward {total_reward}")
             if self.writer:
                 self.plot_memory()
                 self.plot_bonuses()
@@ -252,7 +244,7 @@ class DQNAgent(IncrementalAgent):
                 self.memory.update_priorities(indexes, new_priorities)
             self.update_target_network()
 
-    def policy(self, observation, **kwargs):
+    def policy(self, observation):
         """
         Act according to the state-action value model and an exploration
         policy

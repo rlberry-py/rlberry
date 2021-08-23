@@ -1,3 +1,7 @@
+"""
+TODO: update according to new interface
+"""
+
 from rlberry.envs import gym_make
 from stable_baselines3 import A2C as A2CStableBaselines
 from rlberry.agents import Agent
@@ -101,7 +105,7 @@ env.close()
 #
 # Training several agents and comparing different hyperparams
 #
-from rlberry.stats import AgentStats, MultipleStats, evaluate_policies
+from rlberry.stats import AgentStats, MultipleStats, evaluate_agents
 
 stats = AgentStats(
     A2CAgent,
@@ -136,7 +140,7 @@ mstats.append(stats_alternative)
 mstats.run()
 
 # Plot policy evaluation
-evaluate_policies(mstats.allstats)
+evaluate_agents(mstats.allstats)
 
 # Test hyperparam optim
 print("testint a call to hyperparam optim")

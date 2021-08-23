@@ -15,7 +15,6 @@ env = (GridWorld, dict(nrows=5, ncols=10))
 params = {}
 
 params['ucbvi'] = {
-    'n_episodes': N_EP,
     'horizon': HORIZON,
     'stage_dependent': True,
     'gamma': GAMMA,
@@ -24,20 +23,22 @@ params['ucbvi'] = {
 }
 
 params['optql'] = {
-    'n_episodes': N_EP,
     'horizon': HORIZON,
     'gamma': GAMMA,
     'bonus_scale_factor': 1.0,
 }
 
+eval_kwargs = dict(eval_horizon=HORIZON, n_simulations=20)
+
+
 mstats = MultipleStats()
 
 mstats.append(
-    AgentStats(UCBVIAgent, env, init_kwargs=params['ucbvi'])
+    AgentStats(UCBVIAgent, env, fit_budget=N_EP, init_kwargs=params['ucbvi'], eval_kwargs=eval_kwargs)
 )
 
 mstats.append(
-    AgentStats(OptQLAgent, env, init_kwargs=params['optql'])
+    AgentStats(OptQLAgent, env, fit_budget=N_EP, init_kwargs=params['optql'], eval_kwargs=eval_kwargs)
 )
 
 mstats.run()

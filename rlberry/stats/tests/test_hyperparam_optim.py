@@ -1,43 +1,30 @@
-import numpy as np
 from rlberry.envs import GridWorld
-from rlberry.agents import IncrementalAgent
+from rlberry.agents import AgentWithSimplePolicy
 from rlberry.agents.dynprog.value_iteration import ValueIterationAgent
 from rlberry.stats import AgentStats
 from optuna.samplers import TPESampler
 
 
-class DummyAgent(IncrementalAgent):
+class DummyAgent(AgentWithSimplePolicy):
     def __init__(self,
                  env,
-                 n_episodes,
                  hyperparameter1=0,
                  hyperparameter2=0,
                  **kwargs):
-        IncrementalAgent.__init__(self, env, **kwargs)
+        AgentWithSimplePolicy.__init__(self, env, **kwargs)
         self.name = "DummyAgent"
-        self.n_episodes = n_episodes
         self.fitted = False
         self.hyperparameter1 = hyperparameter1
         self.hyperparameter2 = hyperparameter2
 
         self.fraction_fitted = 0.0
 
-    def fit(self, **kwargs):
-        info = {}
-        info["episode_rewards"] = np.arange(self.n_episodes)
+    def fit(self, budget):
         self.fitted = True
-        return info
+        return None
 
-    def partial_fit(self, fraction, **kwargs):
-        assert fraction > 0.0 and fraction <= 1.0
-        self.fraction_fitted = min(1.0, self.fraction_fitted + fraction)
-        info = {}
-        nn = int(np.ceil(fraction*self.n_episodes))
-        info["episode_rewards"] = np.arange(nn)
-        return info
-
-    def policy(self, observation, time=0, **kwargs):
-        return self.env.action_space.sample()
+    def policy(self, observation):
+        return 0
 
     @classmethod
     def sample_parameters(cls, trial):
@@ -53,12 +40,14 @@ def test_hyperparam_optim_tpe():
     # Define trainenv
     train_env = (GridWorld, {})
 
-    # Parameters
-    params = {"n_episodes": 500}
-
     # Run AgentStats
-    stats_agent = AgentStats(DummyAgent, train_env, init_kwargs=params,
-                             n_fit=4, eval_horizon=10, n_jobs=1)
+    stats_agent = AgentStats(DummyAgent,
+                             train_env,
+                             fit_budget=1,
+                             init_kwargs={},
+                             eval_kwargs={'eval_horizon': 5},
+                             n_fit=4,
+                             n_jobs=1)
 
     # test hyperparameter optimization with TPE sampler
     # using hyperopt default values
@@ -70,12 +59,14 @@ def test_hyperparam_optim_random():
     # Define train env
     train_env = (GridWorld, {})
 
-    # Parameters
-    params = {"n_episodes": 500}
-
     # Run AgentStats
-    stats_agent = AgentStats(DummyAgent, train_env, init_kwargs=params,
-                             n_fit=4, eval_horizon=10, n_jobs=1)
+    stats_agent = AgentStats(DummyAgent,
+                             train_env,
+                             init_kwargs={},
+                             fit_budget=1,
+                             eval_kwargs={'eval_horizon': 5},
+                             n_fit=4,
+                             n_jobs=1)
 
     # test hyperparameter optimization with random sampler
     stats_agent.optimize_hyperparams(sampler_method="random")
@@ -85,12 +76,14 @@ def test_hyperparam_optim_grid():
     # Define train env
     train_env = (GridWorld, {})
 
-    # Parameters
-    params = {"n_episodes": 500}
-
     # Run AgentStats
-    stats_agent = AgentStats(DummyAgent, train_env, init_kwargs=params,
-                             n_fit=4, eval_horizon=10, n_jobs=1)
+    stats_agent = AgentStats(DummyAgent,
+                             train_env,
+                             init_kwargs={},
+                             fit_budget=1,
+                             eval_kwargs={'eval_horizon': 5},
+                             n_fit=4,
+                             n_jobs=1)
 
     # test hyperparameter optimization with grid sampler
     search_space = {"hyperparameter1": [1, 2, 3],
@@ -105,12 +98,14 @@ def test_hyperparam_optim_cmaes():
     # Define train env
     train_env = (GridWorld, {})
 
-    # Parameters
-    params = {"n_episodes": 500}
-
     # Run AgentStats
-    stats_agent = AgentStats(DummyAgent, train_env, init_kwargs=params,
-                             n_fit=4, eval_horizon=10, n_jobs=1)
+    stats_agent = AgentStats(DummyAgent,
+                             train_env,
+                             init_kwargs={},
+                             fit_budget=1,
+                             eval_kwargs={'eval_horizon': 5},
+                             n_fit=4,
+                             n_jobs=1)
 
     # test hyperparameter optimization with CMA-ES sampler
     stats_agent.optimize_hyperparams(sampler_method="cmaes")
@@ -136,7 +131,8 @@ def test_discount_optimization():
 
     vi_stats = AgentStats(ValueIterationAgentToOptimize,
                           env,
-                          eval_horizon=20,
+                          fit_budget=0,
+                          eval_kwargs=dict(eval_horizon=20),
                           init_kwargs=vi_params,
                           n_fit=4,
                           n_jobs=1,

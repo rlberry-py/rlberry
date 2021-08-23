@@ -1,8 +1,8 @@
 import logging
+from rlberry.agents.agent import AgentWithSimplePolicy
 import numpy as np
 
 import gym.spaces as spaces
-from rlberry.agents import IncrementalAgent
 from rlberry.agents.dynprog.utils import backward_induction
 from rlberry.agents.dynprog.utils import backward_induction_in_place
 from rlberry.agents.kernel_based.common import map_to_representative
@@ -12,7 +12,7 @@ from rlberry.utils.writers import DefaultWriter
 logger = logging.getLogger(__name__)
 
 
-class RSUCBVIAgent(IncrementalAgent):
+class RSUCBVIAgent(AgentWithSimplePolicy):
     """
     Value iteration with exploration bonuses for continuous-state environments,
     using a online discretization strategy:
@@ -30,8 +30,6 @@ class RSUCBVIAgent(IncrementalAgent):
     ----------
     env : Model
         Online model with continuous (Box) state space and discrete actions
-    n_episodes : int
-        number of episodes
     gamma : double
         Discount factor in [0, 1]. If gamma is 1.0, the problem is set to
         be finite-horizon.
@@ -89,7 +87,6 @@ class RSUCBVIAgent(IncrementalAgent):
     name = "RSUCBVI"
 
     def __init__(self, env,
-                 n_episodes=1000,
                  gamma=0.99,
                  horizon=100,
                  lp_metric=2,
@@ -101,9 +98,8 @@ class RSUCBVIAgent(IncrementalAgent):
                  reward_free=False,
                  **kwargs):
         # init base class
-        IncrementalAgent.__init__(self, env, **kwargs)
+        AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
-        self.n_episodes = n_episodes
         self.gamma = gamma
         self.horizon = horizon
         self.lp_metric = lp_metric
@@ -196,23 +192,18 @@ class RSUCBVIAgent(IncrementalAgent):
 
         self.episode = 0
 
-        # info
-        self._rewards = np.zeros(self.n_episodes)
-        self._cumul_rewards = np.zeros(self.n_episodes)
-
         # default writer
         self.writer = DefaultWriter(self.name)
 
-    def policy(self, state, hh=0, **kwargs):
+    def policy(self, state, hh=0):
         assert self.Q_policy is not None
         repr_state = self._map_to_repr(state, False)
         return self.Q_policy[hh, repr_state, :].argmax()
 
-    def partial_fit(self, fraction, **kwargs):
-        assert 0.0 < fraction <= 1.0
-        n_episodes_to_run = int(np.ceil(fraction*self.n_episodes))
+    def fit(self, budget: int):
+        n_episodes_to_run = budget
         count = 0
-        while count < n_episodes_to_run and self.episode < self.n_episodes:
+        while count < n_episodes_to_run:
             self._run_episode()
             count += 1
 
@@ -294,18 +285,11 @@ class RSUCBVIAgent(IncrementalAgent):
             self.P_hat[:self.M, :, :self.M],
             self.horizon, self.gamma, self.v_max)
 
-        ep = self.episode
-        self._rewards[ep] = episode_rewards
-        self._cumul_rewards[ep] = episode_rewards \
-            + self._cumul_rewards[max(0, ep - 1)]
-
         self.episode += 1
         #
         if self.writer is not None:
-            avg_reward = self._cumul_rewards[ep]/max(1, ep)
 
             self.writer.add_scalar("episode_rewards", episode_rewards, self.episode)
-            self.writer.add_scalar("avg reward", avg_reward, self.episode)
             self.writer.add_scalar("representative states", self.M, self.episode)
 
         # return sum of rewards collected in the episode

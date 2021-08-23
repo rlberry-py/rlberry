@@ -1,10 +1,9 @@
-import numpy as np
 import torch
 import torch.nn as nn
 import logging
 
 import gym.spaces as spaces
-from rlberry.agents import IncrementalAgent
+from rlberry.agents import AgentWithSimplePolicy
 from rlberry.agents.utils.memories import Memory
 from rlberry.agents.torch.utils.training import optimizer_factory
 from rlberry.agents.torch.utils.models import default_policy_net_fn
@@ -16,14 +15,12 @@ from rlberry.wrappers.uncertainty_estimator_wrapper import UncertaintyEstimatorW
 logger = logging.getLogger(__name__)
 
 
-class A2CAgent(IncrementalAgent):
+class A2CAgent(AgentWithSimplePolicy):
     """
     Parameters
     ----------
     env : Model
         Online model with continuous (Box) state space and discrete actions
-    n_episodes : int
-        Number of episodes
     batch_size : int
         Number of episodes to wait before updating the policy.
     horizon : int
@@ -67,7 +64,6 @@ class A2CAgent(IncrementalAgent):
     name = "A2C"
 
     def __init__(self, env,
-                 n_episodes=1000,
                  batch_size=8,
                  horizon=256,
                  gamma=0.99,
@@ -87,9 +83,8 @@ class A2CAgent(IncrementalAgent):
         if self.use_bonus:
             env = UncertaintyEstimatorWrapper(env,
                                               **uncertainty_estimator_kwargs)
-        IncrementalAgent.__init__(self, env, **kwargs)
+        AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
-        self.n_episodes = n_episodes
         self.batch_size = batch_size
         self.horizon = horizon
         self.gamma = gamma
@@ -147,25 +142,20 @@ class A2CAgent(IncrementalAgent):
 
         self.episode = 0
 
-        # useful data
-        self._rewards = np.zeros(self.n_episodes)
-        self._cumul_rewards = np.zeros(self.n_episodes)
-
         # default writer
         self.writer = DefaultWriter(self.name)
 
-    def policy(self, state, **kwargs):
+    def policy(self, state):
         assert self.cat_policy is not None
         state = torch.from_numpy(state).float().to(self.device)
         action_dist = self.cat_policy_old(state)
         action = action_dist.sample().item()
         return action
 
-    def partial_fit(self, fraction: float, **kwargs):
-        assert 0.0 < fraction <= 1.0
-        n_episodes_to_run = int(np.ceil(fraction*self.n_episodes))
+    def fit(self, budget: int):
+        n_episodes_to_run = budget
         count = 0
-        while count < n_episodes_to_run and self.episode < self.n_episodes:
+        while count < n_episodes_to_run:
             self._run_episode()
             count += 1
 
@@ -208,10 +198,6 @@ class A2CAgent(IncrementalAgent):
             state = next_state
 
         # update
-        ep = self.episode
-        self._rewards[ep] = episode_rewards
-        self._cumul_rewards[ep] = episode_rewards \
-            + self._cumul_rewards[max(0, ep - 1)]
         self.episode += 1
         #
         if self.writer is not None:

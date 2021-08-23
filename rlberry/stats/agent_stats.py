@@ -20,11 +20,10 @@ from joblib import Parallel, delayed
 import json
 import logging
 import dill
+import numpy as np
 import pickle
 import pandas as pd
 import threading
-from rlberry.agents import IncrementalAgent
-from rlberry.stats.evaluation import mc_policy_evaluation
 from rlberry.utils.logging import configure_logging
 from rlberry.utils.writers import DefaultWriter
 from typing import Tuple
@@ -59,15 +58,15 @@ class AgentStats:
         Class of the agent.
     train_env : Tuple (constructor, kwargs)
         Enviroment used to initialize/train the agent.
+    fit_budget : int
+        Argument required to call agent.fit().
     eval_env : Tuple (constructor, kwargs)
         Environment used to evaluate the agent. If None, set to a
         reseeded deep copy of train_env.
     init_kwargs : dict
         Arguments required by the agent's constructor.
-    fit_kwargs : dict
-        Arguments required to call agent.fit().
-    policy_kwargs : dict
-        Arguments required to call agent.policy().
+    eval_kwargs : dict
+        Arguments required to call agent.eval().
     agent_name : str
         Name of the agent. If None, set to agent_class.name
     n_fit : int
@@ -90,11 +89,10 @@ class AgentStats:
     def __init__(self,
                  agent_class,
                  train_env,
+                 fit_budget,
                  eval_env=None,
-                 eval_horizon=None,
                  init_kwargs=None,
-                 fit_kwargs=None,
-                 policy_kwargs=None,
+                 eval_kwargs=None,
                  agent_name=None,
                  n_fit=4,
                  n_jobs=4,
@@ -140,21 +138,12 @@ class AgentStats:
 
         # check kwargs
         init_kwargs = init_kwargs or {}
-        fit_kwargs = fit_kwargs or {}
-        policy_kwargs = policy_kwargs or {}
+        eval_kwargs = eval_kwargs or {}
 
-        # evaluation horizon
-        self.eval_horizon = eval_horizon
-        if eval_horizon is None:
-            try:
-                self.eval_horizon = init_kwargs['horizon']
-            except KeyError:
-                pass
-
-        # init and fit kwargs are deep copied in fit()
+        # params
         self.init_kwargs = deepcopy(init_kwargs)
-        self.fit_kwargs = fit_kwargs
-        self.policy_kwargs = deepcopy(policy_kwargs)
+        self.fit_budget = fit_budget
+        self.eval_kwargs = deepcopy(eval_kwargs)
         self.n_fit = n_fit
         self.n_jobs = n_jobs
         self.joblib_backend = joblib_backend
@@ -169,7 +158,6 @@ class AgentStats:
 
         #
         self.fitted_agents = None
-        self.fit_kwargs_list = None  # keep in memory for partial_fit()
         self.default_writer_data = None
         self.best_hyperparams = None
 
@@ -185,6 +173,14 @@ class AgentStats:
     @property
     def writer_data(self):
         return self.default_writer_data
+
+    def eval(self):
+        """
+        Call .eval() method in all fitted agents and return average result.
+        """
+        assert self.fitted_agents is not None, '[AgentStats] Error, call to eval() requires the agents to be fitted.'
+        values = [agent.eval(self.build_eval_env(), **self.eval_kwargs) for agent in self.fitted_agents]
+        return np.mean(values)
 
     def set_output_dir(self, output_dir):
         """
@@ -230,18 +226,22 @@ class AgentStats:
             for agent in self.fitted_agents:
                 agent.set_writer(None)
 
-    def fit(self):
+    def fit(self, budget=None):
         """
         Fit the agent instances in parallel.
+
+        TODO: handle partial fit correctly (_fit_worker must not create Agents from scratch).
         """
+        budget = budget or self.fit_budget
+
         logger.info(f"Training AgentStats for {self.agent_name}... ")
         seeders = self.seeder.spawn(self.n_fit)
         if not isinstance(seeders, list):
             seeders = [seeders]
         args = [(self.agent_class,
                 self.train_env,
+                budget,
                 deepcopy(self.init_kwargs),
-                deepcopy(self.fit_kwargs),
                 writer,
                 self.thread_logging_level,
                 seeder)
@@ -258,46 +258,6 @@ class AgentStats:
         logger.info("... trained!")
 
         # gather all stats in a dictionary
-        self._gather_default_writer_data()
-
-    def partial_fit(self, fraction):
-        """
-        Partially fit the agent instances (not parallel).
-        """
-        assert fraction > 0.0 and fraction <= 1.0
-        assert issubclass(self.agent_class, IncrementalAgent)
-
-        # Create instances if this is the first call
-        if self.fitted_agents is None:
-            self.fitted_agents = []
-            self.fit_kwargs_list = []
-            for idx in range(self.n_fit):
-                init_kwargs = deepcopy(self.init_kwargs)
-
-                # preprocess train_env
-                train_env_instance = _preprocess_env(self.train_env, self.seeder)
-
-                # create agent instance
-                agent = self.agent_class(train_env_instance,
-                                         copy_env=False,
-                                         seeder=self.seeder,
-                                         **init_kwargs)
-
-                # set agent writer
-                if self.writers[idx][0] is None:
-                    agent.set_writer(None)
-                elif self.writers[idx][0] != 'default':
-                    writer_fn = self.writers[idx][0]
-                    writer_kwargs = self.writers[idx][1]
-                    agent.set_writer(writer_fn(**writer_kwargs))
-                #
-                self.fitted_agents.append(agent)
-                #
-                self.fit_kwargs_list.append(deepcopy(self.fit_kwargs))
-
-        # Run partial fit
-        for agent, fit_kwargs in zip(self.fitted_agents, self.fit_kwargs_list):
-            agent.partial_fit(fraction, **fit_kwargs)
         self._gather_default_writer_data()
 
     def _gather_default_writer_data(self):
@@ -372,7 +332,7 @@ class AgentStats:
     def load(cls, filename):
         filename = Path(filename).with_suffix('.pickle')
 
-        obj = cls(None, None)
+        obj = cls(None, None, None)
         try:
             with filename.open('rb') as ff:
                 tmp_dict = pickle.load(ff)
@@ -395,10 +355,8 @@ class AgentStats:
                              sampler_method='random',
                              pruner_method='halving',
                              continue_previous=False,
-                             partial_fit_fraction=0.25,
+                             fit_fraction=1.0,
                              sampler_kwargs=None,
-                             evaluation_function=None,
-                             evaluation_function_kwargs=None,
                              disable_evaluation_writers=True):
         """
         Run hyperparameter optimization and updates init_kwargs with the
@@ -436,11 +394,9 @@ class AgentStats:
             Set to true to continue previous Optuna study. If true,
             sampler_method and pruner_method will be
             the same as in the previous study.
-        partial_fit_fraction : double, in ]0, 1]
+        fit_fraction : double, in ]0, 1]
             Fraction of the agent to fit for partial evaluation
             (allows pruning of trials).
-            Only used for agents that implement partial_fit()
-            (IncrementalAgent interface).
         sampler_kwargs : dict or None
             Allows users to use different Optuna samplers with
             personalized arguments.
@@ -460,22 +416,7 @@ class AgentStats:
             logging.error("Optuna not installed.")
             return
 
-        assert self.eval_horizon is not None, \
-            "To use optimize_hyperparams(), " + \
-            "eval_horizon must be given to AgentStats."
-
-        assert partial_fit_fraction > 0.0 and partial_fit_fraction <= 1.0
-
-        evaluation_function_kwargs = evaluation_function_kwargs or {}
-        if evaluation_function is None:
-            evaluation_function = mc_policy_evaluation
-            evaluation_function_kwargs = {
-                'eval_horizon': self.eval_horizon,
-                'n_sim': n_sim,
-                'gamma': 1.0,
-                'policy_kwargs': self.policy_kwargs,
-                'stationary_policy': True,
-            }
+        assert fit_fraction > 0.0 and fit_fraction <= 1.0
 
         #
         # Create optuna study
@@ -538,46 +479,37 @@ class AgentStats:
             params_stats = AgentStats(
                 self.agent_class,
                 self.train_env,
+                self.fit_budget,
                 init_kwargs=kwargs,   # kwargs are being optimized
-                fit_kwargs=deepcopy(self.fit_kwargs),
-                policy_kwargs=deepcopy(self.policy_kwargs),
+                eval_kwargs=deepcopy(self.eval_kwargs),
                 agent_name='optim',
                 n_fit=n_fit,
                 n_jobs=n_jobs,
                 thread_logging_level='WARNING',
                 joblib_backend='threading',
                 seed=self.seeder)
-            params_stats._eval_env = None  # make sure _eval_env is not used in this instance
 
             if disable_evaluation_writers:
                 for ii in range(params_stats.n_fit):
                     params_stats.set_writer(ii, None, None)
 
-            # Create evaluation environment instance
-            params_eval_env = _preprocess_env(self._eval_env, self.seeder)
-
             #
             # Case 1: partial fit, that allows pruning
             #
-            if partial_fit_fraction < 1.0 \
-                    and issubclass(params_stats.agent_class, IncrementalAgent):
+            if fit_fraction < 1.0:
                 fraction_complete = 0.0
                 step = 0
                 while fraction_complete < 1.0:
                     #
-                    params_stats.partial_fit(partial_fit_fraction)
+                    params_stats.fit(int(self.fit_budget * fit_fraction))
                     # Evaluate params
-                    eval_result = evaluation_function(params_stats.fitted_agents,
-                                                      params_eval_env,
-                                                      **evaluation_function_kwargs)
-
-                    eval_value = eval_result.mean()
+                    eval_value = params_stats.eval()
 
                     # Report intermediate objective value
                     trial.report(eval_value, step)
 
                     #
-                    fraction_complete += partial_fit_fraction
+                    fraction_complete += fit_fraction
                     step += 1
                     #
 
@@ -593,11 +525,7 @@ class AgentStats:
                 params_stats.fit()
 
                 # Evaluate params
-                eval_result = evaluation_function(params_stats.fitted_agents,
-                                                  params_eval_env,
-                                                  **evaluation_function_kwargs)
-
-                eval_value = eval_result.mean()
+                eval_value = params_stats.eval()
 
             return eval_value
 
@@ -653,8 +581,8 @@ def _fit_worker(args):
     """
     Create and fit an agent instance
     """
-    agent_class, train_env, init_kwargs, \
-        fit_kwargs, writer, thread_logging_level, seeder = args
+    agent_class, train_env, fit_budget, init_kwargs, \
+        writer, thread_logging_level, seeder = args
 
     # reseed external libraries
     set_external_seed(seeder)
@@ -681,7 +609,7 @@ def _fit_worker(args):
         writer_kwargs = writer[1]
         agent.set_writer(writer_fn(**writer_kwargs))
     # fit agent
-    agent.fit(**fit_kwargs)
+    agent.fit(fit_budget)
 
     # Remove writer after fit (prevent pickle problems),
     # unless the agent uses DefaultWriter

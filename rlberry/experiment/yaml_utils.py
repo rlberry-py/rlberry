@@ -173,8 +173,8 @@ def parse_experiment_config(path: Path,
 
             # kwargs
             init_kwargs = agent_config['init_kwargs']
-            fit_kwargs = agent_config['fit_kwargs']
-            policy_kwargs = agent_config['policy_kwargs']
+            eval_kwargs = agent_config['eval_kwargs']
+            fit_budget = agent_config['fit_budget']
 
             # check if there are global kwargs
             if 'global_init_kwargs' in config:
@@ -191,16 +191,15 @@ def parse_experiment_config(path: Path,
                 eval_horizon = None
 
             # append run index to dir
-            output_dir = output_dir / str(last+1)
+            output_dir = output_dir / str(last + 1)
 
             yield seed, AgentStats(agent_class=agent_class,
                                    init_kwargs=init_kwargs,
-                                   fit_kwargs=fit_kwargs,
-                                   policy_kwargs=policy_kwargs,
+                                   eval_kwargs=eval_kwargs,
+                                   fit_budget=fit_budget,
                                    agent_name=agent_name,
                                    train_env=train_env,
                                    eval_env=eval_env,
-                                   eval_horizon=eval_horizon,
                                    n_fit=n_fit,
                                    n_jobs=n_jobs,
                                    output_dir=output_dir,

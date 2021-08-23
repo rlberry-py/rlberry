@@ -1,3 +1,6 @@
 base_config: 'rlberry/experiment/tests/rsucbvi.yaml'
 init_kwargs:
   gamma: 0.9
+fit_budget: 10
+eval_kwargs:
+  horizon: 50

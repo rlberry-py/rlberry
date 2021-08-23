@@ -1,5 +1,4 @@
 import logging
-import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
@@ -8,159 +7,46 @@ import seaborn as sns
 logger = logging.getLogger(__name__)
 
 
-def mc_policy_evaluation(agent,
-                         eval_env,
-                         eval_horizon=10**5,
-                         n_sim=10,
-                         gamma=1.0,
-                         policy_kwargs=None,
-                         stationary_policy=True):
+def evaluate_agents(agent_stats_list,
+                    n_simulations=10,
+                    fignum=None,
+                    show=True,
+                    plot=True,
+                    sns_kwargs=None):
     """
-    Monte-Carlo Policy evaluation [1]_ of an agent to estimate the value at the initial state.
-
-    If a list of agents is provided as input, for each evaluation, one of the agents is sampled
-    uniformly at random.
-
-    Parameters
-    ----------
-    agent : Agent or list of agents.
-        Trained agent(s).
-    eval_env : Env
-        Evaluation environment.
-    eval_horizon : int, default: 10**5
-        Horizon, maximum episode length.
-    n_sim : int, default: 10
-        Number of Monte Carlo simulations.
-    gamma : double, default: 1.0
-        Discount factor.
-    policy_kwargs : dict or None
-        Optional kwargs for agent.policy() method.
-    stationary_policy : bool, default: True
-        If False, the time step h (0<= h <= eval_horizon) is sent as argument
-        to agent.policy() for policy evaluation.
-
-    Return
-    ------
-    Numpy array of shape (n_sim, ) containing the sum of rewards in each simulation.
-
-    References
-    ----------
-    .. [1] http://incompleteideas.net/book/first/ebook/node50.html
-    """
-    if not isinstance(agent, list):
-        agents = [agent]
-    else:
-        agents = agent
-
-    rng = agents[0].seeder.rng
-
-    policy_kwargs = policy_kwargs or {}
-
-    episode_rewards = np.zeros(n_sim)
-    for sim in range(n_sim):
-        idx = rng.integers(len(agents))
-
-        observation = eval_env.reset()
-        for hh in range(eval_horizon):
-            if stationary_policy:
-                action = agents[idx].policy(observation, **policy_kwargs)
-            else:
-                action = agents[idx].policy(observation, hh, **policy_kwargs)
-            observation, reward, done, _ = eval_env.step(action)
-            episode_rewards[sim] += reward * np.power(gamma, hh)
-            if done:
-                break
-
-    return episode_rewards
-
-
-def evaluate_policies(agent_stats_list,
-                      eval_env=None,
-                      eval_horizon=None,
-                      stationary_policy=True,
-                      n_sim=10,
-                      fignum=None,
-                      show=True,
-                      plot=True,
-                      **kwargs):
-    """
-    Evaluate and compate the policies of each of the agents in agent_stats_list.
-    Each element of the agent_stats_list contains a list of fitted agents.
-    To evaluate the policy, we repeat n_sim times:
-        * choose one of the fitted agents uniformly at random
-        * run its policy in eval_env for eval_horizon time steps
-
+    Evaluate and compare each of the agents in agent_stats_list.
 
     Parameters
     ----------
     agent_stats_list : list of AgentStats objects.
-    eval_env : Model
-        Environment where to evaluate the policies.
-        If None, it is taken from AgentStats.
-    eval_horizon : int
-        Number of time steps for policy evaluation.
-        If None, it is taken from AgentStats.
-    stationary_policy : bool
-        If False, the time step h (0<= h <= eval_horizon) is sent as argument
-        to agent.policy() for policy evaluation.
-    n_sim : int
-        Number of simulations to evaluate each policy.
+    n_simulations: int
+        Number of calls to the eval() method of each AgentStats instance.
     fignum: string or int
         Identifier of plot figure.
     show: bool
         If true, calls plt.show().
     plot: bool
         If false, do not plot.
-    kwargs:
+    sns_kwargs:
         Extra parameters for sns.boxplot
     """
+    sns_kwargs = sns_kwargs or {}
+
     #
     # evaluation
     #
-    use_eval_from_agent_stats = (eval_env is None)
-    use_horizon_from_agent_stats = (eval_horizon is None)
 
-    agents_rewards = []
+    eval_outputs = []
     for agent_stats in agent_stats_list:
         # train agents if they are not already trained
         if agent_stats.fitted_agents is None:
             agent_stats.fit()
 
-        # eval env and horizon
-        if use_eval_from_agent_stats:
-            eval_env = agent_stats.build_eval_env()
-            assert eval_env is not None, \
-                "eval_env not in AgentStats %s" % agent_stats.agent_name
-        if use_horizon_from_agent_stats:
-            eval_horizon = agent_stats.eval_horizon
-            assert eval_horizon is not None, \
-                "eval_horizon not in AgentStats %s" % agent_stats.agent_name
+        outputs = []
+        for _ in range(n_simulations):
+            outputs.append(agent_stats.eval())
 
-        # get rng from agent_stats
-        rng = agent_stats.seeder.rng
-
-        # evaluate agent
-        episode_rewards = np.zeros(n_sim)
-        for sim in range(n_sim):
-            # choose one of the fitted agents randomly
-            agent_idx = rng.integers(len(agent_stats.fitted_agents))
-            agent = agent_stats.fitted_agents[agent_idx]
-            # evaluate agent
-            observation = eval_env.reset()
-            for hh in range(eval_horizon):
-                if stationary_policy:
-                    action = agent.policy(observation,
-                                          **agent_stats.policy_kwargs)
-                else:
-                    action = agent.policy(observation, hh,
-                                          **agent_stats.policy_kwargs)
-                observation, reward, done, _ = eval_env.step(action)
-                episode_rewards[sim] += reward
-                if done:
-                    break
-        # store rewards
-        agents_rewards.append(episode_rewards)
-
+        eval_outputs.append(outputs)
     #
     # plot
     #
@@ -179,21 +65,17 @@ def evaluate_policies(agent_stats_list,
 
     # convert output to DataFrame
     data = {}
-    for agent_id, agent_rewards in zip(unique_ids, agents_rewards):
-        data[agent_id] = agent_rewards
+    for agent_id, out in zip(unique_ids, eval_outputs):
+        data[agent_id] = out
     output = pd.DataFrame(data)
 
     # plot
     if plot:
         plt.figure(fignum)
-
         with sns.axes_style("whitegrid"):
-            ax = sns.boxplot(data=output, **kwargs)
+            ax = sns.boxplot(data=output, **sns_kwargs)
             ax.set_xlabel("agent")
             ax.set_ylabel("rewards in one episode")
-            plt.title("Environment = %s" %
-                      getattr(eval_env.unwrapped, "name",
-                              eval_env.unwrapped.__class__.__name__))
             if show:
                 plt.show()
 
@@ -205,7 +87,8 @@ def plot_writer_data(agent_stats,
                      fignum=None,
                      show=True,
                      preprocess_func=None,
-                     title=None):
+                     title=None,
+                     sns_kwargs=None):
     """
     Given a list of AgentStats, plot data (corresponding to info) obtained in each episode.
     The dictionary returned by agents' .fit() method must contain a key equal to `info`.
@@ -223,8 +106,12 @@ def plot_writer_data(agent_stats,
         Function to apply to 'tag' column before plot. For instance, if tag=episode_rewards,
         setting preprocess_func=np.cumsum will plot cumulative rewards
     title: str (Optional)
-        Optinal title to plot. If None, set to tag.
+        Optional title to plot. If None, set to tag.
+    sns_kwargs: dict
+        Optional extra params for seaborn lineplot.
     """
+    sns_kwargs = sns_kwargs or {'ci': 'sd'}
+
     plt.figure(fignum)
     title = title or tag
     if preprocess_func is not None:
@@ -260,7 +147,7 @@ def plot_writer_data(agent_stats,
     else:
         xx = data.index
 
-    sns.lineplot(x=xx, y='value', hue='name', data=data)
+    sns.lineplot(x=xx, y='value', hue='name', data=data, **sns_kwargs)
     plt.title(title)
     plt.ylabel(ylabel)
 
