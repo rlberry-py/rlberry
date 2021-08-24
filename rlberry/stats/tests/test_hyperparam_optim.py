@@ -52,7 +52,8 @@ def test_hyperparam_optim_tpe():
     # test hyperparameter optimization with TPE sampler
     # using hyperopt default values
     sampler_kwargs = TPESampler.hyperopt_parameters()
-    stats_agent.optimize_hyperparams(sampler_kwargs=sampler_kwargs)
+    stats_agent.optimize_hyperparams(sampler_kwargs=sampler_kwargs, n_trials=5)
+    stats_agent.clear_output_dir()
 
 
 def test_hyperparam_optim_random():
@@ -69,7 +70,8 @@ def test_hyperparam_optim_random():
                              n_jobs=1)
 
     # test hyperparameter optimization with random sampler
-    stats_agent.optimize_hyperparams(sampler_method="random")
+    stats_agent.optimize_hyperparams(sampler_method="random", n_trials=5)
+    stats_agent.clear_output_dir()
 
 
 def test_hyperparam_optim_grid():
@@ -92,6 +94,7 @@ def test_hyperparam_optim_grid():
     stats_agent.optimize_hyperparams(n_trials=3 * 3,
                                      sampler_method="grid",
                                      sampler_kwargs=sampler_kwargs)
+    stats_agent.clear_output_dir()
 
 
 def test_hyperparam_optim_cmaes():
@@ -108,7 +111,8 @@ def test_hyperparam_optim_cmaes():
                              n_jobs=1)
 
     # test hyperparameter optimization with CMA-ES sampler
-    stats_agent.optimize_hyperparams(sampler_method="cmaes")
+    stats_agent.optimize_hyperparams(sampler_method="cmaes", n_trials=5)
+    stats_agent.clear_output_dir()
 
 
 def test_discount_optimization():
@@ -142,3 +146,4 @@ def test_discount_optimization():
                                   sampler_method='random', pruner_method='none')
 
     assert vi_stats.best_hyperparams['gamma'] == 0.99
+    vi_stats.clear_output_dir()

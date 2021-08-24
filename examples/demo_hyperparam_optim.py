@@ -35,7 +35,7 @@ ppo_stats = AgentStats(PPOAgent, train_env, fit_budget=N_EPISODES,
                        output_dir='dev/ppo_stats_backup')
 
 
-# hyperparam optim
+# hyperparam optim with multiple threads
 best_trial, data = ppo_stats.optimize_hyperparams(
     n_trials=10, timeout=None,
     n_fit=2, n_jobs=2,
@@ -51,7 +51,7 @@ del ppo_stats
 # load
 ppo_stats = AgentStats.load('dev/ppo_stats_backup/stats.pickle')
 
-# continue previous optimization, now with 5s of timeout
+# continue previous optimization, now with 5s of timeout and multiprocessing
 best_trial, data = ppo_stats.optimize_hyperparams(
     n_trials=10, timeout=5,
     n_fit=2, n_jobs=1,
