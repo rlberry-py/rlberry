@@ -9,6 +9,7 @@ If possible, pickle is prefered (since it is faster).
 [1] https://github.com/uqfoundation/dill
 """
 
+import concurrent.futures
 from copy import deepcopy
 from datetime import datetime
 from pathlib import Path
@@ -17,6 +18,7 @@ from rlberry.seeding import safe_reseed, set_external_seed
 from rlberry.seeding import Seeder
 
 from joblib import Parallel, delayed
+import functools
 import json
 import logging
 import dill
@@ -27,6 +29,7 @@ import shutil
 import threading
 from rlberry.utils.logging import configure_logging
 from rlberry.utils.writers import DefaultWriter
+from rlberry.stats.utils import create_database
 from typing import Tuple
 
 
@@ -208,6 +211,7 @@ class AgentStats:
         timestamp = str(int(timestamp))
         self.timestamp = timestamp
         self.identifier = f'stats_{self.agent_name}_{timestamp}'
+        self.unique_id = str(id(self)) + str(timestamp)
 
         # Agent class
         self.agent_class = agent_class
@@ -245,7 +249,7 @@ class AgentStats:
         handlers_seeders = self.seeder.spawn(self.n_fit, squeeze=False)
         self.agent_handlers = [
             AgentHandler(
-                filename=self.output_dir / Path(f'agent_handlers/{id(self)}_{ii}'),
+                filename=self.output_dir / Path(f'agent_handlers/{self.unique_id}_{ii}'),
                 seeder=handlers_seeders[ii],
                 agent_class=self.agent_class,
                 agent_instance=None,
@@ -259,8 +263,20 @@ class AgentStats:
         self.default_writer_data = None
         self.best_hyperparams = None
 
-        # optuna study
-        self.study = None
+        # optuna study and database
+        self.optuna_study = None
+        self.db_filename = None
+        self.optuna_storage_url = None
+
+    def _init_optuna_storage_url(self):
+        self.output_dir.mkdir(parents=True, exist_ok=True)
+        self.db_filename = self.output_dir / f'data_{self.unique_id}.db'
+        if create_database(self.db_filename):
+            self.optuna_storage_url = f"sqlite:///{self.db_filename}"
+        else:
+            self.db_filename = None
+            self.optuna_storage_url = "sqlite:///:memory:"
+            logger.warning(f'Unable to create databate {self.db_filename}. Using sqlite:///:memory:')
 
     def build_eval_env(self):
         """
@@ -466,10 +482,12 @@ class AgentStats:
         return obj
 
     def optimize_hyperparams(self,
-                             n_trials=5,
+                             n_trials=256,
                              timeout=60,
                              n_fit=2,
                              n_jobs=2,
+                             n_optuna_workers=2,
+                             optuna_parallelization='thread',
                              sampler_method='random',
                              pruner_method='halving',
                              continue_previous=False,
@@ -500,8 +518,11 @@ class AgentStats:
         n_fit: int
             Number of agents to fit for each hyperparam evaluation.
         n_jobs: int
-            Number of jobs to fit agents for each hyperparam evaluation,
-            and also the number of jobs of Optuna.
+            Number of jobs to fit agents for each hyperparam evaluation
+        n_optuna_workers: int
+            Number of workers used by optuna for optimization.
+        optuna_parallelization : 'thread' or 'process'
+            Whether to use threads or processes for optuna parallelization.
         sampler_method : str
             Optuna sampling method.
         pruner_method : str
@@ -539,8 +560,8 @@ class AgentStats:
         # Create optuna study
         #
         if continue_previous:
-            assert self.study is not None
-            study = self.study
+            assert self.optuna_study is not None
+            study = self.optuna_study
 
         else:
             if sampler_kwargs is None:
@@ -576,85 +597,55 @@ class AgentStats:
                 raise NotImplementedError(
                       "Pruner method %s is not implemented." % pruner_method)
 
+            # storage
+            self._init_optuna_storage_url()
+            storage = optuna.storages.RDBStorage(self.optuna_storage_url)
+
             # optuna study
             study = optuna.create_study(sampler=sampler,
                                         pruner=pruner,
+                                        storage=storage,
                                         direction='maximize')
-            self.study = study
+            self.optuna_study = study
 
-        def objective(trial):
-            kwargs = deepcopy(self.init_kwargs)
-
-            # will raise exception if sample_parameters() is not
-            # implemented by the agent class
-            kwargs.update(self.agent_class.sample_parameters(trial))
-
-            #
-            # fit and evaluate agents
-            #
-            # Create AgentStats with hyperparams
-            params_stats = AgentStats(
-                self.agent_class,
-                self.train_env,
-                self.fit_budget,
-                init_kwargs=kwargs,   # kwargs are being optimized
-                eval_kwargs=deepcopy(self.eval_kwargs),
-                agent_name='optim',
-                n_fit=n_fit,
-                n_jobs=n_jobs,
-                thread_logging_level='WARNING',
-                joblib_backend='threading',
-                seed=self.seeder,
-                output_dir=TEMP_DIR)
-
-            if disable_evaluation_writers:
-                for ii in range(params_stats.n_fit):
-                    params_stats.set_writer(ii, None, None)
-
-            #
-            # Case 1: partial fit, that allows pruning
-            #
-            if fit_fraction < 1.0:
-                fraction_complete = 0.0
-                step = 0
-                while fraction_complete < 1.0:
-                    #
-                    params_stats.fit(int(self.fit_budget * fit_fraction))
-                    # Evaluate params
-                    eval_value = params_stats.eval()
-
-                    # Report intermediate objective value
-                    trial.report(eval_value, step)
-
-                    #
-                    fraction_complete += fit_fraction
-                    step += 1
-                    #
-
-                    # Handle pruning based on the intermediate value.
-                    if trial.should_prune():
-                        raise optuna.TrialPruned()
-
-            #
-            # Case 2: full fit
-            #
-            else:
-                # Fit and evaluate params_stats
-                params_stats.fit()
-
-                # Evaluate params
-                eval_value = params_stats.eval()
-
-            # clear aux data
-            params_stats.clear_handlers()
-
-            return eval_value
+        #
+        # Objective function
+        #
+        objective = functools.partial(
+            _optuna_objective,
+            init_kwargs=self.init_kwargs,  # self.init_kwargs
+            agent_class=self.agent_class,  # self.agent_class
+            train_env=self.train_env,    # self.train_env
+            fit_budget=self.fit_budget,   # self.fit_budget
+            eval_kwargs=self.eval_kwargs,  # self.eval_kwargs
+            n_fit=n_fit,
+            n_jobs=n_jobs,
+            seeder=self.seeder,       # self.seeder
+            temp_dir=TEMP_DIR,     # TEMP_DIR
+            disable_evaluation_writers=disable_evaluation_writers,
+            fit_fraction=fit_fraction
+        )
 
         try:
-            study.optimize(objective,
-                           n_trials=n_trials,
-                           n_jobs=n_jobs,
-                           timeout=timeout)
+            if optuna_parallelization == 'thread':
+                with concurrent.futures.ThreadPoolExecutor() as executor:
+                    for _ in range(n_optuna_workers):
+                        executor.submit(
+                            study.optimize,
+                            objective,
+                            n_trials=n_trials,
+                            timeout=timeout)
+            elif optuna_parallelization == 'process':
+                with concurrent.futures.ProcessPoolExecutor() as executor:
+                    for _ in range(n_optuna_workers):
+                        executor.submit(
+                            study.optimize,
+                            objective,
+                            n_trials=n_trials // n_optuna_workers,
+                            timeout=timeout)
+            else:
+                raise ValueError(f'Invalid value for optuna_parallelization: {optuna_parallelization}.')
+
         except KeyboardInterrupt:
             logger.warning("Evaluation stopped.")
 
@@ -755,3 +746,85 @@ def _safe_serialize_json(obj, filename):
         return f"<<non-serializable: {type(obj).__qualname__}>>"
     with open(filename, 'w') as fp:
         json.dump(obj, fp, sort_keys=True, indent=4, default=default)
+
+
+def _optuna_objective(
+    trial,
+    init_kwargs,  # self.init_kwargs
+    agent_class,  # self.agent_class
+    train_env,    # self.train_env
+    fit_budget,   # self.fit_budget
+    eval_kwargs,  # self.eval_kwargs
+    n_fit,
+    n_jobs,
+    seeder,       # self.seeder
+    temp_dir,     # TEMP_DIR
+    disable_evaluation_writers,
+    fit_fraction
+):
+    kwargs = deepcopy(init_kwargs)
+
+    # will raise exception if sample_parameters() is not
+    # implemented by the agent class
+    kwargs.update(agent_class.sample_parameters(trial))
+
+    #
+    # fit and evaluate agents
+    #
+    # Create AgentStats with hyperparams
+    params_stats = AgentStats(
+        agent_class,
+        train_env,
+        fit_budget,
+        init_kwargs=kwargs,   # kwargs are being optimized
+        eval_kwargs=deepcopy(eval_kwargs),
+        agent_name='optim',
+        n_fit=n_fit,
+        n_jobs=n_jobs,
+        thread_logging_level='WARNING',
+        joblib_backend='threading',
+        seed=seeder,
+        output_dir=temp_dir)
+
+    if disable_evaluation_writers:
+        for ii in range(params_stats.n_fit):
+            params_stats.set_writer(ii, None, None)
+
+    #
+    # Case 1: partial fit, that allows pruning
+    #
+    if fit_fraction < 1.0:
+        fraction_complete = 0.0
+        step = 0
+        while fraction_complete < 1.0:
+            #
+            params_stats.fit(int(fit_budget * fit_fraction))
+            # Evaluate params
+            eval_value = params_stats.eval()
+
+            # Report intermediate objective value
+            trial.report(eval_value, step)
+
+            #
+            fraction_complete += fit_fraction
+            step += 1
+            #
+
+            # Handle pruning based on the intermediate value.
+            if trial.should_prune():
+                raise optuna.TrialPruned()
+
+    #
+    # Case 2: full fit
+    #
+    else:
+        # Fit and evaluate params_stats
+        params_stats.fit()
+
+        # Evaluate params
+        eval_value = params_stats.eval()
+
+    # clear aux data
+    params_stats.clear_handlers()
+
+    return eval_value

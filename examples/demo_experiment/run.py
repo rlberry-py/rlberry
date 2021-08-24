@@ -8,6 +8,7 @@ To see more options:
 $ python examples/demo_experiment/run.py
 """
 
+from rlberry.experiment import load_experiment_results
 from rlberry.experiment import experiment_generator
 from rlberry.stats.multiple_stats import MultipleStats
 
@@ -26,7 +27,6 @@ mstats.save()
 
 # Reading the results
 del mstats
-from rlberry.experiment import load_experiment_results
 
 data = load_experiment_results('results', 'params_experiment')
 print(data)

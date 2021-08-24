@@ -37,11 +37,12 @@ ppo_stats = AgentStats(PPOAgent, train_env, fit_budget=N_EPISODES,
 
 # hyperparam optim
 best_trial, data = ppo_stats.optimize_hyperparams(
-                           n_trials=10, timeout=None,
-                           n_sim=5, n_fit=2, n_jobs=2,
-                           sampler_method='optuna_default')
+    n_trials=10, timeout=None,
+    n_fit=2, n_jobs=2,
+    sampler_method='optuna_default',
+    optuna_parallelization='thread')
 
-initial_n_trials = len(ppo_stats.study.trials)
+initial_n_trials = len(ppo_stats.optuna_study.trials)
 
 # save
 ppo_stats.save()
@@ -52,12 +53,13 @@ ppo_stats = AgentStats.load('dev/ppo_stats_backup/stats.pickle')
 
 # continue previous optimization, now with 5s of timeout
 best_trial, data = ppo_stats.optimize_hyperparams(
-                           n_trials=10, timeout=5,
-                           n_sim=5, n_fit=2, n_jobs=2,
-                           continue_previous=True)
+    n_trials=10, timeout=5,
+    n_fit=2, n_jobs=1,
+    continue_previous=True,
+    optuna_parallelization='process')
 
 print("number of initial trials = ", initial_n_trials)
-print("number of trials after continuing= ", len(ppo_stats.study.trials))
+print("number of trials after continuing= ", len(ppo_stats.optuna_study.trials))
 
 
 print("----")
