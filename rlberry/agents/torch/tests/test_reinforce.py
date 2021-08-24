@@ -21,13 +21,11 @@ def test_reinforce_agent():
                                       bonus_scale_factor=1.0)
     #
     agent = REINFORCEAgent(env,
-                           n_episodes=n_episodes,
                            horizon=horizon,
                            gamma=0.99,
                            learning_rate=0.001,
                            use_bonus_if_available=True)
-    agent._log_interval = 0
-    agent.fit()
+    agent.fit(budget=n_episodes)
     agent.policy(env.observation_space.sample())
 
 
@@ -37,16 +35,13 @@ def test_reinforce_agent_partial_fit():
     horizon = 30
 
     agent = REINFORCEAgent(env,
-                           n_episodes=n_episodes,
                            horizon=horizon,
                            gamma=0.99,
                            learning_rate=0.001,
                            use_bonus_if_available=False)
-    agent._log_interval = 0
-
-    agent.partial_fit(0.5)
+    agent.fit(budget=n_episodes // 2)
     agent.policy(env.observation_space.sample())
     assert agent.episode == 5
-    agent.partial_fit(0.5)
+    agent.fit(budget=n_episodes // 2)
     assert agent.episode == 10
     agent.policy(env.observation_space.sample())

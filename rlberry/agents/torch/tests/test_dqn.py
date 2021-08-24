@@ -11,28 +11,26 @@ def test_dqn_agent():
 
     def uncertainty_estimator_fn(observation_space, action_space):
         counter = OnlineDiscretizationCounter(
-                                  observation_space,
-                                  action_space,
-                                  min_dist=0.25)
+            observation_space,
+            action_space,
+            min_dist=0.25)
         return counter
 
     agent = DQNAgent(env,
-                     n_episodes=10,
                      use_bonus=True,
                      uncertainty_estimator_kwargs=dict(
                          uncertainty_estimator_fn=uncertainty_estimator_fn,
                          bonus_scale_factor=1.0
                      ))
-    agent.fit()
+    agent.fit(budget=5)
     agent.policy(env.observation_space.sample())
 
     # test seeding of exploration policy
     agent2 = DQNAgent(env,
-                      n_episodes=10,
                       use_bonus=True,
                       uncertainty_estimator_kwargs=dict(
-                         uncertainty_estimator_fn=uncertainty_estimator_fn,
-                         bonus_scale_factor=1.0
+                          uncertainty_estimator_fn=uncertainty_estimator_fn,
+                          bonus_scale_factor=1.0
                       ))
     agent.reseed(Seeder(123))
     agent2.reseed(Seeder(123))
@@ -50,11 +48,10 @@ def test_dqn_agent_rnd():
         return counter
 
     agent = DQNAgent(env,
-                     n_episodes=10,
                      use_bonus=True,
                      uncertainty_estimator_kwargs=dict(
                          uncertainty_estimator_fn=uncertainty_estimator_fn,
                          bonus_scale_factor=1.0
                      ))
-    agent.fit()
+    agent.fit(budget=5)
     agent.policy(env.observation_space.sample())

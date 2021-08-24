@@ -68,7 +68,7 @@ class REINFORCEAgent(AgentWithSimplePolicy):
                  use_bonus_if_available=False,
                  device="cuda:best",
                  **kwargs):
-        Agent.__init__(self, env, **kwargs)
+        AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
         self.batch_size = batch_size
         self.horizon = horizon
@@ -101,13 +101,13 @@ class REINFORCEAgent(AgentWithSimplePolicy):
 
     def reset(self, **kwargs):
         self.policy_net = self.policy_net_fn(
-                            self.env,
-                            **self.policy_net_kwargs,
-                        ).to(self.device)
+            self.env,
+            **self.policy_net_kwargs
+        ).to(self.device)
 
         self.policy_optimizer = optimizer_factory(
-                                    self.policy_net.parameters(),
-                                    **self.optimizer_kwargs)
+            self.policy_net.parameters(),
+            **self.optimizer_kwargs)
 
         self.memory = Memory()
 
@@ -173,7 +173,7 @@ class REINFORCEAgent(AgentWithSimplePolicy):
         return episode_rewards
 
     def _normalize(self, x):
-        return (x-x.mean())/(x.std()+1e-5)
+        return (x - x.mean()) / (x.std() + 1e-5)
 
     def _update(self):
         # monte carlo estimate of rewards
@@ -222,9 +222,8 @@ class REINFORCEAgent(AgentWithSimplePolicy):
         entr_coef = trial.suggest_loguniform('entr_coef', 1e-8, 0.1)
 
         return {
-                'batch_size': batch_size,
-                'gamma': gamma,
-                'learning_rate': learning_rate,
-                'entr_coef': entr_coef,
-                }
-
+            'batch_size': batch_size,
+            'gamma': gamma,
+            'learning_rate': learning_rate,
+            'entr_coef': entr_coef,
+        }
