@@ -407,18 +407,18 @@ class AgentStats:
             _safe_serialize_json(self.best_hyperparams, fname)
         # save default_writer_data that can be aggregated in a pandas DataFrame
         if self.default_writer_data is not None:
-            for entry in self.default_writer_data:
-                # gather data for entry
-                all_data = {}
-                for run, data in enumerate(self.default_writer_data[entry]):
-                    all_data[f'run_{run}'] = data
-                try:
-                    output = pd.DataFrame(all_data)
-                    # save
-                    fname = Path(output_dir) / f'stats_{entry}.csv'
-                    output.to_csv(fname, index=None)
-                except Exception:
-                    logger.warning(f"Could not save entry [{entry}] of default_writer_data.")
+            data_list = []
+            for idx in self.default_writer_data:
+                df = self.default_writer_data[idx]
+                data_list.append(df)
+            all_writer_data = pd.concat(data_list, ignore_index=True)
+            try:
+                output = pd.DataFrame(all_writer_data)
+                # save
+                fname = Path(output_dir) / 'data.csv'
+                output.to_csv(fname, index=None)
+            except Exception:
+                logger.warning("Could not save default_writer_data.")
 
         #
         # Pickle AgentStats instance
@@ -468,7 +468,6 @@ class AgentStats:
     def optimize_hyperparams(self,
                              n_trials=5,
                              timeout=60,
-                             n_sim=5,
                              n_fit=2,
                              n_jobs=2,
                              sampler_method='random',
@@ -498,8 +497,6 @@ class AgentStats:
         timeout: int
             Stop study after the given number of second(s).
             Set to None for unlimited time.
-        n_sim : int
-            Number of Monte Carlo simulations to evaluate a policy.
         n_fit: int
             Number of agents to fit for each hyperparam evaluation.
         n_jobs: int

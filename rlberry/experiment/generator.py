@@ -35,11 +35,11 @@ def experiment_generator():
     """
     args = docopt(__doc__)
     for (_, agent_stats) in parse_experiment_config(
-                Path(args["<experiment_path>"]),
-                n_fit=int(args["--n_fit"]),
-                n_jobs=int(args["--n_jobs"]),
-                output_base_dir=args["--output_dir"],
-                joblib_backend=args["--joblib_backend"]):
+            Path(args["<experiment_path>"]),
+            n_fit=int(args["--n_fit"]),
+            n_jobs=int(args["--n_jobs"]),
+            output_base_dir=args["--output_dir"],
+            joblib_backend=args["--joblib_backend"]):
         if args["--writer"]:
             if _TENSORBOARD_INSTALLED:
                 for idx in range(agent_stats.n_fit):

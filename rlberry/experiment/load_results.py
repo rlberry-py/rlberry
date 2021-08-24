@@ -61,7 +61,7 @@ def load_experiment_results(output_dir, experiment_name):
     if ndirs > 1:
         assert len(experiment_name) == ndirs, "Number of experiment names must match the number of output_dirs "
     else:
-        output_dir = len(experiment_name)*output_dir
+        output_dir = len(experiment_name) * output_dir
 
     results_dirs = []
     for dd, exper in zip(output_dir, experiment_name):

@@ -6,3 +6,7 @@ init_kwargs:
   max_repr: 800
   bonus_scale_factor: 1.0
   reward_free: True
+  horizon: 50
+eval_kwargs:
+  horizon: 50
+fit_budget: 100

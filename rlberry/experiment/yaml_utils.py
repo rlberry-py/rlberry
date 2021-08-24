@@ -184,12 +184,6 @@ def parse_experiment_config(path: Path,
             if 'global_policy_kwargs' in config:
                 init_kwargs.update(config['global_policy_kwargs'])
 
-            # check eval_horizon
-            if 'eval_horizon' in config:
-                eval_horizon = config['eval_horizon']
-            else:
-                eval_horizon = None
-
             # append run index to dir
             output_dir = output_dir / str(last + 1)
 
