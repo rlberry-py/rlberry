@@ -186,12 +186,10 @@ class Agent(ABC):
         try:
             with filename.open("wb") as ff:
                 pickle.dump(self.__dict__, ff)
-            logger.info("Saved Agent instance using pickle. ({})".format(filename))
         except Exception:
             try:
                 with filename.open("wb") as ff:
                     dill.dump(self.__dict__, ff)
-                logger.info("Saved Agent instance using dill. ({})".format(filename))
             except Exception as ex:
                 logger.warning("Agent instance cannot be pickled: " + str(ex))
                 return None
@@ -215,11 +213,9 @@ class Agent(ABC):
         try:
             with filename.open('rb') as ff:
                 tmp_dict = pickle.load(ff)
-            logger.info("Loaded AgentStats using pickle.")
         except Exception:
             with filename.open('rb') as ff:
                 tmp_dict = dill.load(ff)
-            logger.info("Loaded AgentStats using dill.")
 
         obj.__dict__.clear()
         obj.__dict__.update(tmp_dict)

@@ -84,8 +84,8 @@ def test_agent_stats_1():
     assert stats_agent1.identifier == loaded_stats.identifier
 
     # test hyperparameter optimization call
-    loaded_stats.optimize_hyperparams()
-    loaded_stats.optimize_hyperparams(continue_previous=True)
+    loaded_stats.optimize_hyperparams(n_trials=5)
+    loaded_stats.optimize_hyperparams(n_trials=5, continue_previous=True)
 
     for st in agent_stats_list:
         st.clear_output_dir()
@@ -134,7 +134,7 @@ def test_agent_stats_2():
     assert stats_agent1.identifier == loaded_stats.identifier
 
     # test hyperparemeter optimization
-    loaded_stats.optimize_hyperparams()
+    loaded_stats.optimize_hyperparams(n_trials=5)
 
     # delete some writers
     stats_agent1.set_writer(1, None)

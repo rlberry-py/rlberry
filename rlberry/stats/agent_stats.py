@@ -1,14 +1,3 @@
-"""
-Notes
------
-
-dill[1] is required to extend pickle (see https://stackoverflow.com/a/25353243)
-
-If possible, pickle is prefered (since it is faster).
-
-[1] https://github.com/uqfoundation/dill
-"""
-
 import concurrent.futures
 from copy import deepcopy
 from datetime import datetime
