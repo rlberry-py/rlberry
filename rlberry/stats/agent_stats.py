@@ -23,6 +23,7 @@ import dill
 import numpy as np
 import pickle
 import pandas as pd
+import shutil
 import threading
 from rlberry.utils.logging import configure_logging
 from rlberry.utils.writers import DefaultWriter
@@ -44,8 +45,90 @@ logger = logging.getLogger(__name__)
 
 
 #
+# Aux
+#
+
+class AgentHandler:
+    """
+    Wraps an Agent so that it can be either loaded in memory
+    or represented by a file storing the Agent data.
+    It is necessary because not all agents can be pickled.
+
+    Parameters
+    ----------
+    filename: str or Path
+        File where to save/load the agent instance
+    seeder: Seeder
+        Required for reseeding.
+    agent_class:
+        Class of the agent to be wrapped
+    agent_instance:
+        An instance of agent_class, or None (if not loaded).
+    **agent_kwargs:
+        Arguments required by __init__ method of agent_class.
+    """
+    def __init__(self,
+                 filename,
+                 seeder,
+                 agent_class,
+                 agent_instance=None,
+                 **agent_kwargs) -> None:
+        self._fname = Path(filename)
+        self._seeder = seeder
+        self._agent_class = agent_class
+        self._agent_instance = agent_instance
+        self._agent_kwargs = agent_kwargs
+
+    def set_instance(self, agent_instance):
+        self._agent_instance = agent_instance
+
+    def is_empty(self):
+        return self._agent_instance is None and (not self._fname.exists())
+
+    def is_loaded(self):
+        return self._agent_instance is not None
+
+    def load(self) -> bool:
+        with _LOCK:
+            try:
+                self._agent_instance = self._agent_class.load(self._fname, **self._agent_kwargs)
+                safe_reseed(self._agent_instance.env, self._seeder)
+                return True
+            except Exception:
+                self._agent_instance = None
+                return False
+
+    def dump(self):
+        """Saves agent to file and remove it from memory."""
+        with _LOCK:
+            if self._agent_instance is not None:
+                saved_filename = self._agent_instance.save(self._fname)
+                # saved_filename might have appended the correct extension, for instance,
+                # so self._fname must be updated.
+                self._fname = Path(saved_filename)
+                del self._agent_instance
+                self._agent_instance = None
+
+    def __getattr__(self, attr):
+        """
+        Allows AgentHandler to behave like the handled Agent.
+        """
+        if attr[:2] == '__':
+            raise AttributeError(attr)
+        if attr in self.__dict__:
+            return getattr(self, attr)
+
+        assert not self.is_empty(), 'Calling AgentHandler with no agent instance stored.'
+        if not self.is_loaded():
+            loaded = self.load()
+            if not loaded:
+                raise RuntimeError(f'Could not load Agent from {self._fname}.')
+        return getattr(self._agent_instance, attr)
+
+#
 # Main class
 #
+
 
 class AgentStats:
     """
@@ -122,7 +205,9 @@ class AgentStats:
 
         # create oject identifier
         timestamp = datetime.timestamp(datetime.now())
-        self.identifier = f'stats_{self.agent_name}_{str(int(timestamp))}'
+        timestamp = str(int(timestamp))
+        self.timestamp = timestamp
+        self.identifier = f'stats_{self.agent_name}_{timestamp}'
 
         # Agent class
         self.agent_class = agent_class
@@ -157,7 +242,20 @@ class AgentStats:
         self.writers = [('default', None) for _ in range(n_fit)]
 
         #
-        self.fitted_agents = None
+        handlers_seeders = self.seeder.spawn(self.n_fit, squeeze=False)
+        self.agent_handlers = [
+            AgentHandler(
+                filename=self.output_dir / Path(f'agent_handlers/{id(self)}_{ii}'),
+                seeder=handlers_seeders[ii],
+                agent_class=self.agent_class,
+                agent_instance=None,
+                # kwargs
+                env=train_env,
+                **init_kwargs,
+            )
+            for ii in range(self.n_fit)
+        ]
+
         self.default_writer_data = None
         self.best_hyperparams = None
 
@@ -178,8 +276,8 @@ class AgentStats:
         """
         Call .eval() method in all fitted agents and return average result.
         """
-        assert self.fitted_agents is not None, '[AgentStats] Error, call to eval() requires the agents to be fitted.'
-        values = [agent.eval(self.build_eval_env(), **self.eval_kwargs) for agent in self.fitted_agents]
+        values = [agent.eval(self.build_eval_env(),
+                             **self.eval_kwargs) for agent in self.agent_handlers if not agent.is_empty()]
         return np.mean(values)
 
     def set_output_dir(self, output_dir):
@@ -191,6 +289,18 @@ class AgentStats:
         output_dir : str
         """
         self.output_dir = Path(output_dir)
+
+    def clear_output_dir(self):
+        """Delete output_dir and all its data."""
+        try:
+            shutil.rmtree(self.output_dir)
+        except FileNotFoundError:
+            logger.warning(f'No directory {self.output_dir} found to be deleted.')
+
+    def clear_handlers(self):
+        """Delete files from output_dir/agent_handlers that are managed by this class."""
+        for handler in self.agent_handlers:
+            handler._fname.unlink()
 
     def set_writer(self, idx, writer_fn, writer_kwargs=None):
         """
@@ -222,15 +332,13 @@ class AgentStats:
         Set all writers to None.
         """
         self.writers = [('default', None) for _ in range(self.n_fit)]
-        if self.fitted_agents is not None:
-            for agent in self.fitted_agents:
+        for agent in self.agent_handlers:
+            if not agent.is_empty():
                 agent.set_writer(None)
 
     def fit(self, budget=None):
         """
         Fit the agent instances in parallel.
-
-        TODO: handle partial fit correctly (_fit_worker must not create Agents from scratch).
         """
         budget = budget or self.fit_budget
 
@@ -238,22 +346,32 @@ class AgentStats:
         seeders = self.seeder.spawn(self.n_fit)
         if not isinstance(seeders, list):
             seeders = [seeders]
-        args = [(self.agent_class,
+
+        # remove agent instances from memory to that the agent handlers can be sent to different workers
+        for handler in self.agent_handlers:
+            handler.dump()
+
+        args = [(
+                handler,
+                self.agent_class,
                 self.train_env,
                 budget,
                 deepcopy(self.init_kwargs),
                 writer,
                 self.thread_logging_level,
                 seeder)
-                for (seeder, writer)
-                in zip(seeders, self.writers)]
+                for (handler, seeder, writer)
+                in zip(self.agent_handlers, seeders, self.writers)]
 
         workers_output = Parallel(n_jobs=self.n_jobs,
                                   verbose=5,
                                   backend=self.joblib_backend)(
             delayed(_fit_worker)(arg) for arg in args)
 
-        self.fitted_agents = workers_output
+        self.agent_handlers = workers_output
+        # # load agents back to memory
+        # for handler in self.agent_handlers:
+        #     handler.load()
 
         logger.info("... trained!")
 
@@ -262,12 +380,9 @@ class AgentStats:
 
     def _gather_default_writer_data(self):
         """Gather DefaultWriter data in a dictionary"""
-        assert self.fitted_agents is not None
-        assert len(self.fitted_agents) > 0
-
-        if isinstance(self.fitted_agents[0].writer, DefaultWriter):
-            self.default_writer_data = {}
-            for ii, agent in enumerate(self.fitted_agents):
+        self.default_writer_data = {}
+        for ii, agent in enumerate(self.agent_handlers):
+            if not agent.is_empty() and isinstance(agent.writer, DefaultWriter):
                 self.default_writer_data[ii] = agent.writer.data
 
     def save(self, output_dir=None):
@@ -303,8 +418,7 @@ class AgentStats:
                     fname = Path(output_dir) / f'stats_{entry}.csv'
                     output.to_csv(fname, index=None)
                 except Exception:
-                    logger.warning(f"Could not save entry [{entry}]"
-                                   + " of default_writer_data.")
+                    logger.warning(f"Could not save entry [{entry}] of default_writer_data.")
 
         #
         # Pickle AgentStats instance
@@ -312,6 +426,11 @@ class AgentStats:
 
         # remove writers
         self.disable_writers()
+
+        # clear agent handlers
+        for handler in self.agent_handlers:
+            handler.dump()
+
         # save
         filename = Path('stats').with_suffix('.pickle')
         filename = output_dir / filename
@@ -411,6 +530,7 @@ class AgentStats:
         #
         # setup
         #
+        TEMP_DIR = 'temp/optim'
         global _OPTUNA_INSTALLED
         if not _OPTUNA_INSTALLED:
             logging.error("Optuna not installed.")
@@ -487,7 +607,8 @@ class AgentStats:
                 n_jobs=n_jobs,
                 thread_logging_level='WARNING',
                 joblib_backend='threading',
-                seed=self.seeder)
+                seed=self.seeder,
+                output_dir=TEMP_DIR)
 
             if disable_evaluation_writers:
                 for ii in range(params_stats.n_fit):
@@ -527,6 +648,9 @@ class AgentStats:
                 # Evaluate params
                 eval_value = params_stats.eval()
 
+            # clear aux data
+            params_stats.clear_handlers()
+
             return eval_value
 
         try:
@@ -536,6 +660,9 @@ class AgentStats:
                            timeout=timeout)
         except KeyboardInterrupt:
             logger.warning("Evaluation stopped.")
+
+        # clear temp folder
+        shutil.rmtree(TEMP_DIR)
 
         # continue
         best_trial = study.best_trial
@@ -581,7 +708,7 @@ def _fit_worker(args):
     """
     Create and fit an agent instance
     """
-    agent_class, train_env, fit_budget, init_kwargs, \
+    agent_handler, agent_class, train_env, fit_budget, init_kwargs, \
         writer, thread_logging_level, seeder = args
 
     # reseed external libraries
@@ -591,38 +718,43 @@ def _fit_worker(args):
     configure_logging(thread_logging_level)
 
     with _LOCK:
-        # preprocess and train_env
-        train_env_instance = _preprocess_env(train_env, seeder)
-        # create agent
-        agent = agent_class(train_env_instance, copy_env=False, seeder=seeder, **init_kwargs)
-
-    agent.name += f"(spawn_key{seeder.seed_seq.spawn_key})"
-
-    # seed agent
-    agent.reseed(seeder)
+        if agent_handler.is_empty():
+            # preprocess and train_env
+            train_env_instance = _preprocess_env(train_env, seeder)
+            # create agent
+            agent = agent_class(train_env_instance, copy_env=False, seeder=seeder, **init_kwargs)
+            agent.name += f"(spawn_key{seeder.seed_seq.spawn_key})"
+            # seed agent
+            agent.reseed(seeder)
+            agent_handler.set_instance(agent)
+        agent = agent_handler
 
     # set writer
     if writer[0] is None:
-        agent.set_writer(None)
+        agent_handler.set_writer(None)
     elif writer[0] != 'default':
         writer_fn = writer[0]
         writer_kwargs = writer[1]
-        agent.set_writer(writer_fn(**writer_kwargs))
+        agent_handler.set_writer(writer_fn(**writer_kwargs))
     # fit agent
-    agent.fit(fit_budget)
+    agent_handler.fit(fit_budget)
 
     # Remove writer after fit (prevent pickle problems),
     # unless the agent uses DefaultWriter
-    if not isinstance(agent.writer, DefaultWriter):
-        agent.set_writer(None)
+    if not isinstance(agent_handler.writer, DefaultWriter):
+        agent_handler.set_writer(None)
 
-    return agent
+    # remove from memory to avoid pickle issues
+    agent_handler.dump()
+
+    return agent_handler
 
 
 def _safe_serialize_json(obj, filename):
     """
     Source: https://stackoverflow.com/a/56138540/5691288
     """
-    default = lambda o: f"<<non-serializable: {type(o).__qualname__}>>"
+    def default(obj):
+        return f"<<non-serializable: {type(obj).__qualname__}>>"
     with open(filename, 'w') as fp:
         json.dump(obj, fp, sort_keys=True, indent=4, default=default)

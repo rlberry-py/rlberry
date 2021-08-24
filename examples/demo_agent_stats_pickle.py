@@ -36,7 +36,7 @@ ppo_stats = AgentStats(PPOAgent,
                        init_kwargs=params_ppo,
                        eval_kwargs=eval_kwargs,
                        n_fit=4,
-                       output_dir='ppo_stats')
+                       output_dir='dev/ppo_stats')
 ppo_stats.fit()  # fit the 4 agents
 ppo_stats.save()
 del ppo_stats
@@ -44,7 +44,7 @@ del ppo_stats
 # -------------------------------
 # Load and plot results
 # --------------------------------
-ppo_stats = AgentStats.load('ppo_stats/stats.pickle')
+ppo_stats = AgentStats.load('dev/ppo_stats/stats.pickle')
 
 # learning curves
 plot_writer_data(ppo_stats, tag='episode_rewards',

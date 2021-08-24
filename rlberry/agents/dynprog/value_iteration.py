@@ -28,12 +28,13 @@ class ValueIterationAgent(AgentWithSimplePolicy):
     name = "ValueIteration"
 
     def __init__(self, env, gamma=0.95, horizon=None, epsilon=1e-6, **kwargs):
-        # initialize base class
-        assert isinstance(env, FiniteMDP), \
-            "Value iteration requires a FiniteMDP model."
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
+        # initialize base class
+        assert isinstance(self.env, FiniteMDP), \
+            "Value iteration requires a FiniteMDP model."
         #
+
         self.gamma = gamma
         self.horizon = horizon
         self.epsilon = epsilon

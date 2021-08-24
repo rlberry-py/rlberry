@@ -38,10 +38,6 @@ def evaluate_agents(agent_stats_list,
 
     eval_outputs = []
     for agent_stats in agent_stats_list:
-        # train agents if they are not already trained
-        if agent_stats.fitted_agents is None:
-            agent_stats.fit()
-
         outputs = []
         for _ in range(n_simulations):
             outputs.append(agent_stats.eval())
@@ -126,10 +122,6 @@ def plot_writer_data(agent_stats,
     # preprocess agent stats
     data_list = []
     for stats in agent_stats_list:
-        # train agents if they are not already trained
-        if stats.fitted_agents is None:
-            stats.fit()
-
         if stats.writer_data is not None:
             for idx in stats.writer_data:
                 df = stats.writer_data[idx]

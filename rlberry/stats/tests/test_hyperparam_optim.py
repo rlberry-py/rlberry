@@ -89,7 +89,7 @@ def test_hyperparam_optim_grid():
     search_space = {"hyperparameter1": [1, 2, 3],
                     "hyperparameter2": [-5, 0, 5]}
     sampler_kwargs = {"search_space": search_space}
-    stats_agent.optimize_hyperparams(n_trials=3*3,
+    stats_agent.optimize_hyperparams(n_trials=3 * 3,
                                      sampler_method="grid",
                                      sampler_kwargs=sampler_kwargs)
 
@@ -122,10 +122,10 @@ def test_discount_optimization():
             return {'gamma': gamma}
 
     env = (GridWorld, dict(
-            nrows=3, ncols=10,
-            reward_at={(1, 1): 0.1, (2, 9): 1.0},
-            walls=((1, 4), (2, 4), (1, 5)),
-            success_probability=0.9))
+        nrows=3, ncols=10,
+        reward_at={(1, 1): 0.1, (2, 9): 1.0},
+        walls=((1, 4), (2, 4), (1, 5)),
+        success_probability=0.9))
 
     vi_params = {'gamma': 0.1, 'epsilon': 1e-3}
 

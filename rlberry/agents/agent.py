@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from copy import deepcopy
+from typing import Tuple
 import dill
 import pickle
 import logging
@@ -30,7 +31,7 @@ class Agent(ABC):
     ----------
     name : string
         Agent identifier
-    env : Model
+    env : Model or tuple (constructor, kwargs)
         Environment on which to train the agent.
     writer : object, default: None
         Writer object (e.g. tensorboard SummaryWriter).
@@ -49,13 +50,17 @@ class Agent(ABC):
         assert kwargs == {}, \
             'Unknown parameters sent to agent:' + str(kwargs.keys())
 
-        self.env = env
-
-        if copy_env:
-            try:
-                self.env = deepcopy(env)
-            except Exception as ex:
-                logger.warning("[Agent] Not possible to deepcopy env: " + str(ex))
+        if isinstance(env, Tuple):
+            constructor = env[0]
+            kwargs = env[1] or {}
+            self.env = constructor(**kwargs)
+        else:
+            self.env = env
+            if copy_env:
+                try:
+                    self.env = deepcopy(env)
+                except Exception as ex:
+                    logger.warning("[Agent] Not possible to deepcopy env: " + str(ex))
 
         self.writer = None
 
@@ -152,7 +157,7 @@ class Agent(ABC):
 
         If overridden, load() method must also be overriden.
 
-        Before saving, writer is set to None (tensorboard writers
+        Before saving, consider setting writer to None if it can't be pickled (tensorboard writers
         keep references to files and cannot be pickled).
 
         Note: dill[1]_ is used when pickle fails
@@ -168,14 +173,13 @@ class Agent(ABC):
         -------
         If save() is successful, a Path object corresponding to the filename is returned.
         Otherwise, None is returned.
+        Important: the returned filename might differ from the input filename: For instance,
+        the method can append the correct suffix to the name before saving.
 
         References
         ----------
         .. [1] https://github.com/uqfoundation/dill
         """
-        # disable writer
-        self.set_writer(None)
-
         # save
         filename = Path(filename).with_suffix('.pickle')
         filename.parent.mkdir(parents=True, exist_ok=True)

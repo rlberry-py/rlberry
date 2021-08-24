@@ -60,12 +60,12 @@ def test_rescale_reward():
             _, reward, _, _ = wrapped.sample(
                 wrapped.observation_space.sample(),
                 wrapped.action_space.sample())
-            assert reward <= 10+tol and reward >= -10-tol
+            assert reward <= 10 + tol and reward >= -10 - tol
 
         _ = wrapped.reset()
         for _ in range(100):
             _, reward, _, _ = wrapped.step(wrapped.action_space.sample())
-            assert reward <= 10+tol and reward >= -10-tol
+            assert reward <= 10 + tol and reward >= -10 - tol
 
 
 @pytest.mark.parametrize("rmin, rmax", [(0, 1), (-1, 1), (-5, 5), (-5, 15)])
@@ -88,7 +88,7 @@ def test_rescale_reward_2(rmin, rmax):
     xx = np.linspace(-100, 50, num=100)
     for x in xx:
         y = wrapped._rescale(x)
-        assert y >= rmin-tol and y <= rmax+tol
+        assert y >= rmin - tol and y <= rmax + tol
 
     # test unbounded above
     env.reward_range = (-1.0, np.inf)
@@ -96,7 +96,7 @@ def test_rescale_reward_2(rmin, rmax):
     xx = np.linspace(-1, 1e2, num=100)
     for x in xx:
         y = wrapped._rescale(x)
-        assert y >= rmin-tol and y <= rmax+tol
+        assert y >= rmin - tol and y <= rmax + tol
 
     # test unbounded below
     env.reward_range = (-np.inf, 1.0)
@@ -104,7 +104,7 @@ def test_rescale_reward_2(rmin, rmax):
     xx = np.linspace(-1e2, 1, num=100)
     for x in xx:
         y = wrapped._rescale(x)
-        assert y >= rmin-tol and y <= rmax+tol
+        assert y >= rmin - tol and y <= rmax + tol
 
     # test unbounded
     env.reward_range = (-np.inf, np.inf)
@@ -112,7 +112,7 @@ def test_rescale_reward_2(rmin, rmax):
     xx = np.linspace(-1e2, 1e2, num=200)
     for x in xx:
         y = wrapped._rescale(x)
-        assert y >= rmin-tol and y <= rmax+tol
+        assert y >= rmin - tol and y <= rmax + tol
 
 
 @pytest.mark.parametrize("horizon", list(range(1, 10)))
@@ -130,10 +130,10 @@ def test_autoreset(horizon):
     env = AutoResetWrapper(env, horizon)
 
     env.reset()
-    for tt in range(5*horizon+1):
+    for tt in range(5 * horizon + 1):
         action = env.action_space.sample()
         next_s, reward, done, info = env.step(action)
-        if (tt+1) % horizon == 0:
+        if (tt + 1) % horizon == 0:
             assert next_s == 3
 
 
@@ -145,25 +145,25 @@ def test_uncertainty_est_wrapper():
                                action_space)
 
     w_env = UncertaintyEstimatorWrapper(
-                env,
-                uncertainty_est_fn,
-                bonus_scale_factor=1.0)
+        env,
+        uncertainty_est_fn,
+        bonus_scale_factor=1.0)
 
     for ii in range(10):
         w_env.reset()
         _, _, _, info = w_env.step(0)
         nn = w_env.uncertainty_estimator.count(0, 0)
-        assert nn == ii+1
-        assert info['exploration_bonus'] == pytest.approx(1/np.sqrt(nn))
+        assert nn == ii + 1
+        assert info['exploration_bonus'] == pytest.approx(1 / np.sqrt(nn))
 
 
 def test_vis2dwrapper():
     env = MountainCar()
     env = Vis2dWrapper(env, n_bins_obs=20, memory_size=200)
 
-    agent = RSUCBVIAgent(env, n_episodes=15, gamma=0.99, horizon=200,
+    agent = RSUCBVIAgent(env, gamma=0.99, horizon=200,
                          bonus_scale_factor=0.1, copy_env=False, min_dist=0.1)
 
-    agent.fit()
+    agent.fit(budget=15)
     env.plot_trajectories(show=False)
     env.plot_trajectory_actions(show=False)

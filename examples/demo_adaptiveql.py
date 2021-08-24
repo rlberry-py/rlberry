@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 env = (get_benchmark_env, dict(level=2))
 
-N_EP = 5000
+N_EP = 10
 HORIZON = 30
 
 params = {}
@@ -35,14 +35,17 @@ mstats.append(
                init_kwargs=params['adaql'],
                eval_kwargs=eval_kwargs,
                n_fit=4,
-               n_jobs=4)
+               n_jobs=4,
+               output_dir='dev/examples/adaptive_ql')
 )
 mstats.append(
     AgentStats(RSUCBVIAgent,
                env,
                fit_budget=N_EP,
-               init_kwargs=params['rsucbvi'], n_fit=2)
+               init_kwargs=params['rsucbvi'], n_fit=2,
+               output_dir='dev/examples/rs_ucbvi')
 )
+
 
 mstats.run(save=False)
 
@@ -52,7 +55,7 @@ plot_writer_data(mstats.allstats, tag='episode_rewards',
                  preprocess_func=np.cumsum, title='Cumulative Rewards')
 
 for stats in mstats.allstats:
-    agent = stats.fitted_agents[0]
+    agent = stats.agent_handlers[0]
     try:
         agent.Qtree.plot(0, 25)
     except AttributeError:
