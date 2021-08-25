@@ -1,16 +1,12 @@
-"""
-TODO: update according to new interface
-"""
-
 from stable_baselines3 import A2C as A2CStableBaselines
 from stable_baselines3.common.cmd_util import make_atari_env
 from stable_baselines3.common.vec_env import VecFrameStack
-from rlberry.agents import Agent
+from rlberry.agents import AgentWithSimplePolicy
 from rlberry.stats import AgentStats, MultipleStats
 from rlberry.wrappers.scalarize import ScalarizeEnvWrapper
 
 
-class A2CAgent(Agent):
+class A2CAgent(AgentWithSimplePolicy):
 
     name = 'A2C'
 
@@ -39,7 +35,7 @@ class A2CAgent(Agent):
                  **kwargs):
 
         # init rlberry base class
-        Agent.__init__(self, env, **kwargs)
+        AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
         # Generate seed for A2CStableBaselines using rlberry seeding
         seed = self.rng.integers(2**32).item()
@@ -68,11 +64,11 @@ class A2CAgent(Agent):
             device,
             _init_setup_model)
 
-    def fit(self, **kwargs):
-        result = self.wrapped.learn(**kwargs)
+    def fit(self, budget):
+        self.wrapped.learn(total_timesteps=budget)
 
-    def policy(self, observation, **kwargs):
-        action, _state = self.wrapped.predict(observation, **kwargs)
+    def policy(self, observation):
+        action, _state = self.wrapped.predict(observation, deterministic=True)
         return action
 
     #
@@ -110,40 +106,40 @@ def eval_env_constructor(n_envs=1):
 
 stats = AgentStats(
     A2CAgent,
-    (env_constructor, None),
+    train_env=(env_constructor, None),
     eval_env=(eval_env_constructor, None),
-    eval_horizon=200,
+    eval_kwargs=dict(eval_horizon=200),
     agent_name='A2C baseline',
-    init_kwargs={'policy': 'CnnPolicy', 'verbose': 10},
-    fit_kwargs={'total_timesteps': 1000},
-    policy_kwargs={'deterministic': True},
-    n_fit=10,
-    n_jobs=6,
+    fit_budget=1000,
+    init_kwargs=dict(policy='CnnPolicy', verbose=10),
+    n_fit=2,
+    n_jobs=2,
     joblib_backend='threading')
-
 
 stats_alternative = AgentStats(
     A2CAgent,
-    (env_constructor, None),
+    train_env=(env_constructor, None),
     eval_env=(eval_env_constructor, None),
-    eval_horizon=200,
+    eval_kwargs=dict(eval_horizon=200),
     agent_name='A2C high learning rate',
-    init_kwargs={'policy': 'CnnPolicy', 'verbose': 10, 'learning_rate': 0.01},
-    fit_kwargs={'total_timesteps': 1000},
-    policy_kwargs={'deterministic': True},
-    n_fit=10,
-    n_jobs=6,
+    fit_budget=1000,
+    init_kwargs=dict(policy='CnnPolicy', verbose=10, learning_rate=0.01),
+    n_fit=2,
+    n_jobs=2,
     joblib_backend='threading')
 
 
-# Fit everything in parallel
-mstats = MultipleStats()
-mstats.append(stats)
-mstats.append(stats_alternative)
-mstats.run()
-mstats.save()
+# # Fit everything in parallel
+# mstats = MultipleStats()
+# mstats.append(stats)
+# mstats.append(stats_alternative)
+# mstats.run()
+# mstats.save()
 
 
-# Test hyperparam optim
-print("testint a call to hyperparam optim")
-mstats.allstats[0].optimize_hyperparams(timeout=60, n_fit=2, n_jobs=1)
+# # Test hyperparam optim
+# print("testint a call to hyperparam optim")
+# mstats.allstats[0].optimize_hyperparams(timeout=60, n_fit=2, n_jobs=1)
+
+
+stats.fit()
