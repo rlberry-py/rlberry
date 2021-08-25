@@ -158,10 +158,10 @@ class UCBVIAgent(AgentWithSimplePolicy):
         # default writer
         self.writer = DefaultWriter(self.name)
 
-    def policy(self, state, hh=0):
-        """ Recommended policy. """
+    def policy(self, observation):
+        state = observation
         assert self.Q_policy is not None
-        return self.Q_policy[hh, state, :].argmax()
+        return self.Q_policy[0, state, :].argmax()
 
     def _get_action(self, state, hh=0):
         """ Sampling policy. """

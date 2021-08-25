@@ -195,10 +195,11 @@ class RSUCBVIAgent(AgentWithSimplePolicy):
         # default writer
         self.writer = DefaultWriter(self.name)
 
-    def policy(self, state, hh=0):
+    def policy(self, observation):
+        state = observation
         assert self.Q_policy is not None
         repr_state = self._map_to_repr(state, False)
-        return self.Q_policy[hh, repr_state, :].argmax()
+        return self.Q_policy[0, repr_state, :].argmax()
 
     def fit(self, budget: int, **kwargs):
         del kwargs

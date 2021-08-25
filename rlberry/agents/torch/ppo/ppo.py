@@ -175,7 +175,8 @@ class PPOAgent(AgentWithSimplePolicy):
         # default writer
         self.writer = DefaultWriter(self.name)
 
-    def policy(self, state):
+    def policy(self, observation):
+        state = observation
         assert self.cat_policy is not None
         state = torch.from_numpy(state).float().to(self.device)
         action_dist = self.cat_policy_old(state)

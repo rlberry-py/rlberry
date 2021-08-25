@@ -134,19 +134,10 @@ class MBQVIAgent(AgentWithSimplePolicy):
             info["precision"] = 0.0
         return info
 
-    def policy(self, state, hh=0):
-        """
-        Parameters
-        -----------
-        state : int
-        hh : int
-            Stage when action is taken (for finite horizon problems,
-            the optimal policy depends on hh).
-            Not used if horizon is None.
-        """
+    def policy(self, observation):
+        state = observation
         assert self.env.observation_space.contains(state)
         if self.horizon is None:
             return self.Q[state, :].argmax()
         else:
-            assert hh >= 0 and hh < self.horizon
-            return self.Q[hh, state, :].argmax()
+            return self.Q[0, state, :].argmax()

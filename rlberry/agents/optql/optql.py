@@ -107,9 +107,10 @@ class OptQLAgent(AgentWithSimplePolicy):
         # default writer
         self.writer = DefaultWriter(self.name)
 
-    def policy(self, state, hh=0):
+    def policy(self, observation):
         """ Recommended policy. """
-        return self.Q_bar[hh, state, :].argmax()
+        state = observation
+        return self.Q_bar[0, state, :].argmax()
 
     def _get_action(self, state, hh=0):
         """ Sampling policy. """

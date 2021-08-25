@@ -231,7 +231,7 @@ class AgentWithSimplePolicy(Agent):
     The policy() method takes an observation as input and returns an action.
     """
     @abstractmethod
-    def policy(self, observation, **kwargs):
+    def policy(self, observation):
         """Returns an action, given an observation."""
         pass
 

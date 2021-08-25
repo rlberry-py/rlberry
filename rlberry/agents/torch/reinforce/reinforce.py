@@ -116,7 +116,8 @@ class REINFORCEAgent(AgentWithSimplePolicy):
         # default writer
         self.writer = DefaultWriter(self.name)
 
-    def policy(self, state):
+    def policy(self, observation):
+        state = observation
         assert self.policy_net is not None
         state = torch.from_numpy(state).float().to(self.device)
         action_dist = self.policy_net(state)

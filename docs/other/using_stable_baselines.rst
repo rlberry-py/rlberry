@@ -17,15 +17,12 @@ implementation of `Stable Baselines`_ and evaluate two hyperparameter configurat
 
 .. code-block:: python
 
-    import gym
+    from rlberry.envs import gym_make
     from stable_baselines3 import A2C as A2CStableBaselines
-    from rlberry.agents import Agent
+    from rlberry.agents import AgentWithSimplePolicy
 
 
-    class A2CAgent(Agent):
-        """
-        Wraps stable_baselines3's A2C into an rlberry Agent.
-        """
+    class A2CAgent(AgentWithSimplePolicy):
 
         name = 'A2C'
 
@@ -54,11 +51,13 @@ implementation of `Stable Baselines`_ and evaluate two hyperparameter configurat
                     **kwargs):
 
             # init rlberry base class
-            Agent.__init__(self, env, **kwargs)
+            AgentWithSimplePolicy.__init__(self, env, **kwargs)
+            # rlberry accepts tuples (env_constructor, env_kwargs) as env
+            # After a call to __init__, self.env is set as an environment instance
+            env = self.env
 
             # Generate seed for A2CStableBaselines using rlberry seeding
             seed = self.rng.integers(2**32).item()
-            self.seed = seed
 
             # init stable baselines class
             self.wrapped = A2CStableBaselines(
@@ -84,65 +83,78 @@ implementation of `Stable Baselines`_ and evaluate two hyperparameter configurat
                 device,
                 _init_setup_model)
 
-        def fit(self, **kwargs):
-            result = self.wrapped.learn(**kwargs)
-            info = {}  # possibly store something from results
-            return info
+        def fit(self, budget, **kwargs):
+            self.wrapped.learn(total_timesteps=budget, **kwargs)
 
-        def policy(self, observation, **kwargs):
-            action, _state = self.wrapped.predict(observation, **kwargs)
+        def policy(self, observation):
+            action, _ = self.wrapped.predict(observation, deterministic=True)
             return action
 
+        #
+        # For hyperparameter optimization
+        #
+        @classmethod
+        def sample_parameters(cls, trial):
+            learning_rate = trial.suggest_loguniform('learning_rate', 1e-5, 1)
+            ent_coef = trial.suggest_loguniform("ent_coef", 0.00000001, 0.1)
+            vf_coef = trial.suggest_uniform("vf_coef", 0, 1)
+            normalize_advantage = trial.suggest_categorical("normalize_advantage", [False, True])
+            return dict(
+                learning_rate=learning_rate,
+                ent_coef=ent_coef,
+                vf_coef=vf_coef,
+                normalize_advantage=normalize_advantage,
+            )
+
 
     #
-    # Traning one agent
+    # Training one agent
     #
+    env_ctor = gym_make
+    env_kwargs = dict(id='CartPole-v1')
+    # env = env_ctor(**env_kwargs)
+    # agent = A2CAgent(env, 'MlpPolicy', verbose=1)
+    # agent.fit(budget=1000)
 
-    # Environment (constructor, kwargs)
-    env = (gym.make, dict(id='CartPole-v1'))
-    agent = A2CAgent(env, 'MlpPolicy', verbose=1)
-    agent.fit(total_timesteps=100)
-
-    obs = env.reset()
-    for i in range(1000):
-        action = agent.policy(obs, deterministic=True)
-        obs, reward, done, info = env.step(action)
-        env.render()
-        if done:
-            break
-    env.close()
 
     #
-    # Traning several agents and comparing different hyperparams
+    # Training several agents and comparing different hyperparams
     #
     from rlberry.stats import AgentStats, MultipleStats, evaluate_agents
 
     stats = AgentStats(
         A2CAgent,
-        env,
-        eval_horizon=200,
+        (env_ctor, env_kwargs),
         agent_name='A2C baseline',
-        init_kwargs={'policy': 'MlpPolicy', 'verbose': 1},
-        fit_kwargs={'total_timesteps': 100},
-        policy_kwargs={'deterministic': True},
+        init_kwargs=dict(policy='MlpPolicy', verbose=1),
+        fit_kwargs=dict(log_interval=1000),
+        fit_budget=2500,
+        eval_kwargs=dict(eval_horizon=400),
         n_fit=4,
-        n_jobs=4,
-        seed=42,
-        joblib_backend='loky')   # we might need 'threading' here, since stable baselines creates processes
-                                # 'multiprocessing' does not work, 'loky' seems good
+        parallelization='process',
+        output_dir='dev/stable_baselines',
+        seed=123)
 
     stats_alternative = AgentStats(
         A2CAgent,
-        env,
-        eval_horizon=200,
-        agent_name='A2C high learning rate',
-        init_kwargs={'policy': 'MlpPolicy', 'verbose': 1, 'learning_rate': 0.01},
-        fit_kwargs={'total_timesteps': 100},
-        policy_kwargs={'deterministic': True},
+        (env_ctor, env_kwargs),
+        agent_name='A2C optimized',
+        init_kwargs=dict(policy='MlpPolicy', verbose=1),
+        fit_kwargs=dict(log_interval=1000),
+        fit_budget=2500,
+        eval_kwargs=dict(eval_horizon=400),
         n_fit=4,
-        n_jobs=4,
-        seed=42,
-        joblib_backend='loky')
+        parallelization='process',
+        output_dir='dev/stable_baselines',
+        seed=456)
+
+    # Optimize hyperparams (600 seconds)
+    stats_alternative.optimize_hyperparams(
+        timeout=600,
+        n_optuna_workers=2,
+        n_fit=2,
+        optuna_parallelization='process',
+        fit_fraction=1.0)
 
     # Fit everything in parallel
     mstats = MultipleStats()
@@ -152,13 +164,18 @@ implementation of `Stable Baselines`_ and evaluate two hyperparameter configurat
     mstats.run()
 
     # Plot policy evaluation
-    evaluate_agents(mstats.allstats)
+    out = evaluate_agents(mstats.allstats)
+    print(out)
 
 
-.. warning::
-    When using :class:`~rlberry.stats.agent_stats.AgentStats` with
-    `Stable Baselines`_ agents, make sure to set :code:`joblib_backend='loky'`
-    or  :code:`joblib_backend='threading'` to avoid conflicts with the
-    multiprocessing used by `VecEnv <https://github.com/DLR-RM/stable-baselines3/blob/18d10dbf42dd6dff6d457b45b521fdf2a1169a7e/stable_baselines3/common/vec_env/subproc_vec_env.py>`_ 
-    in Stable Baselines.
-
+    # Visualize policy
+    env = stats_alternative.build_eval_env()
+    agent = stats_alternative.agent_handlers[0]
+    obs = env.reset()
+    for i in range(2500):
+        action = agent.policy(obs)
+        obs, reward, done, info = env.step(action)
+        env.render()
+        if done:
+            break
+    env.close()
