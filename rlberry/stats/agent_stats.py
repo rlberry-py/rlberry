@@ -249,21 +249,8 @@ class AgentStats:
         self.writers = [('default', None) for _ in range(n_fit)]
 
         #
-        handlers_seeders = self.seeder.spawn(self.n_fit, squeeze=False)
-        self.agent_handlers = [
-            AgentHandler(
-                id=ii,
-                filename=self.output_dir / Path(f'agent_handlers/{self.unique_id}_{ii}'),
-                seeder=handlers_seeders[ii],
-                agent_class=self.agent_class,
-                agent_instance=None,
-                # kwargs
-                env=train_env,
-                **init_kwargs,
-            )
-            for ii in range(self.n_fit)
-        ]
-
+        self.agent_handlers = None
+        self._reset_agent_handlers()
         self.default_writer_data = None
         self.best_hyperparams = None
 
@@ -281,6 +268,23 @@ class AgentStats:
             self.db_filename = None
             self.optuna_storage_url = "sqlite:///:memory:"
             logger.warning(f'Unable to create databate {self.db_filename}. Using sqlite:///:memory:')
+
+    def _reset_agent_handlers(self):
+        handlers_seeders = self.seeder.spawn(self.n_fit, squeeze=False)
+        self.agent_handlers = [
+            AgentHandler(
+                id=ii,
+                filename=self.output_dir / Path(f'agent_handlers/{self.unique_id}_{ii}'),
+                seeder=handlers_seeders[ii],
+                agent_class=self.agent_class,
+                agent_instance=None,
+                # kwargs
+                env=self.train_env,
+                **self.init_kwargs,
+            )
+            for ii in range(self.n_fit)
+        ]
+        self.clear_handlers()
 
     def build_eval_env(self):
         """
@@ -530,6 +534,11 @@ class AgentStats:
             'none'
             'halving'
 
+        Note
+        ----
+        After calling this method, agent handlers from previous calls to fit() will be erased.
+        It is suggested to call fit() *after* a call to optimize_hyperparams().
+
         Parameters
         ----------
         n_trials: int
@@ -687,6 +696,9 @@ class AgentStats:
 
         # update using best parameters
         self.init_kwargs.update(best_trial.params)
+
+        # reset agent handlers, so that they take the new parameters
+        self._reset_agent_handlers()
 
         return best_trial, study.trials_dataframe()
 
