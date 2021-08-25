@@ -1,7 +1,8 @@
+import numpy as np
 from rlberry.agents.ucbvi import UCBVIAgent
 from rlberry.agents.optql import OptQLAgent
 from rlberry.envs.finite import GridWorld
-from rlberry.stats import AgentStats, plot_episode_rewards
+from rlberry.stats import AgentStats, plot_writer_data
 from rlberry.stats import MultipleStats
 
 
@@ -9,12 +10,11 @@ N_EP = 3000
 HORIZON = 20
 GAMMA = 1.0
 
-env = GridWorld(nrows=5, ncols=10)
+env = (GridWorld, dict(nrows=5, ncols=10))
 
 params = {}
 
 params['ucbvi'] = {
-    'n_episodes': N_EP,
     'horizon': HORIZON,
     'stage_dependent': True,
     'gamma': GAMMA,
@@ -23,22 +23,26 @@ params['ucbvi'] = {
 }
 
 params['optql'] = {
-    'n_episodes': N_EP,
     'horizon': HORIZON,
     'gamma': GAMMA,
     'bonus_scale_factor': 1.0,
 }
 
+eval_kwargs = dict(eval_horizon=HORIZON, n_simulations=20)
+
+
 mstats = MultipleStats()
 
 mstats.append(
-    AgentStats(UCBVIAgent, env, init_kwargs=params['ucbvi'])
+    AgentStats(UCBVIAgent, env, fit_budget=N_EP, init_kwargs=params['ucbvi'], eval_kwargs=eval_kwargs)
 )
 
 mstats.append(
-    AgentStats(OptQLAgent, env, init_kwargs=params['optql'])
+    AgentStats(OptQLAgent, env, fit_budget=N_EP, init_kwargs=params['optql'], eval_kwargs=eval_kwargs)
 )
 
 mstats.run()
 
-plot_episode_rewards(mstats.allstats, cumulative=True)
+plot_writer_data(mstats.allstats, tag='episode_rewards',
+                 preprocess_func=np.cumsum,
+                 title='Cumulative Rewards')

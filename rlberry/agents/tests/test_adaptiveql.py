@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 
 def test_adaptive_ql():
     env = get_benchmark_env(level=2)
-    agent = AdaptiveQLAgent(env, n_episodes=50, horizon=30)
-    agent.fit()
+    agent = AdaptiveQLAgent(env, horizon=30)
+    agent.fit(budget=50)
     agent.policy(env.observation_space.sample())
     agent.Qtree.plot(0, 20)
     plt.clf()

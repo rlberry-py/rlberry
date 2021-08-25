@@ -98,8 +98,8 @@ implementation of `Stable Baselines`_ and evaluate two hyperparameter configurat
     # Traning one agent
     #
 
-
-    env = gym.make('CartPole-v1')
+    # Environment (constructor, kwargs)
+    env = (gym.make, dict(id='CartPole-v1'))
     agent = A2CAgent(env, 'MlpPolicy', verbose=1)
     agent.fit(total_timesteps=100)
 
@@ -115,7 +115,7 @@ implementation of `Stable Baselines`_ and evaluate two hyperparameter configurat
     #
     # Traning several agents and comparing different hyperparams
     #
-    from rlberry.stats import AgentStats, MultipleStats, compare_policies
+    from rlberry.stats import AgentStats, MultipleStats, evaluate_agents
 
     stats = AgentStats(
         A2CAgent,
@@ -152,7 +152,7 @@ implementation of `Stable Baselines`_ and evaluate two hyperparameter configurat
     mstats.run()
 
     # Plot policy evaluation
-    compare_policies(mstats.allstats)
+    evaluate_agents(mstats.allstats)
 
 
 .. warning::

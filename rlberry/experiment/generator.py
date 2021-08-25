@@ -1,16 +1,15 @@
 """Run experiments.
 
 Usage:
-  run.py <experiment_path> [--writer] [--n_fit=<nf>] [--n_jobs=<nj>] [--output_dir=<dir>] [--joblib_backend=<jb>]
+  run.py <experiment_path> [--writer] [--n_fit=<nf>] [--output_dir=<dir>] [--parallelization=<par>]
   run.py (-h | --help)
 
 Options:
   -h --help     Show this screen.
   --writer      Use a tensorboard writer.
   --n_fit=<nf>  Number of times each agent is fit [default: 4].
-  --n_jobs=<nj>  Number of jobs used to fit each agent [default: 4].
   --output_dir=<dir>  Directory to save the results [default: results].
-  --joblib_backend=<jb>  Backend for joblib [default: loky].
+  --parallelization=<par>  Either 'thread' or 'process' [default: process].
 """
 import logging
 from docopt import docopt
@@ -35,11 +34,10 @@ def experiment_generator():
     """
     args = docopt(__doc__)
     for (_, agent_stats) in parse_experiment_config(
-                Path(args["<experiment_path>"]),
-                n_fit=int(args["--n_fit"]),
-                n_jobs=int(args["--n_jobs"]),
-                output_base_dir=args["--output_dir"],
-                joblib_backend=args["--joblib_backend"]):
+            Path(args["<experiment_path>"]),
+            n_fit=int(args["--n_fit"]),
+            output_base_dir=args["--output_dir"],
+            parallelization=args["--parallelization"]):
         if args["--writer"]:
             if _TENSORBOARD_INSTALLED:
                 for idx in range(agent_stats.n_fit):

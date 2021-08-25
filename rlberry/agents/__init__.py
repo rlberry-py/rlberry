@@ -1,6 +1,6 @@
 # Import interfaces
 from .agent import Agent
-from .incremental_agent import IncrementalAgent
+from .agent import AgentWithSimplePolicy
 
 # basic agents (alphabetical!)
 # basic = does not require torch, jax etc

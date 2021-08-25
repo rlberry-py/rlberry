@@ -81,7 +81,7 @@ class Seeder:
         self.seed_seq = seed_seq
         self.rng = default_rng(self.seed_seq)
 
-    def spawn(self, n=1):
+    def spawn(self, n=1, squeeze=True):
         """
         Spawn a list of Seeder from the seed sequence of the object (self.seed_seq).
 
@@ -89,6 +89,9 @@ class Seeder:
         ----------
         n : int
             Number of seed sequences to spawn
+        squeeze : bool
+            If False, returns a list even if n=1. Otherwise,
+            returns a Seeder if n=1.
         Returns
         -------
         seed_seq : list
@@ -96,7 +99,7 @@ class Seeder:
         """
         seed_seq_list = self.seed_seq.spawn(n)
         spawned_seeders = [Seeder(seq, spawn_seed_seq=False) for seq in seed_seq_list]
-        if len(spawned_seeders) == 1:
+        if len(spawned_seeders) == 1 and squeeze:
             spawned_seeders = spawned_seeders[0]
         return spawned_seeders
 

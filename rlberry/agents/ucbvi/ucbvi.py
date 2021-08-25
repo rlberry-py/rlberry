@@ -2,18 +2,18 @@ import logging
 import numpy as np
 
 import gym.spaces as spaces
-from rlberry.agents import IncrementalAgent
+from rlberry.agents import AgentWithSimplePolicy
 from rlberry.agents.ucbvi.utils import update_value_and_get_action, update_value_and_get_action_sd
 from rlberry.exploration_tools.discrete_counter import DiscreteCounter
 from rlberry.agents.dynprog.utils import backward_induction_sd
 from rlberry.agents.dynprog.utils import backward_induction_in_place
-from rlberry.utils.writers import PeriodicWriter
+from rlberry.utils.writers import DefaultWriter
 
 
 logger = logging.getLogger(__name__)
 
 
-class UCBVIAgent(IncrementalAgent):
+class UCBVIAgent(AgentWithSimplePolicy):
     """
     UCBVI [1]_ with custom exploration bonus.
 
@@ -26,8 +26,6 @@ class UCBVIAgent(IncrementalAgent):
     ----------
     env : gym.Env
         Environment with discrete states and actions.
-    n_episodes : int
-        Number of episodes.
     gamma : double, default: 1.0
         Discount factor in [0, 1]. If gamma is 1.0, the problem is set to
         be finite-horizon.
@@ -64,7 +62,6 @@ class UCBVIAgent(IncrementalAgent):
 
     def __init__(self,
                  env,
-                 n_episodes=1000,
                  gamma=1.0,
                  horizon=100,
                  bonus_scale_factor=1.0,
@@ -74,9 +71,8 @@ class UCBVIAgent(IncrementalAgent):
                  real_time_dp=False,
                  **kwargs):
         # init base class
-        IncrementalAgent.__init__(self, env, **kwargs)
+        AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
-        self.n_episodes = n_episodes
         self.gamma = gamma
         self.horizon = horizon
         self.bonus_scale_factor = bonus_scale_factor
@@ -105,8 +101,8 @@ class UCBVIAgent(IncrementalAgent):
 
         self.v_max = np.zeros(self.horizon)
         self.v_max[-1] = r_range
-        for hh in reversed(range(self.horizon-1)):
-            self.v_max[hh] = r_range + self.gamma*self.v_max[hh+1]
+        for hh in reversed(range(self.horizon - 1)):
+            self.v_max[hh] = r_range + self.gamma * self.v_max[hh + 1]
 
         # initialize
         self.reset()
@@ -130,7 +126,7 @@ class UCBVIAgent(IncrementalAgent):
 
         # MDP estimator
         self.R_hat = np.zeros(shape_hsa)
-        self.P_hat = np.ones(shape_hsas) * 1.0/S
+        self.P_hat = np.ones(shape_hsas) * 1.0 / S
 
         # Value functions
         self.V = np.ones((H, S))
@@ -155,18 +151,14 @@ class UCBVIAgent(IncrementalAgent):
         self.counter = DiscreteCounter(self.env.observation_space,
                                        self.env.action_space)
 
-        # info
-        self._rewards = np.zeros(self.n_episodes)
-
         # update name
         if self.real_time_dp:
             self.name = 'UCBVI-RTDP'
 
         # default writer
-        self.writer = PeriodicWriter(self.name,
-                                     log_every=5*logger.getEffectiveLevel())
+        self.writer = DefaultWriter(self.name)
 
-    def policy(self, state, hh=0, **kwargs):
+    def policy(self, state, hh=0):
         """ Recommended policy. """
         assert self.Q_policy is not None
         return self.Q_policy[hh, state, :].argmax()
@@ -189,8 +181,7 @@ class UCBVIAgent(IncrementalAgent):
                 self.P_hat,
                 self.B_sa,
                 self.gamma,
-                self.v_max,
-                )
+                self.v_max)
 
     def _compute_bonus(self, n, hh):
         # reward-free
@@ -215,10 +206,10 @@ class UCBVIAgent(IncrementalAgent):
             prev_r = self.R_hat[hh, state, action]
             prev_p = self.P_hat[hh, state, action, :]
 
-            self.R_hat[hh, state, action] = (1.0-1.0/nn)*prev_r + reward*1.0/nn
+            self.R_hat[hh, state, action] = (1.0 - 1.0 / nn) * prev_r + reward * 1.0 / nn
 
-            self.P_hat[hh, state, action, :] = (1.0-1.0/nn)*prev_p
-            self.P_hat[hh, state, action, next_state] += 1.0/nn
+            self.P_hat[hh, state, action, :] = (1.0 - 1.0 / nn) * prev_p
+            self.P_hat[hh, state, action, next_state] += 1.0 / nn
 
             self.B_sa[hh, state, action] = self._compute_bonus(nn, hh)
 
@@ -229,10 +220,10 @@ class UCBVIAgent(IncrementalAgent):
             prev_r = self.R_hat[state, action]
             prev_p = self.P_hat[state, action, :]
 
-            self.R_hat[state, action] = (1.0-1.0/nn)*prev_r + reward*1.0/nn
+            self.R_hat[state, action] = (1.0 - 1.0 / nn) * prev_r + reward * 1.0 / nn
 
-            self.P_hat[state, action, :] = (1.0-1.0/nn)*prev_p
-            self.P_hat[state, action, next_state] += 1.0/nn
+            self.P_hat[state, action, :] = (1.0 - 1.0 / nn) * prev_p
+            self.P_hat[state, action, next_state] += 1.0 / nn
 
             self.B_sa[state, action] = self._compute_bonus(nn, 0)
 
@@ -262,7 +253,7 @@ class UCBVIAgent(IncrementalAgent):
                 backward_induction_sd(
                     self.Q,
                     self.V,
-                    self.R_hat+self.B_sa,
+                    self.R_hat + self.B_sa,
                     self.P_hat,
                     self.gamma,
                     self.v_max[0])
@@ -277,23 +268,21 @@ class UCBVIAgent(IncrementalAgent):
                     self.v_max[0])
 
         # update info
-        ep = self.episode
-        self._rewards[ep] = episode_rewards
         self.episode += 1
 
         # writer
         if self.writer is not None:
-            self.writer.add_scalar("ep reward", episode_rewards, self.episode)
+            self.writer.add_scalar("episode_rewards", episode_rewards, self.episode)
             self.writer.add_scalar("n_visited_states", self.counter.get_n_visited_states(), self.episode)
 
         # return sum of rewards collected in the episode
         return episode_rewards
 
-    def partial_fit(self, fraction, **kwargs):
-        assert 0.0 < fraction <= 1.0
-        n_episodes_to_run = int(np.ceil(fraction*self.n_episodes))
+    def fit(self, budget: int, **kwargs):
+        del kwargs
+        n_episodes_to_run = budget
         count = 0
-        while count < n_episodes_to_run and self.episode < self.n_episodes:
+        while count < n_episodes_to_run:
             self._run_episode()
             count += 1
 
@@ -315,7 +304,3 @@ class UCBVIAgent(IncrementalAgent):
                 self.horizon,
                 self.gamma,
                 self.v_max[0])
-
-        info = {"n_episodes": self.episode,
-                "episode_rewards": self._rewards[:self.episode]}
-        return info

@@ -36,29 +36,23 @@ class MyAgent(Agent):
                  **kwargs):
         Agent.__init__(self, env, **kwargs)
     
-    def fit(self, **kwargs):
+    def fit(self, budget: int):
         """
         ** Must be implemented. **
 
-        Trains the agent.
+        Trains the agent, given a computational budget (e.g. number of steps or episodes).
         """
         # code to train the agent
         # ...
+        pass
 
-        # information about training, e.g., episode_rewards,
-        # an array with the rewards gathered in each episode
-        info = {'episode_rewards': episode_rewards}
-        return info
-
-    def policy(self, observation, **kwargs):
+    def eval(self, **kwargs):
         """
         ** Must be implemented. **
 
-        Returns an action, given the observation
+        Evaluates the agent (e.g. Monte-Carlo policy evaluation).
         """
-        # for example
-        action = self.policy_network(observation)
-        return action
+        return 0.0
 
 
     @classmethod
@@ -85,8 +79,6 @@ class MyAgent(Agent):
                 'param_2': param_2,
                 }
 ```
-
-__Remark__: For a faster hyperparameter optimization, it is recommended to implement the `partial_fit()` function in the `IncrementalAgent` interface (`rlberry/agents/incremental_agent.py`), in which case the agent must inherit from `IncrementalAgent`.
 
 
 ### Implementation notes

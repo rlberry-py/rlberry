@@ -4,13 +4,13 @@ import numpy as np
 from rlberry.utils.jit_setup import numba_jit
 
 import gym.spaces as spaces
-from rlberry.agents import Agent
+from rlberry.agents import AgentWithSimplePolicy
 from rlberry.agents.dynprog.utils import backward_induction
 from rlberry.agents.dynprog.utils import backward_induction_in_place
 from rlberry.utils.metrics import metric_lp
 from rlberry.agents.kernel_based.kernels import kernel_func
 from rlberry.agents.kernel_based.common import map_to_representative
-from rlberry.utils.writers import PeriodicWriter
+from rlberry.utils.writers import DefaultWriter
 
 
 logger = logging.getLogger(__name__)
@@ -69,7 +69,7 @@ def compute_bonus(sum_weights, beta, bonus_scale_factor, v_max, bonus_type):
         raise NotImplementedError("Error: unknown bonus type.")
 
 
-class RSKernelUCBVIAgent(Agent):
+class RSKernelUCBVIAgent(AgentWithSimplePolicy):
     """
     Implements KernelUCBVI [1] with representative states [2, 3].
 
@@ -90,8 +90,6 @@ class RSKernelUCBVIAgent(Agent):
     ----------
     env : Model
         Online model with continuous (Box) state space and discrete actions
-    n_episodes : int
-        number of episodes
     gamma : double
         Discount factor in [0, 1]. If gamma is 1.0, the problem is set to
         be finite-horizon.
@@ -147,7 +145,6 @@ class RSKernelUCBVIAgent(Agent):
     name = "RSKernelUCBVI"
 
     def __init__(self, env,
-                 n_episodes=1000,
                  gamma=0.99,
                  horizon=None,
                  lp_metric=2,
@@ -161,9 +158,8 @@ class RSKernelUCBVIAgent(Agent):
                  bonus_type="simplified_bernstein",
                  **kwargs):
         # init base class
-        Agent.__init__(self, env, **kwargs)
+        AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
-        self.n_episodes = n_episodes
         self.gamma = gamma
         self.horizon = horizon
         self.lp_metric = lp_metric
@@ -258,29 +254,22 @@ class RSKernelUCBVIAgent(Agent):
         self.episode = 0
 
         # default writer
-        self.writer = PeriodicWriter(self.name,
-                                     log_every=5*logger.getEffectiveLevel())
+        self.writer = DefaultWriter(self.name)
 
-    def policy(self, state, hh=0, **kwargs):
+    def policy(self, state, hh=0):
         assert self.Q_policy is not None
         repr_state = self._map_to_repr(state, False)
         return self.Q_policy[hh, repr_state, :].argmax()
 
-    def fit(self, **kwargs):
-        info = {}
-        self._rewards = np.zeros(self.n_episodes)
-        self._cumul_rewards = np.zeros(self.n_episodes)
-        for _ in range(self.n_episodes):
+    def fit(self, budget: int, **kwargs):
+        del kwargs
+        for _ in range(budget):
             self._run_episode()
 
         # compute Q function for the recommended policy
         self.Q_policy, _ = backward_induction(self.R_hat[:self.M, :],
                                               self.P_hat[:self.M, :, :self.M],
                                               self.horizon, self.gamma)
-
-        info["n_episodes"] = self.n_episodes
-        info["episode_rewards"] = self._rewards
-        return info
 
     def _map_to_repr(self, state, accept_new_repr=True):
         repr_state = map_to_representative(state,
@@ -341,20 +330,11 @@ class RSKernelUCBVIAgent(Agent):
                                 self.P_hat[:self.M, :, :self.M],
                                 self.horizon, self.gamma, self.v_max)
 
-        ep = self.episode
-        self._rewards[ep] = episode_rewards
-        self._cumul_rewards[ep] = episode_rewards \
-            + self._cumul_rewards[max(0, ep - 1)]
-
         self.episode += 1
         #
         if self.writer is not None:
-            avg_reward = self._cumul_rewards[ep]/max(1, ep)
-
-            self.writer.add_scalar("episode", self.episode, None)
-            self.writer.add_scalar("ep reward", episode_rewards)
-            self.writer.add_scalar("avg reward", avg_reward)
-            self.writer.add_scalar("representative states", self.M)
+            self.writer.add_scalar("episode_rewards", episode_rewards, self.episode)
+            self.writer.add_scalar("representative states", self.M, self.episode)
 
         # return sum of rewards collected in the episode
         return episode_rewards

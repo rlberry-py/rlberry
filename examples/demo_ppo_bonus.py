@@ -1,15 +1,14 @@
-
+import numpy as np
 from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
 from rlberry.agents.torch.ppo import PPOAgent
-from rlberry.stats import AgentStats, plot_episode_rewards, compare_policies
+from rlberry.stats import AgentStats, plot_writer_data, evaluate_agents
 from rlberry.exploration_tools.discrete_counter import DiscreteCounter
 
 
 # --------------------------------
 # Define train env
 # --------------------------------
-env = get_benchmark_env(level=4)
-eval_env = get_benchmark_env(level=4)
+env = (get_benchmark_env, dict(level=4))
 
 
 def uncertainty_estimator_fn(obs_space, act_space):
@@ -22,49 +21,55 @@ def uncertainty_estimator_fn(obs_space, act_space):
 # -----------------------------
 # Parameters
 # -----------------------------
-N_EPISODES = 2000
+N_EPISODES = 200
 GAMMA = 0.99
 HORIZON = 30
 BONUS_SCALE_FACTOR = 0.1
 MIN_DIST = 0.1
 
-params_ppo = {'n_episodes': N_EPISODES,
-              'gamma': GAMMA,
-              'horizon': HORIZON,
-              'batch_size': 16,
-              'entr_coef': 8e-7,
-              'k_epochs': 10,
-              'eps_clip': 0.2,
-              'learning_rate': 0.03
-              }
+params_ppo = {
+    'gamma': GAMMA,
+    'horizon': HORIZON,
+    'batch_size': 16,
+    'entr_coef': 8e-7,
+    'k_epochs': 10,
+    'eps_clip': 0.2,
+    'learning_rate': 0.03
+}
 
 params_ppo_bonus = {
-              'n_episodes': N_EPISODES,
-              'gamma': GAMMA,
-              'horizon': HORIZON,
-              'batch_size': 16,
-              'entr_coef': 8e-7,
-              'k_epochs': 10,
-              'eps_clip': 0.2,
-              'learning_rate': 0.03,
-              'use_bonus': True,
-              'uncertainty_estimator_kwargs': {
-                  'uncertainty_estimator_fn': uncertainty_estimator_fn
-              }
-              }
+    'gamma': GAMMA,
+    'horizon': HORIZON,
+    'batch_size': 16,
+    'entr_coef': 8e-7,
+    'k_epochs': 10,
+    'eps_clip': 0.2,
+    'learning_rate': 0.03,
+    'use_bonus': True,
+    'uncertainty_estimator_kwargs': {
+        'uncertainty_estimator_fn': uncertainty_estimator_fn}
+}
 
+eval_kwargs = dict(eval_horizon=HORIZON, n_simulations=20)
 
 # -----------------------------
 # Run AgentStats
 # -----------------------------
-ppo_stats = AgentStats(PPOAgent, env, eval_env=eval_env, init_kwargs=params_ppo, n_fit=4, agent_name='PPO')
-ppo_bonus_stats = AgentStats(PPOAgent, env, eval_env=eval_env, init_kwargs=params_ppo_bonus, n_fit=4, agent_name='PPO-Bonus')
+ppo_stats = AgentStats(PPOAgent, env, fit_budget=N_EPISODES,
+                       init_kwargs=params_ppo, eval_kwargs=eval_kwargs,
+                       n_fit=4, agent_name='PPO')
+ppo_bonus_stats = AgentStats(
+    PPOAgent, env, fit_budget=N_EPISODES, 
+    init_kwargs=params_ppo_bonus, eval_kwargs=eval_kwargs,
+    n_fit=4, agent_name='PPO-Bonus')
 
 agent_stats_list = [ppo_bonus_stats, ppo_stats]
 
 # learning curves
-plot_episode_rewards(agent_stats_list, cumulative=True, show=False)
+plot_writer_data(agent_stats_list, tag='episode_rewards',
+                 preprocess_func=np.cumsum,
+                 title='Cumulative Rewards', show=False)
 
 # compare final policies
-output = compare_policies(agent_stats_list, eval_horizon=HORIZON, n_sim=20)
+output = evaluate_agents(agent_stats_list)
 print(output)

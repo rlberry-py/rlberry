@@ -1,12 +1,13 @@
 from stable_baselines3 import A2C as A2CStableBaselines
 from stable_baselines3.common.cmd_util import make_atari_env
 from stable_baselines3.common.vec_env import VecFrameStack
-from rlberry.agents import Agent
-from rlberry.stats import AgentStats, MultipleStats
+from rlberry.agents import AgentWithSimplePolicy
+from rlberry.stats import AgentStats
 from rlberry.wrappers.scalarize import ScalarizeEnvWrapper
+from pathlib import Path
 
 
-class A2CAgent(Agent):
+class A2CAgent(AgentWithSimplePolicy):
 
     name = 'A2C'
 
@@ -35,7 +36,10 @@ class A2CAgent(Agent):
                  **kwargs):
 
         # init rlberry base class
-        Agent.__init__(self, env, **kwargs)
+        AgentWithSimplePolicy.__init__(self, env, **kwargs)
+        # rlberry accepts tuples (env_constructor, env_kwargs) as env
+        # After a call to __init__, self.env is set as an environment instance
+        env = self.env
 
         # Generate seed for A2CStableBaselines using rlberry seeding
         seed = self.rng.integers(2**32).item()
@@ -64,14 +68,25 @@ class A2CAgent(Agent):
             device,
             _init_setup_model)
 
-    def fit(self, **kwargs):
-        result = self.wrapped.learn(**kwargs)
-        info = {}  # possibly store something from results
-        return info
+    def fit(self, budget):
+        self.wrapped.learn(total_timesteps=budget)
 
-    def policy(self, observation, **kwargs):
-        action, _state = self.wrapped.predict(observation, **kwargs)
+    def policy(self, observation):
+        action, _ = self.wrapped.predict(observation, deterministic=True)
         return action
+
+    #
+    # Some agents are not pickable: in this case, they must define custom save/load methods.
+    #
+    def save(self, filename):
+        self.wrapped.save(filename)
+        return Path(filename).with_suffix('.zip')
+
+    @classmethod
+    def load(cls, filename, **kwargs):
+        rlberry_a2c_wrapper = cls(**kwargs)
+        rlberry_a2c_wrapper.wrapped = A2CStableBaselines.load(filename)
+        return rlberry_a2c_wrapper
 
     #
     # For hyperparameter optimization
@@ -84,7 +99,7 @@ class A2CAgent(Agent):
 
 
 #
-# Training one agent
+# Train and eval env constructors
 #
 def env_constructor(n_envs=4):
     env = make_atari_env('MontezumaRevenge-v0', n_envs=n_envs)
@@ -102,46 +117,27 @@ def eval_env_constructor(n_envs=1):
     return env
 
 #
-# Training several agents and comparing different hyperparams
+# Testing single agent
 #
 
 
+#
+# Training several agents and comparing different hyperparams
+#
+
 stats = AgentStats(
     A2CAgent,
-    (env_constructor, None),
+    train_env=(env_constructor, None),
     eval_env=(eval_env_constructor, None),
-    eval_horizon=200,
+    eval_kwargs=dict(eval_horizon=200),
     agent_name='A2C baseline',
-    init_kwargs={'policy': 'CnnPolicy', 'verbose': 10},
-    fit_kwargs={'total_timesteps': 1000},
-    policy_kwargs={'deterministic': True},
-    n_fit=10,
-    n_jobs=6,
-    joblib_backend='threading')
+    fit_budget=5000,
+    init_kwargs=dict(policy='CnnPolicy', verbose=10),
+    n_fit=4,
+    parallelization='process',
+    output_dir='dev/stable_baselines_atari',
+    seed=123)
 
 
-stats_alternative = AgentStats(
-    A2CAgent,
-    (env_constructor, None),
-    eval_env=(eval_env_constructor, None),
-    eval_horizon=200,
-    agent_name='A2C high learning rate',
-    init_kwargs={'policy': 'CnnPolicy', 'verbose': 10, 'learning_rate': 0.01},
-    fit_kwargs={'total_timesteps': 1000},
-    policy_kwargs={'deterministic': True},
-    n_fit=10,
-    n_jobs=6,
-    joblib_backend='threading')
-
-
-# Fit everything in parallel
-mstats = MultipleStats()
-mstats.append(stats)
-mstats.append(stats_alternative)
-mstats.run()
-mstats.save()
-
-
-# Test hyperparam optim
-print("testint a call to hyperparam optim")
-mstats.allstats[0].optimize_hyperparams(timeout=60, n_fit=2, n_jobs=1)
+stats.fit()
+stats.optimize_hyperparams(timeout=60, n_fit=2)

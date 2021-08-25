@@ -1,7 +1,6 @@
 from rlberry.seeding.seeder import Seeder
 import concurrent.futures
 import pytest
-from joblib import Parallel, delayed
 
 
 def get_random_number_setting_seed(seeder):
@@ -29,15 +28,3 @@ def test_multithread_seeding():
                     )
                 assert results[0] != results[1], f"error in simulation {(ii, jj)}"
 
-
-@pytest.mark.parametrize("backend", ['loky', 'threading', 'multiprocessing'])
-def test_joblib_seeding_giving_seed(backend):
-    """
-    Checks that different seeds are given to different joblib workers
-    """
-    main_seeder = Seeder(123)
-    workers_output = Parallel(n_jobs=4,
-                              verbose=5,
-                              backend=backend)(
-            delayed(get_random_number_setting_seed)(seed) for seed in main_seeder.spawn(2))
-    assert workers_output[0] != workers_output[1]

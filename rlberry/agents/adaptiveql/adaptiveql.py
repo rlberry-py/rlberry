@@ -1,15 +1,15 @@
 import logging
 import gym.spaces as spaces
 import numpy as np
-from rlberry.agents import IncrementalAgent
-from rlberry.utils.writers import PeriodicWriter
+from rlberry.agents import AgentWithSimplePolicy
+from rlberry.utils.writers import DefaultWriter
 from rlberry.agents.adaptiveql.tree import MDPTreePartition
 
 
 logger = logging.getLogger(__name__)
 
 
-class AdaptiveQLAgent(IncrementalAgent):
+class AdaptiveQLAgent(AgentWithSimplePolicy):
     """
     Adaptive Q-Learning algorithm [1]_ implemented for enviroments
     with continuous (Box) states and **discrete actions**.
@@ -20,8 +20,6 @@ class AdaptiveQLAgent(IncrementalAgent):
     ----------
     env : gym.Env
         Environment with discrete states and actions.
-    n_episodes : int
-        Number of episodes.
     gamma : double, default: 1.0
         Discount factor in [0, 1].
     horizon : int
@@ -51,18 +49,16 @@ class AdaptiveQLAgent(IncrementalAgent):
 
     def __init__(self,
                  env,
-                 n_episodes=1000,
                  gamma=1.0,
                  horizon=50,
                  bonus_scale_factor=1.0,
                  bonus_type="simplified_bernstein",
                  **kwargs):
-        IncrementalAgent.__init__(self, env, **kwargs)
+        AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
         assert isinstance(self.env.observation_space, spaces.Box)
         assert isinstance(self.env.action_space, spaces.Discrete)
 
-        self.n_episodes = n_episodes
         self.gamma = gamma
         self.horizon = horizon
         self.bonus_scale_factor = bonus_scale_factor
@@ -77,8 +73,8 @@ class AdaptiveQLAgent(IncrementalAgent):
 
         self.v_max = np.zeros(self.horizon)
         self.v_max[-1] = r_range
-        for hh in reversed(range(self.horizon-1)):
-            self.v_max[hh] = r_range + self.gamma*self.v_max[hh+1]
+        for hh in reversed(range(self.horizon - 1)):
+            self.v_max[hh] = r_range + self.gamma * self.v_max[hh + 1]
 
         self.reset()
 
@@ -88,14 +84,12 @@ class AdaptiveQLAgent(IncrementalAgent):
                                       self.horizon)
 
         # info
-        self._rewards = np.zeros(self.n_episodes)
         self.episode = 0
 
         # default writer
-        self.writer = PeriodicWriter(self.name,
-                                     log_every=5*logger.getEffectiveLevel())
+        self.writer = DefaultWriter(self.name)
 
-    def policy(self, observation, hh=0, **kwargs):
+    def policy(self, observation, hh=0):
         action, _ = self.Qtree.get_argmax_and_node(observation, hh)
         return action
 
@@ -106,7 +100,7 @@ class AdaptiveQLAgent(IncrementalAgent):
     def _update(self, node, state, action, next_state, reward, hh):
         # split node if necessary
         node_to_check = self.Qtree.update_counts(state, action, hh)
-        if node_to_check.n_visits >= (self.Qtree.dmax/node_to_check.radius)**2.0:
+        if node_to_check.n_visits >= (self.Qtree.dmax / node_to_check.radius)**2.0:
             node_to_check.split()
         assert id(node_to_check) == id(node)
 
@@ -114,20 +108,20 @@ class AdaptiveQLAgent(IncrementalAgent):
 
         # value at next_state
         value_next_state = 0
-        if hh < self.horizon-1:
+        if hh < self.horizon - 1:
             value_next_state = min(
-                self.v_max[hh+1],
-                self.Qtree.get_argmax_and_node(next_state, hh+1)[1].qvalue
+                self.v_max[hh + 1],
+                self.Qtree.get_argmax_and_node(next_state, hh + 1)[1].qvalue
             )
 
         # learning rate
-        alpha = (self.horizon+1.0)/(self.horizon + tt)
+        alpha = (self.horizon + 1.0) / (self.horizon + tt)
 
         bonus = self._compute_bonus(tt, hh)
-        target = reward + bonus + self.gamma*value_next_state
+        target = reward + bonus + self.gamma * value_next_state
 
         # update Q
-        node.qvalue = (1-alpha)*node.qvalue + alpha*target
+        node.qvalue = (1 - alpha) * node.qvalue + alpha * target
 
     def _compute_bonus(self, n, hh):
         if self.bonus_type == "simplified_bernstein":
@@ -154,25 +148,19 @@ class AdaptiveQLAgent(IncrementalAgent):
                 break
 
         # update info
-        ep = self.episode
-        self._rewards[ep] = episode_rewards
         self.episode += 1
 
         # writer
         if self.writer is not None:
-            self.writer.add_scalar("ep reward", episode_rewards, self.episode)
+            self.writer.add_scalar("episode_rewards", episode_rewards, self.episode)
 
         # return sum of rewards collected in the episode
         return episode_rewards
 
-    def partial_fit(self, fraction, **kwargs):
-        assert 0.0 < fraction <= 1.0
-        n_episodes_to_run = int(np.ceil(fraction*self.n_episodes))
+    def fit(self, budget: int, **kwargs):
+        del kwargs
+        n_episodes_to_run = budget
         count = 0
-        while count < n_episodes_to_run and self.episode < self.n_episodes:
+        while count < n_episodes_to_run:
             self._run_episode()
             count += 1
-
-        info = {"n_episodes": self.episode,
-                "episode_rewards": self._rewards[:self.episode]}
-        return info

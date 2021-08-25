@@ -3,6 +3,7 @@ runs/
 
 # videos
 *.mp4
+notebooks/videos/*
 
 # pickled objects and csv
 *.pickle

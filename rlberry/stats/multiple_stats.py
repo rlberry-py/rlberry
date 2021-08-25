@@ -4,7 +4,6 @@ import concurrent.futures
 def fit_stats(stats, save):
     stats.fit()
     if save:
-        stats.save_results()
         stats.save()
     return stats
 
@@ -27,18 +26,15 @@ class MultipleStats:
         """
         self.instances.append(agent_stats)
 
-    def run(self, n_threads=4, save=False):
+    def run(self, save=False):
         """
         Fit AgentStats instances in parallel.
 
         Parameters
         ----------
-        n_threads : int, default: 4
-            Number of parallel threads.
-
         save: bool, default: False
             If true, save AgentStats intances immediately after fitting.
-            AgentStats.save() and AgentStats.save_results() are called.
+            AgentStats.save() is called.
         """
         with concurrent.futures.ThreadPoolExecutor() as executor:
             futures = []
@@ -54,8 +50,6 @@ class MultipleStats:
                 )
 
             self.instances = fitted_instances
-        # with ThreadPool(n_processes) as p:
-        #     self.instances = p.map(fit_stats, self.instances)
 
     def save(self):
         """
@@ -63,7 +57,6 @@ class MultipleStats:
         The output folder is defined in each of the AgentStats instances.
         """
         for stats in self.instances:
-            stats.save_results()
             stats.save()
 
     @property

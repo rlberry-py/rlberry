@@ -2,15 +2,15 @@ import logging
 import numpy as np
 
 import gym.spaces as spaces
-from rlberry.agents import IncrementalAgent
+from rlberry.agents import AgentWithSimplePolicy
 from rlberry.exploration_tools.discrete_counter import DiscreteCounter
-from rlberry.utils.writers import PeriodicWriter
+from rlberry.utils.writers import DefaultWriter
 
 
 logger = logging.getLogger(__name__)
 
 
-class OptQLAgent(IncrementalAgent):
+class OptQLAgent(AgentWithSimplePolicy):
     """
     Optimistic Q-Learning [1]_ with custom exploration bonuses.
 
@@ -18,8 +18,6 @@ class OptQLAgent(IncrementalAgent):
     ----------
     env : gym.Env
         Environment with discrete states and actions.
-    n_episodes : int
-        Number of episodes
     gamma : double, default: 1.0
         Discount factor in [0, 1].
     horizon : int
@@ -44,7 +42,6 @@ class OptQLAgent(IncrementalAgent):
 
     def __init__(self,
                  env,
-                 n_episodes=1000,
                  gamma=1.0,
                  horizon=100,
                  bonus_scale_factor=1.0,
@@ -52,9 +49,8 @@ class OptQLAgent(IncrementalAgent):
                  add_bonus_after_update=False,
                  **kwargs):
         # init base class
-        IncrementalAgent.__init__(self, env, **kwargs)
+        AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
-        self.n_episodes = n_episodes
         self.gamma = gamma
         self.horizon = horizon
         self.bonus_scale_factor = bonus_scale_factor
@@ -108,14 +104,10 @@ class OptQLAgent(IncrementalAgent):
         self.counter = DiscreteCounter(self.env.observation_space,
                                        self.env.action_space)
 
-        # info
-        self._rewards = np.zeros(self.n_episodes)
-
         # default writer
-        self.writer = PeriodicWriter(self.name,
-                                     log_every=5*logger.getEffectiveLevel())
+        self.writer = DefaultWriter(self.name)
 
-    def policy(self, state, hh=0, **kwargs):
+    def policy(self, state, hh=0):
         """ Recommended policy. """
         return self.Q_bar[hh, state, :].argmax()
 
@@ -171,27 +163,20 @@ class OptQLAgent(IncrementalAgent):
                 break
 
         # update info
-        ep = self.episode
-        self._rewards[ep] = episode_rewards
         self.episode += 1
 
         # writer
         if self.writer is not None:
-            self.writer.add_scalar("ep reward", episode_rewards, self.episode)
-            self.writer.add_scalar("total reward", self._rewards[:ep].sum(), self.episode)
+            self.writer.add_scalar("episode_rewards", episode_rewards, self.episode)
             self.writer.add_scalar("n_visited_states", self.counter.get_n_visited_states(), self.episode)
 
         # return sum of rewards collected in the episode
         return episode_rewards
 
-    def partial_fit(self, fraction, **kwargs):
-        assert 0.0 < fraction <= 1.0
-        n_episodes_to_run = int(np.ceil(fraction*self.n_episodes))
+    def fit(self, budget: int, **kwargs):
+        del kwargs
+        n_episodes_to_run = budget
         count = 0
-        while count < n_episodes_to_run and self.episode < self.n_episodes:
+        while count < n_episodes_to_run:
             self._run_episode()
             count += 1
-
-        info = {"n_episodes": self.episode,
-                "episode_rewards": self._rewards[:self.episode]}
-        return info

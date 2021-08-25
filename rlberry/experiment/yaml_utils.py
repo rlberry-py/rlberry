@@ -6,7 +6,7 @@ from rlberry.stats import AgentStats
 from rlberry.utils.factory import load
 
 
-_AGENT_KEYS = ('init_kwargs', 'fit_kwargs', 'policy_kwargs')
+_AGENT_KEYS = ('init_kwargs', 'eval_kwargs', 'fit_kwargs')
 
 
 def read_yaml(path):
@@ -50,7 +50,7 @@ def read_agent_config(config_path):
     -------
     agent_class
     base_config : dict
-        dictionary whose keys are ('init_kwargs', 'fit_kwargs', 'policy_kwargs')
+        dictionary whose keys are ('agent_class', 'init_kwargs', 'eval_kwargs', 'fit_kwargs')
     """
     agent_config = process_agent_yaml(config_path)
     base_config_yaml = agent_config.pop("base_config", None)
@@ -102,9 +102,8 @@ def read_env_config(config_path):
 
 def parse_experiment_config(path: Path,
                             n_fit: int = 4,
-                            n_jobs: int = 4,
                             output_base_dir: str = 'results',
-                            joblib_backend: str = 'loky') -> Generator[Tuple[int, AgentStats], None, None]:
+                            parallelization: str = 'process') -> Generator[Tuple[int, AgentStats], None, None]:
     """
     Read .yaml files. set global seed and convert to AgentStats instances.
 
@@ -128,8 +127,6 @@ def parse_experiment_config(path: Path,
         Path to an experiment config
     n_fit : int
         Number of instances of each agent to fit
-    n_jobs : int
-        Number of parallel jobs
     output_base_dir : str
         Directory where to save AgentStats results.
 
@@ -145,7 +142,6 @@ def parse_experiment_config(path: Path,
         train_env = read_env_config(config["train_env"])
         eval_env = read_env_config(config["eval_env"])
         n_fit = n_fit
-        n_jobs = n_jobs
 
         for agent_path in config["agents"]:
             # set seed before creating AgentStats
@@ -173,38 +169,34 @@ def parse_experiment_config(path: Path,
 
             # kwargs
             init_kwargs = agent_config['init_kwargs']
+            eval_kwargs = agent_config['eval_kwargs']
             fit_kwargs = agent_config['fit_kwargs']
-            policy_kwargs = agent_config['policy_kwargs']
 
             # check if there are global kwargs
             if 'global_init_kwargs' in config:
                 init_kwargs.update(config['global_init_kwargs'])
+            if 'global_eval_kwargs' in config:
+                eval_kwargs.update(config['global_eval_kwargs'])
             if 'global_fit_kwargs' in config:
-                init_kwargs.update(config['global_fit_kwargs'])
-            if 'global_policy_kwargs' in config:
-                init_kwargs.update(config['global_policy_kwargs'])
+                fit_kwargs.update(config['global_fit_kwargs'])
 
-            # check eval_horizon
-            if 'eval_horizon' in config:
-                eval_horizon = config['eval_horizon']
-            else:
-                eval_horizon = None
+            # pop fit_budget from fit_kwargs
+            fit_budget = fit_kwargs.pop('fit_budget')
 
             # append run index to dir
-            output_dir = output_dir / str(last+1)
+            output_dir = output_dir / str(last + 1)
 
             yield seed, AgentStats(agent_class=agent_class,
                                    init_kwargs=init_kwargs,
+                                   eval_kwargs=eval_kwargs,
+                                   fit_budget=fit_budget,
                                    fit_kwargs=fit_kwargs,
-                                   policy_kwargs=policy_kwargs,
                                    agent_name=agent_name,
                                    train_env=train_env,
                                    eval_env=eval_env,
-                                   eval_horizon=eval_horizon,
                                    n_fit=n_fit,
-                                   n_jobs=n_jobs,
                                    output_dir=output_dir,
-                                   joblib_backend=joblib_backend,
+                                   parallelization=parallelization,
                                    seed=seed)
 
 

@@ -1,19 +1,18 @@
 import logging
-import numpy as np
 import torch
 
 import gym.spaces as spaces
-from rlberry.agents import IncrementalAgent
+from rlberry.agents import AgentWithSimplePolicy
 from rlberry.agents.utils.memories import Memory
 from rlberry.agents.torch.utils.training import optimizer_factory
 from rlberry.agents.torch.utils.models import default_policy_net_fn
 from rlberry.utils.torch import choose_device
-from rlberry.utils.writers import PeriodicWriter
+from rlberry.utils.writers import DefaultWriter
 
 logger = logging.getLogger(__name__)
 
 
-class REINFORCEAgent(IncrementalAgent):
+class REINFORCEAgent(AgentWithSimplePolicy):
     """
     REINFORCE with entropy regularization.
 
@@ -21,8 +20,6 @@ class REINFORCEAgent(IncrementalAgent):
     ----------
     env : Model
         Online model with continuous (Box) state space and discrete actions
-    n_episodes : int
-        Number of episodes
     batch_size : int
         Number of episodes to wait before updating the policy.
     horizon : int
@@ -59,7 +56,6 @@ class REINFORCEAgent(IncrementalAgent):
     name = "REINFORCE"
 
     def __init__(self, env,
-                 n_episodes=1000,
                  batch_size=8,
                  horizon=256,
                  gamma=0.99,
@@ -72,9 +68,8 @@ class REINFORCEAgent(IncrementalAgent):
                  use_bonus_if_available=False,
                  device="cuda:best",
                  **kwargs):
-        IncrementalAgent.__init__(self, env, **kwargs)
+        AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
-        self.n_episodes = n_episodes
         self.batch_size = batch_size
         self.horizon = horizon
         self.gamma = gamma
@@ -106,44 +101,35 @@ class REINFORCEAgent(IncrementalAgent):
 
     def reset(self, **kwargs):
         self.policy_net = self.policy_net_fn(
-                            self.env,
-                            **self.policy_net_kwargs,
-                        ).to(self.device)
+            self.env,
+            **self.policy_net_kwargs
+        ).to(self.device)
 
         self.policy_optimizer = optimizer_factory(
-                                    self.policy_net.parameters(),
-                                    **self.optimizer_kwargs)
+            self.policy_net.parameters(),
+            **self.optimizer_kwargs)
 
         self.memory = Memory()
 
         self.episode = 0
 
-        # useful data
-        self._rewards = np.zeros(self.n_episodes)
-        self._cumul_rewards = np.zeros(self.n_episodes)
-
         # default writer
-        log_every = 5*logger.getEffectiveLevel()
-        self.writer = PeriodicWriter(self.name, log_every=log_every)
+        self.writer = DefaultWriter(self.name)
 
-    def policy(self, state, **kwargs):
+    def policy(self, state):
         assert self.policy_net is not None
         state = torch.from_numpy(state).float().to(self.device)
         action_dist = self.policy_net(state)
         action = action_dist.sample().item()
         return action
 
-    def partial_fit(self, fraction: float, **kwargs):
-        assert 0.0 < fraction <= 1.0
-        n_episodes_to_run = int(np.ceil(fraction*self.n_episodes))
+    def fit(self, budget: int, **kwargs):
+        del kwargs
+        n_episodes_to_run = budget
         count = 0
-        while count < n_episodes_to_run and self.episode < self.n_episodes:
+        while count < n_episodes_to_run:
             self._run_episode()
             count += 1
-
-        info = {"n_episodes": self.episode,
-                "episode_rewards": self._rewards[:self.episode]}
-        return info
 
     def _run_episode(self):
         # interact for H steps
@@ -163,7 +149,7 @@ class REINFORCEAgent(IncrementalAgent):
             # save in batch
             self.memory.states.append(state)
             self.memory.actions.append(action)
-            self.memory.rewards.append(reward+bonus)  # add bonus here
+            self.memory.rewards.append(reward + bonus)  # add bonus here
             self.memory.is_terminals.append(done)
             episode_rewards += reward
 
@@ -174,16 +160,11 @@ class REINFORCEAgent(IncrementalAgent):
             state = next_state
 
         # update
-        ep = self.episode
-        self._rewards[ep] = episode_rewards
-        self._cumul_rewards[ep] = episode_rewards \
-            + self._cumul_rewards[max(0, ep - 1)]
         self.episode += 1
 
         #
         if self.writer is not None:
-            self.writer.add_scalar("episode", self.episode, None)
-            self.writer.add_scalar("ep reward", episode_rewards)
+            self.writer.add_scalar("episode_rewards", episode_rewards, self.episode)
 
         #
         if self.episode % self.batch_size == 0:
@@ -193,7 +174,7 @@ class REINFORCEAgent(IncrementalAgent):
         return episode_rewards
 
     def _normalize(self, x):
-        return (x-x.mean())/(x.std()+1e-5)
+        return (x - x.mean()) / (x.std() + 1e-5)
 
     def _update(self):
         # monte carlo estimate of rewards
@@ -242,9 +223,8 @@ class REINFORCEAgent(IncrementalAgent):
         entr_coef = trial.suggest_loguniform('entr_coef', 1e-8, 0.1)
 
         return {
-                'batch_size': batch_size,
-                'gamma': gamma,
-                'learning_rate': learning_rate,
-                'entr_coef': entr_coef,
-                }
-
+            'batch_size': batch_size,
+            'gamma': gamma,
+            'learning_rate': learning_rate,
+            'entr_coef': entr_coef,
+        }

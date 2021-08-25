@@ -16,33 +16,40 @@ as shown in the examples below.
 
     from rlberry.envs import gym_make
     from rlberry.agents.torch.reinforce import REINFORCEAgent
-    from rlberry.stats import AgentStats, plot_episode_rewards
+    from rlberry.stats import AgentStats, plot_writer_data
 
 
-    # Environment
-    env = gym_make('CartPole-v1')
+    # Environment (constructor, kwargs)
+    env = (gym_make, dict(id='CartPole-v1'))
 
     # Initial set of parameters
-    params = {"n_episodes": 400,
-              "gamma": 0.99,
-              "horizon": 500}
+    params = dict(
+        gamma=0.99,
+        horizon=500,
+    )
 
-    # Create AgentStats to fit 4 instances of REINFORCE using 4 threads
-    stats = AgentStats(REINFORCEAgent,
-                       env,
-                       init_kwargs=params,
-                       n_fit=4,
-                       n_jobs=4)
+    fit_budget = 200  # number of episodes to fit the agent
+
+    eval_kwargs = dict(eval_horizon=500)  # parameters to evaluate the agent
+
+
+    # Create AgentStats to fit 4 instances of REINFORCE in parallel.
+    stats = AgentStats(
+        REINFORCEAgent,
+        env,
+        init_kwargs=params,
+        eval_kwargs=eval_kwargs,
+        fit_budget=fit_budget,
+        n_fit=4,
+        parallelization='thread')
 
     # Fit the 4 instances
     stats.fit()
 
-    # The fit() method of REINFORCEAgent returns
-    # a dictionary `info` such that info['episode_rewards']
-    # is a numpy array with the sum of rewards obtained in
-    # each episode.
-    # The method below can be used to plot it!
-    plot_episode_rewards(stats)
+    # The fit() method of REINFORCEAgent logs data to a :class:`~rlberry.utils.writers.DefaultWriter`
+    # object. The method below can be used to plot those data!
+    plot_writer_data(stats, tag='episode_rewards')
+
 
 
 To run hyperparameter optimization, the agent class needs to implement a
@@ -87,14 +94,12 @@ of :class:`~rlberry.stats.agent_stats.AgentStats` to find good parameters for ou
     stats.optimize_hyperparams(
         n_trials=100,
         timeout=10,   # stop after 10 seconds
-        n_sim=5,
         n_fit=2,
-        n_jobs=2,
         sampler_method='optuna_default'
-        )
+    )
 
     print(stats.best_hyperparams)
 
     # Calling fit() again will train the agent with the optimized parameters
     stats.fit()
-    plot_episode_rewards(stats)
+    plot_writer_data(stats, tag='episode_rewards')

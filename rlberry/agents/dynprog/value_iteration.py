@@ -1,9 +1,9 @@
-from rlberry.agents.agent import Agent
+from rlberry.agents.agent import AgentWithSimplePolicy
 from rlberry.agents.dynprog.utils import backward_induction, value_iteration
 from rlberry.envs.finite.finite_mdp import FiniteMDP
 
 
-class ValueIterationAgent(Agent):
+class ValueIterationAgent(AgentWithSimplePolicy):
     """
     Value iteration for enviroments of type FiniteMDP
     (rlberry.envs.finite.finite_mdp.FiniteMDP)
@@ -28,12 +28,13 @@ class ValueIterationAgent(Agent):
     name = "ValueIteration"
 
     def __init__(self, env, gamma=0.95, horizon=None, epsilon=1e-6, **kwargs):
-        # initialize base class
-        assert isinstance(env, FiniteMDP), \
-            "Value iteration requires a FiniteMDP model."
-        Agent.__init__(self, env, **kwargs)
+        AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
+        # initialize base class
+        assert isinstance(self.env, FiniteMDP), \
+            "Value iteration requires a FiniteMDP model."
         #
+
         self.gamma = gamma
         self.horizon = horizon
         self.epsilon = epsilon
@@ -42,10 +43,11 @@ class ValueIterationAgent(Agent):
         self.Q = None
         self.V = None
 
-    def fit(self, **kwargs):
+    def fit(self, budget=None, **kwargs):
         """
         Run value iteration.
         """
+        del kwargs
         info = {}
         if self.horizon is None:
             assert self.gamma < 1.0, \
@@ -61,7 +63,7 @@ class ValueIterationAgent(Agent):
             info["precision"] = 0.0
         return info
 
-    def policy(self, state, hh=0, **kwargs):
+    def policy(self, state, hh=0):
         """
         Parameters
         -----------

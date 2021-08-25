@@ -1,84 +1,80 @@
 import numpy as np
-import os
 from rlberry.envs import GridWorld
-from rlberry.agents import IncrementalAgent
-from rlberry.stats import AgentStats, plot_episode_rewards, compare_policies
+from rlberry.agents import AgentWithSimplePolicy
+from rlberry.stats import AgentStats, plot_writer_data, evaluate_agents
+from rlberry.utils.writers import DefaultWriter
 
 
-class DummyAgent(IncrementalAgent):
-
-    def __init__(self, env, n_episodes, hyperparameter=0, **kwargs):
-        IncrementalAgent.__init__(self, env, **kwargs)
+class DummyAgent(AgentWithSimplePolicy):
+    def __init__(self,
+                 env,
+                 hyperparameter1=0,
+                 hyperparameter2=0,
+                 **kwargs):
+        AgentWithSimplePolicy.__init__(self, env, **kwargs)
         self.name = "DummyAgent"
-        self.n_episodes = n_episodes
         self.fitted = False
-        self.hyperparameter = hyperparameter
+        self.hyperparameter1 = hyperparameter1
+        self.hyperparameter2 = hyperparameter2
 
-        self.fraction_fitted = 0.0
+        self.total_budget = 0.0
+        self.writer = DefaultWriter(self.name)
 
-    def fit(self, **kwargs):
-        info = {}
-        info["episode_rewards"] = np.arange(self.n_episodes)
+    def fit(self, budget, **kwargs):
+        del kwargs
         self.fitted = True
-        self.env.reset()
-        self.env.step(self.env.action_space.sample())
-        return info
+        self.total_budget += budget
+        for ii in range(budget):
+            if self.writer is not None:
+                self.writer.add_scalar('a', 5)
+                self.writer.add_scalar('b', 6, ii)
+        return None
 
-    def partial_fit(self, fraction, **kwargs):
-        assert fraction > 0.0 and fraction <= 1.0
-        self.fraction_fitted = min(1.0, self.fraction_fitted + fraction)
-        info = {}
-        nn = int(np.ceil(fraction*self.n_episodes))
-        info["episode_rewards"] = np.arange(nn)
-        return info
-
-    def policy(self, observation, time=0, **kwargs):
-        return self.env.action_space.sample()
+    def policy(self, observation):
+        return 0
 
     @classmethod
     def sample_parameters(cls, trial):
-        hyperparameter = trial.suggest_categorical('hyperparameter', [1, 2, 3])
-        return {'hyperparameter': hyperparameter}
+        hyperparameter1 \
+            = trial.suggest_categorical('hyperparameter1', [1, 2, 3])
+        hyperparameter2 \
+            = trial.suggest_uniform('hyperparameter2', -10, 10)
+        return {'hyperparameter1': hyperparameter1,
+                'hyperparameter2': hyperparameter2}
 
 
 def test_agent_stats_1():
     # Define train and evaluation envs
-    train_env = GridWorld()
-    eval_env = GridWorld()
+    train_env = (GridWorld, {})
 
     # Parameters
-    params = {"n_episodes": 500}
-    horizon = 20
+    params = {}
+    eval_kwargs = dict(eval_horizon=10)
 
     # Check DummyAgent
-    agent = DummyAgent(train_env, **params)
-    agent.fit()
+    agent = DummyAgent(train_env[0](**train_env[1]), **params)
+    agent.fit(10)
     agent.policy(None)
 
     # Run AgentStats
-    stats_agent1 = AgentStats(DummyAgent, train_env,
-                              init_kwargs=params, n_fit=4, eval_horizon=10, seed=123)
-    stats_agent2 = AgentStats(DummyAgent, train_env,
-                              init_kwargs=params, n_fit=4, eval_horizon=10, seed=123)
+    stats_agent1 = AgentStats(DummyAgent, train_env, fit_budget=5, eval_kwargs=eval_kwargs,
+                              init_kwargs=params, n_fit=4, seed=123)
+    stats_agent2 = AgentStats(DummyAgent, train_env, fit_budget=5, eval_kwargs=eval_kwargs,
+                              init_kwargs=params, n_fit=4, seed=123)
     agent_stats_list = [stats_agent1, stats_agent2]
+    for st in agent_stats_list:
+        st.fit()
 
     # learning curves
-    plot_episode_rewards(agent_stats_list, cumulative=True, show=False)
+    plot_writer_data(agent_stats_list, tag='episode_rewards', show=False)
 
     # compare final policies
-    compare_policies(agent_stats_list, eval_env,
-                     eval_horizon=horizon, n_sim=10, show=False)
-    compare_policies(agent_stats_list, eval_env,
-                     eval_horizon=horizon,
-                     n_sim=10, show=False, stationary_policy=False)
-
-    for st in agent_stats_list:
-        assert 'episode_rewards' in st.fit_statistics
+    evaluate_agents(agent_stats_list, show=False)
 
     # check if fitted
     for agent_stats in agent_stats_list:
-        assert len(agent_stats.fitted_agents) == 4
-        for agent in agent_stats.fitted_agents:
+        assert len(agent_stats.agent_handlers) == 4
+        for agent in agent_stats.agent_handlers:
             assert agent.fitted
 
     # test saving/loading
@@ -88,48 +84,47 @@ def test_agent_stats_1():
     loaded_stats = AgentStats.load(fname)
     assert stats_agent1.identifier == loaded_stats.identifier
 
-    # delete file
-    os.remove(fname.with_suffix('.pickle'))
-    dirname.rmdir()
-
     # test hyperparameter optimization call
-    loaded_stats.optimize_hyperparams()
-    loaded_stats.optimize_hyperparams(continue_previous=True)
+    loaded_stats.optimize_hyperparams(n_trials=5)
+    loaded_stats.optimize_hyperparams(n_trials=5, continue_previous=True)
+
+    for st in agent_stats_list:
+        st.clear_output_dir()
 
 
 def test_agent_stats_2():
     # Define train and evaluation envs
-    train_env = GridWorld()
-    eval_env = GridWorld()
+    train_env = (GridWorld, {})
+    eval_env = (GridWorld, {})
 
     # Parameters
-    params = {"n_episodes": 500}
+    params = {}
+    eval_kwargs = dict(eval_horizon=10)
 
     # Run AgentStats
     stats_agent1 = AgentStats(DummyAgent, train_env, eval_env=eval_env,
-                              init_kwargs=params, n_fit=4, eval_horizon=10,
-                              n_jobs=1, seed=123)
+                              fit_budget=5, eval_kwargs=eval_kwargs,
+                              init_kwargs=params, n_fit=4,
+                              seed=123)
     stats_agent2 = AgentStats(DummyAgent, train_env, eval_env=eval_env,
-                              init_kwargs=params, n_fit=4, eval_horizon=10,
-                              n_jobs=1, seed=123)
+                              fit_budget=5, eval_kwargs=eval_kwargs,
+                              init_kwargs=params, n_fit=4,
+                              seed=123)
     agent_stats_list = [stats_agent1, stats_agent2]
-
-    # set some writers
-    stats_agent1.set_writer(1, None)
-    stats_agent1.set_writer(2, None)
+    for st in agent_stats_list:
+        st.fit()
 
     # compare final policies
-    compare_policies(agent_stats_list, n_sim=10, show=False)
-    compare_policies(agent_stats_list,
-                     n_sim=10, show=False, stationary_policy=False)
+    evaluate_agents(agent_stats_list, show=False)
+    evaluate_agents(agent_stats_list, show=False)
 
     # learning curves
-    plot_episode_rewards(agent_stats_list, cumulative=True, show=False)
+    plot_writer_data(agent_stats_list, tag='episode_rewards', show=False)
 
     # check if fitted
     for agent_stats in agent_stats_list:
-        assert len(agent_stats.fitted_agents) == 4
-        for agent in agent_stats.fitted_agents:
+        assert len(agent_stats.agent_handlers) == 4
+        for agent in agent_stats.agent_handlers:
             assert agent.fitted
 
     # test saving/loading
@@ -139,12 +134,15 @@ def test_agent_stats_2():
     loaded_stats = AgentStats.load(fname)
     assert stats_agent1.identifier == loaded_stats.identifier
 
-    # delete file
-    os.remove(fname.with_suffix('.pickle'))
-    dirname.rmdir()
-
     # test hyperparemeter optimization
-    loaded_stats.optimize_hyperparams()
+    loaded_stats.optimize_hyperparams(n_trials=5)
+
+    # delete some writers
+    stats_agent1.set_writer(1, None)
+    stats_agent1.set_writer(2, None)
+
+    stats_agent1.clear_output_dir()
+    stats_agent2.clear_output_dir()
 
 
 def test_agent_stats_partial_fit_and_tuple_env():
@@ -152,34 +150,37 @@ def test_agent_stats_partial_fit_and_tuple_env():
     train_env = (GridWorld, None)  # tuple (constructor, kwargs) must also work in AgentStats
 
     # Parameters
-    params = {"n_episodes": 500}
-    horizon = 20
+    params = {}
+    eval_kwargs = dict(eval_horizon=10)
 
     # Run AgentStats
     stats = AgentStats(DummyAgent, train_env,
-                       init_kwargs=params, n_fit=4, eval_horizon=10, seed=123)
+                       init_kwargs=params, n_fit=4,
+                       fit_budget=5, eval_kwargs=eval_kwargs,
+                       seed=123)
     stats2 = AgentStats(DummyAgent, train_env,
-                        init_kwargs=params, n_fit=4, eval_horizon=10, seed=123)
-    # set some writers
-    stats.set_writer(0, None)
-    stats.set_writer(3, None)
+                        init_kwargs=params, n_fit=4,
+                        fit_budget=5, eval_kwargs=eval_kwargs,
+                        seed=123)
 
     # Run partial fit
-    stats.partial_fit(0.1)
-    stats.partial_fit(0.5)
-    for agent in stats.fitted_agents:
-        assert agent.fraction_fitted == 0.6
-    for _ in range(2):
-        stats.partial_fit(0.5)
-        for agent in stats.fitted_agents:
-            assert agent.fraction_fitted == 1.0
+    stats.fit(10)
+    stats.fit(20)
+    for agent in stats.agent_handlers:
+        assert agent.total_budget == 30
 
     # Run fit
     stats2.fit()
 
     # learning curves
-    plot_episode_rewards([stats], cumulative=True, show=False)
+    plot_writer_data([stats], tag='episode_rewards', show=False, preprocess_func=np.cumsum)
 
     # compare final policies
-    compare_policies([stats],
-                     eval_horizon=horizon, n_sim=10, show=False)
+    evaluate_agents([stats], show=False)
+
+    # delete some writers
+    stats.set_writer(0, None)
+    stats.set_writer(3, None)
+
+    stats.clear_output_dir()
+    stats2.clear_output_dir()

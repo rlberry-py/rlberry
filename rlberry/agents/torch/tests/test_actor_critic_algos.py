@@ -17,7 +17,6 @@ def test_a2c_agent():
         return counter
 
     agent = A2CAgent(env,
-                     n_episodes=n_episodes,
                      horizon=horizon,
                      gamma=0.99,
                      learning_rate=0.001,
@@ -27,8 +26,7 @@ def test_a2c_agent():
                          uncertainty_estimator_fn=uncertainty_estimator_fn,
                          bonus_scale_factor=1.0
                      ))
-    agent._log_interval = 0
-    agent.fit()
+    agent.fit(budget=n_episodes)
     agent.policy(env.observation_space.sample())
 
 
@@ -38,18 +36,16 @@ def test_a2c_agent_partial_fit():
     horizon = 30
 
     agent = A2CAgent(env,
-                     n_episodes=n_episodes,
                      horizon=horizon,
                      gamma=0.99,
                      learning_rate=0.001,
                      k_epochs=4,
                      use_bonus=False)
-    agent._log_interval = 0
 
-    agent.partial_fit(0.5)
+    agent.fit(budget=n_episodes // 2)
     agent.policy(env.observation_space.sample())
     assert agent.episode == 5
-    agent.partial_fit(0.5)
+    agent.fit(budget=n_episodes // 2)
     assert agent.episode == 10
     agent.policy(env.observation_space.sample())
 
@@ -66,7 +62,6 @@ def test_ppo_agent():
         return counter
 
     agent = PPOAgent(env,
-                     n_episodes=n_episodes,
                      horizon=horizon,
                      gamma=0.99,
                      learning_rate=0.001,
@@ -77,8 +72,7 @@ def test_ppo_agent():
                          uncertainty_estimator_fn=uncertainty_estimator_fn,
                          bonus_scale_factor=1
                      ))
-    agent._log_interval = 0
-    agent.fit()
+    agent.fit(budget=n_episodes)
     agent.policy(env.observation_space.sample())
 
 
@@ -88,7 +82,6 @@ def test_ppo_agent_partial_fit():
     horizon = 30
 
     agent = PPOAgent(env,
-                     n_episodes=n_episodes,
                      horizon=horizon,
                      gamma=0.99,
                      learning_rate=0.001,
@@ -97,10 +90,10 @@ def test_ppo_agent_partial_fit():
                      use_bonus=False)
     agent._log_interval = 0
 
-    agent.partial_fit(0.5)
+    agent.fit(budget=n_episodes // 2)
     agent.policy(env.observation_space.sample())
     assert agent.episode == 5
-    agent.partial_fit(0.5)
+    agent.fit(budget=n_episodes // 2)
     assert agent.episode == 10
     agent.policy(env.observation_space.sample())
 
@@ -118,7 +111,6 @@ def test_avec_ppo_agent():
         return counter
 
     agent = AVECPPOAgent(env,
-                         n_episodes=n_episodes,
                          horizon=horizon,
                          gamma=0.99,
                          learning_rate=0.001,
@@ -130,8 +122,7 @@ def test_avec_ppo_agent():
                              uncertainty_estimator_fn=uncertainty_estimator_fn,
                              bonus_scale_factor=1.0)
                          )
-    agent._log_interval = 0
-    agent.fit()
+    agent.fit(budget=n_episodes // 2)
     agent.policy(env.observation_space.sample())
 
 
@@ -141,7 +132,6 @@ def test_avec_ppo_agent_partial_fit():
     horizon = 30
 
     agent = AVECPPOAgent(env,
-                         n_episodes=n_episodes,
                          horizon=horizon,
                          gamma=0.99,
                          learning_rate=0.001,
@@ -149,11 +139,10 @@ def test_avec_ppo_agent_partial_fit():
                          k_epochs=4,
                          batch_size=1,
                          use_bonus=False)
-    agent._log_interval = 0
 
-    agent.partial_fit(0.5)
+    agent.fit(budget=n_episodes // 2)
     agent.policy(env.observation_space.sample())
     assert agent.episode == 5
-    agent.partial_fit(0.5)
+    agent.fit(budget=n_episodes // 2)
     assert agent.episode == 10
     agent.policy(env.observation_space.sample())

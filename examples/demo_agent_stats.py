@@ -1,15 +1,16 @@
 
+import numpy as np
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
 from rlberry.agents import RSKernelUCBVIAgent, RSUCBVIAgent
 from rlberry.agents.torch.ppo import PPOAgent
-from rlberry.stats import AgentStats, plot_episode_rewards, compare_policies
+from rlberry.stats import AgentStats, plot_writer_data, evaluate_agents
 
 
 # --------------------------------
 # Define train and evaluation envs
 # --------------------------------
-train_env = PBall2D()
-eval_env = PBall2D()
+train_env = (PBall2D, dict())
+eval_env = (PBall2D, dict())
 
 
 # -----------------------------
@@ -22,7 +23,6 @@ BONUS_SCALE_FACTOR = 0.1
 MIN_DIST = 0.1
 
 params = {
-    "n_episodes": N_EPISODES,
     "gamma": GAMMA,
     "horizon": HORIZON,
     "bonus_scale_factor": BONUS_SCALE_FACTOR,
@@ -30,7 +30,6 @@ params = {
 }
 
 params_kernel = {
-    "n_episodes": N_EPISODES,
     "gamma": GAMMA,
     "horizon": HORIZON,
     "bonus_scale_factor": BONUS_SCALE_FACTOR,
@@ -40,26 +39,52 @@ params_kernel = {
     "kernel_type": "gaussian",
 }
 
-params_ppo = {"n_episodes": N_EPISODES,
-              "gamma": GAMMA,
+params_ppo = {"gamma": GAMMA,
               "horizon": HORIZON,
               "learning_rate": 0.0003}
+
+eval_kwargs = dict(eval_horizon=HORIZON, n_simulations=20)
 
 # -----------------------------
 # Run AgentStats
 # -----------------------------
-rsucbvi_stats = AgentStats(RSUCBVIAgent, train_env,
-                           init_kwargs=params, n_fit=4)
-rskernel_stats = AgentStats(RSKernelUCBVIAgent, train_env,
-                            init_kwargs=params_kernel, n_fit=4)
-ppo_stats = AgentStats(PPOAgent, train_env, init_kwargs=params_ppo, n_fit=4)
+rsucbvi_stats = AgentStats(
+    RSUCBVIAgent,
+    train_env,
+    fit_budget=N_EPISODES,
+    init_kwargs=params,
+    eval_kwargs=eval_kwargs,
+    n_fit=4,
+    seed=123)
+rskernel_stats = AgentStats(
+    RSKernelUCBVIAgent,
+    train_env,
+    fit_budget=N_EPISODES,
+    init_kwargs=params_kernel,
+    eval_kwargs=eval_kwargs,
+    n_fit=4,
+    seed=123)
+ppo_stats = AgentStats(
+    PPOAgent,
+    train_env,
+    fit_budget=N_EPISODES,
+    init_kwargs=params_ppo,
+    eval_kwargs=eval_kwargs,
+    n_fit=4,
+    seed=123)
+
 
 agent_stats_list = [rsucbvi_stats, rskernel_stats, ppo_stats]
+for st in agent_stats_list:
+    st.fit()
 
 # learning curves
-plot_episode_rewards(agent_stats_list, cumulative=True, show=False)
+plot_writer_data(agent_stats_list,
+                 tag='episode_rewards',
+                 preprocess_func=np.cumsum,
+                 title='cumulative rewards',
+                 show=False)
 
 # compare final policies
-output = compare_policies(agent_stats_list, eval_env,
-                          eval_horizon=HORIZON, n_sim=10)
+output = evaluate_agents(agent_stats_list)
 print(output)
