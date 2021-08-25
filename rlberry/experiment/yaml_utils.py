@@ -6,7 +6,7 @@ from rlberry.stats import AgentStats
 from rlberry.utils.factory import load
 
 
-_AGENT_KEYS = ('init_kwargs', 'fit_kwargs', 'policy_kwargs')
+_AGENT_KEYS = ('init_kwargs', 'eval_kwargs', 'fit_kwargs', 'fit_budget')
 
 
 def read_yaml(path):
@@ -63,7 +63,7 @@ def read_agent_config(config_path):
         for key in _AGENT_KEYS:
             try:
                 base_config[key].update(agent_config[key])
-            except KeyError:
+            except (KeyError, AttributeError):
                 base_config[key] = agent_config[key]
 
     agent_class = load(base_config.pop("agent_class"))
@@ -174,15 +174,18 @@ def parse_experiment_config(path: Path,
             # kwargs
             init_kwargs = agent_config['init_kwargs']
             eval_kwargs = agent_config['eval_kwargs']
+            fit_kwargs = agent_config['fit_kwargs']
             fit_budget = agent_config['fit_budget']
 
             # check if there are global kwargs
             if 'global_init_kwargs' in config:
                 init_kwargs.update(config['global_init_kwargs'])
+            if 'global_eval_kwargs' in config:
+                eval_kwargs.update(config['global_eval_kwargs'])
             if 'global_fit_kwargs' in config:
-                init_kwargs.update(config['global_fit_kwargs'])
-            if 'global_policy_kwargs' in config:
-                init_kwargs.update(config['global_policy_kwargs'])
+                fit_kwargs.update(config['global_fit_kwargs'])
+            if 'global_fit_budget' in config:
+                fit_budget = config['global_fit_budget']
 
             # append run index to dir
             output_dir = output_dir / str(last + 1)

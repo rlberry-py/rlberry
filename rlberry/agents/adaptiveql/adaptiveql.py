@@ -157,7 +157,8 @@ class AdaptiveQLAgent(AgentWithSimplePolicy):
         # return sum of rewards collected in the episode
         return episode_rewards
 
-    def fit(self, budget: int):
+    def fit(self, budget: int, **kwargs):
+        del kwargs
         n_episodes_to_run = budget
         count = 0
         while count < n_episodes_to_run:

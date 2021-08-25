@@ -19,7 +19,8 @@ class DummyAgent(AgentWithSimplePolicy):
 
         self.fraction_fitted = 0.0
 
-    def fit(self, budget):
+    def fit(self, budget, **kwargs):
+        del kwargs
         self.fitted = True
         return None
 

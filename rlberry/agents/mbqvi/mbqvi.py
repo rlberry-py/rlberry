@@ -76,8 +76,9 @@ class MBQVIAgent(AgentWithSimplePolicy):
         self.N_sas[state, action, next_state] += 1
         self.S_sa[state, action] += reward
 
-    def fit(self, budget=None):
+    def fit(self, budget=None, **kwargs):
         """Build empirical MDP and run value iteration."""
+        del kwargs
         S = self.env.observation_space.n
         A = self.env.action_space.n
         self.N_sa = np.zeros((S, A))

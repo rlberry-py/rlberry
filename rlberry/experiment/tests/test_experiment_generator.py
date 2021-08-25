@@ -16,9 +16,9 @@ def test_mock_args(monkeypatch):
         random_numbers.append(rng.uniform(size=10))
 
         assert agent_stats.agent_class is RSUCBVIAgent
-        assert agent_stats.init_kwargs['horizon'] == 50
+        assert agent_stats.init_kwargs['horizon'] == 51
         assert agent_stats.fit_budget == 10
-        assert agent_stats.eval_kwargs['horizon'] == 50
+        assert agent_stats.eval_kwargs['eval_horizon'] == 51
 
         assert agent_stats.init_kwargs['lp_metric'] == 2
         assert agent_stats.init_kwargs['min_dist'] == 0.0
@@ -41,4 +41,4 @@ def test_mock_args(monkeypatch):
 
     #  check that seeding is the same for each AgentStats instance
     for ii in range(1, len(random_numbers)):
-        assert np.array_equal(random_numbers[ii-1], random_numbers[ii])
+        assert np.array_equal(random_numbers[ii - 1], random_numbers[ii])

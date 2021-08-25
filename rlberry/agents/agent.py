@@ -67,7 +67,7 @@ class Agent(ABC):
         self.seeder = Seeder(seeder)
 
     @abstractmethod
-    def fit(self, budget: int):
+    def fit(self, budget: int, **kwargs):
         """Train the agent using the provided environment.
 
         Ideally, calling
@@ -86,6 +86,8 @@ class Agent(ABC):
         ----------
         budget: int
             Computational (or sample complexity) budget.
+        **kwargs
+            Extra arguments.
         """
         pass
 

@@ -143,6 +143,8 @@ class AgentStats:
         reseeded deep copy of train_env.
     init_kwargs : dict
         Arguments required by the agent's constructor.
+    fit_kwargs : dict
+        Extra required to call agent.fit(bugdet, **fit_kwargs).
     eval_kwargs : dict
         Arguments required to call agent.eval().
     agent_name : str
@@ -170,6 +172,7 @@ class AgentStats:
                  fit_budget,
                  eval_env=None,
                  init_kwargs=None,
+                 fit_kwargs=None,
                  eval_kwargs=None,
                  agent_name=None,
                  n_fit=4,
@@ -219,11 +222,13 @@ class AgentStats:
 
         # check kwargs
         init_kwargs = init_kwargs or {}
+        fit_kwargs = fit_kwargs or {}
         eval_kwargs = eval_kwargs or {}
 
         # params
         self.init_kwargs = deepcopy(init_kwargs)
         self.fit_budget = fit_budget
+        self.fit_kwargs = deepcopy(fit_kwargs)
         self.eval_kwargs = deepcopy(eval_kwargs)
         self.n_fit = n_fit
         self.n_jobs = n_jobs
@@ -345,10 +350,11 @@ class AgentStats:
             if not agent.is_empty():
                 agent.set_writer(None)
 
-    def fit(self, budget=None):
+    def fit(self, budget=None, **kwargs):
         """
         Fit the agent instances in parallel.
         """
+        del kwargs
         budget = budget or self.fit_budget
 
         logger.info(f"Training AgentStats for {self.agent_name}... ")
@@ -366,6 +372,7 @@ class AgentStats:
                 self.train_env,
                 budget,
                 deepcopy(self.init_kwargs),
+                deepcopy(self.fit_kwargs),
                 writer,
                 self.thread_logging_level,
                 seeder)
@@ -689,7 +696,7 @@ def _fit_worker(args):
     Create and fit an agent instance
     """
     agent_handler, agent_class, train_env, fit_budget, init_kwargs, \
-        writer, thread_logging_level, seeder = args
+        fit_kwargs, writer, thread_logging_level, seeder = args
 
     # reseed external libraries
     set_external_seed(seeder)
@@ -717,7 +724,7 @@ def _fit_worker(args):
         writer_kwargs = writer[1]
         agent_handler.set_writer(writer_fn(**writer_kwargs))
     # fit agent
-    agent_handler.fit(fit_budget)
+    agent_handler.fit(fit_budget, **fit_kwargs)
 
     # Remove writer after fit (prevent pickle problems),
     # unless the agent uses DefaultWriter

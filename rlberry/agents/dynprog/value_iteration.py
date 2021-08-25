@@ -43,10 +43,11 @@ class ValueIterationAgent(AgentWithSimplePolicy):
         self.Q = None
         self.V = None
 
-    def fit(self, budget=None):
+    def fit(self, budget=None, **kwargs):
         """
         Run value iteration.
         """
+        del kwargs
         info = {}
         if self.horizon is None:
             assert self.gamma < 1.0, \

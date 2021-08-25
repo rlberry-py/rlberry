@@ -152,7 +152,8 @@ class A2CAgent(AgentWithSimplePolicy):
         action = action_dist.sample().item()
         return action
 
-    def fit(self, budget: int):
+    def fit(self, budget: int, **kwargs):
+        del kwargs
         n_episodes_to_run = budget
         count = 0
         while count < n_episodes_to_run:

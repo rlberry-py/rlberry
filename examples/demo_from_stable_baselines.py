@@ -1,13 +1,9 @@
-"""
-TODO: update according to new interface
-"""
-
 from rlberry.envs import gym_make
 from stable_baselines3 import A2C as A2CStableBaselines
-from rlberry.agents import Agent
+from rlberry.agents import AgentWithSimplePolicy
 
 
-class A2CAgent(Agent):
+class A2CAgent(AgentWithSimplePolicy):
 
     name = 'A2C'
 
@@ -36,7 +32,7 @@ class A2CAgent(Agent):
                  **kwargs):
 
         # init rlberry base class
-        Agent.__init__(self, env, **kwargs)
+        AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
         # Generate seed for A2CStableBaselines using rlberry seeding
         seed = self.rng.integers(2**32).item()
@@ -65,10 +61,8 @@ class A2CAgent(Agent):
             device,
             _init_setup_model)
 
-    def fit(self, **kwargs):
-        result = self.wrapped.learn(**kwargs)
-        info = {}  # possibly store something from results
-        return info
+    def fit(self, budget):
+        self.wrapped.learn(total_timesteps=budget)
 
     def policy(self, observation, **kwargs):
         action, _state = self.wrapped.predict(observation, **kwargs)

@@ -162,7 +162,8 @@ class DQNAgent(AgentWithSimplePolicy):
         self.update_frequency = update_frequency
         self.steps = 0
 
-    def fit(self, budget: int):
+    def fit(self, budget: int, **kwargs):
+        del kwargs
         for self.episode in range(budget):
             if self.writer:
                 state = self.env.reset()

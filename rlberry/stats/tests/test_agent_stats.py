@@ -20,7 +20,8 @@ class DummyAgent(AgentWithSimplePolicy):
         self.total_budget = 0.0
         self.writer = DefaultWriter(self.name)
 
-    def fit(self, budget):
+    def fit(self, budget, **kwargs):
+        del kwargs
         self.fitted = True
         self.total_budget += budget
         for ii in range(budget):

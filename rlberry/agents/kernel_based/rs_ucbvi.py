@@ -200,7 +200,8 @@ class RSUCBVIAgent(AgentWithSimplePolicy):
         repr_state = self._map_to_repr(state, False)
         return self.Q_policy[hh, repr_state, :].argmax()
 
-    def fit(self, budget: int):
+    def fit(self, budget: int, **kwargs):
+        del kwargs
         n_episodes_to_run = budget
         count = 0
         while count < n_episodes_to_run:

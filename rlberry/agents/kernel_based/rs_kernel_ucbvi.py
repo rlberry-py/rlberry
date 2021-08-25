@@ -261,7 +261,8 @@ class RSKernelUCBVIAgent(AgentWithSimplePolicy):
         repr_state = self._map_to_repr(state, False)
         return self.Q_policy[hh, repr_state, :].argmax()
 
-    def fit(self, budget: int):
+    def fit(self, budget: int, **kwargs):
+        del kwargs
         for _ in range(budget):
             self._run_episode()
 

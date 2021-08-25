@@ -9,4 +9,4 @@ init_kwargs:
   horizon: 50
 fit_budget: 10
 eval_kwargs:
-  horizon: 50
+  eval_horizon: 50
