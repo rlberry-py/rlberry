@@ -8,5 +8,6 @@ init_kwargs:
   reward_free: True
   horizon: 50
 eval_kwargs:
-  horizon: 50
-fit_budget: 100
+  eval_horizon: 50
+fit_kwargs:
+  fit_budget: 100

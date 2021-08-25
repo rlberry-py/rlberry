@@ -147,7 +147,7 @@ class AgentStats:
     train_env : Tuple (constructor, kwargs)
         Enviroment used to initialize/train the agent.
     fit_budget : int
-        Argument required to call agent.fit().
+        Argument required to call agent.fit(). If None, must be given in fit_kwargs['fit_budget'].
     eval_env : Tuple (constructor, kwargs)
         Environment used to evaluate the agent. If None, set to a
         reseeded deep copy of train_env.
@@ -177,7 +177,7 @@ class AgentStats:
     def __init__(self,
                  agent_class,
                  train_env,
-                 fit_budget,
+                 fit_budget=None,
                  eval_env=None,
                  init_kwargs=None,
                  fit_kwargs=None,
@@ -234,12 +234,18 @@ class AgentStats:
 
         # params
         self.init_kwargs = deepcopy(init_kwargs)
-        self.fit_budget = fit_budget
         self.fit_kwargs = deepcopy(fit_kwargs)
         self.eval_kwargs = deepcopy(eval_kwargs)
         self.n_fit = n_fit
         self.parallelization = parallelization
         self.thread_logging_level = thread_logging_level
+        if fit_budget is not None:
+            self.fit_budget = fit_budget
+        else:
+            try:
+                self.fit_budget = fit_kwargs.pop('fit_budget')
+            except KeyError:
+                raise ValueError('[AgentStats] fit_budget missing in __init__().')
 
         # output dir
         output_dir = output_dir or self.identifier
@@ -400,6 +406,9 @@ class AgentStats:
             executor_class = concurrent.futures.ProcessPoolExecutor
         else:
             raise ValueError(f'Invalid backend for parallelization: {self.parallelization}')
+
+        if len(args) == 1:
+            workers_output = [_fit_worker(args[0])]
 
         with executor_class() as executor:
             futures = []

@@ -27,14 +27,9 @@ This can be done very succinctly as in the example below:
     seed: 123
     train_env: 'examples/demo_experiment/room.yaml'
     eval_env: 'examples/demo_experiment/room.yaml'
-    global_init_kwargs:
-        n_episodes: 100
-        horizon: 50
     agents:
-    - 'examples/demo_experiment/rsucbvi.yaml'
-    - 'examples/demo_experiment/rsucbvi_alternative.yaml'
-
-
+        - 'examples/demo_experiment/rsucbvi.yaml'
+        - 'examples/demo_experiment/rsucbvi_alternative.yaml'
 
 
 **room.yaml**
@@ -43,6 +38,7 @@ This can be done very succinctly as in the example below:
 
     constructor: 'rlberry.envs.benchmarks.grid_exploration.nroom.NRoom'
     params:
+        reward_free: false
         array_observation: true
         nrooms: 5
 
@@ -58,6 +54,11 @@ This can be done very succinctly as in the example below:
         max_repr: 800
         bonus_scale_factor: 1.0
         reward_free: True
+        horizon: 50
+    eval_kwargs:
+        eval_horizon: 50
+    fit_kwargs:
+        fit_budget: 100
 
 **rsucbvi_alternative.yaml**
 

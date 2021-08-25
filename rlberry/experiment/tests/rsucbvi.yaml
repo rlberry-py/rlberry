@@ -7,6 +7,7 @@ init_kwargs:
   bonus_scale_factor: 1.0
   reward_free: True
   horizon: 50
-fit_budget: 10
 eval_kwargs:
   eval_horizon: 50
+fit_kwargs:
+  fit_budget: 123

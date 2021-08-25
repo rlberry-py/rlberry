@@ -8,7 +8,7 @@ def test_mock_args(monkeypatch):
     monkeypatch.setattr(
         "sys.argv",
         ['', 'rlberry/experiment/tests/params_experiment.yaml']
-        )
+    )
     random_numbers = []
 
     for agent_stats in experiment_generator():

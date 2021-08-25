@@ -6,7 +6,7 @@ from rlberry.stats import AgentStats
 from rlberry.utils.factory import load
 
 
-_AGENT_KEYS = ('init_kwargs', 'eval_kwargs', 'fit_kwargs', 'fit_budget')
+_AGENT_KEYS = ('init_kwargs', 'eval_kwargs', 'fit_kwargs')
 
 
 def read_yaml(path):
@@ -50,7 +50,7 @@ def read_agent_config(config_path):
     -------
     agent_class
     base_config : dict
-        dictionary whose keys are ('init_kwargs', 'fit_kwargs', 'policy_kwargs')
+        dictionary whose keys are ('agent_class', 'init_kwargs', 'eval_kwargs', 'fit_kwargs')
     """
     agent_config = process_agent_yaml(config_path)
     base_config_yaml = agent_config.pop("base_config", None)
@@ -63,7 +63,7 @@ def read_agent_config(config_path):
         for key in _AGENT_KEYS:
             try:
                 base_config[key].update(agent_config[key])
-            except (KeyError, AttributeError):
+            except KeyError:
                 base_config[key] = agent_config[key]
 
     agent_class = load(base_config.pop("agent_class"))
@@ -171,7 +171,6 @@ def parse_experiment_config(path: Path,
             init_kwargs = agent_config['init_kwargs']
             eval_kwargs = agent_config['eval_kwargs']
             fit_kwargs = agent_config['fit_kwargs']
-            fit_budget = agent_config['fit_budget']
 
             # check if there are global kwargs
             if 'global_init_kwargs' in config:
@@ -180,8 +179,9 @@ def parse_experiment_config(path: Path,
                 eval_kwargs.update(config['global_eval_kwargs'])
             if 'global_fit_kwargs' in config:
                 fit_kwargs.update(config['global_fit_kwargs'])
-            if 'global_fit_budget' in config:
-                fit_budget = config['global_fit_budget']
+
+            # pop fit_budget from fit_kwargs
+            fit_budget = fit_kwargs.pop('fit_budget')
 
             # append run index to dir
             output_dir = output_dir / str(last + 1)
@@ -190,6 +190,7 @@ def parse_experiment_config(path: Path,
                                    init_kwargs=init_kwargs,
                                    eval_kwargs=eval_kwargs,
                                    fit_budget=fit_budget,
+                                   fit_kwargs=fit_kwargs,
                                    agent_name=agent_name,
                                    train_env=train_env,
                                    eval_env=eval_env,
