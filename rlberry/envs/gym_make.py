@@ -1,5 +1,3 @@
-from typing import Optional
-
 import gym
 from rlberry.envs.basewrapper import Wrapper
 

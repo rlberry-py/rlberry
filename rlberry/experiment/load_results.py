@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 def _get_most_recent_path(path_list):
     """
-    get most recend result for each agent_name
+    Get most recent result for each agent_name.
     """
     most_recent_path = None
     most_recent_id = None
@@ -91,7 +91,7 @@ def load_experiment_results(output_dir, experiment_name):
         try:
             output_data['stats'][agent_name] = AgentStats.load(fname)
         except Exception:
-            pass
+            logger.warning(f'Could not load AgentStats instance for {agent_name}.')
         logger.info("... loaded " + str(fname))
 
         # store data frames

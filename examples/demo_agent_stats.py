@@ -88,3 +88,6 @@ plot_writer_data(agent_stats_list,
 # compare final policies
 output = evaluate_agents(agent_stats_list)
 print(output)
+
+for st in agent_stats_list:
+    st.clear_output_dir()

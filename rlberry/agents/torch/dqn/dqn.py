@@ -446,7 +446,7 @@ class DQNAgent(AgentWithSimplePolicy):
     def set_time(self, time):
         self.exploration_policy.set_time(time)
 
-    def eval(self):
+    def eval_mode(self):
         self.training = False
         self.exploration_kwargs['method'] = "Greedy"
         self.exploration_policy = \
