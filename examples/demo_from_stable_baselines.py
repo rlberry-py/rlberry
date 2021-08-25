@@ -112,8 +112,7 @@ stats = AgentStats(
     fit_budget=2500,
     eval_kwargs=dict(eval_horizon=400),
     n_fit=4,
-    n_jobs=2,
-    joblib_backend='multiprocessing',
+    parallelization='process',
     output_dir='dev/stable_baselines',
     seed=123)
 
@@ -126,8 +125,7 @@ stats_alternative = AgentStats(
     fit_budget=2500,
     eval_kwargs=dict(eval_horizon=400),
     n_fit=4,
-    n_jobs=2,
-    joblib_backend='multiprocessing',
+    parallelization='process',
     output_dir='dev/stable_baselines',
     seed=456)
 

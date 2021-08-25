@@ -6,7 +6,6 @@ from pathlib import Path
 from rlberry.seeding import safe_reseed, set_external_seed
 from rlberry.seeding import Seeder
 
-from joblib import Parallel, delayed
 import functools
 import json
 import logging
@@ -48,6 +47,8 @@ class AgentHandler:
 
     Parameters
     ----------
+    id: int
+        Integer identifying the handler.
     filename: str or Path
         File where to save/load the agent instance
     seeder: Seeder
@@ -60,16 +61,22 @@ class AgentHandler:
         Arguments required by __init__ method of agent_class.
     """
     def __init__(self,
+                 id,
                  filename,
                  seeder,
                  agent_class,
                  agent_instance=None,
                  **agent_kwargs) -> None:
+        self._id = id
         self._fname = Path(filename)
         self._seeder = seeder
         self._agent_class = agent_class
         self._agent_instance = agent_instance
         self._agent_kwargs = agent_kwargs
+
+    @property
+    def id(self):
+        return self._id
 
     def set_instance(self, agent_instance):
         self._agent_instance = agent_instance
@@ -154,12 +161,10 @@ class AgentStats:
         Name of the agent. If None, set to agent_class.name
     n_fit : int
         Number of agent instances to fit.
-    n_jobs : int
-        Number of jobs to train the agents in parallel using joblib.
     output_dir : str
         Directory where to store data by default.
-    joblib_backend: str, {'threading', 'loky' or 'multiprocessing'}, default: 'multiprocessing'
-        Backend for joblib Parallel.
+    parallelization: {'thread', 'process'}, default: 'process'
+        Whether to parallelize  agent training using threads or processes.
     thread_logging_level : str, default: 'INFO'
         Logging level in each of the threads used to fit agents.
     seed : np.random.SeedSequence, rlberry.seeding.Seeder or int, default : None
@@ -179,9 +184,8 @@ class AgentStats:
                  eval_kwargs=None,
                  agent_name=None,
                  n_fit=4,
-                 n_jobs=4,
                  output_dir=None,
-                 joblib_backend='loky',
+                 parallelization='process',
                  thread_logging_level='INFO',
                  seed=None):
         # agent_class should only be None when the constructor is called
@@ -234,8 +238,7 @@ class AgentStats:
         self.fit_kwargs = deepcopy(fit_kwargs)
         self.eval_kwargs = deepcopy(eval_kwargs)
         self.n_fit = n_fit
-        self.n_jobs = n_jobs
-        self.joblib_backend = joblib_backend
+        self.parallelization = parallelization
         self.thread_logging_level = thread_logging_level
 
         # output dir
@@ -249,6 +252,7 @@ class AgentStats:
         handlers_seeders = self.seeder.spawn(self.n_fit, squeeze=False)
         self.agent_handlers = [
             AgentHandler(
+                id=ii,
                 filename=self.output_dir / Path(f'agent_handlers/{self.unique_id}_{ii}'),
                 seeder=handlers_seeders[ii],
                 agent_class=self.agent_class,
@@ -296,6 +300,8 @@ class AgentStats:
             eval_env = self.build_eval_env()
         values = [agent.eval(eval_env,
                              **self.eval_kwargs) for agent in self.agent_handlers if not agent.is_empty()]
+        if len(values) == 0:
+            return np.nan
         return np.mean(values)
 
     def set_output_dir(self, output_dir):
@@ -384,11 +390,25 @@ class AgentStats:
                 for (handler, seeder, writer)
                 in zip(self.agent_handlers, seeders, self.writers)]
 
-        workers_output = Parallel(n_jobs=self.n_jobs,
-                                  verbose=5,
-                                  backend=self.joblib_backend)(
-            delayed(_fit_worker)(arg) for arg in args)
+        if self.parallelization == 'thread':
+            executor_class = concurrent.futures.ThreadPoolExecutor
+        elif self.parallelization == 'process':
+            executor_class = concurrent.futures.ProcessPoolExecutor
+        else:
+            raise ValueError(f'Invalid backend for parallelization: {self.parallelization}')
 
+        with executor_class() as executor:
+            futures = []
+            for arg in args:
+                futures.append(executor.submit(_fit_worker, arg))
+
+            workers_output = []
+            for future in concurrent.futures.as_completed(futures):
+                workers_output.append(
+                    future.result()
+                )
+
+        workers_output.sort(key=lambda x: x.id)
         self.agent_handlers = workers_output
 
         logger.info("... trained!")
@@ -488,7 +508,6 @@ class AgentStats:
                              n_trials=256,
                              timeout=60,
                              n_fit=2,
-                             n_jobs=2,
                              n_optuna_workers=2,
                              optuna_parallelization='thread',
                              sampler_method='optuna_default',
@@ -520,8 +539,6 @@ class AgentStats:
             Set to None for unlimited time.
         n_fit: int
             Number of agents to fit for each hyperparam evaluation.
-        n_jobs: int
-            Number of jobs to fit agents for each hyperparam evaluation
         n_optuna_workers: int
             Number of workers used by optuna for optimization.
         optuna_parallelization : 'thread' or 'process'
@@ -623,7 +640,6 @@ class AgentStats:
             fit_budget=self.fit_budget,   # self.fit_budget
             eval_kwargs=self.eval_kwargs,  # self.eval_kwargs
             n_fit=n_fit,
-            n_jobs=n_jobs,
             seeder=self.seeder,       # self.seeder
             temp_dir=TEMP_DIR,     # TEMP_DIR
             disable_evaluation_writers=disable_evaluation_writers,
@@ -761,7 +777,6 @@ def _optuna_objective(
     fit_budget,   # self.fit_budget
     eval_kwargs,  # self.eval_kwargs
     n_fit,
-    n_jobs,
     seeder,       # self.seeder
     temp_dir,     # TEMP_DIR
     disable_evaluation_writers,
@@ -786,9 +801,8 @@ def _optuna_objective(
         eval_kwargs=deepcopy(eval_kwargs),
         agent_name='optim',
         n_fit=n_fit,
-        n_jobs=n_jobs,
         thread_logging_level='WARNING',
-        joblib_backend='threading',
+        parallelization='thread',
         seed=seeder,
         output_dir=temp_dir)
 

@@ -48,14 +48,35 @@ eval_kwargs = dict(eval_horizon=HORIZON, n_simulations=20)
 # -----------------------------
 # Run AgentStats
 # -----------------------------
-rsucbvi_stats = AgentStats(RSUCBVIAgent, train_env, fit_budget=N_EPISODES,
-                           init_kwargs=params, eval_kwargs=eval_kwargs, n_fit=4)
-rskernel_stats = AgentStats(RSKernelUCBVIAgent, train_env, fit_budget=N_EPISODES,
-                            init_kwargs=params_kernel, eval_kwargs=eval_kwargs, n_fit=4)
-ppo_stats = AgentStats(PPOAgent, train_env, fit_budget=N_EPISODES,
-                       init_kwargs=params_ppo, eval_kwargs=eval_kwargs, n_fit=4)
+rsucbvi_stats = AgentStats(
+    RSUCBVIAgent,
+    train_env,
+    fit_budget=N_EPISODES,
+    init_kwargs=params,
+    eval_kwargs=eval_kwargs,
+    n_fit=4,
+    seed=123)
+rskernel_stats = AgentStats(
+    RSKernelUCBVIAgent,
+    train_env,
+    fit_budget=N_EPISODES,
+    init_kwargs=params_kernel,
+    eval_kwargs=eval_kwargs,
+    n_fit=4,
+    seed=123)
+ppo_stats = AgentStats(
+    PPOAgent,
+    train_env,
+    fit_budget=N_EPISODES,
+    init_kwargs=params_ppo,
+    eval_kwargs=eval_kwargs,
+    n_fit=4,
+    seed=123)
+
 
 agent_stats_list = [rsucbvi_stats, rskernel_stats, ppo_stats]
+for st in agent_stats_list:
+    st.fit()
 
 # learning curves
 plot_writer_data(agent_stats_list,

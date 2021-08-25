@@ -102,9 +102,8 @@ def read_env_config(config_path):
 
 def parse_experiment_config(path: Path,
                             n_fit: int = 4,
-                            n_jobs: int = 4,
                             output_base_dir: str = 'results',
-                            joblib_backend: str = 'loky') -> Generator[Tuple[int, AgentStats], None, None]:
+                            parallelization: str = 'process') -> Generator[Tuple[int, AgentStats], None, None]:
     """
     Read .yaml files. set global seed and convert to AgentStats instances.
 
@@ -128,8 +127,6 @@ def parse_experiment_config(path: Path,
         Path to an experiment config
     n_fit : int
         Number of instances of each agent to fit
-    n_jobs : int
-        Number of parallel jobs
     output_base_dir : str
         Directory where to save AgentStats results.
 
@@ -145,7 +142,6 @@ def parse_experiment_config(path: Path,
         train_env = read_env_config(config["train_env"])
         eval_env = read_env_config(config["eval_env"])
         n_fit = n_fit
-        n_jobs = n_jobs
 
         for agent_path in config["agents"]:
             # set seed before creating AgentStats
@@ -198,9 +194,8 @@ def parse_experiment_config(path: Path,
                                    train_env=train_env,
                                    eval_env=eval_env,
                                    n_fit=n_fit,
-                                   n_jobs=n_jobs,
                                    output_dir=output_dir,
-                                   joblib_backend=joblib_backend,
+                                   parallelization=parallelization,
                                    seed=seed)
 
 

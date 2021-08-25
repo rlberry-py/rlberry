@@ -5,7 +5,6 @@ packages = find_packages(exclude=['docs', 'notebooks', 'assets'])
 install_requires = [
     'numpy>=1.17',
     'pygame',
-    'joblib',
     'matplotlib',
     'seaborn',
     'pandas',
@@ -20,7 +19,6 @@ tests_require = [
     'pytest-cov',
     'numpy>=1.17',
     'numba',
-    'joblib',
     'matplotlib',
     'pandas',
     'seaborn',

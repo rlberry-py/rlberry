@@ -47,8 +47,7 @@ def test_hyperparam_optim_tpe():
                              fit_budget=1,
                              init_kwargs={},
                              eval_kwargs={'eval_horizon': 5},
-                             n_fit=4,
-                             n_jobs=1)
+                             n_fit=4)
 
     # test hyperparameter optimization with TPE sampler
     # using hyperopt default values
@@ -67,8 +66,7 @@ def test_hyperparam_optim_random():
                              init_kwargs={},
                              fit_budget=1,
                              eval_kwargs={'eval_horizon': 5},
-                             n_fit=4,
-                             n_jobs=1)
+                             n_fit=4)
 
     # test hyperparameter optimization with random sampler
     stats_agent.optimize_hyperparams(sampler_method="random", n_trials=5)
@@ -85,8 +83,7 @@ def test_hyperparam_optim_grid():
                              init_kwargs={},
                              fit_budget=1,
                              eval_kwargs={'eval_horizon': 5},
-                             n_fit=4,
-                             n_jobs=1)
+                             n_fit=4)
 
     # test hyperparameter optimization with grid sampler
     search_space = {"hyperparameter1": [1, 2, 3],
@@ -108,8 +105,7 @@ def test_hyperparam_optim_cmaes():
                              init_kwargs={},
                              fit_budget=1,
                              eval_kwargs={'eval_horizon': 5},
-                             n_fit=4,
-                             n_jobs=1)
+                             n_fit=4)
 
     # test hyperparameter optimization with CMA-ES sampler
     stats_agent.optimize_hyperparams(sampler_method="cmaes", n_trials=5)
@@ -140,10 +136,9 @@ def test_discount_optimization():
                           eval_kwargs=dict(eval_horizon=20),
                           init_kwargs=vi_params,
                           n_fit=4,
-                          n_jobs=1,
                           seed=123)
 
-    vi_stats.optimize_hyperparams(n_trials=5, timeout=30, n_fit=1, n_jobs=1,
+    vi_stats.optimize_hyperparams(n_trials=5, timeout=30, n_fit=1,
                                   sampler_method='random', pruner_method='none')
 
     assert vi_stats.best_hyperparams['gamma'] == 0.99

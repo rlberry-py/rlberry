@@ -1,5 +1,6 @@
 import logging
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import seaborn as sns
 
@@ -40,10 +41,19 @@ def evaluate_agents(agent_stats_list,
     for agent_stats in agent_stats_list:
         outputs = []
         eval_env = agent_stats.build_eval_env()
-        for _ in range(n_simulations):
-            outputs.append(agent_stats.eval(eval_env))
+        logger.info(f'Evaluating {agent_stats.agent_name}...')
+        for ii in range(n_simulations):
+            logger.info(f'... simulation {ii+1}/{n_simulations}')
+            value = agent_stats.eval(eval_env)
+            if not np.isnan(value):
+                outputs.append(agent_stats.eval(eval_env))
+        if len(outputs) > 0:
+            eval_outputs.append(outputs)
 
-        eval_outputs.append(outputs)
+    if len(eval_outputs) == 0:
+        logger.error('[evaluate_agents]: No evaluation data. Make sure AgentStats.fit() has been called.')
+        return
+
     #
     # plot
     #
@@ -109,7 +119,6 @@ def plot_writer_data(agent_stats,
     """
     sns_kwargs = sns_kwargs or {'ci': 'sd'}
 
-    plt.figure(fignum)
     title = title or tag
     if preprocess_func is not None:
         ylabel = 'value'
@@ -129,6 +138,9 @@ def plot_writer_data(agent_stats,
                 df = pd.DataFrame(df[df['tag'] == tag])
                 df['value'] = preprocess_func(df['value'].values)
                 data_list.append(df)
+    if len(data_list) == 0:
+        logger.error('[plot_writer_data]: No data to be plotted.')
+        return
 
     all_writer_data = pd.concat(data_list, ignore_index=True)
 
@@ -140,6 +152,7 @@ def plot_writer_data(agent_stats,
     else:
         xx = data.index
 
+    plt.figure(fignum)
     sns.lineplot(x=xx, y='value', hue='name', data=data, **sns_kwargs)
     plt.title(title)
     plt.ylabel(ylabel)

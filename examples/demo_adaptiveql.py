@@ -35,7 +35,6 @@ mstats.append(
                init_kwargs=params['adaql'],
                eval_kwargs=eval_kwargs,
                n_fit=4,
-               n_jobs=4,
                output_dir='dev/examples/adaptive_ql')
 )
 mstats.append(

@@ -105,11 +105,11 @@ def test_agent_stats_2():
     stats_agent1 = AgentStats(DummyAgent, train_env, eval_env=eval_env,
                               fit_budget=5, eval_kwargs=eval_kwargs,
                               init_kwargs=params, n_fit=4,
-                              n_jobs=1, seed=123)
+                              seed=123)
     stats_agent2 = AgentStats(DummyAgent, train_env, eval_env=eval_env,
                               fit_budget=5, eval_kwargs=eval_kwargs,
                               init_kwargs=params, n_fit=4,
-                              n_jobs=1, seed=123)
+                              seed=123)
     agent_stats_list = [stats_agent1, stats_agent2]
     for st in agent_stats_list:
         st.fit()

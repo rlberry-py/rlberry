@@ -134,11 +134,10 @@ stats = AgentStats(
     fit_budget=5000,
     init_kwargs=dict(policy='CnnPolicy', verbose=10),
     n_fit=4,
-    n_jobs=4,
-    joblib_backend='multiprocessing',
+    parallelization='process',
     output_dir='dev/stable_baselines_atari',
     seed=123)
 
 
 stats.fit()
-# stats.optimize_hyperparams(timeout=60, n_fit=2, n_jobs=1)
+stats.optimize_hyperparams(timeout=60, n_fit=2)

@@ -1,6 +1,5 @@
 numpy>=1.17
 pygame
-joblib
 matplotlib
 seaborn
 pandas
