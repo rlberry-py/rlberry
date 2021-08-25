@@ -85,9 +85,11 @@ class AgentHandler:
             try:
                 self._agent_instance = self._agent_class.load(self._fname, **self._agent_kwargs)
                 safe_reseed(self._agent_instance.env, self._seeder)
+                logger.info(f'Sucessful call to AgentHandler.load() for {self._agent_class}')
                 return True
-            except Exception:
+            except Exception as ex:
                 self._agent_instance = None
+                logger.info(f'Failed call to AgentHandler.load() for {self._agent_class}: {ex}')
                 return False
 
     def dump(self):
@@ -103,6 +105,7 @@ class AgentHandler:
                 self._fname = Path(saved_filename)
                 del self._agent_instance
                 self._agent_instance = None
+                logger.info(f'Sucessful call to AgentHandler.dump() for {self._agent_class}')
 
     def __getattr__(self, attr):
         """
@@ -285,11 +288,13 @@ class AgentStats:
     def writer_data(self):
         return self.default_writer_data
 
-    def eval(self):
+    def eval(self, eval_env=None):
         """
         Call .eval() method in all fitted agents and return average result.
         """
-        values = [agent.eval(self.build_eval_env(),
+        if eval_env is None:
+            eval_env = self.build_eval_env()
+        values = [agent.eval(eval_env,
                              **self.eval_kwargs) for agent in self.agent_handlers if not agent.is_empty()]
         return np.mean(values)
 
@@ -486,7 +491,7 @@ class AgentStats:
                              n_jobs=2,
                              n_optuna_workers=2,
                              optuna_parallelization='thread',
-                             sampler_method='random',
+                             sampler_method='optuna_default',
                              pruner_method='halving',
                              continue_previous=False,
                              fit_fraction=1.0,

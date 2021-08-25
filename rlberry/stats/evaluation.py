@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 def evaluate_agents(agent_stats_list,
-                    n_simulations=10,
+                    n_simulations=5,
                     fignum=None,
                     show=True,
                     plot=True,
@@ -39,8 +39,9 @@ def evaluate_agents(agent_stats_list,
     eval_outputs = []
     for agent_stats in agent_stats_list:
         outputs = []
+        eval_env = agent_stats.build_eval_env()
         for _ in range(n_simulations):
-            outputs.append(agent_stats.eval())
+            outputs.append(agent_stats.eval(eval_env))
 
         eval_outputs.append(outputs)
     #
@@ -71,7 +72,7 @@ def evaluate_agents(agent_stats_list,
         with sns.axes_style("whitegrid"):
             ax = sns.boxplot(data=output, **sns_kwargs)
             ax.set_xlabel("agent")
-            ax.set_ylabel("rewards in one episode")
+            ax.set_ylabel("evaluation output")
             if show:
                 plt.show()
 

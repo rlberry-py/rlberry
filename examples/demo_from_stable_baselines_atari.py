@@ -2,8 +2,9 @@ from stable_baselines3 import A2C as A2CStableBaselines
 from stable_baselines3.common.cmd_util import make_atari_env
 from stable_baselines3.common.vec_env import VecFrameStack
 from rlberry.agents import AgentWithSimplePolicy
-from rlberry.stats import AgentStats, MultipleStats
+from rlberry.stats import AgentStats
 from rlberry.wrappers.scalarize import ScalarizeEnvWrapper
+from pathlib import Path
 
 
 class A2CAgent(AgentWithSimplePolicy):
@@ -36,6 +37,9 @@ class A2CAgent(AgentWithSimplePolicy):
 
         # init rlberry base class
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
+        # rlberry accepts tuples (env_constructor, env_kwargs) as env
+        # After a call to __init__, self.env is set as an environment instance
+        env = self.env
 
         # Generate seed for A2CStableBaselines using rlberry seeding
         seed = self.rng.integers(2**32).item()
@@ -68,8 +72,21 @@ class A2CAgent(AgentWithSimplePolicy):
         self.wrapped.learn(total_timesteps=budget)
 
     def policy(self, observation):
-        action, _state = self.wrapped.predict(observation, deterministic=True)
+        action, _ = self.wrapped.predict(observation, deterministic=True)
         return action
+
+    #
+    # Some agents are not pickable: in this case, they must define custom save/load methods.
+    #
+    def save(self, filename):
+        self.wrapped.save(filename)
+        return Path(filename).with_suffix('.zip')
+
+    @classmethod
+    def load(cls, filename, **kwargs):
+        rlberry_a2c_wrapper = cls(**kwargs)
+        rlberry_a2c_wrapper.wrapped = A2CStableBaselines.load(filename)
+        return rlberry_a2c_wrapper
 
     #
     # For hyperparameter optimization
@@ -82,7 +99,7 @@ class A2CAgent(AgentWithSimplePolicy):
 
 
 #
-# Training one agent
+# Train and eval env constructors
 #
 def env_constructor(n_envs=4):
     env = make_atari_env('MontezumaRevenge-v0', n_envs=n_envs)
@@ -100,9 +117,13 @@ def eval_env_constructor(n_envs=1):
     return env
 
 #
-# Training several agents and comparing different hyperparams
+# Testing single agent
 #
 
+
+#
+# Training several agents and comparing different hyperparams
+#
 
 stats = AgentStats(
     A2CAgent,
@@ -110,35 +131,14 @@ stats = AgentStats(
     eval_env=(eval_env_constructor, None),
     eval_kwargs=dict(eval_horizon=200),
     agent_name='A2C baseline',
-    fit_budget=1000,
+    fit_budget=5000,
     init_kwargs=dict(policy='CnnPolicy', verbose=10),
-    n_fit=2,
-    n_jobs=2,
-    joblib_backend='threading')
-
-stats_alternative = AgentStats(
-    A2CAgent,
-    train_env=(env_constructor, None),
-    eval_env=(eval_env_constructor, None),
-    eval_kwargs=dict(eval_horizon=200),
-    agent_name='A2C high learning rate',
-    fit_budget=1000,
-    init_kwargs=dict(policy='CnnPolicy', verbose=10, learning_rate=0.01),
-    n_fit=2,
-    n_jobs=2,
-    joblib_backend='threading')
+    n_fit=4,
+    n_jobs=4,
+    joblib_backend='multiprocessing',
+    output_dir='dev/stable_baselines_atari',
+    seed=123)
 
 
-# # Fit everything in parallel
-# mstats = MultipleStats()
-# mstats.append(stats)
-# mstats.append(stats_alternative)
-# mstats.run()
-# mstats.save()
-
-
-# # Test hyperparam optim
-# print("testint a call to hyperparam optim")
-# mstats.allstats[0].optimize_hyperparams(timeout=60, n_fit=2, n_jobs=1)
-
-stats.optimize_hyperparams(timeout=60, n_fit=2, n_jobs=1)
+stats.fit()
+# stats.optimize_hyperparams(timeout=60, n_fit=2, n_jobs=1)

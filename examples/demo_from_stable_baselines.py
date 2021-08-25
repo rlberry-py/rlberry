@@ -33,6 +33,9 @@ class A2CAgent(AgentWithSimplePolicy):
 
         # init rlberry base class
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
+        # rlberry accepts tuples (env_constructor, env_kwargs) as env
+        # After a call to __init__, self.env is set as an environment instance
+        env = self.env
 
         # Generate seed for A2CStableBaselines using rlberry seeding
         seed = self.rng.integers(2**32).item()
@@ -61,11 +64,11 @@ class A2CAgent(AgentWithSimplePolicy):
             device,
             _init_setup_model)
 
-    def fit(self, budget):
-        self.wrapped.learn(total_timesteps=budget)
+    def fit(self, budget, **kwargs):
+        self.wrapped.learn(total_timesteps=budget, **kwargs)
 
-    def policy(self, observation, **kwargs):
-        action, _state = self.wrapped.predict(observation, **kwargs)
+    def policy(self, observation):
+        action, _ = self.wrapped.predict(observation, deterministic=True)
         return action
 
     #
@@ -74,8 +77,15 @@ class A2CAgent(AgentWithSimplePolicy):
     @classmethod
     def sample_parameters(cls, trial):
         learning_rate = trial.suggest_loguniform('learning_rate', 1e-5, 1)
-
-        return {'learning_rate': learning_rate}
+        ent_coef = trial.suggest_loguniform("ent_coef", 0.00000001, 0.1)
+        vf_coef = trial.suggest_uniform("vf_coef", 0, 1)
+        normalize_advantage = trial.suggest_categorical("normalize_advantage", [False, True])
+        return dict(
+            learning_rate=learning_rate,
+            ent_coef=ent_coef,
+            vf_coef=vf_coef,
+            normalize_advantage=normalize_advantage,
+        )
 
 
 #
@@ -83,18 +93,10 @@ class A2CAgent(AgentWithSimplePolicy):
 #
 env_ctor = gym_make
 env_kwargs = dict(id='CartPole-v1')
-env = env_ctor(**env_kwargs)
-agent = A2CAgent(env, 'MlpPolicy', verbose=1)
-agent.fit(total_timesteps=1000)
+# env = env_ctor(**env_kwargs)
+# agent = A2CAgent(env, 'MlpPolicy', verbose=1)
+# agent.fit(budget=1000)
 
-obs = env.reset()
-for i in range(1000):
-    action = agent.policy(obs, deterministic=True)
-    obs, reward, done, info = env.step(action)
-    env.render()
-    if done:
-        break
-env.close()
 
 #
 # Training several agents and comparing different hyperparams
@@ -104,27 +106,38 @@ from rlberry.stats import AgentStats, MultipleStats, evaluate_agents
 stats = AgentStats(
     A2CAgent,
     (env_ctor, env_kwargs),
-    eval_horizon=200,
     agent_name='A2C baseline',
-    init_kwargs={'policy': 'MlpPolicy', 'verbose': 1},
-    fit_kwargs={'total_timesteps': 1000},
-    policy_kwargs={'deterministic': True},
+    init_kwargs=dict(policy='MlpPolicy', verbose=1),
+    fit_kwargs=dict(log_interval=1000),
+    fit_budget=2500,
+    eval_kwargs=dict(eval_horizon=400),
     n_fit=4,
-    n_jobs=4,
-    joblib_backend='loky')   # we might need 'threading' here, since stable baselines creates processes
-                             # 'multiprocessing' does not work, 'loky' seems good
+    n_jobs=2,
+    joblib_backend='multiprocessing',
+    output_dir='dev/stable_baselines',
+    seed=123)
 
 stats_alternative = AgentStats(
     A2CAgent,
     (env_ctor, env_kwargs),
-    eval_horizon=200,
-    agent_name='A2C high learning rate',
-    init_kwargs={'policy': 'MlpPolicy', 'verbose': 1, 'learning_rate': 0.01},
-    fit_kwargs={'total_timesteps': 1000},
-    policy_kwargs={'deterministic': True},
+    agent_name='A2C optimized',
+    init_kwargs=dict(policy='MlpPolicy', verbose=1),
+    fit_kwargs=dict(log_interval=1000),
+    fit_budget=2500,
+    eval_kwargs=dict(eval_horizon=400),
     n_fit=4,
-    n_jobs=4,
-    joblib_backend='loky')
+    n_jobs=2,
+    joblib_backend='multiprocessing',
+    output_dir='dev/stable_baselines',
+    seed=456)
+
+# Optimize hyperparams (600 seconds)
+stats_alternative.optimize_hyperparams(
+    timeout=600,
+    n_optuna_workers=2,
+    n_fit=2,
+    optuna_parallelization='process',
+    fit_fraction=1.0)
 
 # Fit everything in parallel
 mstats = MultipleStats()
@@ -134,8 +147,18 @@ mstats.append(stats_alternative)
 mstats.run()
 
 # Plot policy evaluation
-evaluate_agents(mstats.allstats)
+out = evaluate_agents(mstats.allstats)
+print(out)
 
-# Test hyperparam optim
-print("testint a call to hyperparam optim")
-mstats.allstats[0].optimize_hyperparams(timeout=60)
+
+# Visualize policy
+env = stats_alternative.build_eval_env()
+agent = stats_alternative.agent_handlers[0]
+obs = env.reset()
+for i in range(2500):
+    action = agent.policy(obs)
+    obs, reward, done, info = env.step(action)
+    env.render()
+    if done:
+        break
+env.close()
