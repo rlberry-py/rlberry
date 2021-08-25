@@ -141,5 +141,4 @@ stats_alternative = AgentStats(
 # print("testint a call to hyperparam optim")
 # mstats.allstats[0].optimize_hyperparams(timeout=60, n_fit=2, n_jobs=1)
 
-
-stats.fit()
+stats.optimize_hyperparams(timeout=60, n_fit=2, n_jobs=1)

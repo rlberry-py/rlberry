@@ -97,6 +97,9 @@ class AgentHandler:
                 saved_filename = self._agent_instance.save(self._fname)
                 # saved_filename might have appended the correct extension, for instance,
                 # so self._fname must be updated.
+                if not saved_filename:
+                    logger.warning(f'Instance of {self._agent_class} cannot be saved and will be kept in memory.')
+                    return
                 self._fname = Path(saved_filename)
                 del self._agent_instance
                 self._agent_instance = None
@@ -305,7 +308,8 @@ class AgentStats:
     def clear_handlers(self):
         """Delete files from output_dir/agent_handlers that are managed by this class."""
         for handler in self.agent_handlers:
-            handler._fname.unlink()
+            if handler._fname.exists():
+                handler._fname.unlink()
 
     def set_writer(self, idx, writer_fn, writer_kwargs=None):
         """
@@ -374,9 +378,6 @@ class AgentStats:
             delayed(_fit_worker)(arg) for arg in args)
 
         self.agent_handlers = workers_output
-        # # load agents back to memory
-        # for handler in self.agent_handlers:
-        #     handler.load()
 
         logger.info("... trained!")
 
@@ -416,14 +417,15 @@ class AgentStats:
             for idx in self.default_writer_data:
                 df = self.default_writer_data[idx]
                 data_list.append(df)
-            all_writer_data = pd.concat(data_list, ignore_index=True)
-            try:
-                output = pd.DataFrame(all_writer_data)
-                # save
-                fname = Path(output_dir) / 'data.csv'
-                output.to_csv(fname, index=None)
-            except Exception:
-                logger.warning("Could not save default_writer_data.")
+            if len(data_list) > 0:
+                all_writer_data = pd.concat(data_list, ignore_index=True)
+                try:
+                    output = pd.DataFrame(all_writer_data)
+                    # save
+                    fname = Path(output_dir) / 'data.csv'
+                    output.to_csv(fname, index=None)
+                except Exception:
+                    logger.warning("Could not save default_writer_data.")
 
         #
         # Pickle AgentStats instance
@@ -605,6 +607,7 @@ class AgentStats:
             init_kwargs=self.init_kwargs,  # self.init_kwargs
             agent_class=self.agent_class,  # self.agent_class
             train_env=self.train_env,    # self.train_env
+            eval_env=self._eval_env,
             fit_budget=self.fit_budget,   # self.fit_budget
             eval_kwargs=self.eval_kwargs,  # self.eval_kwargs
             n_fit=n_fit,
@@ -742,6 +745,7 @@ def _optuna_objective(
     init_kwargs,  # self.init_kwargs
     agent_class,  # self.agent_class
     train_env,    # self.train_env
+    eval_env,
     fit_budget,   # self.fit_budget
     eval_kwargs,  # self.eval_kwargs
     n_fit,
@@ -765,6 +769,7 @@ def _optuna_objective(
         agent_class,
         train_env,
         fit_budget,
+        eval_env=eval_env,
         init_kwargs=kwargs,   # kwargs are being optimized
         eval_kwargs=deepcopy(eval_kwargs),
         agent_name='optim',
