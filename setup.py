@@ -41,6 +41,12 @@ full_requires = [
 extras_require = {
     'full': full_requires,
     'test': tests_require,
+    'jax_agents': ['jax[cpu]',
+                   'dm-haiku',
+                   'optax',
+                   'dm-reverb-nightly[tensorflow]',
+                   'dm-tree',
+                   'rlax'],
     'deploy': ['sphinx', 'sphinx_rtd_theme'],
     'opengl_rendering': ['PyOpenGL', 'PyOpenGL_accelerate'],
     'torch_agents': ['torch>=1.6.0', 'tensorboard'],
