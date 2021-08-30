@@ -42,6 +42,7 @@ extras_require = {
     'full': full_requires,
     'test': tests_require,
     'jax_agents': ['jax[cpu]',
+                   'chex',
                    'dm-haiku',
                    'optax',
                    'dm-reverb-nightly[tensorflow]',

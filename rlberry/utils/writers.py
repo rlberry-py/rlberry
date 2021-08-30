@@ -27,11 +27,13 @@ class DefaultWriter:
         self._log_interval = log_interval
         self._data = None
         self._time_last_log = None
+        self._log_time = True
         self.reset()
 
     def reset(self):
         """Clear all data."""
         self._data = dict()
+        self._initial_time = timer()
         self._time_last_log = timer()
 
     @property
@@ -44,6 +46,9 @@ class DefaultWriter:
     def add_scalar(self, tag: str, scalar_value: float, global_step: Optional[int] = None):
         """
         Store scalar value.
+
+        Note: the tag 'dw_time_elapsed' is reserved and updated internally.
+        It logs automatically the number of seconds elapsed
 
         Parameters
         ----------
@@ -70,8 +75,16 @@ class DefaultWriter:
         else:
             self._data[tag]['global_step'].append(global_step)
 
+        # Append time interval corresponding to global_step
+        if global_step is not None and self._log_time:
+            assert tag != 'dw_time_elapsed', 'The tag dw_time_elapsed is reserved.'
+            self._log_time = False
+            self.add_scalar(tag='dw_time_elapsed', scalar_value=timer() - self._initial_time, global_step=global_step)
+            self._log_time = True
+
         # Log
-        self._log()
+        if not self._log_time:
+            self._log()
 
     def _log(self):
         # time since last log

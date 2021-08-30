@@ -248,7 +248,7 @@ class AgentStats:
                 raise ValueError('[AgentStats] fit_budget missing in __init__().')
 
         # output dir
-        output_dir = output_dir or self.identifier
+        output_dir = output_dir or ('output/' + self.identifier)
         self.output_dir = Path(output_dir)
 
         # Create list of writers for each agent that will be trained
@@ -410,16 +410,17 @@ class AgentStats:
         if len(args) == 1:
             workers_output = [_fit_worker(args[0])]
 
-        with executor_class() as executor:
-            futures = []
-            for arg in args:
-                futures.append(executor.submit(_fit_worker, arg))
+        else:
+            with executor_class() as executor:
+                futures = []
+                for arg in args:
+                    futures.append(executor.submit(_fit_worker, arg))
 
-            workers_output = []
-            for future in concurrent.futures.as_completed(futures):
-                workers_output.append(
-                    future.result()
-                )
+                workers_output = []
+                for future in concurrent.futures.as_completed(futures):
+                    workers_output.append(
+                        future.result()
+                    )
 
         workers_output.sort(key=lambda x: x.id)
         self.agent_handlers = workers_output
