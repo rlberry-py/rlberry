@@ -18,14 +18,13 @@ import jax.numpy as jnp
 import logging
 import numpy as np
 import optax
-import reverb
 import rlberry.agents.jax.nets.common as nets
 import rlax
-import tensorflow as tf
 
 from gym import spaces
 from rlberry import types
-from rlberry.agents import Agent
+from rlberry.agents import AgentWithSimplePolicy
+from rlberry.agents.jax.utils.replay_buffer import ReplayBuffer
 from rlberry.utils.writers import DefaultWriter
 
 
@@ -51,7 +50,7 @@ class ActorOutput:
     q_values: chex.Array
 
 
-class DQNAgent(Agent):
+class DQNAgent(AgentWithSimplePolicy):
     """
     Implementation of Deep Q-Learning using JAX.
 
@@ -97,13 +96,11 @@ class DQNAgent(Agent):
         max_replay_size: int = 100000,
         **kwargs
     ):
-        Agent.__init__(self, env, **kwargs)
+        AgentWithSimplePolicy.__init__(self, env, **kwargs)
         self.rng_key = jax.random.PRNGKey(self.rng.integers(2**32).item())
         self.writer = DefaultWriter(name=self.name)
 
         # checks
-        if chunk_size < 1:
-            raise ValueError('chunk_size needs to be >= 1')
         if not isinstance(self.env.observation_space, spaces.Box):
             raise ValueError('DQN only implemented for Box observation spaces.')
         if not isinstance(self.env.action_space, spaces.Discrete):
@@ -117,25 +114,13 @@ class DQNAgent(Agent):
         self._target_update_interval = target_update_interval
         self._max_replay_size = max_replay_size
 
-        # define specs
-        # TODO: generalize. Observation is taken from reset() because gym is
-        # mixing things up (returning double instead of float)
-        sample_obs = self.env.reset()
-        try:
-            self._observation_spec = tf.TensorSpec(
-                sample_obs.shape, sample_obs.dtype)
-        except AttributeError:   # in case sample_obs has no .shape attribute
-            self._observation_spec = tf.TensorSpec(
-                self.env.observation_space.shape, self.env.observation_space.dtype)
-        self._action_spec = tf.TensorSpec(
-            self.env.action_space.shape, self.env.action_space.dtype)
-
-        # initialize replay buffer
-        self._reverb_server = None
-        self._reverb_client = None
-        self._reverb_dataset = None
-        self._batched_dataset = None
-        self._init_replay_buffer()
+        # replay buffer
+        self._replay_buffer = ReplayBuffer(
+            self.env,
+            self._batch_size,
+            self._chunk_size,
+            self._max_replay_size,
+        )
 
         # initialize params
         net_ctor = functools.partial(
@@ -146,7 +131,7 @@ class DQNAgent(Agent):
         self._q_net = hk.without_apply_rng(
             hk.transform(lambda x: net_ctor()(x))
         )
-        self._dummy_obs = jnp.ones(self._observation_spec.shape)
+        self._dummy_obs = jnp.ones(self.env.observation_space.shape)
         self.rng_key, subkey1 = jax.random.split(self.rng_key)
         self.rng_key, subkey2 = jax.random.split(self.rng_key)
         self._all_params = AllParams(
@@ -176,50 +161,17 @@ class DQNAgent(Agent):
         self.total_episodes = 0
         self.buffer_entries = 0
 
-    @property
-    def dataset(self):
-        return self._batched_dataset
-
-    def _init_replay_buffer(self):
-        self._reverb_server = reverb.Server(
-            tables=[
-                reverb.Table(
-                    name='replay_buffer',
-                    sampler=reverb.selectors.Uniform(),
-                    remover=reverb.selectors.Fifo(),
-                    max_size=self._max_replay_size,
-                    rate_limiter=reverb.rate_limiters.MinSize(1),
-                    signature={
-                        'actions': tf.TensorSpec(
-                            shape=[self._chunk_size, *self._action_spec.shape],
-                            dtype=self._action_spec.dtype),
-                        'observations': tf.TensorSpec(
-                            shape=[self._chunk_size, *self._observation_spec.shape],
-                            dtype=self._observation_spec.dtype),
-                        'rewards': tf.TensorSpec(
-                            shape=[self._chunk_size, ],
-                            dtype=np.float32),
-                        'discounts': tf.TensorSpec(
-                            shape=[self._chunk_size, ],
-                            dtype=np.float32),
-                        'next_observations': tf.TensorSpec(
-                            shape=[self._chunk_size, *self._observation_spec.shape],
-                            dtype=self._observation_spec.dtype),
-                    },
-                ),
-            ],
-            port=None
+    def policy(self, observation):
+        self.rng_key, subkey = jax.random.split(self.rng_key)
+        actor_out, _ = self.actor_step(
+            self._all_params,
+            self._all_states,
+            observation,
+            subkey,
+            evaluation=True,
         )
-        self._reverb_client = reverb.Client(f'localhost:{self._reverb_server.port}')
-        self._reverb_dataset = reverb.TrajectoryDataset.from_table_signature(
-            server_address=f'localhost:{self._reverb_server.port}',
-            table='replay_buffer',
-            max_in_flight_samples_per_worker=2 * self._batch_size)
-        self._batched_dataset = self._reverb_dataset.batch(self._batch_size, drop_remainder=True).as_numpy_iterator()
-        logger.info(self._reverb_client.server_info())
-
-    def can_sample(self):
-        return self.buffer_entries >= self._batch_size
+        action = actor_out.actions.item()
+        return action
 
     def fit(
         self,
@@ -239,7 +191,7 @@ class DQNAgent(Agent):
         episode_timesteps = 0   # timesteps within an episode
         episode_rewards = 0.0
         observation = self.env.reset()
-        with self._reverb_client.trajectory_writer(num_keep_alive_refs=self._chunk_size) as reverb_writer:
+        with self._replay_buffer.get_writer() as buffer_writer:
             while timesteps_counter < budget:
                 self.rng_key, subkey = jax.random.split(self.rng_key)
                 actor_out, self._all_states = self.actor_step(
@@ -254,7 +206,7 @@ class DQNAgent(Agent):
 
                 # store data
                 episode_rewards += reward
-                reverb_writer.append(
+                buffer_writer.append(
                     {'action': action,
                      'observation': observation,
                      'reward': np.array(reward, dtype=np.float32),
@@ -265,17 +217,6 @@ class DQNAgent(Agent):
 
                 # write to table
                 if episode_timesteps >= self._chunk_size:
-                    reverb_writer.create_item(
-                        table='replay_buffer',
-                        priority=1.0,
-                        trajectory={
-                            'actions': reverb_writer.history['action'][-self._chunk_size:],
-                            'observations': reverb_writer.history['observation'][-self._chunk_size:],
-                            'rewards': reverb_writer.history['reward'][-self._chunk_size:],
-                            'discounts': reverb_writer.history['discount'][-self._chunk_size:],
-                            'next_observations': reverb_writer.history['next_obs'][-self._chunk_size:],
-                        }
-                    )
                     self.buffer_entries += 1
 
                 # for next iteration
@@ -284,31 +225,29 @@ class DQNAgent(Agent):
                 observation = next_obs
 
                 # update
-                if self.total_timesteps % self._online_update_interval == 0 and self.can_sample():
-                    sample = next(self.dataset)
-                    batch = sample.data
-                    self._all_params, self._all_states, info = self.learner_step(
-                        self._all_params,
-                        self._all_states,
-                        batch
-                    )
-                    self.writer.add_scalar('q_loss', info['loss'].item(), self.total_timesteps)
-                    self.writer.add_scalar(
-                        'learner_steps',
-                        self._all_states.learner_steps.item(),
-                        self.total_timesteps)
+                if self.total_timesteps % self._online_update_interval == 0:
+                    sample = self._replay_buffer.sample()
+                    if sample:
+                        batch = sample.data
+                        self._all_params, self._all_states, info = self.learner_step(
+                            self._all_params,
+                            self._all_states,
+                            batch
+                        )
+                        self.writer.add_scalar('q_loss', info['loss'].item(), self.total_timesteps)
+                        self.writer.add_scalar(
+                            'learner_steps',
+                            self._all_states.learner_steps.item(),
+                            self.total_timesteps)
 
                 # check if episode ended
                 if done:
                     self.writer.add_scalar('episode_rewards', episode_rewards, self.total_timesteps)
-                    reverb_writer.end_episode()
+                    buffer_writer.end_episode()
                     episode_timesteps = 0
                     self.total_episodes += 1
                     episode_rewards = 0.0
                     observation = self.env.reset()
-
-    def eval(self, eval_env, **kwargs):
-        return 0.0
 
     @functools.partial(jax.jit, static_argnums=(0,))
     def _loss(self, all_params, batch):
@@ -318,8 +257,7 @@ class DQNAgent(Agent):
         discount_t = batch['discounts']
         obs_t = batch['next_observations']
 
-        # remove time dim
-        # TODO: check if done correctly
+        # remove time dim (batch has shape [batch, chunk_size, ...])
         a_tm1 = a_tm1.flatten()
         r_t = r_t.flatten()
         discount_t = discount_t.flatten()
