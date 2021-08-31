@@ -18,10 +18,12 @@ import jax.numpy as jnp
 import logging
 import numpy as np
 import optax
+import dill
 import rlberry.agents.jax.nets.common as nets
 import rlax
 
 from gym import spaces
+from pathlib import Path
 from rlberry import types
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.agents.jax.utils.replay_buffer import ReplayBuffer
@@ -131,11 +133,14 @@ class DQNAgent(AgentWithSimplePolicy):
         self._q_net = hk.without_apply_rng(
             hk.transform(lambda x: net_ctor()(x))
         )
+
         self._dummy_obs = jnp.ones(self.env.observation_space.shape)
+
         self.rng_key, subkey1 = jax.random.split(self.rng_key)
         self.rng_key, subkey2 = jax.random.split(self.rng_key)
+
         self._all_params = AllParams(
-            online=self._q_net.init(subkey1, self._dummy_obs),
+            online=self._q_net.init(subkey1, self._dummy_obs),   # Deadlock here...
             target=self._q_net.init(subkey2, self._dummy_obs)
         )
 
@@ -155,11 +160,6 @@ class DQNAgent(AgentWithSimplePolicy):
             transition_begin=0,
             power=1.0,
         )
-
-        # counters
-        self.total_timesteps = 0
-        self.total_episodes = 0
-        self.buffer_entries = 0
 
     def policy(self, observation):
         self.rng_key, subkey = jax.random.split(self.rng_key)
@@ -188,7 +188,6 @@ class DQNAgent(AgentWithSimplePolicy):
         """
         del kwargs
         timesteps_counter = 0
-        episode_timesteps = 0   # timesteps within an episode
         episode_rewards = 0.0
         observation = self.env.reset()
         with self._replay_buffer.get_writer() as buffer_writer:
@@ -212,20 +211,14 @@ class DQNAgent(AgentWithSimplePolicy):
                      'reward': np.array(reward, dtype=np.float32),
                      'discount': np.array(self._gamma * (1.0 - done), dtype=np.float32),
                      'next_obs': next_obs})
-                # increment counter
-                episode_timesteps += 1
-
-                # write to table
-                if episode_timesteps >= self._chunk_size:
-                    self.buffer_entries += 1
 
                 # for next iteration
                 timesteps_counter += 1
-                self.total_timesteps += 1
                 observation = next_obs
 
                 # update
-                if self.total_timesteps % self._online_update_interval == 0:
+                total_timesteps = self._all_states.actor_steps.item()
+                if total_timesteps % self._online_update_interval == 0:
                     sample = self._replay_buffer.sample()
                     if sample:
                         batch = sample.data
@@ -234,18 +227,18 @@ class DQNAgent(AgentWithSimplePolicy):
                             self._all_states,
                             batch
                         )
-                        self.writer.add_scalar('q_loss', info['loss'].item(), self.total_timesteps)
-                        self.writer.add_scalar(
-                            'learner_steps',
-                            self._all_states.learner_steps.item(),
-                            self.total_timesteps)
+                        if self.writer:
+                            self.writer.add_scalar('q_loss', info['loss'].item(), total_timesteps)
+                            self.writer.add_scalar(
+                                'learner_steps',
+                                self._all_states.learner_steps.item(),
+                                total_timesteps)
 
                 # check if episode ended
                 if done:
-                    self.writer.add_scalar('episode_rewards', episode_rewards, self.total_timesteps)
+                    if self.writer:
+                        self.writer.add_scalar('episode_rewards', episode_rewards, total_timesteps)
                     buffer_writer.end_episode()
-                    episode_timesteps = 0
-                    self.total_episodes += 1
                     episode_rewards = 0.0
                     observation = self.env.reset()
 
@@ -319,3 +312,48 @@ class DQNAgent(AgentWithSimplePolicy):
                 actor_steps=all_states.actor_steps),
             info
         )
+
+    #
+    # Custom save/load methods.
+    #
+    def save(self, filename):
+        filename = Path(filename).with_suffix('.pickle')
+        filename.parent.mkdir(parents=True, exist_ok=True)
+
+        writer = None
+        if dill.pickles(self.writer):
+            writer = self.writer
+
+        agent_data = dict(
+            rng_key=self.rng_key,
+            params=self._all_params,
+            states=self._all_states,
+            writer=writer,
+        )
+        with filename.open("wb") as ff:
+            dill.dump(agent_data, ff)
+
+        return filename
+
+    @classmethod
+    def load(cls, filename, **kwargs):
+        filename = Path(filename).with_suffix('.pickle')
+        agent = cls(**kwargs)
+        with filename.open('rb') as ff:
+            agent_data = dill.load(ff)
+        agent.key = agent_data['rng_key']
+        agent._all_params = agent_data['params']
+        agent._all_states = agent_data['states']
+        writer = agent_data['writer']
+        if writer:
+            agent.writer = writer
+        return agent
+
+    #
+    # For hyperparameter optimization
+    #
+    @classmethod
+    def sample_parameters(cls, trial):
+        learning_rate = trial.suggest_loguniform('learning_rate', 1e-5, 1)
+
+        return {'learning_rate': learning_rate}

@@ -15,6 +15,7 @@ cov_html/*
 # dev and results folder
 dev/*
 results/*
+temp/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

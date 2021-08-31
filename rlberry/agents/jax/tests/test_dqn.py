@@ -21,3 +21,4 @@ def test_jax_dqn():
         parallelization='thread',
     )
     stats.fit()
+    stats.clear_output_dir()
