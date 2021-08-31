@@ -15,6 +15,7 @@ import pickle
 import pandas as pd
 import shutil
 import threading
+import multiprocessing
 from rlberry.utils.logging import configure_logging
 from rlberry.utils.writers import DefaultWriter
 from rlberry.stats.utils import create_database
@@ -23,7 +24,8 @@ from typing import Tuple
 
 # Using a lock when creating envs and agents, to avoid problems
 # as here: https://github.com/openai/gym/issues/281
-_LOCK = threading.Lock()
+_LOCK_THREAD = threading.Lock()
+_LOCK_PROCESS = multiprocessing.Manager().Lock()
 
 _OPTUNA_INSTALLED = True
 try:
@@ -88,31 +90,33 @@ class AgentHandler:
         return self._agent_instance is not None
 
     def load(self) -> bool:
-        with _LOCK:
-            try:
-                self._agent_instance = self._agent_class.load(self._fname, **self._agent_kwargs)
-                safe_reseed(self._agent_instance.env, self._seeder)
-                logger.info(f'Sucessful call to AgentHandler.load() for {self._agent_class}')
-                return True
-            except Exception as ex:
-                self._agent_instance = None
-                logger.info(f'Failed call to AgentHandler.load() for {self._agent_class}: {ex}')
-                return False
+        with _LOCK_PROCESS:
+            with _LOCK_THREAD:
+                try:
+                    self._agent_instance = self._agent_class.load(self._fname, **self._agent_kwargs)
+                    safe_reseed(self._agent_instance.env, self._seeder)
+                    logger.info(f'Sucessful call to AgentHandler.load() for {self._agent_class}')
+                    return True
+                except Exception as ex:
+                    self._agent_instance = None
+                    logger.info(f'Failed call to AgentHandler.load() for {self._agent_class}: {ex}')
+                    return False
 
     def dump(self):
         """Saves agent to file and remove it from memory."""
-        with _LOCK:
-            if self._agent_instance is not None:
-                saved_filename = self._agent_instance.save(self._fname)
-                # saved_filename might have appended the correct extension, for instance,
-                # so self._fname must be updated.
-                if not saved_filename:
-                    logger.warning(f'Instance of {self._agent_class} cannot be saved and will be kept in memory.')
-                    return
-                self._fname = Path(saved_filename)
-                del self._agent_instance
-                self._agent_instance = None
-                logger.info(f'Sucessful call to AgentHandler.dump() for {self._agent_class}')
+        with _LOCK_PROCESS:
+            with _LOCK_THREAD:
+                if self._agent_instance is not None:
+                    saved_filename = self._agent_instance.save(self._fname)
+                    # saved_filename might have appended the correct extension, for instance,
+                    # so self._fname must be updated.
+                    if not saved_filename:
+                        logger.warning(f'Instance of {self._agent_class} cannot be saved and will be kept in memory.')
+                        return
+                    self._fname = Path(saved_filename)
+                    del self._agent_instance
+                    self._agent_instance = None
+                    logger.info(f'Sucessful call to AgentHandler.dump() for {self._agent_class}')
 
     def __getattr__(self, attr):
         """
@@ -248,7 +252,7 @@ class AgentStats:
                 raise ValueError('[AgentStats] fit_budget missing in __init__().')
 
         # output dir
-        output_dir = output_dir or ('output/' + self.identifier)
+        output_dir = output_dir or ('temp/' + self.identifier)
         self.output_dir = Path(output_dir)
 
         # Create list of writers for each agent that will be trained
@@ -421,6 +425,7 @@ class AgentStats:
                     workers_output.append(
                         future.result()
                     )
+                executor.shutdown()
 
         workers_output.sort(key=lambda x: x.id)
         self.agent_handlers = workers_output
@@ -747,17 +752,18 @@ def _fit_worker(args):
     # logging level in thread
     configure_logging(thread_logging_level)
 
-    with _LOCK:
-        if agent_handler.is_empty():
-            # preprocess and train_env
-            train_env_instance = _preprocess_env(train_env, seeder)
-            # create agent
-            agent = agent_class(train_env_instance, copy_env=False, seeder=seeder, **init_kwargs)
-            agent.name += f"(spawn_key{seeder.seed_seq.spawn_key})"
-            # seed agent
-            agent.reseed(seeder)
-            agent_handler.set_instance(agent)
-        agent = agent_handler
+    with _LOCK_PROCESS:
+        with _LOCK_THREAD:
+            if agent_handler.is_empty():
+                # preprocess and train_env
+                train_env_instance = _preprocess_env(train_env, seeder)
+                # create agent
+                agent = agent_class(train_env_instance, copy_env=False, seeder=seeder, **init_kwargs)
+                agent.name += f"(spawn_key{seeder.seed_seq.spawn_key})"
+                # seed agent
+                agent.reseed(seeder)
+                agent_handler.set_instance(agent)
+            agent = agent_handler
 
     # set writer
     if writer[0] is None:
