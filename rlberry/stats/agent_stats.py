@@ -456,6 +456,10 @@ class AgentStats:
         ----------
         output_dir : str or None
             Output directory. If None, use self.output_dir.
+
+        Returns
+        -------
+        filename where the AgentStats object was saved.
         """
         # use default self.output_dir if another one is not provided.
         output_dir = output_dir or self.output_dir
@@ -509,6 +513,8 @@ class AgentStats:
                 logger.info("Saved AgentStats({}) using dill.".format(self.agent_name))
             except Exception as ex:
                 logger.warning("[AgentStats] Instance cannot be pickled: " + str(ex))
+
+        return filename
 
     @classmethod
     def load(cls, filename):
