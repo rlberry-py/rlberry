@@ -10,6 +10,7 @@ import functools
 import json
 import logging
 import dill
+import gc
 import numpy as np
 import pickle
 import pandas as pd
@@ -623,16 +624,13 @@ class AgentStats:
                 sampler_kwargs = {}
             # get sampler
             if sampler_method == 'random':
-                optuna_seed = self.seeder.rng.integers(2**16)
-                sampler = optuna.samplers.RandomSampler(seed=optuna_seed)
+                sampler = optuna.samplers.RandomSampler()
             elif sampler_method == 'grid':
                 assert sampler_kwargs is not None, \
                     "To use GridSampler, " + \
                     "a search_space dictionary must be provided."
                 sampler = optuna.samplers.GridSampler(**sampler_kwargs)
             elif sampler_method == 'cmaes':
-                optuna_seed = self.seeder.rng.integers(2**16)
-                sampler_kwargs['seed'] = optuna_seed
                 sampler = optuna.samplers.CmaEsSampler(**sampler_kwargs)
             elif sampler_method == 'optuna_default':
                 sampler = optuna.samplers.TPESampler(**sampler_kwargs)
@@ -675,7 +673,6 @@ class AgentStats:
             fit_budget=self.fit_budget,   # self.fit_budget
             eval_kwargs=self.eval_kwargs,  # self.eval_kwargs
             n_fit=n_fit,
-            seeder=self.seeder,       # self.seeder
             temp_dir=TEMP_DIR,     # TEMP_DIR
             disable_evaluation_writers=disable_evaluation_writers,
             fit_fraction=fit_fraction
@@ -783,7 +780,6 @@ def _fit_worker(args):
             # seed agent
             agent.reseed(seeder)
             agent_handler.set_instance(agent)
-        agent = agent_handler
 
     # set writer
     if writer[0] is None:
@@ -802,6 +798,9 @@ def _fit_worker(args):
 
     # remove from memory to avoid pickle issues
     agent_handler.dump()
+
+    # garbage collector
+    gc.collect()
 
     return agent_handler
 
@@ -825,7 +824,6 @@ def _optuna_objective(
     fit_budget,   # self.fit_budget
     eval_kwargs,  # self.eval_kwargs
     n_fit,
-    seeder,       # self.seeder
     temp_dir,     # TEMP_DIR
     disable_evaluation_writers,
     fit_fraction
@@ -851,7 +849,6 @@ def _optuna_objective(
         n_fit=n_fit,
         thread_logging_level='INFO',
         parallelization='thread',
-        seed=seeder,
         output_dir=temp_dir)
 
     if disable_evaluation_writers:
