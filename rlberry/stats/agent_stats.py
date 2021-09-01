@@ -683,7 +683,9 @@ class AgentStats:
                             study.optimize,
                             objective,
                             n_trials=n_trials,
-                            timeout=timeout)
+                            timeout=timeout,
+                            gc_after_trial=True)
+                    executor.shutdown()
             elif optuna_parallelization == 'process':
                 with concurrent.futures.ProcessPoolExecutor(
                         mp_context=multiprocessing.get_context('spawn')) as executor:
@@ -692,7 +694,9 @@ class AgentStats:
                             study.optimize,
                             objective,
                             n_trials=n_trials // n_optuna_workers,
-                            timeout=timeout)
+                            timeout=timeout,
+                            gc_after_trial=True)
+                    executor.shutdown()
             else:
                 raise ValueError(f'Invalid value for optuna_parallelization: {optuna_parallelization}.')
 
@@ -700,7 +704,10 @@ class AgentStats:
             logger.warning("Evaluation stopped.")
 
         # clear temp folder
-        shutil.rmtree(TEMP_DIR)
+        try:
+            shutil.rmtree(TEMP_DIR)
+        except FileNotFoundError as ex:
+            logger.warning(f'Could not delete {TEMP_DIR}: {ex}')
 
         # continue
         best_trial = study.best_trial
@@ -836,7 +843,7 @@ def _optuna_objective(
         eval_kwargs=deepcopy(eval_kwargs),
         agent_name='optim',
         n_fit=n_fit,
-        thread_logging_level='WARNING',
+        thread_logging_level='INFO',
         parallelization='thread',
         seed=seeder,
         output_dir=temp_dir)
@@ -881,5 +888,6 @@ def _optuna_objective(
 
     # clear aux data
     params_stats.clear_handlers()
+    del params_stats
 
     return eval_value
