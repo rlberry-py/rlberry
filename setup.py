@@ -36,6 +36,13 @@ full_requires = [
     'PyOpenGL',
     'PyOpenGL_accelerate',
     'pyvirtualdisplay',
+    'jax[cpu]',
+    'chex',
+    'dm-haiku',
+    'optax',
+    'dm-reverb-nightly[tensorflow]',
+    'dm-tree',
+    'rlax'
 ]
 
 extras_require = {
