@@ -3,6 +3,7 @@ from rlberry.agents.jax.dqn.dqn import DQNAgent
 from rlberry.envs import gym_make
 from rlberry.stats import AgentStats, plot_writer_data
 
+
 if __name__ == '__main__':
     env = (gym_make, dict(id='CartPole-v0'))
     params = dict(
@@ -40,4 +41,11 @@ if __name__ == '__main__':
     plot_writer_data([stats], tag='q_loss')
 
     stats.save()
+
+    stats.optimize_hyperparams(
+        timeout=500,
+        n_fit=1,
+        n_optuna_workers=1,
+        sampler_method='random',
+        optuna_parallelization='process')
     stats.clear_output_dir()

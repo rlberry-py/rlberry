@@ -140,7 +140,7 @@ class DQNAgent(AgentWithSimplePolicy):
         self.rng_key, subkey2 = jax.random.split(self.rng_key)
 
         self._all_params = AllParams(
-            online=self._q_net.init(subkey1, self._dummy_obs),   # Deadlock here...
+            online=self._q_net.init(subkey1, self._dummy_obs),
             target=self._q_net.init(subkey2, self._dummy_obs)
         )
 

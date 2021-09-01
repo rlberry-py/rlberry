@@ -136,4 +136,4 @@ class ReplayBuffer:
             table='replay_buffer',
             max_in_flight_samples_per_worker=2 * self._batch_size)
         self._batched_dataset = self._reverb_dataset.batch(self._batch_size, drop_remainder=True).as_numpy_iterator()
-        logger.info(self._reverb_client.server_info())
+        # logger.info(self._reverb_client.server_info())
