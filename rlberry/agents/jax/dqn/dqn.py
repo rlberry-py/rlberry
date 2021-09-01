@@ -8,6 +8,31 @@ See also: https://stackoverflow.com/a/46833531 to set LD_LIBRARY_PATH automatica
 when activating the conda environment.
 
 * For priority updates, see https://github.com/deepmind/reverb/issues/28
+
+
+Important
+---------
+
+The is something very weird happening when using this agent with the optimize_hyperparams()
+method of AgentStats.
+If @functools.partial(jax.jit, static_argnums=(0,)) is used as a decorator to jit
+the learner_step() and actor_step() methods, the memory use increases a lot
+as the number of optuna trials increases.
+
+Using the following instead (in __init__):
+        self.actor_step = jax.jit(self._actor_step)
+        self.learner_step = jax.jit(self._learner_step)
+seems to solve the issue.
+
+However, if we jit the loss function before, as:
+        self._loss = jax.jit(self._loss)
+        self.actor_step = jax.jit(self._actor_step)
+        self.learner_step = jax.jit(self._learner_step)
+the memory issue comes back!
+
+It does not seem to be the same issue as this one: https://github.com/google/jax/issues/2072
+
+TODO: try to reproduce this issue with a simple example.
 """
 
 import chex
@@ -148,8 +173,8 @@ class DQNAgent(AgentWithSimplePolicy):
         self._optimizer = optax.adam(learning_rate)
         self._all_states = AllStates(
             optimizer=self._optimizer.init(self._all_params.online),
-            learner_steps=0,
-            actor_steps=0,
+            learner_steps=jnp.array(0),
+            actor_steps=jnp.array(0),
         )
 
         # epsilon decay
@@ -160,6 +185,10 @@ class DQNAgent(AgentWithSimplePolicy):
             transition_begin=0,
             power=1.0,
         )
+
+        # update functions (jit)
+        self.actor_step = jax.jit(self._actor_step)
+        self.learner_step = jax.jit(self._learner_step)
 
     def policy(self, observation):
         self.rng_key, subkey = jax.random.split(self.rng_key)
@@ -242,7 +271,6 @@ class DQNAgent(AgentWithSimplePolicy):
                     episode_rewards = 0.0
                     observation = self.env.reset()
 
-    @functools.partial(jax.jit, static_argnums=(0,))
     def _loss(self, all_params, batch):
         obs_tm1 = batch['observations']
         a_tm1 = batch['actions']
@@ -270,8 +298,7 @@ class DQNAgent(AgentWithSimplePolicy):
         )
         return loss, info
 
-    @functools.partial(jax.jit, static_argnums=(0,))
-    def actor_step(self, all_params, all_states, observation, rng_key, evaluation):
+    def _actor_step(self, all_params, all_states, observation, rng_key, evaluation):
         obs = jnp.expand_dims(observation, 0)            # dummy batch
         q_val = self._q_net.apply(all_params.online, obs)[0]   # remove batch
         epsilon = self._epsilon_schedule(all_states.actor_steps)
@@ -288,8 +315,7 @@ class DQNAgent(AgentWithSimplePolicy):
                 actor_steps=all_states.actor_steps + 1),
         )
 
-    @functools.partial(jax.jit, static_argnums=(0,))
-    def learner_step(self, all_params, all_states, batch):
+    def _learner_step(self, all_params, all_states, batch):
         target_params = rlax.periodic_update(
             all_params.online,
             all_params.target,
@@ -355,5 +381,6 @@ class DQNAgent(AgentWithSimplePolicy):
     @classmethod
     def sample_parameters(cls, trial):
         learning_rate = trial.suggest_loguniform('learning_rate', 1e-5, 1)
+        gamma = trial.suggest_uniform('gamma', 0.95, 0.99)
 
-        return {'learning_rate': learning_rate}
+        return {'learning_rate': learning_rate, 'gamma': gamma}
