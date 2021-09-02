@@ -7,24 +7,23 @@ from rlberry.stats import AgentStats, plot_writer_data
 if __name__ == '__main__':
     env = (gym_make, dict(id='CartPole-v0'))
     params = dict(
-        chunk_size=4,
+        chunk_size=8,
         batch_size=128,
-        target_update_interval=1000,
+        target_update_interval=2000,
         eval_interval=200,
+        lambda_=0.1,
     )
 
     stats = AgentStats(
         DQNAgent,
         env,
-        fit_budget=1000,
+        fit_budget=20000,
         eval_env=env,
         init_kwargs=params,
         n_fit=2,
         parallelization='process',
     )
-
-    stats.fit()       # fit with fit_budget
-    stats.fit(10000)    # fit with another budget
+    stats.fit()
 
     agent = stats.agent_handlers[0]
     env_instance = stats.agent_handlers[0].env
@@ -43,11 +42,4 @@ if __name__ == '__main__':
     plot_writer_data([stats], tag='q_loss')
 
     stats.save()
-
-    stats.optimize_hyperparams(
-        timeout=500,
-        n_fit=1,
-        n_optuna_workers=1,
-        sampler_method='random',
-        optuna_parallelization='process')
     stats.clear_output_dir()

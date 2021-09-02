@@ -53,6 +53,7 @@ from rlberry import types
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.agents.jax.utils.replay_buffer import ReplayBuffer
 from rlberry.utils.writers import DefaultWriter
+from typing import Optional
 
 
 logger = logging.getLogger(__name__)
@@ -111,6 +112,8 @@ class DQNAgent(AgentWithSimplePolicy):
     max_episode_length : int
         Maximum length of an episode. If None, episodes will only end if `done = True`
         is returned by env.step().
+    lambda_ : float
+        Parameter for Peng's Q(lambda). If None, usual Q-learning is used.
     """
     name = "JaxDqnAgent"
 
@@ -122,13 +125,14 @@ class DQNAgent(AgentWithSimplePolicy):
         chunk_size: int = 8,
         online_update_interval: int = 1,
         target_update_interval: int = 512,
-        learning_rate: float = 0.01,
+        learning_rate: float = 0.001,
         epsilon_init: float = 1.0,
         epsilon_end: float = 0.05,
         epsilon_steps: int = 5000,
         max_replay_size: int = 100000,
-        eval_interval: int = None,
-        max_episode_length: int = None,
+        eval_interval: Optional[int] = None,
+        max_episode_length: Optional[int] = None,
+        lambda_: Optional[float] = None,
         **kwargs
     ):
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
@@ -150,6 +154,7 @@ class DQNAgent(AgentWithSimplePolicy):
         self._max_replay_size = max_replay_size
         self._eval_interval = eval_interval
         self._max_episode_length = max_episode_length or np.inf
+        self._lambda = lambda_
 
         # replay buffer
         self._replay_buffer = ReplayBuffer(
@@ -306,19 +311,26 @@ class DQNAgent(AgentWithSimplePolicy):
         discount_t = batch['discounts']
         obs_t = batch['next_observations']
 
-        # remove time dim (batch has shape [batch, chunk_size, ...])
-        a_tm1 = a_tm1.flatten()
-        r_t = r_t.flatten()
-        discount_t = discount_t.flatten()
-        obs_tm1 = jnp.reshape(obs_tm1, (-1, obs_tm1.shape[-1]))
-        obs_t = jnp.reshape(obs_t, (-1, obs_t.shape[-1]))
+        if self._lambda is None:
+            # remove time dim (batch has shape [batch, chunk_size, ...])
+            a_tm1 = a_tm1.flatten()
+            r_t = r_t.flatten()
+            discount_t = discount_t.flatten()
+            obs_tm1 = jnp.reshape(obs_tm1, (-1, obs_tm1.shape[-1]))
+            obs_t = jnp.reshape(obs_t, (-1, obs_t.shape[-1]))
 
         q_tm1 = self._q_net.apply(all_params.online, obs_tm1)
         q_t_val = self._q_net.apply(all_params.target, obs_t)
         q_t_select = self._q_net.apply(all_params.online, obs_t)
 
-        batched_loss = jax.vmap(rlax.double_q_learning)
-        td_error = batched_loss(q_tm1, a_tm1, r_t, discount_t, q_t_val, q_t_select)
+        if self._lambda is None:
+            batched_loss = jax.vmap(rlax.double_q_learning)
+            td_error = batched_loss(q_tm1, a_tm1, r_t, discount_t, q_t_val, q_t_select)
+        else:
+            batched_loss = jax.vmap(rlax.q_lambda)
+            batch_lambda = self._lambda * jnp.ones(r_t.shape)
+            td_error = batched_loss(q_tm1, a_tm1, r_t, discount_t, q_t_val, batch_lambda)
+
         loss = jnp.mean(rlax.l2_loss(td_error))
 
         info = dict(
