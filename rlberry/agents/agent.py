@@ -1,6 +1,4 @@
 from abc import ABC, abstractmethod
-from copy import deepcopy
-from typing import Tuple
 import dill
 import pickle
 import logging
@@ -8,6 +6,7 @@ import numpy as np
 from inspect import signature
 from pathlib import Path
 from rlberry.seeding.seeder import Seeder
+from rlberry.envs.utils import process_env
 
 
 logger = logging.getLogger(__name__)
@@ -33,6 +32,8 @@ class Agent(ABC):
         Agent identifier
     env : Model or tuple (constructor, kwargs)
         Environment on which to train the agent.
+    eval_env : Model or tuple (constructor, kwargs)
+        Environment on which to evaluate the agent. If None, copied from env.
     writer : object, default: None
         Writer object (e.g. tensorboard SummaryWriter).
     seeder : rlberry.seeding.Seeder, int, or None
@@ -43,6 +44,7 @@ class Agent(ABC):
 
     def __init__(self,
                  env,
+                 eval_env=None,
                  copy_env=True,
                  seeder=None,
                  **kwargs):
@@ -50,21 +52,13 @@ class Agent(ABC):
         assert kwargs == {}, \
             'Unknown parameters sent to agent:' + str(kwargs.keys())
 
-        if isinstance(env, Tuple):
-            constructor = env[0]
-            kwargs = env[1] or {}
-            self.env = constructor(**kwargs)
-        else:
-            self.env = env
-            if copy_env:
-                try:
-                    self.env = deepcopy(env)
-                except Exception as ex:
-                    logger.warning("[Agent] Not possible to deepcopy env: " + str(ex))
-
+        self.seeder = Seeder(seeder)
+        self.env = process_env(env, self.seeder, copy_env=copy_env)
         self.writer = None
 
-        self.seeder = Seeder(seeder)
+        # evaluation environment
+        eval_env = eval_env or env
+        self.eval_env = process_env(eval_env, self.seeder, copy_env=True)
 
     @abstractmethod
     def fit(self, budget: int, **kwargs):
@@ -236,7 +230,6 @@ class AgentWithSimplePolicy(Agent):
         pass
 
     def eval(self,
-             eval_env,
              eval_horizon=10**5,
              n_simimulations=10,
              gamma=1.0,
@@ -246,8 +239,6 @@ class AgentWithSimplePolicy(Agent):
 
         Parameters
         ----------
-        eval_env : Env
-            Evaluation environment.
         eval_horizon : int, default: 10**5
             Horizon, maximum episode length.
         n_simimulations : int, default: 10
@@ -266,11 +257,13 @@ class AgentWithSimplePolicy(Agent):
         del kwargs  # unused
         episode_rewards = np.zeros(n_simimulations)
         for sim in range(n_simimulations):
-            observation = eval_env.reset()
-            for hh in range(eval_horizon):
+            observation = self.eval_env.reset()
+            tt = 0
+            while tt < eval_horizon:
                 action = self.policy(observation)
-                observation, reward, done, _ = eval_env.step(action)
-                episode_rewards[sim] += reward * np.power(gamma, hh)
+                observation, reward, done, _ = self.eval_env.step(action)
+                episode_rewards[sim] += reward * np.power(gamma, tt)
+                tt += 1
                 if done:
                     break
         return episode_rewards.mean()

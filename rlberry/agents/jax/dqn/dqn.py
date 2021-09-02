@@ -105,6 +105,12 @@ class DQNAgent(AgentWithSimplePolicy):
         Number of steps over which annealing over epsilon takes place.
     max_replay_size : int
         Maximum number of transitions in the replay buffer.
+    eval_interval : int
+        Interval (in number of transitions) between agent evaluations in fit().
+        If None, never evaluate.
+    max_episode_length : int
+        Maximum length of an episode. If None, episodes will only end if `done = True`
+        is returned by env.step().
     """
     name = "JaxDqnAgent"
 
@@ -121,6 +127,8 @@ class DQNAgent(AgentWithSimplePolicy):
         epsilon_end: float = 0.05,
         epsilon_steps: int = 5000,
         max_replay_size: int = 100000,
+        eval_interval: int = None,
+        max_episode_length: int = None,
         **kwargs
     ):
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
@@ -140,6 +148,8 @@ class DQNAgent(AgentWithSimplePolicy):
         self._online_update_interval = online_update_interval
         self._target_update_interval = target_update_interval
         self._max_replay_size = max_replay_size
+        self._eval_interval = eval_interval
+        self._max_episode_length = max_episode_length or np.inf
 
         # replay buffer
         self._replay_buffer = ReplayBuffer(
@@ -218,6 +228,7 @@ class DQNAgent(AgentWithSimplePolicy):
         del kwargs
         timesteps_counter = 0
         episode_rewards = 0.0
+        episode_timesteps = 0
         observation = self.env.reset()
         with self._replay_buffer.get_writer() as buffer_writer:
             while timesteps_counter < budget:
@@ -232,6 +243,9 @@ class DQNAgent(AgentWithSimplePolicy):
                 action = actor_out.actions.item()
                 next_obs, reward, done, _ = self.env.step(action)
 
+                # check max episode length
+                done = done and (episode_timesteps < self._max_episode_length)
+
                 # store data
                 episode_rewards += reward
                 buffer_writer.append(
@@ -241,8 +255,9 @@ class DQNAgent(AgentWithSimplePolicy):
                      'discount': np.array(self._gamma * (1.0 - done), dtype=np.float32),
                      'next_obs': next_obs})
 
-                # for next iteration
+                # counters and next obs
                 timesteps_counter += 1
+                episode_timesteps += 1
                 observation = next_obs
 
                 # update
@@ -263,12 +278,25 @@ class DQNAgent(AgentWithSimplePolicy):
                                 self._all_states.learner_steps.item(),
                                 total_timesteps)
 
+                # eval
+                if self._eval_interval is not None and total_timesteps % self._eval_interval == 0:
+                    eval_rewards = self.eval(
+                        eval_horizon=self._max_episode_length,
+                        n_simimulations=2,
+                        gamma=1.0)
+                    self.writer.add_scalar(
+                        'eval_rewards',
+                        eval_rewards,
+                        total_timesteps
+                    )
+
                 # check if episode ended
                 if done:
                     if self.writer:
                         self.writer.add_scalar('episode_rewards', episode_rewards, total_timesteps)
                     buffer_writer.end_episode()
                     episode_rewards = 0.0
+                    episode_timesteps = 0
                     observation = self.env.reset()
 
     def _loss(self, all_params, batch):

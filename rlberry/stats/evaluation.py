@@ -40,13 +40,12 @@ def evaluate_agents(agent_stats_list,
     eval_outputs = []
     for agent_stats in agent_stats_list:
         outputs = []
-        eval_env = agent_stats.build_eval_env()
         logger.info(f'Evaluating {agent_stats.agent_name}...')
         for ii in range(n_simulations):
             logger.info(f'... simulation {ii+1}/{n_simulations}')
-            value = agent_stats.eval(eval_env)
+            value = agent_stats.eval()
             if not np.isnan(value):
-                outputs.append(agent_stats.eval(eval_env))
+                outputs.append(agent_stats.eval())
         if len(outputs) > 0:
             eval_outputs.append(outputs)
 

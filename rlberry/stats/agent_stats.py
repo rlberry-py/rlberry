@@ -17,6 +17,7 @@ import pandas as pd
 import shutil
 import threading
 import multiprocessing
+from rlberry.envs.utils import process_env
 from rlberry.utils.logging import configure_logging
 from rlberry.utils.writers import DefaultWriter
 from rlberry.stats.utils import create_database
@@ -154,8 +155,7 @@ class AgentStats:
     fit_budget : int
         Argument required to call agent.fit(). If None, must be given in fit_kwargs['fit_budget'].
     eval_env : Tuple (constructor, kwargs)
-        Environment used to evaluate the agent. If None, set to a
-        reseeded deep copy of train_env.
+        Environment used to evaluate the agent. If None, set train_env.
     init_kwargs : dict
         Arguments required by the agent's constructor.
     fit_kwargs : dict
@@ -301,20 +301,17 @@ class AgentStats:
         """
         Return an instantiated and reseeded evaluation environment.
         """
-        return _preprocess_env(self._eval_env, self.seeder)
+        return process_env(self._eval_env, self.seeder)
 
     @property
     def writer_data(self):
         return self.default_writer_data
 
-    def eval(self, eval_env=None):
+    def eval(self):
         """
         Call .eval() method in all fitted agents and return average result.
         """
-        if eval_env is None:
-            eval_env = self.build_eval_env()
-        values = [agent.eval(eval_env,
-                             **self.eval_kwargs) for agent in self.agent_handlers if not agent.is_empty()]
+        values = [agent.eval(**self.eval_kwargs) for agent in self.agent_handlers if not agent.is_empty()]
         if len(values) == 0:
             return np.nan
         return np.mean(values)
@@ -408,6 +405,7 @@ class AgentStats:
                 handler,
                 self.agent_class,
                 self.train_env,
+                self._eval_env,
                 budget,
                 deepcopy(self.init_kwargs),
                 deepcopy(self.fit_kwargs),
@@ -738,28 +736,12 @@ class AgentStats:
 # Aux functions
 #
 
-def _preprocess_env(env, seeder):
-    """
-    If env is a tuple (constructor, kwargs), creates an instance.
-
-    Reseeds the env before returning.
-    """
-    if isinstance(env, tuple):
-        constructor, kwargs = env
-        kwargs = kwargs or {}
-        env = constructor(**kwargs)
-
-    reseeded = safe_reseed(env, seeder)
-    assert reseeded
-
-    return env
-
 
 def _fit_worker(args):
     """
     Create and fit an agent instance
     """
-    lock, agent_handler, agent_class, train_env, fit_budget, init_kwargs, \
+    lock, agent_handler, agent_class, train_env, eval_env, fit_budget, init_kwargs, \
         fit_kwargs, writer, thread_logging_level, seeder = args
 
     # reseed external libraries
@@ -772,10 +754,13 @@ def _fit_worker(args):
     # as here: https://github.com/openai/gym/issues/281
     with lock:
         if agent_handler.is_empty():
-            # preprocess and train_env
-            train_env_instance = _preprocess_env(train_env, seeder)
             # create agent
-            agent = agent_class(train_env_instance, copy_env=False, seeder=seeder, **init_kwargs)
+            agent = agent_class(
+                env=train_env,
+                eval_env=eval_env,
+                copy_env=False,
+                seeder=seeder,
+                **init_kwargs)
             agent.name += f"(spawn_key{seeder.seed_seq.spawn_key})"
             # seed agent
             agent.reseed(seeder)
