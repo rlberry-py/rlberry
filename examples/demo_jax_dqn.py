@@ -10,6 +10,7 @@ if __name__ == '__main__':
         chunk_size=4,
         batch_size=128,
         target_update_interval=1000,
+        eval_interval=200,
     )
 
     stats = AgentStats(
@@ -18,7 +19,7 @@ if __name__ == '__main__':
         fit_budget=1000,
         eval_env=env,
         init_kwargs=params,
-        n_fit=4,
+        n_fit=2,
         parallelization='process',
     )
 
@@ -38,6 +39,7 @@ if __name__ == '__main__':
 
     plot_writer_data([stats], tag='episode_rewards', show=False)
     plot_writer_data([stats], tag='dw_time_elapsed', show=False)
+    plot_writer_data([stats], tag='eval_rewards', show=False)
     plot_writer_data([stats], tag='q_loss')
 
     stats.save()
