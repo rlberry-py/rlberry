@@ -420,7 +420,13 @@ class DQNAgent(AgentWithSimplePolicy):
     #
     @classmethod
     def sample_parameters(cls, trial):
-        learning_rate = trial.suggest_loguniform('learning_rate', 1e-5, 1)
+        learning_rate = trial.suggest_loguniform('learning_rate', 1e-5, 1e-1)
         gamma = trial.suggest_uniform('gamma', 0.95, 0.99)
-
-        return {'learning_rate': learning_rate, 'gamma': gamma}
+        lambda_ = trial.suggest_categorical(
+            'lambda_',
+            [0.1, 0.5, 0.9, None])
+        return dict(
+            learning_rate=learning_rate,
+            gamma=gamma,
+            lambda_=lambda_
+        )
