@@ -25,6 +25,13 @@ tests_require = [
     'optuna',
     'pyvirtualdisplay',
     'gym',
+    'jax[cpu]',
+    'chex',
+    'dm-haiku',
+    'optax',
+    'dm-reverb-nightly[tensorflow]',
+    'dm-tree',
+    'rlax'
 ]
 
 full_requires = [
@@ -36,11 +43,25 @@ full_requires = [
     'PyOpenGL',
     'PyOpenGL_accelerate',
     'pyvirtualdisplay',
+    'jax[cpu]',
+    'chex',
+    'dm-haiku',
+    'optax',
+    'dm-reverb-nightly[tensorflow]',
+    'dm-tree',
+    'rlax'
 ]
 
 extras_require = {
     'full': full_requires,
     'test': tests_require,
+    'jax_agents': ['jax[cpu]',
+                   'chex',
+                   'dm-haiku',
+                   'optax',
+                   'dm-reverb-nightly[tensorflow]',
+                   'dm-tree',
+                   'rlax'],
     'deploy': ['sphinx', 'sphinx_rtd_theme'],
     'opengl_rendering': ['PyOpenGL', 'PyOpenGL_accelerate'],
     'torch_agents': ['torch>=1.6.0', 'tensorboard'],

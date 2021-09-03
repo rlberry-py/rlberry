@@ -10,20 +10,19 @@ import functools
 import json
 import logging
 import dill
+import gc
 import numpy as np
 import pickle
 import pandas as pd
 import shutil
 import threading
+import multiprocessing
+from rlberry.envs.utils import process_env
 from rlberry.utils.logging import configure_logging
 from rlberry.utils.writers import DefaultWriter
 from rlberry.stats.utils import create_database
 from typing import Tuple
 
-
-# Using a lock when creating envs and agents, to avoid problems
-# as here: https://github.com/openai/gym/issues/281
-_LOCK = threading.Lock()
 
 _OPTUNA_INSTALLED = True
 try:
@@ -88,31 +87,29 @@ class AgentHandler:
         return self._agent_instance is not None
 
     def load(self) -> bool:
-        with _LOCK:
-            try:
-                self._agent_instance = self._agent_class.load(self._fname, **self._agent_kwargs)
-                safe_reseed(self._agent_instance.env, self._seeder)
-                logger.info(f'Sucessful call to AgentHandler.load() for {self._agent_class}')
-                return True
-            except Exception as ex:
-                self._agent_instance = None
-                logger.info(f'Failed call to AgentHandler.load() for {self._agent_class}: {ex}')
-                return False
+        try:
+            self._agent_instance = self._agent_class.load(self._fname, **self._agent_kwargs)
+            safe_reseed(self._agent_instance.env, self._seeder)
+            logger.info(f'Sucessful call to AgentHandler.load() for {self._agent_class}')
+            return True
+        except Exception as ex:
+            self._agent_instance = None
+            logger.info(f'Failed call to AgentHandler.load() for {self._agent_class}: {ex}')
+            return False
 
     def dump(self):
         """Saves agent to file and remove it from memory."""
-        with _LOCK:
-            if self._agent_instance is not None:
-                saved_filename = self._agent_instance.save(self._fname)
-                # saved_filename might have appended the correct extension, for instance,
-                # so self._fname must be updated.
-                if not saved_filename:
-                    logger.warning(f'Instance of {self._agent_class} cannot be saved and will be kept in memory.')
-                    return
-                self._fname = Path(saved_filename)
-                del self._agent_instance
-                self._agent_instance = None
-                logger.info(f'Sucessful call to AgentHandler.dump() for {self._agent_class}')
+        if self._agent_instance is not None:
+            saved_filename = self._agent_instance.save(self._fname)
+            # saved_filename might have appended the correct extension, for instance,
+            # so self._fname must be updated.
+            if not saved_filename:
+                logger.warning(f'Instance of {self._agent_class} cannot be saved and will be kept in memory.')
+                return
+            self._fname = Path(saved_filename)
+            del self._agent_instance
+            self._agent_instance = None
+            logger.info(f'Sucessful call to AgentHandler.dump() for {self._agent_class}')
 
     def __getattr__(self, attr):
         """
@@ -140,6 +137,15 @@ class AgentStats:
     Class to train, optimize hyperparameters, evaluate and gather
     statistics about an agent.
 
+    Notes
+    -----
+    If parallelization='process', make sure your main code
+    has a guard `if __name__ == '__main__'`
+
+    This is because we're using 'spawn' for creating child processes.
+    See https://github.com/google/jax/issues/1805
+    and https://stackoverflow.com/a/66290106
+
     Parameters
     ----------
     agent_class
@@ -149,8 +155,7 @@ class AgentStats:
     fit_budget : int
         Argument required to call agent.fit(). If None, must be given in fit_kwargs['fit_budget'].
     eval_env : Tuple (constructor, kwargs)
-        Environment used to evaluate the agent. If None, set to a
-        reseeded deep copy of train_env.
+        Environment used to evaluate the agent. If None, set train_env.
     init_kwargs : dict
         Arguments required by the agent's constructor.
     fit_kwargs : dict
@@ -185,7 +190,7 @@ class AgentStats:
                  agent_name=None,
                  n_fit=4,
                  output_dir=None,
-                 parallelization='process',
+                 parallelization='thread',
                  thread_logging_level='INFO',
                  seed=None):
         # agent_class should only be None when the constructor is called
@@ -248,7 +253,7 @@ class AgentStats:
                 raise ValueError('[AgentStats] fit_budget missing in __init__().')
 
         # output dir
-        output_dir = output_dir or self.identifier
+        output_dir = output_dir or ('temp/' + self.identifier)
         self.output_dir = Path(output_dir)
 
         # Create list of writers for each agent that will be trained
@@ -296,20 +301,17 @@ class AgentStats:
         """
         Return an instantiated and reseeded evaluation environment.
         """
-        return _preprocess_env(self._eval_env, self.seeder)
+        return process_env(self._eval_env, self.seeder)
 
     @property
     def writer_data(self):
         return self.default_writer_data
 
-    def eval(self, eval_env=None):
+    def eval(self):
         """
         Call .eval() method in all fitted agents and return average result.
         """
-        if eval_env is None:
-            eval_env = self.build_eval_env()
-        values = [agent.eval(eval_env,
-                             **self.eval_kwargs) for agent in self.agent_handlers if not agent.is_empty()]
+        values = [agent.eval(**self.eval_kwargs) for agent in self.agent_handlers if not agent.is_empty()]
         if len(values) == 0:
             return np.nan
         return np.mean(values)
@@ -387,10 +389,23 @@ class AgentStats:
         for handler in self.agent_handlers:
             handler.dump()
 
+        if self.parallelization == 'thread':
+            executor_class = concurrent.futures.ThreadPoolExecutor
+            lock = threading.Lock()
+        elif self.parallelization == 'process':
+            executor_class = functools.partial(
+                concurrent.futures.ProcessPoolExecutor,
+                mp_context=multiprocessing.get_context('spawn'))
+            lock = multiprocessing.Manager().Lock()
+        else:
+            raise ValueError(f'Invalid backend for parallelization: {self.parallelization}')
+
         args = [(
+                lock,
                 handler,
                 self.agent_class,
                 self.train_env,
+                self._eval_env,
                 budget,
                 deepcopy(self.init_kwargs),
                 deepcopy(self.fit_kwargs),
@@ -400,26 +415,21 @@ class AgentStats:
                 for (handler, seeder, writer)
                 in zip(self.agent_handlers, seeders, self.writers)]
 
-        if self.parallelization == 'thread':
-            executor_class = concurrent.futures.ThreadPoolExecutor
-        elif self.parallelization == 'process':
-            executor_class = concurrent.futures.ProcessPoolExecutor
-        else:
-            raise ValueError(f'Invalid backend for parallelization: {self.parallelization}')
-
         if len(args) == 1:
             workers_output = [_fit_worker(args[0])]
 
-        with executor_class() as executor:
-            futures = []
-            for arg in args:
-                futures.append(executor.submit(_fit_worker, arg))
+        else:
+            with executor_class() as executor:
+                futures = []
+                for arg in args:
+                    futures.append(executor.submit(_fit_worker, arg))
 
-            workers_output = []
-            for future in concurrent.futures.as_completed(futures):
-                workers_output.append(
-                    future.result()
-                )
+                workers_output = []
+                for future in concurrent.futures.as_completed(futures):
+                    workers_output.append(
+                        future.result()
+                    )
+                executor.shutdown()
 
         workers_output.sort(key=lambda x: x.id)
         self.agent_handlers = workers_output
@@ -436,18 +446,17 @@ class AgentStats:
             if not agent.is_empty() and isinstance(agent.writer, DefaultWriter):
                 self.default_writer_data[ii] = agent.writer.data
 
-    def save(self, output_dir=None):
+    def save(self):
         """
-        Save AgentStats data to a folder. The data can be
+        Save AgentStats data to a self.output_dir. The data can be
         later loaded to recreate an AgentStats instance.
 
-        Parameters
-        ----------
-        output_dir : str or None
-            Output directory. If None, use self.output_dir.
+        Returns
+        -------
+        filename where the AgentStats object was saved.
         """
-        # use default self.output_dir if another one is not provided.
-        output_dir = output_dir or self.output_dir
+        # use self.output_dir
+        output_dir = self.output_dir
         output_dir = Path(output_dir)
 
         # create dir if it does not exist
@@ -499,6 +508,8 @@ class AgentStats:
             except Exception as ex:
                 logger.warning("[AgentStats] Instance cannot be pickled: " + str(ex))
 
+        return filename
+
     @classmethod
     def load(cls, filename):
         filename = Path(filename).with_suffix('.pickle')
@@ -545,8 +556,11 @@ class AgentStats:
 
         Note
         ----
-        After calling this method, agent handlers from previous calls to fit() will be erased.
+        * After calling this method, agent handlers from previous calls to fit() will be erased.
         It is suggested to call fit() *after* a call to optimize_hyperparams().
+        * This method calls self.save() before the optuna optimization starts, to ensure
+        that we can continue the optimization later even if the program is stopped before the
+        optimization is finished.
 
         Parameters
         ----------
@@ -606,16 +620,13 @@ class AgentStats:
                 sampler_kwargs = {}
             # get sampler
             if sampler_method == 'random':
-                optuna_seed = self.seeder.rng.integers(2**16)
-                sampler = optuna.samplers.RandomSampler(seed=optuna_seed)
+                sampler = optuna.samplers.RandomSampler()
             elif sampler_method == 'grid':
                 assert sampler_kwargs is not None, \
                     "To use GridSampler, " + \
                     "a search_space dictionary must be provided."
                 sampler = optuna.samplers.GridSampler(**sampler_kwargs)
             elif sampler_method == 'cmaes':
-                optuna_seed = self.seeder.rng.integers(2**16)
-                sampler_kwargs['seed'] = optuna_seed
                 sampler = optuna.samplers.CmaEsSampler(**sampler_kwargs)
             elif sampler_method == 'optuna_default':
                 sampler = optuna.samplers.TPESampler(**sampler_kwargs)
@@ -646,6 +657,9 @@ class AgentStats:
                                         direction='maximize')
             self.optuna_study = study
 
+        # save, to that optimization can be resumed later
+        self.save()
+
         #
         # Objective function
         #
@@ -658,7 +672,6 @@ class AgentStats:
             fit_budget=self.fit_budget,   # self.fit_budget
             eval_kwargs=self.eval_kwargs,  # self.eval_kwargs
             n_fit=n_fit,
-            seeder=self.seeder,       # self.seeder
             temp_dir=TEMP_DIR,     # TEMP_DIR
             disable_evaluation_writers=disable_evaluation_writers,
             fit_fraction=fit_fraction
@@ -672,15 +685,20 @@ class AgentStats:
                             study.optimize,
                             objective,
                             n_trials=n_trials,
-                            timeout=timeout)
+                            timeout=timeout,
+                            gc_after_trial=True)
+                    executor.shutdown()
             elif optuna_parallelization == 'process':
-                with concurrent.futures.ProcessPoolExecutor() as executor:
+                with concurrent.futures.ProcessPoolExecutor(
+                        mp_context=multiprocessing.get_context('spawn')) as executor:
                     for _ in range(n_optuna_workers):
                         executor.submit(
                             study.optimize,
                             objective,
                             n_trials=n_trials // n_optuna_workers,
-                            timeout=timeout)
+                            timeout=timeout,
+                            gc_after_trial=True)
+                    executor.shutdown()
             else:
                 raise ValueError(f'Invalid value for optuna_parallelization: {optuna_parallelization}.')
 
@@ -688,7 +706,10 @@ class AgentStats:
             logger.warning("Evaluation stopped.")
 
         # clear temp folder
-        shutil.rmtree(TEMP_DIR)
+        try:
+            shutil.rmtree(TEMP_DIR)
+        except FileNotFoundError as ex:
+            logger.warning(f'Could not delete {TEMP_DIR}: {ex}')
 
         # continue
         best_trial = study.best_trial
@@ -716,28 +737,12 @@ class AgentStats:
 # Aux functions
 #
 
-def _preprocess_env(env, seeder):
-    """
-    If env is a tuple (constructor, kwargs), creates an instance.
-
-    Reseeds the env before returning.
-    """
-    if isinstance(env, tuple):
-        constructor, kwargs = env
-        kwargs = kwargs or {}
-        env = constructor(**kwargs)
-
-    reseeded = safe_reseed(env, seeder)
-    assert reseeded
-
-    return env
-
 
 def _fit_worker(args):
     """
     Create and fit an agent instance
     """
-    agent_handler, agent_class, train_env, fit_budget, init_kwargs, \
+    lock, agent_handler, agent_class, train_env, eval_env, fit_budget, init_kwargs, \
         fit_kwargs, writer, thread_logging_level, seeder = args
 
     # reseed external libraries
@@ -746,17 +751,21 @@ def _fit_worker(args):
     # logging level in thread
     configure_logging(thread_logging_level)
 
-    with _LOCK:
+    # Using a lock when creating envs and agents, to avoid problems
+    # as here: https://github.com/openai/gym/issues/281
+    with lock:
         if agent_handler.is_empty():
-            # preprocess and train_env
-            train_env_instance = _preprocess_env(train_env, seeder)
             # create agent
-            agent = agent_class(train_env_instance, copy_env=False, seeder=seeder, **init_kwargs)
+            agent = agent_class(
+                env=train_env,
+                eval_env=eval_env,
+                copy_env=False,
+                seeder=seeder,
+                **init_kwargs)
             agent.name += f"(spawn_key{seeder.seed_seq.spawn_key})"
             # seed agent
             agent.reseed(seeder)
             agent_handler.set_instance(agent)
-        agent = agent_handler
 
     # set writer
     if writer[0] is None:
@@ -775,6 +784,9 @@ def _fit_worker(args):
 
     # remove from memory to avoid pickle issues
     agent_handler.dump()
+
+    # garbage collector
+    gc.collect()
 
     return agent_handler
 
@@ -798,7 +810,6 @@ def _optuna_objective(
     fit_budget,   # self.fit_budget
     eval_kwargs,  # self.eval_kwargs
     n_fit,
-    seeder,       # self.seeder
     temp_dir,     # TEMP_DIR
     disable_evaluation_writers,
     fit_fraction
@@ -822,9 +833,8 @@ def _optuna_objective(
         eval_kwargs=deepcopy(eval_kwargs),
         agent_name='optim',
         n_fit=n_fit,
-        thread_logging_level='WARNING',
+        thread_logging_level='INFO',
         parallelization='thread',
-        seed=seeder,
         output_dir=temp_dir)
 
     if disable_evaluation_writers:
@@ -867,5 +877,6 @@ def _optuna_objective(
 
     # clear aux data
     params_stats.clear_handlers()
+    del params_stats
 
     return eval_value

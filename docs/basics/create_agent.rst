@@ -25,8 +25,10 @@ The example below shows how to create an agent.
                      env,
                      param1=0.99,
                      param2=1e-5,
-                     **kwargs):   # it's important to put **kwargs to ensure compatibility with the base class 
-                Agent.__init__(self, env, **kwargs) # self.env is initialized in the base class
+                     **kwargs):   # it's important to put **kwargs to ensure compatibility with the base class
+                # self.env is initialized in the base class
+                # An evaluation environment is also initialized: self.eval_env
+                Agent.__init__(self, env, **kwargs)
 
                 self.param1 = param1
                 self.param2 = param2 
@@ -53,10 +55,10 @@ The example below shows how to create an agent.
             info = {'episode_rewards': rewards}
             return info
 
-        def eval(self, eval_env, **kwargs):
+        def eval(self, **kwargs):
             """
             Returns a value corresponding to the evaluation of the agent on the 
-            evaluation environment (eval_env).
+            evaluation environment.
 
             For instance, it can be a Monte-Carlo evaluation of the policy learned in fit().
             """

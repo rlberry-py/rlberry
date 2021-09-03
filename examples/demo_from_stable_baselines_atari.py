@@ -121,23 +121,23 @@ def eval_env_constructor(n_envs=1):
 #
 
 
-#
-# Training several agents and comparing different hyperparams
-#
+if __name__ == '__main__':
+    #
+    # Training several agents and comparing different hyperparams
+    #
 
-stats = AgentStats(
-    A2CAgent,
-    train_env=(env_constructor, None),
-    eval_env=(eval_env_constructor, None),
-    eval_kwargs=dict(eval_horizon=200),
-    agent_name='A2C baseline',
-    fit_budget=5000,
-    init_kwargs=dict(policy='CnnPolicy', verbose=10),
-    n_fit=4,
-    parallelization='process',
-    output_dir='dev/stable_baselines_atari',
-    seed=123)
+    stats = AgentStats(
+        A2CAgent,
+        train_env=(env_constructor, None),
+        eval_env=(eval_env_constructor, None),
+        eval_kwargs=dict(eval_horizon=200),
+        agent_name='A2C baseline',
+        fit_budget=5000,
+        init_kwargs=dict(policy='CnnPolicy', verbose=10),
+        n_fit=4,
+        parallelization='process',
+        output_dir='dev/stable_baselines_atari',
+        seed=123)
 
-
-stats.fit()
-stats.optimize_hyperparams(timeout=60, n_fit=2)
+    stats.fit()
+    stats.optimize_hyperparams(timeout=60, n_fit=2)
