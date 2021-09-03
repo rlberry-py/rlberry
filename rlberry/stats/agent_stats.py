@@ -446,22 +446,17 @@ class AgentStats:
             if not agent.is_empty() and isinstance(agent.writer, DefaultWriter):
                 self.default_writer_data[ii] = agent.writer.data
 
-    def save(self, output_dir=None):
+    def save(self):
         """
-        Save AgentStats data to a folder. The data can be
+        Save AgentStats data to a self.output_dir. The data can be
         later loaded to recreate an AgentStats instance.
-
-        Parameters
-        ----------
-        output_dir : str or None
-            Output directory. If None, use self.output_dir.
 
         Returns
         -------
         filename where the AgentStats object was saved.
         """
-        # use default self.output_dir if another one is not provided.
-        output_dir = output_dir or self.output_dir
+        # use self.output_dir
+        output_dir = self.output_dir
         output_dir = Path(output_dir)
 
         # create dir if it does not exist
@@ -561,8 +556,11 @@ class AgentStats:
 
         Note
         ----
-        After calling this method, agent handlers from previous calls to fit() will be erased.
+        * After calling this method, agent handlers from previous calls to fit() will be erased.
         It is suggested to call fit() *after* a call to optimize_hyperparams().
+        * This method calls self.save() before the optuna optimization starts, to ensure
+        that we can continue the optimization later even if the program is stopped before the
+        optimization is finished.
 
         Parameters
         ----------
@@ -658,6 +656,9 @@ class AgentStats:
                                         storage=storage,
                                         direction='maximize')
             self.optuna_study = study
+
+        # save, to that optimization can be resumed later
+        self.save()
 
         #
         # Objective function
