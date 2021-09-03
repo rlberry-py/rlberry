@@ -53,7 +53,7 @@ from rlberry import types
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.agents.jax.utils.replay_buffer import ReplayBuffer
 from rlberry.utils.writers import DefaultWriter
-from typing import Optional
+from typing import Any, Callable, Mapping, Optional
 
 
 logger = logging.getLogger(__name__)
@@ -114,6 +114,10 @@ class DQNAgent(AgentWithSimplePolicy):
         is returned by env.step().
     lambda_ : float
         Parameter for Peng's Q(lambda). If None, usual Q-learning is used.
+    net_constructor : callable
+        Constructor for Q network. If None, uses default MLP.
+    net_kwargs : dict
+        kwargs for network constructor (net_constructor).
     """
     name = "JaxDqnAgent"
 
@@ -133,6 +137,8 @@ class DQNAgent(AgentWithSimplePolicy):
         eval_interval: Optional[int] = None,
         max_episode_length: Optional[int] = None,
         lambda_: Optional[float] = None,
+        net_constructor: Optional[Callable[..., hk.Module]] = None,
+        net_kwargs: Optional[Mapping[str, Any]] = None,
         **kwargs
     ):
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
@@ -164,12 +170,13 @@ class DQNAgent(AgentWithSimplePolicy):
             self._max_replay_size,
         )
 
-        # initialize params
-        net_ctor = functools.partial(
-            nets.MLPQNetwork,
+        # initialize network and params
+        net_constructor = net_constructor or nets.MLPQNetwork
+        net_kwargs = net_kwargs or dict(
             num_actions=self.env.action_space.n,
             hidden_sizes=(64, 64)
         )
+        net_ctor = functools.partial(net_constructor, **net_kwargs)
         self._q_net = hk.without_apply_rng(
             hk.transform(lambda x: net_ctor()(x))
         )
