@@ -13,7 +13,7 @@ when activating the conda environment.
 Important
 ---------
 
-The is something very weird happening when using this agent with the optimize_hyperparams()
+There is something very weird happening when using this agent with the optimize_hyperparams()
 method of AgentStats.
 If @functools.partial(jax.jit, static_argnums=(0,)) is used as a decorator to jit
 the learner_step() and actor_step() methods, the memory use increases a lot
@@ -118,6 +118,8 @@ class DQNAgent(AgentWithSimplePolicy):
         Constructor for Q network. If None, uses default MLP.
     net_kwargs : dict
         kwargs for network constructor (net_constructor).
+    max_gradient_norm : float, default: 100.0
+        Maximum gradient norm.
     """
     name = "JaxDqnAgent"
 
@@ -139,6 +141,7 @@ class DQNAgent(AgentWithSimplePolicy):
         lambda_: Optional[float] = None,
         net_constructor: Optional[Callable[..., hk.Module]] = None,
         net_kwargs: Optional[Mapping[str, Any]] = None,
+        max_gradient_norm: float = 100.0,
         **kwargs
     ):
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
@@ -161,6 +164,7 @@ class DQNAgent(AgentWithSimplePolicy):
         self._eval_interval = eval_interval
         self._max_episode_length = max_episode_length or np.inf
         self._lambda = lambda_
+        self._max_gradient_norm = max_gradient_norm
 
         # replay buffer
         self._replay_buffer = ReplayBuffer(
@@ -192,7 +196,10 @@ class DQNAgent(AgentWithSimplePolicy):
         )
 
         # initialize optimizer and states
-        self._optimizer = optax.adam(learning_rate)
+        self._optimizer = optax.chain(
+            optax.clip_by_global_norm(self._max_gradient_norm),
+            optax.adam(learning_rate)
+        )
         self._all_states = AllStates(
             optimizer=self._optimizer.init(self._all_params.online),
             learner_steps=jnp.array(0),
