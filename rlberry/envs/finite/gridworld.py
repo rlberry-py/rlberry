@@ -290,10 +290,44 @@ class GridWorld(RenderInterface2D, FiniteMDP):
     #
     # Code for rendering
     #
+    def get_layout_array(self, state_data=None, fill_walls_with=np.nan):
+        """
+        Returns an array 'layout' of shape (nrows, ncols) such that:
+
+            layout[row, col] = state_data[self.coord2idx[row, col]]
+
+        If (row, col) is a wall:
+
+            layout[row, col] = fill_walls_with
+
+        Parameters
+        ----------
+        state_data : np.array, default = None
+            Array of shape (self.observation_space.n,)
+        fill_walls_with : float, default: np.nan
+            Value to set in the layout in the coordinates corresponding to walls.
+
+        Returns
+        -------
+        Gridworld layout array of shape (nrows, ncols).
+        """
+
+        layout = np.zeros((self.nrows, self.ncols))
+
+        if state_data is not None:
+            assert state_data.shape == (self.observation_space.n,)
+            data_rows = [self.index2coord[idx][0] for idx in self.index2coord]
+            data_cols = [self.index2coord[idx][1] for idx in self.index2coord]
+            layout[data_rows, data_cols] = state_data
+
+        walls_rows = [ww[0] for ww in self.walls]
+        walls_cols = [ww[1] for ww in self.walls]
+        layout[walls_rows, walls_cols] = fill_walls_with
+        return layout
 
     def get_background(self):
         """
-        Returne a scene (list of shapes) representing the background
+        Return a scene (list of shapes) representing the background
         """
         bg = Scene()
 

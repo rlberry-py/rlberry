@@ -58,13 +58,21 @@ def test_rendering_calls(ModelClass):
 
 
 def test_gridworld_aux_functions():
-    env = GridWorld(nrows=5, ncols=5, walls=((1, 1),),
+    env = GridWorld(nrows=5, ncols=8, walls=((1, 1),),
                     reward_at={(4, 4): 1, (4, 3): -1})
     env.log()  # from FiniteMDP
     env.render_ascii()  # from GridWorld
-    vals = np.ones(env.observation_space.n)
+    vals = np.arange(env.observation_space.n)
     env.display_values(vals)
     env.print_transition_at(0, 0, 'up')
+
+    layout = env.get_layout_array(vals, fill_walls_with=np.inf)
+    for rr in range(env.nrows):
+        for cc in range(env.ncols):
+            if (rr, cc) in env.walls:
+                assert layout[rr, cc] == np.inf
+            else:
+                assert layout[rr, cc] == vals[env.coord2index[(rr, cc)]]
 
 
 def test_ball2d_benchmark_instantiation():
