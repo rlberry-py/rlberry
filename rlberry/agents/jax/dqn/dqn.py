@@ -13,7 +13,7 @@ when activating the conda environment.
 Important
 ---------
 
-The is something very weird happening when using this agent with the optimize_hyperparams()
+There is something very weird happening when using this agent with the optimize_hyperparams()
 method of AgentStats.
 If @functools.partial(jax.jit, static_argnums=(0,)) is used as a decorator to jit
 the learner_step() and actor_step() methods, the memory use increases a lot
@@ -53,7 +53,7 @@ from rlberry import types
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.agents.jax.utils.replay_buffer import ReplayBuffer
 from rlberry.utils.writers import DefaultWriter
-from typing import Optional
+from typing import Any, Callable, Mapping, Optional
 
 
 logger = logging.getLogger(__name__)
@@ -114,6 +114,12 @@ class DQNAgent(AgentWithSimplePolicy):
         is returned by env.step().
     lambda_ : float
         Parameter for Peng's Q(lambda). If None, usual Q-learning is used.
+    net_constructor : callable
+        Constructor for Q network. If None, uses default MLP.
+    net_kwargs : dict
+        kwargs for network constructor (net_constructor).
+    max_gradient_norm : float, default: 100.0
+        Maximum gradient norm.
     """
     name = "JaxDqnAgent"
 
@@ -133,6 +139,9 @@ class DQNAgent(AgentWithSimplePolicy):
         eval_interval: Optional[int] = None,
         max_episode_length: Optional[int] = None,
         lambda_: Optional[float] = None,
+        net_constructor: Optional[Callable[..., hk.Module]] = None,
+        net_kwargs: Optional[Mapping[str, Any]] = None,
+        max_gradient_norm: float = 100.0,
         **kwargs
     ):
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
@@ -155,6 +164,7 @@ class DQNAgent(AgentWithSimplePolicy):
         self._eval_interval = eval_interval
         self._max_episode_length = max_episode_length or np.inf
         self._lambda = lambda_
+        self._max_gradient_norm = max_gradient_norm
 
         # replay buffer
         self._replay_buffer = ReplayBuffer(
@@ -164,12 +174,13 @@ class DQNAgent(AgentWithSimplePolicy):
             self._max_replay_size,
         )
 
-        # initialize params
-        net_ctor = functools.partial(
-            nets.MLPQNetwork,
+        # initialize network and params
+        net_constructor = net_constructor or nets.MLPQNetwork
+        net_kwargs = net_kwargs or dict(
             num_actions=self.env.action_space.n,
             hidden_sizes=(64, 64)
         )
+        net_ctor = functools.partial(net_constructor, **net_kwargs)
         self._q_net = hk.without_apply_rng(
             hk.transform(lambda x: net_ctor()(x))
         )
@@ -185,7 +196,10 @@ class DQNAgent(AgentWithSimplePolicy):
         )
 
         # initialize optimizer and states
-        self._optimizer = optax.adam(learning_rate)
+        self._optimizer = optax.chain(
+            optax.clip_by_global_norm(self._max_gradient_norm),
+            optax.adam(learning_rate)
+        )
         self._all_states = AllStates(
             optimizer=self._optimizer.init(self._all_params.online),
             learner_steps=jnp.array(0),

@@ -136,6 +136,8 @@ def plot_writer_data(agent_stats,
                 df = stats.writer_data[idx]
                 df = pd.DataFrame(df[df['tag'] == tag])
                 df['value'] = preprocess_func(df['value'].values)
+                # update name according to AgentStats name
+                df['name'] = stats.agent_name
                 data_list.append(df)
     if len(data_list) == 0:
         logger.error('[plot_writer_data]: No data to be plotted.')
@@ -152,7 +154,7 @@ def plot_writer_data(agent_stats,
         xx = data.index
 
     plt.figure(fignum)
-    sns.lineplot(x=xx, y='value', hue='name', data=data, **sns_kwargs)
+    sns.lineplot(x=xx, y='value', hue='name', style='name', data=data, **sns_kwargs)
     plt.title(title)
     plt.ylabel(ylabel)
 
