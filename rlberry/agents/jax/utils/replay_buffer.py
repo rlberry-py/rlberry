@@ -1,11 +1,31 @@
+"""
+Notes
+-----
+
+* For priority updates, see https://github.com/deepmind/reverb/issues/28
+"""
+
 import gym
 import logging
 import numpy as np
-import reverb
 import tensorflow as tf
 
-
 logger = logging.getLogger(__name__)
+
+
+try:
+    import reverb
+except ImportError as ex:
+    logger.error(
+        f'[replay_buffer] Could not import reverb: \n   {ex}   \n'
+        + ' >>> If you have issues with libpython3.7m.so.1.0, try running: \n'
+        + ' >>> $ export LD_LIBRARY_PATH=$CONDA_PREFIX/lib \n'
+        + ' >>> in a conda environment, '
+        + ' >>> or see https://github.com/deepmind/acme/issues/47 \n'
+        + ' >>> See also https://stackoverflow.com/a/46833531 for how to set \n'
+        + ' >>> LD_LIBRARY_PATH automatically when activating a conda environment.'
+    )
+    exit(1)
 
 
 class ChunkWriter:

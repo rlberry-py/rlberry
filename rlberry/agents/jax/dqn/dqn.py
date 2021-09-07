@@ -1,15 +1,4 @@
 """
-Notes
------
-* In a conda environment, it might be necessary to run:
-$ export LD_LIBRARY_PATH=$CONDA_PREFIX/lib
-(see: https://github.com/deepmind/acme/issues/47)
-See also: https://stackoverflow.com/a/46833531 to set LD_LIBRARY_PATH automatically
-when activating the conda environment.
-
-* For priority updates, see https://github.com/deepmind/reverb/issues/28
-
-
 Important
 ---------
 
