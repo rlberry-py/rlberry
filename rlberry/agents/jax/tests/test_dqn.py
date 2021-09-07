@@ -1,12 +1,22 @@
 import pytest
 
-from rlberry.agents.jax.dqn.dqn import DQNAgent
 from rlberry.envs import gym_make
 from rlberry.stats import AgentStats
+
+# Ignoring the text in case jax_agents requirements are not installled
+# TODO: better handle setup to avoid conflicts between jax_agents and tensorboard.
+_IMPORT_SUCCESSFUL = True
+try:
+    from rlberry.agents.jax.dqn.dqn import DQNAgent
+except ImportError:
+    _IMPORT_SUCCESSFUL = False
 
 
 @pytest.mark.parametrize("lambda_", [None, 0.1])
 def test_jax_dqn(lambda_):
+    if not _IMPORT_SUCCESSFUL:
+        return
+
     env = (gym_make, dict(id='CartPole-v0'))
     params = dict(
         chunk_size=4,

@@ -25,30 +25,17 @@ tests_require = [
     'optuna',
     'pyvirtualdisplay',
     'gym',
-    'jax[cpu]',
-    'chex',
-    'dm-haiku',
-    'optax',
-    'dm-reverb-nightly[tensorflow]',
-    'dm-tree',
-    'rlax'
 ]
 
 full_requires = [
     'numba',
     'torch>=1.6.0',
+    'tensorboard',
     'optuna',
     'ffmpeg-python',
     'PyOpenGL',
     'PyOpenGL_accelerate',
     'pyvirtualdisplay',
-    'jax[cpu]',
-    'chex',
-    'dm-haiku',
-    'optax',
-    'dm-reverb-nightly[tensorflow]',
-    'dm-tree',
-    'rlax'
 ]
 
 extras_require = {
