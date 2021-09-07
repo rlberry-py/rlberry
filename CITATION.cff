@@ -1,4 +1,4 @@
-cff-version: 0.11
+cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 authors:
 - family-names: "Domingues"
@@ -13,7 +13,9 @@ authors:
   given-names: "Xuedong"
 - family-names: "Valko"
   given-names: "Michal"
+
 title: "rlberry - A Reinforcement Learning Library for Research and Education"
+abbreviation: rlberry
 version: 0.11
 doi: 10.5281/zenodo.5223308
 date-released: 2021-08-19
