@@ -43,6 +43,9 @@
    <a href="https://img.shields.io/pypi/dm/rlberry">
       <img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/rlberry">
    </a>
+   <a href="https://zenodo.org/badge/latestdoi/304451364">
+      <img src="https://zenodo.org/badge/304451364.svg" alt="DOI">
+   </a>
 </p>
 
 <p align="center">
@@ -90,11 +93,11 @@ If you use `rlberry` in scientific publications, we would appreciate citations u
 ```bibtex
 @misc{rlberry,
 author = {Domingues, Omar Darwiche and Flet-Berliac, Yannis and Leurent, Edouard and M{\'e}nard, Pierre and Shang, Xuedong and Valko, Michal},
+doi = {10.5281/zenodo.5223308},
+month = {8},
 title = {{rlberry - A Reinforcement Learning Library for Research and Education}},
-year = {2021},
-publisher = {GitHub},
-journal = {GitHub repository},
-howpublished = {\url{https://github.com/rlberry-py/rlberry}}
+url = {https://github.com/rlberry-py/rlberry},
+year = {2021}
 }
 ```
 
