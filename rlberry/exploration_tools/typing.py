@@ -45,7 +45,7 @@ def process_type(arg, expected_type):
     elif expected_type == 'numpy':
         if isinstance(arg, np.ndarray):
             return arg
-        elif isinstance(arg, torch.Tensor):
+        elif _TORCH_INSTALLED and isinstance(arg, torch.Tensor):
             return arg.detach().cpu().numpy()
         else:
             return arg
