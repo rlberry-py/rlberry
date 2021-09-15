@@ -43,8 +43,25 @@ or, for a basic installation:
 Full installation includes, for instance:
 
 *   `Numba <https://github.com/numba/numba>`_ for just-in-time compilation of algorithms based on dynamic programming
-*   `PyTorch <https://pytorch.org/>`_ for Deep RL agents
 *   `Optuna <https://optuna.org/#installation>`_ for hyperparameter optimization
 *   `ffmpeg-python <https://github.com/kkroening/ffmpeg-python>`_ for saving videos
 *   `PyOpenGL <https://pypi.org/project/PyOpenGL/>`_ for more rendering options
+
+
+Installation for Deep RL agents
+===============================
+
+* PyTorch agents:
+
+.. code:: bash
+
+    $ pip install -e .[torch_agents]
+
+
+* JAX agents:
+
+.. code:: bash
+
+    $ pip install -e .[jax_agents]
+
 
