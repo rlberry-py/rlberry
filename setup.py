@@ -29,6 +29,8 @@ tests_require = [
 
 full_requires = [
     'numba',
+    'torch>=1.6.0',
+    'tensorboard',
     'optuna',
     'ffmpeg-python',
     'PyOpenGL',
@@ -36,27 +38,19 @@ full_requires = [
     'pyvirtualdisplay',
 ]
 
-jax_agents_requires = [
-    'jax[cpu]',
-    'chex',
-    'dm-haiku',
-    'optax',
-    'dm-reverb-nightly[tensorflow]',
-    'dm-tree',
-    'rlax']
-
-torch_agents_requires = [
-    'torch>=1.6.0',
-    'tensorboard'
-]
-
 extras_require = {
     'full': full_requires,
     'test': tests_require,
-    'jax_agents': jax_agents_requires,
-    'torch_agents': torch_agents_requires,
+    'jax_agents': ['jax[cpu]',
+                   'chex',
+                   'dm-haiku',
+                   'optax',
+                   'dm-reverb-nightly[tensorflow]',
+                   'dm-tree',
+                   'rlax'],
     'deploy': ['sphinx', 'sphinx_rtd_theme'],
     'opengl_rendering': ['PyOpenGL', 'PyOpenGL_accelerate'],
+    'torch_agents': ['torch>=1.6.0', 'tensorboard'],
     'hyperparam_optimization': ['optuna'],
     'save_video': ['ffmpeg-python'],
 }
