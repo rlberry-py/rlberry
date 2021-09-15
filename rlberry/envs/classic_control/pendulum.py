@@ -42,13 +42,12 @@ class Pendulum(RenderInterface2D, Model):
         self.set_refresh_interval(10)
 
         # observation and action spaces
-        high = np.array([1., 1., self.max_speed], dtype=np.float32)
+        high = np.array([1., 1., self.max_speed])
         low = -high
         self.action_space = spaces.Box(low=-self.max_torque,
                                        high=self.max_torque,
-                                       shape=(1,),
-                                       dtype=np.float32)
-        self.observation_space = spaces.Box(low=low, high=high, dtype=np.float32)
+                                       shape=(1,))
+        self.observation_space = spaces.Box(low=low, high=high)
 
         # initialize
         self.reset()
