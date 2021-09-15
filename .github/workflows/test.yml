@@ -29,9 +29,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install torch==1.7.1+cpu -f https://download.pytorch.org/whl/torch_stable.html
           pip install -e .[test]
-          pip install -e .[full]
           pip install -e .[jax_agents]
-          pip install -e .[torch_agents]
       - name: Test with pytest
         run: |
           export NUMBA_DISABLE_JIT=1
