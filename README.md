@@ -103,11 +103,11 @@ year = {2021}
 
 ## Tests
 
-To run tests, install test dependencies with `pip install -e .[test]` and run `pytest`. 
-
-To check coverage, install test dependencies and run 
-
 ```bash 
+$ pip install pytest
+$ pip install pytest-cov
+$ pip install -e .[jax_agents]
+$ pip install -e .[torch_agents]
 $ cd scripts
 $ bash run_testscov.sh
 ```
