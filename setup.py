@@ -2,6 +2,9 @@ from setuptools import setup, find_packages
 
 packages = find_packages(exclude=['docs', 'notebooks', 'assets'])
 
+#
+# Base installation (interface only)
+#
 install_requires = [
     'numpy>=1.17',
     'pygame',
@@ -14,23 +17,13 @@ install_requires = [
     'pyyaml',
 ]
 
-tests_require = [
-    'pytest',
-    'pytest-cov',
-    'numpy>=1.17',
-    'numba',
-    'matplotlib',
-    'pandas',
-    'seaborn',
-    'optuna',
-    'pyvirtualdisplay',
-    'gym',
-]
+#
+# Extras
+#
 
-full_requires = [
+# default installation
+default_requires = [
     'numba',
-    'torch>=1.6.0',
-    'tensorboard',
     'optuna',
     'ffmpeg-python',
     'PyOpenGL',
@@ -38,21 +31,28 @@ full_requires = [
     'pyvirtualdisplay',
 ]
 
+# tensorboard must be installed manually, due to conflicts with
+# dm-reverb-nightly[tensorflow] in jax_agents_requires
+torch_agents_requires = default_requires + [
+    'torch>=1.6.0',
+    # 'tensorboard'
+]
+
+jax_agents_requires = default_requires + [
+    'jax[cpu]',
+    'chex',
+    'dm-haiku',
+    'optax',
+    'dm-reverb-nightly[tensorflow]',
+    'dm-tree',
+    'rlax'
+]
+
 extras_require = {
-    'full': full_requires,
-    'test': tests_require,
-    'jax_agents': ['jax[cpu]',
-                   'chex',
-                   'dm-haiku',
-                   'optax',
-                   'dm-reverb-nightly[tensorflow]',
-                   'dm-tree',
-                   'rlax'],
+    'default': default_requires,
+    'jax_agents': jax_agents_requires,
+    'torch_agents': torch_agents_requires,
     'deploy': ['sphinx', 'sphinx_rtd_theme'],
-    'opengl_rendering': ['PyOpenGL', 'PyOpenGL_accelerate'],
-    'torch_agents': ['torch>=1.6.0', 'tensorboard'],
-    'hyperparam_optimization': ['optuna'],
-    'save_video': ['ffmpeg-python'],
 }
 
 with open("README.md", "r") as fh:
@@ -79,7 +79,6 @@ setup(
         "Operating System :: OS Independent",
     ],
     install_requires=install_requires,
-    tests_require=tests_require,
     extras_require=extras_require,
     zip_safe=False,
 )
