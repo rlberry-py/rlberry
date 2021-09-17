@@ -26,10 +26,13 @@ jobs:
           python-version: '3.7'
       - name: Install dependencies
         run: |
+          sudo apt-get install freeglut3-dev
           python -m pip install --upgrade pip
           pip install torch==1.7.1+cpu -f https://download.pytorch.org/whl/torch_stable.html
-          pip install -e .[test]
+          pip install pytest
+          pip install pytest-cov
           pip install -e .[jax_agents]
+          pip install -e .[torch_agents]
       - name: Test with pytest
         run: |
           export NUMBA_DISABLE_JIT=1

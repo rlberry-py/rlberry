@@ -18,13 +18,8 @@ Then you have two options for the installation. For a stable version, you can ju
 
 .. code:: bash
 
-    $ pip install rlberry[full]
+    $ pip install rlberry[default]
 
-or, for a basic installation (without heavy libraries like PyTorch):
-
-.. code:: bash
-
-    $ pip install rlberry
 
 For more advanced users who want to try the development version, all you need to do is clone the rlberry_ repository and install:
 
@@ -32,19 +27,26 @@ For more advanced users who want to try the development version, all you need to
 
     $ git clone https://github.com/rlberry-py/rlberry.git
     $ cd rlberry
-    $ pip install -e .[full]
+    $ pip install -e .[default]
 
-or, for a basic installation:
+
+Installation for Deep RL agents
+===============================
+
+Deep RL agents require extra libraries, like PyTorch and JAX.
+
+* PyTorch agents:
 
 .. code:: bash
+    $ pip install -e .[torch_agents]
+    $ pip install tensorboard   # only if you're not installing jax_agents too!
+* JAX agents:
 
-    $ pip install -e .
+.. code:: bash
+    $ pip install -e .[jax_agents]
 
-Full installation includes, for instance:
-
-*   `Numba <https://github.com/numba/numba>`_ for just-in-time compilation of algorithms based on dynamic programming
-*   `PyTorch <https://pytorch.org/>`_ for Deep RL agents
-*   `Optuna <https://optuna.org/#installation>`_ for hyperparameter optimization
-*   `ffmpeg-python <https://github.com/kkroening/ffmpeg-python>`_ for saving videos
-*   `PyOpenGL <https://pypi.org/project/PyOpenGL/>`_ for more rendering options
-
+.. warning::
+    If you're using PyTorch agents *and* JAX agents, do not install tensorboard separately,
+    since `pip install -e .[jax_agents]` installs tensorflow, which already contains
+    tensorboard. Otherwise, there might be a conflict between the two installations
+    and tensorboard will not work properly.
