@@ -134,6 +134,7 @@ class DQNAgent(AgentWithSimplePolicy):
         **kwargs
     ):
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
+        env = self.env
         self.rng_key = jax.random.PRNGKey(self.rng.integers(2**32).item())
         self.writer = DefaultWriter(name=self.name)
 
@@ -155,13 +156,31 @@ class DQNAgent(AgentWithSimplePolicy):
         self._lambda = lambda_
         self._max_gradient_norm = max_gradient_norm
 
-        # replay buffer
+        #
+        # Setup replay buffer
+        #
+
+        # define specs
+        # TODO: generalize. Observation is taken from reset() because gym is
+        # mixing things up (returning double instead of float)
+        sample_obs = env.reset()
+        try:
+            obs_shape, obs_dtype = sample_obs.shape, sample_obs.dtype
+        except AttributeError:   # in case sample_obs has no .shape attribute
+            obs_shape, obs_dtype = env.observation_space.shape, env.observation_space.dtype
+        action_shape, action_dtype = env.action_space.shape, env.action_space.dtype
+
         self._replay_buffer = ReplayBuffer(
-            self.env,
             self._batch_size,
             self._chunk_size,
             self._max_replay_size,
         )
+        self._replay_buffer.setup_entry('actions', action_shape, action_dtype)
+        self._replay_buffer.setup_entry('observations', obs_shape, obs_dtype)
+        self._replay_buffer.setup_entry('next_observations', obs_shape, obs_dtype)
+        self._replay_buffer.setup_entry('rewards', (), np.float32)
+        self._replay_buffer.setup_entry('discounts', (), np.float32)
+        self._replay_buffer.build()
 
         # initialize network and params
         net_constructor = net_constructor or nets.MLPQNetwork
@@ -257,11 +276,11 @@ class DQNAgent(AgentWithSimplePolicy):
                 # store data
                 episode_rewards += reward
                 buffer_writer.append(
-                    {'action': action,
-                     'observation': observation,
-                     'reward': np.array(reward, dtype=np.float32),
-                     'discount': np.array(self._gamma * (1.0 - done), dtype=np.float32),
-                     'next_obs': next_obs})
+                    {'actions': action,
+                     'observations': observation,
+                     'rewards': np.array(reward, dtype=np.float32),
+                     'discounts': np.array(self._gamma * (1.0 - done), dtype=np.float32),
+                     'next_observations': next_obs})
 
                 # counters and next obs
                 timesteps_counter += 1
