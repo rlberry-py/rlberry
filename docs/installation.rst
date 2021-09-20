@@ -38,11 +38,13 @@ Deep RL agents require extra libraries, like PyTorch and JAX.
 * PyTorch agents:
 
 .. code:: bash
+
     $ pip install -e .[torch_agents]
     $ pip install tensorboard   # only if you're not installing jax_agents too!
 * JAX agents:
 
 .. code:: bash
+
     $ pip install -e .[jax_agents]
 
 .. warning::
