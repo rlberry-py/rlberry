@@ -72,6 +72,7 @@ class ReplayBuffer:
 
     TODO:
     * Sampling from different tables (priotirized, uniform etc.)
+    * Update priorities.
 
     """
     def __init__(
