@@ -248,7 +248,7 @@ class AgentStats:
             self.fit_budget = fit_budget
         else:
             try:
-                self.fit_budget = fit_kwargs.pop('fit_budget')
+                self.fit_budget = self.fit_kwargs.pop('fit_budget')
             except KeyError:
                 raise ValueError('[AgentStats] fit_budget missing in __init__().')
 
