@@ -2,7 +2,7 @@ import gym
 from rlberry.seeding import Seeder
 
 
-class MultiDiscrete(gym.spaces.MultiDiscrete, Seeder):
+class MultiDiscrete(gym.spaces.MultiDiscrete):
     """
 
     Inherited from gym.spaces.MultiDiscrete for compatibility with gym.
@@ -22,8 +22,26 @@ class MultiDiscrete(gym.spaces.MultiDiscrete, Seeder):
     """
     def __init__(self, nvec):
         gym.spaces.MultiDiscrete.__init__(self, nvec)
-        Seeder.__init__(self)
+        self.seeder = Seeder()
+
+    @property
+    def rng(self):
+        return self.seeder.rng
+
+    def reseed(self, seed_seq=None):
+        """
+        Get new random number generator.
+
+        Parameters
+        ----------
+        seed_seq : np.random.SeedSequence, rlberry.seeding.Seeder or int, default : None
+            Seed sequence from which to spawn the random number generator.
+            If None, generate random seed.
+            If int, use as entropy for SeedSequence.
+            If seeder, use seeder.seed_seq
+        """
+        self.seeder.reseed(seed_seq)
 
     def sample(self):
-        sample = self.rng.random(self.nvec.shape)*self.nvec
+        sample = self.rng.random(self.nvec.shape) * self.nvec
         return sample.astype(self.dtype)

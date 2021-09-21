@@ -3,7 +3,7 @@ import numpy as np
 from rlberry.seeding import Seeder
 
 
-class Box(gym.spaces.Box, Seeder):
+class Box(gym.spaces.Box):
     """
     Class that represents a space that is a cartesian product in R^n:
 
@@ -27,7 +27,25 @@ class Box(gym.spaces.Box, Seeder):
     """
     def __init__(self, low, high, shape=None, dtype=np.float64):
         gym.spaces.Box.__init__(self, low, high, shape=shape, dtype=dtype)
-        Seeder.__init__(self)
+        self.seeder = Seeder()
+
+    @property
+    def rng(self):
+        return self.seeder.rng
+
+    def reseed(self, seed_seq=None):
+        """
+        Get new random number generator.
+
+        Parameters
+        ----------
+        seed_seq : np.random.SeedSequence, rlberry.seeding.Seeder or int, default : None
+            Seed sequence from which to spawn the random number generator.
+            If None, generate random seed.
+            If int, use as entropy for SeedSequence.
+            If seeder, use seeder.seed_seq
+        """
+        self.seeder.reseed(seed_seq)
 
     def sample(self):
         """
@@ -58,7 +76,7 @@ class Box(gym.spaces.Box, Seeder):
 
         # Vectorized sampling by interval type
         sample[unbounded] = self.rng.normal(
-                size=unbounded[unbounded].shape)
+            size=unbounded[unbounded].shape)
 
         sample[low_bounded] = self.rng.exponential(
             size=low_bounded[low_bounded].shape) + self.low[low_bounded]
