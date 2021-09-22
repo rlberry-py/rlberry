@@ -1,18 +1,20 @@
 import json
 from copy import deepcopy
-from rlberry.network.resources import ResourceRequest
-from typing import Any, Mapping
+from rlberry.network import interface
 
 
-def json_serialize(obj: Mapping[str, Any]):
-    obj_copy = deepcopy(obj)
-    for key in obj:
-        if isinstance(obj[key], ResourceRequest):
-            val = obj_copy.pop(key)
-            new_key = 'ResourceRequest_' + key
-            obj_copy[new_key] = val
-    obj = obj_copy
+def serialize_message(message: interface.Message) -> bytes:
+    message = message.to_dict()
+    processes_msg = deepcopy(message)
+    for entry in ['params', 'data']:
+        for key in message[entry]:
+            if isinstance(message[entry][key], interface.ResourceRequest):
+                val = processes_msg[entry].pop(key)
+                new_key = interface.REQUEST_PREFIX + key
+                processes_msg[entry][new_key] = val
+    message = processes_msg
 
     def default(obj):
         return f"<<non-serializable: {type(obj).__qualname__}>>"
-    return json.dumps(obj, default=default)
+
+    return str.encode(json.dumps(message, default=default))

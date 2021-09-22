@@ -1,18 +1,20 @@
-from rlberry.network.resources import ResourceItem
+from rlberry.network.interface import ResourceItem
 from rlberry.network.server import BerryServer
 from rlberry.agents import ValueIterationAgent
 from rlberry.envs import GridWorld
 
-resources = dict(
-    GridWorld=ResourceItem(
-        obj=GridWorld,
-        description='GridWorld constructor'
-    ),
-    ValueIterationAgent=ResourceItem(
-        obj=ValueIterationAgent,
-        description='ValueIterationAgent constructor'
-    ),
-)
 
-server = BerryServer(resources=resources)
-server.start()
+if __name__ == '__main__':
+    resources = dict(
+        GridWorld=ResourceItem(
+            obj=GridWorld,
+            description='GridWorld constructor'
+        ),
+        ValueIterationAgent=ResourceItem(
+            obj=ValueIterationAgent,
+            description='ValueIterationAgent constructor' + ValueIterationAgent.__doc__
+        ),
+    )
+
+    server = BerryServer(resources=resources, client_session_timeout=10.0)
+    server.start()
