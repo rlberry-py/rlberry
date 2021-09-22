@@ -1,10 +1,18 @@
 from typing import Any, Dict, Mapping, NamedTuple, Optional
 
+
 REQUEST_PREFIX = 'ResourceRequest_'
 
 
+class Command:
+    NONE = 'NONE'
+    ECHO = 'ECHO'
+    FIT_AGENT_STATS = 'FIT_AGENT_STATS'  # fit, eval and return eval output
+    LIST_RESOURCES = 'LIST_RESOURCES'
+
+
 class Message(NamedTuple):
-    command: Optional[str] = None
+    command: Optional[Command] = None
     params: Optional[Mapping[str, Any]] = None
     data: Optional[Mapping[str, Any]] = None
 

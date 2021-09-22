@@ -7,7 +7,7 @@ client = BerryClient()
 # Send params for AgentStats
 client.send(
     Message.create(
-        command='agent_stats',
+        command=interface.Command.FIT_AGENT_STATS,
         params=dict(
             agent_class=ResourceRequest(name='ValueIterationAgent'),
             train_env=ResourceRequest(name='GridWorld', kwargs=dict(nrows=35)),
@@ -20,7 +20,7 @@ client.send(
         data=None,
     ),
     Message.create(
-        command='test',
+        command=interface.Command.LIST_RESOURCES,
         params=dict(),
         data=dict()
     )
@@ -28,7 +28,7 @@ client.send(
 
 client.send(
     Message.create(
-        command='',
+        command=interface.Command.NONE,
         params=dict(),
         data=dict()
     )

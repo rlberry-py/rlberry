@@ -42,6 +42,29 @@ class ClientHandler:
                             processed_message[entry][new_key] = self._resources[resource_name]['obj']
         return interface.Message.from_dict(processed_message)
 
+    def _execute_message(self, message: interface.Message):
+        """Execute command in message and send response."""
+        response = interface.Message.create(command=interface.Command.ECHO)
+        # FIT_AGENT_STATS
+        if message.command == interface.Command.FIT_AGENT_STATS:
+            agent_stats = AgentStats(**message.params)
+            agent_stats.fit()
+            output = agent_stats.eval()
+            response = interface.Message.create(data=dict(eval_output=output))
+        # LIST_RESOURCES
+        elif message.command == interface.Command.LIST_RESOURCES:
+            info = {}
+            for rr in self._resources:
+                info[rr] = self._resources[rr]['description']
+                # print('==============================================')
+                # print(f'Resource: \n---------\n{rr}\n')
+                # print(f"Description: \n------------\n{self._resources[rr]['description']}\n\n")
+                # print('==============================================')
+            response = interface.Message.create(data=info)
+        # Send response
+        self._socket.sendall(serialize_message(response))
+        return 0
+
     def run(self):
         if self._timeout:
             self._socket.settimeout(self._timeout)
@@ -54,10 +77,9 @@ class ClientHandler:
                 # process bytes
                 message = interface.Message.from_dict(json.loads(message_bytes))
                 message = self._process_message(message)
-                print(message)
-                # Handle message ...
-                # Send confirmation
-                self._socket.sendall(serialize_message(interface.Message.create(command='received_message')))
+                print(f'<client process> Received message: \n{message}')
+                # execute message commands and send back a response
+                self._execute_message(message)
             print(f'<client process> Finished client @ {self._address}')
 
 

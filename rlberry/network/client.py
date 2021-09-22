@@ -1,3 +1,4 @@
+import pprint
 import socket
 import json
 from rlberry.network import interface
@@ -25,10 +26,11 @@ class BerryClient():
         self._port = port
 
     def send(self, *messages: interface.Message):
+        pp = pprint.PrettyPrinter(indent=4)
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.connect((self._host, self._port))
             for msg in messages:
                 msg_bytes = serialize_message(msg)
                 s.sendall(msg_bytes)
                 received_bytes = s.recv(1024)
-                print(json.loads(received_bytes))
+                pp.pprint(json.loads(received_bytes))
