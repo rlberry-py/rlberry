@@ -56,10 +56,6 @@ class ClientHandler:
             info = {}
             for rr in self._resources:
                 info[rr] = self._resources[rr]['description']
-                # print('==============================================')
-                # print(f'Resource: \n---------\n{rr}\n')
-                # print(f"Description: \n------------\n{self._resources[rr]['description']}\n\n")
-                # print('==============================================')
             response = interface.Message.create(data=info)
         # Send response
         self._socket.sendall(serialize_message(response))
@@ -145,35 +141,7 @@ class BerryServer():
                         self._resources,
                         self._client_session_timeout)
                     executor.submit(client_handler.run)
-                    # with conn:
-                    #     print(f'BerryServer({self._host}, {self._port}): new connection by {addr}')
-                    #     while True:
-                    #         data = conn.recv(1024)
-                    #         if not data:
-                    #             break
-                    #         try:
-                    #             data = self._process_received_data(data)
-                    #         except Exception as ex:
-                    #             print(f'Error: {str(ex)}')
-                    #         print(f'\n Received data: {data}, of type {type(data)}')
-                    #         if data['command'] == 'agent_stats':
-                    #             print('\n Initializing AgentStats...')
-                    #             agent_stats = AgentStats(**data['params'])
-                    #             agent_stats.fit()
-                    #             output = Message.create(
-                    #                 command=dict(),
-                    #                 params=dict(),
-                    #                 data=dict(eval_output=agent_stats.eval()))
-                    #             conn.sendall(serialize_message(output))
 
-                    #         else:
-                    #             for rr in self._resources:
-                    #                 print('==============================================')
-                    #                 print(f'Resource: \n---------\n{rr}\n')
-                    #                 print(f"Description: \n------------\n{self._resources[rr]['description']}\n\n")
-                    #                 print('==============================================')
-                    #             conn.sendall(serialize_message(Message.create(command='end')))
- 
 
 if __name__ == '__main__':
     server = BerryServer()
