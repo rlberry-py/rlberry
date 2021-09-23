@@ -15,19 +15,22 @@ class Message(NamedTuple):
     command: Optional[Command] = None
     params: Optional[Mapping[str, Any]] = None
     data: Optional[Mapping[str, Any]] = None
+    info: Optional[Mapping[str, Any]] = None
 
     def to_dict(self):
         return self._asdict()
 
     @classmethod
-    def create(cls, command=None, params=None, data=None):
+    def create(cls, command=None, params=None, data=None, info=None):
         command = command or ''
         params = params or dict()
         data = data or dict()
+        info = info or dict()
         return cls(
             command=command,
             params=params,
-            data=data
+            data=data,
+            info=info,
         )
 
     @classmethod
@@ -43,6 +46,6 @@ class ResourceItem(Dict):
 Resources = Mapping[str, ResourceItem]
 
 
-class ResourceRequest(Dict):
+class ResourceRequest(NamedTuple):
     name: str = ""
     kwargs: Optional[Mapping[str, Any]] = None

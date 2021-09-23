@@ -25,7 +25,7 @@ class ClientHandler:
         """Replace resource requests in 'message' by available resources."""
         message = message.to_dict()
         processed_message = deepcopy(message)
-        for entry in ['params', 'data']:
+        for entry in ['params', 'data', 'info']:
             for key in message[entry]:
                 if key.startswith(interface.REQUEST_PREFIX):
                     new_key = key[len(interface.REQUEST_PREFIX):]
@@ -56,7 +56,7 @@ class ClientHandler:
             info = {}
             for rr in self._resources:
                 info[rr] = self._resources[rr]['description']
-            response = interface.Message.create(data=info)
+            response = interface.Message.create(info=info)
         # Send response
         self._socket.sendall(serialize_message(response))
         return 0
