@@ -5,6 +5,7 @@ TODO: Test attention modules
 import torch
 from rlberry.agents.torch.utils.models import MultiLayerPerceptron
 from rlberry.agents.torch.utils.models import ConvolutionalNetwork
+from torch.distributions import Categorical
 from rlberry.agents.torch.utils.attention_models import EgoAttention
 from rlberry.agents.torch.utils.attention_models import SelfAttention
 
@@ -17,6 +18,17 @@ def test_mlp():
     x = torch.rand(1, 5)
     y = model.forward(x)
     assert y.shape[1] == 10
+
+
+def test_mlp_policy():
+    model = MultiLayerPerceptron(in_size=5,
+                                 layer_sizes=[10, 10, 10],
+                                 out_size=10,
+                                 reshape=False,
+                                 is_policy=True)
+    x = torch.rand(1, 5)
+    scores = model.action_scores(x)
+    assert scores.shape[1] == 10
 
 
 def test_cnn():
@@ -35,3 +47,4 @@ def test_ego_attention():
 
 def test_self_attention():
     _ = SelfAttention()
+
