@@ -21,6 +21,7 @@ __credits__ = ["Alborz Geramifard", "Robert H. Klein", "Christoph Dann",
 __license__ = "BSD 3-Clause"
 __author__ = "Christoph Dann <cdann@cdann.de>"
 
+
 # SOURCE:
 # https://github.com/rlpy/rlpy/blob/master/rlpy/Domains/Acrobot.py
 
@@ -123,7 +124,7 @@ class Acrobot(RenderInterface2D, Model):
 
     def step(self, action):
         assert self.action_space.contains(action), \
-                "%r (%s) invalid" % (action, type(action))
+            "%r (%s) invalid" % (action, type(action))
 
         # save state for rendering
         if self.is_render_enabled():
@@ -163,7 +164,7 @@ class Acrobot(RenderInterface2D, Model):
     def _get_ob(self):
         s = self.state
         return np.array([np.cos(s[0]), np.sin(s[0]), np.cos(s[1]),
-                        np.sin(s[1]), s[2], s[3]])
+                         np.sin(s[1]), s[2], s[3]])
 
     def _terminal(self):
         s = self.state
@@ -185,23 +186,23 @@ class Acrobot(RenderInterface2D, Model):
         dtheta1 = s[2]
         dtheta2 = s[3]
         d1 = m1 * lc1 ** 2 + m2 * \
-            (l1 ** 2 + lc2 ** 2 + 2 * l1 * lc2 * np.cos(theta2)) + I1 + I2
+             (l1 ** 2 + lc2 ** 2 + 2 * l1 * lc2 * np.cos(theta2)) + I1 + I2
         d2 = m2 * (lc2 ** 2 + l1 * lc2 * np.cos(theta2)) + I2
         phi2 = m2 * lc2 * g * np.cos(theta1 + theta2 - np.pi / 2.)
         phi1 = - m2 * l1 * lc2 * dtheta2 ** 2 * np.sin(theta2) \
-               - 2 * m2 * l1 * lc2 * dtheta2 * dtheta1 * np.sin(theta2)  \
-            + (m1 * lc1 + m2 * l1) * g * np.cos(theta1 - np.pi / 2) + phi2
+               - 2 * m2 * l1 * lc2 * dtheta2 * dtheta1 * np.sin(theta2) \
+               + (m1 * lc1 + m2 * l1) * g * np.cos(theta1 - np.pi / 2) + phi2
         if self.book_or_nips == "nips":
             # the following line is consistent with the description in the
             # paper
             ddtheta2 = (a + d2 / d1 * phi1 - phi2) / \
-                (m2 * lc2 ** 2 + I2 - d2 ** 2 / d1)
+                       (m2 * lc2 ** 2 + I2 - d2 ** 2 / d1)
         else:
             # the following line is consistent with the java implementation
             # and the book
             ddtheta2 = (a + d2 / d1 * phi1 - m2 * l1 * lc2 * dtheta1 ** 2 *
                         np.sin(theta2) - phi2) \
-                / (m2 * lc2 ** 2 + I2 - d2 ** 2 / d1)
+                       / (m2 * lc2 ** 2 + I2 - d2 ** 2 / d1)
         ddtheta1 = -(d2 * ddtheta2 + phi1) / d1
         return (dtheta1, dtheta2, ddtheta1, ddtheta2, 0.)
 
@@ -224,16 +225,16 @@ class Acrobot(RenderInterface2D, Model):
               p1[1] - self.LINK_LENGTH_2 * np.cos(state[0] + state[1]))
 
         link1 = bar_shape(p0, p1, 0.1)
-        link1.set_color((255/255, 140/255, 0/255))
+        link1.set_color((255 / 255, 140 / 255, 0 / 255))
 
         link2 = bar_shape(p1, p2, 0.1)
-        link2.set_color((210/255, 105/255, 30/255))
+        link2.set_color((210 / 255, 105 / 255, 30 / 255))
 
         joint1 = circle_shape(p0, 0.075)
-        joint1.set_color((255/255, 215/255, 0/255))
+        joint1.set_color((255 / 255, 215 / 255, 0 / 255))
 
         joint2 = circle_shape(p1, 0.075)
-        joint2.set_color((255/255, 215/255, 0/255))
+        joint2.set_color((255 / 255, 215 / 255, 0 / 255))
 
         goal_line = GeometricPrimitive("LINES")
         goal_line.add_vertex((-5, 1))
@@ -357,7 +358,6 @@ def rk4(derivs, y0, t, *args, **kwargs):
     yout[0] = y0
 
     for i in np.arange(len(t) - 1):
-
         thist = t[i]
         dt = t[i + 1] - thist
         dt2 = dt / 2.0
@@ -369,4 +369,3 @@ def rk4(derivs, y0, t, *args, **kwargs):
         k4 = np.asarray(derivs(y0 + dt * k3, thist + dt, *args, **kwargs))
         yout[i + 1] = y0 + dt / 6.0 * (k1 + 2 * k2 + 2 * k3 + k4)
     return yout
-

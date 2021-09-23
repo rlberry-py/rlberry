@@ -44,7 +44,7 @@ class TwinRooms(RenderInterface2D, Model):
         self.observation_space = spaces.Box(
             low=np.array([0.0, 0.0]),
             high=np.array([2.0, 1.0]),
-            )
+        )
         self.action_space = spaces.Discrete(4)
         self.reward_range = (0.0, 1.0)
 
@@ -80,8 +80,8 @@ class TwinRooms(RenderInterface2D, Model):
             reward_pos = reward_pos + np.array([1.0, 0.0])
         xr, yr = reward_pos
 
-        dist = np.sqrt((state[0]-xr)**2.0 + (state[1]-yr)**2.0)
-        reward = max(0.0,  1.0 - dist/0.1)
+        dist = np.sqrt((state[0] - xr) ** 2.0 + (state[1] - yr) ** 2.0)
+        reward = max(0.0, 1.0 - dist / 0.1)
         return reward
 
     def _clip_to_room(self, state):
@@ -89,9 +89,9 @@ class TwinRooms(RenderInterface2D, Model):
         state[1] = min(1.0, state[1])
         if self.current_room == 0:
             state[0] = max(0.0, state[0])
-            state[0] = min(1.0-self.wall_eps, state[0])
+            state[0] = min(1.0 - self.wall_eps, state[0])
         else:
-            state[0] = max(1.0+self.wall_eps, state[0])
+            state[0] = max(1.0 + self.wall_eps, state[0])
             state[0] = min(2.0, state[0])
         return state
 
@@ -120,7 +120,7 @@ class TwinRooms(RenderInterface2D, Model):
             raise ValueError("Invalid action")
 
         next_state = state + displacement \
-            + self.room_noises[self.current_room] * self.rng.normal(size=2)
+                     + self.room_noises[self.current_room] * self.rng.normal(size=2)
 
         # clip to room
         next_state = self._clip_to_room(next_state)
@@ -145,14 +145,14 @@ class TwinRooms(RenderInterface2D, Model):
         eps = self.wall_eps
         shape = GeometricPrimitive("POLYGON")
         shape.set_color((0.25, 0.25, 0.25))
-        shape.add_vertex((1-eps, 0))
-        shape.add_vertex((1-eps, 1))
-        shape.add_vertex((1+eps, 1))
-        shape.add_vertex((1+eps, 0))
+        shape.add_vertex((1 - eps, 0))
+        shape.add_vertex((1 - eps, 1))
+        shape.add_vertex((1 + eps, 1))
+        shape.add_vertex((1 + eps, 0))
         bg.add_shape(shape)
 
         # rewards
-        for (x, y) in [self.base_reward_pos, self.base_reward_pos+np.array([1.0, 0.0])]:
+        for (x, y) in [self.base_reward_pos, self.base_reward_pos + np.array([1.0, 0.0])]:
             reward = circle_shape((x, y), 0.1, n_points=50)
             reward.type = "POLYGON"
             reward.set_color((0.0, 0.5, 0.0))

@@ -24,7 +24,6 @@ for agent_stats in experiment_generator():
 mstats.run()
 mstats.save()
 
-
 # Reading the results
 del mstats
 

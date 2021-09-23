@@ -2,7 +2,6 @@ import numpy as np
 import rlberry.check_packages as check_packages
 from rlberry.seeding.seeder import Seeder
 
-
 if check_packages.TORCH_INSTALLED:
     import torch
 
@@ -51,7 +50,7 @@ def safe_reseed(obj, seeder):
         obj.reseed(seeder)
         reseeded = True
     except AttributeError:
-        seed_val = seeder.rng.integers(2**32).item()
+        seed_val = seeder.rng.integers(2 ** 32).item()
         try:
             obj.seed(seed_val)
             reseeded = True

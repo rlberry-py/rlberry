@@ -5,7 +5,6 @@ from gym.spaces import Discrete
 from rlberry.utils.writers import DefaultWriter
 from rlberry.utils.jit_setup import numba_jit
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -66,7 +65,7 @@ def run_lsvi_jit(
                 inverse_counts = \
                     feat_ns_aa.dot(lambda_mat_inv.T.dot(feat_ns_aa))
                 bonus = bonus_factor * np.sqrt(inverse_counts) \
-                    + v_max * inverse_counts * (bonus_factor > 0.0)
+                        + v_max * inverse_counts * (bonus_factor > 0.0)
                 #
                 q_ns[aa] = feat_ns_aa.dot(q_w[hh + 1, :]) + bonus
                 q_ns[aa] = min(q_ns[aa], v_max)
@@ -168,17 +167,17 @@ class LSVIUCBAgent(AgentWithSimplePolicy):
 
         # attributes initialized in reset()
         self.episode = None
-        self.lambda_mat = None      # lambda matrix
+        self.lambda_mat = None  # lambda matrix
         self.lambda_mat_inv = None  # inverse of lambda matrix
-        self.w_vec = None           # vector representation of Q
-        self.w_policy = None        # representation of Q for final policy
-        self.reward_hist = None     # reward history
-        self.state_hist = None      # state history
-        self.action_hist = None     # action history
-        self.nstate_hist = None     # next state history
+        self.w_vec = None  # vector representation of Q
+        self.w_policy = None  # representation of Q for final policy
+        self.reward_hist = None  # reward history
+        self.state_hist = None  # state history
+        self.action_hist = None  # action history
+        self.nstate_hist = None  # next state history
 
-        self.feat_hist = None             # feature history
-        self.feat_ns_all_actions = None   # next state features for all actions
+        self.feat_hist = None  # feature history
+        self.feat_ns_all_actions = None  # next state features for all actions
         #
 
         # aux variables (init in reset() too)
@@ -299,7 +298,7 @@ class LSVIUCBAgent(AgentWithSimplePolicy):
         feat = self.feature_map.map(state, action)
         inverse_counts = feat @ (self.lambda_mat_inv.T @ feat)
         bonus = bonus_factor * np.sqrt(inverse_counts) \
-            + self.v_max * inverse_counts * (bonus_factor > 0.0)
+                + self.v_max * inverse_counts * (bonus_factor > 0.0)
         q = feat.dot(q_w) + bonus
         return q
 
@@ -311,7 +310,7 @@ class LSVIUCBAgent(AgentWithSimplePolicy):
             feat = self.feature_map.map(state, aa)
             inverse_counts = feat @ (self.lambda_mat_inv.T @ feat)
             bonus = bonus_factor * np.sqrt(inverse_counts) \
-                + self.v_max * inverse_counts * (bonus_factor > 0.0)
+                    + self.v_max * inverse_counts * (bonus_factor > 0.0)
             q_vec[aa] = feat.dot(q_w) + bonus
             # q_vec[aa] = min(q_vec[aa], self.v_max)   # !!!!!!!!!
         return q_vec

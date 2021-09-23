@@ -31,7 +31,7 @@ def map_to_representative(state,
 
     max_representatives = representative_states.shape[0]
     if dist_to_closest > min_dist \
-        and n_representatives < max_representatives \
+            and n_representatives < max_representatives \
             and accept_new_repr:
         new_index = n_representatives
         representative_states[new_index, :] = state
@@ -68,6 +68,7 @@ class OnlineDiscretizationCounter(UncertaintyEstimator):
     rate_power : float
         returns bonuses in n^power.
     """
+
     def __init__(self,
                  observation_space,
                  action_space,
@@ -94,7 +95,7 @@ class OnlineDiscretizationCounter(UncertaintyEstimator):
             # if high and low are bounded
             if self.observation_space.is_bounded():
                 scaling = self.observation_space.high \
-                    - self.observation_space.low
+                          - self.observation_space.low
                 # if high or low are unbounded
             else:
                 scaling = np.ones(self.state_dim)
@@ -145,12 +146,12 @@ the maximum number of representative states.")
     @preprocess_args(expected_type='numpy')
     def measure(self, state, action, **kwargs):
         n = np.maximum(1.0, self.count(state, action))
-        return np.power(1/n, self.rate_power)
+        return np.power(1 / n, self.rate_power)
 
     def count(self, state, action):
         state_idx, dist_to_closest = self._get_representative_state(
-                                            state,
-                                            accept_new_repr=False)
+            state,
+            accept_new_repr=False)
         # if state is too far from the closest representative,
         # its count is zero.
         if dist_to_closest > self.min_dist:
@@ -176,6 +177,6 @@ the maximum number of representative states.")
         # number of visits of visited states only
         n_visits = self.N_sa[visited, :].sum(axis=1)
         # empirical distribution
-        dist = n_visits/n_visits.sum()
-        entropy = (-dist*np.log2(dist)).sum()
+        dist = n_visits / n_visits.sum()
+        entropy = (-dist * np.log2(dist)).sum()
         return entropy

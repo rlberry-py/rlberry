@@ -8,7 +8,6 @@ from rlberry.agents.dynprog.utils import backward_induction_in_place
 from rlberry.agents.kernel_based.common import map_to_representative
 from rlberry.utils.writers import DefaultWriter
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -128,7 +127,7 @@ class RSUCBVIAgent(AgentWithSimplePolicy):
             if (self.env.observation_space.high == np.inf).sum() == 0 \
                     and (self.env.observation_space.low == -np.inf).sum() == 0:
                 scaling = self.env.observation_space.high \
-                    - self.env.observation_space.low
+                          - self.env.observation_space.low
                 # if high or low are unbounded
             else:
                 scaling = np.ones(self.state_dim)
@@ -148,7 +147,7 @@ class RSUCBVIAgent(AgentWithSimplePolicy):
             self.v_max = r_range * horizon
         else:
             self.v_max = r_range * (1.0 - np.power(self.gamma, self.horizon)) \
-                                                        / (1.0 - self.gamma)
+                         / (1.0 - self.gamma)
 
         # number of representative states and number of actions
         if max_repr is None:
@@ -236,9 +235,9 @@ class RSUCBVIAgent(AgentWithSimplePolicy):
         self.S_sa[repr_state, action] += reward
 
         self.R_hat[repr_state, action] = self.S_sa[repr_state, action] \
-            / self.N_sa[repr_state, action]
+                                         / self.N_sa[repr_state, action]
         self.P_hat[repr_state, action, :] = self.N_sas[repr_state, action, :] \
-            / self.N_sa[repr_state, action]
+                                            / self.N_sa[repr_state, action]
         self.B_sa[repr_state, action] = \
             self._compute_bonus(self.N_sa[repr_state, action])
 
@@ -290,7 +289,6 @@ class RSUCBVIAgent(AgentWithSimplePolicy):
         self.episode += 1
         #
         if self.writer is not None:
-
             self.writer.add_scalar("episode_rewards", episode_rewards, self.episode)
             self.writer.add_scalar("representative states", self.M, self.episode)
 

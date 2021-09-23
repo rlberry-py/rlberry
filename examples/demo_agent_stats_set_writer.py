@@ -4,12 +4,10 @@ from rlberry.agents.torch.ppo import PPOAgent
 from rlberry.stats import AgentStats, plot_writer_data, evaluate_agents
 from torch.utils.tensorboard import SummaryWriter
 
-
 # --------------------------------
 # Define training env
 # --------------------------------
 train_env = (PBall2D, dict())
-
 
 # -----------------------------
 # Parameters

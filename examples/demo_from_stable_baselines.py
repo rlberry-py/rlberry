@@ -4,7 +4,6 @@ from rlberry.agents import AgentWithSimplePolicy
 
 
 class A2CAgent(AgentWithSimplePolicy):
-
     name = 'A2C'
 
     def __init__(self,
@@ -30,7 +29,6 @@ class A2CAgent(AgentWithSimplePolicy):
                  device="auto",
                  _init_setup_model: bool = True,
                  **kwargs):
-
         # init rlberry base class
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
         # rlberry accepts tuples (env_constructor, env_kwargs) as env
@@ -38,7 +36,7 @@ class A2CAgent(AgentWithSimplePolicy):
         env = self.env
 
         # Generate seed for A2CStableBaselines using rlberry seeding
-        seed = self.rng.integers(2**32).item()
+        seed = self.rng.integers(2 ** 32).item()
 
         # init stable baselines class
         self.wrapped = A2CStableBaselines(
@@ -147,7 +145,6 @@ mstats.run()
 # Plot policy evaluation
 out = evaluate_agents(mstats.allstats)
 print(out)
-
 
 # Visualize policy
 env = stats_alternative.build_eval_env()

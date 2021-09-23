@@ -25,7 +25,7 @@ class DiscretizeStateWrapper(Wrapper):
         self._open_bins = []
         for dd in range(self.dim):
             range_dd = self.env.observation_space.high[dd] \
-                - self.env.observation_space.low[dd]
+                       - self.env.observation_space.low[dd]
             epsilon = range_dd / n_bins
             bins_dd = []
             for bb in range(n_bins + 1):
@@ -70,7 +70,7 @@ class DiscretizeStateWrapper(Wrapper):
 
     def get_continuous_state(self, discrete_state, randomize=False):
         assert discrete_state >= 0 \
-            and discrete_state < self.observation_space.n, \
+               and discrete_state < self.observation_space.n, \
             "invalid discrete_state"
         # get multi-index
         index \
@@ -82,7 +82,7 @@ class DiscretizeStateWrapper(Wrapper):
             continuous_state[dd] = self._bins[dd][index[dd]]
             if randomize:
                 range_dd = self.env.observation_space.high[dd] \
-                    - self.env.observation_space.low[dd]
+                           - self.env.observation_space.low[dd]
                 epsilon = range_dd / self.n_bins
                 continuous_state[dd] += epsilon * self.rng.uniform()
         return continuous_state

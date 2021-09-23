@@ -12,7 +12,6 @@ from rlberry.agents.kernel_based.kernels import kernel_func
 from rlberry.agents.kernel_based.common import map_to_representative
 from rlberry.utils.writers import DefaultWriter
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -35,7 +34,7 @@ def update_model(repr_state, action, repr_next_state, reward,
                          repr_states[u_repr_state, :],
                          lp_metric,
                          scaling)
-        weight = kernel_func(dist/bandwidth, kernel_type=kernel_type)
+        weight = kernel_func(dist / bandwidth, kernel_type=kernel_type)
 
         # aux variables
         prev_N_sa = beta + N_sa[u_repr_state, action]  # regularization beta
@@ -45,14 +44,14 @@ def update_model(repr_state, action, repr_next_state, reward,
         N_sa[u_repr_state, action] += weight
 
         # update transitions
-        P_hat[u_repr_state, action, :n_representatives] =\
-            dirac_next_s*weight / current_N_sa + \
-            (prev_N_sa/current_N_sa) * \
+        P_hat[u_repr_state, action, :n_representatives] = \
+            dirac_next_s * weight / current_N_sa + \
+            (prev_N_sa / current_N_sa) * \
             P_hat[u_repr_state, action, :n_representatives]
 
         # update rewards
-        R_hat[u_repr_state, action] = weight*reward/current_N_sa + \
-            (prev_N_sa/current_N_sa)*R_hat[u_repr_state, action]
+        R_hat[u_repr_state, action] = weight * reward / current_N_sa + \
+                                      (prev_N_sa / current_N_sa) * R_hat[u_repr_state, action]
 
         # update bonus
         B_sa[u_repr_state, action] = compute_bonus(N_sa[u_repr_state, action],
@@ -64,7 +63,7 @@ def update_model(repr_state, action, repr_next_state, reward,
 def compute_bonus(sum_weights, beta, bonus_scale_factor, v_max, bonus_type):
     n = beta + sum_weights
     if bonus_type == "simplified_bernstein":
-        return bonus_scale_factor * np.sqrt(1.0/n) + (1+beta)*(v_max)/n
+        return bonus_scale_factor * np.sqrt(1.0 / n) + (1 + beta) * (v_max) / n
     else:
         raise NotImplementedError("Error: unknown bonus type.")
 
@@ -191,7 +190,7 @@ class RSKernelUCBVIAgent(AgentWithSimplePolicy):
             if (self.env.observation_space.high == np.inf).sum() == 0 \
                     and (self.env.observation_space.low == -np.inf).sum() == 0:
                 scaling = self.env.observation_space.high \
-                    - self.env.observation_space.low
+                          - self.env.observation_space.low
                 # if high or low are unbounded
             else:
                 scaling = np.ones(self.state_dim)
@@ -211,7 +210,7 @@ class RSKernelUCBVIAgent(AgentWithSimplePolicy):
             self.v_max = r_range * horizon
         else:
             self.v_max = r_range * (1.0 - np.power(self.gamma, self.horizon)) \
-                                                        / (1.0 - self.gamma)
+                         / (1.0 - self.gamma)
 
         # number of representative states and number of actions
         if max_repr is None:
@@ -226,8 +225,8 @@ class RSKernelUCBVIAgent(AgentWithSimplePolicy):
         # declaring variables
         self.episode = None  # current episode
         self.representative_states = None  # coordinates of all repr states
-        self.N_sa = None   # sum of weights at (s, a)
-        self.B_sa = None   # bonus at (s, a)
+        self.N_sa = None  # sum of weights at (s, a)
+        self.B_sa = None  # bonus at (s, a)
         self.R_hat = None  # reward  estimate
         self.P_hat = None  # transitions estimate
         self.Q = None  # Q function
@@ -326,10 +325,10 @@ class RSKernelUCBVIAgent(AgentWithSimplePolicy):
 
         # run backward induction
         backward_induction_in_place(
-                                self.Q[:, :self.M, :], self.V[:, :self.M],
-                                self.R_hat[:self.M, :]+self.B_sa[:self.M, :],
-                                self.P_hat[:self.M, :, :self.M],
-                                self.horizon, self.gamma, self.v_max)
+            self.Q[:, :self.M, :], self.V[:, :self.M],
+            self.R_hat[:self.M, :] + self.B_sa[:self.M, :],
+            self.P_hat[:self.M, :, :self.M],
+            self.horizon, self.gamma, self.v_max)
 
         self.episode += 1
         #

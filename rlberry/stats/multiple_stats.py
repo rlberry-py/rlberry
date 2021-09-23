@@ -12,6 +12,7 @@ class MultipleStats:
     """
     Class to fit multiple AgentStats instances in parallel with multiple threads.
     """
+
     def __init__(self) -> None:
         super().__init__()
         self.instances = []

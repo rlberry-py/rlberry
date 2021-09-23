@@ -25,6 +25,7 @@ class Box(gym.spaces.Box):
     reseed()
         get new random number generator
     """
+
     def __init__(self, low, high, shape=None, dtype=np.float64):
         gym.spaces.Box.__init__(self, low, high, shape=shape, dtype=dtype)
         self.seeder = Seeder()

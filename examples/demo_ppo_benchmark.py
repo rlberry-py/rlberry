@@ -5,7 +5,6 @@ from rlberry.agents.torch.ppo import PPOAgent
 from rlberry.wrappers import DiscretizeStateWrapper
 from rlberry.stats import AgentStats, plot_writer_data, evaluate_agents
 
-
 # --------------------------------
 # Define train and evaluation envs
 # --------------------------------
@@ -53,7 +52,6 @@ agent_stats_list = [oracle_stats, ppo_stats]
 plot_writer_data(agent_stats_list, tag='episode_rewards',
                  preprocess_func=np.cumsum,
                  title='Cumulative Rewards', show=False)
-
 
 # compare final policies
 output = evaluate_agents(agent_stats_list)

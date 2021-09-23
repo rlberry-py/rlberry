@@ -44,4 +44,3 @@ if __name__ == "__main__":
     x = [3.9, 3.5]
     index = binary_search_nd(x, bins)
     print(index)
-

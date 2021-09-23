@@ -28,6 +28,7 @@ class TreeNode:
         Number of visits to the node.
 
     """
+
     def __init__(self, bounds, depth, qvalue=0.0, n_visits=0):
         self.dim = len(bounds)
 
@@ -66,7 +67,7 @@ class TreeNode:
         child_bounds = split_bounds(self.bounds)
         for bounds in child_bounds:
             self.children.append(
-                TreeNode(bounds, self.depth+1, self.qvalue, self.n_visits)
+                TreeNode(bounds, self.depth + 1, self.qvalue, self.n_visits)
             )
 
 
@@ -83,6 +84,7 @@ class TreePartition:
     initial_value: double
         Value to initialize the root node.
     """
+
     def __init__(self, space, initial_value=0.0):
         assert isinstance(space, spaces.Box)
         assert space.is_bounded()
@@ -125,7 +127,7 @@ class TreePartition:
              colormap_name='cool',
              max_value=10,
              node=None,
-             root=True,):
+             root=True, ):
         """
         Visualize the function (2d domain only).
         Shows the hierarchical partition.
@@ -141,8 +143,8 @@ class TreePartition:
             y0, y1 = node.bounds[1, :]
 
             colormap_fn = plt.get_cmap(colormap_name)
-            color = colormap_fn(node.qvalue/max_value)
-            rectangle = plt.Rectangle((x0, y0), x1-x0, y1-y0, ec="black", color=color)
+            color = colormap_fn(node.qvalue / max_value)
+            rectangle = plt.Rectangle((x0, y0), x1 - x0, y1 - y0, ec="black", color=color)
             plt.gca().add_patch(rectangle)
             plt.axis('scaled')
 
@@ -157,6 +159,7 @@ class MDPTreePartition:
 
     Used to store/manipulate a Q function, a reward function and a transition model.
     """
+
     def __init__(self, observation_space, action_space, horizon):
         self.horizon = horizon
         self.n_actions = action_space.n
@@ -165,7 +168,7 @@ class MDPTreePartition:
             self.trees.append({})
             for aa in range(self.n_actions):
                 self.trees[hh][aa] = TreePartition(observation_space,
-                                                   initial_value=horizon-hh)
+                                                   initial_value=horizon - hh)
 
         self.dmax = self.trees[0][0].dmax
 
@@ -201,4 +204,4 @@ class MDPTreePartition:
         """
         Visualize Q_h(x, a)
         """
-        self.trees[h][a].plot(max_value=self.horizon-h)
+        self.trees[h][a].plot(max_value=self.horizon - h)

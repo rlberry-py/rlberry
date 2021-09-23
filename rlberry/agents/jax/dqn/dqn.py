@@ -44,7 +44,6 @@ from rlberry.agents.jax.utils.replay_buffer import ReplayBuffer
 from rlberry.utils.writers import DefaultWriter
 from typing import Any, Callable, Mapping, Optional
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -113,29 +112,29 @@ class DQNAgent(AgentWithSimplePolicy):
     name = "JaxDqnAgent"
 
     def __init__(
-        self,
-        env: types.Env,
-        gamma: float = 0.99,
-        batch_size: int = 64,
-        chunk_size: int = 8,
-        online_update_interval: int = 1,
-        target_update_interval: int = 512,
-        learning_rate: float = 0.001,
-        epsilon_init: float = 1.0,
-        epsilon_end: float = 0.05,
-        epsilon_steps: int = 5000,
-        max_replay_size: int = 100000,
-        eval_interval: Optional[int] = None,
-        max_episode_length: Optional[int] = None,
-        lambda_: Optional[float] = None,
-        net_constructor: Optional[Callable[..., hk.Module]] = None,
-        net_kwargs: Optional[Mapping[str, Any]] = None,
-        max_gradient_norm: float = 100.0,
-        **kwargs
+            self,
+            env: types.Env,
+            gamma: float = 0.99,
+            batch_size: int = 64,
+            chunk_size: int = 8,
+            online_update_interval: int = 1,
+            target_update_interval: int = 512,
+            learning_rate: float = 0.001,
+            epsilon_init: float = 1.0,
+            epsilon_end: float = 0.05,
+            epsilon_steps: int = 5000,
+            max_replay_size: int = 100000,
+            eval_interval: Optional[int] = None,
+            max_episode_length: Optional[int] = None,
+            lambda_: Optional[float] = None,
+            net_constructor: Optional[Callable[..., hk.Module]] = None,
+            net_kwargs: Optional[Mapping[str, Any]] = None,
+            max_gradient_norm: float = 100.0,
+            **kwargs
     ):
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
         env = self.env
-        self.rng_key = jax.random.PRNGKey(self.rng.integers(2**32).item())
+        self.rng_key = jax.random.PRNGKey(self.rng.integers(2 ** 32).item())
         self.writer = DefaultWriter(name=self.name)
 
         # checks
@@ -166,7 +165,7 @@ class DQNAgent(AgentWithSimplePolicy):
         sample_obs = env.reset()
         try:
             obs_shape, obs_dtype = sample_obs.shape, sample_obs.dtype
-        except AttributeError:   # in case sample_obs has no .shape attribute
+        except AttributeError:  # in case sample_obs has no .shape attribute
             obs_shape, obs_dtype = env.observation_space.shape, env.observation_space.dtype
         action_shape, action_dtype = env.action_space.shape, env.action_space.dtype
 
@@ -240,9 +239,9 @@ class DQNAgent(AgentWithSimplePolicy):
         return action
 
     def fit(
-        self,
-        budget: int,
-        **kwargs
+            self,
+            budget: int,
+            **kwargs
     ):
         """
         Train DQN agent.
@@ -361,8 +360,8 @@ class DQNAgent(AgentWithSimplePolicy):
         return loss, info
 
     def _actor_step(self, all_params, all_states, observation, rng_key, evaluation):
-        obs = jnp.expand_dims(observation, 0)            # dummy batch
-        q_val = self._q_net.apply(all_params.online, obs)[0]   # remove batch
+        obs = jnp.expand_dims(observation, 0)  # dummy batch
+        q_val = self._q_net.apply(all_params.online, obs)[0]  # remove batch
         epsilon = self._epsilon_schedule(all_states.actor_steps)
         train_action = rlax.epsilon_greedy(epsilon).sample(rng_key, q_val)
         eval_action = rlax.greedy().sample(rng_key, q_val)

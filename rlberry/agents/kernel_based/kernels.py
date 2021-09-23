@@ -33,13 +33,13 @@ def kernel_func(z, kernel_type):
     elif kernel_type == "epanechnikov":
         return (1.0 - np.power(z, 2.0)) * (np.abs(z) <= 1)
     elif kernel_type == "quartic":
-        return np.power((1.0 - np.power(z, 2.0)), 2.0)*(np.abs(z) <= 1)
+        return np.power((1.0 - np.power(z, 2.0)), 2.0) * (np.abs(z) <= 1)
     elif kernel_type == "triweight":
-        return np.power((1.0 - np.power(z, 2.0)), 3.0)*(np.abs(z) <= 1)
+        return np.power((1.0 - np.power(z, 2.0)), 3.0) * (np.abs(z) <= 1)
     elif kernel_type == "tricube":
-        return np.power((1.0 - np.power(np.abs(z), 3.0)), 3.0)*(np.abs(z) <= 1)
+        return np.power((1.0 - np.power(np.abs(z), 3.0)), 3.0) * (np.abs(z) <= 1)
     elif kernel_type == "cosine":
-        return np.cos(z*np.pi/2)*(np.abs(z) <= 1)
+        return np.cos(z * np.pi / 2) * (np.abs(z) <= 1)
     elif "exp-" in kernel_type:
         exponent = _str_to_int(kernel_type.split("-")[1])
         return np.exp(-np.power(np.abs(z), exponent) / 2.0)

@@ -5,6 +5,7 @@ class AutoResetWrapper(Wrapper):
     """
     Auto reset the environment after "horizon" steps have passed.
     """
+
     def __init__(self, env, horizon):
         """
         Parameters

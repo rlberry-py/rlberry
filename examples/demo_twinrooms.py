@@ -20,7 +20,7 @@ for ii in range(100):
     ns, rr, _, _ = env.step(action)
     state = ns
 
-    if (ii+1) % horizon == 0:
+    if (ii + 1) % horizon == 0:
         state = env.reset()
 
 env.render()

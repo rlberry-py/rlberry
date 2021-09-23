@@ -147,7 +147,7 @@ does not make true projections onto the lp ball.")
         assert len(self.reward_amplitudes) == len(self.reward_centers)
         if len(self.reward_amplitudes) > 0:
             assert self.reward_amplitudes.max() <= 1.0 and \
-                self.reward_amplitudes.min() >= 0.0, \
+                   self.reward_amplitudes.min() >= 0.0, \
                 "reward amplitudes b_i must be in [0, 1]"
             assert self.reward_smoothness.min() > 0.0, \
                 "reward smoothness c_i must be > 0"
@@ -164,7 +164,7 @@ does not make true projections onto the lp ball.")
             self.state = state
         else:
             self.state = self.mu_init \
-                + self.sigma_init * self.seeder.rng.normal(size=self.d)
+                         + self.sigma_init * self.seeder.rng.normal(size=self.d)
             # projection to unit ball
         self.state = projection_to_pball(self.state, self.p)
         return self.state.copy()
@@ -176,7 +176,7 @@ does not make true projections onto the lp ball.")
         # next state
         action_vec = self.action_list[action]
         next_s = self.A.dot(state) + self.B.dot(action_vec) \
-            + self.sigma * self.rng.normal(size=self.d)
+                 + self.sigma * self.rng.normal(size=self.d)
         next_s = projection_to_pball(next_s, self.p)
 
         # done and reward
@@ -356,7 +356,6 @@ class SimplePBallND(PBall):
                        reward_smoothness,
                        reward_centers,
                        A, B, sigma, sigma_init, mu_init)
-
 
 # if __name__ == '__main__':
 #     env = PBall2D(p=5)

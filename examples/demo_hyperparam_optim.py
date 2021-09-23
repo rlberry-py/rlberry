@@ -2,7 +2,6 @@ from rlberry.envs.benchmarks.ball_exploration import PBall2D
 from rlberry.agents.torch.ppo import PPOAgent
 from rlberry.stats import AgentStats
 
-
 if __name__ == '__main__':
     # --------------------------------
     # Define train and evaluation envs

@@ -6,7 +6,6 @@ from rlberry.agents import AgentWithSimplePolicy
 from rlberry.exploration_tools.discrete_counter import DiscreteCounter
 from rlberry.utils.writers import DefaultWriter
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -70,8 +69,8 @@ class OptQLAgent(AgentWithSimplePolicy):
 
         self.v_max = np.zeros(self.horizon)
         self.v_max[-1] = r_range
-        for hh in reversed(range(self.horizon-1)):
-            self.v_max[hh] = r_range + self.gamma*self.v_max[hh+1]
+        for hh in reversed(range(self.horizon - 1)):
+            self.v_max[hh] = r_range + self.gamma * self.v_max[hh + 1]
 
         # initialize
         self.reset()
@@ -85,14 +84,14 @@ class OptQLAgent(AgentWithSimplePolicy):
         self.N_sa = np.zeros((H, S, A))
 
         # Value functions
-        self.V = np.ones((H+1, S))
+        self.V = np.ones((H + 1, S))
         self.V[H, :] = 0
         self.Q = np.ones((H, S, A))
         self.Q_bar = np.ones((H, S, A))
         for hh in range(self.horizon):
-            self.V[hh, :] *= (self.horizon-hh)
-            self.Q[hh, :, :] *= (self.horizon-hh)
-            self.Q_bar[hh, :, :] *= (self.horizon-hh)
+            self.V[hh, :] *= (self.horizon - hh)
+            self.Q[hh, :, :] *= (self.horizon - hh)
+            self.Q_bar[hh, :, :] *= (self.horizon - hh)
 
         if self.add_bonus_after_update:
             self.Q *= 0.0
@@ -130,20 +129,20 @@ class OptQLAgent(AgentWithSimplePolicy):
         nn = self.N_sa[hh, state, action]
 
         # learning rate
-        alpha = (self.horizon+1.0)/(self.horizon + nn)
+        alpha = (self.horizon + 1.0) / (self.horizon + nn)
         bonus = self._compute_bonus(nn, hh)
 
         # bonus in the update
         if not self.add_bonus_after_update:
-            target = reward + bonus + self.gamma*self.V[hh+1, next_state]
-            self.Q[hh, state, action] = (1-alpha)*self.Q[hh, state, action] + alpha * target
+            target = reward + bonus + self.gamma * self.V[hh + 1, next_state]
+            self.Q[hh, state, action] = (1 - alpha) * self.Q[hh, state, action] + alpha * target
             self.V[hh, state] = min(self.v_max[hh], self.Q[hh, state, :].max())
             self.Q_bar[hh, state, action] = self.Q[hh, state, action]
         # bonus outside the update
         else:
-            target = reward + self.gamma*self.V[hh+1, next_state]                  # bonus not here
-            self.Q[hh, state, action] = (1-alpha)*self.Q[hh, state, action] + alpha * target
-            self.Q_bar[hh, state, action] = self.Q[hh, state, action] + bonus      # bonus here
+            target = reward + self.gamma * self.V[hh + 1, next_state]  # bonus not here
+            self.Q[hh, state, action] = (1 - alpha) * self.Q[hh, state, action] + alpha * target
+            self.Q_bar[hh, state, action] = self.Q[hh, state, action] + bonus  # bonus here
             self.V[hh, state] = min(self.v_max[hh], self.Q_bar[hh, state, :].max())
 
     def _run_episode(self):

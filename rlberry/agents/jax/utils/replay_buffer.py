@@ -10,7 +10,6 @@ import tensorflow as tf
 
 logger = logging.getLogger(__name__)
 
-
 try:
     import reverb
 except ImportError as ex:
@@ -28,6 +27,7 @@ except ImportError as ex:
 
 class ChunkWriter:
     """Wrapper for reverb's TrajectoryWriter"""
+
     def __init__(self, reverb_client, chunk_size, entries):
         self.writer = None
         self.chunk_size = chunk_size
@@ -75,11 +75,12 @@ class ReplayBuffer:
     * Update priorities.
 
     """
+
     def __init__(
-        self,
-        batch_size: int,
-        chunk_size: int,
-        max_replay_size: int,
+            self,
+            batch_size: int,
+            chunk_size: int,
+            max_replay_size: int,
     ):
         if chunk_size < 1:
             raise ValueError('chunk_size needs to be >= 1')

@@ -17,6 +17,7 @@ class Wrapper(Model):
 
     [1] https://github.com/openai/gym/blob/master/gym/core.py
     """
+
     def __init__(self, env):
         # Init base class
         Model.__init__(self)

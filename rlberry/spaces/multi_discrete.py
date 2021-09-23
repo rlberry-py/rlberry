@@ -20,6 +20,7 @@ class MultiDiscrete(gym.spaces.MultiDiscrete):
     reseed()
         get new random number generator
     """
+
     def __init__(self, nvec):
         gym.spaces.MultiDiscrete.__init__(self, nvec)
         self.seeder = Seeder()

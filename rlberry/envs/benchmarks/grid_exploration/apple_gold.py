@@ -71,10 +71,10 @@ class AppleGold(GridWorld):
             reward_at = {}
         else:
             reward_at = {
-                        (7, 7): 10.0,
-                        (8, 2): 1.0,
-                        (10, 3): 1.0
-                        }
+                (7, 7): 10.0,
+                (8, 2): 1.0,
+                (10, 3): 1.0
+            }
             for jj in range(7, 16):
                 for ii in range(1, 12):
                     if (ii, jj) not in walls and (ii, jj) != (7, 7):
@@ -102,8 +102,8 @@ class AppleGold(GridWorld):
         xx = xx + 0.5
         yy = yy + 0.5
         # map to [0, 1]
-        xx = xx/self.ncols
-        yy = yy/self.nrows
+        xx = xx / self.ncols
+        yy = yy / self.nrows
         return np.array([xx, yy])
 
     def reset(self):
@@ -173,4 +173,3 @@ class AppleGold(GridWorld):
                 bg.add_shape(flag)
 
         return bg
-

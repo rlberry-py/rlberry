@@ -4,7 +4,6 @@ from rlberry.agents.torch.ppo import PPOAgent
 from rlberry.stats import AgentStats, plot_writer_data, evaluate_agents
 from rlberry.exploration_tools.discrete_counter import DiscreteCounter
 
-
 # --------------------------------
 # Define train env
 # --------------------------------
@@ -59,7 +58,7 @@ ppo_stats = AgentStats(PPOAgent, env, fit_budget=N_EPISODES,
                        init_kwargs=params_ppo, eval_kwargs=eval_kwargs,
                        n_fit=4, agent_name='PPO')
 ppo_bonus_stats = AgentStats(
-    PPOAgent, env, fit_budget=N_EPISODES, 
+    PPOAgent, env, fit_budget=N_EPISODES,
     init_kwargs=params_ppo_bonus, eval_kwargs=eval_kwargs,
     n_fit=4, agent_name='PPO-Bonus')
 

@@ -25,8 +25,8 @@ class DiscreteDistribution(ABC):
         """
         distribution = self.get_distribution()
         return self.np_random.choice(
-                    list(distribution.keys()), 1,
-                    p=np.array(list(distribution.values())))[0]
+            list(distribution.keys()), 1,
+            p=np.array(list(distribution.values())))[0]
 
     def seed(self, seeder=None):
         """
@@ -99,8 +99,8 @@ class EpsilonGreedy(DiscreteDistribution):
         """
         self.optimal_action = np.argmax(values)
         self.epsilon = self.final_temperature \
-            + (self.temperature - self.final_temperature) * \
-            np.exp(- self.time / self.tau)
+                       + (self.temperature - self.final_temperature) * \
+                       np.exp(- self.time / self.tau)
         if self.writer:
             self.writer.add_scalar('exploration/epsilon',
                                    self.epsilon,
@@ -134,7 +134,7 @@ class Greedy(DiscreteDistribution):
     def get_distribution(self):
         optimal_action = np.argmax(self.values)
         return {action: 1 if action == optimal_action
-                else 0 for action in range(self.action_space.n)}
+        else 0 for action in range(self.action_space.n)}
 
     def update(self, values):
         self.values = values

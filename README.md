@@ -60,31 +60,30 @@
 
 <!-- Table of content -->
 
+## What is `rlberry`?
 
+**Writing reinforcement learning algorithms is fun!** *But after the fun, we have lots of boring things to implement*:
+run our agents in parallel, average and plot results, optimize hyperparameters, compare to baselines, create tricky
+environments etc etc!
 
-## What is `rlberry`? 
-
-**Writing reinforcement learning algorithms is fun!** *But after the fun, we have lots of boring things to implement*: run our agents in parallel, average and plot results, optimize hyperparameters, compare to baselines, create tricky environments etc etc!
-
-`rlberry` **is a Python library that makes your life easier** by doing all these things with a few lines of code, so that you can spend most of your time developing agents.
+`rlberry` **is a Python library that makes your life easier** by doing all these things with a few lines of code, so
+that you can spend most of your time developing agents.
 `rlberry` also provides implementations of several RL agents, benchmark environments and many other useful tools.
 
 Check our [getting started section](#getting-started)!
-
 
 ## Getting started
 
 In our [documentation](https://rlberry.readthedocs.io/en/latest/), you will find a **quick tutorial** to the library.
 
-Also, we provide a handful of notebooks on [Google colab](https://colab.research.google.com/) as examples to show you how to use `rlberry`:
+Also, we provide a handful of notebooks on [Google colab](https://colab.research.google.com/) as examples to show you
+how to use `rlberry`:
 
-| Content | Description | Link |
-|-|-|-|
-| Introduction to `rlberry` | How to create an agent, optimize its hyperparameters and compare to a baseline. | <a href="https://colab.research.google.com/github/rlberry-py/rlberry/blob/main/notebooks/introduction_to_rlberry.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg"></a> |
-| Evaluating and optimizing agents  | Train a REINFORCE agent and optimize its hyperparameters |  <a href="https://colab.research.google.com/github/rlberry-py/rlberry/blob/main/notebooks/rlberry_evaluate_and_optimize_agent.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg"></a>
-
-
-
+| Content | Description | Link | |-|-|-| | Introduction to `rlberry` | How to create an agent, optimize its
+hyperparameters and compare to a baseline.
+| <a href="https://colab.research.google.com/github/rlberry-py/rlberry/blob/main/notebooks/introduction_to_rlberry.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg"></a>
+| | Evaluating and optimizing agents | Train a REINFORCE agent and optimize its hyperparameters
+|  <a href="https://colab.research.google.com/github/rlberry-py/rlberry/blob/main/notebooks/rlberry_evaluate_and_optimize_agent.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg"></a>
 
 ## Citing rlberry
 
@@ -92,12 +91,12 @@ If you use `rlberry` in scientific publications, we would appreciate citations u
 
 ```bibtex
 @misc{rlberry,
-author = {Domingues, Omar Darwiche and Flet-Berliac, Yannis and Leurent, Edouard and M{\'e}nard, Pierre and Shang, Xuedong and Valko, Michal},
-doi = {10.5281/zenodo.5223308},
-month = {8},
-title = {{rlberry - A Reinforcement Learning Library for Research and Education}},
-url = {https://github.com/rlberry-py/rlberry},
-year = {2021}
+    author = {Domingues, Omar Darwiche and Flet-Berliac, Yannis and Leurent, Edouard and M{\'e}nard, Pierre and Shang, Xuedong and Valko, Michal},
+    doi = {10.5281/zenodo.5223308},
+    month = {8},
+    title = {{rlberry - A Reinforcement Learning Library for Research and Education}},
+    url = {https://github.com/rlberry-py/rlberry},
+    year = {2021}
 }
 ```
 
@@ -111,8 +110,11 @@ $ pip install -e .[torch_agents]
 $ cd scripts
 $ bash run_testscov.sh
 ```
+
 and coverage report in `cov_html/index.html`.
 
 ## Contributing
 
-Want to contribute to `rlberry`? Please check [our contribution guidelines](CONTRIBUTING.md). A list of interesting TODO's will be available soon. **If you want to add any new agents or environments, do not hesitate to [open an issue](https://github.com/rlberry-py/rlberry/issues/new/choose)!**
+Want to contribute to `rlberry`? Please check [our contribution guidelines](CONTRIBUTING.md). A list of interesting
+TODO's will be available soon. **If you want to add any new agents or environments, do not hesitate
+to [open an issue](https://github.com/rlberry-py/rlberry/issues/new/choose)!**

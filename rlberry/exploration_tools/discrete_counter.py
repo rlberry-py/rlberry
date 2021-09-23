@@ -18,6 +18,7 @@ class DiscreteCounter(UncertaintyEstimator):
     rate_power : float
         Returns bonuses in 1/n ** rate_power.
     """
+
     def __init__(self,
                  observation_space,
                  action_space,
@@ -69,7 +70,7 @@ class DiscreteCounter(UncertaintyEstimator):
     def measure(self, state, action, **kwargs):
         state, action = self._preprocess(state, action)
         n = np.maximum(1.0, self.N_sa[state, action])
-        return np.power(1.0/n, self.rate_power)
+        return np.power(1.0 / n, self.rate_power)
 
     def count(self, state, action):
         state, action = self._preprocess(state, action)
@@ -94,6 +95,6 @@ class DiscreteCounter(UncertaintyEstimator):
         # number of visits of visited states only
         n_visits = self.N_sa[visited, :].sum(axis=1)
         # empirical distribution
-        dist = n_visits/n_visits.sum()
-        entropy = (-dist*np.log2(dist)).sum()
+        dist = n_visits / n_visits.sum()
+        entropy = (-dist * np.log2(dist)).sum()
         return entropy

@@ -7,7 +7,6 @@ import logging
 import matplotlib.pyplot as plt
 import numpy as np
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -79,6 +78,7 @@ class Vis2dWrapper(Wrapper):
     state_preprocess_kwargs : dict, default: None
         kwargs for state_preprocess_fn
     """
+
     def __init__(self,
                  env,
                  n_bins_obs=10,
@@ -220,7 +220,7 @@ class Vis2dWrapper(Wrapper):
 
         for idx in indices:
             traj = self.memory.trajectories[idx]
-            color_time_intensity = (idx+1)/self.memory.n_trajectories
+            color_time_intensity = (idx + 1) / self.memory.n_trajectories
             color = colormap_fn(color_time_intensity)
 
             states = np.array([traj[ii].state for ii in range(len(traj))])
@@ -241,7 +241,7 @@ class Vis2dWrapper(Wrapper):
                 raise ValueError()
 
             sizes = 1 + sizes
-            sizes = (dot_scale_factor**2) * 100 * epsilon * sizes / sizes.max()
+            sizes = (dot_scale_factor ** 2) * 100 * epsilon * sizes / sizes.max()
 
             ax.scatter(x=states[:, 0], y=states[:, 1], color=color, s=sizes, alpha=alpha)
             plt.tight_layout()
@@ -317,7 +317,7 @@ class Vis2dWrapper(Wrapper):
         """
         logger.info("Plotting...")
 
-        fignum = fignum or (str(self)+'-actions')
+        fignum = fignum or (str(self) + '-actions')
         colormap_fn = plt.get_cmap(colormap_name)
         action_description = action_description or list(range(self.env.action_space.n))
 
@@ -335,7 +335,7 @@ class Vis2dWrapper(Wrapper):
 
         # indices to visualize
         if video_filename is None:
-            indices = [self.memory.n_trajectories-1]
+            indices = [self.memory.n_trajectories - 1]
         else:
             indices = np.arange(self.memory.n_trajectories)[::n_skip]
 
@@ -344,7 +344,7 @@ class Vis2dWrapper(Wrapper):
 
         # for idx in indices:
         for init_idx in indices:
-            idx_set = range(max(0, init_idx-n_traj_to_show+1), init_idx+1)
+            idx_set = range(max(0, init_idx - n_traj_to_show + 1), init_idx + 1)
             # clear before showing new trajectories
             fig = plt.figure(fignum, figsize=figsize)
             fig.clf()
@@ -363,11 +363,11 @@ class Vis2dWrapper(Wrapper):
                 states = np.array([traj[ii].state for ii in range(len(traj))])
                 actions = np.array([traj[ii].action for ii in range(len(traj))])
 
-                sizes = (dot_scale_factor**2) * 750 * epsilon
+                sizes = (dot_scale_factor ** 2) * 750 * epsilon
 
                 for aa in range(self.env.action_space.n):
                     states_aa = states[actions == aa]
-                    color = colormap_fn(aa/self.env.action_space.n)
+                    color = colormap_fn(aa / self.env.action_space.n)
                     ax.scatter(x=states_aa[:, 0], y=states_aa[:, 1], color=color,
                                s=sizes, alpha=alpha,
                                label=f'action = {action_description[aa]}')

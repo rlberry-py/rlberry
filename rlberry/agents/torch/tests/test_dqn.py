@@ -35,8 +35,8 @@ def test_dqn_agent():
     agent.reseed(Seeder(123))
     agent2.reseed(Seeder(123))
 
-    n1 = agent.exploration_policy.np_random.integers(2**32, size=2)
-    n2 = agent2.exploration_policy.np_random.integers(2**32, size=2)
+    n1 = agent.exploration_policy.np_random.integers(2 ** 32, size=2)
+    n2 = agent2.exploration_policy.np_random.integers(2 ** 32, size=2)
     assert np.array_equal(n1, n2)
 
 

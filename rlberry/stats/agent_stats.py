@@ -23,13 +23,11 @@ from rlberry.utils.writers import DefaultWriter
 from rlberry.stats.utils import create_database
 from typing import Tuple
 
-
 _OPTUNA_INSTALLED = True
 try:
     import optuna
 except Exception:
     _OPTUNA_INSTALLED = False
-
 
 logger = logging.getLogger(__name__)
 
@@ -59,6 +57,7 @@ class AgentHandler:
     **agent_kwargs:
         Arguments required by __init__ method of agent_class.
     """
+
     def __init__(self,
                  id,
                  filename,
@@ -126,6 +125,7 @@ class AgentHandler:
             if not loaded:
                 raise RuntimeError(f'Could not load Agent from {self._fname}.')
         return getattr(self._agent_instance, attr)
+
 
 #
 # Main class
@@ -401,19 +401,19 @@ class AgentStats:
             raise ValueError(f'Invalid backend for parallelization: {self.parallelization}')
 
         args = [(
-                lock,
-                handler,
-                self.agent_class,
-                self.train_env,
-                self._eval_env,
-                budget,
-                deepcopy(self.init_kwargs),
-                deepcopy(self.fit_kwargs),
-                writer,
-                self.thread_logging_level,
-                seeder)
-                for (handler, seeder, writer)
-                in zip(self.agent_handlers, seeders, self.writers)]
+            lock,
+            handler,
+            self.agent_class,
+            self.train_env,
+            self._eval_env,
+            budget,
+            deepcopy(self.init_kwargs),
+            deepcopy(self.fit_kwargs),
+            writer,
+            self.thread_logging_level,
+            seeder)
+            for (handler, seeder, writer)
+            in zip(self.agent_handlers, seeders, self.writers)]
 
         if len(args) == 1:
             workers_output = [_fit_worker(args[0])]
@@ -632,7 +632,7 @@ class AgentStats:
                 sampler = optuna.samplers.TPESampler(**sampler_kwargs)
             else:
                 raise NotImplementedError(
-                      "Sampler method %s is not implemented." % sampler_method)
+                    "Sampler method %s is not implemented." % sampler_method)
 
             # get pruner
             if pruner_method == 'halving':
@@ -644,7 +644,7 @@ class AgentStats:
                 pruner = None
             else:
                 raise NotImplementedError(
-                      "Pruner method %s is not implemented." % pruner_method)
+                    "Pruner method %s is not implemented." % pruner_method)
 
             # storage
             self._init_optuna_storage_url()
@@ -667,12 +667,12 @@ class AgentStats:
             _optuna_objective,
             init_kwargs=self.init_kwargs,  # self.init_kwargs
             agent_class=self.agent_class,  # self.agent_class
-            train_env=self.train_env,    # self.train_env
+            train_env=self.train_env,  # self.train_env
             eval_env=self._eval_env,
-            fit_budget=self.fit_budget,   # self.fit_budget
+            fit_budget=self.fit_budget,  # self.fit_budget
             eval_kwargs=self.eval_kwargs,  # self.eval_kwargs
             n_fit=n_fit,
-            temp_dir=TEMP_DIR,     # TEMP_DIR
+            temp_dir=TEMP_DIR,  # TEMP_DIR
             disable_evaluation_writers=disable_evaluation_writers,
             fit_fraction=fit_fraction
         )
@@ -743,7 +743,7 @@ def _fit_worker(args):
     Create and fit an agent instance
     """
     lock, agent_handler, agent_class, train_env, eval_env, fit_budget, init_kwargs, \
-        fit_kwargs, writer, thread_logging_level, seeder = args
+    fit_kwargs, writer, thread_logging_level, seeder = args
 
     # reseed external libraries
     set_external_seed(seeder)
@@ -795,24 +795,26 @@ def _safe_serialize_json(obj, filename):
     """
     Source: https://stackoverflow.com/a/56138540/5691288
     """
+
     def default(obj):
         return f"<<non-serializable: {type(obj).__qualname__}>>"
+
     with open(filename, 'w') as fp:
         json.dump(obj, fp, sort_keys=True, indent=4, default=default)
 
 
 def _optuna_objective(
-    trial,
-    init_kwargs,  # self.init_kwargs
-    agent_class,  # self.agent_class
-    train_env,    # self.train_env
-    eval_env,
-    fit_budget,   # self.fit_budget
-    eval_kwargs,  # self.eval_kwargs
-    n_fit,
-    temp_dir,     # TEMP_DIR
-    disable_evaluation_writers,
-    fit_fraction
+        trial,
+        init_kwargs,  # self.init_kwargs
+        agent_class,  # self.agent_class
+        train_env,  # self.train_env
+        eval_env,
+        fit_budget,  # self.fit_budget
+        eval_kwargs,  # self.eval_kwargs
+        n_fit,
+        temp_dir,  # TEMP_DIR
+        disable_evaluation_writers,
+        fit_fraction
 ):
     kwargs = deepcopy(init_kwargs)
 
@@ -829,7 +831,7 @@ def _optuna_objective(
         train_env,
         fit_budget,
         eval_env=eval_env,
-        init_kwargs=kwargs,   # kwargs are being optimized
+        init_kwargs=kwargs,  # kwargs are being optimized
         eval_kwargs=deepcopy(eval_kwargs),
         agent_name='optim',
         n_fit=n_fit,

@@ -5,7 +5,6 @@ import yaml
 from rlberry.stats import AgentStats
 from rlberry.utils.factory import load
 
-
 _AGENT_KEYS = ('init_kwargs', 'eval_kwargs', 'fit_kwargs')
 
 

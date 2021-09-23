@@ -24,9 +24,9 @@ def test_discrete_env(rate_power):
                 assert counter.N_sa[ss, aa] == N
                 assert counter.count(ss, aa) == N
                 if rate_power == pytest.approx(1):
-                    assert np.allclose(counter.measure(ss, aa), 1.0/N)
+                    assert np.allclose(counter.measure(ss, aa), 1.0 / N)
                 elif rate_power == pytest.approx(0.5):
-                    assert np.allclose(counter.measure(ss, aa), np.sqrt(1.0/N))
+                    assert np.allclose(counter.measure(ss, aa), np.sqrt(1.0 / N))
 
         assert counter.get_n_visited_states() == env.observation_space.n
         assert np.allclose(counter.get_entropy(), np.log2(env.observation_space.n))
@@ -51,9 +51,9 @@ def test_continuous_state_env(rate_power):
             assert counter.N_sa[dss, aa] == N
             assert counter.count(ss, aa) == N
             if rate_power == pytest.approx(1):
-                assert np.allclose(counter.measure(ss, aa), 1.0/N)
+                assert np.allclose(counter.measure(ss, aa), 1.0 / N)
             elif rate_power == pytest.approx(0.5):
-                assert np.allclose(counter.measure(ss, aa), np.sqrt(1.0/N))
+                assert np.allclose(counter.measure(ss, aa), np.sqrt(1.0 / N))
             counter.reset()
 
 
@@ -73,9 +73,9 @@ def test_continuous_state_env_2(rate_power):
                 counter.update(ss, aa, ns, rr)
             assert counter.count(ss, aa) == N
             if rate_power == pytest.approx(1):
-                assert np.allclose(counter.measure(ss, aa), 1.0/N)
+                assert np.allclose(counter.measure(ss, aa), 1.0 / N)
             elif rate_power == pytest.approx(0.5):
-                assert np.allclose(counter.measure(ss, aa), np.sqrt(1.0/N))
+                assert np.allclose(counter.measure(ss, aa), np.sqrt(1.0 / N))
             counter.reset()
 
 
@@ -98,7 +98,7 @@ def test_continuous_state_env_3():
                     counter.update(continuous_ss, aa, None, rr)
                 assert counter.N_sa[ss, aa] == N
                 assert counter.count(continuous_ss, aa) == N
-                assert np.allclose(counter.measure(continuous_ss, aa), np.sqrt(1.0/N))
+                assert np.allclose(counter.measure(continuous_ss, aa), np.sqrt(1.0 / N))
 
         assert counter.get_n_visited_states() == env.discrete_observation_space.n
         assert np.allclose(counter.get_entropy(), np.log2(env.discrete_observation_space.n))

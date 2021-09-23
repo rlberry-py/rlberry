@@ -1,5 +1,6 @@
 from rlberry.agents.torch import AVECPPOAgent
 from rlberry.envs.classic_control import MountainCar
+
 render = False
 
 for env, n_episodes, horizon in zip([MountainCar()], [40000], [256]):

@@ -55,13 +55,13 @@ def test_agent_stats_and_multiple_stats_seeding(env, agent_class):
         assert compare_trajectories(traj3, traj3_test)
 
     for ii in range(2, agent_stats.n_fit):
-        rand1 = stats1.agent_handlers[ii - 2].seeder.rng.integers(2**32)
-        rand2 = stats1.agent_handlers[ii - 1].seeder.rng.integers(2**32)
-        rand3 = stats1.agent_handlers[ii].seeder.rng.integers(2**32)
+        rand1 = stats1.agent_handlers[ii - 2].seeder.rng.integers(2 ** 32)
+        rand2 = stats1.agent_handlers[ii - 1].seeder.rng.integers(2 ** 32)
+        rand3 = stats1.agent_handlers[ii].seeder.rng.integers(2 ** 32)
 
-        rand1_test = stats2.agent_handlers[ii - 2].seeder.rng.integers(2**32)
-        rand2_test = stats2.agent_handlers[ii - 1].seeder.rng.integers(2**32)
-        rand3_test = stats2.agent_handlers[ii].seeder.rng.integers(2**32)
+        rand1_test = stats2.agent_handlers[ii - 2].seeder.rng.integers(2 ** 32)
+        rand2_test = stats2.agent_handlers[ii - 1].seeder.rng.integers(2 ** 32)
+        rand3_test = stats2.agent_handlers[ii].seeder.rng.integers(2 ** 32)
 
         assert rand1 != rand2
         assert rand1 != rand3

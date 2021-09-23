@@ -20,6 +20,7 @@ class Tuple(gym.spaces.Tuple):
     reseed()
         get new random number generator
     """
+
     def __init__(self, spaces):
         gym.spaces.Tuple.__init__(self, spaces)
         self.seeder = Seeder()

@@ -34,9 +34,9 @@ def update_value_and_get_action(state,
     for aa in range(A):
         q_aa = R_hat[state, aa] + B_sa[state, aa]
 
-        if hh < H-1:
+        if hh < H - 1:
             for sn in range(S):
-                q_aa += gamma*P_hat[state, aa, sn]*V[hh+1, sn]
+                q_aa += gamma * P_hat[state, aa, sn] * V[hh + 1, sn]
 
         if aa == 0 or q_aa > max_val:
             max_val = q_aa
@@ -82,9 +82,9 @@ def update_value_and_get_action_sd(state,
     for aa in range(A):
         q_aa = R_hat[hh, state, aa] + B_sa[hh, state, aa]
 
-        if hh < H-1:
+        if hh < H - 1:
             for sn in range(S):
-                q_aa += gamma*P_hat[hh, state, aa, sn]*V[hh+1, sn]
+                q_aa += gamma * P_hat[hh, state, aa, sn] * V[hh + 1, sn]
 
         if aa == 0 or q_aa > max_val:
             max_val = q_aa

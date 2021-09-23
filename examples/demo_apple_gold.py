@@ -1,7 +1,6 @@
 from rlberry.envs.benchmarks.grid_exploration.apple_gold import AppleGold
 from rlberry.agents.dynprog import ValueIterationAgent
 
-
 env = AppleGold(reward_free=False, array_observation=False)
 
 agent = ValueIterationAgent(env, gamma=0.9)
@@ -18,4 +17,3 @@ for tt in range(50):
         break
     state = next_s
 env.render()
-

@@ -117,23 +117,23 @@ class A2CAgent(AgentWithSimplePolicy):
 
     def reset(self, **kwargs):
         self.cat_policy = self.policy_net_fn(
-                            self.env,
-                            **self.policy_net_kwargs).to(self.device)
+            self.env,
+            **self.policy_net_kwargs).to(self.device)
         self.policy_optimizer = optimizer_factory(
-                                    self.cat_policy.parameters(),
-                                    **self.optimizer_kwargs)
+            self.cat_policy.parameters(),
+            **self.optimizer_kwargs)
 
         self.value_net = self.value_net_fn(
-                                    self.env,
-                                    **self.value_net_kwargs).to(self.device)
+            self.env,
+            **self.value_net_kwargs).to(self.device)
 
         self.value_optimizer = optimizer_factory(
-                                self.value_net.parameters(),
-                                **self.optimizer_kwargs)
+            self.value_net.parameters(),
+            **self.optimizer_kwargs)
 
         self.cat_policy_old = self.policy_net_fn(
-                                self.env,
-                                **self.policy_net_kwargs).to(self.device)
+            self.env,
+            **self.policy_net_kwargs).to(self.device)
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
 
         self.MseLoss = nn.MSELoss()
@@ -189,7 +189,7 @@ class A2CAgent(AgentWithSimplePolicy):
                     bonus = info['exploration_bonus']
 
             # save in batch
-            self.memory.rewards.append(reward+bonus)   # add bonus here
+            self.memory.rewards.append(reward + bonus)  # add bonus here
             self.memory.is_terminals.append(done)
             episode_rewards += reward
 
@@ -242,12 +242,12 @@ class A2CAgent(AgentWithSimplePolicy):
             # normalize the advantages
             advantages = rewards - state_values.detach()
             advantages = (advantages - advantages.mean()) \
-                / (advantages.std() + 1e-8)
+                         / (advantages.std() + 1e-8)
             # find pg loss
             pg_loss = - logprobs * advantages
             loss = pg_loss \
-                + 0.5 * self.MseLoss(state_values, rewards) \
-                - self.entr_coef * dist_entropy
+                   + 0.5 * self.MseLoss(state_values, rewards) \
+                   - self.entr_coef * dist_entropy
 
             # take gradient step
             self.policy_optimizer.zero_grad()
@@ -278,9 +278,9 @@ class A2CAgent(AgentWithSimplePolicy):
                                              [1, 5, 10, 20])
 
         return {
-                'batch_size': batch_size,
-                'gamma': gamma,
-                'learning_rate': learning_rate,
-                'entr_coef': entr_coef,
-                'k_epochs': k_epochs,
-                }
+            'batch_size': batch_size,
+            'gamma': gamma,
+            'learning_rate': learning_rate,
+            'entr_coef': entr_coef,
+            'k_epochs': k_epochs,
+        }

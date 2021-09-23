@@ -276,6 +276,3 @@ class ConvolutionalNetwork(nn.Module):
 
     def action_scores(self, x):
         return self.head.action_scores(self.convolutions(x))
-
-
-

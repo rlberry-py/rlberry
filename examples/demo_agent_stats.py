@@ -1,17 +1,14 @@
-
 import numpy as np
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
 from rlberry.agents import RSKernelUCBVIAgent, RSUCBVIAgent
 from rlberry.agents.torch.ppo import PPOAgent
 from rlberry.stats import AgentStats, plot_writer_data, evaluate_agents
 
-
 # --------------------------------
 # Define train and evaluation envs
 # --------------------------------
 train_env = (PBall2D, dict())
 eval_env = (PBall2D, dict())
-
 
 # -----------------------------
 # Parameters
@@ -72,7 +69,6 @@ ppo_stats = AgentStats(
     eval_kwargs=eval_kwargs,
     n_fit=4,
     seed=123)
-
 
 agent_stats_list = [rsucbvi_stats, rskernel_stats, ppo_stats]
 for st in agent_stats_list:

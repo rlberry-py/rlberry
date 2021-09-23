@@ -5,9 +5,9 @@
 #
 import rlberry.check_packages as check_packages
 
-
 if check_packages.NUMBA_INSTALLED:
     from numba import jit
+
     numba_jit = jit(nopython=True)
 else:
     def numba_jit(func, **options):

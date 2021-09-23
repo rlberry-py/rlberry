@@ -15,7 +15,6 @@ from rlberry.rendering import RenderInterface
 from rlberry.rendering import RenderInterface2D
 from rlberry.envs import Wrapper
 
-
 try:
     display = Display(visible=0, size=(1400, 900))
     display.start()
@@ -92,4 +91,3 @@ def test_render2d_interface_wrapped(ModelClass):
             os.remove('test_video.mp4')
         except Exception:
             pass
-

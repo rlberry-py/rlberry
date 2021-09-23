@@ -68,6 +68,7 @@ def preprocess_args(expected_type):
     expected_type: {'torch', 'numpy'}
         Desired type for output.
     """
+
     def decorator(func):
         def inner(self, *args, **kwargs):
             processed_args = ()
@@ -78,5 +79,7 @@ def preprocess_args(expected_type):
             ouput_expected_type = _get_type(args[0])
             processed_output = process_type(output, ouput_expected_type)
             return processed_output
+
         return inner
+
     return decorator

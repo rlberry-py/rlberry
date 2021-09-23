@@ -102,16 +102,16 @@ class DQNAgent(AgentWithSimplePolicy):
                  **kwargs):
         # Wrap arguments and initialize base class
         memory_kwargs = {
-                        'capacity': memory_capacity,
-                        'n_steps': 1,
-                        'gamma': gamma
-                        }
+            'capacity': memory_capacity,
+            'n_steps': 1,
+            'gamma': gamma
+        }
         exploration_kwargs = {
-                             'method': "EpsilonGreedy",
-                             'temperature': epsilon_init,
-                             'final_temperature': epsilon_final,
-                             'tau': epsilon_decay,
-                            }
+            'method': "EpsilonGreedy",
+            'temperature': epsilon_init,
+            'final_temperature': epsilon_final,
+            'tau': epsilon_decay,
+        }
         self.use_bonus = use_bonus
         if self.use_bonus:
             env = UncertaintyEstimatorWrapper(env,
@@ -209,7 +209,7 @@ class DQNAgent(AgentWithSimplePolicy):
             total_success += info.get("is_success", 0)
             if done:
                 break
-        return total_reward, total_bonus, total_success, time+1
+        return total_reward, total_bonus, total_success, time + 1
 
     def record(self, state, action, reward, next_state, done, info):
         """
@@ -301,7 +301,7 @@ class DQNAgent(AgentWithSimplePolicy):
         """
         # Concatenate the batch elements
         state = torch.cat(tuple(torch.tensor([batch.state],
-                          dtype=torch.float))).to(self.device)
+                                             dtype=torch.float))).to(self.device)
         action = torch.tensor(batch.action,
                               dtype=torch.long).to(self.device)
         reward = torch.tensor(batch.reward,
@@ -313,7 +313,7 @@ class DQNAgent(AgentWithSimplePolicy):
                 self.writer.add_scalar("debug/minibatch_mean_reward", reward.mean().item(), self.episode)
             reward += bonus
         next_state = torch.cat(tuple(torch.tensor([batch.next_state],
-                               dtype=torch.float))).to(self.device)
+                                                  dtype=torch.float))).to(self.device)
         terminal = torch.tensor(batch.terminal,
                                 dtype=torch.bool).to(self.device)
         batch = Transition(state, action, reward, next_state, terminal, batch.info)
@@ -334,16 +334,16 @@ class DQNAgent(AgentWithSimplePolicy):
                 # Double Q-learning: estimate action values
                 # from target network
                 best_values = self.target_net(
-                                batch.next_state
-                                ).gather(1, best_actions.unsqueeze(1))\
-                                 .squeeze(1)
+                    batch.next_state
+                ).gather(1, best_actions.unsqueeze(1)) \
+                    .squeeze(1)
             else:
                 best_values, _ = self.target_net(batch.next_state).max(1)
             next_state_values[~batch.terminal] \
                 = best_values[~batch.terminal]
             # Compute the expected Q values
             target_state_action_value = batch.reward \
-                + self.gamma * next_state_values
+                                        + self.gamma * next_state_values
 
         # Compute residuals
         residuals = self.loss_function(state_action_values, target_state_action_value, reduction='none')
@@ -366,7 +366,7 @@ class DQNAgent(AgentWithSimplePolicy):
             indexes for each state
         """
         values, actions = self.value_net(torch.tensor(states,
-                                         dtype=torch.float)
+                                                      dtype=torch.float)
                                          .to(self.device)).max(1)
         return values.data.cpu().numpy(), actions.data.cpu().numpy()
 
@@ -385,7 +385,7 @@ class DQNAgent(AgentWithSimplePolicy):
         for each state
         """
         return self.value_net(torch.tensor(states,
-                              dtype=torch.float)
+                                           dtype=torch.float)
                               .to(self.device)).data.cpu().numpy()
 
     def get_state_value(self, state):
@@ -519,7 +519,7 @@ class DQNAgent(AgentWithSimplePolicy):
         import matplotlib.pyplot as plt
         if isinstance(self.env.unwrapped, NRoom):
             states = [self.env.unwrapped._convert_index_to_float_coord(idx)
-                          for idx in range(max(self.env.unwrapped.index2coord.keys()))]
+                      for idx in range(max(self.env.unwrapped.index2coord.keys()))]
             actions = np.repeat(np.arange(self.env.action_space.n), len(states))
             states = states * self.env.action_space.n
         else:
@@ -545,7 +545,7 @@ class DQNAgent(AgentWithSimplePolicy):
         import matplotlib.pyplot as plt
         if isinstance(self.env.unwrapped, NRoom):
             states = [self.env.unwrapped._convert_index_to_float_coord(idx)
-                          for idx in range(max(self.env.unwrapped.index2coord.keys()))]
+                      for idx in range(max(self.env.unwrapped.index2coord.keys()))]
         else:
             states = self.memory.sample(states_count)[0].state
         states = torch.from_numpy(np.array(states)).to(self.device)
@@ -578,10 +578,10 @@ class DQNAgent(AgentWithSimplePolicy):
                                                   [1000, 5000, 10000])
 
         return {
-                'batch_size': batch_size,
-                'gamma': gamma,
-                'learning_rate': learning_rate,
-                'target_update': target_update,
-                'epsilon_final': epsilon_final,
-                'epsilon_decay': epsilon_decay,
-                }
+            'batch_size': batch_size,
+            'gamma': gamma,
+            'learning_rate': learning_rate,
+            'target_update': target_update,
+            'epsilon_final': epsilon_final,
+            'epsilon_decay': epsilon_decay,
+        }

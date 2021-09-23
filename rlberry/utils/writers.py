@@ -4,7 +4,6 @@ import pandas as pd
 from typing import Optional
 from timeit import default_timer as timer
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -22,6 +21,7 @@ class DefaultWriter:
     log_interval : int
         Minimum number of seconds between consecutive logs.
     """
+
     def __init__(self, name: str, log_interval: int = 3):
         self._name = name
         self._log_interval = log_interval
@@ -68,7 +68,7 @@ class DefaultWriter:
             self._data[tag]['global_step'] = []
 
         self._data[tag]['name'].append(self._name)  # used in plots, when aggregating several writers
-        self._data[tag]['tag'].append(tag)   # useful to convert all data to a single DataFrame
+        self._data[tag]['tag'].append(tag)  # useful to convert all data to a single DataFrame
         self._data[tag]['value'].append(scalar_value)
         if global_step is None:
             self._data[tag]['global_step'].append(np.nan)
@@ -116,4 +116,5 @@ class DefaultWriter:
 
         def method(*args, **kwargs):
             pass
+
         return method
