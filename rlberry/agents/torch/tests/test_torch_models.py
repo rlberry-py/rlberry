@@ -41,6 +41,17 @@ def test_cnn():
     assert y.shape[1] == 15
 
 
+def test_cnn_policy():
+    model = ConvolutionalNetwork(in_channels=10,
+                                 in_height=20,
+                                 in_width=30,
+                                 out_size=15,
+                                 is_policy=True)
+    x = torch.rand(1, 10, 20, 30)
+    scores = model.action_scores(x)
+    assert scores.shape[1] == 15
+
+
 def test_ego_attention():
     _ = EgoAttention()
 
