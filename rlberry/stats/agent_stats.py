@@ -743,7 +743,7 @@ def _fit_worker(args):
     Create and fit an agent instance
     """
     lock, agent_handler, agent_class, train_env, eval_env, fit_budget, init_kwargs, \
-    fit_kwargs, writer, thread_logging_level, seeder = args
+        fit_kwargs, writer, thread_logging_level, seeder = args
 
     # reseed external libraries
     set_external_seed(seeder)

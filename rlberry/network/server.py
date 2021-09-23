@@ -45,20 +45,43 @@ class ClientHandler:
     def _execute_message(self, message: interface.Message):
         """Execute command in message and send response."""
         response = interface.Message.create(command=interface.Command.ECHO)
-        # FIT_AGENT_STATS
-        if message.command == interface.Command.FIT_AGENT_STATS:
-            agent_stats = AgentStats(**message.params)
-            agent_stats.fit()
-            output = agent_stats.eval()
-            response = interface.Message.create(data=dict(eval_output=output))
-        # LIST_RESOURCES
-        elif message.command == interface.Command.LIST_RESOURCES:
-            info = {}
-            for rr in self._resources:
-                info[rr] = self._resources[rr]['description']
-            response = interface.Message.create(info=info)
-        # Send response
-        self._socket.sendall(serialize_message(response))
+        try:
+            # CREATE_AGENT_STATS_INSTANCE
+            if message.command == interface.Command.CREATE_AGENT_STATS_INSTANCE:
+                agent_stats = AgentStats(**message.params)
+                output_dir = 'client_data' / agent_stats.output_dir
+                agent_stats.set_output_dir(output_dir)
+                filename = str(agent_stats.save())
+                response = interface.Message.create(info=dict(filename=filename))
+                del agent_stats
+            # FIT_AGENT_STATS
+            elif message.command == interface.Command.FIT_AGENT_STATS:
+                filename = message.params['filename']
+                agent_stats = AgentStats.load(filename)
+                agent_stats.fit()
+                agent_stats.save()
+                response = interface.Message.create(command=interface.Command.ECHO)
+                del agent_stats
+            # EVAL_AGENT_STATS
+            elif message.command == interface.Command.EVAL_AGENT_STATS:
+                filename = message.params['filename']
+                agent_stats = AgentStats.load(filename)
+                eval_output = agent_stats.eval()
+                # agent_stats.save()  # eval does not change the state of agent stats
+                response = interface.Message.create(data=dict(output=eval_output))
+                del agent_stats
+            # LIST_RESOURCES
+            elif message.command == interface.Command.LIST_RESOURCES:
+                info = {}
+                for rr in self._resources:
+                    info[rr] = self._resources[rr]['description']
+                response = interface.Message.create(info=info)
+            # Send response
+            self._socket.sendall(serialize_message(response))
+        except Exception as ex:
+            response = interface.Message.create(info=dict(ERROR='Exception: ' + str(ex)))
+            self._socket.sendall(serialize_message(response))
+            return 1
         return 0
 
     def run(self):
@@ -120,7 +143,7 @@ class BerryServer():
                     description='gym_make'),
             )
         else:
-            for key, val in resources.items():
+            for _, val in resources.items():
                 if set(val.keys()) != set(['obj', 'description']):
                     raise ValueError(
                         "resources items must be a dictionary with keys ['obj', 'description']."

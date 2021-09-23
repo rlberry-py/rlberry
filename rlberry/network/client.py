@@ -1,6 +1,7 @@
 import pprint
 import socket
 import json
+from typing import List, Union
 from rlberry.network import interface
 from rlberry.network.utils import serialize_message
 
@@ -25,7 +26,8 @@ class BerryClient():
         self._host = host
         self._port = port
 
-    def send(self, *messages: interface.Message):
+    def send(self, *messages: interface.Message) -> Union[List[interface.Message], interface.Message]:
+        returned_messages = []
         pp = pprint.PrettyPrinter(indent=4)
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.connect((self._host, self._port))
@@ -33,4 +35,11 @@ class BerryClient():
                 msg_bytes = serialize_message(msg)
                 s.sendall(msg_bytes)
                 received_bytes = s.recv(1024)
-                pp.pprint(json.loads(received_bytes))
+                received_msg_dict = json.loads(received_bytes)
+                pp.pprint(received_msg_dict)
+                received_msg = interface.Message.from_dict(received_msg_dict)
+                returned_messages.append(received_msg)
+
+        if len(messages) == 1:
+            return returned_messages[0]
+        return returned_messages

@@ -7,8 +7,15 @@ REQUEST_PREFIX = 'ResourceRequest_'
 class Command:
     NONE = 'NONE'
     ECHO = 'ECHO'
-    FIT_AGENT_STATS = 'FIT_AGENT_STATS'  # fit, eval and return eval output
+    CREATE_AGENT_STATS_INSTANCE = 'CREATE_AGENT_STATS_INSTANCE'
+    FIT_AGENT_STATS = 'FIT_AGENT_STATS'
+    EVAL_AGENT_STATS = 'EVAL_AGENT_STATS'
     LIST_RESOURCES = 'LIST_RESOURCES'
+
+
+class BerryServerInfo:
+    host: str
+    port: int
 
 
 class Message(NamedTuple):
