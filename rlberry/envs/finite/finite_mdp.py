@@ -170,7 +170,6 @@ class FiniteMDP(Model):
                                     f'with prob {self.P[s, a, ss]: .2f}')
             logger.info("~~~~~~~~~~~~~~~~~~~~")
 
-
 # if __name__ == '__main__':
 #     S = 3
 #     A = 2

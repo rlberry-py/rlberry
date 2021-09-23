@@ -10,13 +10,11 @@ from rlberry.envs.benchmarks.ball_exploration import PBall2D, SimplePBallND
 from rlberry.envs import Wrapper
 from rlberry.wrappers import RescaleRewardWrapper
 
-
 _GYM_INSTALLED = True
 try:
     import gym
 except Exception:
     _GYM_INSTALLED = False
-
 
 classes = [
     MountainCar,
@@ -46,7 +44,6 @@ def compare_trajectories(traj1, traj2):
 
 @pytest.mark.parametrize("ModelClass", classes)
 def test_wrapper_seeding(ModelClass):
-
     env1 = Wrapper(ModelClass())
     seeder = Seeder(123)
     env1.reseed(seeder)
@@ -70,7 +67,6 @@ def test_wrapper_seeding(ModelClass):
 
 @pytest.mark.parametrize("ModelClass", classes)
 def test_rescale_wrapper_seeding(ModelClass):
-
     env1 = RescaleRewardWrapper(ModelClass(), (0, 1))
     seeder = Seeder(123)
     env1.reseed(seeder)
@@ -94,7 +90,6 @@ def test_rescale_wrapper_seeding(ModelClass):
 
 @pytest.mark.parametrize("ModelClass", classes)
 def test_wrapper_copy_reseeding(ModelClass):
-
     env = Wrapper(ModelClass())
     seeder = Seeder(123)
     env.reseed(seeder)
@@ -110,7 +105,6 @@ def test_wrapper_copy_reseeding(ModelClass):
 
 @pytest.mark.parametrize("ModelClass", classes)
 def test_double_wrapper_copy_reseeding(ModelClass):
-
     env = Wrapper(Wrapper(ModelClass()))
     seeder = Seeder(123)
     env.reseed(seeder)

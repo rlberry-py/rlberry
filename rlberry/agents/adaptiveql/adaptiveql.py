@@ -5,7 +5,6 @@ from rlberry.agents import AgentWithSimplePolicy
 from rlberry.utils.writers import DefaultWriter
 from rlberry.agents.adaptiveql.tree import MDPTreePartition
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -100,7 +99,7 @@ class AdaptiveQLAgent(AgentWithSimplePolicy):
     def _update(self, node, state, action, next_state, reward, hh):
         # split node if necessary
         node_to_check = self.Qtree.update_counts(state, action, hh)
-        if node_to_check.n_visits >= (self.Qtree.dmax / node_to_check.radius)**2.0:
+        if node_to_check.n_visits >= (self.Qtree.dmax / node_to_check.radius) ** 2.0:
             node_to_check.split()
         assert id(node_to_check) == id(node)
 

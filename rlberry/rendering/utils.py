@@ -46,17 +46,17 @@ def video_write(fn, images, framerate=60, vcodec='libx264'):
         _, height, width, channels = images.shape
         process = (
             ffmpeg
-            .input('pipe:', format='rawvideo', pix_fmt='rgb24',
-                   s='{}x{}'.format(width, height), r=framerate)
-            .output(fn, pix_fmt='yuv420p', vcodec=vcodec)
-            .overwrite_output()
-            .run_async(pipe_stdin=True)
+                .input('pipe:', format='rawvideo', pix_fmt='rgb24',
+                       s='{}x{}'.format(width, height), r=framerate)
+                .output(fn, pix_fmt='yuv420p', vcodec=vcodec)
+                .overwrite_output()
+                .run_async(pipe_stdin=True)
         )
         for frame in images:
             process.stdin.write(
                 frame
-                .astype(np.uint8)
-                .tobytes()
+                    .astype(np.uint8)
+                    .tobytes()
             )
         process.stdin.close()
         process.wait()
@@ -64,4 +64,3 @@ def video_write(fn, images, framerate=60, vcodec='libx264'):
     except Exception as ex:
         logger.warning("Not possible to save \
 video, due to exception: {}".format(str(ex)))
-

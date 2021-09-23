@@ -9,7 +9,6 @@ from rlberry.agents.dynprog.utils import backward_induction_sd
 from rlberry.agents.dynprog.utils import backward_induction_in_place
 from rlberry.utils.writers import DefaultWriter
 
-
 logger = logging.getLogger(__name__)
 
 

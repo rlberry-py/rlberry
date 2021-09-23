@@ -47,7 +47,7 @@ def split_bounds(bounds, dim=0):
         return [bounds]
     left = bounds[dim, 0]
     right = bounds[dim, 1]
-    middle = (left+right)/2.0
+    middle = (left + right) / 2.0
 
     left_interval = bounds.copy()
     right_interval = bounds.copy()
@@ -58,4 +58,4 @@ def split_bounds(bounds, dim=0):
     right_interval[dim, 0] = middle
     right_interval[dim, 1] = right
 
-    return split_bounds(left_interval, dim+1) + split_bounds(right_interval, dim+1)
+    return split_bounds(left_interval, dim + 1) + split_bounds(right_interval, dim + 1)

@@ -14,8 +14,8 @@ def get_nroom_state_coord(state_index, nroom_env):
     xx = xx + 0.5
     yy = yy + 0.5
     # map to [0, 1]
-    xx = xx/nroom_env.ncols
-    yy = yy/nroom_env.nrows
+    xx = xx / nroom_env.ncols
+    yy = yy / nroom_env.nrows
     return np.array([xx, yy])
 
 
@@ -86,19 +86,19 @@ class NRoom(GridWorld):
             self.room_ncols = self.max_rooms_per_row
         else:
             self.room_ncols = nrooms
-        nrows = self.room_size*self.room_nrows + (self.room_nrows-1)
-        ncols = self.room_size*self.room_ncols + (self.room_ncols-1)
+        nrows = self.room_size * self.room_nrows + (self.room_nrows - 1)
+        ncols = self.room_size * self.room_ncols + (self.room_ncols - 1)
 
         # # walls
         walls = []
-        for room_col in range(self.room_ncols-1):
-            col = (room_col+1)*(self.room_size+1) - 1
+        for room_col in range(self.room_ncols - 1):
+            col = (room_col + 1) * (self.room_size + 1) - 1
             for jj in range(nrows):
-                if (jj % (self.room_size+1)) != (self.room_size//2):
+                if (jj % (self.room_size + 1)) != (self.room_size // 2):
                     walls.append((jj, col))
 
-        for room_row in range(self.room_nrows-1):
-            row = (room_row+1)*(self.room_size+1) - 1
+        for room_row in range(self.room_nrows - 1):
+            row = (room_row + 1) * (self.room_size + 1) - 1
             for jj in range(ncols):
                 walls.append((row, jj))
 
@@ -116,23 +116,23 @@ class NRoom(GridWorld):
                 # existing rooms
                 if count < self.nrooms:
                     # remove top wall
-                    if ((room_c == self.room_ncols-1) and (room_r % 2 == 0)) \
+                    if ((room_c == self.room_ncols - 1) and (room_r % 2 == 0)) \
                             or ((room_c == 0) and (room_r % 2 == 1)):
-                        if room_r != self.room_nrows-1:
+                        if room_r != self.room_nrows - 1:
                             wall_to_remove = self._convert_room_coord_to_global(
-                                                                room_r, room_c,
-                                                                self.room_size, self.room_size//2)
+                                room_r, room_c,
+                                self.room_size, self.room_size // 2)
                             if wall_to_remove in walls:
                                 walls.remove(wall_to_remove)
                 # rooms to remove
                 else:
-                    for ii in range(-1, self.room_size+1):
-                        for jj in range(-1, self.room_size+1):
+                    for ii in range(-1, self.room_size + 1):
+                        for jj in range(-1, self.room_size + 1):
                             wall_to_include = self._convert_room_coord_to_global(
-                                                            room_r, room_c,
-                                                            ii, jj)
+                                room_r, room_c,
+                                ii, jj)
                             if wall_to_include[0] >= 0 and wall_to_include[0] < nrows \
-                                and wall_to_include[1] >= 0 and wall_to_include[1] < ncols \
+                                    and wall_to_include[1] >= 0 and wall_to_include[1] < ncols \
                                     and (wall_to_include not in walls):
                                 walls.append(wall_to_include)
                     pass
@@ -140,19 +140,19 @@ class NRoom(GridWorld):
                 # start coord
                 if count == nrooms // 2:
                     start_coord = self._convert_room_coord_to_global(
-                                                room_r, room_c,
-                                                self.room_size//2, self.room_size//2)
+                        room_r, room_c,
+                        self.room_size // 2, self.room_size // 2)
                 # terminal state
                 if count == nrooms - 1:
                     terminal_state = self._convert_room_coord_to_global(
-                                                room_r, room_c,
-                                                self.room_size//2, self.room_size//2)
+                        room_r, room_c,
+                        self.room_size // 2, self.room_size // 2)
                 # trap
                 if include_traps:
                     self.traps.append(
                         self._convert_room_coord_to_global(
-                                room_r, room_c,
-                                self.room_size//2+1, self.room_size//2+1)
+                            room_r, room_c,
+                            self.room_size // 2 + 1, self.room_size // 2 + 1)
                     )
                 count += 1
 
@@ -162,10 +162,10 @@ class NRoom(GridWorld):
             reward_at = {}
         else:
             reward_at = {
-                            terminal_state: 1.0,
-                            start_coord: 0.01,
-                            (self.room_size//2, self.room_size//2): 0.1
-                        }
+                terminal_state: 1.0,
+                start_coord: 0.01,
+                (self.room_size // 2, self.room_size // 2): 0.1
+            }
 
         # Check remove_walls
         if remove_walls:
@@ -193,8 +193,8 @@ class NRoom(GridWorld):
             self.observation_space = spaces.Box(0.0, 1.0, shape=(2,))
 
     def _convert_room_coord_to_global(self, room_row, room_col, room_coord_row, room_coord_col):
-        col_offset = (self.room_size+1)*room_col
-        row_offset = (self.room_size+1)*room_row
+        col_offset = (self.room_size + 1) * room_col
+        row_offset = (self.room_size + 1) * room_row
 
         row = room_coord_row + row_offset
         col = room_coord_col + col_offset
@@ -207,8 +207,8 @@ class NRoom(GridWorld):
         xx = xx + 0.5
         yy = yy + 0.5
         # map to [0, 1]
-        xx = xx/self.ncols
-        yy = yy/self.nrows
+        xx = xx / self.ncols
+        yy = yy / self.nrows
         return np.array([xx, yy])
 
     def reset(self):

@@ -168,8 +168,8 @@ class GridWorld(RenderInterface2D, FiniteMDP):
                         next_s = self.coord2index[next_s_coord]
                         if a == nn:  # action is successful
                             self.P[s, a, next_s] = self.success_probability \
-                                + (1 - self.success_probability) \
-                                * (n_valid == 1)
+                                                   + (1 - self.success_probability) \
+                                                   * (n_valid == 1)
                         elif neighbors[a][0] not in valid_neighbors:
                             self.P[s, a, s] = 1.0
                         else:
@@ -235,8 +235,8 @@ class GridWorld(RenderInterface2D, FiniteMDP):
         grid_ascii = ''
         for rr in range(self.nrows + 1):
             if rr < self.nrows:
-                grid_ascii += str(rr).zfill(2) + 2 * ' '\
-                     + ' '.join(grid[rr]) + '\n'
+                grid_ascii += str(rr).zfill(2) + 2 * ' ' \
+                              + ' '.join(grid[rr]) + '\n'
             else:
                 grid_ascii += 3 * ' ' + ' '.join([str(jj).zfill(2) for jj
                                                   in range(self.ncols)])
@@ -257,11 +257,11 @@ class GridWorld(RenderInterface2D, FiniteMDP):
         for rr in range(self.nrows + 1):
             if rr < self.nrows:
                 grid_values_ascii += str(rr).zfill(2) + 2 * ' ' \
-                    + ' '.join(grid_values[rr]) + '\n'
+                                     + ' '.join(grid_values[rr]) + '\n'
             else:
                 grid_values_ascii += 4 * ' ' \
-                    + ' '.join([str(jj).zfill(2).ljust(9) for jj
-                                in range(self.ncols)])
+                                     + ' '.join([str(jj).zfill(2).ljust(9) for jj
+                                                 in range(self.ncols)])
         logger.info(grid_values_ascii)
 
     def print_transition_at(self, row, col, action):
@@ -366,7 +366,7 @@ class GridWorld(RenderInterface2D, FiniteMDP):
                 if np.isnan(layout[rr, cc]):
                     img[rr, cc, :] = wall_color
                 else:
-                    img[rr, cc, :3] = scalar_map.to_rgba(layout[rr, cc])[:3]        
+                    img[rr, cc, :3] = scalar_map.to_rgba(layout[rr, cc])[:3]
         return img
 
     def get_background(self):
@@ -390,7 +390,7 @@ class GridWorld(RenderInterface2D, FiniteMDP):
         for (y, x) in self.reward_at:
             flag = GeometricPrimitive("POLYGON")
             rwd = self.reward_at[(y, x)]
-            color = 0.5*np.abs(rwd)/self.reward_range[1]
+            color = 0.5 * np.abs(rwd) / self.reward_range[1]
             if rwd > 0:
                 flag.set_color((0.0, color, 0.0))
             if rwd < 0:
@@ -421,7 +421,6 @@ class GridWorld(RenderInterface2D, FiniteMDP):
 
         scene.add_shape(agent)
         return scene
-
 
 # if __name__ == '__main__':
 #     env = GridWorld(nrows=5, ncols=5,

@@ -5,9 +5,7 @@ import pytest
 from rlberry.seeding import Seeder
 from rlberry.envs import gym_make
 
-
 from copy import deepcopy
-
 
 gym_envs = [
     'Acrobot-v1',
@@ -36,7 +34,6 @@ def compare_trajectories(traj1, traj2):
 
 @pytest.mark.parametrize("env_name", gym_envs)
 def test_env_seeding(env_name):
-
     seeder1 = Seeder(123)
     env1 = gym_make(env_name)
     env1.reseed(seeder1)
@@ -60,7 +57,6 @@ def test_env_seeding(env_name):
 
 @pytest.mark.parametrize("env_name", gym_envs)
 def test_copy_reseeding(env_name):
-
     seeder = Seeder(123)
     env = gym_make(env_name)
     env.reseed(seeder)

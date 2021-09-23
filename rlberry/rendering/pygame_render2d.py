@@ -25,7 +25,7 @@ class PyGameRender2D:
     def __init__(self):
         # parameters
         self.window_width = 800
-        self.window_height = 800    # multiples of 16 are preferred
+        self.window_height = 800  # multiples of 16 are preferred
         self.background_color = (150, 190, 255)
         self.refresh_interval = 50
         self.window_name = "rlberry render"
@@ -102,8 +102,8 @@ class PyGameRender2D:
 
             vertices = []
             for vertex in shape.vertices:
-                xx = vertex[0]*self.window_width/width_range
-                yy = vertex[1]*self.window_height/height_range
+                xx = vertex[0] * self.window_width / width_range
+                yy = vertex[1] * self.window_height / height_range
 
                 # put origin at bottom left instead of top left
                 yy = self.window_height - yy
@@ -111,9 +111,9 @@ class PyGameRender2D:
                 pg_vertex = (xx, yy)
                 vertices.append(pg_vertex)
 
-            color = (255*shape.color[0],
-                     255*shape.color[1],
-                     255*shape.color[2])
+            color = (255 * shape.color[0],
+                     255 * shape.color[1],
+                     255 * shape.color[2])
             pg.draw.polygon(self.screen, color, vertices)
 
         else:
@@ -190,4 +190,3 @@ pygame or pyopengl not installed.")
             logger.error("Not possible to render the environment, pygame \
 or pyopengl not installed.")
             return []
-

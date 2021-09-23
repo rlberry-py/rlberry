@@ -56,4 +56,3 @@ class RescaleRewardWrapper(Wrapper):
         observation, reward, done, info = self.env.sample(state, action)
         rescaled_reward = self._rescale(reward)
         return observation, rescaled_reward, done, info
-

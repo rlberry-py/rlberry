@@ -7,7 +7,7 @@ from rlberry.wrappers.gym_utils import convert_space_from_gym
 
 def convert_and_compare(sp, rlberry_space):
     sp_conv = convert_space_from_gym(sp)
-    assert(isinstance(sp_conv, rlberry_space))
+    assert (isinstance(sp_conv, rlberry_space))
     sp_conv.reseed()
     for _ in range(100):
         assert (sp.contains(sp_conv.sample()))
@@ -64,24 +64,24 @@ def test_multibinary():
 
 def test_dict():
     nested_observation_space = gym.spaces.Dict({
-            'sensors':  gym.spaces.Dict({
-                'position': gym.spaces.Box(low=-100, high=100, shape=(3,)),
-                'velocity': gym.spaces.Box(low=-1, high=1, shape=(3,)),
-                'front_cam': gym.spaces.Tuple((
-                    gym.spaces.Box(low=0, high=1, shape=(10, 10, 3)),
-                    gym.spaces.Box(low=0, high=1, shape=(10, 10, 3))
-                )),
-                'rear_cam': gym.spaces.Box(low=0, high=1, shape=(10, 10, 3)),
-            }),
-            'ext_controller': gym.spaces.MultiDiscrete((5, 2, 2)),
-            'inner_state': gym.spaces.Dict({
-                'charge': gym.spaces.Discrete(100),
-                'system_checks': gym.spaces.MultiBinary(10),
-                'job_status': gym.spaces.Dict({
-                    'task': gym.spaces.Discrete(5),
-                    'progress': gym.spaces.Box(low=0, high=100, shape=()),
-                })
+        'sensors': gym.spaces.Dict({
+            'position': gym.spaces.Box(low=-100, high=100, shape=(3,)),
+            'velocity': gym.spaces.Box(low=-1, high=1, shape=(3,)),
+            'front_cam': gym.spaces.Tuple((
+                gym.spaces.Box(low=0, high=1, shape=(10, 10, 3)),
+                gym.spaces.Box(low=0, high=1, shape=(10, 10, 3))
+            )),
+            'rear_cam': gym.spaces.Box(low=0, high=1, shape=(10, 10, 3)),
+        }),
+        'ext_controller': gym.spaces.MultiDiscrete((5, 2, 2)),
+        'inner_state': gym.spaces.Dict({
+            'charge': gym.spaces.Discrete(100),
+            'system_checks': gym.spaces.MultiBinary(10),
+            'job_status': gym.spaces.Dict({
+                'task': gym.spaces.Discrete(5),
+                'progress': gym.spaces.Box(low=0, high=100, shape=()),
             })
         })
+    })
     sp = nested_observation_space
     convert_and_compare(sp, rlberry.spaces.Dict)

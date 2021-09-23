@@ -95,9 +95,9 @@ class RandomNetworkDistillation(UncertaintyEstimator):
         self.random_target_network = self.net_fn(**self.net_kwargs).to(self.device)
         self.predictor_network = self.net_fn(**self.net_kwargs).to(self.device)
         self.rnd_optimizer = torch.optim.Adam(
-                                self.predictor_network.parameters(),
-                                lr=self.learning_rate,
-                                betas=(0.9, 0.999))
+            self.predictor_network.parameters(),
+            lr=self.learning_rate,
+            betas=(0.9, 0.999))
 
         self.count = 0
         self.loss = torch.tensor(0.0).to(self.device)

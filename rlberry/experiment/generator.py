@@ -17,13 +17,11 @@ from pathlib import Path
 from datetime import datetime
 from rlberry.experiment.yaml_utils import parse_experiment_config
 
-
 _TENSORBOARD_INSTALLED = True
 try:
     from torch.utils.tensorboard import SummaryWriter
 except ImportError:
     _TENSORBOARD_INSTALLED = False
-
 
 logger = logging.getLogger(__name__)
 

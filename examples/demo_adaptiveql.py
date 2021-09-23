@@ -45,7 +45,6 @@ mstats.append(
                output_dir='dev/examples/rs_ucbvi')
 )
 
-
 mstats.run(save=False)
 
 evaluate_agents(mstats.allstats)

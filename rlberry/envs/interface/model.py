@@ -3,7 +3,6 @@ import numpy as np
 import logging
 from rlberry.seeding import Seeder
 
-
 logger = logging.getLogger(__name__)
 
 

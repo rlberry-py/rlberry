@@ -3,13 +3,11 @@ from rlberry.envs.benchmarks.ball_exploration import PBall2D
 from rlberry.agents.torch.ppo import PPOAgent
 from rlberry.stats import AgentStats, plot_writer_data, evaluate_agents
 
-
 # --------------------------------
 # Define train and evaluation envs
 # --------------------------------
 train_env = (PBall2D, dict())
 eval_env = (PBall2D, dict())
-
 
 # -----------------------------
 # Parameters
@@ -19,7 +17,6 @@ GAMMA = 0.99
 HORIZON = 50
 BONUS_SCALE_FACTOR = 0.1
 MIN_DIST = 0.1
-
 
 params_ppo = {"gamma": GAMMA,
               "horizon": HORIZON,

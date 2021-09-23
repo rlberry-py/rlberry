@@ -72,9 +72,9 @@ class FourRoom(GridWorld):
                 reward_at = {(8, 0): 1.0}
             elif difficulty in [1, 2]:
                 reward_at = {
-                            (8, 0): 1.0,
-                            (3, 3): 0.1,
-                            }
+                    (8, 0): 1.0,
+                    (3, 3): 0.1,
+                }
 
         # Init base class
         GridWorld.__init__(self,
@@ -98,8 +98,8 @@ class FourRoom(GridWorld):
         xx = xx + 0.5
         yy = yy + 0.5
         # map to [0, 1]
-        xx = xx/self.ncols
-        yy = yy/self.nrows
+        xx = xx / self.ncols
+        yy = yy / self.nrows
         return np.array([xx, yy])
 
     def reset(self):

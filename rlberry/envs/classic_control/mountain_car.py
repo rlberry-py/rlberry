@@ -118,7 +118,7 @@ class MountainCar(RenderInterface2D, Model):
         position = state[0]
         velocity = state[1]
         velocity += (action - 1) * self.force \
-            + math.cos(3 * position) * (-self.gravity)
+                    + math.cos(3 * position) * (-self.gravity)
         velocity = np.clip(velocity, -self.max_speed, self.max_speed)
         position += velocity
         position = np.clip(position, self.min_position, self.max_position)
@@ -155,7 +155,7 @@ class MountainCar(RenderInterface2D, Model):
 
         n_points = 50
         obs_range = self.observation_space.high[0] \
-            - self.observation_space.low[0]
+                    - self.observation_space.low[0]
         eps = obs_range / (n_points - 1)
         for ii in reversed(range(n_points)):
             x = self.observation_space.low[0] + ii * eps
@@ -190,4 +190,3 @@ class MountainCar(RenderInterface2D, Model):
 
         scene.add_shape(agent)
         return scene
-

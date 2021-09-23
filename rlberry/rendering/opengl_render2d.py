@@ -35,7 +35,7 @@ class OpenGLRender2D:
     def __init__(self):
         # parameters
         self.window_width = 800
-        self.window_height = 800    # multiples of 16 are preferred
+        self.window_height = 800  # multiples of 16 are preferred
         self.background_color = (0.6, 0.75, 1.0)
         self.refresh_interval = 50
         self.window_name = "rlberry render"

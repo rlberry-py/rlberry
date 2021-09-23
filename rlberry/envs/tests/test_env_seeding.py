@@ -11,7 +11,6 @@ from rlberry.envs.benchmarks.grid_exploration.six_room import SixRoom
 from rlberry.envs.benchmarks.grid_exploration.apple_gold import AppleGold
 from rlberry.envs.benchmarks.ball_exploration import PBall2D, SimplePBallND
 
-
 classes = [
     MountainCar,
     GridWorld,
@@ -83,7 +82,6 @@ def test_env_seeding(ModelClass):
 
 @pytest.mark.parametrize("ModelClass", classes)
 def test_copy_reseeding(ModelClass):
-
     seeder = seeding.Seeder(123)
     env = ModelClass()
     env.reseed(seeder)

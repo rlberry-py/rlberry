@@ -10,6 +10,7 @@ class ReplayMemory(object):
     """
     Container that stores and samples transitions.
     """
+
     def __init__(self,
                  capacity=10000,
                  **kwargs):
@@ -68,6 +69,7 @@ class TransitionReplayMemory(ReplayMemory):
 
 class PrioritizedReplayMemory(TransitionReplayMemory):
     """Code from https://github.com/openai/baselines/blob/master/baselines/deepq/replay_buffer.py"""
+
     def __init__(self,
                  capacity=10000,
                  alpha=0.5,
@@ -215,7 +217,7 @@ class CEMMemory:
         self.actions.append(action)
         self.rewards.append(reward)
         self.size += 1
-        if self.size == self.max_size+1:
+        if self.size == self.max_size + 1:
             self.states.pop(0)
             self.actions.pop(0)
             self.rewards.pop(0)

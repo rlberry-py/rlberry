@@ -48,9 +48,9 @@ class UncertaintyEstimatorWrapper(Wrapper):
         uncertainty_estimator_fn = load(uncertainty_estimator_fn) if isinstance(uncertainty_estimator_fn, str) else \
             uncertainty_estimator_fn
         self.uncertainty_estimator = uncertainty_estimator_fn(
-                                        env.observation_space,
-                                        env.action_space,
-                                        **uncertainty_estimator_kwargs)
+            env.observation_space,
+            env.action_space,
+            **uncertainty_estimator_kwargs)
         self.previous_obs = None
 
     def reset(self):
@@ -102,4 +102,5 @@ class UncertaintyEstimatorWrapper(Wrapper):
 
     def bonus_batch(self, states, actions=None):
         bonus = self.bonus_scale_factor * self.uncertainty_estimator.measure_batch(states, actions)
-        return np.clip(bonus, 0, self.bonus_max) if isinstance(bonus, np.ndarray) else torch.clamp(bonus, 0, self.bonus_max)
+        return np.clip(bonus, 0, self.bonus_max) if isinstance(bonus, np.ndarray) else torch.clamp(bonus, 0,
+                                                                                                   self.bonus_max)

@@ -55,9 +55,9 @@ class SixRoom(GridWorld):
             reward_at = {}
         else:
             reward_at = {
-                        (10, 0): 10.0,
-                        (4, 4): 0.1,
-                        }
+                (10, 0): 10.0,
+                (4, 4): 0.1,
+            }
 
         # Init base class
         GridWorld.__init__(self,
@@ -81,8 +81,8 @@ class SixRoom(GridWorld):
         xx = xx + 0.5
         yy = yy + 0.5
         # map to [0, 1]
-        xx = xx/self.ncols
-        yy = yy/self.nrows
+        xx = xx / self.ncols
+        yy = yy / self.nrows
         return np.array([xx, yy])
 
     def reset(self):
@@ -143,4 +143,3 @@ class SixRoom(GridWorld):
             bg.add_shape(flag)
 
         return bg
-

@@ -89,25 +89,25 @@ def test_multibinary():
 
 def test_dict():
     nested_observation_space = Dict({
-            'sensors':  Dict({
-                'position': Box(low=-100, high=100, shape=(3,)),
-                'velocity': Box(low=-1, high=1, shape=(3,)),
-                'front_cam': Tuple((
-                    Box(low=0, high=1, shape=(10, 10, 3)),
-                    Box(low=0, high=1, shape=(10, 10, 3))
-                )),
-                'rear_cam': Box(low=0, high=1, shape=(10, 10, 3)),
-            }),
-            'ext_controller': MultiDiscrete((5, 2, 2)),
-            'inner_state': Dict({
-                'charge': Discrete(100),
-                'system_checks': MultiBinary(10),
-                'job_status': Dict({
-                    'task': Discrete(5),
-                    'progress': Box(low=0, high=100, shape=()),
-                })
+        'sensors': Dict({
+            'position': Box(low=-100, high=100, shape=(3,)),
+            'velocity': Box(low=-1, high=1, shape=(3,)),
+            'front_cam': Tuple((
+                Box(low=0, high=1, shape=(10, 10, 3)),
+                Box(low=0, high=1, shape=(10, 10, 3))
+            )),
+            'rear_cam': Box(low=0, high=1, shape=(10, 10, 3)),
+        }),
+        'ext_controller': MultiDiscrete((5, 2, 2)),
+        'inner_state': Dict({
+            'charge': Discrete(100),
+            'system_checks': MultiBinary(10),
+            'job_status': Dict({
+                'task': Discrete(5),
+                'progress': Box(low=0, high=100, shape=()),
             })
         })
+    })
     sp = nested_observation_space
     for _ in range(10):
         assert sp.contains(sp.sample())

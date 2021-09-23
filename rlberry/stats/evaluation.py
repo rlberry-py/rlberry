@@ -4,7 +4,6 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -42,7 +41,7 @@ def evaluate_agents(agent_stats_list,
         outputs = []
         logger.info(f'Evaluating {agent_stats.agent_name}...')
         for ii in range(n_simulations):
-            logger.info(f'... simulation {ii+1}/{n_simulations}')
+            logger.info(f'... simulation {ii + 1}/{n_simulations}')
             value = agent_stats.eval()
             if not np.isnan(value):
                 outputs.append(agent_stats.eval())

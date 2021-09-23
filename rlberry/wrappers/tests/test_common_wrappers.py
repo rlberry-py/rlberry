@@ -117,7 +117,6 @@ def test_rescale_reward_2(rmin, rmax):
 
 @pytest.mark.parametrize("horizon", list(range(1, 10)))
 def test_autoreset(horizon):
-
     # dummy MDP
     S, A = 5, 2
     R = np.ones((S, A))

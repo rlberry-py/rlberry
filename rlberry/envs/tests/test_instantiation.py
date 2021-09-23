@@ -12,7 +12,6 @@ from rlberry.envs.benchmarks.grid_exploration.nroom import NRoom
 from rlberry.envs.benchmarks.grid_exploration.apple_gold import AppleGold
 from rlberry.rendering.render_interface import RenderInterface2D
 
-
 classes = [
     MountainCar,
     GridWorld,
@@ -169,7 +168,7 @@ def test_apple_gold(reward_free, array_observation):
         assert isinstance(next_state, np.ndarray)
 
 
-@pytest.mark.parametrize("reward_free, array_observation, initial_state_distribution", 
+@pytest.mark.parametrize("reward_free, array_observation, initial_state_distribution",
                          [
                              (False, False, 'center'),
                              (False, True, 'center'),

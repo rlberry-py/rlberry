@@ -102,10 +102,10 @@ class MBQVIAgent(AgentWithSimplePolicy):
                     if count % 10000 == 0:
                         completed = 100 * count / total_samples
                         logger.debug("[{}] ... {}/{} ({:0.0f}%)".format(
-                                                                 self.name,
-                                                                 count,
-                                                                 total_samples,
-                                                                 completed))
+                            self.name,
+                            count,
+                            total_samples,
+                            completed))
 
         # build model and run VI
         logger.debug(

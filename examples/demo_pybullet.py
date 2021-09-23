@@ -6,7 +6,6 @@ import gym
 
 from rlberry.agents.torch.dqn import DQNAgent
 
-
 env = gym.make("DiscretePendulumSwingupBulletEnv-v0")
 
 env.render()

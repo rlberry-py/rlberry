@@ -8,7 +8,6 @@ from pathlib import Path
 from rlberry.seeding.seeder import Seeder
 from rlberry.envs.utils import process_env
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -224,13 +223,14 @@ class AgentWithSimplePolicy(Agent):
 
     The policy() method takes an observation as input and returns an action.
     """
+
     @abstractmethod
     def policy(self, observation):
         """Returns an action, given an observation."""
         pass
 
     def eval(self,
-             eval_horizon=10**5,
+             eval_horizon=10 ** 5,
              n_simimulations=10,
              gamma=1.0,
              **kwargs):

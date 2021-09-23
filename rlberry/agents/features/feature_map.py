@@ -16,6 +16,7 @@ class FeatureMap(ABC):
     map()
         Maps a (observation, action) pair to a numpy array.
     """
+
     def __init__(self):
         ABC.__init__(self)
         self.shape = ()

@@ -5,7 +5,6 @@ from rlberry.envs.finite import GridWorld
 from rlberry.stats import AgentStats, plot_writer_data
 from rlberry.stats import MultipleStats
 
-
 N_EP = 3000
 HORIZON = 20
 GAMMA = 1.0
@@ -29,7 +28,6 @@ params['optql'] = {
 }
 
 eval_kwargs = dict(eval_horizon=HORIZON, n_simulations=20)
-
 
 mstats = MultipleStats()
 

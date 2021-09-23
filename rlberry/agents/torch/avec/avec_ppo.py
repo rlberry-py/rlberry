@@ -154,25 +154,25 @@ class AVECPPOAgent(AgentWithSimplePolicy):
 
     def reset(self, **kwargs):
         self.cat_policy = self.policy_net_fn(
-                            self.env,
-                            **self.policy_net_kwargs
-                            ).to(self.device)
+            self.env,
+            **self.policy_net_kwargs
+        ).to(self.device)
         self.policy_optimizer = optimizer_factory(
-                                    self.cat_policy.parameters(),
-                                    **self.optimizer_kwargs)
+            self.cat_policy.parameters(),
+            **self.optimizer_kwargs)
 
         self.value_net = self.value_net_fn(
-                            self.env,
-                            **self.value_net_kwargs
-                            ).to(self.device)
+            self.env,
+            **self.value_net_kwargs
+        ).to(self.device)
         self.value_optimizer = optimizer_factory(
-                                    self.value_net.parameters(),
-                                    **self.optimizer_kwargs)
+            self.value_net.parameters(),
+            **self.optimizer_kwargs)
 
         self.cat_policy_old = self.policy_net_fn(
-                                self.env,
-                                **self.policy_net_kwargs
-                                ).to(self.device)
+            self.env,
+            **self.policy_net_kwargs
+        ).to(self.device)
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
 
         self.MseLoss = nn.MSELoss()
@@ -293,9 +293,9 @@ class AVECPPOAgent(AgentWithSimplePolicy):
             surr2 = torch.clamp(ratios, 1 - self.eps_clip, 1
                                 + self.eps_clip) * advantages
             loss = -torch.min(surr1, surr2) \
-                + self.avec_coef * self._avec_loss(state_values, rewards) \
-                + self.vf_coef * self.MseLoss(state_values, rewards) \
-                - self.entr_coef * dist_entropy
+                   + self.avec_coef * self._avec_loss(state_values, rewards) \
+                   + self.vf_coef * self.MseLoss(state_values, rewards) \
+                   - self.entr_coef * dist_entropy
 
             # take gradient step
             self.policy_optimizer.zero_grad()
@@ -345,10 +345,10 @@ class AVECPPOAgent(AgentWithSimplePolicy):
                                              [1, 5, 10, 20])
 
         return {
-                'batch_size': batch_size,
-                'gamma': gamma,
-                'learning_rate': learning_rate,
-                'entr_coef': entr_coef,
-                'eps_clip': eps_clip,
-                'k_epochs': k_epochs,
-                }
+            'batch_size': batch_size,
+            'gamma': gamma,
+            'learning_rate': learning_rate,
+            'entr_coef': entr_coef,
+            'eps_clip': eps_clip,
+            'k_epochs': k_epochs,
+        }

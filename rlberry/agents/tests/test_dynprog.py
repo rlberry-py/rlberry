@@ -10,7 +10,6 @@ from rlberry.agents.dynprog.utils import bellman_operator
 from rlberry.agents.dynprog.utils import value_iteration
 from rlberry.envs.finite import FiniteMDP
 
-
 _rng = seeding.Seeder(123).rng
 
 

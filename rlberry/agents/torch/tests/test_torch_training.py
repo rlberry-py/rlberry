@@ -9,7 +9,6 @@ assert isinstance(loss_function_factory("l1").__name__, type(F.l1_loss.__name__)
 assert isinstance(loss_function_factory("smooth_l1").__name__, type(F.smooth_l1_loss.__name__))
 assert isinstance(loss_function_factory("bce").__name__, type(F.binary_cross_entropy.__name__))
 
-
 # optimizer_factory
 env = get_benchmark_env(level=1)
 assert optimizer_factory(default_policy_net_fn(env).parameters(), "ADAM").defaults["lr"] == 0.001

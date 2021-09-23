@@ -24,7 +24,7 @@ def map_to_representative(state,
 
     max_representatives = representative_states.shape[0]
     if (dist_to_closest > min_dist) \
-        and (n_representatives < max_representatives) \
+            and (n_representatives < max_representatives) \
             and accept_new_repr:
         new_index = n_representatives
         representative_states[new_index, :] = state

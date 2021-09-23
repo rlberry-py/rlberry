@@ -61,7 +61,7 @@ class Pendulum(RenderInterface2D, Model):
 
     def step(self, action):
         assert self.action_space.contains(action), \
-                "%r (%s) invalid" % (action, type(action))
+            "%r (%s) invalid" % (action, type(action))
 
         # save state for rendering
         if self.is_render_enabled():
@@ -74,7 +74,7 @@ class Pendulum(RenderInterface2D, Model):
         dt = self.dt
 
         action = np.clip(action, -self.max_torque, self.max_torque)[0]
-        self.last_action = action # for rendering
+        self.last_action = action  # for rendering
         costs = angle_normalize(theta) ** 2 + .1 * thetadot ** 2 + .001 * (action ** 2)
 
         # compute the next state after action
@@ -106,10 +106,10 @@ class Pendulum(RenderInterface2D, Model):
               -self.length * np.cos(state[0]))
 
         link = bar_shape(p0, p1, 0.1)
-        link.set_color((255/255, 105/255, 30/255))
+        link.set_color((255 / 255, 105 / 255, 30 / 255))
 
         joint = circle_shape(p0, 0.075)
-        joint.set_color((255/255, 215/255, 0/255))
+        joint.set_color((255 / 255, 215 / 255, 0 / 255))
 
         scene.add_shape(link)
         scene.add_shape(joint)
@@ -119,4 +119,3 @@ class Pendulum(RenderInterface2D, Model):
 
 def angle_normalize(x):
     return (((x + np.pi) % (2 * np.pi)) - np.pi)
-

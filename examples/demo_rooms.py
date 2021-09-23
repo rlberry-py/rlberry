@@ -3,7 +3,6 @@ from rlberry.envs.benchmarks.grid_exploration.six_room import SixRoom
 from rlberry.envs.benchmarks.grid_exploration.nroom import NRoom
 from rlberry.agents.dynprog import ValueIterationAgent
 
-
 # env = FourRoom(reward_free=False, difficulty=0, array_observation=False)
 # env = SixRoom(reward_free=False, array_observation=False)
 env = NRoom(nrooms=9,

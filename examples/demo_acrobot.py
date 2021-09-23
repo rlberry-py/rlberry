@@ -12,7 +12,7 @@ agent.fit()
 
 env.enable_rendering()
 state = env.reset()
-for tt in range(4*agent.horizon):
+for tt in range(4 * agent.horizon):
     action = agent.policy(state)
     next_state, reward, done, _ = env.step(action)
     state = next_state

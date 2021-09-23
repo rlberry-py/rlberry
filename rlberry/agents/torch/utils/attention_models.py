@@ -42,7 +42,7 @@ class EgoAttention(BaseModule):
         batch_size = others.shape[0]
         n_entities = others.shape[1] + 1
         input_all = torch.cat((ego.view(batch_size, 1,
-                               self.feature_size), others), dim=1)
+                                        self.feature_size), others), dim=1)
         # Dimensions: Batch, entity, head, feature_per_head
         key_all = self.key_all(input_all).view(batch_size,
                                                n_entities,
@@ -69,8 +69,8 @@ class EgoAttention(BaseModule):
                                             mask,
                                             nn.Dropout(self.dropout_factor))
         result = (self.attention_combine(
-                    value.reshape((batch_size,
-                                   self.feature_size))) + ego.squeeze(1))/2
+            value.reshape((batch_size,
+                           self.feature_size))) + ego.squeeze(1)) / 2
         return result, attention_matrix
 
 
@@ -129,7 +129,7 @@ class SelfAttention(BaseModule):
                                             nn.Dropout(self.dropout_factor))
         result = (self.attention_combine(
             value.reshape((batch_size, n_entities, self.feature_size)))
-            + input_all)/2
+                  + input_all) / 2
         return result, attention_matrix
 
 

@@ -398,10 +398,10 @@ class PPOAgent(AgentWithSimplePolicy):
                                              [1, 5, 10, 20])
 
         return {
-                'batch_size': batch_size,
-                'gamma': gamma,
-                'learning_rate': learning_rate,
-                'entr_coef': entr_coef,
-                'eps_clip': eps_clip,
-                'k_epochs': k_epochs,
-                }
+            'batch_size': batch_size,
+            'gamma': gamma,
+            'learning_rate': learning_rate,
+            'entr_coef': entr_coef,
+            'eps_clip': eps_clip,
+            'k_epochs': k_epochs,
+        }

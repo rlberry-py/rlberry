@@ -20,6 +20,7 @@ class MultiBinary(gym.spaces.MultiBinary):
     reseed()
         get new random number generator
     """
+
     def __init__(self, n):
         gym.spaces.MultiBinary.__init__(self, n)
         self.seeder = Seeder()

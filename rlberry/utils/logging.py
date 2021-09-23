@@ -29,10 +29,10 @@ def configure_logging(level: str = "INFO",
         "disable_existing_loggers": False,
         "formatters": {
             "standard": {
-                "format": default_msg+"[%(levelname)s] %(message)s "
+                "format": default_msg + "[%(levelname)s] %(message)s "
             },
             "detailed": {
-                "format": default_msg+"[%(name)s:%(levelname)s] %(message)s "
+                "format": default_msg + "[%(name)s:%(levelname)s] %(message)s "
             }
         },
         "handlers": {

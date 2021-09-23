@@ -7,7 +7,7 @@ global_init_kwargs:
   horizon: 51
 global_eval_kwargs:
   eval_horizon: 51
-global_fit_kwargs: 
+global_fit_kwargs:
   fit_budget: 10
 agents:
   - 'rlberry/experiment/tests/rsucbvi.yaml'

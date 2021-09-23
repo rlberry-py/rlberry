@@ -7,16 +7,16 @@ import numpy as np
 from rlberry.agents.kernel_based.kernels import kernel_func
 
 kernel_types = [
-                "uniform",
-                "triangular",
-                "gaussian",
-                "epanechnikov",
-                "quartic",
-                "triweight",
-                "tricube",
-                "cosine",
-                "exp-4"
-                ]
+    "uniform",
+    "triangular",
+    "gaussian",
+    "epanechnikov",
+    "quartic",
+    "triweight",
+    "tricube",
+    "cosine",
+    "exp-4"
+]
 
 z = np.linspace(-2, 2, 100)
 

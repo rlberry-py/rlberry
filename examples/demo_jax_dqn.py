@@ -1,12 +1,9 @@
-
 import rlberry.agents.jax.nets.common as nets
 from rlberry.agents.jax.dqn.dqn import DQNAgent
 from rlberry.envs import gym_make
 from rlberry.stats import AgentStats, MultipleStats, plot_writer_data
 
-
 if __name__ == '__main__':
-
     # global params
     fit_budget = 10000
     n_fit = 2

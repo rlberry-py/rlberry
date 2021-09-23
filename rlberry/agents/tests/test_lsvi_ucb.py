@@ -68,7 +68,6 @@ def test_lsvi_ucb_matrix_inversion(FeatMapClass):
 
 
 def test_lsvi_without_bonus():
-
     def lsvi_debug_gather_data(agent):
         """
         Function to gather data sampling uniformly
@@ -145,7 +144,6 @@ def test_lsvi_without_bonus():
 
 
 def test_lsvi_random_exploration():
-
     env = GridWorld(nrows=2, ncols=2, walls=(), success_probability=0.95)
     env.reseed(123)
 

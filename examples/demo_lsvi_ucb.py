@@ -26,8 +26,8 @@ class GridWorldFeatureMap(FeatureMap):
                 row_jj, col_jj = index2coord[jj]
                 x_jj = row_jj / n_rows
                 y_jj = col_jj / n_cols
-                dist = np.sqrt((x_jj - x_ii)**2.0 + (y_jj - y_ii)**2.0)
-                sim_matrix[ii, jj] = np.exp(-(dist / sigma)**2.0)
+                dist = np.sqrt((x_jj - x_ii) ** 2.0 + (y_jj - y_ii) ** 2.0)
+                sim_matrix[ii, jj] = np.exp(-(dist / sigma) ** 2.0)
 
         # factorize similarity matrix to obtain features
         uu, ss, vh = np.linalg.svd(sim_matrix, hermitian=True)
@@ -50,7 +50,6 @@ def feature_map_fn(env):
 
 
 if __name__ == '__main__':
-
     # Parameters
     n_episodes = 750
     horizon = 10

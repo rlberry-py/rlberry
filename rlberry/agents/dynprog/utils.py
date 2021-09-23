@@ -143,6 +143,7 @@ def backward_induction_sd(Q, V, R, P, gamma=1.0, vmax=np.inf):
             if V[hh, ss] > vmax:
                 V[hh, ss] = vmax
 
+
 @numba_jit
 def value_iteration(R, P, gamma, epsilon=1e-6):
     """
@@ -218,4 +219,3 @@ def bellman_operator(Q, R, P, gamma):
             for ns in range(S):
                 TQ[ss, aa] += gamma * P[ss, aa, ns] * V[ns]
     return TQ
-

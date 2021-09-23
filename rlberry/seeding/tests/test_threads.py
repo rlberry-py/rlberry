@@ -4,7 +4,7 @@ import pytest
 
 
 def get_random_number_setting_seed(seeder):
-    return seeder.rng.integers(2**32)
+    return seeder.rng.integers(2 ** 32)
 
 
 def test_multithread_seeding():
@@ -27,4 +27,3 @@ def test_multithread_seeding():
                         future.result()
                     )
                 assert results[0] != results[1], f"error in simulation {(ii, jj)}"
-

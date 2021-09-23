@@ -20,6 +20,7 @@ class Dict(gym.spaces.Dict):
     reseed()
         get new random number generator
     """
+
     def __init__(self, spaces=None, **spaces_kwargs):
         gym.spaces.Dict.__init__(self, spaces, **spaces_kwargs)
         self.seeder = Seeder()

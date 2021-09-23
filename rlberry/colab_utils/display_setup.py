@@ -1,4 +1,3 @@
-
 #
 #  Code to visualize the environments.
 #
