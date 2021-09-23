@@ -5,7 +5,6 @@ TODO: Test attention modules
 import torch
 from rlberry.agents.torch.utils.models import MultiLayerPerceptron
 from rlberry.agents.torch.utils.models import ConvolutionalNetwork
-from torch.distributions import Categorical
 from rlberry.agents.torch.utils.attention_models import EgoAttention
 from rlberry.agents.torch.utils.attention_models import SelfAttention
 
@@ -53,7 +52,8 @@ def test_cnn_policy():
 
 
 def test_ego_attention():
-    _ = EgoAttention()
+    module = EgoAttention()
+    print(module)
 
 
 def test_self_attention():

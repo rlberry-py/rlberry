@@ -174,9 +174,6 @@ class DQNAgent(AgentWithSimplePolicy):
             if self.episode % 20 == 0:
                 logger.info(f"Episode {self.episode + 1}/{budget}, total reward {total_reward}")
             if self.writer:
-                self.plot_memory()
-                self.plot_bonuses()
-                self.plot_value()
                 self.writer.add_scalar("episode_rewards", total_reward, self.episode)
                 self.writer.add_scalar("episode/total_reward", total_reward, self.episode)
                 self.writer.add_scalar("episode/total_bonus", total_bonus, self.episode)
@@ -484,79 +481,6 @@ class DQNAgent(AgentWithSimplePolicy):
             self.writer.add_graph(self.value_net, input_to_model=(model_input,))
             self.writer.add_scalar("agent/trainable_parameters",
                                    trainable_parameters(self.value_net), 0)
-
-    def plot_memory(self, frequency=100, states_count=20000):
-        if not self.writer:
-            return
-        if not self.episode % frequency == 0:
-            return
-        if self.memory.is_empty():
-            return
-        if representation_2d(self.memory.memory[0].state, self.env) is False:
-            return
-        import matplotlib.pyplot as plt
-        fig = plt.figure()
-        res = self.memory.sample(states_count)
-        samples, idx = res if not self.prioritized_replay else (res[0], res[2])
-        positions = np.array([representation_2d(state, self.env) for state in samples.state])
-        next_positions = np.array([representation_2d(next_state, self.env) for next_state in samples.next_state])
-        delta = next_positions - positions
-        color = np.mod(idx - self.memory.position, len(self.memory))
-        # plt.scatter(positions[:, 0], positions[:, 1], c=color, cmap="plasma", alpha=0.3)
-        plt.quiver(positions[:, 0], positions[:, 1], delta[:, 0], delta[:, 1], color, cmap="plasma",
-                   angles='xy', scale_units='xy', scale=1, alpha=0.3)
-        self.writer.add_figure("episode/memory", fig, self.episode, close=True)
-
-    def plot_bonuses(self, frequency=100, states_count=20000):
-        if not self.writer:
-            return
-        if not self.use_bonus:
-            return
-        if not self.episode % frequency == 0:
-            return
-        from rlberry.envs.benchmarks.grid_exploration.nroom import NRoom
-        import matplotlib
-        import matplotlib.pyplot as plt
-        if isinstance(self.env.unwrapped, NRoom):
-            states = [self.env.unwrapped._convert_index_to_float_coord(idx)
-                      for idx in range(max(self.env.unwrapped.index2coord.keys()))]
-            actions = np.repeat(np.arange(self.env.action_space.n), len(states))
-            states = states * self.env.action_space.n
-        else:
-            sample = self.memory.sample(states_count)[0]
-            states, actions = sample.state, sample.action
-        states = torch.from_numpy(np.array(states)).to(self.device)
-        actions = torch.from_numpy(np.array(actions)).to(self.device)
-        bonuses = self.env.bonus_batch(states, actions).cpu().numpy()
-        positions = np.array([representation_2d(state, self.env) for state in states.cpu().numpy()])
-        fig = plt.figure()
-        plt.scatter(positions[:, 0], positions[:, 1],
-                    c=bonuses, norm=matplotlib.colors.LogNorm(), alpha=0.3)
-        plt.colorbar()
-        self.writer.add_figure("episode/bonuses", fig, self.episode, close=True)
-
-    def plot_value(self, frequency=100, states_count=20000):
-        if not self.writer:
-            return
-        if not self.episode % frequency == 0:
-            return
-        from rlberry.envs.benchmarks.grid_exploration.nroom import NRoom
-        import matplotlib
-        import matplotlib.pyplot as plt
-        if isinstance(self.env.unwrapped, NRoom):
-            states = [self.env.unwrapped._convert_index_to_float_coord(idx)
-                      for idx in range(max(self.env.unwrapped.index2coord.keys()))]
-        else:
-            states = self.memory.sample(states_count)[0].state
-        states = torch.from_numpy(np.array(states)).to(self.device)
-        values = self.value_net(states).max(1)[0].detach().cpu().numpy()
-        norm = matplotlib.colors.LogNorm() if values.min() >= 0 else None
-        fig = plt.figure()
-        positions = np.array([representation_2d(state, self.env) for state in states.cpu().numpy()])
-        plt.scatter(positions[:, 0], positions[:, 1],
-                    c=values, norm=norm, alpha=0.3)
-        plt.colorbar()
-        self.writer.add_figure("episode/values", fig, self.episode, close=True)
 
     #
     # For hyperparameter optimization
