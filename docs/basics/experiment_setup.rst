@@ -13,7 +13,7 @@ To setup an experiment with rlberry, you can use yaml files. You'll need:
 
 * yaml files describing the environments and the agents
 
-* A main python script that reads the files and generates :class:`~rlberry.stats.agent_stats.AgentStats` instances to run each agent.
+* A main python script that reads the files and generates :class:`~rlberry.manager.agent_manager.AgentManager` instances to run each agent.
 
 
 This can be done very succinctly as in the example below:
@@ -85,16 +85,16 @@ This can be done very succinctly as in the example below:
     """
 
     from rlberry.experiment import experiment_generator
-    from rlberry.stats.multiple_stats import MultipleStats
+    from rlberry.manager.multiple_managers import MultipleManagers
 
-    mstats = MultipleStats()
+    multimanagers = MultipleManagers()
 
-    for agent_stats in experiment_generator():
-        mstats.append(agent_stats)
+    for agent_manager in experiment_generator():
+        multimanagers.append(agent_manager)
 
         # Alternatively:
-        # agent_stats.fit()
-        # agent_stats.save()
+        # agent_manager.fit()
+        # agent_manager.save()
 
-    mstats.run()
-    mstats.save()
+    multimanagers.run()
+    multimanagers.save()

@@ -3,7 +3,7 @@ from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
 from rlberry.agents import MBQVIAgent
 from rlberry.agents.torch.ppo import PPOAgent
 from rlberry.wrappers import DiscretizeStateWrapper
-from rlberry.stats import AgentStats, plot_writer_data, evaluate_agents
+from rlberry.manager import AgentManager, plot_writer_data, evaluate_agents
 
 # --------------------------------
 # Define train and evaluation envs
@@ -35,24 +35,24 @@ params_ppo = {"gamma": GAMMA,
 eval_kwargs = dict(eval_horizon=HORIZON, n_simulations=20)
 
 # -----------------------------
-# Run AgentStats
+# Run AgentManager
 # -----------------------------
-oracle_stats = AgentStats(MBQVIAgent, d_train_env, fit_budget=None,
+oracle_stats = AgentManager(MBQVIAgent, d_train_env, fit_budget=None,
                           init_kwargs=params_oracle,
                           eval_kwargs=eval_kwargs,
                           n_fit=4, agent_name="Oracle")
-ppo_stats = AgentStats(PPOAgent, train_env, fit_budget=N_EPISODES,
+ppo_stats = AgentManager(PPOAgent, train_env, fit_budget=N_EPISODES,
                        init_kwargs=params_ppo,
                        eval_kwargs=eval_kwargs,
                        n_fit=4, agent_name="PPO")
 
-agent_stats_list = [oracle_stats, ppo_stats]
+agent_manager_list = [oracle_stats, ppo_stats]
 
 # learning curves
-plot_writer_data(agent_stats_list, tag='episode_rewards',
+plot_writer_data(agent_manager_list, tag='episode_rewards',
                  preprocess_func=np.cumsum,
                  title='Cumulative Rewards', show=False)
 
 # compare final policies
-output = evaluate_agents(agent_stats_list)
+output = evaluate_agents(agent_manager_list)
 print(output)

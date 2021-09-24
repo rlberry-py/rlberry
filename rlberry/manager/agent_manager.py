@@ -20,7 +20,7 @@ import multiprocessing
 from rlberry.envs.utils import process_env
 from rlberry.utils.logging import configure_logging
 from rlberry.utils.writers import DefaultWriter
-from rlberry.stats.utils import create_database
+from rlberry.manager.utils import create_database
 from typing import Tuple
 
 _OPTUNA_INSTALLED = True
@@ -132,7 +132,7 @@ class AgentHandler:
 #
 
 
-class AgentStats:
+class AgentManager:
     """
     Class to train, optimize hyperparameters, evaluate and gather
     statistics about an agent.
@@ -194,7 +194,7 @@ class AgentStats:
                  thread_logging_level='INFO',
                  seed=None):
         # agent_class should only be None when the constructor is called
-        # by the class method AgentStats.load(), since the agent class
+        # by the class method AgentManager.load(), since the agent class
         # will be loaded.
 
         if agent_class is None:
@@ -208,10 +208,10 @@ class AgentStats:
 
         # Check train_env and eval_env
         assert isinstance(
-            train_env, Tuple), "[AgentStats]train_env must be Tuple (constructor, kwargs)"
+            train_env, Tuple), "[AgentManager]train_env must be Tuple (constructor, kwargs)"
         if eval_env is not None:
             assert isinstance(
-                eval_env, Tuple), "[AgentStats]train_env must be Tuple (constructor, kwargs)"
+                eval_env, Tuple), "[AgentManager]train_env must be Tuple (constructor, kwargs)"
 
         # create oject identifier
         timestamp = datetime.timestamp(datetime.now())
@@ -250,7 +250,7 @@ class AgentStats:
             try:
                 self.fit_budget = self.fit_kwargs.pop('fit_budget')
             except KeyError:
-                raise ValueError('[AgentStats] fit_budget missing in __init__().')
+                raise ValueError('[AgentManager] fit_budget missing in __init__().')
 
         # output dir
         output_dir = output_dir or ('temp/' + self.identifier)
@@ -343,7 +343,7 @@ class AgentStats:
         """
         Note
         -----
-        Must be called right after creating an instance of AgentStats.
+        Must be called right after creating an instance of AgentManager.
 
         Parameters
         ----------
@@ -356,11 +356,11 @@ class AgentStats:
             kwargs for writer_fn
         idx : int
             Index of the agent to set the writer (0 <= idx < `n_fit`).
-            AgentStats fits `n_fit` agents, the writer of each one of them
+            AgentManager fits `n_fit` agents, the writer of each one of them
             needs to be set separetely.
         """
         assert idx >= 0 and idx < self.n_fit, \
-            "Invalid index sent to AgentStats.set_writer()"
+            "Invalid index sent to AgentManager.set_writer()"
         writer_kwargs = writer_kwargs or {}
         self.writers[idx] = (writer_fn, writer_kwargs)
 
@@ -380,7 +380,7 @@ class AgentStats:
         del kwargs
         budget = budget or self.fit_budget
 
-        logger.info(f"Training AgentStats for {self.agent_name}... ")
+        logger.info(f"Training AgentManager for {self.agent_name}... ")
         seeders = self.seeder.spawn(self.n_fit)
         if not isinstance(seeders, list):
             seeders = [seeders]
@@ -448,12 +448,12 @@ class AgentStats:
 
     def save(self):
         """
-        Save AgentStats data to a self.output_dir. The data can be
-        later loaded to recreate an AgentStats instance.
+        Save AgentManager data to a self.output_dir. The data can be
+        later loaded to recreate an AgentManager instance.
 
         Returns
         -------
-        filename where the AgentStats object was saved.
+        filename where the AgentManager object was saved.
         """
         # use self.output_dir
         output_dir = self.output_dir
@@ -482,7 +482,7 @@ class AgentStats:
                     logger.warning("Could not save default_writer_data.")
 
         #
-        # Pickle AgentStats instance
+        # Pickle AgentManager instance
         #
 
         # remove writers
@@ -499,14 +499,14 @@ class AgentStats:
         try:
             with filename.open("wb") as ff:
                 pickle.dump(self.__dict__, ff)
-            logger.info("Saved AgentStats({}) using pickle.".format(self.agent_name))
+            logger.info("Saved AgentManager({}) using pickle.".format(self.agent_name))
         except Exception:
             try:
                 with filename.open("wb") as ff:
                     dill.dump(self.__dict__, ff)
-                logger.info("Saved AgentStats({}) using dill.".format(self.agent_name))
+                logger.info("Saved AgentManager({}) using dill.".format(self.agent_name))
             except Exception as ex:
-                logger.warning("[AgentStats] Instance cannot be pickled: " + str(ex))
+                logger.warning("[AgentManager] Instance cannot be pickled: " + str(ex))
 
         return filename
 
@@ -518,11 +518,11 @@ class AgentStats:
         try:
             with filename.open('rb') as ff:
                 tmp_dict = pickle.load(ff)
-            logger.info("Loaded AgentStats using pickle.")
+            logger.info("Loaded AgentManager using pickle.")
         except Exception:
             with filename.open('rb') as ff:
                 tmp_dict = dill.load(ff)
-            logger.info("Loaded AgentStats using dill.")
+            logger.info("Loaded AgentManager using dill.")
 
         obj.__dict__.clear()
         obj.__dict__.update(tmp_dict)
@@ -825,8 +825,8 @@ def _optuna_objective(
     #
     # fit and evaluate agents
     #
-    # Create AgentStats with hyperparams
-    params_stats = AgentStats(
+    # Create AgentManager with hyperparams
+    params_stats = AgentManager(
         agent_class,
         train_env,
         fit_budget,

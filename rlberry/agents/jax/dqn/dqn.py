@@ -3,7 +3,7 @@ Important
 ---------
 
 There is something very weird happening when using this agent with the optimize_hyperparams()
-method of AgentStats.
+method of AgentManager.
 If @functools.partial(jax.jit, static_argnums=(0,)) is used as a decorator to jit
 the learner_step() and actor_step() methods, the memory use increases a lot
 as the number of optuna trials increases.

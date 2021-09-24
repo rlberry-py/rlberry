@@ -1,9 +1,3 @@
-.. rlberry documentation master file, created by
-sphinx-quickstart on Sat Jan 16 00:20:04 2021.
-You can adapt this file completely to your liking, but it should at least
-contain the root `toctree` directive.
-
-
 .. image:: ../assets/logo_wide.svg
     :width: 50%
     :alt: rlberry logo
@@ -129,13 +123,13 @@ It works as follows:
 
 
 .. note:: 
-    The class :class:`~rlberry.stats.agent_stats.AgentStats` provides a :code:`seed` parameter in its constructor,
+    The class :class:`~rlberry.manager.agent_manager.AgentManager` provides a :code:`seed` parameter in its constructor,
     and handles automatically the seeding of all environments and agents used by it.
 
 .. note:: 
 
    The :meth:`optimize_hyperparams` method of 
-   :class:`~rlberry.stats.agent_stats.AgentStats` uses the `Optuna <https://optuna.org/>`_ 
+   :class:`~rlberry.manager.agent_manager.AgentManager` uses the `Optuna <https://optuna.org/>`_ 
    library for hyperparameter optimization and is **inherently non-deterministic**
    (see `Optuna FAQ <https://optuna.readthedocs.io/en/stable/faq.html#how-can-i-obtain-reproducible-optimization-results>`_).
 

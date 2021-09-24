@@ -1,7 +1,7 @@
 import pytest
 
 from rlberry.envs import gym_make
-from rlberry.stats import AgentStats
+from rlberry.manager import AgentManager
 
 # Ignoring the text in case jax_agents requirements are not installled
 # TODO: better handle setup to avoid conflicts between jax_agents and tensorboard.
@@ -25,7 +25,7 @@ def test_jax_dqn(lambda_):
         lambda_=lambda_
     )
 
-    stats = AgentStats(
+    stats = AgentManager(
         DQNAgent,
         env,
         fit_budget=20,

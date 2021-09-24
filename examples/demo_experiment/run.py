@@ -10,19 +10,19 @@ $ python examples/demo_experiment/run.py
 
 from rlberry.experiment import load_experiment_results
 from rlberry.experiment import experiment_generator
-from rlberry.stats.multiple_stats import MultipleStats
+from rlberry.manager.multiple_managers import MultipleManagers
 
-mstats = MultipleStats()
+multimanagers = MultipleManagers()
 
-for agent_stats in experiment_generator():
-    mstats.append(agent_stats)
+for agent_manager in experiment_generator():
+    multimanagers.append(agent_manager)
 
     # Alternatively:
-    # agent_stats.fit()
-    # agent_stats.save()
+    # agent_manager.fit()
+    # agent_manager.save()
 
-mstats.run()
-mstats.save()
+multimanagers.run()
+multimanagers.save()
 
 # Reading the results
 del mstats

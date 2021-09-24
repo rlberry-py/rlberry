@@ -9,14 +9,14 @@ Evaluate an agent and optimize its hyperparameters
 With rlberry_, once you created your agent, it is very easy to train in parallel
 several instances of it, analyze the results and optimize hyperparameters. 
 
-This is one of the purposes of the :class:`~rlberry.stats.agent_stats.AgentStats` class,
+This is one of the purposes of the :class:`~rlberry.manager.agent_manager.AgentManager` class,
 as shown in the examples below.
 
 .. code-block:: python
 
     from rlberry.envs import gym_make
     from rlberry.agents.torch.reinforce import REINFORCEAgent
-    from rlberry.stats import AgentStats, plot_writer_data
+    from rlberry.manager import AgentManager, plot_writer_data
 
 
     # Environment (constructor, kwargs)
@@ -33,8 +33,8 @@ as shown in the examples below.
     eval_kwargs = dict(eval_horizon=500)  # parameters to evaluate the agent
 
 
-    # Create AgentStats to fit 4 instances of REINFORCE in parallel.
-    stats = AgentStats(
+    # Create AgentManager to fit 4 instances of REINFORCE in parallel.
+    stats = AgentManager(
         REINFORCEAgent,
         env,
         init_kwargs=params,
@@ -86,7 +86,7 @@ For :class:`~rlberry.agents.reinforce.reinforce.REINFORCEAgent`, this method loo
 
 
 Now we can use the :meth:`optimize_hyperparams` method 
-of :class:`~rlberry.stats.agent_stats.AgentStats` to find good parameters for our agent:
+of :class:`~rlberry.manager.agent_manager.AgentManager` to find good parameters for our agent:
 
 .. code-block:: python
 

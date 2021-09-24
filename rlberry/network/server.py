@@ -7,7 +7,7 @@ from copy import deepcopy
 from rlberry.network import interface
 from rlberry.network.utils import serialize_message
 from rlberry.envs import gym_make
-from rlberry.stats import AgentStats
+from rlberry.manager import AgentManager
 from typing import Optional
 
 
@@ -51,37 +51,37 @@ class ClientHandler:
                 for rr in self._resources:
                     info[rr] = self._resources[rr]['description']
                 response = interface.Message.create(info=info)
-            # CREATE_AGENT_STATS_INSTANCE
-            elif message.command == interface.Command.CREATE_AGENT_STATS_INSTANCE:
-                agent_stats = AgentStats(**message.params)
-                output_dir = 'client_data' / agent_stats.output_dir
-                agent_stats.set_output_dir(output_dir)
-                filename = str(agent_stats.save())
+            # CREATE_agent_manager_INSTANCE
+            elif message.command == interface.Command.CREATE_agent_manager_INSTANCE:
+                agent_manager = AgentManager(**message.params)
+                output_dir = 'client_data' / agent_manager.output_dir
+                agent_manager.set_output_dir(output_dir)
+                filename = str(agent_manager.save())
                 response = interface.Message.create(info=dict(filename=filename))
-                del agent_stats
-            # FIT_AGENT_STATS
-            elif message.command == interface.Command.FIT_AGENT_STATS:
+                del agent_manager
+            # FIT_agent_manager
+            elif message.command == interface.Command.FIT_agent_manager:
                 filename = message.params['filename']
-                agent_stats = AgentStats.load(filename)
-                agent_stats.fit()
-                agent_stats.save()
+                agent_manager = AgentManager.load(filename)
+                agent_manager.fit()
+                agent_manager.save()
                 response = interface.Message.create(command=interface.Command.ECHO)
-                del agent_stats
-            # EVAL_AGENT_STATS
-            elif message.command == interface.Command.EVAL_AGENT_STATS:
+                del agent_manager
+            # EVAL_agent_manager
+            elif message.command == interface.Command.EVAL_agent_manager:
                 filename = message.params['filename']
-                agent_stats = AgentStats.load(filename)
-                eval_output = agent_stats.eval()
-                # agent_stats.save()  # eval does not change the state of agent stats
+                agent_manager = AgentManager.load(filename)
+                eval_output = agent_manager.eval()
+                # agent_manager.save()  # eval does not change the state of agent stats
                 response = interface.Message.create(data=dict(output=eval_output))
-                del agent_stats
-            # AGENT_STATS_CLEAR_OUTPUT_DIR
-            elif message.command == interface.Command.AGENT_STATS_CLEAR_OUTPUT_DIR:
+                del agent_manager
+            # agent_manager_CLEAR_OUTPUT_DIR
+            elif message.command == interface.Command.agent_manager_CLEAR_OUTPUT_DIR:
                 filename = message.params['filename']
-                agent_stats = AgentStats.load(filename)
-                agent_stats.clear_output_dir()
-                response = interface.Message.create(message=f'Cleared output: {agent_stats.output_dir}')
-                del agent_stats
+                agent_manager = AgentManager.load(filename)
+                agent_manager.clear_output_dir()
+                response = interface.Message.create(message=f'Cleared output: {agent_manager.output_dir}')
+                del agent_manager
             # Send response
             self._socket.sendall(serialize_message(response))
         except Exception as ex:

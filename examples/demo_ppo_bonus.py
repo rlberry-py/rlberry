@@ -1,7 +1,7 @@
 import numpy as np
 from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
 from rlberry.agents.torch.ppo import PPOAgent
-from rlberry.stats import AgentStats, plot_writer_data, evaluate_agents
+from rlberry.manager import AgentManager, plot_writer_data, evaluate_agents
 from rlberry.exploration_tools.discrete_counter import DiscreteCounter
 
 # --------------------------------
@@ -52,23 +52,23 @@ params_ppo_bonus = {
 eval_kwargs = dict(eval_horizon=HORIZON, n_simulations=20)
 
 # -----------------------------
-# Run AgentStats
+# Run AgentManager
 # -----------------------------
-ppo_stats = AgentStats(PPOAgent, env, fit_budget=N_EPISODES,
+ppo_stats = AgentManager(PPOAgent, env, fit_budget=N_EPISODES,
                        init_kwargs=params_ppo, eval_kwargs=eval_kwargs,
                        n_fit=4, agent_name='PPO')
-ppo_bonus_stats = AgentStats(
+ppo_bonus_stats = AgentManager(
     PPOAgent, env, fit_budget=N_EPISODES,
     init_kwargs=params_ppo_bonus, eval_kwargs=eval_kwargs,
     n_fit=4, agent_name='PPO-Bonus')
 
-agent_stats_list = [ppo_bonus_stats, ppo_stats]
+agent_manager_list = [ppo_bonus_stats, ppo_stats]
 
 # learning curves
-plot_writer_data(agent_stats_list, tag='episode_rewards',
+plot_writer_data(agent_manager_list, tag='episode_rewards',
                  preprocess_func=np.cumsum,
                  title='Cumulative Rewards', show=False)
 
 # compare final policies
-output = evaluate_agents(agent_stats_list)
+output = evaluate_agents(agent_manager_list)
 print(output)

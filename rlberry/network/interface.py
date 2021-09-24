@@ -8,10 +8,10 @@ class Command:
     NONE = 'NONE'
     ECHO = 'ECHO'
     LIST_RESOURCES = 'LIST_RESOURCES'
-    CREATE_AGENT_STATS_INSTANCE = 'CREATE_AGENT_STATS_INSTANCE'
-    FIT_AGENT_STATS = 'FIT_AGENT_STATS'
-    EVAL_AGENT_STATS = 'EVAL_AGENT_STATS'
-    AGENT_STATS_CLEAR_OUTPUT_DIR = 'AGENT_STATS_CLEAR_OUTPUT_DIR'
+    CREATE_agent_manager_INSTANCE = 'CREATE_agent_manager_INSTANCE'
+    FIT_agent_manager = 'FIT_agent_manager'
+    EVAL_agent_manager = 'EVAL_agent_manager'
+    agent_manager_CLEAR_OUTPUT_DIR = 'agent_manager_CLEAR_OUTPUT_DIR'
 
 
 class BerryServerInfo:

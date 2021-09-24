@@ -15,7 +15,7 @@ Subpackages
    rlberry.rendering
    rlberry.seeding
    rlberry.spaces
-   rlberry.stats
+   rlberry.manager
    rlberry.utils
    rlberry.wrappers
 

@@ -4,16 +4,16 @@ from rlberry.network import interface
 from rlberry.network.client import BerryClient
 
 
-class RemoteAgentStats:
+class RemoteAgentManager:
     """
-    Class to define a client that handles an AgentStats instance in a remote BerryServer.
+    Class to define a client that handles an AgentManager instance in a remote BerryServer.
 
     Parameters
     ----------
     client: BerryClient
         Client instance, to communicate with a BerryServer.
     **kwargs:
-        Parameters for AgentStats instance.
+        Parameters for AgentManager instance.
         Some parameters (as agent_class, train_env, eval_env) can be defined using a ResourceRequest.
     """
     def __init__(
@@ -23,27 +23,27 @@ class RemoteAgentStats:
     ):
         self._client = client
 
-        # Create a remote AgentStats object and keep reference to the filename
+        # Create a remote AgentManager object and keep reference to the filename
         # in the server where the object was saved.
         msg = self._client.send(
             interface.Message.create(
-                command=interface.Command.CREATE_AGENT_STATS_INSTANCE,
+                command=interface.Command.CREATE_agent_manager_INSTANCE,
                 params=kwargs,
                 data=None,
             )
         )
-        self._remote_agent_stats_filename = pathlib.Path(
+        self._remote_agent_manager_filename = pathlib.Path(
             msg.info['filename']
         )
 
     @property
     def remote_file(self):
-        return str(self._remote_agent_stats_filename)
+        return str(self._remote_agent_manager_filename)
 
     def fit(self):
         msg = self._client.send(
             interface.Message.create(
-                command=interface.Command.FIT_AGENT_STATS,
+                command=interface.Command.FIT_agent_manager,
                 params=dict(filename=self.remote_file),
                 data=None,
             )
@@ -53,7 +53,7 @@ class RemoteAgentStats:
     def eval(self):
         msg = self._client.send(
             interface.Message.create(
-                command=interface.Command.EVAL_AGENT_STATS,
+                command=interface.Command.EVAL_agent_manager,
                 params=dict(filename=self.remote_file),
                 data=None,
             )
