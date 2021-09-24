@@ -19,6 +19,7 @@ class ClientHandler:
         self._socket = client_socket
         self._address = client_address
         self._resources = resources
+        self._logger = logging.getLogger('ClientHandler')
 
     def _process_message(self, message: interface.Message):
         """Replace resource requests in 'message' by available resources."""
@@ -51,32 +52,32 @@ class ClientHandler:
                 for rr in self._resources:
                     info[rr] = self._resources[rr]['description']
                 response = interface.Message.create(info=info)
-            # CREATE_agent_manager_INSTANCE
-            elif message.command == interface.Command.CREATE_agent_manager_INSTANCE:
+            # CREATE_AGENT_MANAGER_INSTANCE
+            elif message.command == interface.Command.CREATE_AGENT_MANAGER_INSTANCE:
                 agent_manager = AgentManager(**message.params)
                 output_dir = 'client_data' / agent_manager.output_dir
                 agent_manager.set_output_dir(output_dir)
                 filename = str(agent_manager.save())
                 response = interface.Message.create(info=dict(filename=filename))
                 del agent_manager
-            # FIT_agent_manager
-            elif message.command == interface.Command.FIT_agent_manager:
+            # FIT_AGENT_MANAGER
+            elif message.command == interface.Command.FIT_AGENT_MANAGER:
                 filename = message.params['filename']
                 agent_manager = AgentManager.load(filename)
                 agent_manager.fit()
                 agent_manager.save()
                 response = interface.Message.create(command=interface.Command.ECHO)
                 del agent_manager
-            # EVAL_agent_manager
-            elif message.command == interface.Command.EVAL_agent_manager:
+            # EVAL_AGENT_MANAGER
+            elif message.command == interface.Command.EVAL_AGENT_MANAGER:
                 filename = message.params['filename']
                 agent_manager = AgentManager.load(filename)
                 eval_output = agent_manager.eval()
                 # agent_manager.save()  # eval does not change the state of agent stats
                 response = interface.Message.create(data=dict(output=eval_output))
                 del agent_manager
-            # agent_manager_CLEAR_OUTPUT_DIR
-            elif message.command == interface.Command.agent_manager_CLEAR_OUTPUT_DIR:
+            # AGENT_MANAGER_CLEAR_OUTPUT_DIR
+            elif message.command == interface.Command.AGENT_MANAGER_CLEAR_OUTPUT_DIR:
                 filename = message.params['filename']
                 agent_manager = AgentManager.load(filename)
                 agent_manager.clear_output_dir()
@@ -106,6 +107,7 @@ class ClientHandler:
                     self._execute_message(message)
             except Exception as ex:
                 print(f'<server: client process> [ERROR]: {ex}')
+                self._logger.exception(ex)
             finally:
                 print(f'<server: client process> Finished client @ {self._address}')
 

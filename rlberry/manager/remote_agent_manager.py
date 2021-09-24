@@ -27,7 +27,7 @@ class RemoteAgentManager:
         # in the server where the object was saved.
         msg = self._client.send(
             interface.Message.create(
-                command=interface.Command.CREATE_agent_manager_INSTANCE,
+                command=interface.Command.CREATE_AGENT_MANAGER_INSTANCE,
                 params=kwargs,
                 data=None,
             )
@@ -43,7 +43,7 @@ class RemoteAgentManager:
     def fit(self):
         msg = self._client.send(
             interface.Message.create(
-                command=interface.Command.FIT_agent_manager,
+                command=interface.Command.FIT_AGENT_MANAGER,
                 params=dict(filename=self.remote_file),
                 data=None,
             )
@@ -53,7 +53,7 @@ class RemoteAgentManager:
     def eval(self):
         msg = self._client.send(
             interface.Message.create(
-                command=interface.Command.EVAL_agent_manager,
+                command=interface.Command.EVAL_AGENT_MANAGER,
                 params=dict(filename=self.remote_file),
                 data=None,
             )
