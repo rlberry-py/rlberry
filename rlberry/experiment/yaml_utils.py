@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Generator, Tuple
 import yaml
 
-from rlberry.stats import AgentStats
+from rlberry.manager import AgentManager
 from rlberry.utils.factory import load
 
 _AGENT_KEYS = ('init_kwargs', 'eval_kwargs', 'fit_kwargs')
@@ -102,9 +102,9 @@ def read_env_config(config_path):
 def parse_experiment_config(path: Path,
                             n_fit: int = 4,
                             output_base_dir: str = 'results',
-                            parallelization: str = 'process') -> Generator[Tuple[int, AgentStats], None, None]:
+                            parallelization: str = 'process') -> Generator[Tuple[int, AgentManager], None, None]:
     """
-    Read .yaml files. set global seed and convert to AgentStats instances.
+    Read .yaml files. set global seed and convert to AgentManager instances.
 
     Exemple of experiment config:
 
@@ -127,13 +127,13 @@ def parse_experiment_config(path: Path,
     n_fit : int
         Number of instances of each agent to fit
     output_base_dir : str
-        Directory where to save AgentStats results.
+        Directory where to save AgentManager results.
 
     Returns
     -------
     seed: int
         global seed
-    agent_stats: AgentStats
+    agent_manager: AgentManager
         the Agent Stats to fit
     """
     with path.open() as file:
@@ -143,7 +143,7 @@ def parse_experiment_config(path: Path,
         n_fit = n_fit
 
         for agent_path in config["agents"]:
-            # set seed before creating AgentStats
+            # set seed before creating AgentManager
             seed = config["seed"]
 
             agent_name = Path(agent_path).stem
@@ -185,7 +185,7 @@ def parse_experiment_config(path: Path,
             # append run index to dir
             output_dir = output_dir / str(last + 1)
 
-            yield seed, AgentStats(agent_class=agent_class,
+            yield seed, AgentManager(agent_class=agent_class,
                                    init_kwargs=init_kwargs,
                                    eval_kwargs=eval_kwargs,
                                    fit_budget=fit_budget,
@@ -201,5 +201,5 @@ def parse_experiment_config(path: Path,
 
 if __name__ == '__main__':
     filename = 'examples/demo_experiment/params_experiment.yaml'
-    for (seed, agent_stats) in parse_experiment_config(Path(filename)):
+    for (seed, agent_manager) in parse_experiment_config(Path(filename)):
         print(seed)

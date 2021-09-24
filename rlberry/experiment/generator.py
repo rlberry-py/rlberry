@@ -28,20 +28,20 @@ logger = logging.getLogger(__name__)
 
 def experiment_generator():
     """
-    Parse command line arguments and yields AgentStats instances.
+    Parse command line arguments and yields AgentManager instances.
     """
     args = docopt(__doc__)
-    for (_, agent_stats) in parse_experiment_config(
+    for (_, agent_manager) in parse_experiment_config(
             Path(args["<experiment_path>"]),
             n_fit=int(args["--n_fit"]),
             output_base_dir=args["--output_dir"],
             parallelization=args["--parallelization"]):
         if args["--writer"]:
             if _TENSORBOARD_INSTALLED:
-                for idx in range(agent_stats.n_fit):
-                    logdir = agent_stats.output_dir / f"run_{idx + 1}_{datetime.now().strftime('%b%d_%H-%M-%S')}"
-                    agent_stats.set_writer(idx=idx, writer_fn=SummaryWriter, writer_kwargs={'log_dir': logdir})
+                for idx in range(agent_manager.n_fit):
+                    logdir = agent_manager.output_dir / f"run_{idx + 1}_{datetime.now().strftime('%b%d_%H-%M-%S')}"
+                    agent_manager.set_writer(idx=idx, writer_fn=SummaryWriter, writer_kwargs={'log_dir': logdir})
             else:
                 logger.warning('Option --writer is not available: tensorboard is not installed.')
 
-        yield agent_stats
+        yield agent_manager

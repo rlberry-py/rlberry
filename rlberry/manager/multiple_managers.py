@@ -8,34 +8,34 @@ def fit_stats(stats, save):
     return stats
 
 
-class MultipleStats:
+class MultipleManagers:
     """
-    Class to fit multiple AgentStats instances in parallel with multiple threads.
+    Class to fit multiple AgentManager instances in parallel with multiple threads.
     """
 
     def __init__(self) -> None:
         super().__init__()
         self.instances = []
 
-    def append(self, agent_stats):
+    def append(self, agent_manager):
         """
-        Append new AgentStats instance.
+        Append new AgentManager instance.
 
         Parameters
         ----------
-        agent_stats : AgentStats
+        agent_manager : AgentManager
         """
-        self.instances.append(agent_stats)
+        self.instances.append(agent_manager)
 
     def run(self, save=False):
         """
-        Fit AgentStats instances in parallel.
+        Fit AgentManager instances in parallel.
 
         Parameters
         ----------
         save: bool, default: False
-            If true, save AgentStats intances immediately after fitting.
-            AgentStats.save() is called.
+            If true, save AgentManager intances immediately after fitting.
+            AgentManager.save() is called.
         """
         with concurrent.futures.ThreadPoolExecutor() as executor:
             futures = []
@@ -54,12 +54,12 @@ class MultipleStats:
 
     def save(self):
         """
-        Pickle AgentStats instances and saves fit statistics in .csv files.
-        The output folder is defined in each of the AgentStats instances.
+        Pickle AgentManager instances and saves fit statistics in .csv files.
+        The output folder is defined in each of the AgentManager instances.
         """
         for stats in self.instances:
             stats.save()
 
     @property
-    def allstats(self):
+    def managers(self):
         return self.instances

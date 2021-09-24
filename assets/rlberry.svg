@@ -46,13 +46,13 @@
                          style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 397px; height: 1px; padding-top: 176px; margin-left: 193px;">
                         <div style="box-sizing: border-box; font-size: 0; text-align: center; ">
                             <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: #000000; line-height: 1.2; pointer-events: all; font-weight: bold; white-space: normal; word-wrap: normal; ">
-                                rlberry Agent &amp; AgentStats
+                                rlberry Agent &amp; AgentManager
                             </div>
                         </div>
                     </div>
                 </foreignObject>
                 <text x="392" y="180" fill="#000000" font-family="Helvetica" font-size="12px" text-anchor="middle"
-                      font-weight="bold">rlberry Agent &amp; AgentStats
+                      font-weight="bold">rlberry Agent &amp; AgentManager
                 </text>
             </switch>
         </g>

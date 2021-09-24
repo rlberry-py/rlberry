@@ -2,7 +2,7 @@ from stable_baselines3 import A2C as A2CStableBaselines
 from stable_baselines3.common.cmd_util import make_atari_env
 from stable_baselines3.common.vec_env import VecFrameStack
 from rlberry.agents import AgentWithSimplePolicy
-from rlberry.stats import AgentStats
+from rlberry.manager import AgentManager
 from rlberry.wrappers.scalarize import ScalarizeEnvWrapper
 from pathlib import Path
 
@@ -125,7 +125,7 @@ if __name__ == '__main__':
     # Training several agents and comparing different hyperparams
     #
 
-    stats = AgentStats(
+    stats = AgentManager(
         A2CAgent,
         train_env=(env_constructor, None),
         eval_env=(eval_env_constructor, None),

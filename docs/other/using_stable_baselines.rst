@@ -120,9 +120,9 @@ implementation of `Stable Baselines`_ and evaluate two hyperparameter configurat
     #
     # Training several agents and comparing different hyperparams
     #
-    from rlberry.stats import AgentStats, MultipleStats, evaluate_agents
+    from rlberry.manager import AgentManager, MultipleManagers, evaluate_agents
 
-    stats = AgentStats(
+    stats = AgentManager(
         A2CAgent,
         (env_ctor, env_kwargs),
         agent_name='A2C baseline',
@@ -135,7 +135,7 @@ implementation of `Stable Baselines`_ and evaluate two hyperparameter configurat
         output_dir='dev/stable_baselines',
         seed=123)
 
-    stats_alternative = AgentStats(
+    stats_alternative = AgentManager(
         A2CAgent,
         (env_ctor, env_kwargs),
         agent_name='A2C optimized',
@@ -157,14 +157,14 @@ implementation of `Stable Baselines`_ and evaluate two hyperparameter configurat
         fit_fraction=1.0)
 
     # Fit everything in parallel
-    mstats = MultipleStats()
-    mstats.append(stats)
-    mstats.append(stats_alternative)
+    multimanagers = MultipleManagers()
+    multimanagers.append(stats)
+    multimanagers.append(stats_alternative)
 
-    mstats.run()
+    multimanagers.run()
 
     # Plot policy evaluation
-    out = evaluate_agents(mstats.allstats)
+    out = evaluate_agents(multimanagers.managers)
     print(out)
 
 

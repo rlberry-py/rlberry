@@ -1,7 +1,7 @@
 from rlberry.envs import GridWorld
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.agents.dynprog.value_iteration import ValueIterationAgent
-from rlberry.stats import AgentStats
+from rlberry.manager import AgentManager
 from optuna.samplers import TPESampler
 
 
@@ -41,8 +41,8 @@ def test_hyperparam_optim_tpe():
     # Define trainenv
     train_env = (GridWorld, {})
 
-    # Run AgentStats
-    stats_agent = AgentStats(DummyAgent,
+    # Run AgentManager
+    stats_agent = AgentManager(DummyAgent,
                              train_env,
                              fit_budget=1,
                              init_kwargs={},
@@ -60,8 +60,8 @@ def test_hyperparam_optim_random():
     # Define train env
     train_env = (GridWorld, {})
 
-    # Run AgentStats
-    stats_agent = AgentStats(DummyAgent,
+    # Run AgentManager
+    stats_agent = AgentManager(DummyAgent,
                              train_env,
                              init_kwargs={},
                              fit_budget=1,
@@ -77,8 +77,8 @@ def test_hyperparam_optim_grid():
     # Define train env
     train_env = (GridWorld, {})
 
-    # Run AgentStats
-    stats_agent = AgentStats(DummyAgent,
+    # Run AgentManager
+    stats_agent = AgentManager(DummyAgent,
                              train_env,
                              init_kwargs={},
                              fit_budget=1,
@@ -99,8 +99,8 @@ def test_hyperparam_optim_cmaes():
     # Define train env
     train_env = (GridWorld, {})
 
-    # Run AgentStats
-    stats_agent = AgentStats(DummyAgent,
+    # Run AgentManager
+    stats_agent = AgentManager(DummyAgent,
                              train_env,
                              init_kwargs={},
                              fit_budget=1,
@@ -130,7 +130,7 @@ def test_discount_optimization():
 
     vi_params = {'gamma': 0.1, 'epsilon': 1e-3}
 
-    vi_stats = AgentStats(ValueIterationAgentToOptimize,
+    vi_stats = AgentManager(ValueIterationAgentToOptimize,
                           env,
                           fit_budget=0,
                           eval_kwargs=dict(eval_horizon=20),

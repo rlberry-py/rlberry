@@ -1,7 +1,7 @@
 import rlberry.agents.jax.nets.common as nets
 from rlberry.agents.jax.dqn.dqn import DQNAgent
 from rlberry.envs import gym_make
-from rlberry.stats import AgentStats, MultipleStats, plot_writer_data
+from rlberry.manager import AgentManager, MultipleManagers, plot_writer_data
 
 if __name__ == '__main__':
     # global params
@@ -35,7 +35,7 @@ if __name__ == '__main__':
         )
     )
 
-    stats = AgentStats(
+    stats = AgentManager(
         DQNAgent,
         env,
         fit_budget=fit_budget,
@@ -46,7 +46,7 @@ if __name__ == '__main__':
         agent_name='dqn',
     )
 
-    stats_alternative = AgentStats(
+    stats_alternative = AgentManager(
         DQNAgent,
         env,
         fit_budget=fit_budget,
@@ -58,15 +58,15 @@ if __name__ == '__main__':
     )
 
     # fit everything in parallel
-    mstats = MultipleStats()
-    mstats.append(stats)
-    mstats.append(stats_alternative)
-    mstats.run()
+    multimanagers = MultipleManagers()
+    multimanagers.append(stats)
+    multimanagers.append(stats_alternative)
+    multimanagers.run()
 
-    plot_writer_data(mstats.allstats, tag='episode_rewards', show=False)
-    plot_writer_data(mstats.allstats, tag='dw_time_elapsed', show=False)
-    plot_writer_data(mstats.allstats, tag='eval_rewards', show=False)
-    plot_writer_data(mstats.allstats, tag='q_loss')
+    plot_writer_data(multimanagers.managers, tag='episode_rewards', show=False)
+    plot_writer_data(multimanagers.managers, tag='dw_time_elapsed', show=False)
+    plot_writer_data(multimanagers.managers, tag='eval_rewards', show=False)
+    plot_writer_data(multimanagers.managers, tag='q_loss')
 
     stats.save()
     stats.clear_output_dir()

@@ -2,7 +2,7 @@ import numpy as np
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
 from rlberry.agents import RSKernelUCBVIAgent, RSUCBVIAgent
 from rlberry.agents.torch.ppo import PPOAgent
-from rlberry.stats import AgentStats, plot_writer_data, evaluate_agents
+from rlberry.manager import AgentManager, plot_writer_data, evaluate_agents
 
 # --------------------------------
 # Define train and evaluation envs
@@ -43,9 +43,9 @@ params_ppo = {"gamma": GAMMA,
 eval_kwargs = dict(eval_horizon=HORIZON, n_simulations=20)
 
 # -----------------------------
-# Run AgentStats
+# Run AgentManager
 # -----------------------------
-rsucbvi_stats = AgentStats(
+rsucbvi_stats = AgentManager(
     RSUCBVIAgent,
     train_env,
     fit_budget=N_EPISODES,
@@ -53,7 +53,7 @@ rsucbvi_stats = AgentStats(
     eval_kwargs=eval_kwargs,
     n_fit=4,
     seed=123)
-rskernel_stats = AgentStats(
+rskernel_stats = AgentManager(
     RSKernelUCBVIAgent,
     train_env,
     fit_budget=N_EPISODES,
@@ -61,7 +61,7 @@ rskernel_stats = AgentStats(
     eval_kwargs=eval_kwargs,
     n_fit=4,
     seed=123)
-ppo_stats = AgentStats(
+ppo_stats = AgentManager(
     PPOAgent,
     train_env,
     fit_budget=N_EPISODES,
@@ -70,20 +70,20 @@ ppo_stats = AgentStats(
     n_fit=4,
     seed=123)
 
-agent_stats_list = [rsucbvi_stats, rskernel_stats, ppo_stats]
-for st in agent_stats_list:
+agent_manager_list = [rsucbvi_stats, rskernel_stats, ppo_stats]
+for st in agent_manager_list:
     st.fit()
 
 # learning curves
-plot_writer_data(agent_stats_list,
+plot_writer_data(agent_manager_list,
                  tag='episode_rewards',
                  preprocess_func=np.cumsum,
                  title='cumulative rewards',
                  show=False)
 
 # compare final policies
-output = evaluate_agents(agent_stats_list)
+output = evaluate_agents(agent_manager_list)
 print(output)
 
-for st in agent_stats_list:
+for st in agent_manager_list:
     st.clear_output_dir()

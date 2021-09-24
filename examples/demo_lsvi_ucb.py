@@ -1,7 +1,7 @@
 import numpy as np
 from rlberry.agents.features import FeatureMap
 from rlberry.envs.finite import GridWorld
-from rlberry.stats import AgentStats, plot_writer_data, evaluate_agents
+from rlberry.manager import AgentManager, plot_writer_data, evaluate_agents
 from rlberry.agents.dynprog import ValueIterationAgent
 from rlberry.agents.linear import LSVIUCBAgent
 from rlberry.agents.ucbvi import UCBVIAgent
@@ -87,7 +87,7 @@ if __name__ == '__main__':
         gamma=gamma
     )
 
-    stats = AgentStats(
+    stats = AgentManager(
         LSVIUCBAgent,
         env,
         init_kwargs=params,
@@ -97,7 +97,7 @@ if __name__ == '__main__':
         parallelization=parallelization)
 
     # UCBVI baseline
-    stats_ucbvi = AgentStats(
+    stats_ucbvi = AgentManager(
         UCBVIAgent,
         env,
         init_kwargs=params_ucbvi,
@@ -107,7 +107,7 @@ if __name__ == '__main__':
         parallelization=parallelization)
 
     # Random exploration baseline
-    stats_random = AgentStats(
+    stats_random = AgentManager(
         LSVIUCBAgent,
         env,
         init_kwargs=params_greedy,
@@ -118,7 +118,7 @@ if __name__ == '__main__':
         parallelization=parallelization)
 
     # Oracle (optimal policy)
-    oracle_stats = AgentStats(
+    oracle_stats = AgentManager(
         ValueIterationAgent,
         env,
         init_kwargs=params_oracle,

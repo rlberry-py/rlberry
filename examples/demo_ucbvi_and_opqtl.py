@@ -2,8 +2,8 @@ import numpy as np
 from rlberry.agents.ucbvi import UCBVIAgent
 from rlberry.agents.optql import OptQLAgent
 from rlberry.envs.finite import GridWorld
-from rlberry.stats import AgentStats, plot_writer_data
-from rlberry.stats import MultipleStats
+from rlberry.manager import AgentManager, plot_writer_data
+from rlberry.manager import MultipleManagers
 
 N_EP = 3000
 HORIZON = 20
@@ -29,18 +29,18 @@ params['optql'] = {
 
 eval_kwargs = dict(eval_horizon=HORIZON, n_simulations=20)
 
-mstats = MultipleStats()
+multimanagers = MultipleManagers()
 
-mstats.append(
-    AgentStats(UCBVIAgent, env, fit_budget=N_EP, init_kwargs=params['ucbvi'], eval_kwargs=eval_kwargs)
+multimanagers.append(
+    AgentManager(UCBVIAgent, env, fit_budget=N_EP, init_kwargs=params['ucbvi'], eval_kwargs=eval_kwargs)
 )
 
-mstats.append(
-    AgentStats(OptQLAgent, env, fit_budget=N_EP, init_kwargs=params['optql'], eval_kwargs=eval_kwargs)
+multimanagers.append(
+    AgentManager(OptQLAgent, env, fit_budget=N_EP, init_kwargs=params['optql'], eval_kwargs=eval_kwargs)
 )
 
-mstats.run()
+multimanagers.run()
 
-plot_writer_data(mstats.allstats, tag='episode_rewards',
+plot_writer_data(multimanagers.managers, tag='episode_rewards',
                  preprocess_func=np.cumsum,
                  title='Cumulative Rewards')

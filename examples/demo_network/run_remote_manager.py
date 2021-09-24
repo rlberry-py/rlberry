@@ -1,13 +1,13 @@
 from rlberry.network.client import BerryClient
 from rlberry.network.interface import ResourceRequest
 
-from rlberry.stats.remote_agent_stats import RemoteAgentStats
+from rlberry.manager.remote_agent_manager import RemoteAgentManager
 
 
 client = BerryClient()
 
 
-remote_stats = RemoteAgentStats(
+remote_stats = RemoteAgentManager(
     client,
     agent_class=ResourceRequest(name='ValueIterationAgent'),
     train_env=ResourceRequest(name='GridWorld', kwargs=dict(nrows=35)),

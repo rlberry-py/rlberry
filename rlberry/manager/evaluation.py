@@ -7,20 +7,20 @@ import seaborn as sns
 logger = logging.getLogger(__name__)
 
 
-def evaluate_agents(agent_stats_list,
+def evaluate_agents(agent_manager_list,
                     n_simulations=5,
                     fignum=None,
                     show=True,
                     plot=True,
                     sns_kwargs=None):
     """
-    Evaluate and compare each of the agents in agent_stats_list.
+    Evaluate and compare each of the agents in agent_manager_list.
 
     Parameters
     ----------
-    agent_stats_list : list of AgentStats objects.
+    agent_manager_list : list of AgentManager objects.
     n_simulations: int
-        Number of calls to the eval() method of each AgentStats instance.
+        Number of calls to the eval() method of each AgentManager instance.
     fignum: string or int
         Identifier of plot figure.
     show: bool
@@ -37,19 +37,19 @@ def evaluate_agents(agent_stats_list,
     #
 
     eval_outputs = []
-    for agent_stats in agent_stats_list:
+    for agent_manager in agent_manager_list:
         outputs = []
-        logger.info(f'Evaluating {agent_stats.agent_name}...')
+        logger.info(f'Evaluating {agent_manager.agent_name}...')
         for ii in range(n_simulations):
             logger.info(f'... simulation {ii + 1}/{n_simulations}')
-            value = agent_stats.eval()
+            value = agent_manager.eval()
             if not np.isnan(value):
-                outputs.append(agent_stats.eval())
+                outputs.append(agent_manager.eval())
         if len(outputs) > 0:
             eval_outputs.append(outputs)
 
     if len(eval_outputs) == 0:
-        logger.error('[evaluate_agents]: No evaluation data. Make sure AgentStats.fit() has been called.')
+        logger.error('[evaluate_agents]: No evaluation data. Make sure AgentManager.fit() has been called.')
         return
 
     #
@@ -59,8 +59,8 @@ def evaluate_agents(agent_stats_list,
     # build unique agent IDs (in case there are two agents with the same ID)
     unique_ids = []
     id_count = {}
-    for agent_stats in agent_stats_list:
-        name = agent_stats.agent_name
+    for agent_manager in agent_manager_list:
+        name = agent_manager.agent_name
         if name not in id_count:
             id_count[name] = 1
         else:
@@ -87,7 +87,7 @@ def evaluate_agents(agent_stats_list,
     return output
 
 
-def plot_writer_data(agent_stats,
+def plot_writer_data(agent_manager,
                      tag,
                      fignum=None,
                      show=True,
@@ -95,12 +95,12 @@ def plot_writer_data(agent_stats,
                      title=None,
                      sns_kwargs=None):
     """
-    Given a list of AgentStats, plot data (corresponding to info) obtained in each episode.
+    Given a list of AgentManager, plot data (corresponding to info) obtained in each episode.
     The dictionary returned by agents' .fit() method must contain a key equal to `info`.
 
     Parameters
     ----------
-    agent_stats : AgentStats, or list of AgentStats
+    agent_manager : AgentManager, or list of AgentManager
     tag : str
         Tag of data to plot.
     fignum: string or int
@@ -123,19 +123,19 @@ def plot_writer_data(agent_stats,
     else:
         ylabel = tag
     preprocess_func = preprocess_func or (lambda x: x)
-    agent_stats_list = agent_stats
-    if not isinstance(agent_stats_list, list):
-        agent_stats_list = [agent_stats_list]
+    agent_manager_list = agent_manager
+    if not isinstance(agent_manager_list, list):
+        agent_manager_list = [agent_manager_list]
 
     # preprocess agent stats
     data_list = []
-    for stats in agent_stats_list:
+    for stats in agent_manager_list:
         if stats.writer_data is not None:
             for idx in stats.writer_data:
                 df = stats.writer_data[idx]
                 df = pd.DataFrame(df[df['tag'] == tag])
                 df['value'] = preprocess_func(df['value'].values)
-                # update name according to AgentStats name
+                # update name according to AgentManager name
                 df['name'] = stats.agent_name
                 data_list.append(df)
     if len(data_list) == 0:

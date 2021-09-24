@@ -8,8 +8,8 @@ Compare different agents
 
 
 Two or more agents can be compared using the classes 
-:class:`~rlberry.stats.agent_stats.AgentStats` and
-:class:`~rlberry.stats.multiple_stats.MultipleStats`, as in the example below.
+:class:`~rlberry.manager.agent_manager.AgentManager` and
+:class:`~rlberry.manager.multiple_managers.MultipleManagers`, as in the example below.
 
 
 .. code-block:: python
@@ -18,7 +18,7 @@ Two or more agents can be compared using the classes
         from rlberry.envs.classic_control import MountainCar
         from rlberry.agents.torch.reinforce import REINFORCEAgent
         from rlberry.agents.kernel_based.rs_kernel_ucbvi import RSKernelUCBVIAgent
-        from rlberry.stats import AgentStats, MultipleStats, plot_writer_data
+        from rlberry.manager import AgentManager, MultipleManagers, plot_writer_data
 
 
         # Environment constructor and kwargs
@@ -38,10 +38,10 @@ Two or more agents can be compared using the classes
 
         eval_kwargs = dict(eval_horizon=200)
 
-        # Create AgentStats for REINFORCE and RSKernelUCBVI
-        mstats = MultipleStats()
-        mstats.append(
-        AgentStats(
+        # Create AgentManager for REINFORCE and RSKernelUCBVI
+        multimanagers = MultipleManagers()
+        multimanagers.append(
+        AgentManager(
                 REINFORCEAgent,
                 env,
                 init_kwargs=params['reinforce'],
@@ -49,8 +49,8 @@ Two or more agents can be compared using the classes
                 n_fit=4,
                 parallelization='thread')
         )
-        mstats.append(
-        AgentStats(
+        multimanagers.append(
+        AgentManager(
                 RSKernelUCBVIAgent,
                 env,
                 init_kwargs=params['kernel'],
@@ -60,9 +60,9 @@ Two or more agents can be compared using the classes
         )
 
         # Fit and plot
-        mstats.run()
+        multimanagers.run()
         plot_writer_data(
-        mstats.allstats,
+        multimanagers.managers,
         tag='episode_rewards',
         preprocess_func=np.cumsum,
         title="Cumulative Rewards")

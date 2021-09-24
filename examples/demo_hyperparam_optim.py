@@ -1,6 +1,6 @@
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
 from rlberry.agents.torch.ppo import PPOAgent
-from rlberry.stats import AgentStats
+from rlberry.manager import AgentManager
 
 if __name__ == '__main__':
     # --------------------------------
@@ -24,9 +24,9 @@ if __name__ == '__main__':
     eval_kwargs = dict(eval_horizon=HORIZON, n_simulations=20)
 
     # -------------------------------
-    # Run AgentStats and save results
+    # Run AgentManager and save results
     # --------------------------------
-    ppo_stats = AgentStats(
+    ppo_stats = AgentManager(
         PPOAgent, train_env, fit_budget=N_EPISODES,
         init_kwargs=params_ppo,
         eval_kwargs=eval_kwargs,
@@ -47,7 +47,7 @@ if __name__ == '__main__':
     del ppo_stats
 
     # load
-    ppo_stats = AgentStats.load('dev/ppo_stats_backup/stats.pickle')
+    ppo_stats = AgentManager.load('dev/ppo_stats_backup/stats.pickle')
 
     # continue previous optimization, now with 120s of timeout and multiprocessing
     best_trial, data = ppo_stats.optimize_hyperparams(
