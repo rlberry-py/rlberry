@@ -141,5 +141,5 @@ def test_discount_optimization():
     vi_stats.optimize_hyperparams(n_trials=5, n_fit=1,
                                   sampler_method='random', pruner_method='none')
 
-    assert vi_stats.best_hyperparams['gamma'] == 0.99
+    assert vi_stats.optuna_study
     vi_stats.clear_output_dir()
