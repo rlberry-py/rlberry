@@ -16,5 +16,5 @@ if __name__ == '__main__':
         ),
     )
 
-    server = BerryServer(resources=resources, client_session_timeout=10.0)
+    server = BerryServer(resources=resources, client_socket_timeout=10.0)
     server.start()
