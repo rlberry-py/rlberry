@@ -15,6 +15,5 @@ if __name__ == '__main__':
             description='ValueIterationAgent constructor' + ValueIterationAgent.__doc__
         ),
     )
-
     server = BerryServer(resources=resources, client_socket_timeout=10.0)
     server.start()
