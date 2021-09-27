@@ -15,11 +15,12 @@ logger = logging.getLogger(__name__)
 
 
 class ClientHandler:
-    def __init__(self, client_socket, client_address, resources):
+    def __init__(self, client_socket, client_address, resources, timeout):
         self._socket = client_socket
         self._address = client_address
         self._resources = resources
         self._logger = logging.getLogger('ClientHandler')
+        self._timeout = timeout
 
     def _process_message(self, message: interface.Message):
         """Replace resource requests in 'message' by available resources."""
@@ -44,6 +45,7 @@ class ClientHandler:
 
     def _execute_message(self, message: interface.Message):
         """Execute command in message and send response."""
+        self._socket.settimeout(self._timeout)
         response = interface.Message.create(command=interface.Command.ECHO)
         try:
             # LIST_RESOURCES
@@ -96,6 +98,7 @@ class ClientHandler:
             try:
                 print(f'\n<server: client process> Handling client @ {self._address}')
                 while True:
+                    self._socket.settimeout(self._timeout)
                     message_bytes = self._socket.recv(1024)
                     if not message_bytes:
                         break
@@ -175,12 +178,12 @@ class BerryServer():
                 while True:
                     print(f'<server: main process> BerryServer({self._host}, {self._port}): waiting for connection...')
                     client_socket, client_address = s.accept()   # wait for connection
-                    client_socket.settimeout(self._client_socket_timeout)
                     self._client_socket_counter += 1
                     client_handler = ClientHandler(
                         client_socket,
                         client_address,
-                        self._resources)
+                        self._resources,
+                        self._client_socket_timeout)
                     futures.append(executor.submit(client_handler.run))
                     if self._terminate_after and self._client_socket_counter >= self._terminate_after:
                         print('<server: main process> Terminating server (main process): '
