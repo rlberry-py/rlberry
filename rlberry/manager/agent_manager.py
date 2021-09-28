@@ -253,8 +253,10 @@ class AgentManager:
                 raise ValueError('[AgentManager] fit_budget missing in __init__().')
 
         # output dir
-        output_dir = output_dir or ('temp/' + self.identifier)
-        self.output_dir = Path(output_dir)
+        if output_dir is None:
+            self.output_dir = Path('temp/' + self.identifier)
+        else:
+            self.output_dir = Path(output_dir) / self.identifier
 
         # Create list of writers for each agent that will be trained
         self.writers = [('default', None) for _ in range(n_fit)]
@@ -315,16 +317,6 @@ class AgentManager:
         if len(values) == 0:
             return np.nan
         return np.mean(values)
-
-    def set_output_dir(self, output_dir):
-        """
-        Change output directory.
-
-        Parameters
-        -----------
-        output_dir : str
-        """
-        self.output_dir = Path(output_dir)
 
     def clear_output_dir(self):
         """Delete output_dir and all its data."""
