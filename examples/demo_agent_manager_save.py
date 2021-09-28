@@ -36,13 +36,13 @@ ppo_stats = AgentManager(
     n_fit=4,
     output_dir='dev/ppo_stats')
 ppo_stats.fit()  # fit the 4 agents
-ppo_stats.save()
+ppo_stats_fname = ppo_stats.save()
 del ppo_stats
 
 # -------------------------------
 # Load and plot results
 # --------------------------------
-ppo_stats = AgentManager.load('dev/ppo_stats/stats.pickle')
+ppo_stats = AgentManager.load(ppo_stats_fname)
 
 # learning curves
 plot_writer_data(ppo_stats, tag='episode_rewards',

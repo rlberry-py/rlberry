@@ -356,15 +356,6 @@ class AgentManager:
         writer_kwargs = writer_kwargs or {}
         self.writers[idx] = (writer_fn, writer_kwargs)
 
-    def disable_writers(self):
-        """
-        Set all writers to None.
-        """
-        self.writers = [('default', None) for _ in range(self.n_fit)]
-        for agent in self.agent_handlers:
-            if not agent.is_empty():
-                agent.set_writer(None)
-
     def fit(self, budget=None, **kwargs):
         """
         Fit the agent instances in parallel.
@@ -377,7 +368,7 @@ class AgentManager:
         if not isinstance(seeders, list):
             seeders = [seeders]
 
-        # remove agent instances from memory to that the agent handlers can be sent to different workers
+        # remove agent instances from memory so that the agent handlers can be sent to different workers
         for handler in self.agent_handlers:
             handler.dump()
 
@@ -476,9 +467,6 @@ class AgentManager:
         #
         # Pickle AgentManager instance
         #
-
-        # remove writers
-        self.disable_writers()
 
         # clear agent handlers
         for handler in self.agent_handlers:
@@ -722,7 +710,7 @@ class AgentManager:
         # reset agent handlers, so that they take the new parameters
         self._reset_agent_handlers()
 
-        return best_trial, study.trials_dataframe()
+        return deepcopy(best_trial.params)
 
 
 #

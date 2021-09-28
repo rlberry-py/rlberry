@@ -34,7 +34,7 @@ if __name__ == '__main__':
         output_dir='dev/ppo_stats_backup')
 
     # hyperparam optim with multiple threads
-    best_trial, data = ppo_stats.optimize_hyperparams(
+    ppo_stats.optimize_hyperparams(
         n_trials=5, timeout=None,
         n_fit=2,
         sampler_method='optuna_default',
@@ -43,14 +43,14 @@ if __name__ == '__main__':
     initial_n_trials = len(ppo_stats.optuna_study.trials)
 
     # save
-    ppo_stats.save()
+    ppo_stats_fname = ppo_stats.save()
     del ppo_stats
 
     # load
-    ppo_stats = AgentManager.load('dev/ppo_stats_backup/stats.pickle')
+    ppo_stats = AgentManager.load(ppo_stats_fname)
 
     # continue previous optimization, now with 120s of timeout and multiprocessing
-    best_trial, data = ppo_stats.optimize_hyperparams(
+    ppo_stats.optimize_hyperparams(
         n_trials=512, timeout=120,
         n_fit=2,
         continue_previous=True,
