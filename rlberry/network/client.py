@@ -26,7 +26,11 @@ class BerryClient():
         self._host = host
         self._port = port
 
-    def send(self, *messages: interface.Message) -> Union[List[interface.Message], interface.Message]:
+    def send(
+            self,
+            *messages: interface.Message,
+            print_response: bool = False,
+    ) -> Union[List[interface.Message], interface.Message]:
         returned_messages = []
         pp = pprint.PrettyPrinter(indent=4)
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -36,7 +40,8 @@ class BerryClient():
                 s.sendall(msg_bytes)
                 received_bytes = s.recv(1024)
                 received_msg_dict = json.loads(received_bytes)
-                pp.pprint(received_msg_dict)
+                if print_response:
+                    pp.pprint(received_msg_dict)
                 received_msg = interface.Message.from_dict(received_msg_dict)
                 returned_messages.append(received_msg)
 

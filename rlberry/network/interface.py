@@ -6,12 +6,16 @@ REQUEST_PREFIX = 'ResourceRequest_'
 
 class Command:
     NONE = 'NONE'
+    RAISE_EXCEPTION = 'RAISE_EXCEPTION'
     ECHO = 'ECHO'
     LIST_RESOURCES = 'LIST_RESOURCES'
-    CREATE_AGENT_MANAGER_INSTANCE = 'CREATE_AGENT_MANAGER_INSTANCE'
-    FIT_AGENT_MANAGER = 'FIT_AGENT_MANAGER'
-    EVAL_AGENT_MANAGER = 'EVAL_AGENT_MANAGER'
+    AGENT_MANAGER_CREATE_INSTANCE = 'AGENT_MANAGER_CREATE_INSTANCE'
+    AGENT_MANAGER_FIT = 'AGENT_MANAGER_FIT'
+    AGENT_MANAGER_EVAL = 'AGENT_MANAGER_EVAL'
     AGENT_MANAGER_CLEAR_OUTPUT_DIR = 'AGENT_MANAGER_CLEAR_OUTPUT_DIR'
+    AGENT_MANAGER_CLEAR_HANDLERS = 'AGENT_MANAGER_CLEAR_HANDLERS'
+    AGENT_MANAGER_SET_WRITER = 'AGENT_MANAGER_SET_WRITER'
+    AGENT_MANAGER_OPTIMIZE_HYPERPARAMS = 'AGENT_MANAGER_OPTIMIZE_HYPERPARAMS'
 
 
 class BerryServerInfo:
@@ -30,7 +34,13 @@ class Message(NamedTuple):
         return self._asdict()
 
     @classmethod
-    def create(cls, message='', command=None, params=None, data=None, info=None):
+    def create(
+            cls,
+            message: Optional[str] = '',
+            command: Optional[Command] = None,
+            params: Optional[Mapping[str, Any]] = None,
+            data: Optional[Mapping[str, Any]] = None,
+            info: Optional[Mapping[str, Any]] = None):
         command = command or ''
         params = params or dict()
         data = data or dict()

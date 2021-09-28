@@ -7,7 +7,7 @@ client = BerryClient()
 # Send params for AgentManager
 client.send(
     Message.create(
-        command=interface.Command.CREATE_AGENT_MANAGER_INSTANCE,
+        command=interface.Command.AGENT_MANAGER_CREATE_INSTANCE,
         params=dict(
             agent_class=ResourceRequest(name='ValueIterationAgent'),
             train_env=ResourceRequest(name='GridWorld', kwargs=dict(nrows=35)),

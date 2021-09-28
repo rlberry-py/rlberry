@@ -3,9 +3,8 @@ import logging
 import multiprocessing
 import socket
 import json
-from copy import deepcopy
 from rlberry.network import interface
-from rlberry.network.utils import serialize_message
+from rlberry.network.utils import apply_fn_to_tree, map_request_to_obj, serialize_message
 from rlberry.envs import gym_make
 from rlberry.manager import AgentManager
 from typing import Optional
@@ -25,23 +24,10 @@ class ClientHandler:
     def _process_message(self, message: interface.Message):
         """Replace resource requests in 'message' by available resources."""
         message = message.to_dict()
-        processed_message = deepcopy(message)
-        for entry in ['params', 'data', 'info']:
-            for key in message[entry]:
-                if key.startswith(interface.REQUEST_PREFIX):
-                    new_key = key[len(interface.REQUEST_PREFIX):]
-                    resource_name = message[entry][key]['name']
-                    try:
-                        resource_kwargs = message[entry][key]['kwargs']
-                    except KeyError:
-                        resource_kwargs = None
-                    if resource_name in self._resources:
-                        processed_message[entry].pop(key)
-                        if resource_kwargs:
-                            processed_message[entry][new_key] = (self._resources[resource_name]['obj'], resource_kwargs)
-                        else:
-                            processed_message[entry][new_key] = self._resources[resource_name]['obj']
-        return interface.Message.from_dict(processed_message)
+        message = apply_fn_to_tree(
+            lambda key, val: map_request_to_obj(key, val, self._resources), message, apply_to_nodes=True
+        )
+        return interface.Message.from_dict(message)
 
     def _execute_message(self, message: interface.Message):
         """Execute command in message and send response."""
@@ -54,28 +40,30 @@ class ClientHandler:
                 for rr in self._resources:
                     info[rr] = self._resources[rr]['description']
                 response = interface.Message.create(info=info)
-            # CREATE_AGENT_MANAGER_INSTANCE
-            elif message.command == interface.Command.CREATE_AGENT_MANAGER_INSTANCE:
-                agent_manager = AgentManager(**message.params)
-                output_dir = 'client_data' / agent_manager.output_dir
-                agent_manager.set_output_dir(output_dir)
+            # AGENT_MANAGER_CREATE_INSTANCE
+            elif message.command == interface.Command.AGENT_MANAGER_CREATE_INSTANCE:
+                params = message.params
+                if 'output_dir' in params:
+                    params['output_dir'] = 'client_data' / params['output_dir']
+                else:
+                    params['output_dir'] = 'client_data/'
+                agent_manager = AgentManager(**params)
                 filename = str(agent_manager.save())
                 response = interface.Message.create(info=dict(filename=filename))
                 del agent_manager
-            # FIT_AGENT_MANAGER
-            elif message.command == interface.Command.FIT_AGENT_MANAGER:
+            # AGENT_MANAGER_FIT
+            elif message.command == interface.Command.AGENT_MANAGER_FIT:
                 filename = message.params['filename']
                 agent_manager = AgentManager.load(filename)
                 agent_manager.fit()
                 agent_manager.save()
                 response = interface.Message.create(command=interface.Command.ECHO)
                 del agent_manager
-            # EVAL_AGENT_MANAGER
-            elif message.command == interface.Command.EVAL_AGENT_MANAGER:
+            # AGENT_MANAGER_EVAL
+            elif message.command == interface.Command.AGENT_MANAGER_EVAL:
                 filename = message.params['filename']
                 agent_manager = AgentManager.load(filename)
                 eval_output = agent_manager.eval()
-                # agent_manager.save()  # eval does not change the state of agent stats
                 response = interface.Message.create(data=dict(output=eval_output))
                 del agent_manager
             # AGENT_MANAGER_CLEAR_OUTPUT_DIR
@@ -83,12 +71,37 @@ class ClientHandler:
                 filename = message.params['filename']
                 agent_manager = AgentManager.load(filename)
                 agent_manager.clear_output_dir()
-                response = interface.Message.create(message=f'Cleared output: {agent_manager.output_dir}')
+                response = interface.Message.create(message=f'Cleared output dir: {agent_manager.output_dir}')
                 del agent_manager
+            # AGENT_MANAGER_CLEAR_HANDLERS
+            elif message.command == interface.Command.AGENT_MANAGER_CLEAR_HANDLERS:
+                filename = message.params['filename']
+                agent_manager = AgentManager.load(filename)
+                agent_manager.clear_handlers()
+                agent_manager.save()
+                response = interface.Message.create(message=f'Cleared handlers: {filename}')
+                del agent_manager
+            # AGENT_MANAGER_SET_WRITER
+            elif message.command == interface.Command.AGENT_MANAGER_SET_WRITER:
+                filename = message.params['filename']
+                agent_manager = AgentManager.load(filename)
+                agent_manager.set_writer(**message.params['kwargs'])
+                agent_manager.save()
+                del agent_manager
+            # AGENT_MANAGER_OPTIMIZE_HYPERPARAMS
+            elif message.command == interface.Command.AGENT_MANAGER_OPTIMIZE_HYPERPARAMS:
+                filename = message.params['filename']
+                agent_manager = AgentManager.load(filename)
+                best_params_dict = agent_manager.optimize_hyperparams(**message.params['kwargs'])
+                agent_manager.save()
+                del agent_manager
+                response = interface.Message.create(data=best_params_dict)
             # Send response
             self._socket.sendall(serialize_message(response))
         except Exception as ex:
-            response = interface.Message.create(info=dict(ERROR='Exception: ' + str(ex)))
+            response = interface.Message.create(
+                command=interface.Command.RAISE_EXCEPTION,
+                message=str(ex))
             self._socket.sendall(serialize_message(response))
             return 1
         return 0
@@ -184,6 +197,8 @@ class BerryServer():
                         client_address,
                         self._resources,
                         self._client_socket_timeout)
+                    print(f'<server: main process> BerryServer({self._host}, {self._port}): '
+                          f'new client @ {client_address}')
                     futures.append(executor.submit(client_handler.run))
                     if self._terminate_after and self._client_socket_counter >= self._terminate_after:
                         print('<server: main process> Terminating server (main process): '
