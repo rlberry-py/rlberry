@@ -3,10 +3,10 @@ import logging
 import multiprocessing
 import socket
 import json
+import rlberry.network.server_utils as server_utils
 from rlberry.network import interface
 from rlberry.network.utils import apply_fn_to_tree, map_request_to_obj, serialize_message
 from rlberry.envs import gym_make
-from rlberry.manager import AgentManager
 from typing import Optional
 
 
@@ -32,70 +32,9 @@ class ClientHandler:
     def _execute_message(self, message: interface.Message):
         """Execute command in message and send response."""
         self._socket.settimeout(self._timeout)
-        response = interface.Message.create(command=interface.Command.ECHO)
         try:
-            # LIST_RESOURCES
-            if message.command == interface.Command.LIST_RESOURCES:
-                info = {}
-                for rr in self._resources:
-                    info[rr] = self._resources[rr]['description']
-                response = interface.Message.create(info=info)
-            # AGENT_MANAGER_CREATE_INSTANCE
-            elif message.command == interface.Command.AGENT_MANAGER_CREATE_INSTANCE:
-                params = message.params
-                if 'output_dir' in params:
-                    params['output_dir'] = 'client_data' / params['output_dir']
-                else:
-                    params['output_dir'] = 'client_data/'
-                agent_manager = AgentManager(**params)
-                filename = str(agent_manager.save())
-                response = interface.Message.create(info=dict(filename=filename))
-                del agent_manager
-            # AGENT_MANAGER_FIT
-            elif message.command == interface.Command.AGENT_MANAGER_FIT:
-                filename = message.params['filename']
-                agent_manager = AgentManager.load(filename)
-                agent_manager.fit()
-                agent_manager.save()
-                response = interface.Message.create(command=interface.Command.ECHO)
-                del agent_manager
-            # AGENT_MANAGER_EVAL
-            elif message.command == interface.Command.AGENT_MANAGER_EVAL:
-                filename = message.params['filename']
-                agent_manager = AgentManager.load(filename)
-                eval_output = agent_manager.eval()
-                response = interface.Message.create(data=dict(output=eval_output))
-                del agent_manager
-            # AGENT_MANAGER_CLEAR_OUTPUT_DIR
-            elif message.command == interface.Command.AGENT_MANAGER_CLEAR_OUTPUT_DIR:
-                filename = message.params['filename']
-                agent_manager = AgentManager.load(filename)
-                agent_manager.clear_output_dir()
-                response = interface.Message.create(message=f'Cleared output dir: {agent_manager.output_dir}')
-                del agent_manager
-            # AGENT_MANAGER_CLEAR_HANDLERS
-            elif message.command == interface.Command.AGENT_MANAGER_CLEAR_HANDLERS:
-                filename = message.params['filename']
-                agent_manager = AgentManager.load(filename)
-                agent_manager.clear_handlers()
-                agent_manager.save()
-                response = interface.Message.create(message=f'Cleared handlers: {filename}')
-                del agent_manager
-            # AGENT_MANAGER_SET_WRITER
-            elif message.command == interface.Command.AGENT_MANAGER_SET_WRITER:
-                filename = message.params['filename']
-                agent_manager = AgentManager.load(filename)
-                agent_manager.set_writer(**message.params['kwargs'])
-                agent_manager.save()
-                del agent_manager
-            # AGENT_MANAGER_OPTIMIZE_HYPERPARAMS
-            elif message.command == interface.Command.AGENT_MANAGER_OPTIMIZE_HYPERPARAMS:
-                filename = message.params['filename']
-                agent_manager = AgentManager.load(filename)
-                best_params_dict = agent_manager.optimize_hyperparams(**message.params['kwargs'])
-                agent_manager.save()
-                del agent_manager
-                response = interface.Message.create(data=best_params_dict)
+            # Execute commands
+            response = server_utils.execute_message(message, self._resources)
             # Send response
             self._socket.sendall(serialize_message(response))
         except Exception as ex:
