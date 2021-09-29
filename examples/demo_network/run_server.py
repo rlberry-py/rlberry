@@ -1,11 +1,12 @@
 from rlberry.network.interface import ResourceItem
 from rlberry.network.server import BerryServer
 from rlberry.agents import ValueIterationAgent
-from rlberry.agents.torch import REINFORCEAgent
+from rlberry.agents.torch import REINFORCEAgent, A2CAgent
 from rlberry.envs import GridWorld, gym_make
 from rlberry.utils.writers import DefaultWriter
 
 if __name__ == '__main__':
+    port = int(input("Select server port: "))
     resources = dict(
         GridWorld=ResourceItem(
             obj=GridWorld,
@@ -19,6 +20,10 @@ if __name__ == '__main__':
             obj=REINFORCEAgent,
             description='REINFORCEAgent'
         ),
+        A2CAgent=ResourceItem(
+            obj=A2CAgent,
+            description='A2CAgent'
+        ),
         ValueIterationAgent=ResourceItem(
             obj=ValueIterationAgent,
             description='ValueIterationAgent constructor' + ValueIterationAgent.__doc__
@@ -28,5 +33,5 @@ if __name__ == '__main__':
             description='rlberry default writer'
         )
     )
-    server = BerryServer(resources=resources, client_socket_timeout=10.0)
+    server = BerryServer(resources=resources, port=port, client_socket_timeout=10.0)
     server.start()
