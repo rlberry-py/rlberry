@@ -80,9 +80,7 @@ def test_agent_manager_1():
             assert agent.fitted
 
     # test saving/loading
-    dirname = stats_agent1.output_dir
-    fname = dirname / 'stats'
-    stats_agent1.save()
+    fname = stats_agent1.save()
     loaded_stats = AgentManager.load(fname)
     assert stats_agent1.unique_id == loaded_stats.unique_id
 
@@ -132,9 +130,7 @@ def test_agent_manager_2():
             assert agent.fitted
 
     # test saving/loading
-    dirname = stats_agent1.output_dir
-    fname = dirname / 'stats'
-    stats_agent1.save()
+    fname = stats_agent1.save()
     loaded_stats = AgentManager.load(fname)
     assert stats_agent1.unique_id == loaded_stats.unique_id
 

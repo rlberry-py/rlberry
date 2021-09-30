@@ -176,6 +176,9 @@ class AgentManager:
         If None, generate random seed.
         If int, use as entropy for SeedSequence.
         If seeder, use seeder.seed_seq
+    create_unique_out_dir : bool, default = True
+        If true, data is saved to output_dir/manager_data/<AGENT_NAME_UNIQUE_ID>
+        Otherwise, data is saved to output_dir/manager_data
     """
 
     def __init__(self,
@@ -191,7 +194,8 @@ class AgentManager:
                  output_dir=None,
                  parallelization='thread',
                  thread_logging_level='INFO',
-                 seed=None):
+                 seed=None,
+                 create_unique_out_dir=True):
         # agent_class should only be None when the constructor is called
         # by the class method AgentManager.load(), since the agent class
         # will be loaded.
@@ -253,7 +257,9 @@ class AgentManager:
         # output dir
         if output_dir is None:
             output_dir = 'temp/'
-        self.output_dir = Path(output_dir) / 'manager_data' / (self.agent_name + '_' + self.unique_id)
+        self.output_dir = Path(output_dir) / 'manager_data'
+        if create_unique_out_dir:
+            self.output_dir = self.output_dir / (self.agent_name + '_' + self.unique_id)
 
         # Create list of writers for each agent that will be trained
         self.writers = [('default', None) for _ in range(n_fit)]
@@ -445,7 +451,7 @@ class AgentManager:
 
     def save(self):
         """
-        Save AgentManager data to a self.output_dir. The data can be
+        Save AgentManager data to self.output_dir. The data can be
         later loaded to recreate an AgentManager instance.
 
         Returns
@@ -487,7 +493,7 @@ class AgentManager:
             handler.dump()
 
         # save
-        filename = Path('stats').with_suffix('.pickle')
+        filename = Path('manager_obj').with_suffix('.pickle')
         filename = output_dir / filename
         filename.parent.mkdir(parents=True, exist_ok=True)
         try:
@@ -835,7 +841,8 @@ def _optuna_objective(
         n_fit=n_fit,
         thread_logging_level='INFO',
         parallelization='thread',
-        output_dir=temp_dir)
+        output_dir=temp_dir,
+        create_unique_out_dir=True)
 
     if disable_evaluation_writers:
         for ii in range(params_stats.n_fit):

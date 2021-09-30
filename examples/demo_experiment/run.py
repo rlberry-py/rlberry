@@ -12,20 +12,18 @@ from rlberry.experiment import load_experiment_results
 from rlberry.experiment import experiment_generator
 from rlberry.manager.multiple_managers import MultipleManagers
 
-multimanagers = MultipleManagers()
 
-for agent_manager in experiment_generator():
-    multimanagers.append(agent_manager)
+if __name__ == '__main__':
+    multimanagers = MultipleManagers()
 
-    # Alternatively:
-    # agent_manager.fit()
-    # agent_manager.save()
+    for agent_manager in experiment_generator():
+        multimanagers.append(agent_manager)
 
-multimanagers.run()
-multimanagers.save()
+    multimanagers.run()
+    multimanagers.save()
 
-# Reading the results
-del mstats
+    # Reading the results
+    del multimanagers
 
-data = load_experiment_results('results', 'params_experiment')
-print(data)
+    data = load_experiment_results('results', 'params_experiment')
+    print(data)
