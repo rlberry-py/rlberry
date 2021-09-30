@@ -90,11 +90,10 @@ class AgentHandler:
         try:
             self._agent_instance = self._agent_class.load(self._fname, **self._agent_kwargs)
             safe_reseed(self._agent_instance.env, self._seeder)
-            logger.info(f'Sucessful call to AgentHandler.load() for {self._agent_class}')
             return True
         except Exception as ex:
             self._agent_instance = None
-            logger.info(f'Failed call to AgentHandler.load() for {self._agent_class}: {ex}')
+            logger.error(f'Failed call to AgentHandler.load() for {self._agent_class}: {ex}')
             return False
 
     def dump(self):
@@ -109,7 +108,6 @@ class AgentHandler:
             self._fname = Path(saved_filename)
             del self._agent_instance
             self._agent_instance = None
-            logger.info(f'Sucessful call to AgentHandler.dump() for {self._agent_class}')
 
     def __getattr__(self, attr):
         """

@@ -57,10 +57,12 @@ def test_agent_manager_1():
     agent.policy(None)
 
     # Run AgentManager
-    stats_agent1 = AgentManager(DummyAgent, train_env, fit_budget=5, eval_kwargs=eval_kwargs,
-                              init_kwargs=params, n_fit=4, seed=123)
-    stats_agent2 = AgentManager(DummyAgent, train_env, fit_budget=5, eval_kwargs=eval_kwargs,
-                              init_kwargs=params, n_fit=4, seed=123)
+    stats_agent1 = AgentManager(
+        DummyAgent, train_env, fit_budget=5, eval_kwargs=eval_kwargs,
+        init_kwargs=params, n_fit=4, seed=123)
+    stats_agent2 = AgentManager(
+        DummyAgent, train_env, fit_budget=5, eval_kwargs=eval_kwargs,
+        init_kwargs=params, n_fit=4, seed=123)
     agent_manager_list = [stats_agent1, stats_agent2]
     for st in agent_manager_list:
         st.fit()
@@ -82,7 +84,7 @@ def test_agent_manager_1():
     fname = dirname / 'stats'
     stats_agent1.save()
     loaded_stats = AgentManager.load(fname)
-    assert stats_agent1.identifier == loaded_stats.identifier
+    assert stats_agent1.unique_id == loaded_stats.unique_id
 
     # test hyperparameter optimization call
     loaded_stats.optimize_hyperparams(n_trials=5)
@@ -102,14 +104,16 @@ def test_agent_manager_2():
     eval_kwargs = dict(eval_horizon=10)
 
     # Run AgentManager
-    stats_agent1 = AgentManager(DummyAgent, train_env, eval_env=eval_env,
-                              fit_budget=5, eval_kwargs=eval_kwargs,
-                              init_kwargs=params, n_fit=4,
-                              seed=123)
-    stats_agent2 = AgentManager(DummyAgent, train_env, eval_env=eval_env,
-                              fit_budget=5, eval_kwargs=eval_kwargs,
-                              init_kwargs=params, n_fit=4,
-                              seed=123)
+    stats_agent1 = AgentManager(
+        DummyAgent, train_env, eval_env=eval_env,
+        fit_budget=5, eval_kwargs=eval_kwargs,
+        init_kwargs=params, n_fit=4,
+        seed=123)
+    stats_agent2 = AgentManager(
+        DummyAgent, train_env, eval_env=eval_env,
+        fit_budget=5, eval_kwargs=eval_kwargs,
+        init_kwargs=params, n_fit=4,
+        seed=123)
     agent_manager_list = [stats_agent1, stats_agent2]
     for st in agent_manager_list:
         st.fit()
@@ -132,7 +136,7 @@ def test_agent_manager_2():
     fname = dirname / 'stats'
     stats_agent1.save()
     loaded_stats = AgentManager.load(fname)
-    assert stats_agent1.identifier == loaded_stats.identifier
+    assert stats_agent1.unique_id == loaded_stats.unique_id
 
     # test hyperparemeter optimization
     loaded_stats.optimize_hyperparams(n_trials=5)
@@ -154,14 +158,16 @@ def test_agent_manager_partial_fit_and_tuple_env():
     eval_kwargs = dict(eval_horizon=10)
 
     # Run AgentManager
-    stats = AgentManager(DummyAgent, train_env,
-                       init_kwargs=params, n_fit=4,
-                       fit_budget=5, eval_kwargs=eval_kwargs,
-                       seed=123)
-    stats2 = AgentManager(DummyAgent, train_env,
-                        init_kwargs=params, n_fit=4,
-                        fit_budget=5, eval_kwargs=eval_kwargs,
-                        seed=123)
+    stats = AgentManager(
+        DummyAgent, train_env,
+        init_kwargs=params, n_fit=4,
+        fit_budget=5, eval_kwargs=eval_kwargs,
+        seed=123)
+    stats2 = AgentManager(
+        DummyAgent, train_env,
+        init_kwargs=params, n_fit=4,
+        fit_budget=5, eval_kwargs=eval_kwargs,
+        seed=123)
 
     # Run partial fit
     stats.fit(10)
