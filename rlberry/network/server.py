@@ -36,22 +36,22 @@ class ClientHandler:
             # Execute commands
             response = server_utils.execute_message(message, self._resources)
             # Send response
-            self._socket.sendall(serialize_message(response))
+            interface.send_data(self._socket, serialize_message(response))
         except Exception as ex:
             response = interface.Message.create(
                 command=interface.Command.RAISE_EXCEPTION,
                 message=str(ex))
-            self._socket.sendall(serialize_message(response))
+            interface.send_data(self._socket, serialize_message(response))
             return 1
         return 0
 
     def run(self):
         with self._socket:
             try:
-                print(f'\n<server: client process> Handling client @ {self._address}')
                 while True:
+                    print(f'\n<server: client process> Handling client @ {self._address}')
                     self._socket.settimeout(self._timeout)
-                    message_bytes = self._socket.recv(1024)
+                    message_bytes = interface.receive_data(self._socket)
                     if not message_bytes:
                         break
                     # process bytes

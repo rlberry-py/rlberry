@@ -33,5 +33,5 @@ if __name__ == '__main__':
             description='rlberry default writer'
         )
     )
-    server = BerryServer(resources=resources, port=port, client_socket_timeout=10.0)
+    server = BerryServer(resources=resources, port=port, client_socket_timeout=120.0)
     server.start()

@@ -37,8 +37,8 @@ class BerryClient():
             s.connect((self._host, self._port))
             for msg in messages:
                 msg_bytes = serialize_message(msg)
-                s.sendall(msg_bytes)
-                received_bytes = s.recv(1024)
+                interface.send_data(s, msg_bytes)
+                received_bytes = interface.receive_data(s)
                 received_msg_dict = json.loads(received_bytes)
                 if print_response:
                     pp.pprint(received_msg_dict)

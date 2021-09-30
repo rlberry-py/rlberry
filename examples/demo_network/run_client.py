@@ -3,7 +3,8 @@ from rlberry.network import interface
 from rlberry.network.interface import Message, ResourceRequest
 
 
-client = BerryClient()
+port = int(input("Select server port: "))
+client = BerryClient(port=port)
 # Send params for AgentManager
 client.send(
     Message.create(
@@ -23,13 +24,16 @@ client.send(
         command=interface.Command.LIST_RESOURCES,
         params=dict(),
         data=dict()
-    )
+    ),
+    print_response=True,
 )
 
+import numpy as np
 client.send(
     Message.create(
         command=interface.Command.NONE,
         params=dict(),
-        data=dict()
-    )
+        data=dict(big_list=list(1.0 * np.arange(2**18)))
+    ),
+    print_response=True,
 )
