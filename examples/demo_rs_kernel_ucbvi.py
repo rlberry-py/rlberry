@@ -10,7 +10,7 @@ agent = RSKernelUCBVIAgent(env, gamma=0.99, horizon=300,
                            bonus_scale_factor=0.01,
                            min_dist=0.2, bandwidth=0.05, beta=1.0,
                            kernel_type="gaussian")
-agent.fit(budget=10)
+agent.fit(budget=500)
 
 env.enable_rendering()
 state = env.reset()
@@ -27,4 +27,4 @@ for tt in range(4 * agent.horizon):
     state = next_state
 
 print("steps to achieve the goal for the first time = ", time_before_done)
-env.save_video("kernel_acrobot_gaussian.mp4", framerate=15)
+env.save_video("kernel_acrobot_gaussian.mp4", framerate=60)

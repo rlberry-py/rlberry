@@ -16,4 +16,4 @@ for tt in range(200):
         break
     state = next_s
 
-env.save_video("gridworld.mp4", framerate=5)
+env.save_video("gridworld.mp4", framerate=15)

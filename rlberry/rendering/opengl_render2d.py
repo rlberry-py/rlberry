@@ -19,10 +19,13 @@ try:
     from OpenGL.GL import glMatrixMode, glLoadIdentity, glClearColor
     from OpenGL.GL import glClear, glFlush, glBegin, glEnd
     from OpenGL.GL import glColor3f, glVertex2f
+    from OpenGL.GL import glReadBuffer, glReadPixels
     from OpenGL.GL import GL_PROJECTION, GL_COLOR_BUFFER_BIT
     from OpenGL.GL import GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_LINE_LOOP
     from OpenGL.GL import GL_POLYGON, GL_TRIANGLES, GL_TRIANGLE_STRIP
     from OpenGL.GL import GL_TRIANGLE_FAN, GL_QUADS, GL_QUAD_STRIP
+    from OpenGL.GL import GL_FRONT, GL_RGB, GL_UNSIGNED_BYTE
+
 except Exception:
     _IMPORT_SUCESSFUL = False
 
@@ -183,6 +186,12 @@ class OpenGLRender2D:
             logger.error("Not possible to render the environment, \
 pygame or pyopengl not installed.")
 
+    def get_gl_image_str(self):
+        # see https://gist.github.com/Jerdak/7364746
+        glReadBuffer(GL_FRONT)
+        pixels = glReadPixels(0, 0, self.window_width, self.window_height, GL_RGB, GL_UNSIGNED_BYTE)
+        return pixels
+
     def get_video_data(self):
         """
         Stores scenes in self.data in a list of numpy arrays that can be used
@@ -195,7 +204,7 @@ pygame or pyopengl not installed.")
 
             pg.init()
             display = (self.window_width, self.window_height)
-            screen = pg.display.set_mode(display, DOUBLEBUF | OPENGL)
+            _ = pg.display.set_mode(display, DOUBLEBUF | OPENGL)
             pg.display.set_caption(self.window_name)
             self.initGL()
 
@@ -209,12 +218,13 @@ pygame or pyopengl not installed.")
                 #
                 # See https://stackoverflow.com/a/42754578/5691288
                 #
-                string_image = pg.image.tostring(screen, 'RGB')
+                string_image = self.get_gl_image_str()
                 temp_surf = pg.image.fromstring(string_image,
                                                 (self.window_width,
                                                  self.window_height), 'RGB')
                 tmp_arr = pg.surfarray.array3d(temp_surf)
                 imgdata = np.moveaxis(tmp_arr, 0, 1)
+                imgdata = np.flipud(imgdata)
                 video_data.append(imgdata)
 
             pg.quit()
