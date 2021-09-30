@@ -10,7 +10,7 @@ agent = RSKernelUCBVIAgent(env, gamma=0.99, horizon=300,
                            bonus_scale_factor=0.01,
                            min_dist=0.2, bandwidth=0.05, beta=1.0,
                            kernel_type="gaussian")
-agent.fit(budget=500)
+agent.fit(budget=10)
 
 env.enable_rendering()
 state = env.reset()

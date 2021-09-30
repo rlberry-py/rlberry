@@ -35,3 +35,4 @@ for ii in range(100):
     env.step(3)
 
 env.render()
+env.save_video('pball.mp4')
