@@ -1,7 +1,13 @@
+import dill
+import logging
 import pathlib
+import pickle
 from typing import Any, Mapping
 from rlberry.network import interface
 from rlberry.network.client import BerryClient
+
+
+logger = logging.getLogger(__name__)
 
 
 class RemoteAgentManager:
@@ -21,24 +27,25 @@ class RemoteAgentManager:
         client: BerryClient,
         **kwargs: Mapping[str, Any],
     ):
-        self._client = client
+        if client:
+            self._client = client
 
-        # Create a remote AgentManager object and keep reference to the filename
-        # in the server where the object was saved.
-        msg = self._client.send(
-            interface.Message.create(
-                command=interface.Command.AGENT_MANAGER_CREATE_INSTANCE,
-                params=kwargs,
-                data=None,
+            # Create a remote AgentManager object and keep reference to the filename
+            # in the server where the object was saved.
+            msg = self._client.send(
+                interface.Message.create(
+                    command=interface.Command.AGENT_MANAGER_CREATE_INSTANCE,
+                    params=kwargs,
+                    data=None,
+                )
             )
-        )
-        self._remote_agent_manager_filename = pathlib.Path(
-            msg.info['filename']
-        )
+            self._remote_agent_manager_filename = pathlib.Path(
+                msg.info['filename']
+            )
 
-        # get useful attributes
-        self.agent_name = msg.info['agent_name']
-        self.output_dir = pathlib.Path(msg.info['output_dir'])  # to save locally
+            # get useful attributes
+            self.agent_name = msg.info['agent_name']
+            self.output_dir = pathlib.Path(msg.info['output_dir'])  # to save locally
 
     def set_client(self, client: BerryClient):
         self._client = client
@@ -122,3 +129,53 @@ class RemoteAgentManager:
             raise Exception(msg.message)
         best_params_dict = msg.data
         return best_params_dict
+
+    def save(self):
+        """
+        Save RemoteAgentManager data to self.output_dir.
+
+        Returns
+        -------
+        filename where the AgentManager object was saved.
+        """
+        # use self.output_dir
+        output_dir = self.output_dir
+
+        # create dir if it does not exist
+        output_dir.mkdir(parents=True, exist_ok=True)
+
+        # save
+        filename = pathlib.Path('remote_manager_obj').with_suffix('.pickle')
+        filename = output_dir / filename
+        filename.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            with filename.open("wb") as ff:
+                pickle.dump(self.__dict__, ff)
+            logger.info("Saved RemoteAgentManager({}) using pickle.".format(self.agent_name))
+        except Exception:
+            try:
+                with filename.open("wb") as ff:
+                    dill.dump(self.__dict__, ff)
+                logger.info("Saved RemoteAgentManager({}) using dill.".format(self.agent_name))
+            except Exception as ex:
+                logger.warning("[RemoteAgentManager] Instance cannot be pickled: " + str(ex))
+
+        return filename
+
+    @classmethod
+    def load(cls, filename):
+        filename = pathlib.Path(filename).with_suffix('.pickle')
+
+        obj = cls(None)
+        try:
+            with filename.open('rb') as ff:
+                tmp_dict = pickle.load(ff)
+            logger.info("Loaded RemoteAgentManager using pickle.")
+        except Exception:
+            with filename.open('rb') as ff:
+                tmp_dict = dill.load(ff)
+            logger.info("Loaded RemoteAgentManager using dill.")
+
+        obj.__dict__.clear()
+        obj.__dict__.update(tmp_dict)
+        return obj

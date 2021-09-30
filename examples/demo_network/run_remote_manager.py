@@ -65,6 +65,9 @@ mmanagers.run()
 print([stats.eval_agents() for stats in mmanagers.managers])
 local_stats.clear_output_dir()
 
+fname1 = remote_stats1.save()
+del remote_stats1
+remote_stats1 = RemoteAgentManager.load(fname1)
 
 best_params1 = remote_stats1.optimize_hyperparams(timeout=10)
 best_params2 = remote_stats2.optimize_hyperparams(timeout=10)
