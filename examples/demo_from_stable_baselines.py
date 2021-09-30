@@ -86,74 +86,74 @@ class A2CAgent(AgentWithSimplePolicy):
         )
 
 
-#
-# Training one agent
-#
-env_ctor = gym_make
-env_kwargs = dict(id='CartPole-v1')
-# env = env_ctor(**env_kwargs)
-# agent = A2CAgent(env, 'MlpPolicy', verbose=1)
-# agent.fit(budget=1000)
+if __name__ == '__main__':
+    #
+    # Training one agent
+    #
+    env_ctor = gym_make
+    env_kwargs = dict(id='CartPole-v1')
+    # env = env_ctor(**env_kwargs)
+    # agent = A2CAgent(env, 'MlpPolicy', verbose=1)
+    # agent.fit(budget=1000)
 
+    #
+    # Training several agents and comparing different hyperparams
+    #
+    from rlberry.manager import AgentManager, MultipleManagers, evaluate_agents
 
-#
-# Training several agents and comparing different hyperparams
-#
-from rlberry.manager import AgentManager, MultipleManagers, evaluate_agents
+    stats = AgentManager(
+        A2CAgent,
+        (env_ctor, env_kwargs),
+        agent_name='A2C baseline',
+        init_kwargs=dict(policy='MlpPolicy', verbose=1),
+        fit_kwargs=dict(log_interval=1000),
+        fit_budget=2500,
+        eval_kwargs=dict(eval_horizon=400),
+        n_fit=4,
+        parallelization='process',
+        output_dir='dev/stable_baselines',
+        seed=123)
 
-stats = AgentManager(
-    A2CAgent,
-    (env_ctor, env_kwargs),
-    agent_name='A2C baseline',
-    init_kwargs=dict(policy='MlpPolicy', verbose=1),
-    fit_kwargs=dict(log_interval=1000),
-    fit_budget=2500,
-    eval_kwargs=dict(eval_horizon=400),
-    n_fit=4,
-    parallelization='process',
-    output_dir='dev/stable_baselines',
-    seed=123)
+    stats_alternative = AgentManager(
+        A2CAgent,
+        (env_ctor, env_kwargs),
+        agent_name='A2C optimized',
+        init_kwargs=dict(policy='MlpPolicy', verbose=1),
+        fit_kwargs=dict(log_interval=1000),
+        fit_budget=2500,
+        eval_kwargs=dict(eval_horizon=400),
+        n_fit=4,
+        parallelization='process',
+        output_dir='dev/stable_baselines',
+        seed=456)
 
-stats_alternative = AgentManager(
-    A2CAgent,
-    (env_ctor, env_kwargs),
-    agent_name='A2C optimized',
-    init_kwargs=dict(policy='MlpPolicy', verbose=1),
-    fit_kwargs=dict(log_interval=1000),
-    fit_budget=2500,
-    eval_kwargs=dict(eval_horizon=400),
-    n_fit=4,
-    parallelization='process',
-    output_dir='dev/stable_baselines',
-    seed=456)
+    # Optimize hyperparams (600 seconds)
+    stats_alternative.optimize_hyperparams(
+        timeout=600,
+        n_optuna_workers=2,
+        n_fit=2,
+        optuna_parallelization='process',
+        fit_fraction=1.0)
 
-# Optimize hyperparams (600 seconds)
-stats_alternative.optimize_hyperparams(
-    timeout=600,
-    n_optuna_workers=2,
-    n_fit=2,
-    optuna_parallelization='process',
-    fit_fraction=1.0)
+    # Fit everything in parallel
+    multimanagers = MultipleManagers()
+    multimanagers.append(stats)
+    multimanagers.append(stats_alternative)
 
-# Fit everything in parallel
-multimanagers = MultipleManagers()
-multimanagers.append(stats)
-multimanagers.append(stats_alternative)
+    multimanagers.run()
 
-multimanagers.run()
+    # Plot policy evaluation
+    out = evaluate_agents(multimanagers.managers)
+    print(out)
 
-# Plot policy evaluation
-out = evaluate_agents(multimanagers.managers)
-print(out)
-
-# Visualize policy
-env = stats_alternative.build_eval_env()
-agent = stats_alternative.agent_handlers[0]
-obs = env.reset()
-for i in range(2500):
-    action = agent.policy(obs)
-    obs, reward, done, info = env.step(action)
-    env.render()
-    if done:
-        break
-env.close()
+    # Visualize policy
+    env = stats_alternative.build_eval_env()
+    agent = stats_alternative.agent_handlers[0]
+    obs = env.reset()
+    for i in range(2500):
+        action = agent.policy(obs)
+        obs, reward, done, info = env.step(action)
+        env.render()
+        if done:
+            break
+    env.close()

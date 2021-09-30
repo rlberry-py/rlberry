@@ -1,5 +1,5 @@
 from stable_baselines3 import A2C as A2CStableBaselines
-from stable_baselines3.common.cmd_util import make_atari_env
+from stable_baselines3.common.env_util import make_atari_env
 from stable_baselines3.common.vec_env import VecFrameStack
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.manager import AgentManager

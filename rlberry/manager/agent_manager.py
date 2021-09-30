@@ -324,7 +324,8 @@ class AgentManager:
         -------
         array of length `n_simulations` containing the .eval() outputs.
         """
-        n_simulations = 2 * self.n_fit
+        if not n_simulations:
+            n_simulations = 2 * self.n_fit
         values = []
         for ii in range(n_simulations):
             # randomly choose one of the fitted agents
