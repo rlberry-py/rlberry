@@ -51,7 +51,7 @@ class RemoteAgentManager:
         if msg.command == interface.Command.RAISE_EXCEPTION:
             raise Exception(msg.message)
 
-    def eval(self):
+    def eval_agents(self):
         msg = self._client.send(
             interface.Message.create(
                 command=interface.Command.AGENT_MANAGER_EVAL,

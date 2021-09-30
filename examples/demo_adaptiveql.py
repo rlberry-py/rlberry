@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 env = (get_benchmark_env, dict(level=2))
 
-N_EP = 10
+N_EP = 1000
 HORIZON = 30
 
 params = {}
@@ -63,4 +63,4 @@ for stats in multimanagers.managers:
 plt.show()
 
 for stats in multimanagers.managers:
-    print(f'Agent = {stats.agent_name}, Eval = {stats.eval()}')
+    print(f'Agent = {stats.agent_name}, Eval = {stats.eval_agents()}')

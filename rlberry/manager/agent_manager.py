@@ -11,12 +11,12 @@ import json
 import logging
 import dill
 import gc
-import numpy as np
 import pickle
 import pandas as pd
 import shutil
 import threading
 import multiprocessing
+import numpy as np
 from rlberry.envs.utils import process_env
 from rlberry.utils.logging import configure_logging
 from rlberry.utils.writers import DefaultWriter
@@ -201,6 +201,7 @@ class AgentManager:
             return None  # Must only happen when load() method is called.
 
         self.seeder = Seeder(seed)
+        self.eval_seeder = self.seeder.spawn(1)
 
         self.agent_name = agent_name
         if agent_name is None:
@@ -309,14 +310,31 @@ class AgentManager:
     def writer_data(self):
         return self.default_writer_data
 
-    def eval(self):
+    def eval_agents(self, n_simulations=5) -> list:
         """
-        Call .eval() method in all fitted agents and return average result.
+        Call .eval() method in fitted agents and returns a list with the results.
+
+        Parameters
+        ----------
+        n_simulations : int, default = 5
+            Total number of agent evaluations
+
+        Returns
+        -------
+        array of length `n_simulations` containing the .eval() outputs.
         """
-        values = [agent.eval(**self.eval_kwargs) for agent in self.agent_handlers if not agent.is_empty()]
-        if len(values) == 0:
-            return np.nan
-        return np.mean(values)
+        values = []
+        for ii in range(n_simulations):
+            # randomly choose one of the fitted agents
+            agent_idx = self.eval_seeder.rng.choice(len(self.agent_handlers))
+            agent = self.agent_handlers[agent_idx]
+            if agent.is_empty():
+                logger.error('Calling eval() in an AgentManager instance contaning an empty AgentHandler.'
+                             ' Returning [].')
+                return []
+            values.append(agent.eval(**self.eval_kwargs))
+            logger.info(f'[eval]... simulation {ii + 1}/{n_simulations}')
+        return values
 
     def clear_output_dir(self):
         """Delete output_dir and all its data."""
@@ -833,7 +851,7 @@ def _optuna_objective(
             #
             params_stats.fit(int(fit_budget * fit_fraction))
             # Evaluate params
-            eval_value = params_stats.eval()
+            eval_value = np.mean(params_stats.eval_agents())
 
             # Report intermediate objective value
             trial.report(eval_value, step)
@@ -855,7 +873,7 @@ def _optuna_objective(
         params_stats.fit()
 
         # Evaluate params
-        eval_value = params_stats.eval()
+        eval_value = np.mean(params_stats.eval_agents())
 
     # clear aux data
     params_stats.clear_handlers()

@@ -50,5 +50,5 @@ plot_writer_data(ppo_stats, tag='episode_rewards',
                  title='Cumulative Rewards', show=False)
 
 # compare final policies
-output = evaluate_agents([ppo_stats])
+output = evaluate_agents([ppo_stats], n_simulations=15)
 print(output)

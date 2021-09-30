@@ -1,6 +1,5 @@
 import logging
 import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
 import seaborn as sns
 
@@ -29,6 +28,10 @@ def evaluate_agents(agent_manager_list,
         If false, do not plot.
     sns_kwargs:
         Extra parameters for sns.boxplot
+
+    Returns
+    -------
+    dataframe with the evaluation results.
     """
     sns_kwargs = sns_kwargs or {}
 
@@ -38,13 +41,8 @@ def evaluate_agents(agent_manager_list,
 
     eval_outputs = []
     for agent_manager in agent_manager_list:
-        outputs = []
         logger.info(f'Evaluating {agent_manager.agent_name}...')
-        for ii in range(n_simulations):
-            logger.info(f'... simulation {ii + 1}/{n_simulations}')
-            value = agent_manager.eval()
-            if not np.isnan(value):
-                outputs.append(agent_manager.eval())
+        outputs = agent_manager.eval_agents(n_simulations)
         if len(outputs) > 0:
             eval_outputs.append(outputs)
 

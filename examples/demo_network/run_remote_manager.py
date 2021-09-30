@@ -62,7 +62,7 @@ mmanagers.append(remote_stats2)
 mmanagers.run()
 
 # Test some methods
-print([stats.eval() for stats in mmanagers.managers])
+print([stats.eval_agents() for stats in mmanagers.managers])
 local_stats.clear_output_dir()
 
 

@@ -35,7 +35,7 @@ def execute_message(
     elif message.command == interface.Command.AGENT_MANAGER_EVAL:
         filename = message.params['filename']
         agent_manager = AgentManager.load(filename)
-        eval_output = agent_manager.eval()
+        eval_output = agent_manager.eval_agents()
         response = interface.Message.create(data=dict(output=eval_output))
         del agent_manager
     # AGENT_MANAGER_CLEAR_OUTPUT_DIR
