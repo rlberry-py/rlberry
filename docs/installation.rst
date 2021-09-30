@@ -20,6 +20,9 @@ Then you have two options for the installation. For a stable version, you can ju
 
     $ pip install rlberry[default]
 
+.. warning::
+    For `zsh` users, `zsh` uses brackets for globbing, therefore it is necessary to add quotes around the arguments, e.g. `pip install 'rlberry[default]'`.
+
 
 For more advanced users who want to try the development version, all you need to do is clone the rlberry_ repository and install:
 
