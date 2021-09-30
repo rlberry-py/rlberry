@@ -41,7 +41,7 @@ def execute_message(
     elif message.command == interface.Command.AGENT_MANAGER_EVAL:
         filename = message.params['filename']
         agent_manager = AgentManager.load(filename)
-        eval_output = agent_manager.eval_agents()
+        eval_output = agent_manager.eval_agents(message.params['n_simulations'])
         response = interface.Message.create(data=dict(output=eval_output))
         del agent_manager
     # AGENT_MANAGER_CLEAR_OUTPUT_DIR
@@ -74,6 +74,15 @@ def execute_message(
         agent_manager.save()
         del agent_manager
         response = interface.Message.create(data=best_params_dict)
-
+    # AGENT_MANAGER_GET_WRITER_DATA
+    elif message.command == interface.Command.AGENT_MANAGER_GET_WRITER_DATA:
+        filename = message.params['filename']
+        agent_manager = AgentManager.load(filename)
+        writer_data = agent_manager.writer_data
+        writer_data = writer_data or dict()
+        for idx in writer_data:
+            writer_data[idx] = writer_data[idx].to_csv(index=False)
+        del agent_manager
+        response = interface.Message.create(data=writer_data)
     # end
     return response

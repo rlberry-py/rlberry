@@ -22,7 +22,7 @@ from rlberry.envs.utils import process_env
 from rlberry.utils.logging import configure_logging
 from rlberry.utils.writers import DefaultWriter
 from rlberry.manager.utils import create_database
-from typing import Tuple
+from typing import Optional, Tuple
 
 _OPTUNA_INSTALLED = True
 try:
@@ -259,7 +259,7 @@ class AgentManager:
             output_dir = 'temp/'
         self.output_dir = Path(output_dir) / 'manager_data'
         if create_unique_out_dir:
-            self.output_dir = self.output_dir / (self.agent_name + '_' + self.unique_id)
+            self.output_dir = self.output_dir / (self.agent_name + '_id' + self.unique_id)
 
         # Create list of writers for each agent that will be trained
         self.writers = [('default', None) for _ in range(n_fit)]
@@ -312,19 +312,20 @@ class AgentManager:
     def writer_data(self):
         return self.default_writer_data
 
-    def eval_agents(self, n_simulations=5) -> list:
+    def eval_agents(self, n_simulations: Optional[int] = None) -> list:
         """
         Call .eval() method in fitted agents and returns a list with the results.
 
         Parameters
         ----------
-        n_simulations : int, default = 5
-            Total number of agent evaluations
+        n_simulations : int
+            Total number of agent evaluations. If None, set to 2*(number of agents)
 
         Returns
         -------
         array of length `n_simulations` containing the .eval() outputs.
         """
+        n_simulations = 2 * self.n_fit
         values = []
         for ii in range(n_simulations):
             # randomly choose one of the fitted agents

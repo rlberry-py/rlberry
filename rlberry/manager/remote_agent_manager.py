@@ -1,8 +1,10 @@
 import dill
+import io
 import logging
+import pandas as pd
 import pathlib
 import pickle
-from typing import Any, Mapping
+from typing import Any, Mapping, Optional
 from rlberry.network import interface
 from rlberry.network.client import BerryClient
 
@@ -54,6 +56,23 @@ class RemoteAgentManager:
     def remote_file(self):
         return str(self._remote_agent_manager_filename)
 
+    @property
+    def writer_data(self):
+        msg = self._client.send(
+            interface.Message.create(
+                command=interface.Command.AGENT_MANAGER_GET_WRITER_DATA,
+                params=dict(filename=self.remote_file),
+            )
+        )
+        if msg.command == interface.Command.RAISE_EXCEPTION:
+            raise Exception(msg.message)
+        raw_data = msg.data
+        writer_data = dict()
+        for idx in raw_data:
+            csv_content = raw_data[idx]
+            writer_data[idx] = pd.read_csv(io.StringIO(csv_content), sep=',')
+        return writer_data
+
     def fit(self):
         msg = self._client.send(
             interface.Message.create(
@@ -65,11 +84,13 @@ class RemoteAgentManager:
         if msg.command == interface.Command.RAISE_EXCEPTION:
             raise Exception(msg.message)
 
-    def eval_agents(self):
+    def eval_agents(self, n_simulations: Optional[int] = None):
         msg = self._client.send(
             interface.Message.create(
                 command=interface.Command.AGENT_MANAGER_EVAL,
-                params=dict(filename=self.remote_file),
+                params=dict(
+                    filename=self.remote_file,
+                    n_simulations=n_simulations),
                 data=None,
             )
         )

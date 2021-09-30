@@ -1,82 +1,74 @@
+from rlberry.envs.gym_make import gym_make
 from rlberry.network.client import BerryClient
 from rlberry.network.interface import ResourceRequest
 
-from rlberry.agents import ValueIterationAgent as LocalValueIterationAgent
-from rlberry.envs.finite import GridWorld as LocalGridWorld
+from rlberry.agents.torch import REINFORCEAgent
 
 from rlberry.manager.agent_manager import AgentManager
 from rlberry.manager.multiple_managers import MultipleManagers
 from rlberry.manager.remote_agent_manager import RemoteAgentManager
+from rlberry.manager.evaluation import evaluate_agents, plot_writer_data
 
 
-client1 = BerryClient(port=8001)
-client2 = client1
-# client2 = BerryClient(port=8004)
+if __name__ == '__main__':
+    port = int(input("Select server port: "))
+    client = BerryClient(port=port)
 
+    FIT_BUDGET = 1000
 
-local_stats = AgentManager(
-    agent_class=LocalValueIterationAgent,
-    train_env=(LocalGridWorld, dict(nrows=35)),
-    fit_budget=100,
-    init_kwargs=dict(gamma=0.99),
-    eval_kwargs=dict(eval_horizon=100, n_simulations=20),
-    n_fit=2,
-    seed=10
-)
+    local_manager = AgentManager(
+        agent_class=REINFORCEAgent,
+        train_env=(gym_make, dict(id='CartPole-v0')),
+        fit_budget=FIT_BUDGET,
+        init_kwargs=dict(gamma=0.99),
+        eval_kwargs=dict(eval_horizon=200, n_simulations=20),
+        n_fit=2,
+        seed=10,
+        agent_name='REINFORCE(local)',
+        parallelization='process'
+    )
 
+    remote_manager = RemoteAgentManager(
+        client,
+        agent_class=ResourceRequest(name='REINFORCEAgent'),
+        train_env=ResourceRequest(name='gym_make', kwargs=dict(id='CartPole-v0')),
+        fit_budget=FIT_BUDGET,
+        init_kwargs=dict(gamma=0.99),
+        eval_kwargs=dict(eval_horizon=200, n_simulations=20),
+        n_fit=2,
+        seed=10,
+        agent_name='REINFORCE(remote)',
+        parallelization='process'
+    )
 
-remote_stats1 = RemoteAgentManager(
-    client1,
-    agent_class=ResourceRequest(name='REINFORCEAgent'),
-    train_env=ResourceRequest(name='gym_make', kwargs=dict(id='CartPole-v0')),
-    fit_budget=100,
-    init_kwargs=dict(gamma=0.95),
-    eval_kwargs=dict(eval_horizon=100, n_simulations=20),
-    n_fit=2,
-    seed=10
-)
+    remote_manager.set_writer(
+        idx=0,
+        writer_fn=ResourceRequest(name='DefaultWriter'),
+        writer_kwargs=dict(name='debug_reinforce_writer')
+    )
 
-remote_stats2 = RemoteAgentManager(
-    client2,
-    agent_class=ResourceRequest(name='A2CAgent'),
-    train_env=ResourceRequest(name='gym_make', kwargs=dict(id='CartPole-v0')),
-    fit_budget=100,
-    init_kwargs=dict(gamma=0.95),
-    eval_kwargs=dict(eval_horizon=100, n_simulations=20),
-    n_fit=2,
-    seed=10
-)
+    # Optimize hyperparams of remote agent
+    best_params = remote_manager.optimize_hyperparams(timeout=120, optuna_parallelization='process')
+    print(f'best params = {best_params}')
 
+    # Test save/load
+    fname1 = remote_manager.save()
+    del remote_manager
+    remote_manager = RemoteAgentManager.load(fname1)
 
-remote_stats1.set_writer(
-    idx=0,
-    writer_fn=ResourceRequest(name='DefaultWriter'),
-    writer_kwargs=dict(name='debug_reinforce_writer')
-)
+    # Fit everything in parallel
+    mmanagers = MultipleManagers()
+    mmanagers.append(local_manager)
+    mmanagers.append(remote_manager)
+    mmanagers.run()
 
-# Fit everything in parallel
-mmanagers = MultipleManagers()
-mmanagers.append(local_stats)
-mmanagers.append(remote_stats1)
-mmanagers.append(remote_stats2)
-mmanagers.run()
+    # plot
+    plot_writer_data(mmanagers.managers, tag='episode_rewards', show=False)
+    evaluate_agents(mmanagers.managers, n_simulations=10, show=True)
 
-# Test some methods
-print([stats.eval_agents() for stats in mmanagers.managers])
-local_stats.clear_output_dir()
+    # Test some methods
+    print([manager.eval_agents() for manager in mmanagers.managers])
 
-fname1 = remote_stats1.save()
-del remote_stats1
-remote_stats1 = RemoteAgentManager.load(fname1)
-
-best_params1 = remote_stats1.optimize_hyperparams(timeout=10)
-best_params2 = remote_stats2.optimize_hyperparams(timeout=10)
-
-print(f'best params 1 = {best_params1}')
-print(f'best params 2 = {best_params2}')
-
-remote_stats1.clear_handlers()
-remote_stats1.clear_output_dir()
-
-remote_stats2.clear_handlers()
-remote_stats2.clear_output_dir()
+    for manager in mmanagers.managers:
+        manager.clear_handlers()
+        manager.clear_output_dir()
