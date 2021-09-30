@@ -175,6 +175,9 @@ class Agent(ABC):
         ----------
         .. [1] https://github.com/uqfoundation/dill
         """
+        # remove writer if not pickleable
+        if not dill.pickles(self.writer):
+            self.set_writer(None)
         # save
         filename = Path(filename).with_suffix('.pickle')
         filename.parent.mkdir(parents=True, exist_ok=True)

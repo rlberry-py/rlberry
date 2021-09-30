@@ -185,18 +185,20 @@ def parse_experiment_config(path: Path,
             # append run index to dir
             output_dir = output_dir / str(last + 1)
 
-            yield seed, AgentManager(agent_class=agent_class,
-                                   init_kwargs=init_kwargs,
-                                   eval_kwargs=eval_kwargs,
-                                   fit_budget=fit_budget,
-                                   fit_kwargs=fit_kwargs,
-                                   agent_name=agent_name,
-                                   train_env=train_env,
-                                   eval_env=eval_env,
-                                   n_fit=n_fit,
-                                   output_dir=output_dir,
-                                   parallelization=parallelization,
-                                   seed=seed)
+            yield seed, AgentManager(
+                agent_class=agent_class,
+                init_kwargs=init_kwargs,
+                eval_kwargs=eval_kwargs,
+                fit_budget=fit_budget,
+                fit_kwargs=fit_kwargs,
+                agent_name=agent_name,
+                train_env=train_env,
+                eval_env=eval_env,
+                n_fit=n_fit,
+                output_dir=output_dir,
+                parallelization=parallelization,
+                seed=seed,
+                create_unique_out_dir=False)  # output_dir is already made unique above
 
 
 if __name__ == '__main__':

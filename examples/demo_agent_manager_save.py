@@ -34,15 +34,15 @@ ppo_stats = AgentManager(
     init_kwargs=params_ppo,
     eval_kwargs=eval_kwargs,
     n_fit=4,
-    output_dir='dev/ppo_stats')
+    output_dir='dev/')
 ppo_stats.fit()  # fit the 4 agents
-ppo_stats.save()
+ppo_stats_fname = ppo_stats.save()
 del ppo_stats
 
 # -------------------------------
 # Load and plot results
 # --------------------------------
-ppo_stats = AgentManager.load('dev/ppo_stats/stats.pickle')
+ppo_stats = AgentManager.load(ppo_stats_fname)
 
 # learning curves
 plot_writer_data(ppo_stats, tag='episode_rewards',
@@ -50,5 +50,5 @@ plot_writer_data(ppo_stats, tag='episode_rewards',
                  title='Cumulative Rewards', show=False)
 
 # compare final policies
-output = evaluate_agents([ppo_stats])
+output = evaluate_agents([ppo_stats], n_simulations=15)
 print(output)

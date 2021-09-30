@@ -1,6 +1,5 @@
 import logging
 import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
 import seaborn as sns
 
@@ -29,6 +28,10 @@ def evaluate_agents(agent_manager_list,
         If false, do not plot.
     sns_kwargs:
         Extra parameters for sns.boxplot
+
+    Returns
+    -------
+    dataframe with the evaluation results.
     """
     sns_kwargs = sns_kwargs or {}
 
@@ -38,13 +41,8 @@ def evaluate_agents(agent_manager_list,
 
     eval_outputs = []
     for agent_manager in agent_manager_list:
-        outputs = []
         logger.info(f'Evaluating {agent_manager.agent_name}...')
-        for ii in range(n_simulations):
-            logger.info(f'... simulation {ii + 1}/{n_simulations}')
-            value = agent_manager.eval()
-            if not np.isnan(value):
-                outputs.append(agent_manager.eval())
+        outputs = agent_manager.eval_agents(n_simulations)
         if len(outputs) > 0:
             eval_outputs.append(outputs)
 
@@ -129,14 +127,19 @@ def plot_writer_data(agent_manager,
 
     # preprocess agent stats
     data_list = []
-    for stats in agent_manager_list:
-        if stats.writer_data is not None:
-            for idx in stats.writer_data:
-                df = stats.writer_data[idx]
+    for manager in agent_manager_list:
+        # Important: since manager can be a RemoteAgentManager,
+        # it is important to avoid repeated accesses to its methods and properties.
+        # That is why writer_data is taken from the manager instance only in the line below.
+        writer_data = manager.writer_data
+        agent_name = manager.agent_name
+        if writer_data is not None:
+            for idx in writer_data:
+                df = writer_data[idx]
                 df = pd.DataFrame(df[df['tag'] == tag])
                 df['value'] = preprocess_func(df['value'].values)
                 # update name according to AgentManager name
-                df['name'] = stats.agent_name
+                df['name'] = agent_name
                 data_list.append(df)
     if len(data_list) == 0:
         logger.error('[plot_writer_data]: No data to be plotted.')

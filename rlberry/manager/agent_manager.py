@@ -11,17 +11,18 @@ import json
 import logging
 import dill
 import gc
-import numpy as np
 import pickle
 import pandas as pd
 import shutil
 import threading
 import multiprocessing
+import numpy as np
+import uuid
 from rlberry.envs.utils import process_env
 from rlberry.utils.logging import configure_logging
 from rlberry.utils.writers import DefaultWriter
 from rlberry.manager.utils import create_database
-from typing import Tuple
+from typing import Optional, Tuple
 
 _OPTUNA_INSTALLED = True
 try:
@@ -89,11 +90,10 @@ class AgentHandler:
         try:
             self._agent_instance = self._agent_class.load(self._fname, **self._agent_kwargs)
             safe_reseed(self._agent_instance.env, self._seeder)
-            logger.info(f'Sucessful call to AgentHandler.load() for {self._agent_class}')
             return True
         except Exception as ex:
             self._agent_instance = None
-            logger.info(f'Failed call to AgentHandler.load() for {self._agent_class}: {ex}')
+            logger.error(f'Failed call to AgentHandler.load() for {self._agent_class}: {ex}')
             return False
 
     def dump(self):
@@ -108,7 +108,6 @@ class AgentHandler:
             self._fname = Path(saved_filename)
             del self._agent_instance
             self._agent_instance = None
-            logger.info(f'Sucessful call to AgentHandler.dump() for {self._agent_class}')
 
     def __getattr__(self, attr):
         """
@@ -167,7 +166,7 @@ class AgentManager:
     n_fit : int
         Number of agent instances to fit.
     output_dir : str
-        Directory where to store data by default.
+        Directory where to store data.
     parallelization: {'thread', 'process'}, default: 'process'
         Whether to parallelize  agent training using threads or processes.
     thread_logging_level : str, default: 'INFO'
@@ -177,6 +176,9 @@ class AgentManager:
         If None, generate random seed.
         If int, use as entropy for SeedSequence.
         If seeder, use seeder.seed_seq
+    create_unique_out_dir : bool, default = True
+        If true, data is saved to output_dir/manager_data/<AGENT_NAME_UNIQUE_ID>
+        Otherwise, data is saved to output_dir/manager_data
     """
 
     def __init__(self,
@@ -192,7 +194,8 @@ class AgentManager:
                  output_dir=None,
                  parallelization='thread',
                  thread_logging_level='INFO',
-                 seed=None):
+                 seed=None,
+                 create_unique_out_dir=True):
         # agent_class should only be None when the constructor is called
         # by the class method AgentManager.load(), since the agent class
         # will be loaded.
@@ -201,6 +204,7 @@ class AgentManager:
             return None  # Must only happen when load() method is called.
 
         self.seeder = Seeder(seed)
+        self.eval_seeder = self.seeder.spawn(1)
 
         self.agent_name = agent_name
         if agent_name is None:
@@ -215,10 +219,8 @@ class AgentManager:
 
         # create oject identifier
         timestamp = datetime.timestamp(datetime.now())
-        timestamp = str(int(timestamp))
-        self.timestamp = timestamp
-        self.identifier = f'stats_{self.agent_name}_{timestamp}'
-        self.unique_id = str(id(self)) + str(timestamp)
+        self.timestamp = str(timestamp).replace('.', '')
+        self.unique_id = str(id(self)) + self.timestamp
 
         # Agent class
         self.agent_class = agent_class
@@ -253,8 +255,11 @@ class AgentManager:
                 raise ValueError('[AgentManager] fit_budget missing in __init__().')
 
         # output dir
-        output_dir = output_dir or ('temp/' + self.identifier)
-        self.output_dir = Path(output_dir)
+        if output_dir is None:
+            output_dir = 'temp/'
+        self.output_dir = Path(output_dir) / 'manager_data'
+        if create_unique_out_dir:
+            self.output_dir = self.output_dir / (self.agent_name + '_id' + self.unique_id)
 
         # Create list of writers for each agent that will be trained
         self.writers = [('default', None) for _ in range(n_fit)]
@@ -272,7 +277,7 @@ class AgentManager:
 
     def _init_optuna_storage_url(self):
         self.output_dir.mkdir(parents=True, exist_ok=True)
-        self.db_filename = self.output_dir / f'data_{self.unique_id}.db'
+        self.db_filename = self.output_dir / 'optuna_data.db'
         if create_database(self.db_filename):
             self.optuna_storage_url = f"sqlite:///{self.db_filename}"
         else:
@@ -285,7 +290,7 @@ class AgentManager:
         self.agent_handlers = [
             AgentHandler(
                 id=ii,
-                filename=self.output_dir / Path(f'agent_handlers/{self.unique_id}_{ii}'),
+                filename=self.output_dir / Path(f'agent_handlers/idx_{ii}'),
                 seeder=handlers_seeders[ii],
                 agent_class=self.agent_class,
                 agent_instance=None,
@@ -307,24 +312,32 @@ class AgentManager:
     def writer_data(self):
         return self.default_writer_data
 
-    def eval(self):
+    def eval_agents(self, n_simulations: Optional[int] = None) -> list:
         """
-        Call .eval() method in all fitted agents and return average result.
-        """
-        values = [agent.eval(**self.eval_kwargs) for agent in self.agent_handlers if not agent.is_empty()]
-        if len(values) == 0:
-            return np.nan
-        return np.mean(values)
-
-    def set_output_dir(self, output_dir):
-        """
-        Change output directory.
+        Call .eval() method in fitted agents and returns a list with the results.
 
         Parameters
-        -----------
-        output_dir : str
+        ----------
+        n_simulations : int
+            Total number of agent evaluations. If None, set to 2*(number of agents)
+
+        Returns
+        -------
+        array of length `n_simulations` containing the .eval() outputs.
         """
-        self.output_dir = Path(output_dir)
+        n_simulations = 2 * self.n_fit
+        values = []
+        for ii in range(n_simulations):
+            # randomly choose one of the fitted agents
+            agent_idx = self.eval_seeder.rng.choice(len(self.agent_handlers))
+            agent = self.agent_handlers[agent_idx]
+            if agent.is_empty():
+                logger.error('Calling eval() in an AgentManager instance contaning an empty AgentHandler.'
+                             ' Returning [].')
+                return []
+            values.append(agent.eval(**self.eval_kwargs))
+            logger.info(f'[eval]... simulation {ii + 1}/{n_simulations}')
+        return values
 
     def clear_output_dir(self):
         """Delete output_dir and all its data."""
@@ -364,15 +377,6 @@ class AgentManager:
         writer_kwargs = writer_kwargs or {}
         self.writers[idx] = (writer_fn, writer_kwargs)
 
-    def disable_writers(self):
-        """
-        Set all writers to None.
-        """
-        self.writers = [('default', None) for _ in range(self.n_fit)]
-        for agent in self.agent_handlers:
-            if not agent.is_empty():
-                agent.set_writer(None)
-
     def fit(self, budget=None, **kwargs):
         """
         Fit the agent instances in parallel.
@@ -385,7 +389,7 @@ class AgentManager:
         if not isinstance(seeders, list):
             seeders = [seeders]
 
-        # remove agent instances from memory to that the agent handlers can be sent to different workers
+        # remove agent instances from memory so that the agent handlers can be sent to different workers
         for handler in self.agent_handlers:
             handler.dump()
 
@@ -448,7 +452,7 @@ class AgentManager:
 
     def save(self):
         """
-        Save AgentManager data to a self.output_dir. The data can be
+        Save AgentManager data to self.output_dir. The data can be
         later loaded to recreate an AgentManager instance.
 
         Returns
@@ -485,15 +489,12 @@ class AgentManager:
         # Pickle AgentManager instance
         #
 
-        # remove writers
-        self.disable_writers()
-
         # clear agent handlers
         for handler in self.agent_handlers:
             handler.dump()
 
         # save
-        filename = Path('stats').with_suffix('.pickle')
+        filename = Path('manager_obj').with_suffix('.pickle')
         filename = output_dir / filename
         filename.parent.mkdir(parents=True, exist_ok=True)
         try:
@@ -600,7 +601,7 @@ class AgentManager:
         #
         # setup
         #
-        TEMP_DIR = 'temp/optim'
+        TEMP_DIR = self.output_dir / 'optim'
         global _OPTUNA_INSTALLED
         if not _OPTUNA_INSTALLED:
             logging.error("Optuna not installed.")
@@ -712,7 +713,11 @@ class AgentManager:
             logger.warning(f'Could not delete {TEMP_DIR}: {ex}')
 
         # continue
-        best_trial = study.best_trial
+        try:
+            best_trial = study.best_trial
+        except ValueError as ex:
+            logger.error(f'Hyperparam optimization failed due to the error: {ex}')
+            return dict()
 
         logger.info(f'Number of finished trials: {len(study.trials)}')
         logger.info('Best trial:')
@@ -730,7 +735,7 @@ class AgentManager:
         # reset agent handlers, so that they take the new parameters
         self._reset_agent_handlers()
 
-        return best_trial, study.trials_dataframe()
+        return deepcopy(best_trial.params)
 
 
 #
@@ -833,11 +838,12 @@ def _optuna_objective(
         eval_env=eval_env,
         init_kwargs=kwargs,  # kwargs are being optimized
         eval_kwargs=deepcopy(eval_kwargs),
-        agent_name='optim',
+        agent_name='optim_' + uuid.uuid4().hex,
         n_fit=n_fit,
         thread_logging_level='INFO',
         parallelization='thread',
-        output_dir=temp_dir)
+        output_dir=temp_dir,
+        create_unique_out_dir=True)
 
     if disable_evaluation_writers:
         for ii in range(params_stats.n_fit):
@@ -853,7 +859,7 @@ def _optuna_objective(
             #
             params_stats.fit(int(fit_budget * fit_fraction))
             # Evaluate params
-            eval_value = params_stats.eval()
+            eval_value = np.mean(params_stats.eval_agents())
 
             # Report intermediate objective value
             trial.report(eval_value, step)
@@ -875,10 +881,10 @@ def _optuna_objective(
         params_stats.fit()
 
         # Evaluate params
-        eval_value = params_stats.eval()
+        eval_value = np.mean(params_stats.eval_agents())
 
     # clear aux data
-    params_stats.clear_handlers()
+    params_stats.clear_output_dir()
     del params_stats
 
     return eval_value

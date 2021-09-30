@@ -40,13 +40,13 @@ def load_experiment_results(output_dir, experiment_name):
 
         output_data['experiment_dirs'] = list of paths to experiment directory (output_dir/experiment_name)
         output_data['agent_list'] = list containing the names of the agents in the experiment
-        output_data['stats'][agent_name] = fitted AgentManager for agent_name
+        output_data['manager'][agent_name] = fitted AgentManager for agent_name
         output_data['dataframes'][agent_name] = dict of pandas data frames from the last run of the experiment
         output_data['data_dir'][agent_name] = directory from which the results were loaded
     """
     output_data = {}
     output_data['agent_list'] = []
-    output_data['stats'] = {}
+    output_data['manager'] = {}
     output_data['dataframes'] = {}
     output_data['data_dir'] = {}
 
@@ -76,6 +76,7 @@ def load_experiment_results(output_dir, experiment_name):
     data_dirs = {}
     for dd in subdirs:
         data_dirs[dd.name] = _get_most_recent_path([f for f in dd.iterdir() if f.is_dir()])
+        data_dirs[dd.name] = data_dirs[dd.name] / 'manager_data'
 
     # Load data from each subdir
     for agent_name in data_dirs:
@@ -85,10 +86,10 @@ def load_experiment_results(output_dir, experiment_name):
         output_data['data_dir'][agent_name] = data_dirs[agent_name]
 
         # store AgentManager
-        output_data['stats'][agent_name] = None
-        fname = data_dirs[agent_name] / 'stats.pickle'
+        output_data['manager'][agent_name] = None
+        fname = data_dirs[agent_name] / 'manager_obj.pickle'
         try:
-            output_data['stats'][agent_name] = AgentManager.load(fname)
+            output_data['manager'][agent_name] = AgentManager.load(fname)
         except Exception:
             logger.warning(f'Could not load AgentManager instance for {agent_name}.')
         logger.info("... loaded " + str(fname))

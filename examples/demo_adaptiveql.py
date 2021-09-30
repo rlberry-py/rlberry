@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 env = (get_benchmark_env, dict(level=2))
 
-N_EP = 10
+N_EP = 1000
 HORIZON = 30
 
 params = {}
@@ -36,7 +36,7 @@ multimanagers.append(
         init_kwargs=params['adaql'],
         eval_kwargs=eval_kwargs,
         n_fit=4,
-        output_dir='dev/examples/adaptive_ql')
+        output_dir='dev/examples/')
 )
 multimanagers.append(
     AgentManager(
@@ -44,7 +44,7 @@ multimanagers.append(
         env,
         fit_budget=N_EP,
         init_kwargs=params['rsucbvi'], n_fit=2,
-        output_dir='dev/examples/rs_ucbvi')
+        output_dir='dev/examples/')
 )
 
 multimanagers.run(save=False)
@@ -63,4 +63,4 @@ for stats in multimanagers.managers:
 plt.show()
 
 for stats in multimanagers.managers:
-    print(f'Agent = {stats.agent_name}, Eval = {stats.eval()}')
+    print(f'Agent = {stats.agent_name}, Eval = {stats.eval_agents()}')
