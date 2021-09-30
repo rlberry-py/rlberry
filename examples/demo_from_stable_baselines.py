@@ -10,7 +10,7 @@ class A2CAgent(AgentWithSimplePolicy):
                  env,
                  policy,
                  learning_rate=7e-4,
-                 n_steps: int = 5,
+                 n_steps: int = 200,
                  gamma: float = 0.99,
                  gae_lambda: float = 1.0,
                  ent_coef: float = 0.0,
