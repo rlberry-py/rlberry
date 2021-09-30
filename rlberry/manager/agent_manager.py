@@ -308,8 +308,7 @@ class AgentManager:
         """
         return process_env(self._eval_env, self.seeder)
 
-    @property
-    def writer_data(self):
+    def get_writer_data(self):
         return self.default_writer_data
 
     def eval_agents(self, n_simulations: Optional[int] = None) -> list:

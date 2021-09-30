@@ -131,7 +131,7 @@ def plot_writer_data(agent_manager,
         # Important: since manager can be a RemoteAgentManager,
         # it is important to avoid repeated accesses to its methods and properties.
         # That is why writer_data is taken from the manager instance only in the line below.
-        writer_data = manager.writer_data
+        writer_data = manager.get_writer_data()
         agent_name = manager.agent_name
         if writer_data is not None:
             for idx in writer_data:

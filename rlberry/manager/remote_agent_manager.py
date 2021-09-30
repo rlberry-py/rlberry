@@ -56,8 +56,7 @@ class RemoteAgentManager:
     def remote_file(self):
         return str(self._remote_agent_manager_filename)
 
-    @property
-    def writer_data(self):
+    def get_writer_data(self):
         msg = self._client.send(
             interface.Message.create(
                 command=interface.Command.AGENT_MANAGER_GET_WRITER_DATA,

@@ -78,7 +78,7 @@ def execute_message(
     elif message.command == interface.Command.AGENT_MANAGER_GET_WRITER_DATA:
         filename = message.params['filename']
         agent_manager = AgentManager.load(filename)
-        writer_data = agent_manager.writer_data
+        writer_data = agent_manager.get_writer_data()
         writer_data = writer_data or dict()
         for idx in writer_data:
             writer_data[idx] = writer_data[idx].to_csv(index=False)
