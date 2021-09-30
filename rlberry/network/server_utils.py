@@ -21,7 +21,13 @@ def execute_message(
             params['output_dir'] = 'client_data/'
         agent_manager = AgentManager(**params)
         filename = str(agent_manager.save())
-        response = interface.Message.create(info=dict(filename=filename))
+        response = interface.Message.create(
+            info=dict(
+                filename=filename,
+                agent_name=agent_manager.agent_name,
+                output_dir=str(agent_manager.output_dir).replace('client_data/', 'remote_data/')
+            )
+        )
         del agent_manager
     # AGENT_MANAGER_FIT
     elif message.command == interface.Command.AGENT_MANAGER_FIT:

@@ -34,7 +34,7 @@ ppo_stats = AgentManager(
     init_kwargs=params_ppo,
     eval_kwargs=eval_kwargs,
     n_fit=4,
-    output_dir='dev/ppo_stats')
+    output_dir='dev/')
 ppo_stats.fit()  # fit the 4 agents
 ppo_stats_fname = ppo_stats.save()
 del ppo_stats

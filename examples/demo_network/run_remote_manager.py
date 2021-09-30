@@ -9,7 +9,7 @@ from rlberry.manager.multiple_managers import MultipleManagers
 from rlberry.manager.remote_agent_manager import RemoteAgentManager
 
 
-client1 = BerryClient(port=8000)
+client1 = BerryClient(port=8001)
 client2 = client1
 # client2 = BerryClient(port=8004)
 

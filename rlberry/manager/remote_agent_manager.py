@@ -36,6 +36,13 @@ class RemoteAgentManager:
             msg.info['filename']
         )
 
+        # get useful attributes
+        self.agent_name = msg.info['agent_name']
+        self.output_dir = pathlib.Path(msg.info['output_dir'])  # to save locally
+
+    def set_client(self, client: BerryClient):
+        self._client = client
+
     @property
     def remote_file(self):
         return str(self._remote_agent_manager_filename)

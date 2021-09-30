@@ -17,6 +17,7 @@ import shutil
 import threading
 import multiprocessing
 import numpy as np
+import uuid
 from rlberry.envs.utils import process_env
 from rlberry.utils.logging import configure_logging
 from rlberry.utils.writers import DefaultWriter
@@ -167,7 +168,7 @@ class AgentManager:
     n_fit : int
         Number of agent instances to fit.
     output_dir : str
-        Directory where to store data by default.
+        Directory where to store data.
     parallelization: {'thread', 'process'}, default: 'process'
         Whether to parallelize  agent training using threads or processes.
     thread_logging_level : str, default: 'INFO'
@@ -216,10 +217,8 @@ class AgentManager:
 
         # create oject identifier
         timestamp = datetime.timestamp(datetime.now())
-        timestamp = str(int(timestamp))
-        self.timestamp = timestamp
-        self.identifier = f'stats_{self.agent_name}_{timestamp}'
-        self.unique_id = str(id(self)) + str(timestamp)
+        self.timestamp = str(timestamp).replace('.', '')
+        self.unique_id = str(id(self)) + self.timestamp
 
         # Agent class
         self.agent_class = agent_class
@@ -255,9 +254,8 @@ class AgentManager:
 
         # output dir
         if output_dir is None:
-            self.output_dir = Path('temp/' + self.identifier)
-        else:
-            self.output_dir = Path(output_dir) / self.identifier
+            output_dir = 'temp/'
+        self.output_dir = Path(output_dir) / 'manager_data' / (self.agent_name + '_' + self.unique_id)
 
         # Create list of writers for each agent that will be trained
         self.writers = [('default', None) for _ in range(n_fit)]
@@ -275,7 +273,7 @@ class AgentManager:
 
     def _init_optuna_storage_url(self):
         self.output_dir.mkdir(parents=True, exist_ok=True)
-        self.db_filename = self.output_dir / f'data_{self.unique_id}.db'
+        self.db_filename = self.output_dir / 'optuna_data.db'
         if create_database(self.db_filename):
             self.optuna_storage_url = f"sqlite:///{self.db_filename}"
         else:
@@ -288,7 +286,7 @@ class AgentManager:
         self.agent_handlers = [
             AgentHandler(
                 id=ii,
-                filename=self.output_dir / Path(f'agent_handlers/{self.unique_id}_{ii}'),
+                filename=self.output_dir / Path(f'agent_handlers/idx_{ii}'),
                 seeder=handlers_seeders[ii],
                 agent_class=self.agent_class,
                 agent_instance=None,
@@ -598,7 +596,7 @@ class AgentManager:
         #
         # setup
         #
-        TEMP_DIR = 'temp/optim'
+        TEMP_DIR = self.output_dir / 'optim'
         global _OPTUNA_INSTALLED
         if not _OPTUNA_INSTALLED:
             logging.error("Optuna not installed.")
@@ -710,7 +708,11 @@ class AgentManager:
             logger.warning(f'Could not delete {TEMP_DIR}: {ex}')
 
         # continue
-        best_trial = study.best_trial
+        try:
+            best_trial = study.best_trial
+        except ValueError as ex:
+            logger.error(f'Hyperparam optimization failed due to the error: {ex}')
+            return dict()
 
         logger.info(f'Number of finished trials: {len(study.trials)}')
         logger.info('Best trial:')
@@ -831,7 +833,7 @@ def _optuna_objective(
         eval_env=eval_env,
         init_kwargs=kwargs,  # kwargs are being optimized
         eval_kwargs=deepcopy(eval_kwargs),
-        agent_name='optim',
+        agent_name='optim_' + uuid.uuid4().hex,
         n_fit=n_fit,
         thread_logging_level='INFO',
         parallelization='thread',
@@ -876,7 +878,7 @@ def _optuna_objective(
         eval_value = np.mean(params_stats.eval_agents())
 
     # clear aux data
-    params_stats.clear_handlers()
+    params_stats.clear_output_dir()
     del params_stats
 
     return eval_value

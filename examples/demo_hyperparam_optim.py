@@ -11,7 +11,7 @@ if __name__ == '__main__':
     # -----------------------------
     # Parameters
     # -----------------------------
-    N_EPISODES = 5
+    N_EPISODES = 100
     GAMMA = 0.99
     HORIZON = 50
     BONUS_SCALE_FACTOR = 0.1
@@ -31,7 +31,7 @@ if __name__ == '__main__':
         init_kwargs=params_ppo,
         eval_kwargs=eval_kwargs,
         n_fit=4,
-        output_dir='dev/ppo_stats_backup')
+        output_dir='dev/')
 
     # hyperparam optim with multiple threads
     ppo_stats.optimize_hyperparams(
