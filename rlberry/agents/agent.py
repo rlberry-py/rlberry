@@ -18,9 +18,12 @@ class Agent(ABC):
     ----------
     env : Model
         Environment used to fit the agent.
+    eval_env : Model or tuple (constructor, kwargs)
+        Environment on which to evaluate the agent. If None, copied from env.
     copy_env : bool
         If true, makes a deep copy of the environment.
-
+    seeder : rlberry.seeding.Seeder, int, or None
+        Object for random number generation.
     .. note::
         Classes that implement this interface should send ``**kwargs`` to :code:`Agent.__init__()`
 
