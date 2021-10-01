@@ -101,7 +101,7 @@ If you use `rlberry` in scientific publications, we would appreciate citations u
 }
 ```
 
-## Notes
+## Development notes
 
 The modules listed below are experimental at the moment, that is, they are not thoroughly tested and are susceptible to evolve.
 
