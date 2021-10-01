@@ -101,6 +101,17 @@ If you use `rlberry` in scientific publications, we would appreciate citations u
 }
 ```
 
+## Notes
+
+The modules listed below are experimental at the moment, that is, they are not thoroughly tested and are susceptible to evolve.
+
+* `rlberry.network`: Allows communication between between a server and client via sockets, and can be used to run agents remotely.
+
+* `rlberry.agents.torch`, `rlberry.agents.jax`, `rlberry.exploration_tools.torch`: Deep RL agents are currently not stable, and their main purpose now is to illustrate how to implement and run those algorithms with the `rlberry` interface
+(e.g., run several agents in parallel, optimize hyperparameters etc.).
+Other libraries, such as [Stable Baselines](https://stable-baselines3.readthedocs.io/en/master/) provide reliable implementations of deep RL algorithms, and **can be used with `rlberry`**, as shown by 
+[this example](https://github.com/rlberry-py/rlberry/blob/main/examples/demo_from_stable_baselines.py).
+
 ## Tests
 
 ```bash 
@@ -113,17 +124,6 @@ $ bash run_testscov.sh
 ```
 
 and coverage report in `cov_html/index.html`.
-
-## Important
-
-The modules listed below are experimental at the moment, that is, they are not thoroughly tested and are susceptible to evolve.
-
-* `rlberry.network`: Allows communication between between a server and client via sockets, and can be used to run agents remotely.
-
-* `rlberry.agents.torch`, `rlberry.agents.jax`, `rlberry.exploration_tools.torch`: Deep RL agents are currently not stable, and their main purpose now is to illustrate how to implement and run those algorithms with the `rlberry` interface
-(e.g., run several agents in parallel, optimize hyperparameters etc.).
-Other libraries, such as [Stable Baselines](https://stable-baselines3.readthedocs.io/en/master/) provide reliable implementations of deep RL algorithms, and **can be used with `rlberry`**, as shown by 
-[this example](https://github.com/rlberry-py/rlberry/blob/main/examples/demo_from_stable_baselines.py).
 
 
 ## Contributing
