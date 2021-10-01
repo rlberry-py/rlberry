@@ -12,11 +12,13 @@ logger = logging.getLogger(__name__)
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 
 _IMPORT_SUCESSFUL = True
+_IMPORT_ERROR_MSG = ''
 try:
     import pygame as pg
 
-except Exception:
+except Exception as ex:
     _IMPORT_SUCESSFUL = False
+    _IMPORT_ERROR_MSG = str(ex)
 
 
 class PyGameRender2D:
@@ -148,8 +150,10 @@ class PyGameRender2D:
                     pg.quit()
                     return
         else:
-            logger.error("Not possible to render the environment, \
-pygame or pyopengl not installed.")
+            logger.error(
+                f"Not possible to render the environment due to the following error: {_IMPORT_ERROR_MSG}"
+            )
+            return
 
     def get_video_data(self):
         """
@@ -187,6 +191,7 @@ pygame or pyopengl not installed.")
             pg.quit()
             return video_data
         else:
-            logger.error("Not possible to render the environment, pygame \
-or pyopengl not installed.")
+            logger.error(
+                f"Not possible to render the environment due to the following error: {_IMPORT_ERROR_MSG}"
+            )
             return []

@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 
 _IMPORT_SUCESSFUL = True
+_IMPORT_ERROR_MSG = ''
 try:
     import pygame as pg
     from pygame.locals import DOUBLEBUF, OPENGL
@@ -26,8 +27,9 @@ try:
     from OpenGL.GL import GL_TRIANGLE_FAN, GL_QUADS, GL_QUAD_STRIP
     from OpenGL.GL import GL_FRONT, GL_RGB, GL_UNSIGNED_BYTE
 
-except Exception:
+except Exception as ex:
     _IMPORT_SUCESSFUL = False
+    _IMPORT_ERROR_MSG = str(ex)
 
 
 class OpenGLRender2D:
@@ -183,8 +185,10 @@ class OpenGLRender2D:
                     pg.quit()
                     return
         else:
-            logger.error("Not possible to render the environment, \
-pygame or pyopengl not installed.")
+            logger.error(
+                f"Not possible to render the environment due to the following error: {_IMPORT_ERROR_MSG}"
+            )
+            return
 
     def get_gl_image_str(self):
         # see https://gist.github.com/Jerdak/7364746
@@ -230,6 +234,7 @@ pygame or pyopengl not installed.")
             pg.quit()
             return video_data
         else:
-            logger.error("Not possible to render the environment, \
-pygame or pyopengl not installed.")
+            logger.error(
+                f"Not possible to render the environment due to the following error: {_IMPORT_ERROR_MSG}"
+            )
             return []
