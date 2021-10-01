@@ -51,7 +51,7 @@ def update_model(repr_state, action, repr_next_state, reward,
 
         # update rewards
         R_hat[u_repr_state, action] = weight * reward / current_N_sa + \
-                                      (prev_N_sa / current_N_sa) * R_hat[u_repr_state, action]
+            (prev_N_sa / current_N_sa) * R_hat[u_repr_state, action]
 
         # update bonus
         B_sa[u_repr_state, action] = compute_bonus(N_sa[u_repr_state, action],
@@ -170,7 +170,6 @@ class RSKernelUCBVIAgent(AgentWithSimplePolicy):
         self.bonus_type = bonus_type
 
         # check environment
-        assert self.env.is_online()
         assert isinstance(self.env.observation_space, spaces.Box)
         assert isinstance(self.env.action_space, spaces.Discrete)
 
@@ -190,7 +189,7 @@ class RSKernelUCBVIAgent(AgentWithSimplePolicy):
             if (self.env.observation_space.high == np.inf).sum() == 0 \
                     and (self.env.observation_space.low == -np.inf).sum() == 0:
                 scaling = self.env.observation_space.high \
-                          - self.env.observation_space.low
+                    - self.env.observation_space.low
                 # if high or low are unbounded
             else:
                 scaling = np.ones(self.state_dim)
@@ -209,8 +208,7 @@ class RSKernelUCBVIAgent(AgentWithSimplePolicy):
         if self.gamma == 1.0:
             self.v_max = r_range * horizon
         else:
-            self.v_max = r_range * (1.0 - np.power(self.gamma, self.horizon)) \
-                         / (1.0 - self.gamma)
+            self.v_max = r_range * (1.0 - np.power(self.gamma, self.horizon)) / (1.0 - self.gamma)
 
         # number of representative states and number of actions
         if max_repr is None:

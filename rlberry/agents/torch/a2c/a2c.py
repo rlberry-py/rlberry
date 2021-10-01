@@ -79,11 +79,13 @@ class A2CAgent(AgentWithSimplePolicy):
                  uncertainty_estimator_kwargs=None,
                  device="cuda:best",
                  **kwargs):
+
+        AgentWithSimplePolicy.__init__(self, env, **kwargs)
+
         self.use_bonus = use_bonus
         if self.use_bonus:
-            env = UncertaintyEstimatorWrapper(env,
-                                              **uncertainty_estimator_kwargs)
-        AgentWithSimplePolicy.__init__(self, env, **kwargs)
+            self.env = UncertaintyEstimatorWrapper(
+                self.env, **uncertainty_estimator_kwargs)
 
         self.batch_size = batch_size
         self.horizon = horizon
@@ -242,12 +244,12 @@ class A2CAgent(AgentWithSimplePolicy):
             # normalize the advantages
             advantages = rewards - state_values.detach()
             advantages = (advantages - advantages.mean()) \
-                         / (advantages.std() + 1e-8)
+                / (advantages.std() + 1e-8)
             # find pg loss
             pg_loss = - logprobs * advantages
             loss = pg_loss \
-                   + 0.5 * self.MseLoss(state_values, rewards) \
-                   - self.entr_coef * dist_entropy
+                + 0.5 * self.MseLoss(state_values, rewards) \
+                - self.entr_coef * dist_entropy
 
             # take gradient step
             self.policy_optimizer.zero_grad()

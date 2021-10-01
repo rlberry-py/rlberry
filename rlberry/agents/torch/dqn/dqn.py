@@ -7,7 +7,6 @@ from rlberry.agents import AgentWithSimplePolicy
 from rlberry.agents.utils.memories import Transition, PrioritizedReplayMemory, TransitionReplayMemory
 from rlberry.exploration_tools.discrete_counter import DiscreteCounter
 from rlberry.exploration_tools.online_discretization_counter import OnlineDiscretizationCounter
-from rlberry.rendering.env_representation_render2d import representation_2d
 from rlberry.wrappers.uncertainty_estimator_wrapper import UncertaintyEstimatorWrapper
 from rlberry.agents.torch.dqn.exploration import exploration_factory
 from rlberry.agents.torch.utils.training import loss_function_factory, model_factory, size_model_config, \
@@ -112,11 +111,11 @@ class DQNAgent(AgentWithSimplePolicy):
             'final_temperature': epsilon_final,
             'tau': epsilon_decay,
         }
+        AgentWithSimplePolicy.__init__(self, env, **kwargs)
         self.use_bonus = use_bonus
         if self.use_bonus:
-            env = UncertaintyEstimatorWrapper(env,
-                                              **uncertainty_estimator_kwargs)
-        AgentWithSimplePolicy.__init__(self, env, **kwargs)
+            self.env = UncertaintyEstimatorWrapper(
+                self.env, **uncertainty_estimator_kwargs)
         self.horizon = horizon
         self.exploration_kwargs = exploration_kwargs or {}
         self.memory_kwargs = memory_kwargs or {}
@@ -339,8 +338,7 @@ class DQNAgent(AgentWithSimplePolicy):
             next_state_values[~batch.terminal] \
                 = best_values[~batch.terminal]
             # Compute the expected Q values
-            target_state_action_value = batch.reward \
-                                        + self.gamma * next_state_values
+            target_state_action_value = batch.reward + self.gamma * next_state_values
 
         # Compute residuals
         residuals = self.loss_function(state_action_values, target_state_action_value, reduction='none')

@@ -113,11 +113,13 @@ class AVECPPOAgent(AgentWithSimplePolicy):
                  uncertainty_estimator_kwargs=None,
                  device="cuda:best",
                  **kwargs):
+
+        AgentWithSimplePolicy.__init__(self, env, **kwargs)
+
         self.use_bonus = use_bonus
         if self.use_bonus:
-            env = UncertaintyEstimatorWrapper(env,
-                                              **uncertainty_estimator_kwargs)
-        AgentWithSimplePolicy.__init__(self, env, **kwargs)
+            self.env = UncertaintyEstimatorWrapper(
+                self.env, **uncertainty_estimator_kwargs)
 
         self.learning_rate = learning_rate
         self.gamma = gamma
@@ -293,9 +295,9 @@ class AVECPPOAgent(AgentWithSimplePolicy):
             surr2 = torch.clamp(ratios, 1 - self.eps_clip, 1
                                 + self.eps_clip) * advantages
             loss = -torch.min(surr1, surr2) \
-                   + self.avec_coef * self._avec_loss(state_values, rewards) \
-                   + self.vf_coef * self.MseLoss(state_values, rewards) \
-                   - self.entr_coef * dist_entropy
+                + self.avec_coef * self._avec_loss(state_values, rewards) \
+                + self.vf_coef * self.MseLoss(state_values, rewards) \
+                - self.entr_coef * dist_entropy
 
             # take gradient step
             self.policy_optimizer.zero_grad()

@@ -47,14 +47,15 @@ class MBQVIAgent(AgentWithSimplePolicy):
                  horizon=None,
                  epsilon=1e-6,
                  **kwargs):
-        # initialize base class
-        assert env.is_generative(), \
-            "MBQVI requires a generative model."
-        assert isinstance(env.observation_space, Discrete), \
-            "MBQVI requires a finite state space."
-        assert isinstance(env.action_space, Discrete), \
-            "MBQVI requires a finite action space."
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
+
+        # initialize base class
+        assert self.env.is_generative(), \
+            "MBQVI requires a generative model."
+        assert isinstance(self.env.observation_space, Discrete), \
+            "MBQVI requires a finite state space."
+        assert isinstance(self.env.action_space, Discrete), \
+            "MBQVI requires a finite action space."
 
         #
         self.n_samples = n_samples

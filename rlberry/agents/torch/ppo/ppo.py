@@ -13,6 +13,7 @@ from rlberry.utils.torch import choose_device
 from rlberry.utils.writers import DefaultWriter
 from rlberry.wrappers.uncertainty_estimator_wrapper import UncertaintyEstimatorWrapper
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -93,11 +94,12 @@ class PPOAgent(AgentWithSimplePolicy):
                  uncertainty_estimator_kwargs=None,
                  **kwargs):  # TODO: sort arguments
 
+        AgentWithSimplePolicy.__init__(self, env, **kwargs)
+
         # bonus
         self.use_bonus = use_bonus
         if self.use_bonus:
-            env = UncertaintyEstimatorWrapper(env, **uncertainty_estimator_kwargs)
-        AgentWithSimplePolicy.__init__(self, env, **kwargs)
+            self.env = UncertaintyEstimatorWrapper(self.env, **uncertainty_estimator_kwargs)
 
         # algorithm parameters
         self.gamma = gamma
