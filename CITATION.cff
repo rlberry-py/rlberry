@@ -16,7 +16,7 @@ authors:
 
 title: "rlberry - A Reinforcement Learning Library for Research and Education"
 abbreviation: rlberry
-version: 0.11
+version: 0.2
 doi: 10.5281/zenodo.5223308
 date-released: 2021-08-19
 url: "https://github.com/rlberry-py/rlberry"
