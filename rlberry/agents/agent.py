@@ -7,6 +7,7 @@ from inspect import signature
 from pathlib import Path
 from rlberry import types
 from rlberry.seeding.seeder import Seeder
+from rlberry.seeding import safe_reseed
 from rlberry.envs.utils import process_env
 from typing import Any, Optional, Mapping
 
@@ -156,6 +157,8 @@ class Agent(ABC):
             self.seeder = self.seeder.spawn()
         else:
             self.seeder = Seeder(seed_seq)
+        safe_reseed(self.env, self.seeder)
+        safe_reseed(self.eval_env, self.seeder)
 
     def save(self, filename):
         """
