@@ -127,7 +127,7 @@ class RSUCBVIAgent(AgentWithSimplePolicy):
             if (self.env.observation_space.high == np.inf).sum() == 0 \
                     and (self.env.observation_space.low == -np.inf).sum() == 0:
                 scaling = self.env.observation_space.high \
-                          - self.env.observation_space.low
+                    - self.env.observation_space.low
                 # if high or low are unbounded
             else:
                 scaling = np.ones(self.state_dim)
@@ -147,7 +147,7 @@ class RSUCBVIAgent(AgentWithSimplePolicy):
             self.v_max = r_range * horizon
         else:
             self.v_max = r_range * (1.0 - np.power(self.gamma, self.horizon)) \
-                         / (1.0 - self.gamma)
+                / (1.0 - self.gamma)
 
         # number of representative states and number of actions
         if max_repr is None:
@@ -192,7 +192,7 @@ class RSUCBVIAgent(AgentWithSimplePolicy):
         self.episode = 0
 
         # default writer
-        self.writer = DefaultWriter(self.name)
+        self.writer = DefaultWriter(self.name, metadata=self._metadata)
 
     def policy(self, observation):
         state = observation
@@ -235,9 +235,9 @@ class RSUCBVIAgent(AgentWithSimplePolicy):
         self.S_sa[repr_state, action] += reward
 
         self.R_hat[repr_state, action] = self.S_sa[repr_state, action] \
-                                         / self.N_sa[repr_state, action]
+            / self.N_sa[repr_state, action]
         self.P_hat[repr_state, action, :] = self.N_sas[repr_state, action, :] \
-                                            / self.N_sa[repr_state, action]
+            / self.N_sa[repr_state, action]
         self.B_sa[repr_state, action] = \
             self._compute_bonus(self.N_sa[repr_state, action])
 

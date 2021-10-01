@@ -155,7 +155,7 @@ class UCBVIAgent(AgentWithSimplePolicy):
             self.name = 'UCBVI-RTDP'
 
         # default writer
-        self.writer = DefaultWriter(self.name)
+        self.writer = DefaultWriter(self.name, metadata=self._metadata)
 
     def policy(self, observation):
         state = observation

@@ -5,8 +5,10 @@ import logging
 import numpy as np
 from inspect import signature
 from pathlib import Path
+from rlberry import types
 from rlberry.seeding.seeder import Seeder
 from rlberry.envs.utils import process_env
+from typing import Any, Optional, Mapping
 
 logger = logging.getLogger(__name__)
 
@@ -16,14 +18,16 @@ class Agent(ABC):
 
     Parameters
     ----------
-    env : Model
+    env : gym.Env or tuple (constructor, kwargs)
         Environment used to fit the agent.
-    eval_env : Model or tuple (constructor, kwargs)
+    eval_env : gym.Env or tuple (constructor, kwargs)
         Environment on which to evaluate the agent. If None, copied from env.
     copy_env : bool
         If true, makes a deep copy of the environment.
     seeder : rlberry.seeding.Seeder, int, or None
         Object for random number generation.
+    _metadata : dict
+        Extra information (e.g. about which is the process id where the agent is running).
     .. note::
         Classes that implement this interface should send ``**kwargs`` to :code:`Agent.__init__()`
 
@@ -45,10 +49,11 @@ class Agent(ABC):
     name = ""
 
     def __init__(self,
-                 env,
-                 eval_env=None,
-                 copy_env=True,
-                 seeder=None,
+                 env: types.Env,
+                 eval_env: Optional[types.Env] = None,
+                 copy_env: bool = True,
+                 seeder: Optional[types.Seed] = None,
+                 _metadata: Optional[Mapping[str, Any]] = None,
                  **kwargs):
         # Check if wrong parameters have been sent to an agent.
         assert kwargs == {}, \
@@ -61,6 +66,9 @@ class Agent(ABC):
         # evaluation environment
         eval_env = eval_env or env
         self.eval_env = process_env(eval_env, self.seeder, copy_env=True)
+
+        # metadata
+        self._metadata = _metadata or dict()
 
     @abstractmethod
     def fit(self, budget: int, **kwargs):
@@ -88,7 +96,7 @@ class Agent(ABC):
         pass
 
     @abstractmethod
-    def eval(self, eval_env, **kwargs):
+    def eval(self, **kwargs):
         """Returns a float measuring the quality of the agent (e.g. MC policy evaluation).
 
         Parameters

@@ -184,7 +184,7 @@ class AVECPPOAgent(AgentWithSimplePolicy):
         self.episode = 0
 
         # default writer
-        self.writer = DefaultWriter(self.name)
+        self.writer = DefaultWriter(self.name, metadata=self._metadata)
 
     def policy(self, observation):
         state = observation

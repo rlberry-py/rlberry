@@ -12,7 +12,7 @@ class DefaultWriter:
     Default writer to be used by the agents.
 
     Can be used in the fit() method of the agents, so
-    that training data can be visualized later.
+    that training data can be handled by AgentManager and RemoteAgentManager.
 
     Parameters
     ----------
@@ -20,11 +20,14 @@ class DefaultWriter:
         Name of the writer.
     log_interval : int
         Minimum number of seconds between consecutive logs.
+    metadata : dict
+        Extra information to be logged.
     """
 
-    def __init__(self, name: str, log_interval: int = 3):
+    def __init__(self, name: str, log_interval: int = 3, metadata: Optional[dict] = None):
         self._name = name
         self._log_interval = log_interval
+        self._metadata = metadata or dict()
         self._data = None
         self._time_last_log = None
         self._log_time = True
@@ -102,7 +105,10 @@ class DefaultWriter:
                 if not np.isnan(gstep):
                     max_global_step = max(max_global_step, gstep)
 
-            message = f'[{self._name}] | max_global_step = {max_global_step} | ' + message
+            header = self._name
+            if self._metadata:
+                header += f' | {self._metadata}'
+            message = f'[{header}] | max_global_step = {max_global_step} | ' + message
             logger.info(message)
 
     def __getattr__(self, attr):

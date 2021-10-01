@@ -86,7 +86,7 @@ class AdaptiveQLAgent(AgentWithSimplePolicy):
         self.episode = 0
 
         # default writer
-        self.writer = DefaultWriter(self.name)
+        self.writer = DefaultWriter(self.name, metadata=self._metadata)
 
     def policy(self, observation):
         action, _ = self.Qtree.get_argmax_and_node(observation, 0)

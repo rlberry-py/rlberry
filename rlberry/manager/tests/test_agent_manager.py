@@ -18,7 +18,7 @@ class DummyAgent(AgentWithSimplePolicy):
         self.hyperparameter2 = hyperparameter2
 
         self.total_budget = 0.0
-        self.writer = DefaultWriter(self.name)
+        self.writer = DefaultWriter(self.name, metadata=self._metadata)
 
     def fit(self, budget, **kwargs):
         del kwargs

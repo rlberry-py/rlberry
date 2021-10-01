@@ -384,7 +384,7 @@ class AgentManager:
         del kwargs
         budget = budget or self.fit_budget
 
-        logger.info(f"Training AgentManager for {self.agent_name}... ")
+        logger.info(f"Running AgentManager fit() for {self.agent_name}... ")
         seeders = self.seeder.spawn(self.n_fit)
         if not isinstance(seeders, list):
             seeders = [seeders]
@@ -405,6 +405,7 @@ class AgentManager:
             raise ValueError(f'Invalid backend for parallelization: {self.parallelization}')
 
         args = [(
+            idx,
             lock,
             handler,
             self.agent_class,
@@ -416,8 +417,8 @@ class AgentManager:
             writer,
             self.thread_logging_level,
             seeder)
-            for (handler, seeder, writer)
-            in zip(self.agent_handlers, seeders, self.writers)]
+            for idx, (handler, seeder, writer)
+            in enumerate(zip(self.agent_handlers, seeders, self.writers))]
 
         if len(args) == 1:
             workers_output = [_fit_worker(args[0])]
@@ -747,7 +748,7 @@ def _fit_worker(args):
     """
     Create and fit an agent instance
     """
-    lock, agent_handler, agent_class, train_env, eval_env, fit_budget, init_kwargs, \
+    idx, lock, agent_handler, agent_class, train_env, eval_env, fit_budget, init_kwargs, \
         fit_kwargs, writer, thread_logging_level, seeder = args
 
     # reseed external libraries
@@ -766,8 +767,10 @@ def _fit_worker(args):
                 eval_env=eval_env,
                 copy_env=False,
                 seeder=seeder,
+                _metadata=dict(
+                    worker=idx,
+                ),
                 **init_kwargs)
-            agent.name += f"(spawn_key{seeder.seed_seq.spawn_key})"
             # seed agent
             agent.reseed(seeder)
             agent_handler.set_instance(agent)
