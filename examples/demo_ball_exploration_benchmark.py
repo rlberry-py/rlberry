@@ -21,7 +21,7 @@ for tt in range(5 * env.horizon):
     hh = tt
     if hh >= env.horizon:
         hh = tt % env.horizon
-    action = agent.policy(state, hh)
+    action = agent.policy(state)
     next_s, _, _, _ = env.step(action)
     state = next_s
 env.render()

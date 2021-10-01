@@ -4,9 +4,9 @@ from rlberry.envs.benchmarks.ball_exploration import PBall2D
 
 for env, horizon in zip([MountainCar(), PBall2D()], [170, 50]):
     print("Running RS-UCBVI on %s" % env.name)
-    agent = RSUCBVIAgent(env, n_episodes=1000, gamma=0.99, horizon=horizon,
+    agent = RSUCBVIAgent(env, gamma=0.99, horizon=horizon,
                          bonus_scale_factor=0.1)
-    agent.fit()
+    agent.fit(budget=500)
 
     env.enable_rendering()
     state = env.reset()

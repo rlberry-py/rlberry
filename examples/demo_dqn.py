@@ -8,14 +8,14 @@ from rlberry.utils.logging import configure_logging
 configure_logging(level="INFO")
 
 env = gym_make("CartPole-v0")
-agent = DQNAgent(env, n_episodes=50, epsilon_decay=1000)
+agent = DQNAgent(env, epsilon_decay=1000)
 agent.set_writer(SummaryWriter())
 
 print(f"Running DQN on {env}")
 print(f"Visualize with tensorboard by \
 running:\n$tensorboard --logdir {Path(agent.writer.log_dir).parent}")
 
-agent.fit()
+agent.fit(budget=50)
 
 for episode in range(3):
     done = False

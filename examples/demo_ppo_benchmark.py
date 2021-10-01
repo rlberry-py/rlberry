@@ -37,16 +37,21 @@ eval_kwargs = dict(eval_horizon=HORIZON, n_simulations=20)
 # -----------------------------
 # Run AgentManager
 # -----------------------------
-oracle_stats = AgentManager(MBQVIAgent, d_train_env, fit_budget=None,
-                          init_kwargs=params_oracle,
-                          eval_kwargs=eval_kwargs,
-                          n_fit=4, agent_name="Oracle")
-ppo_stats = AgentManager(PPOAgent, train_env, fit_budget=N_EPISODES,
-                       init_kwargs=params_ppo,
-                       eval_kwargs=eval_kwargs,
-                       n_fit=4, agent_name="PPO")
+oracle_stats = AgentManager(
+    MBQVIAgent, d_train_env, fit_budget=0,
+    init_kwargs=params_oracle,
+    eval_kwargs=eval_kwargs,
+    n_fit=4, agent_name="Oracle")
+ppo_stats = AgentManager(
+    PPOAgent, train_env, fit_budget=N_EPISODES,
+    init_kwargs=params_ppo,
+    eval_kwargs=eval_kwargs,
+    n_fit=4, agent_name="PPO")
 
 agent_manager_list = [oracle_stats, ppo_stats]
+
+for manager in agent_manager_list:
+    manager.fit()
 
 # learning curves
 plot_writer_data(agent_manager_list, tag='episode_rewards',

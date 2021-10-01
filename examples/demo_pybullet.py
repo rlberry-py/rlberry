@@ -9,9 +9,9 @@ from rlberry.agents.torch.dqn import DQNAgent
 env = gym.make("DiscretePendulumSwingupBulletEnv-v0")
 
 env.render()
-agent = DQNAgent(env, n_episodes=100, gamma=0.95, learning_rate=0.0005, copy_env=False)
+agent = DQNAgent(env, gamma=0.95, learning_rate=0.0005, copy_env=False)
 agent.set_writer(SummaryWriter())
-agent.fit()
+agent.fit(budget=100)
 
 while True:
     state = env.reset()

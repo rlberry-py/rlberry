@@ -15,10 +15,10 @@ else:
     env = MountainCar()
     env = Vis2dWrapper(env, n_bins_obs=20, memory_size=200)
 
-    agent = RSUCBVIAgent(env, n_episodes=100, gamma=0.99, horizon=200,
+    agent = RSUCBVIAgent(env, gamma=0.99, horizon=200,
                          bonus_scale_factor=0.1, copy_env=False, min_dist=0.1)
 
-agent.fit()
+agent.fit(budget=100)
 
 env.enable_rendering()
 for ep in range(3):

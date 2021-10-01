@@ -8,9 +8,9 @@ env.reward_range = (-1.0, 0.0)  # missing in gym implementation
 # rescake rewards to [0, 1]
 env = RescaleRewardWrapper(env, (0.0, 1.0))
 
-agent = RSUCBVIAgent(env, n_episodes=10, gamma=0.99, horizon=200,
+agent = RSUCBVIAgent(env, gamma=0.99, horizon=200,
                      bonus_scale_factor=0.1, min_dist=0.2)
-agent.fit()
+agent.fit(budget=10)
 
 state = env.reset()
 for tt in range(200):
