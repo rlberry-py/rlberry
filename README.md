@@ -28,15 +28,15 @@
 </p>
 
 <p align="center">
-   <a href="https://pypi.org/project/rlberry/">
+   <!-- <a href="https://pypi.org/project/rlberry/">
       <img alt="PyPI" src="https://img.shields.io/pypi/v/rlberry">
-   </a>
+   </a> -->
    <a href="https://img.shields.io/pypi/pyversions/rlberry">
       <img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/rlberry">
    </a>
-   <a href="https://img.shields.io/pypi/wheel/rlberry">
+   <!-- <a href="https://img.shields.io/pypi/wheel/rlberry">
       <img alt="PyPI - Wheel" src="https://img.shields.io/pypi/wheel/rlberry">
-   </a>
+   </a> -->
    <a href="https://img.shields.io/pypi/status/rlberry">
       <img alt="PyPI - Status" src="https://img.shields.io/pypi/status/rlberry">
    </a>
@@ -112,8 +112,19 @@ $ bash run_testscov.sh
 
 and coverage report in `cov_html/index.html`.
 
+## Important
+
+The modules listed below are experimental at the moment, that is, they are not thoroughly tested and are susceptible to evolve.
+
+* `rlberry.network`: Allows communication between between a server and client via sockets, and can be used to run agents remotely.
+
+* `rlberry.agents.torch`, `rlberry.agents.jax`, `rlberry.exploration_tools.torch`: Deep RL agents are currently not stable, and their main purpose now is to illustrate how to implement and run those algorithms with the `rlberry` interface
+(e.g., run several agents in parallel, optimize hyperparameters etc.).
+Other libraries, such as [Stable Baselines](https://stable-baselines3.readthedocs.io/en/master/) provide reliable implementations of deep RL algorithms, and **can be used with `rlberry`**, as shown by 
+[this example](https://github.com/rlberry-py/rlberry/blob/main/examples/demo_from_stable_baselines.py).
+
+
 ## Contributing
 
-Want to contribute to `rlberry`? Please check [our contribution guidelines](CONTRIBUTING.md). A list of interesting
-TODO's will be available soon. **If you want to add any new agents or environments, do not hesitate
+Want to contribute to `rlberry`? Please check [our contribution guidelines](CONTRIBUTING.md). **If you want to add any new agents or environments, do not hesitate
 to [open an issue](https://github.com/rlberry-py/rlberry/issues/new/choose)!**
