@@ -25,27 +25,27 @@
    <a href="https://codecov.io/gh/rlberry-py/rlberry">
       <img alt="codecov" src="https://codecov.io/gh/rlberry-py/rlberry/branch/main/graph/badge.svg?token=TIFP7RUD75">
    </a>
+   <a href="https://img.shields.io/pypi/pyversions/rlberry">
+      <img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/rlberry">
+   </a>
 </p>
 
 <p align="center">
    <!-- <a href="https://pypi.org/project/rlberry/">
       <img alt="PyPI" src="https://img.shields.io/pypi/v/rlberry">
    </a> -->
-   <a href="https://img.shields.io/pypi/pyversions/rlberry">
-      <img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/rlberry">
-   </a>
    <!-- <a href="https://img.shields.io/pypi/wheel/rlberry">
       <img alt="PyPI - Wheel" src="https://img.shields.io/pypi/wheel/rlberry">
    </a> -->
-   <a href="https://img.shields.io/pypi/status/rlberry">
+   <!-- <a href="https://img.shields.io/pypi/status/rlberry">
       <img alt="PyPI - Status" src="https://img.shields.io/pypi/status/rlberry">
-   </a>
-   <a href="https://img.shields.io/pypi/dm/rlberry">
+   </a> -->
+   <!-- <a href="https://img.shields.io/pypi/dm/rlberry">
       <img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/rlberry">
-   </a>
-   <a href="https://zenodo.org/badge/latestdoi/304451364">
+   </a> -->
+   <!-- <a href="https://zenodo.org/badge/latestdoi/304451364">
       <img src="https://zenodo.org/badge/304451364.svg" alt="DOI">
-   </a>
+   </a> -->
 </p>
 
 <p align="center">
@@ -74,7 +74,9 @@ Check our [getting started section](#getting-started)!
 
 ## Getting started
 
-In our [documentation](https://rlberry.readthedocs.io/en/latest/), you will find a **quick tutorial** to the library.
+In our [documentation](https://rlberry.readthedocs.io/en/latest/), you will find 
+a [quick tutorial](https://rlberry.readthedocs.io/en/latest/#quick-tutorial) to the library
+and instructions about [how to install it](https://rlberry.readthedocs.io/en/latest/installation.html).
 
 Also, we provide a handful of notebooks on [Google colab](https://colab.research.google.com/) as examples to show you
 how to use `rlberry`:
