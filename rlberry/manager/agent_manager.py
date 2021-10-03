@@ -766,7 +766,7 @@ def _fit_worker(args):
     """
     Create and fit an agent instance
     """
-    (idx, default_writer_kwargs, lock, agent_handler, agent_class, train_env, 
+    (idx, default_writer_kwargs, lock, agent_handler, agent_class, train_env,
      eval_env, fit_budget, init_kwargs,
      fit_kwargs, writer, worker_logging_level, seeder) = args
 

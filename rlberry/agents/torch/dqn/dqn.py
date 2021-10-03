@@ -135,7 +135,6 @@ class DQNAgent(AgentWithSimplePolicy):
         self.training = True
         self.steps = 0
         self.episode = 0
-        self.writer = None
 
         self.optimizer_kwargs = {'optimizer_type': optimizer_type,
                                  'lr': learning_rate}

@@ -431,7 +431,7 @@ class DQNAgent(AgentWithSimplePolicy):
         agent._all_states = agent_data['states']
         writer = agent_data['writer']
         if writer:
-            agent.writer = writer
+            agent._writer = writer
         return agent
 
     #
