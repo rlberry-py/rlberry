@@ -10,7 +10,6 @@ from rlberry.agents.torch.utils.training import optimizer_factory
 from rlberry.agents.torch.utils.models import default_policy_net_fn
 from rlberry.agents.torch.utils.models import default_value_net_fn
 from rlberry.utils.torch import choose_device
-from rlberry.utils.writers import DefaultWriter
 from rlberry.wrappers.uncertainty_estimator_wrapper import UncertaintyEstimatorWrapper
 
 
@@ -173,9 +172,6 @@ class PPOAgent(AgentWithSimplePolicy):
         self.advantages = []  # TODO: add to memory
 
         self.episode = 0
-
-        # default writer
-        self.writer = DefaultWriter(self.name, metadata=self._metadata)
 
     def policy(self, observation):
         state = observation

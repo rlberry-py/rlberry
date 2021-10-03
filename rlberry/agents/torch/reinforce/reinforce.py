@@ -7,7 +7,6 @@ from rlberry.agents.utils.memories import Memory
 from rlberry.agents.torch.utils.training import optimizer_factory
 from rlberry.agents.torch.utils.models import default_policy_net_fn
 from rlberry.utils.torch import choose_device
-from rlberry.utils.writers import DefaultWriter
 
 logger = logging.getLogger(__name__)
 
@@ -112,9 +111,6 @@ class REINFORCEAgent(AgentWithSimplePolicy):
         self.memory = Memory()
 
         self.episode = 0
-
-        # default writer
-        self.writer = DefaultWriter(self.name, metadata=self._metadata)
 
     def policy(self, observation):
         state = observation

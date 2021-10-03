@@ -2,7 +2,6 @@ import numpy as np
 from rlberry.envs import GridWorld
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.manager import AgentManager, plot_writer_data, evaluate_agents
-from rlberry.utils.writers import DefaultWriter
 
 
 class DummyAgent(AgentWithSimplePolicy):
@@ -18,7 +17,6 @@ class DummyAgent(AgentWithSimplePolicy):
         self.hyperparameter2 = hyperparameter2
 
         self.total_budget = 0.0
-        self.writer = DefaultWriter(self.name, metadata=self._metadata)
 
     def fit(self, budget, **kwargs):
         del kwargs

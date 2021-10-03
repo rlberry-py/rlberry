@@ -1,10 +1,10 @@
 import concurrent.futures
 from copy import deepcopy
-from datetime import datetime
 from pathlib import Path
 
 from rlberry.seeding import safe_reseed, set_external_seed
 from rlberry.seeding import Seeder
+from rlberry import metadata_utils
 
 import functools
 import json
@@ -17,7 +17,6 @@ import shutil
 import threading
 import multiprocessing
 import numpy as np
-import uuid
 from rlberry.envs.utils import process_env
 from rlberry.utils.logging import configure_logging
 from rlberry.utils.writers import DefaultWriter
@@ -218,9 +217,7 @@ class AgentManager:
                 eval_env, Tuple), "[AgentManager]train_env must be Tuple (constructor, kwargs)"
 
         # create oject identifier
-        timestamp = datetime.timestamp(datetime.now())
-        self.timestamp = str(timestamp).replace('.', '')
-        self.unique_id = str(id(self)) + self.timestamp
+        self.unique_id = metadata_utils.get_unique_id(self)
 
         # Agent class
         self.agent_class = agent_class
@@ -256,10 +253,10 @@ class AgentManager:
 
         # output dir
         if output_dir is None:
-            output_dir = 'temp/'
+            output_dir = metadata_utils.RLBERRY_TEMP_DATA_DIR
         self.output_dir = Path(output_dir) / 'manager_data'
         if create_unique_out_dir:
-            self.output_dir = self.output_dir / (self.agent_name + '_id' + self.unique_id)
+            self.output_dir = self.output_dir / (self.agent_name + '_' + self.unique_id)
 
         # Create list of writers for each agent that will be trained
         self.writers = [('default', None) for _ in range(n_fit)]
@@ -767,8 +764,8 @@ def _fit_worker(args):
                 eval_env=eval_env,
                 copy_env=False,
                 seeder=seeder,
-                _metadata=dict(
-                    worker=idx,
+                _execution_metadata=metadata_utils.ExecutionMetadata(
+                    obj_worker_id=idx
                 ),
                 **init_kwargs)
             # seed agent
@@ -841,7 +838,7 @@ def _optuna_objective(
         eval_env=eval_env,
         init_kwargs=kwargs,  # kwargs are being optimized
         eval_kwargs=deepcopy(eval_kwargs),
-        agent_name='optim_' + uuid.uuid4().hex,
+        agent_name='optim',
         n_fit=n_fit,
         thread_logging_level='INFO',
         parallelization='thread',

@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 from typing import Optional
 from timeit import default_timer as timer
+from rlberry import metadata_utils
 
 logger = logging.getLogger(__name__)
 
@@ -20,14 +21,17 @@ class DefaultWriter:
         Name of the writer.
     log_interval : int
         Minimum number of seconds between consecutive logs.
-    metadata : dict
-        Extra information to be logged.
+    execution_metadata : metadata_utils.ExecutionMetadata
+        Execution metadata about the object that is using the writer.
     """
 
-    def __init__(self, name: str, log_interval: int = 3, metadata: Optional[dict] = None):
+    def __init__(
+            self, name: str,
+            log_interval: int = 3,
+            execution_metadata: Optional[metadata_utils.ExecutionMetadata] = None):
         self._name = name
         self._log_interval = log_interval
-        self._metadata = metadata or dict()
+        self._execution_metadata = execution_metadata
         self._data = None
         self._time_last_log = None
         self._log_time = True
@@ -106,8 +110,8 @@ class DefaultWriter:
                     max_global_step = max(max_global_step, gstep)
 
             header = self._name
-            if self._metadata:
-                header += f' | {self._metadata}'
+            if self._execution_metadata:
+                header += f'[worker: {self._execution_metadata.obj_worker_id}]'
             message = f'[{header}] | max_global_step = {max_global_step} | ' + message
             logger.info(message)
 
