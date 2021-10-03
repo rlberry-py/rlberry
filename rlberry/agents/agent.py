@@ -30,8 +30,10 @@ class Agent(ABC):
         If true, makes a deep copy of the environment.
     seeder : rlberry.seeding.Seeder, int, or None
         Object for random number generation.
-    _execution_metadata : ExecutionMetadata
+    _execution_metadata : ExecutionMetadata (optional)
         Extra information about agent execution (e.g. about which is the process id where the agent is running).
+    _default_writer_kwargs : dict (optional)
+        Parameters to initialize DefaultWriter (attribute self.writer).
     .. note::
         Classes that implement this interface should send ``**kwargs`` to :code:`Agent.__init__()`
 
@@ -61,6 +63,7 @@ class Agent(ABC):
                  copy_env: bool = True,
                  seeder: Optional[types.Seed] = None,
                  _execution_metadata: Optional[metadata_utils.ExecutionMetadata] = None,
+                 _default_writer_kwargs: Optional[dict] = None,
                  **kwargs):
         # Check if wrong parameters have been sent to an agent.
         assert kwargs == {}, \
@@ -80,7 +83,13 @@ class Agent(ABC):
             self._unique_id = self.name + '_' + self._unique_id
 
         # create writer
-        self.writer = DefaultWriter(self.name, execution_metadata=self._execution_metadata)
+        _default_writer_kwargs = _default_writer_kwargs or dict(
+            name=self.name, execution_metadata=self._execution_metadata)
+        self._writer = DefaultWriter(**_default_writer_kwargs)
+
+    @property
+    def writer(self):
+        return self._writer
 
     @property
     def unique_id(self):
@@ -101,6 +110,8 @@ class Agent(ABC):
         This property is required to reduce the time required for hyperparam
         optimization (by allowing early stopping), but it is not strictly required
         elsewhere in the library.
+
+        If the agent does not require a budget, set it to -1.
 
         Parameters
         ----------

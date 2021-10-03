@@ -168,13 +168,15 @@ class AgentManager:
         Directory where to store data.
     parallelization: {'thread', 'process'}, default: 'process'
         Whether to parallelize  agent training using threads or processes.
-    thread_logging_level : str, default: 'INFO'
-        Logging level in each of the threads used to fit agents.
+    worker_logging_level : str, default: 'INFO'
+        Logging level in each of the threads/processes used to fit agents.
     seed : np.random.SeedSequence, rlberry.seeding.Seeder or int, default : None
         Seed sequence from which to spawn the random number generator.
         If None, generate random seed.
         If int, use as entropy for SeedSequence.
         If seeder, use seeder.seed_seq
+    enable_tensorboard : bool, default = False
+        If True, enable tensorboard logging in Agent's DefaultWriter.
     create_unique_out_dir : bool, default = True
         If true, data is saved to output_dir/manager_data/<AGENT_NAME_UNIQUE_ID>
         Otherwise, data is saved to output_dir/manager_data
@@ -192,8 +194,9 @@ class AgentManager:
                  n_fit=4,
                  output_dir=None,
                  parallelization='thread',
-                 thread_logging_level='INFO',
+                 worker_logging_level='INFO',
                  seed=None,
+                 enable_tensorboard=False,
                  create_unique_out_dir=True):
         # agent_class should only be None when the constructor is called
         # by the class method AgentManager.load(), since the agent class
@@ -242,7 +245,7 @@ class AgentManager:
         self.eval_kwargs = deepcopy(eval_kwargs)
         self.n_fit = n_fit
         self.parallelization = parallelization
-        self.thread_logging_level = thread_logging_level
+        self.worker_logging_level = worker_logging_level
         if fit_budget is not None:
             self.fit_budget = fit_budget
         else:
@@ -259,7 +262,23 @@ class AgentManager:
             self.output_dir = self.output_dir / (self.agent_name + '_' + self.unique_id)
 
         # Create list of writers for each agent that will be trained
+        # 'default' will keep Agent's use of DefaultWriter.
         self.writers = [('default', None) for _ in range(n_fit)]
+
+        # Parameters to setup Agent's DefaultWriter
+        self.agent_default_writer_kwargs = [None for _ in range(n_fit)]
+        if enable_tensorboard:
+            self.agent_default_writer_kwargs = [
+                dict(
+                    name=self.agent_name,
+                    log_interval=3,
+                    tensorboard_kwargs=dict(
+                        log_dir=self.output_dir / 'tensorboard' / str(idx)
+                    ),
+                    execution_metadata=metadata_utils.ExecutionMetadata(obj_worker_id=idx)
+                )
+                for idx in range(n_fit)
+            ]
 
         #
         self.agent_handlers = None
@@ -403,6 +422,7 @@ class AgentManager:
 
         args = [(
             idx,
+            default_writer_kwargs,
             lock,
             handler,
             self.agent_class,
@@ -412,10 +432,11 @@ class AgentManager:
             deepcopy(self.init_kwargs),
             deepcopy(self.fit_kwargs),
             writer,
-            self.thread_logging_level,
+            self.worker_logging_level,
             seeder)
-            for idx, (handler, seeder, writer)
-            in enumerate(zip(self.agent_handlers, seeders, self.writers))]
+            for idx, (default_writer_kwargs, handler, seeder, writer)
+            in enumerate(
+                zip(self.agent_default_writer_kwargs, self.agent_handlers, seeders, self.writers))]
 
         if len(args) == 1:
             workers_output = [_fit_worker(args[0])]
@@ -745,28 +766,32 @@ def _fit_worker(args):
     """
     Create and fit an agent instance
     """
-    idx, lock, agent_handler, agent_class, train_env, eval_env, fit_budget, init_kwargs, \
-        fit_kwargs, writer, thread_logging_level, seeder = args
+    (idx, default_writer_kwargs, lock, agent_handler, agent_class, train_env, 
+     eval_env, fit_budget, init_kwargs,
+     fit_kwargs, writer, worker_logging_level, seeder) = args
 
     # reseed external libraries
     set_external_seed(seeder)
 
     # logging level in thread
-    configure_logging(thread_logging_level)
+    configure_logging(worker_logging_level)
 
     # Using a lock when creating envs and agents, to avoid problems
     # as here: https://github.com/openai/gym/issues/281
     with lock:
         if agent_handler.is_empty():
+            if default_writer_kwargs is None:
+                _execution_metadata = metadata_utils.ExecutionMetadata(obj_worker_id=idx)
+            else:
+                _execution_metadata = default_writer_kwargs['execution_metadata']
             # create agent
             agent = agent_class(
                 env=train_env,
                 eval_env=eval_env,
                 copy_env=False,
                 seeder=seeder,
-                _execution_metadata=metadata_utils.ExecutionMetadata(
-                    obj_worker_id=idx
-                ),
+                _execution_metadata=_execution_metadata,
+                _default_writer_kwargs=default_writer_kwargs,
                 **init_kwargs)
             # seed agent
             agent.reseed(seeder)
@@ -775,7 +800,7 @@ def _fit_worker(args):
     # set writer
     if writer[0] is None:
         agent_handler.set_writer(None)
-    elif writer[0] != 'default':
+    elif writer[0] != 'default':  # 'default' corresponds to DefaultWriter created by Agent.__init__()
         writer_fn = writer[0]
         writer_kwargs = writer[1]
         agent_handler.set_writer(writer_fn(**writer_kwargs))
@@ -840,9 +865,10 @@ def _optuna_objective(
         eval_kwargs=deepcopy(eval_kwargs),
         agent_name='optim',
         n_fit=n_fit,
-        thread_logging_level='INFO',
+        worker_logging_level='INFO',
         parallelization='thread',
         output_dir=temp_dir,
+        enable_tensorboard=False,
         create_unique_out_dir=True)
 
     if disable_evaluation_writers:

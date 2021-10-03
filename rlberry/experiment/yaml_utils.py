@@ -1,8 +1,6 @@
 from pathlib import Path
 from typing import Generator, Tuple
 import yaml
-
-from rlberry.manager import AgentManager
 from rlberry.utils.factory import load
 
 _AGENT_KEYS = ('init_kwargs', 'eval_kwargs', 'fit_kwargs')
@@ -102,7 +100,7 @@ def read_env_config(config_path):
 def parse_experiment_config(path: Path,
                             n_fit: int = 4,
                             output_base_dir: str = 'results',
-                            parallelization: str = 'process') -> Generator[Tuple[int, AgentManager], None, None]:
+                            parallelization: str = 'process') -> Generator[Tuple[int, dict], None, None]:
     """
     Read .yaml files. set global seed and convert to AgentManager instances.
 
@@ -133,8 +131,8 @@ def parse_experiment_config(path: Path,
     -------
     seed: int
         global seed
-    agent_manager: AgentManager
-        the Agent Stats to fit
+    agent_manager_kwargs:
+        parameters to create an AgentManager instance.
     """
     with path.open() as file:
         config = yaml.safe_load(file)
@@ -185,7 +183,7 @@ def parse_experiment_config(path: Path,
             # append run index to dir
             output_dir = output_dir / str(last + 1)
 
-            yield seed, AgentManager(
+            yield seed, dict(
                 agent_class=agent_class,
                 init_kwargs=init_kwargs,
                 eval_kwargs=eval_kwargs,
