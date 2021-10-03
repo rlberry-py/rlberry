@@ -136,9 +136,9 @@ class Agent(ABC):
         pass
 
     def set_writer(self, writer):
-        self.writer = writer
+        self._writer = writer
 
-        if self.writer:
+        if self._writer:
             init_args = signature(self.__init__).parameters
             kwargs = [f"| {key} | {getattr(self, key, None)} |" for key in init_args]
             writer.add_text(
