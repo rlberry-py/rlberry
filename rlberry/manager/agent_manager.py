@@ -266,20 +266,20 @@ class AgentManager:
         self.writers = [('default', None) for _ in range(n_fit)]
 
         # Parameters to setup Agent's DefaultWriter
-        self.agent_default_writer_kwargs = [None for _ in range(n_fit)]
+        self.agent_default_writer_kwargs = [
+            dict(
+                name=self.agent_name,
+                log_interval=3,
+                tensorboard_kwargs=None,
+                execution_metadata=metadata_utils.ExecutionMetadata(obj_worker_id=idx)
+            )
+            for idx in range(n_fit)
+        ]
         if enable_tensorboard:
-            self.agent_default_writer_kwargs = [
-                dict(
-                    name=self.agent_name,
-                    log_interval=3,
-                    tensorboard_kwargs=dict(
-                        log_dir=self.output_dir / 'tensorboard' / str(idx)
-                    ),
-                    execution_metadata=metadata_utils.ExecutionMetadata(obj_worker_id=idx)
+            for idx, params in enumerate(self.agent_default_writer_kwargs):
+                params['tensorboard_kwargs'] = dict(
+                    log_dir=self.output_dir / 'tensorboard' / str(idx)
                 )
-                for idx in range(n_fit)
-            ]
-
         #
         self.agent_handlers = None
         self._reset_agent_handlers()

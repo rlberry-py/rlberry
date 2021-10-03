@@ -1,3 +1,4 @@
+from datetime import datetime
 import uuid
 import hashlib
 from typing import Optional, NamedTuple
@@ -16,9 +17,11 @@ def get_unique_id(obj):
     """
     # id() is guaranteed to be unique among simultaneously existing objects (uses memory address).
     # uuid4() is an universal id, but there might be issues if called simultaneously in different processes.
-    # This function combines both in a single ID, and hashes it.
-    str_id = str(id(obj)) + uuid.uuid4().hex
-    str_id = hashlib.sha1(str_id.encode("utf-8")).hexdigest()
+    # This function combines id(), uuid4(), and a timestamp in a single ID, and hashes it.
+    timestamp = datetime.timestamp(datetime.now())
+    timestamp = str(timestamp).replace('.', '')
+    str_id = timestamp + str(id(obj)) + uuid.uuid4().hex
+    str_id = hashlib.md5(str_id.encode()).hexdigest()
     return str_id
 
 
