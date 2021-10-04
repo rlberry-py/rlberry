@@ -275,10 +275,12 @@ class AgentManager:
             )
             for idx in range(n_fit)
         ]
+        self.tensorboard_dir = None
         if enable_tensorboard:
+            self.tensorboard_dir = self.output_dir / 'tensorboard'
             for idx, params in enumerate(self.agent_default_writer_kwargs):
                 params['tensorboard_kwargs'] = dict(
-                    log_dir=self.output_dir / 'tensorboard' / str(idx)
+                    log_dir=self.tensorboard_dir / str(idx)
                 )
         #
         self.agent_handlers = None

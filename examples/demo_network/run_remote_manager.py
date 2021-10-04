@@ -14,7 +14,7 @@ if __name__ == '__main__':
     port = int(input("Select server port: "))
     client = BerryClient(port=port)
 
-    FIT_BUDGET = 1000
+    FIT_BUDGET = 500
 
     local_manager = AgentManager(
         agent_class=REINFORCEAgent,
@@ -35,10 +35,11 @@ if __name__ == '__main__':
         fit_budget=FIT_BUDGET,
         init_kwargs=dict(gamma=0.99),
         eval_kwargs=dict(eval_horizon=200, n_simulations=20),
-        n_fit=2,
+        n_fit=3,
         seed=10,
         agent_name='REINFORCE(remote)',
-        parallelization='process'
+        parallelization='process',
+        enable_tensorboard=True,
     )
 
     remote_manager.set_writer(
@@ -48,7 +49,7 @@ if __name__ == '__main__':
     )
 
     # Optimize hyperparams of remote agent
-    best_params = remote_manager.optimize_hyperparams(timeout=120, optuna_parallelization='process')
+    best_params = remote_manager.optimize_hyperparams(timeout=60, optuna_parallelization='process')
     print(f'best params = {best_params}')
 
     # Test save/load
@@ -62,6 +63,9 @@ if __name__ == '__main__':
     mmanagers.append(remote_manager)
     mmanagers.run()
 
+    # Fit remotely for a few more episodes
+    remote_manager.fit(budget=100)
+
     # plot
     plot_writer_data(mmanagers.managers, tag='episode_rewards', show=False)
     evaluate_agents(mmanagers.managers, n_simulations=10, show=True)
@@ -69,6 +73,7 @@ if __name__ == '__main__':
     # Test some methods
     print([manager.eval_agents() for manager in mmanagers.managers])
 
-    for manager in mmanagers.managers:
-        manager.clear_handlers()
-        manager.clear_output_dir()
+    # # uncomment to clear output files
+    # for manager in mmanagers.managers:
+    #     manager.clear_handlers()
+    #     manager.clear_output_dir()

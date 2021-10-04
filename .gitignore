@@ -16,8 +16,6 @@ cov_html/*
 dev/*
 results/*
 temp/*
-client_data/*
-remote_data/*
 rlberry_data/*
 
 # Byte-compiled / optimized / DLL files
