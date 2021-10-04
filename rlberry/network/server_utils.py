@@ -98,10 +98,11 @@ def execute_message(
                 agent_manager.output_dir / 'tensorboard_data.zip')
             if tensorboard_zip_file is not None:
                 tensorboard_bin_data = open(tensorboard_zip_file, "rb").read()
+                tensorboard_bin_data = base64.b64encode(tensorboard_bin_data).decode('ascii')
         response = interface.Message.create(
             data=dict(
                 writer_data=writer_data,
-                tensorboard_bin_data=base64.b64encode(tensorboard_bin_data).decode('ascii'))
+                tensorboard_bin_data=tensorboard_bin_data)
         )
         del agent_manager
     # end
