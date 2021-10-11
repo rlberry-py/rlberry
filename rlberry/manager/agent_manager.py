@@ -54,7 +54,7 @@ class AgentHandler:
         Class of the agent to be wrapped
     agent_instance:
         An instance of agent_class, or None (if not loaded).
-    **agent_kwargs:
+    agent_kwargs:
         Arguments required by __init__ method of agent_class.
     """
 
@@ -64,13 +64,13 @@ class AgentHandler:
                  seeder,
                  agent_class,
                  agent_instance=None,
-                 **agent_kwargs) -> None:
+                 agent_kwargs=None) -> None:
         self._id = id
         self._fname = Path(filename)
         self._seeder = seeder
         self._agent_class = agent_class
         self._agent_instance = agent_instance
-        self._agent_kwargs = agent_kwargs
+        self._agent_kwargs = agent_kwargs or {}
 
     @property
     def id(self):
@@ -235,12 +235,12 @@ class AgentManager:
         self._eval_env = eval_env
 
         # check kwargs
-        init_kwargs = init_kwargs or {}
         fit_kwargs = fit_kwargs or {}
         eval_kwargs = eval_kwargs or {}
 
         # params
-        self.init_kwargs = deepcopy(init_kwargs)
+        base_init_kwargs = init_kwargs or {}
+        self._base_init_kwargs = deepcopy(base_init_kwargs)
         self.fit_kwargs = deepcopy(fit_kwargs)
         self.eval_kwargs = deepcopy(eval_kwargs)
         self.n_fit = n_fit
@@ -282,7 +282,8 @@ class AgentManager:
                 params['tensorboard_kwargs'] = dict(
                     log_dir=self.tensorboard_dir / str(idx)
                 )
-        #
+        # agent handlers and init kwargs
+        self._set_init_kwargs()  # init_kwargs for each agent
         self.agent_handlers = None
         self._reset_agent_handlers()
         self.default_writer_data = None
@@ -303,6 +304,23 @@ class AgentManager:
             self.optuna_storage_url = "sqlite:///:memory:"
             logger.warning(f'Unable to create databate {self.db_filename}. Using sqlite:///:memory:')
 
+    def _set_init_kwargs(self):
+        init_seeders = self.seeder.spawn(self.n_fit, squeeze=False)
+        self.init_kwargs = []
+        for ii in range(self.n_fit):
+            kwargs_ii = deepcopy(self._base_init_kwargs)
+            kwargs_ii.update(
+                dict(
+                    env=self.train_env,
+                    eval_env=self._eval_env,
+                    copy_env=False,
+                    seeder=init_seeders[ii],
+                    _execution_metadata=self.agent_default_writer_kwargs[ii]['execution_metadata'],
+                    _default_writer_kwargs=self.agent_default_writer_kwargs[ii],
+                )
+            )
+            self.init_kwargs.append(kwargs_ii)
+
     def _reset_agent_handlers(self):
         handlers_seeders = self.seeder.spawn(self.n_fit, squeeze=False)
         self.agent_handlers = [
@@ -313,8 +331,7 @@ class AgentManager:
                 agent_class=self.agent_class,
                 agent_instance=None,
                 # kwargs
-                env=self.train_env,
-                **self.init_kwargs,
+                agent_kwargs=self.init_kwargs[ii],
             )
             for ii in range(self.n_fit)
         ]
@@ -423,22 +440,17 @@ class AgentManager:
             raise ValueError(f'Invalid backend for parallelization: {self.parallelization}')
 
         args = [(
-            idx,
-            default_writer_kwargs,
             lock,
             handler,
             self.agent_class,
-            self.train_env,
-            self._eval_env,
             budget,
-            deepcopy(self.init_kwargs),
+            init_kwargs,
             deepcopy(self.fit_kwargs),
             writer,
             self.worker_logging_level,
             seeder)
-            for idx, (default_writer_kwargs, handler, seeder, writer)
-            in enumerate(
-                zip(self.agent_default_writer_kwargs, self.agent_handlers, seeders, self.writers))]
+            for init_kwargs, handler, seeder, writer
+            in zip(self.init_kwargs, self.agent_handlers, seeders, self.writers)]
 
         if len(args) == 1:
             workers_output = [_fit_worker(args[0])]
@@ -687,7 +699,7 @@ class AgentManager:
         #
         objective = functools.partial(
             _optuna_objective,
-            init_kwargs=self.init_kwargs,  # self.init_kwargs
+            base_init_kwargs=self._base_init_kwargs,  # self._base_init_kwargs
             agent_class=self.agent_class,  # self.agent_class
             train_env=self.train_env,  # self.train_env
             eval_env=self._eval_env,
@@ -751,9 +763,10 @@ class AgentManager:
         self.best_hyperparams = best_trial.params
 
         # update using best parameters
-        self.init_kwargs.update(best_trial.params)
+        self._base_init_kwargs.update(best_trial.params)
 
-        # reset agent handlers, so that they take the new parameters
+        # reset init_kwargs and agent handlers, so that they take the new parameters
+        self._set_init_kwargs()
         self._reset_agent_handlers()
 
         return deepcopy(best_trial.params)
@@ -768,8 +781,7 @@ def _fit_worker(args):
     """
     Create and fit an agent instance
     """
-    (idx, default_writer_kwargs, lock, agent_handler, agent_class, train_env,
-     eval_env, fit_budget, init_kwargs,
+    (lock, agent_handler, agent_class, fit_budget, init_kwargs,
      fit_kwargs, writer, worker_logging_level, seeder) = args
 
     # reseed external libraries
@@ -782,21 +794,10 @@ def _fit_worker(args):
     # as here: https://github.com/openai/gym/issues/281
     with lock:
         if agent_handler.is_empty():
-            if default_writer_kwargs is None:
-                _execution_metadata = metadata_utils.ExecutionMetadata(obj_worker_id=idx)
-            else:
-                _execution_metadata = default_writer_kwargs['execution_metadata']
             # create agent
-            agent = agent_class(
-                env=train_env,
-                eval_env=eval_env,
-                copy_env=False,
-                seeder=seeder,
-                _execution_metadata=_execution_metadata,
-                _default_writer_kwargs=default_writer_kwargs,
-                **init_kwargs)
+            agent = agent_class(**init_kwargs)
             # seed agent
-            agent.reseed(seeder)
+            agent.reseed(seeder)    # TODO: check if extra reseeding here is necessary
             agent_handler.set_instance(agent)
 
     # set writer
@@ -837,7 +838,7 @@ def _safe_serialize_json(obj, filename):
 
 def _optuna_objective(
         trial,
-        init_kwargs,  # self.init_kwargs
+        base_init_kwargs,  # self._base_init_kwargs
         agent_class,  # self.agent_class
         train_env,  # self.train_env
         eval_env,
@@ -848,7 +849,7 @@ def _optuna_objective(
         disable_evaluation_writers,
         fit_fraction
 ):
-    kwargs = deepcopy(init_kwargs)
+    kwargs = deepcopy(base_init_kwargs)
 
     # will raise exception if sample_parameters() is not
     # implemented by the agent class
