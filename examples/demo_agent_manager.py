@@ -58,7 +58,11 @@ if __name__ == '__main__':
         eval_kwargs=eval_kwargs,
         n_fit=4,
         seed=123,
-        enable_tensorboard=True)
+        enable_tensorboard=True,
+        default_writer_kwargs=dict(
+            maxlen=N_EPISODES - 10,
+            log_interval=5.0,
+        ))
     rskernel_stats = AgentManager(
         RSKernelUCBVIAgent,
         train_env,

@@ -1,6 +1,7 @@
 import logging
 import numpy as np
 import pandas as pd
+from collections import deque
 from typing import Optional
 from timeit import default_timer as timer
 from rlberry import check_packages
@@ -31,19 +32,24 @@ class DefaultWriter:
         data added with the add_scalar method.
     execution_metadata : metadata_utils.ExecutionMetadata
         Execution metadata about the object that is using the writer.
+    maxlen : Optional[int], default: None
+        If given, data stored by self._data (accessed through the property self.data) is limited
+        to `maxlen` entries.
     """
 
     def __init__(
             self, name: str,
             log_interval: int = 3,
             tensorboard_kwargs: Optional[dict] = None,
-            execution_metadata: Optional[metadata_utils.ExecutionMetadata] = None):
+            execution_metadata: Optional[metadata_utils.ExecutionMetadata] = None,
+            maxlen: Optional[int] = None):
         self._name = name
         self._log_interval = log_interval
         self._execution_metadata = execution_metadata
         self._data = None
         self._time_last_log = None
         self._log_time = True
+        self._maxlen = maxlen
         self.reset()
 
         # initialize tensorboard
@@ -106,10 +112,10 @@ class DefaultWriter:
         # Update data structures
         if tag not in self._data:
             self._data[tag] = dict()
-            self._data[tag]['name'] = []
-            self._data[tag]['tag'] = []
-            self._data[tag]['value'] = []
-            self._data[tag]['global_step'] = []
+            self._data[tag]['name'] = deque(maxlen=self._maxlen)
+            self._data[tag]['tag'] = deque(maxlen=self._maxlen)
+            self._data[tag]['value'] = deque(maxlen=self._maxlen)
+            self._data[tag]['global_step'] = deque(maxlen=self._maxlen)
 
         self._data[tag]['name'].append(self._name)  # used in plots, when aggregating several writers
         self._data[tag]['tag'].append(tag)  # useful to convert all data to a single DataFrame

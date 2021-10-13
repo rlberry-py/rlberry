@@ -180,6 +180,8 @@ class AgentManager:
     create_unique_out_dir : bool, default = True
         If true, data is saved to output_dir/manager_data/<AGENT_NAME_UNIQUE_ID>
         Otherwise, data is saved to output_dir/manager_data
+    default_writer_kwargs : dict
+        Optional arguments for DefaultWriter.
     """
 
     def __init__(self,
@@ -197,7 +199,8 @@ class AgentManager:
                  worker_logging_level='INFO',
                  seed=None,
                  enable_tensorboard=False,
-                 create_unique_out_dir=True):
+                 create_unique_out_dir=True,
+                 default_writer_kwargs=None):
         # agent_class should only be None when the constructor is called
         # by the class method AgentManager.load(), since the agent class
         # will be loaded.
@@ -282,6 +285,14 @@ class AgentManager:
                 params['tensorboard_kwargs'] = dict(
                     log_dir=self.tensorboard_dir / str(idx)
                 )
+        # Update DefaultWriter according to user's settings.
+        default_writer_kwargs = default_writer_kwargs or {}
+        if default_writer_kwargs:
+            logger.warning('(Re)defining the following DefaultWriter'
+                           f' parameters in AgentManager: {list(default_writer_kwargs.keys())}')
+        for ii in range(n_fit):
+            self.agent_default_writer_kwargs[ii].update(default_writer_kwargs)
+
         # agent handlers and init kwargs
         self._set_init_kwargs()  # init_kwargs for each agent
         self.agent_handlers = None
