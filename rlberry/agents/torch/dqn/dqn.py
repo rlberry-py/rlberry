@@ -464,7 +464,7 @@ class DQNAgent(AgentWithSimplePolicy):
         self.value_net.reset()
 
     def set_writer(self, writer):
-        self.writer = writer
+        self._writer = writer
         try:
             self.exploration_policy.set_writer(writer)
         except AttributeError:
