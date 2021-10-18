@@ -23,6 +23,13 @@ First, we suggest you to create a virtual environment using
 Alternatively, you can clone the repository and run :code:`pip install -e .[default]`.
 
 
+**Installing the development version:**
+
+.. code:: bash
+
+    $ pip install git+https://github.com/rlberry-py/rlberry.git@dev#egg=rlberry[default]
+
+
 **Installing a previous version:**
 
 
