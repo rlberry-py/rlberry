@@ -91,7 +91,7 @@ class Agent(ABC):
         self._writer = DefaultWriter(**_default_writer_kwargs)
 
         # output directory for the agent instance
-        self._output_dir = f"output_{self._unique_id}" or output_dir
+        self._output_dir = output_dir or f"output_{self._unique_id}"
         self._output_dir = Path(self._output_dir)
 
     @property
