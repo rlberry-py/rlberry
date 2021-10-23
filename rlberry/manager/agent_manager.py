@@ -328,6 +328,7 @@ class AgentManager:
                     seeder=init_seeders[ii],
                     _execution_metadata=self.agent_default_writer_kwargs[ii]['execution_metadata'],
                     _default_writer_kwargs=self.agent_default_writer_kwargs[ii],
+                    _output_dir=Path(self.output_dir) / f"output_{ii}"
                 )
             )
             self.init_kwargs.append(kwargs_ii)
