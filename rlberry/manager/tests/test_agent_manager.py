@@ -46,7 +46,7 @@ def test_agent_manager_1():
     train_env = (GridWorld, {})
 
     # Parameters
-    params = {}
+    params = dict(hyperparameter1=-1, hyperparameter2=100)
     eval_kwargs = dict(eval_horizon=10)
 
     # Check DummyAgent
@@ -55,15 +55,24 @@ def test_agent_manager_1():
     agent.policy(None)
 
     # Run AgentManager
+    params_per_instance = [dict(hyperparameter2=ii) for ii in range(4)]
     stats_agent1 = AgentManager(
         DummyAgent, train_env, fit_budget=5, eval_kwargs=eval_kwargs,
-        init_kwargs=params, n_fit=4, seed=123)
+        init_kwargs=params, n_fit=4, seed=123, init_kwargs_per_instance=params_per_instance)
     stats_agent2 = AgentManager(
         DummyAgent, train_env, fit_budget=5, eval_kwargs=eval_kwargs,
         init_kwargs=params, n_fit=4, seed=123)
     agent_manager_list = [stats_agent1, stats_agent2]
     for st in agent_manager_list:
         st.fit()
+
+    for ii, instance in enumerate(stats_agent1.agent_handlers):
+        assert instance.hyperparameter1 == -1
+        assert instance.hyperparameter2 == ii
+
+    for ii, instance in enumerate(stats_agent2.agent_handlers):
+        assert instance.hyperparameter1 == -1
+        assert instance.hyperparameter2 == 100
 
     # learning curves
     plot_writer_data(agent_manager_list, tag='episode_rewards', show=False)

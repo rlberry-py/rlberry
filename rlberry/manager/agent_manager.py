@@ -155,7 +155,7 @@ class AgentManager:
     eval_env : Tuple (constructor, kwargs)
         Environment used to evaluate the agent. If None, set train_env.
     init_kwargs : dict
-        Arguments required by the agent's constructor.
+        Arguments required by the agent's constructor. Shared across all n_fit instances.
     fit_kwargs : dict
         Extra required to call agent.fit(bugdet, **fit_kwargs).
     eval_kwargs : dict
@@ -182,6 +182,12 @@ class AgentManager:
         Otherwise, data is saved to output_dir/manager_data
     default_writer_kwargs : dict
         Optional arguments for DefaultWriter.
+    init_kwargs_per_instance : List[dict] (optional)
+        List of length n_fit containing the params to be passed to each of
+        the n_fit agent instances. It can be useful if different instances
+        require different parameters. If the same parameter is defined by
+        init_kwargs and init_kwargs_per_instance, the value given by
+        init_kwargs_per_instance will be used.
     """
 
     def __init__(self,
@@ -200,7 +206,8 @@ class AgentManager:
                  seed=None,
                  enable_tensorboard=False,
                  create_unique_out_dir=True,
-                 default_writer_kwargs=None):
+                 default_writer_kwargs=None,
+                 init_kwargs_per_instance=None):
         # agent_class should only be None when the constructor is called
         # by the class method AgentManager.load(), since the agent class
         # will be loaded.
@@ -256,6 +263,11 @@ class AgentManager:
                 self.fit_budget = self.fit_kwargs.pop('fit_budget')
             except KeyError:
                 raise ValueError('[AgentManager] fit_budget missing in __init__().')
+        # extra params per instance
+        if init_kwargs_per_instance is not None:
+            assert len(init_kwargs_per_instance) == n_fit
+            init_kwargs_per_instance = deepcopy(init_kwargs_per_instance)
+        self.init_kwargs_per_instance = init_kwargs_per_instance or [dict() for _ in range(n_fit)]
 
         # output dir
         if output_dir is None:
@@ -331,6 +343,8 @@ class AgentManager:
                     _default_writer_kwargs=self.agent_default_writer_kwargs[ii],
                 )
             )
+            per_instance_kwargs = self.init_kwargs_per_instance[ii]
+            kwargs_ii.update(per_instance_kwargs)
             self.init_kwargs.append(kwargs_ii)
 
     def _reset_agent_handlers(self):
