@@ -354,7 +354,8 @@ class GridWorld(RenderInterface2D, FiniteMDP):
         # map data to [0.0, 1.0]
         if state_data is not None:
             state_data = state_data - state_data.min()
-            state_data = state_data / state_data.max()
+            if state_data.max() > 0.0:
+                state_data = state_data / state_data.max()
 
         colormap_fn = plt.get_cmap(colormap_name)
         layout = self.get_layout_array(state_data, fill_walls_with=np.nan)
@@ -364,9 +365,9 @@ class GridWorld(RenderInterface2D, FiniteMDP):
         for rr in range(layout.shape[0]):
             for cc in range(layout.shape[1]):
                 if np.isnan(layout[rr, cc]):
-                    img[rr, cc, :] = wall_color
+                    img[self.nrows - 1 - rr, cc, :] = wall_color
                 else:
-                    img[rr, cc, :3] = scalar_map.to_rgba(layout[rr, cc])[:3]
+                    img[self.nrows - 1 - rr, cc, :3] = scalar_map.to_rgba(layout[rr, cc])[:3]
         return img
 
     def get_background(self):
