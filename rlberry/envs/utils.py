@@ -20,5 +20,6 @@ def process_env(env, seeder, copy_env=True):
         else:
             processed_env = env
     reseeded = safe_reseed(processed_env, seeder)
-    assert reseeded
+    if not reseeded:
+        logger.warning("[Agent] Not possible to reseed environment.")
     return processed_env

@@ -50,6 +50,8 @@ class Agent(ABC):
         Writer object (e.g. tensorboard SummaryWriter).
     seeder : rlberry.seeding.Seeder, int, or None
         Object for random number generation.
+    output_dir : str or Path
+        Directory that the agent can use to store data.
     unique_id : str
         Unique identifier for the agent instance. Can be used, for example,
         to create files/directories for the agent to log data safely.
@@ -62,6 +64,7 @@ class Agent(ABC):
                  eval_env: Optional[types.Env] = None,
                  copy_env: bool = True,
                  seeder: Optional[types.Seed] = None,
+                 output_dir: Optional[str] = None,
                  _execution_metadata: Optional[metadata_utils.ExecutionMetadata] = None,
                  _default_writer_kwargs: Optional[dict] = None,
                  **kwargs):
@@ -87,6 +90,10 @@ class Agent(ABC):
             name=self.name, execution_metadata=self._execution_metadata)
         self._writer = DefaultWriter(**_default_writer_kwargs)
 
+        # output directory for the agent instance
+        self._output_dir = output_dir or f"output_{self._unique_id}"
+        self._output_dir = Path(self._output_dir)
+
     @property
     def writer(self):
         return self._writer
@@ -94,6 +101,10 @@ class Agent(ABC):
     @property
     def unique_id(self):
         return self._unique_id
+
+    @property
+    def output_dir(self):
+        return self._output_dir
 
     @abstractmethod
     def fit(self, budget: int, **kwargs):
