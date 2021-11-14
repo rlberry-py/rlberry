@@ -87,6 +87,7 @@ def evaluate_agents(agent_manager_list,
 
 def plot_writer_data(agent_manager,
                      tag,
+                     xtag=None,
                      fignum=None,
                      show=True,
                      preprocess_func=None,
@@ -100,7 +101,9 @@ def plot_writer_data(agent_manager,
     ----------
     agent_manager : AgentManager, or list of AgentManager
     tag : str
-        Tag of data to plot.
+        Tag of data to plot on y-axis.
+    xtag : str
+        Tag of data to plot on x-axis. If None, use 'global_step'.
     fignum: string or int
         Identifier of plot figure.
     show: bool
@@ -112,6 +115,10 @@ def plot_writer_data(agent_manager,
         Optional title to plot. If None, set to tag.
     sns_kwargs: dict
         Optional extra params for seaborn lineplot.
+
+    Returns
+    -------
+    Pandas DataFrame with processed data used by seaborn's lineplot.
     """
     sns_kwargs = sns_kwargs or {'ci': 'sd'}
 
@@ -136,11 +143,15 @@ def plot_writer_data(agent_manager,
         if writer_data is not None:
             for idx in writer_data:
                 df = writer_data[idx]
-                df = pd.DataFrame(df[df['tag'] == tag])
-                df['value'] = preprocess_func(df['value'].values)
+                processed_df = pd.DataFrame(df[df['tag'] == tag])
+                processed_df['value'] = preprocess_func(processed_df['value'].values)
                 # update name according to AgentManager name
-                df['name'] = agent_name
-                data_list.append(df)
+                processed_df['name'] = agent_name
+                # add column with xtag, if given
+                if xtag is not None:
+                    df_xtag = pd.DataFrame(df[df['tag'] == xtag])
+                    processed_df[xtag] = df_xtag['value'].values
+                data_list.append(processed_df)
     if len(data_list) == 0:
         logger.error('[plot_writer_data]: No data to be plotted.')
         return
@@ -148,10 +159,13 @@ def plot_writer_data(agent_manager,
     all_writer_data = pd.concat(data_list, ignore_index=True)
 
     data = all_writer_data[all_writer_data['tag'] == tag]
-    if data['global_step'].notnull().sum() > 0:
-        xx = 'global_step'
+    if xtag is None:
+        xtag = 'global_step'
+
+    if data[xtag].notnull().sum() > 0:
+        xx = xtag
         if data['global_step'].isna().sum() > 0:
-            logger.warning(f'Plotting {tag} vs global_step, but global_step might be missing for some agents.')
+            logger.warning(f'Plotting {tag} vs {xtag}, but {xtag} might be missing for some agents.')
     else:
         xx = data.index
 
@@ -164,3 +178,5 @@ def plot_writer_data(agent_manager,
 
     if show:
         plt.show()
+
+    return data
