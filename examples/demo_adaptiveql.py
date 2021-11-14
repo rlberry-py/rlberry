@@ -57,7 +57,7 @@ if __name__ == '__main__':
                      preprocess_func=np.cumsum, title='Cumulative Rewards')
 
     for stats in multimanagers.managers:
-        agent = stats.agent_handlers[0]
+        agent = stats.get_agent_instances()[0]
         try:
             agent.Qtree.plot(0, 25)
         except AttributeError:

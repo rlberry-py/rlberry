@@ -79,6 +79,11 @@ class AgentHandler:
     def set_instance(self, agent_instance):
         self._agent_instance = agent_instance
 
+    def get_instance(self):
+        if not self.is_loaded():
+            self.load()
+        return self._agent_instance
+
     def is_empty(self):
         return self._agent_instance is None and (not self._fname.exists())
 
@@ -371,6 +376,11 @@ class AgentManager:
 
     def get_writer_data(self):
         return self.default_writer_data
+
+    def get_agent_instances(self):
+        if self.agent_handlers:
+            return [agent_handler.get_instance() for agent_handler in self.agent_handlers]
+        return []
 
     def eval_agents(self, n_simulations: Optional[int] = None) -> list:
         """
