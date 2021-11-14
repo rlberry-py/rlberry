@@ -156,7 +156,9 @@ def plot_writer_data(agent_manager,
         xx = data.index
 
     plt.figure(fignum)
-    sns.lineplot(x=xx, y='value', hue='name', style='name', data=data, **sns_kwargs)
+    lineplot_kwargs = dict(x=xx, y='value', hue='name', style='name', data=data)
+    lineplot_kwargs.update(sns_kwargs)
+    sns.lineplot(**lineplot_kwargs)
     plt.title(title)
     plt.ylabel(ylabel)
 
