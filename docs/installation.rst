@@ -11,7 +11,7 @@ First, we suggest you to create a virtual environment using
 
 .. code:: bash
 
-    $ conda create -n rlberry python=3.7
+    $ conda create -n rlberry python=3.8
     $ conda activate rlberry
 
 **Installing the latest version:**
