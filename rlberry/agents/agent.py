@@ -5,11 +5,14 @@ import logging
 import numpy as np
 from inspect import signature
 from pathlib import Path
+from rlberry import metadata_utils
 from rlberry import types
 from rlberry.seeding.seeder import Seeder
 from rlberry.seeding import safe_reseed
 from rlberry.envs.utils import process_env
-from typing import Any, Optional, Mapping
+from rlberry.utils.writers import DefaultWriter
+from typing import Optional
+
 
 logger = logging.getLogger(__name__)
 
@@ -27,8 +30,10 @@ class Agent(ABC):
         If true, makes a deep copy of the environment.
     seeder : rlberry.seeding.Seeder, int, or None
         Object for random number generation.
-    _metadata : dict
-        Extra information (e.g. about which is the process id where the agent is running).
+    _execution_metadata : ExecutionMetadata (optional)
+        Extra information about agent execution (e.g. about which is the process id where the agent is running).
+    _default_writer_kwargs : dict (optional)
+        Parameters to initialize DefaultWriter (attribute self.writer).
     .. note::
         Classes that implement this interface should send ``**kwargs`` to :code:`Agent.__init__()`
 
@@ -45,6 +50,11 @@ class Agent(ABC):
         Writer object (e.g. tensorboard SummaryWriter).
     seeder : rlberry.seeding.Seeder, int, or None
         Object for random number generation.
+    output_dir : str or Path
+        Directory that the agent can use to store data.
+    unique_id : str
+        Unique identifier for the agent instance. Can be used, for example,
+        to create files/directories for the agent to log data safely.
     """
 
     name = ""
@@ -54,7 +64,9 @@ class Agent(ABC):
                  eval_env: Optional[types.Env] = None,
                  copy_env: bool = True,
                  seeder: Optional[types.Seed] = None,
-                 _metadata: Optional[Mapping[str, Any]] = None,
+                 output_dir: Optional[str] = None,
+                 _execution_metadata: Optional[metadata_utils.ExecutionMetadata] = None,
+                 _default_writer_kwargs: Optional[dict] = None,
                  **kwargs):
         # Check if wrong parameters have been sent to an agent.
         assert kwargs == {}, \
@@ -62,14 +74,37 @@ class Agent(ABC):
 
         self.seeder = Seeder(seeder)
         self.env = process_env(env, self.seeder, copy_env=copy_env)
-        self.writer = None
 
         # evaluation environment
         eval_env = eval_env or env
         self.eval_env = process_env(eval_env, self.seeder, copy_env=True)
 
         # metadata
-        self._metadata = _metadata or dict()
+        self._execution_metadata = _execution_metadata or metadata_utils.ExecutionMetadata()
+        self._unique_id = metadata_utils.get_unique_id(self)
+        if self.name:
+            self._unique_id = self.name + '_' + self._unique_id
+
+        # create writer
+        _default_writer_kwargs = _default_writer_kwargs or dict(
+            name=self.name, execution_metadata=self._execution_metadata)
+        self._writer = DefaultWriter(**_default_writer_kwargs)
+
+        # output directory for the agent instance
+        self._output_dir = output_dir or f"output_{self._unique_id}"
+        self._output_dir = Path(self._output_dir)
+
+    @property
+    def writer(self):
+        return self._writer
+
+    @property
+    def unique_id(self):
+        return self._unique_id
+
+    @property
+    def output_dir(self):
+        return self._output_dir
 
     @abstractmethod
     def fit(self, budget: int, **kwargs):
@@ -86,6 +121,8 @@ class Agent(ABC):
         This property is required to reduce the time required for hyperparam
         optimization (by allowing early stopping), but it is not strictly required
         elsewhere in the library.
+
+        If the agent does not require a budget, set it to -1.
 
         Parameters
         ----------
@@ -110,9 +147,9 @@ class Agent(ABC):
         pass
 
     def set_writer(self, writer):
-        self.writer = writer
+        self._writer = writer
 
-        if self.writer:
+        if self._writer:
             init_args = signature(self.__init__).parameters
             kwargs = [f"| {key} | {getattr(self, key, None)} |" for key in init_args]
             writer.add_text(

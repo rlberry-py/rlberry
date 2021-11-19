@@ -26,4 +26,9 @@ if __name__ == '__main__':
     del multimanagers
 
     data = load_experiment_results('results', 'params_experiment')
+
     print(data)
+
+    # Fit one of the managers for a few more episodes
+    # If tensorboard is enabled, you should see more episodes ran for 'rsucbvi_alternative'
+    data['manager']['rsucbvi_alternative'].fit(50)

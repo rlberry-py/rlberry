@@ -57,7 +57,12 @@ if __name__ == '__main__':
         init_kwargs=params,
         eval_kwargs=eval_kwargs,
         n_fit=4,
-        seed=123)
+        seed=123,
+        enable_tensorboard=True,
+        default_writer_kwargs=dict(
+            maxlen=N_EPISODES - 10,
+            log_interval=5.0,
+        ))
     rskernel_stats = AgentManager(
         RSKernelUCBVIAgent,
         train_env,
@@ -65,7 +70,8 @@ if __name__ == '__main__':
         init_kwargs=params_kernel,
         eval_kwargs=eval_kwargs,
         n_fit=4,
-        seed=123)
+        seed=123,
+        enable_tensorboard=True)
     a2c_stats = AgentManager(
         A2CAgent,
         train_env,
@@ -81,16 +87,26 @@ if __name__ == '__main__':
     for st in agent_manager_list:
         st.fit()
 
+    # Fit RSUCBVI for 50 more episodes
+    rsucbvi_stats.fit(budget=50)
+
     # learning curves
     plot_writer_data(agent_manager_list,
                      tag='episode_rewards',
                      preprocess_func=np.cumsum,
                      title='cumulative rewards',
                      show=False)
+        
+    plot_writer_data(agent_manager_list,
+                     tag='episode_rewards',
+                     title='episode rewards',
+                     show=False)
 
     # compare final policies
     output = evaluate_agents(agent_manager_list)
+
     print(output)
 
-    for st in agent_manager_list:
-        st.clear_output_dir()
+    # uncomment to delete output directories
+    # for st in agent_manager_list:
+    #     st.clear_output_dir()

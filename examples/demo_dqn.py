@@ -12,8 +12,8 @@ agent = DQNAgent(env, epsilon_decay=1000)
 agent.set_writer(SummaryWriter())
 
 print(f"Running DQN on {env}")
-print(f"Visualize with tensorboard by \
-running:\n$tensorboard --logdir {Path(agent.writer.log_dir).parent}")
+print("Visualize with tensorboard by "
+      f"running:\n$tensorboard --logdir {Path(agent.writer.log_dir).parent}")
 
 agent.fit(budget=50)
 

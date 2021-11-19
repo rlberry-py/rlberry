@@ -27,7 +27,7 @@ def set_external_seed(seeder):
         torch.manual_seed(seeder.seed_seq.generate_state(1, dtype=np.uint32)[0])
 
 
-def safe_reseed(obj, seeder):
+def safe_reseed(obj, seeder, reseed_spaces=True):
     """
     Calls obj.reseed(seed_seq) method if available;
     If a obj.seed() method is available, call obj.seed(seed_val),
@@ -40,6 +40,9 @@ def safe_reseed(obj, seeder):
         Object to be reseeded.
     seeder: seeding.Seeder
         Seeder object from which to generate random seeds.
+    reseed_spaces: bool, default = True.
+        If False, do not try to reseed observation_space and action_space (if
+        they exist as attributes of `obj`).
 
     Returns
     -------
@@ -58,10 +61,11 @@ def safe_reseed(obj, seeder):
             reseeded = False
 
     # check if the object has observation and action spaces to be reseeded.
-    try:
-        safe_reseed(obj.observation_space, seeder)
-        safe_reseed(obj.action_space, seeder)
-    except AttributeError:
-        pass
+    if reseed_spaces:
+        try:
+            safe_reseed(obj.observation_space, seeder)
+            safe_reseed(obj.action_space, seeder)
+        except AttributeError:
+            pass
 
     return reseeded

@@ -10,7 +10,6 @@ from rlberry.agents.dynprog.utils import backward_induction_in_place
 from rlberry.utils.metrics import metric_lp
 from rlberry.agents.kernel_based.kernels import kernel_func
 from rlberry.agents.kernel_based.common import map_to_representative
-from rlberry.utils.writers import DefaultWriter
 
 logger = logging.getLogger(__name__)
 
@@ -249,9 +248,6 @@ class RSKernelUCBVIAgent(AgentWithSimplePolicy):
         self.Q_policy = None
 
         self.episode = 0
-
-        # default writer
-        self.writer = DefaultWriter(self.name, metadata=self._metadata)
 
     def policy(self, observation):
         state = observation

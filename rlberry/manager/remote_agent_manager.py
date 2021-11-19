@@ -1,9 +1,11 @@
+import base64
 import dill
 import io
 import logging
 import pandas as pd
 import pathlib
 import pickle
+import zipfile
 from typing import Any, Mapping, Optional
 from rlberry.network import interface
 from rlberry.network.client import BerryClient
@@ -41,6 +43,9 @@ class RemoteAgentManager:
                     data=None,
                 )
             )
+            if msg.command == interface.Command.RAISE_EXCEPTION:
+                raise Exception(msg.message)
+
             self._remote_agent_manager_filename = pathlib.Path(
                 msg.info['filename']
             )
@@ -57,6 +62,11 @@ class RemoteAgentManager:
         return str(self._remote_agent_manager_filename)
 
     def get_writer_data(self):
+        """
+        * Calls get_writer_data() in the remote AgentManager and returns the result locally.
+        * If tensorboard data is available in the remote AgentManager, the data is zipped,
+        received locally and unzipped.
+        """
         msg = self._client.send(
             interface.Message.create(
                 command=interface.Command.AGENT_MANAGER_GET_WRITER_DATA,
@@ -65,18 +75,32 @@ class RemoteAgentManager:
         )
         if msg.command == interface.Command.RAISE_EXCEPTION:
             raise Exception(msg.message)
-        raw_data = msg.data
+        raw_data = msg.data['writer_data']
         writer_data = dict()
         for idx in raw_data:
             csv_content = raw_data[idx]
             writer_data[idx] = pd.read_csv(io.StringIO(csv_content), sep=',')
+
+        # check if tensorboard data was received
+        # If so, read file and unzip it.
+        tensorboard_bin_data = msg.data['tensorboard_bin_data']
+        if tensorboard_bin_data is not None:
+            tensorboard_bin_data = base64.b64decode(tensorboard_bin_data.encode('ascii'))
+            zip_file = open(self.output_dir / 'tensorboard_data.zip', "wb")
+            zip_file.write(tensorboard_bin_data)
+            zip_file.close()
+            with zipfile.ZipFile(self.output_dir / 'tensorboard_data.zip', 'r') as zip_ref:
+                zip_ref.extractall(self.output_dir)
         return writer_data
 
-    def fit(self):
+    def fit(self, budget=None, **kwargs):
         msg = self._client.send(
             interface.Message.create(
                 command=interface.Command.AGENT_MANAGER_FIT,
-                params=dict(filename=self.remote_file),
+                params=dict(
+                    filename=self.remote_file,
+                    budget=budget,
+                    extra_params=kwargs),
                 data=None,
             )
         )

@@ -1,5 +1,5 @@
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
-from rlberry.agents.torch.ppo import PPOAgent
+from rlberry.agents.torch import REINFORCEAgent
 from rlberry.manager import AgentManager
 
 if __name__ == '__main__':
@@ -11,54 +11,54 @@ if __name__ == '__main__':
     # -----------------------------
     # Parameters
     # -----------------------------
-    N_EPISODES = 100
+    N_EPISODES = 10
     GAMMA = 0.99
     HORIZON = 50
     BONUS_SCALE_FACTOR = 0.1
     MIN_DIST = 0.1
 
-    params_ppo = {"gamma": GAMMA,
-                  "horizon": HORIZON,
-                  "learning_rate": 0.0003}
+    params = {"gamma": GAMMA,
+              "horizon": HORIZON,
+              "learning_rate": 0.0003}
 
     eval_kwargs = dict(eval_horizon=HORIZON, n_simulations=20)
 
     # -------------------------------
     # Run AgentManager and save results
     # --------------------------------
-    ppo_stats = AgentManager(
-        PPOAgent, train_env, fit_budget=N_EPISODES,
-        init_kwargs=params_ppo,
+    manager = AgentManager(
+        REINFORCEAgent, train_env, fit_budget=N_EPISODES,
+        init_kwargs=params,
         eval_kwargs=eval_kwargs,
-        n_fit=4,
-        output_dir='dev/')
+        n_fit=4)
 
     # hyperparam optim with multiple threads
-    ppo_stats.optimize_hyperparams(
+    manager.optimize_hyperparams(
         n_trials=5, timeout=None,
         n_fit=2,
         sampler_method='optuna_default',
         optuna_parallelization='thread')
 
-    initial_n_trials = len(ppo_stats.optuna_study.trials)
+    initial_n_trials = len(manager.optuna_study.trials)
 
     # save
-    ppo_stats_fname = ppo_stats.save()
-    del ppo_stats
+    manager_fname = manager.save()
+    del manager
 
     # load
-    ppo_stats = AgentManager.load(ppo_stats_fname)
+    manager = AgentManager.load(manager_fname)
 
     # continue previous optimization, now with 120s of timeout and multiprocessing
-    ppo_stats.optimize_hyperparams(
+    manager.optimize_hyperparams(
         n_trials=512, timeout=120,
-        n_fit=2,
+        n_fit=8,
         continue_previous=True,
-        optuna_parallelization='process')
+        optuna_parallelization='process',
+        n_optuna_workers=4)
 
     print("number of initial trials = ", initial_n_trials)
-    print("number of trials after continuing= ", len(ppo_stats.optuna_study.trials))
+    print("number of trials after continuing= ", len(manager.optuna_study.trials))
 
     print("----")
     print("fitting agents after choosing hyperparams...")
-    ppo_stats.fit()  # fit the 4 agents
+    manager.fit()  # fit the 4 agents

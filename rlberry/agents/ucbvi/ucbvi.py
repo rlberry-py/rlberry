@@ -7,7 +7,6 @@ from rlberry.agents.ucbvi.utils import update_value_and_get_action, update_value
 from rlberry.exploration_tools.discrete_counter import DiscreteCounter
 from rlberry.agents.dynprog.utils import backward_induction_sd
 from rlberry.agents.dynprog.utils import backward_induction_in_place
-from rlberry.utils.writers import DefaultWriter
 
 logger = logging.getLogger(__name__)
 
@@ -153,9 +152,6 @@ class UCBVIAgent(AgentWithSimplePolicy):
         # update name
         if self.real_time_dp:
             self.name = 'UCBVI-RTDP'
-
-        # default writer
-        self.writer = DefaultWriter(self.name, metadata=self._metadata)
 
     def policy(self, observation):
         state = observation

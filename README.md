@@ -25,9 +25,9 @@
    <a href="https://codecov.io/gh/rlberry-py/rlberry">
       <img alt="codecov" src="https://codecov.io/gh/rlberry-py/rlberry/branch/main/graph/badge.svg?token=TIFP7RUD75">
    </a>
-   <a href="https://img.shields.io/pypi/pyversions/rlberry">
+   <!-- <a href="https://img.shields.io/pypi/pyversions/rlberry">
       <img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/rlberry">
-   </a>
+   </a> -->
 </p>
 
 <p align="center">

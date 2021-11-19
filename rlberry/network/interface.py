@@ -81,6 +81,7 @@ def send_data(socket, data):
     """
     adapted from: https://stackoverflow.com/a/63532988
     """
+    print(f'[rlberry.network] sending {len(data)} bytes...')
     socket.sendall(struct.pack('>I', len(data)) + data)
 
 
@@ -97,4 +98,5 @@ def receive_data(socket):
     while remaining_size > 0:
         received_data += socket.recv(remaining_size)
         remaining_size = data_size - len(received_data)
+        print(f'[rlberry.network] ... received {len(received_data)}/{data_size} bytes.')
     return received_data
