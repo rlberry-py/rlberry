@@ -74,7 +74,7 @@ Check our [getting started section](#getting-started)!
 
 ## Getting started
 
-In our [documentation](https://rlberry.readthedocs.io/en/latest/), you will find 
+In our [documentation](https://rlberry.readthedocs.io/en/latest/), you will find
 a [quick tutorial](https://rlberry.readthedocs.io/en/latest/#quick-tutorial) to the library
 and instructions about [how to install it](https://rlberry.readthedocs.io/en/latest/installation.html).
 
@@ -101,6 +101,7 @@ If you use `rlberry` in scientific publications, we would appreciate citations u
 }
 ```
 
+
 ## Development notes
 
 The modules listed below are experimental at the moment, that is, they are not thoroughly tested and are susceptible to evolve.
@@ -109,12 +110,12 @@ The modules listed below are experimental at the moment, that is, they are not t
 
 * `rlberry.agents.torch`, `rlberry.agents.jax`, `rlberry.exploration_tools.torch`: Deep RL agents are currently not stable, and their main purpose now is to illustrate how to implement and run those algorithms with the `rlberry` interface
 (e.g., run several agents in parallel, optimize hyperparameters etc.).
-Other libraries, such as [Stable Baselines](https://stable-baselines3.readthedocs.io/en/master/) provide reliable implementations of deep RL algorithms, and **can be used with `rlberry`**, as shown by 
+Other libraries, such as [Stable Baselines](https://stable-baselines3.readthedocs.io/en/master/) provide reliable implementations of deep RL algorithms, and **can be used with `rlberry`**, as shown by
 [this example](https://github.com/rlberry-py/rlberry/blob/main/examples/demo_from_stable_baselines.py).
 
 ## Tests
 
-```bash 
+```bash
 $ pip install pytest
 $ pip install pytest-cov
 $ pip install -e .[jax_agents]
@@ -128,5 +129,5 @@ and coverage report in `cov_html/index.html`.
 
 ## Contributing
 
-Want to contribute to `rlberry`? Please check [our contribution guidelines](CONTRIBUTING.md). **If you want to add any new agents or environments, do not hesitate
+Want to contribute to `rlberry`? Please check [our contribution guidelines](docs/CONTRIBUTING.md). **If you want to add any new agents or environments, do not hesitate
 to [open an issue](https://github.com/rlberry-py/rlberry/issues/new/choose)!**
