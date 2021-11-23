@@ -3,7 +3,6 @@ dill==0.3.4
 docopt==0.6.2
 ffmpeg==1.4
 gym==0.21.0
-haiku==0.01_20110820-135621
 ipython==7.29.0
 matplotlib==3.5.0
 numba==0.54.1
