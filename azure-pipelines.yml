@@ -57,7 +57,7 @@ jobs:
 
 - job: 'windows-latest'
   pool:
-    vmImage: 'windows-latest'
+    vmImage: 'windows'
   strategy:
     matrix:
       Python38:
