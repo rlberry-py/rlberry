@@ -13,3 +13,4 @@ ffmpeg-python
 PyOpenGL
 PyOpenGL_accelerate
 pyvirtualdisplay
+torch>=1.6.0
