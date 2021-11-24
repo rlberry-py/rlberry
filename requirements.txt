@@ -1,5 +1,9 @@
-jaxlib
-chex
+# Optional dependencies
+#jaxlib
+#chex
+#rlax
+
+# Dependencies
 dm-haiku
 dill
 docopt
@@ -19,7 +23,6 @@ pytest
 pyvirtualdisplay
 PyYAML
 reverb
-rlax
 seaborn
 setuptools
 stable_baselines3
