@@ -1,0 +1,16 @@
+numpy>=1.17
+pygame
+matplotlib
+seaborn
+pandas
+gym
+dill
+docopt
+pyyaml
+numba
+optuna
+ffmpeg-python
+PyOpenGL
+PyOpenGL_accelerate
+pyvirtualdisplay
+torch>=1.6.0
