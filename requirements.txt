@@ -1,3 +1,4 @@
+jaxlib
 chex
 dm-haiku
 dill
