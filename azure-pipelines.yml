@@ -10,8 +10,8 @@ jobs:
     vmImage: ubuntu-latest
   strategy:
     matrix:
-      Python37:
-        python.version: '3.7'
+      Python38:
+        python.version: '3.8'
 
   steps:
   - task: UsePythonVersion@0
@@ -34,8 +34,8 @@ jobs:
     vmImage: 'macOS-11'
   strategy:
     matrix:
-      Python37:
-        python.version: '3.7'
+      Python38:
+        python.version: '3.8'
 
   steps:
   - task: UsePythonVersion@0
@@ -58,8 +58,8 @@ jobs:
     vmImage: 'vs2017-win2016'
   strategy:
     matrix:
-      Python37:
-        python.version: '3.7'
+      Python38:
+        python.version: '3.8'
 
   steps:
   - task: UsePythonVersion@0
