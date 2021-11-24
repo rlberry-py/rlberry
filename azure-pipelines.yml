@@ -29,9 +29,9 @@ jobs:
       pytest
     displayName: 'pytest'
 
-- job: 'macOS1014'
+- job: 'macOS'
   pool:
-    vmImage: 'macOS-10.14'
+    vmImage: 'macOS-11'
   strategy:
     matrix:
       Python37:
