@@ -6,6 +6,12 @@ pandas
 gym
 dill
 docopt
-pytest
---find-links https://download.pytorch.org/whl/torch_stable.html
-torch>=1.6.0+cpu
+pyyaml
+numba
+optuna
+ffmpeg-python
+PyOpenGL
+PyOpenGL_accelerate
+pyvirtualdisplay
+torch>=1.6.0
+sphinx-gallery
