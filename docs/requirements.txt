@@ -15,3 +15,5 @@ PyOpenGL_accelerate
 pyvirtualdisplay
 torch>=1.6.0
 sphinx-gallery
+numpydoc
+myst-parser
