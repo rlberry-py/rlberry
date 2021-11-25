@@ -110,4 +110,5 @@ sphinx_gallery_conf = {
     "doc_module": "rlberry",
     "backreferences_dir": os.path.join("generated"),
     "reference_url": {"rlberry": None},
+    'matplotlib_animations':True
 }
