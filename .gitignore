@@ -9,7 +9,7 @@ notebooks/videos/*
 *.pickle
 *.csv
 
-# test coverage folder 
+# test coverage folder
 cov_html/*
 
 # dev and results folder
@@ -90,6 +90,10 @@ instance/
 
 # Sphinx documentation
 docs/_build/
+docs/generated
+docs/auto_examples
+
+
 
 # PyBuilder
 target/
@@ -151,7 +155,7 @@ dmypy.json
 # macOS
 .DS_Store
 
-# vscode 
+# vscode
 .vscode
 
 # PyCharm
