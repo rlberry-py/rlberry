@@ -1,4 +1,4 @@
-.. _evaluate_agent:
+.. _seeding:
 
 Seeding & Reproducibility
 ==========================
