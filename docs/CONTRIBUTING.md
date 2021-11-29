@@ -1,3 +1,5 @@
+.. _contributing:
+
 # Contribution guidelines for rlberry
 
 Currently, we are accepting the following forms of contributions:
