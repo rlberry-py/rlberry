@@ -120,7 +120,7 @@ Before a PR can be merged, it needs to be approved. Please prefix the title of y
 
 1. Give your PR a helpful title
 2. Make sure your PR passes the test. You can check this by typing `pytest` from the main folder `rlberry`, or you can run a particular test by running for instance `pytest rlberry/agents/tests/` for instance, replacing `rlberry/agents/tests/` by the folder of the test you want to run.
-3. Make sure your code is properly commented and documented, and make sure the documentation renders properly. To build the documentation, please refer to our [Documentation guidelines]. The CI will also build the docs: please refer to Generated documentation at PR time.
+3. Make sure your code is properly commented and documented, and make sure the documentation renders properly. To build the documentation, please refer to our [Documentation guidelines](documentation). The CI will also build the docs: please refer to Generated documentation at PR time.
 4. Tests are necessary for enhancements to be accepted. You must include tests to verify the correct behavior of the fix or feature.
 5. Run black to auto-format your code.
     ```bash
@@ -137,6 +137,8 @@ Before a PR can be merged, it needs to be approved. Please prefix the title of y
 * Readthedocs is used to build the docs for viewing.
 
 Please note that if you want to skip the CI (azure pipeline is long to run), use `[ci skip]` in the description of the commit.
+
+(contributing)=
 
 # Documentation
 
