@@ -42,7 +42,7 @@ Seeding & Reproducibility
 
 rlberry_ has a class :class:`~rlberry.seeding.seeder.Seeder` that conveniently wraps a `NumPy SeedSequence <https://numpy.org/doc/stable/reference/random/parallel.html>`_,
 and allows us to create independent random number generators for different objects and threads, using a single
-:class:`~rlberry.seeding.seeder.Seeder` instance. See <seeding>.
+:class:`~rlberry.seeding.seeder.Seeder` instance. See :ref:`Seeding <seeding>`.
 
 
 How to contribute ?

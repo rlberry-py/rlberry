@@ -54,7 +54,7 @@ One easy way to find an issue to work on is by applying the “help wanted” la
 
 ## How to contribute -- git crash-course
 
-The preferred way to contribute to scikit-learn is to fork the main repository on GitHub, then submit a “pull request” (PR).
+The preferred way to contribute to rlberry is to fork the main repository on GitHub, then submit a “pull request” (PR).
 
 In the first few steps, we explain how to locally install rlberry, and how to set up your git repository:
 
@@ -77,7 +77,7 @@ In the first few steps, we explain how to locally install rlberry, and how to se
     ```bash
     git remote add upstream https://github.com/rlberry-py/rlberry
     ```
-    You should now have a working installation of scikit-learn, and your git repository properly configured. The next steps now describe the process of modifying code and submitting a PR:
+    You should now have a working installation of rlberry, and your git repository properly configured. The next steps now describe the process of modifying code and submitting a PR:
 7. Synchronize your main branch with the upstream/main branch, more details on [GitHub Docs](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/syncing-a-fork):
     ```bash
     git checkout main
@@ -133,7 +133,7 @@ Before a PR can be merged, it needs to be approved. Please prefix the title of y
 ## Continuous integration (CI)
 
 
-* Azure pipelines are used for testing scikit-learn on Linux, Mac and Windows, with different dependencies and settings.
+* Azure pipelines are used for testing rlberry on Linux, Mac and Windows, with different dependencies and settings.
 * Readthedocs is used to build the docs for viewing.
 
 Please note that if you want to skip the CI (azure pipeline is long to run), use `[ci skip]` in the description of the commit.
