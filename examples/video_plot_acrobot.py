@@ -2,7 +2,13 @@
 ===============================================
 A demo of Acrobot environment with RSUCBVIAgent
 ===============================================
+Here is the result :
+
+.. video:: ../../../video/video_plot_acrobot.mp4
+   :width: 600
+
 """
+
 
 from rlberry.envs import Acrobot
 from rlberry.agents import RSUCBVIAgent
@@ -19,7 +25,7 @@ n_episodes = 300
 agent = RSUCBVIAgent(
     env,
     gamma=0.99,
-    horizon=300,
+    horizon=10,
     bonus_scale_factor=0.01, min_dist=0.25)
 agent.fit(budget=n_episodes)
 
@@ -30,16 +36,5 @@ for tt in range(4 * agent.horizon):
     next_state, reward, done, _ = env.step(action)
     state = next_state
 
-# Play the video
-fig, ax = plt.subplots()
-video = env.get_video()
-
-img = plt.imshow(video[0])
-def animate(i):
-    img.set_data(video[i])
-    return (img,)
-
-# call the animator. blit=True means only re-draw the parts that have changed.
-anim = animation.FuncAnimation(fig, animate, frames=np.arange(len(video)),
-                               interval=10, blit=True)
-plt.show()
+# Save video
+video = env.save_video("../docs/video/video_plot_acrobot.mp4")

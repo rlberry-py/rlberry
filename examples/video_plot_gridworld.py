@@ -2,6 +2,10 @@
 ========================================================
 A demo of Gridworld environment with ValueIterationAgent
 ========================================================
+Here is the result :
+
+.. video:: ../../../video/video_plot_gridworld.mp4
+   :width: 600
 """
 
 from rlberry.agents.dynprog import ValueIterationAgent
@@ -26,14 +30,7 @@ for tt in range(50):
     if done:
         break
     state = next_s
-video = env.get_video()
 
-img = plt.imshow(video[0])
-def animate(i):
-    img.set_data(video[i])
-    return (img,)
-
-# call the animator. blit=True means only re-draw the parts that have changed.
-# *interval* draws a new frame every *interval* milliseconds.
-anim = animation.FuncAnimation(fig, animate, frames=np.arange(len(video)),blit=True)
-plt.show()
+# Save the video
+video = env.save_video("../docs/video/video_plot_gridworld.mp4")
+print("../docs/video/video_plot_gridworld.mp4")

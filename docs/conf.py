@@ -40,6 +40,7 @@ extensions = ['sphinx.ext.doctest',
               'sphinx.ext.mathjax',
               'sphinx.ext.napoleon',
               'sphinx.ext.autosectionlabel',
+              'sphinxcontrib.video',
               "numpydoc",
               "sphinx_gallery.gen_gallery",
               'myst_parser',]
@@ -110,5 +111,6 @@ sphinx_gallery_conf = {
     "doc_module": "rlberry",
     "backreferences_dir": os.path.join("generated"),
     "reference_url": {"rlberry": None},
-    'matplotlib_animations':True
+    'matplotlib_animations':True,
+    'remove_config_comments': True,
 }
