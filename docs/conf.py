@@ -43,6 +43,7 @@ extensions = ['sphinx.ext.doctest',
               'sphinxcontrib.video',
               "numpydoc",
               "sphinx_gallery.gen_gallery",
+              "sphinx_lfs_content",
               'myst_parser',]
 
 # Napoleon settings
