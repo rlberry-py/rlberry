@@ -103,6 +103,15 @@ class AgentHandler:
     def dump(self):
         """Saves agent to file and remove it from memory."""
         if self._agent_instance is not None:
+            #
+            # Remove env and eval_env from agent instance, in
+            # case they are not pickleable. The load() method
+            # passes the constructor of these envs back to
+            # the agent when they're rebuilt/loaded.
+            #
+            self._agent_instance.env = None
+            self._agent_instance.eval_env = None
+
             saved_filename = self._agent_instance.save(self._fname)
             # saved_filename might have appended the correct extension, for instance,
             # so self._fname must be updated.
