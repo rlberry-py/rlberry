@@ -12,6 +12,7 @@ except ImportError:
     _IMPORT_SUCCESSFUL = False
 
 
+@pytest.mark.xfail
 @pytest.mark.parametrize("lambda_", [None, 0.1])
 def test_jax_dqn(lambda_):
     if not _IMPORT_SUCCESSFUL:

@@ -1,0 +1,9 @@
+build:
+  image: latest
+formats:
+  - none
+python:
+  pip_install: true
+  extra_requirements:
+    - tests
+    - docs
