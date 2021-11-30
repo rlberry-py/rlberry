@@ -4,7 +4,7 @@ A demo of Gridworld environment with ValueIterationAgent
 ========================================================
 Here is the result :
 
-.. video:: ../../../video/video_plot_gridworld.mp4
+.. video:: ../video_plot_gridworld.mp4
    :width: 600
 """
 
@@ -32,5 +32,4 @@ for tt in range(50):
     state = next_s
 
 # Save the video
-video = env.save_video("../docs/video/video_plot_gridworld.mp4")
-print("../docs/video/video_plot_gridworld.mp4")
+video = env.save_video("../docs/_video/video_plot_gridworld.mp4")

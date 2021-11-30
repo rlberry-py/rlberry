@@ -4,7 +4,8 @@
 # Please use a script name that begins with video_plot as with the other examples
 # and in the script, there should be a line to save the video in the right place
 # and a line to load the video in the headers. Look at existing examples for
-# the correct syntax.
+# the correct syntax. Be careful that you must remove the _build folder before
+# recompiling the doc when a video has been updated/added.
 
 
 for f in ../examples/video_plot*.py ;

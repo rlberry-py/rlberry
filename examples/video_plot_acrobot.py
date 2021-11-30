@@ -4,7 +4,7 @@ A demo of Acrobot environment with RSUCBVIAgent
 ===============================================
 Here is the result :
 
-.. video:: ../../../video/video_plot_acrobot.mp4
+.. video:: ../video_plot_acrobot.mp4
    :width: 600
 
 """
@@ -37,4 +37,4 @@ for tt in range(4 * agent.horizon):
     state = next_state
 
 # Save video
-video = env.save_video("../docs/video/video_plot_acrobot.mp4")
+video = env.save_video("../docs/_video/video_plot_acrobot.mp4")
