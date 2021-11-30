@@ -266,7 +266,7 @@ class Agent(ABC):
             with filename.open('rb') as ff:
                 tmp_dict = dill.load(ff)
 
-        # If env and eval_env where removed before saving,
+        # If env and eval_env were removed before saving,
         # use those provided by kwargs
         if tmp_dict['env'] is None:
             tmp_dict['env'] = obj.env
