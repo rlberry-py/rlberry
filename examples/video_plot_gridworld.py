@@ -32,4 +32,4 @@ for tt in range(50):
     state = next_s
 
 # Save the video
-video = env.save_video("../docs/_video/video_plot_gridworld.mp4")
+video = env.save_video("../docs/_video/video_plot_gridworld.mp4", framerate=10)
