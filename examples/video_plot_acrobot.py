@@ -25,7 +25,7 @@ n_episodes = 300
 agent = RSUCBVIAgent(
     env,
     gamma=0.99,
-    horizon=10,
+    horizon=300,
     bonus_scale_factor=0.01, min_dist=0.25)
 agent.fit(budget=n_episodes)
 
