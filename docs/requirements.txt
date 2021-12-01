@@ -2,4 +2,3 @@ sphinx-gallery
 numpydoc
 myst-parser
 git+https://github.com/sphinx-contrib/video
-git+https://github.com/ssciwr/sphinx_lfs_content
