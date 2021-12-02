@@ -7,6 +7,7 @@ Here is the result :
 .. video:: ../video_plot_gridworld.mp4
    :width: 600
 """
+# sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_gridworld.jpg'
 
 from rlberry.agents.dynprog import ValueIterationAgent
 from rlberry.envs.finite import GridWorld

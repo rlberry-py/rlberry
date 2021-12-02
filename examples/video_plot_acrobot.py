@@ -8,7 +8,7 @@ Here is the result :
    :width: 600
 
 """
-
+# sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_acrobot.jpg'
 
 from rlberry.envs import Acrobot
 from rlberry.agents import RSUCBVIAgent

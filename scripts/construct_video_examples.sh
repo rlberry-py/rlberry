@@ -10,5 +10,10 @@
 
 for f in ../examples/video_plot*.py ;
 do
+# construct the mp4
 python $f
+name=$(basename $f)
+# make a thumbnail. Warning : the video should have the same name as the python script 
+# i.e. video_plot_SOMETHING.mp4 to be detected
+ffmpeg -i ../docs/_video/${name%%.py}.mp4  -vframes 1 -f image2 ../docs/thumbnails/${name%%.py}.jpg
 done
