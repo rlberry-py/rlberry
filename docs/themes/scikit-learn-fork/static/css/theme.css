@@ -524,6 +524,7 @@ div.sk-sidebar-toc-wrapper {
   height: 100vh;
   padding-right: 1.75rem;
 
+
   /* Hide scrollbar for IE and Edge */
   -ms-overflow-style: none;
 
@@ -544,6 +545,7 @@ div.sk-sidebar-toc-wrapper::after {
 
 div.sk-sidebar-toc > ul > li > a{
   font-weight: bold;
+  line-height: 1.4em;
 }
 
 div.sk-sidebar-toc > ul,
@@ -560,6 +562,9 @@ div.sk-sidebar-toc ul ul ul {
 
 div.sk-sidebar-toc ul li ul li ul{
   display: none;
+}
+div.sk-sidebar-toc ul li{
+  margin:10px 0 0 0;
 }
 
 div.sk-sidebar-toc span {

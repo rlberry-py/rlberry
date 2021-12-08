@@ -3,7 +3,7 @@
 Citing rlberry
 --------------
 
-If you use rlberry in scientific publications, we would appreciate citations using the following Bibtex entry:
+If you use rlberry in scientific publications, we would appreciate citations using the following Bibtex entry::
 
     @misc{rlberry,
         author = {Domingues, Omar Darwiche and Flet-Berliac, Yannis and Leurent, Edouard and M{\'e}nard, Pierre and Shang, Xuedong and Valko, Michal},
