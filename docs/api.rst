@@ -11,7 +11,7 @@ Agents
    :toctree: generated/
    :template: class.rst
 
-   agents.agent.AgentWithSimplePolicy
+   agents.AgentWithSimplePolicy
    agents.features.FeatureMap
    agents.ValueIterationAgent
    agents.MBQVIAgent
@@ -33,27 +33,41 @@ Agents
 Manager
 ====================
 
-   .. autosummary::
-      :toctree: generated/
-      :template: class.rst
+Main classes
+--------------------
+
+.. autosummary::
+  :toctree: generated/
+  :template: class.rst
 
 
     manager.AgentManager
-    manager.evaluate_agents
     manager.MultipleManagers
-    manager.plot_writer_data
+
+Evaluation and plot
+--------------------
+
+.. autosummary::
+   :toctree: generated/
+   :template: function.rst
+
+   manager.evaluate_agents
+   manager.plot_writer_data
+
+
 
 
 Environments
 ====================
+
+Benchmark Environments
+----------------------
 
 .. autosummary::
    :toctree: generated/
    :template: class.rst
 
     envs.Acrobot
-    envs.gym_make
-    envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
     envs.benchmarks.ball_exploration.PBall2D
     envs.benchmarks.generalization.twinrooms.TwinRooms
     envs.benchmarks.grid_exploration.apple_gold.AppleGold
@@ -61,6 +75,17 @@ Environments
     envs.classic_control.MountainCar
     envs.finite.Chain
     envs.finite.GridWorld
+
+Importation tools
+-----------------
+
+.. autosummary::
+   :toctree: generated/
+   :template: function.rst
+
+    envs.gym_make.gym_make
+    envs.gym_make.atari_make
+
 
 
 Seeding
