@@ -22,7 +22,6 @@ Agents
    agents.MBQVIAgent
    agents.MBQVIAgent
    agents.torch.dqn.DQNAgent
-   agents.kernel_based.kernels.kernel_func
    agents.linear.LSVIUCBAgent
    agents.torch.a2c.A2CAgent
    agents.torch.ppo.PPOAgent
