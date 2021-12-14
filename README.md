@@ -106,7 +106,7 @@ If you use `rlberry` in scientific publications, we would appreciate citations u
 
 The modules listed below are experimental at the moment, that is, they are not thoroughly tested and are susceptible to evolve.
 
-* `rlberry.network`: Allows communication between between a server and client via sockets, and can be used to run agents remotely.
+* `rlberry.network`: Allows communication between a server and client via sockets, and can be used to run agents remotely.
 
 * `rlberry.agents.torch`, `rlberry.agents.jax`, `rlberry.exploration_tools.torch`: Deep RL agents are currently not stable, and their main purpose now is to illustrate how to implement and run those algorithms with the `rlberry` interface
 (e.g., run several agents in parallel, optimize hyperparameters etc.).
