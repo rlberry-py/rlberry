@@ -79,8 +79,8 @@ class GridWorld(RenderInterface2D, FiniteMDP):
         self.start_coord = tuple(start_coord)
 
         # Actions (string to index & index to string)
-        self.a_str2idx = {'left': 0, 'right': 1, 'up': 2, 'down': 3}
-        self.a_idx2str = {0: 'left', 1: 'right', 2: 'up', 3: 'down'}
+        self.a_str2idx = {'left': 0, 'right': 1, 'down': 2, 'up': 3}
+        self.a_idx2str = {0: 'left', 1: 'right', 2: 'down', 3: 'up'}
 
         # --------------------------------------------
         # The variables below are defined in _build()
