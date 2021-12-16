@@ -22,12 +22,8 @@ Environment definition
 ~~~~~~~~~~~~~~~~~~~~~~
 
 A grid world is a simple environment with finite states and actions, on
-which we can test simple algorithms.
-
-The reward function can be
-accessed by: env.R[state, action]
-
-And the transitions: env.P[state,
+which we can test simple algorithms. \* The reward function can be
+accessed by: env.R[state, action] \* And the transitions: env.P[state,
 action, next_state]
 
 .. code:: ipython3
@@ -36,14 +32,21 @@ action, next_state]
     env_kwargs =dict(nrows=3, ncols=10,
                     reward_at = {(1,1):0.1, (2, 9):1.0},
                     walls=((1,4),(2,4), (1,5)),
-                    success_probability=0.6)
+                    success_probability=0.7)
     env = env_ctor(**env_kwargs)
+
+As an indication :
+
+-  nrows: number of rows
+-  ncols: number of columns
+-  success_probability: probability of moving in the chosen direction
 
 Agents definition
 ~~~~~~~~~~~~~~~~~
 
-We will compare a RandomAgent (which play random action) to a ValueIterationAgent.
-Our goal is then to assess the performance of the two algorithms.
+We will compare a RandomAgent (which play random action) to a
+ValueIterationAgent. Our goal is then to assess the performance of the
+two algorithms.
 
 .. code:: ipython3
 
@@ -59,6 +62,10 @@ Our goal is then to assess the performance of the two algorithms.
         def policy(self, observation):
             return self.env.action_space.sample()
 
+    # We will compare this agent to V
+
+
+    # Define parameters
     vi_params = {'gamma':0.1, 'epsilon':1e-3}
 
 Running the experiments
@@ -73,7 +80,7 @@ Running the experiments
         fit_budget=0,
         eval_kwargs=dict(eval_horizon=20),
         init_kwargs=vi_params,
-        n_fit=4)
+        n_fit=1)
     vi_stats.fit()
 
     # Create AgentManager for baseline
@@ -85,18 +92,24 @@ Running the experiments
         n_fit=1)
     baseline_stats.fit()
 
-Compare average reward of the obtained policies using Monte Carlo simulations
+
+Compare average reward of the obtained policies using 10 Monte Carlo simulations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-We compare the rewards using 10 Monte-Carlo simulations. Which means that we run
-the experiment 10 times and in each of these 10 exp, we record the final 
-reward. We plot te associated boxplot.
+
+We want to compare the mean rewards. To do that we use 10 Monte-Carlo
+simulations.
+
+In each of the smulation, we estimate the mean reward using 10
+Monte-Carlo simulations. In total 100 MC simulations.
+
+We plot the boxplots of the associated means.
 
 .. code:: ipython3
 
     output = evaluate_agents([vi_stats, baseline_stats], n_simulations=10, plot=True)
 
 
-.. image:: output_10_1.png
+.. image:: output_11_1.png
 
 
 Getting all the rewards an not only the last one
@@ -180,4 +193,5 @@ tells us what evaluation is returned.
     regret.plot(xlabel = 'timestep', ylabel = 'Regret', title="Mean cumulative regret as a function of iterations")
 
 
-.. image:: output_16_1.png
+
+.. image:: output_17_1.png
