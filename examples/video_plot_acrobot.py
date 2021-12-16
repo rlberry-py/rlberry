@@ -2,7 +2,8 @@
 ===============================================
 A demo of Acrobot environment with RSUCBVIAgent
 ===============================================
-Here is the result :
+Illustration of the training and video rendering of RSUCBVI Agent in Acrobot
+environment.
 
 .. video:: ../video_plot_acrobot.mp4
    :width: 600
@@ -13,10 +14,6 @@ Here is the result :
 from rlberry.envs import Acrobot
 from rlberry.agents import RSUCBVIAgent
 from rlberry.wrappers import RescaleRewardWrapper
-
-import matplotlib.pyplot as plt
-from matplotlib import animation
-import numpy as np
 
 env = Acrobot()
 # rescale rewards to [0, 1]

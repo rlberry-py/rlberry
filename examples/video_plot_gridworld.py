@@ -2,7 +2,8 @@
 ========================================================
 A demo of Gridworld environment with ValueIterationAgent
 ========================================================
-Here is the result :
+Illustration of the training and video rendering ofValueIteration Agent in
+Gridworld environment.
 
 .. video:: ../video_plot_gridworld.mp4
    :width: 600
@@ -11,9 +12,7 @@ Here is the result :
 
 from rlberry.agents.dynprog import ValueIterationAgent
 from rlberry.envs.finite import GridWorld
-import matplotlib.pyplot as plt
-from matplotlib import animation
-import numpy as np
+
 
 fig, ax = plt.subplots()
 
