@@ -1,6 +1,6 @@
-.. _contributing:
+(contributing)=
 
-# Contribution guidelines for rlberry
+# Contributing
 
 Currently, we are accepting the following forms of contributions:
 
@@ -17,6 +17,42 @@ Currently, we are accepting the following forms of contributions:
 ## Guidelines for docstring
 
 * Follow the [numpydoc docstring guide](https://numpydoc.readthedocs.io/en/latest/format.html).
+
+## Have a video for an example in the documentation
+
+To generate the videos for the examples, cd to the docs folder  and then use `make video`.
+
+Here is a template of the python script of a video example:
+```python
+"""
+===============
+Some good title
+===============
+Some explanation text of what you are doing
+
+.. video:: ../video_plot_my_experiment.mp4
+   :width: 600
+"""
+# sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_my_experiment.jpg'
+
+# Write here the code that generates the video
+
+
+# Save the video
+video = env.save_video("../docs/_video/video_plot_my_experiment.mp4", framerate=10)
+```
+
+For a video to be automatically compiled with `make video`, you must follow this
+template replacing the "my_experiment" with the name of your example. It may be
+useful to change the framerate in the last line of the code to have a faster or
+slower framerate depending on your environment.
+
+After running `make video`, you should have your video available in `docs/_video`
+you should add this video to the git repo with `git add docs/_video/video_plot_my_experiment.mp4`
+and `git add docs/thumbnails/video_plot_my_experiment.jpg` to add the associated thumbnail.
+
+Then just push the new examples, the mp4 and the jpg files, they should be included in the doc.
+
 
 ## Guidelines for new agents
 
