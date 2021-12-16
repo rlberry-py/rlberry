@@ -285,7 +285,7 @@ class AgentWithSimplePolicy(Agent):
 
     def eval(self,
              eval_horizon=10 ** 5,
-             n_simimulations=10,
+             n_simulations=10,
              gamma=1.0,
              **kwargs):
         """
@@ -295,7 +295,7 @@ class AgentWithSimplePolicy(Agent):
         ----------
         eval_horizon : int, default: 10**5
             Horizon, maximum episode length.
-        n_simimulations : int, default: 10
+        n_simulations : int, default: 10
             Number of Monte Carlo simulations.
         gamma : double, default: 1.0
             Discount factor.
@@ -309,8 +309,8 @@ class AgentWithSimplePolicy(Agent):
         .. [1] http://incompleteideas.net/book/first/ebook/node50.html
             """
         del kwargs  # unused
-        episode_rewards = np.zeros(n_simimulations)
-        for sim in range(n_simimulations):
+        episode_rewards = np.zeros(n_simulations)
+        for sim in range(n_simulations):
             observation = self.eval_env.reset()
             tt = 0
             while tt < eval_horizon:
