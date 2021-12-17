@@ -40,6 +40,7 @@ extensions = ['sphinx.ext.doctest',
               'sphinx.ext.autosummary',
               'sphinx.ext.mathjax',
               'sphinx.ext.autosectionlabel',
+              'sphinxcontrib.video',
               "numpydoc",
               "sphinx_gallery.gen_gallery",
               'myst_parser',]
@@ -91,11 +92,12 @@ html_logo = "../assets/logo_wide.svg"
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = []
-
+html_extra_path = ["_video"]
 
 sphinx_gallery_conf = {
     "doc_module": "rlberry",
     "backreferences_dir": os.path.join("generated"),
     "reference_url": {"rlberry": None},
-    'matplotlib_animations':True
+    'matplotlib_animations':True,
+    'remove_config_comments': True,
 }
