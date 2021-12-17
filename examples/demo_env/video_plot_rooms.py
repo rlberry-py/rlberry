@@ -1,8 +1,15 @@
-""" 
- ===================== 
- Demo: demo_rooms 
- =====================
 """
+===============================
+A demo of rooms environment
+===============================
+ Illustration of NRooms environment
+
+.. video:: ../../video_plot_rooms.mp4
+   :width: 600
+
+"""
+# sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_rooms.jpg'
+
 from rlberry.envs.benchmarks.grid_exploration.nroom import NRoom
 from rlberry.agents.dynprog import ValueIterationAgent
 
@@ -30,3 +37,4 @@ for _ in range(10):
             break
         state = next_s
 env.render()
+video = env.save_video("_video/video_plot_rooms.mp4")

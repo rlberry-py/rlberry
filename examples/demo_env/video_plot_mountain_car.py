@@ -1,8 +1,15 @@
-""" 
- ===================== 
- Demo: demo_mountain_car 
- =====================
 """
+===============================
+A demo of MountainCar environment
+===============================
+ Illustration of MountainCar environment
+
+.. video:: ../../video_plot_montain_car.mp4
+   :width: 600
+
+"""
+# sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_montain_car.jpg'
+
 from rlberry.agents.mbqvi import MBQVIAgent
 from rlberry.envs.classic_control import MountainCar
 from rlberry.wrappers import DiscretizeStateWrapper
@@ -19,4 +26,4 @@ for tt in range(200):
     next_state, reward, done, _ = env.step(action)
     state = next_state
 
-env.save_video("mountain_car.mp4", framerate=50)
+video = env.save_video("_video/video_plot_montain_car.mp4")

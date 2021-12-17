@@ -1,8 +1,15 @@
-""" 
- ===================== 
- Demo: demo_mbqvi 
- =====================
 """
+==================================================
+A demo of MBQVI algorithm in Gridworld environment
+==================================================
+ Illustration of how to set up an MBQVI algorithm in rlberry.
+ The environment chosen here is GridWorld environment.
+
+.. video:: ../../video_plot_mbqvi.mp4
+   :width: 600
+
+"""
+# sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_mbqvi.jpg'
 from rlberry.agents.mbqvi import MBQVIAgent
 from rlberry.envs.finite import GridWorld
 
@@ -24,4 +31,4 @@ for tt in range(50):
     action = agent.policy(state)
     next_s, _, _, _ = env_eval.step(action)
     state = next_s
-env_eval.render()
+video = env_eval.save_video("_video/video_plot_mbqvi.mp4")

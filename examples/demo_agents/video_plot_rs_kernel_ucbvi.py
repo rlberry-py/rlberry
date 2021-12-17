@@ -1,8 +1,16 @@
-""" 
- ===================== 
- Demo: demo_rs_kernel_ucbvi 
- =====================
 """
+=============================================================
+A demo of RSKernelUCBVIAgent algorithm in Acrobot environment
+=============================================================
+ Illustration of how to set up a RSKernelUCBVI algorithm in rlberry.
+ The environment chosen here is Acrobot environment.
+
+.. video:: ../../video_plot_rs_kernel_ucbvi.mp4
+   :width: 600
+
+"""
+# sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_rs_kernel_ucbvi.jpg'
+
 from rlberry.envs import Acrobot
 from rlberry.agents import RSKernelUCBVIAgent
 from rlberry.wrappers import RescaleRewardWrapper
@@ -22,7 +30,7 @@ state = env.reset()
 
 time_before_done = 0
 ended = False
-for tt in range(4 * agent.horizon):
+for tt in range(2 * agent.horizon):
     action = agent.policy(state)
     next_state, reward, done, _ = env.step(action)
     if not done and not ended:
@@ -32,4 +40,4 @@ for tt in range(4 * agent.horizon):
     state = next_state
 
 print("steps to achieve the goal for the first time = ", time_before_done)
-env.save_video("kernel_acrobot_gaussian.mp4", framerate=60)
+video = env.save_video("_video/video_plot_rs_kernel_ucbvi.mp4")

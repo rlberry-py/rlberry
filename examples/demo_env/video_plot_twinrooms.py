@@ -1,8 +1,15 @@
-""" 
- ===================== 
- Demo: demo_twinrooms 
- =====================
 """
+===============================
+A demo of twinrooms environment
+===============================
+ Illustration of TwinRooms environment
+
+.. video:: ../../video_plot_twinrooms.mp4
+   :width: 600
+
+"""
+# sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_twinrooms.jpg'
+
 from rlberry.envs.benchmarks.generalization.twinrooms import TwinRooms
 from rlberry.agents.mbqvi import MBQVIAgent
 from rlberry.wrappers.discretize_state import DiscretizeStateWrapper
@@ -20,7 +27,7 @@ agent.fit()
 
 state = env.reset()
 env.enable_rendering()
-for ii in range(100):
+for ii in range(10):
     action = agent.policy(state)
     ns, rr, _, _ = env.step(action)
     state = ns
@@ -29,3 +36,4 @@ for ii in range(100):
         state = env.reset()
 
 env.render()
+video = env.save_video("_video/video_plot_twinrooms.mp4")

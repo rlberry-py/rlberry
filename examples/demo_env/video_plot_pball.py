@@ -1,8 +1,15 @@
-""" 
- ===================== 
- Demo: demo_pball 
- =====================
 """
+===============================
+A demo of PBALL2D environment
+===============================
+ Illustration of PBall2D environment
+
+.. video:: ../../video_plot_pball.mp4
+   :width: 600
+
+"""
+# sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_pball.jpg'
+
 import numpy as np
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
 
@@ -35,9 +42,9 @@ env = PBall2D(p=p, A=A,
 
 env.enable_rendering()
 
-for ii in range(100):
+for ii in range(5):
     env.step(1)
     env.step(3)
 
 env.render()
-env.save_video('pball.mp4')
+video = env.save_video("_video/video_plot_pball.mp4")

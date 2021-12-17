@@ -32,6 +32,9 @@ Some explanation text of what you are doing
 
 .. video:: ../video_plot_my_experiment.mp4
    :width: 600
+
+.. In the path for the video described before, use an additional ".." if your
+    experiment is in a sub-folder of the examples folder.
 """
 # sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_my_experiment.jpg'
 

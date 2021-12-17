@@ -5,7 +5,7 @@ A demo of Acrobot environment with RSUCBVIAgent
 Illustration of the training and video rendering of RSUCBVI Agent in Acrobot
 environment.
 
-.. video:: ../video_plot_acrobot.mp4
+.. video:: ../../video_plot_acrobot.mp4
    :width: 600
 
 """
@@ -28,10 +28,10 @@ agent.fit(budget=n_episodes)
 
 env.enable_rendering()
 state = env.reset()
-for tt in range(4 * agent.horizon):
+for tt in range(2*agent.horizon):
     action = agent.policy(state)
     next_state, reward, done, _ = env.step(action)
     state = next_state
 
 # Save video
-video = env.save_video("../docs/_video/video_plot_acrobot.mp4")
+video = env.save_video("_video/video_plot_acrobot.mp4")

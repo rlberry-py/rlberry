@@ -1,9 +1,8 @@
-""" 
- ===================== 
- Demo: demo_kernels 
- =====================
 """
-"""
+=====================
+Plot kernel functions
+=====================
+
 This script requires matplotlib
 """
 
@@ -25,7 +24,8 @@ kernel_types = [
 
 z = np.linspace(-2, 2, 100)
 
-fig, axes = plt.subplots(1, len(kernel_types))
+
+fig, axes = plt.subplots(1, len(kernel_types),figsize=(15,5))
 for ii, k_type in enumerate(kernel_types):
     kernel_vals = kernel_func(z, k_type)
     axes[ii].plot(z, kernel_vals)
