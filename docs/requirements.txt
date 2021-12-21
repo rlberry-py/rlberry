@@ -3,4 +3,3 @@ numpydoc
 myst-parser
 git+https://github.com/sphinx-contrib/video
 matplotlib
-gym
