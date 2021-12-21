@@ -1,5 +1,5 @@
-codecov:
-  require_ci_to_pass: yes
+
+comment: false
 
 coverage:
   precision: 2
@@ -17,13 +17,14 @@ parsers:
       method: no
       macro: no
 
-comment:
-  layout: "reach,diff,flags,files,footer"
-  behavior: default
-  require_changes: no
+codecov:
+  notify:
+    # Prevent coverage status to upload multiple times for parallel and long
+    # running CI pipelines. This configuration is particularly useful on PRs
+    # to avoid confusion. Note that this value is set to the number of Azure
+    # Pipeline jobs uploading coverage reports.
+    after_n_builds: 6
 
 ignore:
   - "./rlberry/rendering/opengl_render2d.py"
   - "./rlberry/rendering/pygame_render2d.py"
-
-
