@@ -28,11 +28,11 @@ jobs:
 
   - script: |
       set -xe
-      python -m pip install pytest pytest-azurepipelines pytest-cov codecov pytest-xvfb
+      pip install pytest pytest-azurepipelines pytest-cov codecov pytest-xvfb
       # run doctests in the documentation
-      # TODO: remove "|| .." once at least one doctest is added
-      python -m pytest doc/*rst || echo "Ignoring exit status"
-      python -m pytest --cov=rlberry rlberry
+      # TODO: use following line for doctest ?
+      pytest docs/*rst || echo "Ignoring exit status"
+      pytest --cov=rlberry rlberry
     displayName: 'Test and coverage'
   - script: codecov -t $CODECOV_TOKEN || echo "codecov upload failed"
     displayName: 'Upload coverage report'
