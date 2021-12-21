@@ -5,17 +5,6 @@ coverage:
   precision: 2
   round: down
   range: "70...100"
-  status:
-    patch: off
-    project: off
-
-parsers:
-  gcov:
-    branch_detection:
-      conditional: yes
-      loop: yes
-      method: no
-      macro: no
 
 codecov:
   notify:
