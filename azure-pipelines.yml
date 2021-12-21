@@ -24,7 +24,7 @@ jobs:
   - script: |
       python -m pip install --upgrade pip
       pip install -r requirements.txt
-      sudo apt install libglu1-mesa 
+      sudo apt install libglu1-mesa
     displayName: 'Install dependencies'
 
   - script: |
@@ -35,10 +35,9 @@ jobs:
       pytest docs/*rst || echo "Ignoring exit status"
       pytest --cov=rlberry rlberry
     displayName: 'Test and coverage'
-  - script: codecov -t $CODECOV_TOKEN || echo "codecov upload failed"
-    displayName: 'Upload coverage report'
-    env:
-      CODECOV_TOKEN: $(CODECOV_TOKEN)
+  - script: |
+      bash <(curl -s https://codecov.io/bash)
+    displayName: 'Upload to codecov.io'
 
 
 
