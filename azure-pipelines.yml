@@ -25,10 +25,22 @@ jobs:
       python -m pip install --upgrade pip
       pip install -r requirements.txt
     displayName: 'Install dependencies'
+
   - script: |
-      pip install pytest pytest-azurepipelines
-      pytest
-    displayName: 'pytest'
+      set -xe
+      python -m pip install pytest pytest-azurepipelines pytest-cov codecov pytest-xvfb
+      # run doctests in the documentation
+      # TODO: remove "|| .." once at least one doctest is added
+      python -m pytest doc/*rst || echo "Ignoring exit status"
+      python -m pytest --cov=rlberry rlberry
+    displayName: 'Test and coverage'
+  - script: codecov -t $CODECOV_TOKEN || echo "codecov upload failed"
+    displayName: 'Upload coverage report'
+    env:
+      CODECOV_TOKEN: $(CODECOV_TOKEN)
+
+
+
 - job: 'macOS'
   pool:
     vmImage: 'macOS-11'
@@ -48,7 +60,7 @@ jobs:
       pip install -r requirements.txt
     displayName: 'Install dependencies'
   - script: |
-      pip install pytest pytest-azurepipelines
+      pip install pytest pytest-azurepipelines pytest-xvfb
       pytest
     displayName: 'pytest'
 - job: 'windows'
@@ -70,6 +82,6 @@ jobs:
       pip install -r requirements.txt
     displayName: 'Install dependencies'
   - script: |
-      pip install pytest pytest-azurepipelines
+      pip install pytest pytest-azurepipelines pytest-xvfb
       pytest
     displayName: 'pytest'
