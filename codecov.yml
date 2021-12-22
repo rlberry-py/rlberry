@@ -8,14 +8,12 @@ coverage:
 
 
 codecov:
-  require_ci_to_pass: yes
   notify:
     # Prevent coverage status to upload multiple times for parallel and long
     # running CI pipelines. This configuration is particularly useful on PRs
     # to avoid confusion. Note that this value is set to the number of Azure
     # Pipeline jobs uploading coverage reports.
     after_n_builds: 1
-    wait_for_ci: yes
 
 ignore:
   - "./rlberry/rendering/opengl_render2d.py"
