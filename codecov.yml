@@ -5,7 +5,7 @@ coverage:
   precision: 2
   round: down
   range: "70...100"
-  
+
 
 codecov:
   notify:
@@ -13,7 +13,7 @@ codecov:
     # running CI pipelines. This configuration is particularly useful on PRs
     # to avoid confusion. Note that this value is set to the number of Azure
     # Pipeline jobs uploading coverage reports.
-    after_n_builds: 2
+    after_n_builds: 1
 
 ignore:
   - "./rlberry/rendering/opengl_render2d.py"
