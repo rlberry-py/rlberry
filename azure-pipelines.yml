@@ -34,7 +34,9 @@ jobs:
       pytest --cov=rlberry rlberry
     displayName: 'Test and coverage'
   - script: |
-      bash <(curl -s https://codecov.io/bash)
+      curl -Os https://uploader.codecov.io/v0.1.0_4653/linux/codecov
+      chmod +x codecov
+      ./codecov
     displayName: 'Upload to codecov.io'
 
 
