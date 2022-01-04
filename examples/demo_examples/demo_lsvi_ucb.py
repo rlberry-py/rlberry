@@ -1,7 +1,10 @@
-""" 
- ===================== 
- Demo: demo_lsvi_ucb 
- =====================
+"""
+====================================================
+A demo of lsviUCB algorithm in Gridworld environment
+====================================================
+ Illustration of how to set up an lsviUCB algorithm in rlberry and comparison
+ with UCBVI and ValueIteration in GridWorld environment.
+
 """
 import numpy as np
 from rlberry.agents.features import FeatureMap
