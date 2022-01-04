@@ -9,7 +9,7 @@ Gridworld environment.
 Libraries
 ~~~~~~~~~
 
-.. code:: ipython3
+.. code:: python
 
     import numpy as np
     import pandas as pd
@@ -23,13 +23,13 @@ Environment definition
 A grid world is a simple environment with finite states and actions, on
 which we can test simple algorithms. This can be seen as a simple maze.
 
-.. code:: ipython3
+.. code:: python
 
     env_ctor = GridWorld
-    env_kwargs =dict(nrows=3, ncols=10,
-                    reward_at = {(1,1):0.1, (2, 9):1.0},
-                    walls=((1,4),(2,4), (1,5)),
-                    success_probability=0.7)
+    env_kwargs = dict(nrows=3, ncols=10,
+                     reward_at = {(1,1):0.1, (2, 9):1.0},
+                     walls=((1,4),(2,4), (1,5)),
+                     success_probability=0.7)
     env = env_ctor(**env_kwargs)
 
 As an indication :
@@ -40,6 +40,13 @@ As an indication :
 -  walls: position of the walls
 -  success_probability: probability of moving in the chosen direction
 
+Example of a rendering of a gridworld with an agent playing (See the
+:ref:`GridWorld example<gridworld_example>` for an explanation on how to
+generate such a video):
+
+.. video:: ../video_plot_gridworld.mp4
+   :width: 600
+
 Agents definition
 ~~~~~~~~~~~~~~~~~
 
@@ -47,7 +54,7 @@ We will compare a RandomAgent (which play random action) to a
 ValueIterationAgent. Our goal is then to assess the performance of the
 two algorithms.
 
-.. code:: ipython3
+.. code:: python
 
     # Create random agent as a baseline
     class RandomAgent(AgentWithSimplePolicy):
@@ -81,7 +88,7 @@ This gives us 1 value per agent. We do this 10 times (so 10 times 10
 equal 100 simulations) in order to have an idea of the variability of
 our estimation.
 
-.. code:: ipython3
+.. code:: python
 
     # Create AgentManager for VI
     vi_stats = AgentManager(
@@ -102,23 +109,26 @@ our estimation.
         n_fit=1)
     baseline_stats.fit()
 
-.. code:: ipython3
+.. code:: python
 
     output = evaluate_agents([vi_stats, baseline_stats], n_simulations=10, plot=True)
 
 
 .. image:: output_11_1.png
 
+The result is that ValueIteration clearly outperform Random policy.
 
 Comparison of cumulative regret as iterations increase
 ------------------------------------------------------
+In this section we look at the cumulative regret, to do that we have to redefine
+the evaluation metric used by our algorithm.
 
 To get the regret at each iteration, we have to redefine the ``eval``
 function of our agents that tells us what evaluation is returned. The
 default is the final reward, we want to retreive all the rewards, an
 array
 
-.. code:: ipython3
+.. code:: python
 
     class RandomAgent2(RandomAgent):
         name = 'RandomAgent2'
@@ -162,7 +172,7 @@ simulations and we don’t need the additional 10 simulations because we
 won’t compare the expected regret on several runs (i.e. we won’t assess
 the variability of our estimation).
 
-.. code:: ipython3
+.. code:: python
 
     # Create AgentManager to fit 4 agents using 1 job
     vi_stats = AgentManager(
@@ -184,18 +194,15 @@ the variability of our estimation).
     baseline_stats.fit()
 
 
-.. code:: ipython3
+.. code:: python
 
     output = evaluate_agents([vi_stats, baseline_stats], n_simulations=100, plot=False)
 
+    regret = pd.DataFrame(np.array([np.array(output[agent].values.tolist()).cumsum(axis=1).mean(axis=0)
+                                    for agent in output.columns]).T, columns=output.columns)
 
-.. code:: ipython3
-
-    regret = pd.DataFrame(np.array([np.array(output[agent].values.tolist()).cumsum(axis=1).mean(axis=0) for agent in output.columns]).T, columns=output.columns)
-
-.. code:: ipython3
-
-    regret.plot(xlabel = 'timestep', ylabel = 'Regret', title="Mean cumulative regret as a function of iterations")
+    regret.plot(xlabel = 'timestep', ylabel = 'Regret',
+                title="Mean cumulative regret as a function of iterations")
 
 
 
