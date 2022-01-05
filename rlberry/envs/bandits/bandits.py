@@ -18,10 +18,10 @@ class Bandit(Model):
 
     laws: list of laws.
         laws of the arms. can either be a frozen scipy law or any class that
-        has a method .rvs() to sample according to the given law.
+        has a method .rvs().
 
     """
-
+    name = ""
     def __init__(self, laws=[]):
         Model.__init__(self)
         self.laws = laws
@@ -71,6 +71,8 @@ class CorruptedLaws:
             return self.cor_law.rvs(random_state=rng)
         else:
             return self.law.rvs(random_state=rng)
+    def mean(self):
+        return (1-self.cor_prop)*self.law.mean()+self.cor_prop*self.cor_law.mean()
 
 
 class CorruptedNormalBandit(Bandit):
