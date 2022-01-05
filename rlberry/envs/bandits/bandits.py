@@ -85,8 +85,9 @@ class CorruptedNormalBandit(Bandit):
     means: array-like of size n_arms, default=array([0,1])
         means of the law of inliers of each of the arms.
 
-    stds: array-like of size n_arms, default=array([1,1])
-        stds of the law of inliers of each of the arms.
+    stds: array-like of size n_arms or None, default=None
+        stds of the law of inliers of each of the arms. If None, use array with
+        all ones.
 
     cor_prop: float in (0,1/2), default=0.05
         proportion of corruption
@@ -99,7 +100,7 @@ class CorruptedNormalBandit(Bandit):
     def __init__(
         self,
         means=np.array([0, 1]),
-        stds=np.array([1, 1]),
+        stds=None,
         cor_prop=0.05,
         cor_laws=None,
     ):
@@ -114,10 +115,14 @@ class CorruptedNormalBandit(Bandit):
             self.cor_laws = cor_laws
         else:
             self.cor_laws = [stats.norm(loc=1000) for a in range(len(means))]
-        assert len(means) == len(stds)
+        if stds is None:
+            self.stds = np.ones(len(means))
+        else:
+            self.stds = stds
+        assert len(means) == len(self.stds)
         assert cor_prop <= 0.5
         inlier_laws = [
-            stats.norm(loc=means[a], scale=stds[a]) for a in range(len(means))
+            stats.norm(loc=means[a], scale=self.stds[a]) for a in range(len(means))
         ]
         return [
             CorruptedLaws(inlier_laws[a], cor_prop, self.cor_laws[a])
