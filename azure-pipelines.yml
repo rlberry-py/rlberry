@@ -43,7 +43,7 @@ jobs:
 
 - job: 'macOS'
   pool:
-    vmImage: 'macOS-11'
+    vmImage: 'macOS-latest'
   strategy:
     matrix:
       Python38:
