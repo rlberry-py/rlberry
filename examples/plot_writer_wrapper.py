@@ -9,7 +9,6 @@ during the fit of the agent.
 
 
 import numpy as np
-import pytest
 
 from rlberry.wrappers import WriterWrapper
 from rlberry.envs import GridWorld
