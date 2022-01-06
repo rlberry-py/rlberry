@@ -6,7 +6,7 @@ from rlberry.envs import GridWorld
 
 from rlberry.agents import UCBVIAgent
 
-@pytest.mark.parametrize("write_scalar", ['action','regret', "action_and_regret"])
+@pytest.mark.parametrize("write_scalar", ['action','reward', "action_and_reward"])
 def test_wrapper(write_scalar):
     """ Test that the wrapper record data"""
     class MyAgent(UCBVIAgent):
