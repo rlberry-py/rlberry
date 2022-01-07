@@ -13,7 +13,7 @@ class IndexAgent(AgentWithSimplePolicy):
         Compute the index for an arm using the past rewards on this arm and
         the current time t.
 
-    phase : int, default=None
+    phased : int, default=None
         used to compute "phased bandit" where the index is computed only every
         phase iterations. If None, the bandit is not phased.
     """
@@ -37,7 +37,7 @@ class IndexAgent(AgentWithSimplePolicy):
             self.writer.add_scalar('action',action, a)
             if a == n_episodes-1:
                 break
-        if phased is None :
+        if self.phased is None :
             for ep in range(self.n_arms,n_episodes):
 
                 indexes = self.get_indexes(rewards, actions, ep+1)
