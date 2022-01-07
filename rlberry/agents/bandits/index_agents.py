@@ -13,17 +13,17 @@ class IndexAgent(AgentWithSimplePolicy):
         Compute the index for an arm using the past rewards on this arm and
         the current time t.
 
-    phased : int, default=None
-        used to compute "phased bandit" where the index is computed only every
-        phase iterations. If None, the bandit is not phased.
+    phase : bool, default = None
+        If True, compute "phased bandit" where the index is computed only every
+        phase**j. If None, the Bandit is not phased.
     """
     name = 'IndexAgent'
     def __init__(self, env, index_function = lambda rew, t : np.mean(rew),
-                 phased = None, **kwargs):
+                 phase = None, **kwargs):
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
         self.n_arms = self.env.action_space.n
         self.index_function = index_function
-        self.phased = phased
+        self.phase = phase
     def fit(self, budget=None, **kwargs):
         n_episodes = budget
         rewards = np.zeros(n_episodes)
@@ -37,7 +37,7 @@ class IndexAgent(AgentWithSimplePolicy):
             self.writer.add_scalar('action',action, a)
             if a == n_episodes-1:
                 break
-        if self.phased is None :
+        if self.phase is None :
             for ep in range(self.n_arms,n_episodes):
 
                 indexes = self.get_indexes(rewards, actions, ep+1)
@@ -48,9 +48,12 @@ class IndexAgent(AgentWithSimplePolicy):
                 self.writer.add_scalar('action',action, ep)
 
         else:
+            indexes = np.inf*np.ones(self.n_arms)
+            power = 0
             for ep in range(self.n_arms,n_episodes):
-                if (ep % phase == 0):
+                if np.log(ep)/np.log(self.phase) >= power: # geometric scale
                     indexes = self.get_indexes(rewards, actions, ep+1)
+                    power += 1
                 action = np.argmax(indexes)
                 next_state, reward, done, _ = self.env.step(action)
                 rewards[ep] = reward
