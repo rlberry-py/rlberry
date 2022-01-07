@@ -173,6 +173,10 @@ class AgentManager:
         Directory where to store data.
     parallelization: {'thread', 'process'}, default: 'process'
         Whether to parallelize  agent training using threads or processes.
+    mp_context: {'spawn', 'fork'}, default: 'spawn'.
+        Context for python multiprocessing module.
+        Warning: If you're using JAX, it only works with 'spawn'.
+                 If running code on a notebook or interpreter, use 'fork'.
     worker_logging_level : str, default: 'INFO'
         Logging level in each of the threads/processes used to fit agents.
     seed : np.random.SeedSequence, rlberry.seeding.Seeder or int, default : None
@@ -207,6 +211,7 @@ class AgentManager:
                  n_fit=4,
                  output_dir=None,
                  parallelization='thread',
+                 mp_context='spawn',
                  worker_logging_level='INFO',
                  seed=None,
                  enable_tensorboard=False,
@@ -260,6 +265,7 @@ class AgentManager:
         self.eval_kwargs = deepcopy(eval_kwargs)
         self.n_fit = n_fit
         self.parallelization = parallelization
+        self.mp_context = mp_context
         self.worker_logging_level = worker_logging_level
         if fit_budget is not None:
             self.fit_budget = fit_budget
@@ -470,7 +476,7 @@ class AgentManager:
         elif self.parallelization == 'process':
             executor_class = functools.partial(
                 concurrent.futures.ProcessPoolExecutor,
-                mp_context=multiprocessing.get_context('spawn'))
+                mp_context=multiprocessing.get_context(self.mp_context))
             lock = multiprocessing.Manager().Lock()
         else:
             raise ValueError(f'Invalid backend for parallelization: {self.parallelization}')
@@ -760,7 +766,7 @@ class AgentManager:
                     executor.shutdown()
             elif optuna_parallelization == 'process':
                 with concurrent.futures.ProcessPoolExecutor(
-                        mp_context=multiprocessing.get_context('spawn')) as executor:
+                        mp_context=multiprocessing.get_context(self.mp_context)) as executor:
                     for _ in range(n_optuna_workers):
                         executor.submit(
                             study.optimize,
