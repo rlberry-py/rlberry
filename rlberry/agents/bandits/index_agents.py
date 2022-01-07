@@ -37,15 +37,25 @@ class IndexAgent(AgentWithSimplePolicy):
             self.writer.add_scalar('action',action, a)
             if a == n_episodes-1:
                 break
+        if phased is None :
+            for ep in range(self.n_arms,n_episodes):
 
-        for ep in range(self.n_arms,n_episodes):
-            if (phased is None) or (ep % phase == 0):
                 indexes = self.get_indexes(rewards, actions, ep+1)
-            action = np.argmax(indexes)
-            next_state, reward, done, _ = self.env.step(action)
-            rewards[ep] = reward
-            actions[ep] = action
-            self.writer.add_scalar('action',action, ep)
+                action = np.argmax(indexes)
+                next_state, reward, done, _ = self.env.step(action)
+                rewards[ep] = reward
+                actions[ep] = action
+                self.writer.add_scalar('action',action, ep)
+
+        else:
+            for ep in range(self.n_arms,n_episodes):
+                if (ep % phase == 0):
+                    indexes = self.get_indexes(rewards, actions, ep+1)
+                action = np.argmax(indexes)
+                next_state, reward, done, _ = self.env.step(action)
+                rewards[ep] = reward
+                actions[ep] = action
+                self.writer.add_scalar('action',action, ep)
 
         self.optimal_action = np.argmax(indexes)
 
