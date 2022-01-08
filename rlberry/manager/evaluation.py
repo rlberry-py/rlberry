@@ -2,13 +2,14 @@ import logging
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+import numpy as np
 
 logger = logging.getLogger(__name__)
 
 
 def evaluate_agents(agent_manager_list,
                     n_simulations=5,
-                    fignum=None,
+                    ax=None,
                     show=True,
                     plot=True,
                     sns_kwargs=None):
@@ -20,8 +21,8 @@ def evaluate_agents(agent_manager_list,
     agent_manager_list : list of AgentManager objects.
     n_simulations: int
         Number of calls to the eval() method of each AgentManager instance.
-    fignum: string or int
-        Identifier of plot figure.
+    ax: matplotlib axis
+        Matplotlib axis on which we plot. If None, create one
     show: bool
         If true, calls plt.show().
     plot: bool
@@ -74,9 +75,8 @@ def evaluate_agents(agent_manager_list,
 
     # plot
     if plot:
-        plt.figure(fignum)
         with sns.axes_style("whitegrid"):
-            ax = sns.boxplot(data=output, **sns_kwargs)
+            ax = sns.boxplot(data=output, ax = ax, **sns_kwargs)
             ax.set_xlabel("agent")
             ax.set_ylabel("evaluation output")
             if show:
@@ -88,10 +88,11 @@ def evaluate_agents(agent_manager_list,
 def plot_writer_data(agent_manager,
                      tag,
                      xtag=None,
-                     fignum=None,
+                     ax=None,
                      show=True,
                      preprocess_func=None,
                      title=None,
+                     savefig_fname=None,
                      sns_kwargs=None):
     """
     Given a list of AgentManager, plot data (corresponding to info) obtained in each episode.
@@ -104,8 +105,8 @@ def plot_writer_data(agent_manager,
         Tag of data to plot on y-axis.
     xtag : str
         Tag of data to plot on x-axis. If None, use 'global_step'.
-    fignum: string or int
-        Identifier of plot figure.
+    ax: matplotlib axis
+        Matplotlib axis on which we plot. If None, create one
     show: bool
         If true, calls plt.show().
     preprocess_func: Callable
@@ -113,6 +114,9 @@ def plot_writer_data(agent_manager,
         setting preprocess_func=np.cumsum will plot cumulative rewards
     title: str (Optional)
         Optional title to plot. If None, set to tag.
+    savefig_fname: str (Optional)
+        Name of the figure in which the plot is saved with figure.savefig. If None,
+        the figure is not saved.
     sns_kwargs: dict
         Optional extra params for seaborn lineplot.
 
@@ -169,14 +173,22 @@ def plot_writer_data(agent_manager,
     else:
         xx = data.index
 
-    plt.figure(fignum)
+    if ax is None:
+        figure, ax = plt.subplots(1,1)
     lineplot_kwargs = dict(x=xx, y='value', hue='name', style='name', data=data)
     lineplot_kwargs.update(sns_kwargs)
     sns.lineplot(**lineplot_kwargs)
-    plt.title(title)
-    plt.ylabel(ylabel)
+    ax.set_title(title)
+    ax.set_ylabel(ylabel)
 
     if show:
         plt.show()
+
+    if savefig_fname is not None:
+        plt.gcf().savefig(savefig_fname)
+
+    # Reshape the output data for easy replot
+    output_data = pd.pivot_table(data, values='value', index='global_step',
+                    columns=['name'], fill_value=np.nan)
 
     return data
