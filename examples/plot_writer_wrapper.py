@@ -46,3 +46,5 @@ def compute_reward(rewards):
 # Plot of the cumulative reward.
 output = plot_writer_data(agent, tag="reward", preprocess_func=compute_reward, title="Cumulative Reward")
 # The output is for 500 global steps because it uses 10 fit_budget * horizon
+# The variable "output" contains all the data necessary to plot, one
+# can be use "output" to make a custom plot
