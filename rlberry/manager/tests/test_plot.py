@@ -15,8 +15,8 @@ class VIAgent(UCBVIAgent):
 
 def test_plot_writer_data():
     env_ctor = GridWorld
-    env_kwargs = dict(nrows=3, ncols=3,
-                     reward_at = {(1,1):0.1, (2, 9):1.0})
+    env_kwargs = dict(nrows=2, ncols=2,
+                     reward_at = {(1,1):0.1, (2, 2):1.0})
 
     agent = AgentManager(VIAgent,
         (env_ctor, env_kwargs),
@@ -31,5 +31,6 @@ def test_plot_writer_data():
     # Plot of the cumulative reward.
     with tempfile.TemporaryDirectory() as tmpdirname:
         output = plot_writer_data(agent, tag="reward", preprocess_func=compute_reward,
-                                  title="Cumulative Reward", savefig_fname=tmpdirname+"test.png")
+                                  title="Cumulative Reward", show = False,
+                                  savefig_fname=tmpdirname+"test.png")
         assert os.path.getsize(tmpdirname+'test.png')>1000 # check that the file is not empty
