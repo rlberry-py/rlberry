@@ -32,4 +32,4 @@ def test_plot_writer_data():
     with tempfile.TemporaryDirectory() as tmpdirname:
         output = plot_writer_data(agent, tag="reward", preprocess_func=compute_reward,
                                   title="Cumulative Reward", savefig_fname=tmpdirname+"test.png")
-        assert os.path.getsize(tmpdirname+'test.png')>1000
+        assert os.path.getsize(tmpdirname+'test.png')>1000 # check that the file is not empty

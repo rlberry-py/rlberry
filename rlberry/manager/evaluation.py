@@ -191,4 +191,4 @@ def plot_writer_data(agent_manager,
     output_data = pd.pivot_table(data, values='value', index='global_step',
                     columns=['name'], fill_value=np.nan)
 
-    return data
+    return output_data
