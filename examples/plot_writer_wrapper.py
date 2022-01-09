@@ -1,10 +1,10 @@
 """
-=============================
-Record reward during training
-=============================
+==============================================
+Record reward during training and then plot it
+==============================================
 
 This script shows how to modify an agent to easily record reward or action
-during the fit of the agent.
+during the fit of the agent and then use the plot utils.
 """
 
 
@@ -14,6 +14,7 @@ from rlberry.wrappers import WriterWrapper
 from rlberry.envs import GridWorld
 from rlberry.manager import plot_writer_data, AgentManager
 from rlberry.agents import UCBVIAgent
+import matplotlib.pyplot as plt
 
 # We wrape the default writer of the agent in a WriterWrapper to record rewards.
 class VIAgent(UCBVIAgent):
@@ -44,8 +45,18 @@ def compute_reward(rewards):
     return np.cumsum(rewards)
 
 # Plot of the cumulative reward.
-output = plot_writer_data(agent, tag="reward", preprocess_func=compute_reward, title="Cumulative Reward")
+output = plot_writer_data(agent, tag="reward", preprocess_func=compute_reward,
+                          title="Cumulative Reward")
 # The output is for 500 global steps because it uses 10 fit_budget * horizon
-# The variable "output" contains all the data necessary to plot, one
-# can be use "output" to make a custom plot
 
+
+# Log-Log plot :
+fig, ax = plt.subplots(1,1)
+plot_writer_data(agent, tag="reward", preprocess_func=compute_reward,
+                 title="Cumulative Reward",
+                ax=ax, show = False # necessary to customize axes
+                )
+ax.set_xlim(100, 500)
+ax.relim()
+ax.set_xscale('log')
+ax.set_yscale('log')

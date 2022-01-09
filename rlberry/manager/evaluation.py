@@ -165,16 +165,18 @@ def plot_writer_data(agent_manager,
     data = all_writer_data[all_writer_data['tag'] == tag]
     if xtag is None:
         xtag = 'global_step'
+        data['global_step']=data['global_step'].astype(int) # transform object to int.
 
     if data[xtag].notnull().sum() > 0:
         xx = xtag
-        if data['global_step'].isna().sum() > 0:
+        if data[xtag].isna().sum() > 0:
             logger.warning(f'Plotting {tag} vs {xtag}, but {xtag} might be missing for some agents.')
     else:
         xx = data.index
 
     if ax is None:
         figure, ax = plt.subplots(1,1)
+
     lineplot_kwargs = dict(x=xx, y='value', hue='name', style='name', data=data)
     lineplot_kwargs.update(sns_kwargs)
     sns.lineplot(**lineplot_kwargs)
@@ -187,8 +189,4 @@ def plot_writer_data(agent_manager,
     if savefig_fname is not None:
         plt.gcf().savefig(savefig_fname)
 
-    # Reshape the output data for easy replot
-    output_data = pd.pivot_table(data, values='value', index='global_step',
-                    columns=['name'], fill_value=np.nan)
-
-    return output_data
+    return data
