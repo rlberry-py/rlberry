@@ -11,6 +11,27 @@ RLBERRY_DEFAULT_DATA_DIR = 'rlberry_data/'
 RLBERRY_TEMP_DATA_DIR = 'rlberry_data/temp/'
 
 
+def get_timestamp_str():
+    """
+    Get a string containing current time stamp.
+    """
+    now = datetime.now()
+    date_time = now.strftime("%Y-%m-%d_%H:%M:%S")
+    timestamp = date_time
+    return timestamp
+
+
+def get_readable_id(obj):
+    """
+    Create a more readable id than get_unique_id(),
+    combining a timestamp to a 8-character hash.
+    """
+    long_id = get_unique_id(obj)
+    timestamp = get_timestamp_str()
+    short_id = f"{timestamp}_{long_id[:8]}"
+    return short_id
+
+
 def get_unique_id(obj):
     """
     Get a unique id for an obj. Use it in __init__ methods when necessary.

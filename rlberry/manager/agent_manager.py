@@ -186,9 +186,10 @@ class AgentManager:
         If seeder, use seeder.seed_seq
     enable_tensorboard : bool, default = False
         If True, enable tensorboard logging in Agent's DefaultWriter.
-    create_unique_out_dir : bool, default = True
-        If true, data is saved to output_dir/manager_data/<AGENT_NAME_UNIQUE_ID>
-        Otherwise, data is saved to output_dir/manager_data
+    outdir_id_style: {None, 'unique', 'timestamp'}, default = 'timestamp'
+        If None, data is saved to output_dir/manager_data
+        If 'unique', data is saved to output_dir/manager_data/<AGENT_NAME_UNIQUE_ID>
+        If 'timestamp', data is saved to output_dir/manager_data/<AGENT_NAME_TIMESTAMP_SHORT_ID>
     default_writer_kwargs : dict
         Optional arguments for DefaultWriter.
     init_kwargs_per_instance : List[dict] (optional)
@@ -215,7 +216,7 @@ class AgentManager:
                  worker_logging_level='INFO',
                  seed=None,
                  enable_tensorboard=False,
-                 create_unique_out_dir=True,
+                 outdir_id_style='timestamp',
                  default_writer_kwargs=None,
                  init_kwargs_per_instance=None):
         # agent_class should only be None when the constructor is called
@@ -239,8 +240,12 @@ class AgentManager:
             assert isinstance(
                 eval_env, Tuple), "[AgentManager]train_env must be Tuple (constructor, kwargs)"
 
+        # check options
+        assert outdir_id_style in [None, 'unique', 'timestamp']
+
         # create oject identifier
         self.unique_id = metadata_utils.get_unique_id(self)
+        self.timestamp_id = metadata_utils.get_readable_id(self)
 
         # Agent class
         self.agent_class = agent_class
@@ -284,8 +289,10 @@ class AgentManager:
         if output_dir is None:
             output_dir = metadata_utils.RLBERRY_TEMP_DATA_DIR
         self.output_dir = Path(output_dir) / 'manager_data'
-        if create_unique_out_dir:
+        if outdir_id_style == 'unique':
             self.output_dir = self.output_dir / (self.agent_name + '_' + self.unique_id)
+        elif outdir_id_style == 'timestamp':
+            self.output_dir = self.output_dir / (self.agent_name + '_' + self.timestamp_id)
 
         # Create list of writers for each agent that will be trained
         # 'default' will keep Agent's use of DefaultWriter.
@@ -914,7 +921,7 @@ def _optuna_objective(
         parallelization='thread',
         output_dir=temp_dir,
         enable_tensorboard=False,
-        create_unique_out_dir=True)
+        outdir_id_style='unique')
 
     if disable_evaluation_writers:
         for ii in range(params_stats.n_fit):
