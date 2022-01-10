@@ -1,3 +1,0 @@
-base_config: 'examples_old/demo_experiment/rsucbvi.yaml'
-init_kwargs:
-  gamma: 0.9

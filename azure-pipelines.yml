@@ -12,8 +12,6 @@ jobs:
     matrix:
       Python38:
         python.version: '3.8'
-      Python37:
-        python.version: '3.7'
 
   steps:
   - task: UsePythonVersion@0
@@ -24,14 +22,28 @@ jobs:
   - script: |
       python -m pip install --upgrade pip
       pip install -r requirements.txt
+      sudo apt install libglu1-mesa
     displayName: 'Install dependencies'
+
   - script: |
-      pip install pytest pytest-azurepipelines
-      pytest
-    displayName: 'pytest'
+      set -xe
+      pip install pytest pytest-azurepipelines pytest-cov codecov pytest-xvfb
+      # run doctests in the documentation
+      # TODO: use following line for doctest ?
+      pytest docs/*rst || echo "Ignoring exit status"
+      pytest --cov=rlberry --cov-report xml rlberry
+    displayName: 'Test and coverage'
+  - script: |
+      curl -Os https://uploader.codecov.io/latest/linux/codecov
+      chmod +x codecov
+      ./codecov
+    displayName: 'Upload to codecov.io'
+
+
+
 - job: 'macOS'
   pool:
-    vmImage: 'macOS-11'
+    vmImage: 'macOS-latest'
   strategy:
     matrix:
       Python38:
@@ -48,7 +60,7 @@ jobs:
       pip install -r requirements.txt
     displayName: 'Install dependencies'
   - script: |
-      pip install pytest pytest-azurepipelines
+      pip install pytest pytest-azurepipelines pytest-xvfb
       pytest
     displayName: 'pytest'
 - job: 'windows'
@@ -70,6 +82,6 @@ jobs:
       pip install -r requirements.txt
     displayName: 'Install dependencies'
   - script: |
-      pip install pytest pytest-azurepipelines
+      pip install pytest pytest-azurepipelines pytest-xvfb
       pytest
     displayName: 'pytest'

@@ -37,30 +37,18 @@ extensions = ['sphinx.ext.doctest',
               'sphinx.ext.todo',
               'sphinx.ext.viewcode',
               'sphinx.ext.autodoc',
+              'sphinx.ext.autosummary',
               'sphinx.ext.mathjax',
-              'sphinx.ext.napoleon',
               'sphinx.ext.autosectionlabel',
+              'sphinxcontrib.video',
               "numpydoc",
               "sphinx_gallery.gen_gallery",
               'myst_parser',]
+autodoc_default_flags = ["members", "inherited-members"]
 
-# Napoleon settings
-napoleon_google_docstring = True
-napoleon_numpy_docstring = True
-napoleon_include_init_with_doc = False
-napoleon_include_private_with_doc = False
-napoleon_include_special_with_doc = True
-napoleon_use_admonition_for_examples = False
-napoleon_use_admonition_for_notes = False
-napoleon_use_admonition_for_references = False
-napoleon_use_ivar = False
-napoleon_use_param = True
-napoleon_use_rtype = True
-napoleon_type_aliases = None
-napoleon_attr_annotations = True
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ['templates']
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -104,11 +92,12 @@ html_logo = "../assets/logo_wide.svg"
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = []
-
+html_extra_path = ["_video"]
 
 sphinx_gallery_conf = {
     "doc_module": "rlberry",
     "backreferences_dir": os.path.join("generated"),
     "reference_url": {"rlberry": None},
-    'matplotlib_animations':True
+    'matplotlib_animations':True,
+    'remove_config_comments': True,
 }
