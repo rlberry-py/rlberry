@@ -1,12 +1,12 @@
-""" 
- ===================== 
- Demo: params_experiment.yaml 
- =====================
-"""
+# """ 
+#  ===================== 
+#  Demo: params_experiment.yaml 
+#  =====================
+# """
 description: 'RSUCBVI in NRoom'
 seed: 123
-train_env: 'examples/demo_experiment/room.yaml'
-eval_env: 'examples/demo_experiment/room.yaml'
+train_env: 'examples/demo_examples/demo_experiment/room.yaml'
+eval_env: 'examples/demo_examples/demo_experiment/room.yaml'
 agents:
-  - 'examples/demo_experiment/rsucbvi.yaml'
-  - 'examples/demo_experiment/rsucbvi_alternative.yaml'
+  - 'examples/demo_examples/demo_experiment/rsucbvi.yaml'
+  - 'examples/demo_examples/demo_experiment/rsucbvi_alternative.yaml'
