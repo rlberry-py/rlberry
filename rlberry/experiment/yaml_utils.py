@@ -196,7 +196,7 @@ def parse_experiment_config(path: Path,
                 output_dir=output_dir,
                 parallelization=parallelization,
                 seed=seed,
-                create_unique_out_dir=False)  # output_dir is already made unique above
+                outdir_id_style=None)  # output_dir is already made unique above
 
 
 if __name__ == '__main__':
