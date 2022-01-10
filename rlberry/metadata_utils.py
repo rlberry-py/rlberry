@@ -16,7 +16,7 @@ def get_timestamp_str():
     Get a string containing current time stamp.
     """
     now = datetime.now()
-    date_time = now.strftime("%Y-%m-%d_%H:%M:%S")
+    date_time = now.strftime("%Y-%m-%d_%H-%M-%S")
     timestamp = date_time
     return timestamp
 
