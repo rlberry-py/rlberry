@@ -20,7 +20,7 @@ def update_value_and_get_action(state,
     P_hat : np.ndarray
         shape (S, A, S)
     B_sa : np.ndarray
-        shape (S, A)
+        shape (H, S, A)
     gamma : double
     v_max : np.ndarray
         shape (H,)
@@ -32,7 +32,7 @@ def update_value_and_get_action(state,
     previous_value = V[hh, state]
 
     for aa in range(A):
-        q_aa = R_hat[state, aa] + B_sa[state, aa]
+        q_aa = R_hat[state, aa] + B_sa[hh,state, aa]
 
         if hh < H - 1:
             for sn in range(S):
