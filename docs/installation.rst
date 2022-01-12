@@ -14,11 +14,11 @@ First, we suggest you to create a virtual environment using
     $ conda create -n rlberry python=3.8
     $ conda activate rlberry
 
-**Installing the latest version:**
+**Installing the latest version (0.2.1):**
 
 .. code:: bash
 
-    $ pip install git+https://github.com/rlberry-py/rlberry.git#egg=rlberry[default]
+    $ pip install git+https://github.com/rlberry-py/rlberry.git@v0.2.1#egg=rlberry[default]
 
 Alternatively, you can clone the repository and run :code:`pip install -e .[default]`.
 
