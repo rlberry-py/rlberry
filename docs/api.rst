@@ -23,8 +23,6 @@ Basic Agents
    agents.RSUCBVIAgent
    agents.RSKernelUCBVIAgent
    agents.OptQLAgent
-   agents.MBQVIAgent
-   agents.MBQVIAgent
    agents.linear.LSVIUCBAgent
 
 
@@ -45,7 +43,7 @@ Torch agents
 Jax agents (experimental)
 --------------------
 
-Still experimental. See source code rlberry.jax for more info.
+Still experimental. See source code rlberry.agents.jax for more info.
 
 
 Manager
