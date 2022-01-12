@@ -13,7 +13,9 @@ logger = logging.getLogger(__name__)
 class RSUCBVIAgent(AgentWithSimplePolicy):
     """
     Value iteration with exploration bonuses for continuous-state environments,
-    using a online discretization strategy:
+    using a online discretization strategy.
+
+    The strategy:
     - Build (online) a set of representative states
     - Estimate transtions an rewards on the finite set of representative states
     and actions.
