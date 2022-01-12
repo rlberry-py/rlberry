@@ -3,9 +3,9 @@ import numpy as np
 
 import gym.spaces as spaces
 from rlberry.agents import AgentWithSimplePolicy
-from rlberry.agents.ucbvi.utils import update_value_and_get_action, update_value_and_get_action_sd, backward_induction_reward_sd
+from rlberry.agents.ucbvi.utils import update_value_and_get_action, update_value_and_get_action_sd
 from rlberry.exploration_tools.discrete_counter import DiscreteCounter
-from rlberry.agents.dynprog.utils import backward_induction_sd
+from rlberry.agents.dynprog.utils import backward_induction_sd, backward_induction_reward_sd
 from rlberry.agents.dynprog.utils import backward_induction_in_place
 
 logger = logging.getLogger(__name__)
