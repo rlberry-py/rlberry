@@ -7,6 +7,9 @@ rlberry API
 Agents
 ====================
 
+Basic Agents
+--------------------
+
 .. autosummary::
    :toctree: generated/
    :template: class.rst
@@ -19,15 +22,30 @@ Agents
    agents.UCBVIAgent
    agents.RSUCBVIAgent
    agents.RSKernelUCBVIAgent
-   agents.optql.OptQLAgent
+   agents.OptQLAgent
    agents.MBQVIAgent
    agents.MBQVIAgent
-   agents.torch.dqn.DQNAgent
    agents.linear.LSVIUCBAgent
-   agents.torch.a2c.A2CAgent
-   agents.torch.ppo.PPOAgent
+
+
+
+Torch agents
+--------------------
+
+.. autosummary::
+   :toctree: generated/
+   :template: class.rst
+
+   agents.torch.DQNAgent
+   agents.torch.A2CAgent
+   agents.torch.PPOAgent
    agents.torch.AVECPPOAgent
    agents.torch.REINFORCEAgent
+
+Jax agents (experimental)
+--------------------
+
+Still experimental. See source code rlberry.jax for more info.
 
 
 Manager

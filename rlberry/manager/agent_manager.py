@@ -171,7 +171,7 @@ class AgentManager:
         Number of agent instances to fit.
     output_dir : str
         Directory where to store data.
-    parallelization: {'thread', 'process'}, default: 'process'
+    parallelization: {'thread', 'process'}, default: 'thread'
         Whether to parallelize  agent training using threads or processes.
     mp_context: {'spawn', 'fork'}, default: 'spawn'.
         Context for python multiprocessing module.
@@ -211,7 +211,7 @@ class AgentManager:
                  agent_name=None,
                  n_fit=4,
                  output_dir=None,
-                 parallelization='process',
+                 parallelization='thread',
                  mp_context='spawn',
                  worker_logging_level='INFO',
                  seed=None,
@@ -388,6 +388,9 @@ class AgentManager:
         return process_env(self._eval_env, self.seeder)
 
     def get_writer_data(self):
+        """
+        Return a dataframe containing data from the writer of the agent.
+        """
         return self.default_writer_data
 
     def get_agent_instances(self):
