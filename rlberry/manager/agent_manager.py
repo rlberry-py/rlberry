@@ -211,7 +211,7 @@ class AgentManager:
                  agent_name=None,
                  n_fit=4,
                  output_dir=None,
-                 parallelization='thread',
+                 parallelization='process',
                  mp_context='spawn',
                  worker_logging_level='INFO',
                  seed=None,

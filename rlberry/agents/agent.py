@@ -272,10 +272,49 @@ class Agent(ABC):
 
 
 class AgentWithSimplePolicy(Agent):
-    """A subclass of Agent implementing a policy() method, and a simple evaluation
+    """A subclass of Agent meant to help design simple agents
+
+    Implement a policy() method, and a simple evaluation
     method (Monte-Carlo policy evaluation).
 
     The policy() method takes an observation as input and returns an action.
+
+
+    Parameters
+    ----------
+    env : gym.Env or tuple (constructor, kwargs)
+        Environment used to fit the agent.
+    eval_env : gym.Env or tuple (constructor, kwargs)
+        Environment on which to evaluate the agent. If None, copied from env.
+    copy_env : bool
+        If true, makes a deep copy of the environment.
+    seeder : rlberry.seeding.Seeder, int, or None
+        Object for random number generation.
+    _execution_metadata : ExecutionMetadata (optional)
+        Extra information about agent execution (e.g. about which is the process id where the agent is running).
+    _default_writer_kwargs : dict (optional)
+        Parameters to initialize DefaultWriter (attribute self.writer).
+    .. note::
+        Classes that implement this interface should send ``**kwargs`` to :code:`Agent.__init__()`
+
+
+    Attributes
+    ----------
+    name : string
+        Agent identifier
+    env : Model or tuple (constructor, kwargs)
+        Environment on which to train the agent.
+    eval_env : Model or tuple (constructor, kwargs)
+        Environment on which to evaluate the agent. If None, copied from env.
+    writer : object, default: None
+        Writer object (e.g. tensorboard SummaryWriter).
+    seeder : rlberry.seeding.Seeder, int, or None
+        Object for random number generation.
+    output_dir : str or Path
+        Directory that the agent can use to store data.
+    unique_id : str
+        Unique identifier for the agent instance. Can be used, for example,
+        to create files/directories for the agent to log data safely.
     """
 
     @abstractmethod

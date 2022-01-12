@@ -11,6 +11,7 @@ Agents
    :toctree: generated/
    :template: class.rst
 
+   agents.Agent
    agents.AgentWithSimplePolicy
    agents.features.FeatureMap
    agents.ValueIterationAgent
@@ -107,3 +108,4 @@ Wrappers
   wrappers.RescaleRewardWrapper
   wrappers.scalarize.ScalarizeEnvWrapper
   wrappers.vis2d.Vis2dWrapper
+  wrappers.WriterWrapper

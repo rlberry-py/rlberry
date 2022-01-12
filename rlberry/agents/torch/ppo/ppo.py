@@ -18,6 +18,12 @@ logger = logging.getLogger(__name__)
 
 class PPOAgent(AgentWithSimplePolicy):
     """
+    Proximal Policy Optimization Agent.
+
+    Policy gradient methods for reinforcement learning, which alternate between
+    sampling data through interaction with the environment, and optimizing a
+    “surrogate” objective function using stochastic gradient ascent
+
     Parameters
     ----------
     env : Model
