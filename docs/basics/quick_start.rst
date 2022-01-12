@@ -136,7 +136,7 @@ regret during fit.
 
 This is only doable if the agent is trained one step at a time.
 
-First, we have to record the regret during the fit as this is not done
+First, we have to record the reward during the fit as this is not done
 automatically. To do this, we use the WriterWrapper module.
 
 .. code:: python
@@ -240,103 +240,3 @@ Finally, we plot the cumulative regret using the 5000 reward values.
 
 
 .. image:: output_26_0.png
-
-
-Comparison at evaluation time using another criterion
------------------------------------------------------
-
-To get the regret at each iteration, we have to redefine the ``eval``
-function of our agents that tells us what evaluation is returned. The
-default is the final reward, we want to retrieve all the rewards, an
-array
-
-.. code:: python
-
-    class RandomAgent2(RandomAgent):
-        name = 'RandomAgent2'
-        def __init__(self, env, **kwargs):
-            super().__init__(env, **kwargs)
-
-        def eval(self,
-                 eval_horizon=10 ** 5,
-                 **kwargs):
-            del kwargs  # unused
-            episode_regret = np.zeros(eval_horizon)
-            observation = self.eval_env.reset()
-            for tt in range(eval_horizon):
-                action = self.policy(observation)
-                observation, reward, done, _ = self.eval_env.step(action)
-                episode_regret[tt] = 1-reward # Optimal reward is 1
-            return episode_regret
-
-
-    class UCBVIAgent2(UCBVIAgent):
-        name = 'UCBVI2'
-        def __init__(self, env, gamma=0.95, horizon=None, **kwargs):
-            super().__init__( env, gamma=0.95, horizon=None, **kwargs)
-
-        def eval(self,
-                 eval_horizon=10 ** 5,
-                 gamma=1,
-                 **kwargs):
-            del kwargs  # unused
-            episode_regret = np.zeros(eval_horizon)
-            observation = self.eval_env.reset()
-            for tt in range(eval_horizon):
-                action = self.policy(observation)
-                observation, reward, done, _ = self.eval_env.step(action)
-                episode_regret[tt] = 1-reward # Optimal reward is 1
-
-            return episode_regret
-
-Then, we do the Monte-Carlo simulations. This time, we directly do 100
-simulations and we don’t need the additional 10 simulations because we
-won’t compare the expected regret on several runs (i.e. we won’t assess
-the variability of our estimation).
-
-.. code:: python
-
-    # Create AgentManager to fit 4 agents using 1 job
-    ucbvi_stats = AgentManager(
-        UCBVIAgent2,
-        (env_ctor, env_kwargs),
-        fit_budget=100,
-        eval_kwargs=dict(eval_horizon=100),
-        init_kwargs=ucbvi_params,
-        n_fit=4)
-    ucbvi_stats.fit()
-
-    # Create AgentManager for baseline
-    baseline_stats = AgentManager(
-        RandomAgent2,
-        (env_ctor, env_kwargs),
-        fit_budget=100,
-        eval_kwargs=dict(eval_horizon=100),
-        n_fit=1)
-    baseline_stats.fit()
-
-
-.. code:: python
-
-    output = evaluate_agents([ucbvi_stats, baseline_stats], n_simulations=100, plot=False)
-
-
-.. code:: python
-
-    regret = pd.DataFrame(np.array([np.array(output[agent].values.tolist()).cumsum(axis=1).mean(axis=0)
-                                    for agent in output.columns]).T, columns=output.columns)
-
-.. code:: python
-
-    regret.plot(xlabel = 'timestep', ylabel = 'Regret',
-                title="Mean cumulative regret as a function of iterations for a fitted agent")
-
-
-
-.. image:: output_33_1.png
-
-
-The regret of the Random agent is linear, and the ValueIteration agent
-has a sub-linear regret (it never learns anything), it seems that it
-takes around 10~15 iterations to get to the intended target and then the
-``fail_prob`` explain that the regret is not 0 afterwards.
