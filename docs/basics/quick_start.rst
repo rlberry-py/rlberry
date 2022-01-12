@@ -40,8 +40,9 @@ Let us see a graphical representation
         next_s, _, done, _ = env.step(1)
         state = next_s
     video = env.save_video("video_chain.mp4", framerate=5)
-    # You see that even though we take always the optimal step (go right),
-    # the agent nonetheless fail sometimes.
+
+Even though we take always the optimal step (go right), the agent nonetheless
+fails sometimes due to fail_prob=0.1.
 
 .. video:: ../video_chain_quickstart.mp4
    :width: 600
@@ -338,4 +339,4 @@ the variability of our estimation).
 The regret of the Random agent is linear, and the ValueIteration agent
 has a sub-linear regret (it never learns anything), it seems that it
 takes around 10~15 iterations to get to the intended target and then the
-``fail_prob`` explain tha the regret is not 0 afterwards.
+``fail_prob`` explain that the regret is not 0 afterwards.
