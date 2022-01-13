@@ -173,15 +173,12 @@ class AgentManager:
         Directory where to store data.
     parallelization: {'thread', 'process'}, default: 'process'
         Whether to parallelize  agent training using threads or processes.
-<<<<<<< HEAD
-=======
     max_workers: None or int, default: None
         Number of processes/threads used in a call to fit().
         If None and parallelization='process', it will default to the
         number of processors on the machine.
         If None and parallelization='thread', it will default to the
         number of processors on the machine, multiplied by 5.
->>>>>>> main
     mp_context: {'spawn', 'fork'}, default: 'spawn'.
         Context for python multiprocessing module.
         Warning: If you're using JAX, it only works with 'spawn'.
