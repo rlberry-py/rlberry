@@ -177,7 +177,7 @@ class AgentManager:
         Number of processes/threads used in a call to fit().
         If None and parallelization='process', it will default to the
         number of processors on the machine.
-        If None and parallelization='thread', :it will default to the 
+        If None and parallelization='thread', it will default to the
         number of processors on the machine, multiplied by 5.
     mp_context: {'spawn', 'fork'}, default: 'spawn'.
         Context for python multiprocessing module.
