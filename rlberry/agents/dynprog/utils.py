@@ -49,11 +49,15 @@ def backward_induction(R, P, horizon, gamma=1.0, vmax=np.inf):
                 V[hh, ss] = vmax
     return Q, V
 
+
 @numba_jit
-def backward_induction_reward_sd(Q, V, R, P, horizon, gamma=1.0, vmax=np.inf):
+def backward_induction_reward_sd(Q, V, R, P, gamma=1.0, vmax=np.inf):
     """
     Backward induction to compute Q and V functions in
     the finite horizon setting.
+
+    Assumes R is stage-dependent, but P is stage-independent.
+
     Takes as input the arrays where to store Q and V.
 
     Parameters
@@ -77,6 +81,7 @@ def backward_induction_reward_sd(Q, V, R, P, horizon, gamma=1.0, vmax=np.inf):
         default = np.inf
     """
     H, S, A = R.shape
+    horizon = H
     for hh in range(horizon - 1, -1, -1):
         for ss in range(S):
             max_q = -np.inf
@@ -94,6 +99,7 @@ def backward_induction_reward_sd(Q, V, R, P, horizon, gamma=1.0, vmax=np.inf):
             V[hh, ss] = max_q
             if V[hh, ss] > vmax:
                 V[hh, ss] = vmax
+
 
 @numba_jit
 def backward_induction_in_place(Q, V, R, P, horizon, gamma=1.0, vmax=np.inf):

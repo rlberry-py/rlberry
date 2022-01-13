@@ -254,7 +254,6 @@ class UCBVIAgent(AgentWithSimplePolicy):
                     self.V,
                     self.R_hat + self.B_sa,
                     self.P_hat,
-                    self.horizon,
                     self.gamma,
                     self.v_max[0])
 
