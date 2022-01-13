@@ -32,14 +32,13 @@ class PSRLAgent(AgentWithSimplePolicy):
     scale_prior_reward : double, delfault: 1.0
         scale of the Beta (uniform) prior,
         i.e prior is Beta(scale_prior_reward*(1,1))
-    scale_prior_transition : double, default: 1/number of state 
-        scale of the (uniform) Dirichlet prior, 
+    scale_prior_transition : double, default: 1/number of state
+        scale of the (uniform) Dirichlet prior,
         i.e prior is Dirichlet(scale_prior_transition*(1,...,1))
     reward_free : bool, default: False
         If true, ignores rewards and uses only 1/n bonuses.
     stage_dependent : bool, default: False
         If true, assume that transitions and rewards can change with the stage h.
-    real_time_dp : bool, default: False
 
     References
     ----------
@@ -49,7 +48,6 @@ class PSRLAgent(AgentWithSimplePolicy):
 
     """
     name = "PSRL"
-
 
     def __init__(self,
                  env,
@@ -66,9 +64,9 @@ class PSRLAgent(AgentWithSimplePolicy):
         self.gamma = gamma
         self.horizon = horizon
         self.scale_prior_reward = scale_prior_reward
-        self.scale_prior_transition = scale_prior_transition 
+        self.scale_prior_transition = scale_prior_transition
         if scale_prior_transition is None:
-            self.scale_prior_transition = 1.0/self.env.observation_space.n
+            self.scale_prior_transition = 1.0 / self.env.observation_space.n
         self.reward_free = reward_free
         self.stage_dependent = stage_dependent
 
@@ -111,10 +109,10 @@ class PSRLAgent(AgentWithSimplePolicy):
             shape_hsas = (S, A, S)
 
         # Prior transition
-        self.N_sas = self.scale_prior_transition*np.ones(shape_hsas)
+        self.N_sas = self.scale_prior_transition * np.ones(shape_hsas)
 
         # Prior reward
-        self.M_sa = self.scale_prior_reward*np.ones(shape_hsa+(2,))
+        self.M_sa = self.scale_prior_reward * np.ones(shape_hsa + (2,))
 
         # Value functions
         self.V = np.zeros((H, S))
@@ -130,7 +128,6 @@ class PSRLAgent(AgentWithSimplePolicy):
         self.counter = DiscreteCounter(self.env.observation_space,
                                        self.env.action_space)
 
-
     def policy(self, observation):
         state = observation
         assert self.Q_policy is not None
@@ -141,25 +138,24 @@ class PSRLAgent(AgentWithSimplePolicy):
         assert self.Q is not None
         return self.Q[hh, state, :].argmax()
 
-
     def _update(self, state, action, next_state, reward, hh):
-        #update posterior
+        # update posterior
         if self.stage_dependent:
             self.N_sas[hh, state, action, next_state] += 1
-            bern_reward = np.random.binomial(1,reward)
+            bern_reward = np.random.binomial(1, reward)
             self.M_sa[hh, state, action, 0] += bern_reward
-            self.M_sa[hh, state, action, 1] += (1-bern_reward)
+            self.M_sa[hh, state, action, 1] += (1 - bern_reward)
 
         else:
             self.N_sas[state, action, next_state] += 1
-            self.M_sa[state, action,0] += reward
-            self.M_sa[state, action,1] += (1-reward)
+            self.M_sa[state, action, 0] += reward
+            self.M_sa[state, action, 1] += (1 - reward)
 
     def _run_episode(self):
-        #sample reward and transitions from posterior
-        self.R_sample = np.random.beta(self.M_sa[...,0], self.M_sa[...,1])
+        # sample reward and transitions from posterior
+        self.R_sample = np.random.beta(self.M_sa[..., 0], self.M_sa[..., 1])
         self.P_sample = np.random.gamma(self.N_sas)
-        self.P_sample = self.P_sample/self.P_sample.sum(-1,keepdims=True)
+        self.P_sample = self.P_sample / self.P_sample.sum(-1, keepdims=True)
         # run backward induction
         if self.stage_dependent:
             backward_induction_sd(
@@ -217,8 +213,8 @@ class PSRLAgent(AgentWithSimplePolicy):
             count += 1
 
         # compute Q function for the recommended policy
-        R_hat = self.M_sa[...,0]/(self.M_sa[...,0]+self.M_sa[...,1])
-        P_hat = self.N_sas/self.N_sas.sum(-1,keepdims=True)
+        R_hat = self.M_sa[..., 0] / (self.M_sa[..., 0] + self.M_sa[..., 1])
+        P_hat = self.N_sas / self.N_sas.sum(-1, keepdims=True)
         if self.stage_dependent:
             backward_induction_sd(
                 self.Q_policy,
