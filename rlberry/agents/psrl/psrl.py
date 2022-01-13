@@ -3,17 +3,16 @@ import numpy as np
 
 import gym.spaces as spaces
 from rlberry.agents import AgentWithSimplePolicy
-from rlberry.agents.ucbvi.utils import update_value_and_get_action, update_value_and_get_action_sd
 from rlberry.exploration_tools.discrete_counter import DiscreteCounter
-from rlberry.agents.dynprog.utils import backward_induction_sd, backward_induction_reward_sd
-from rlberry.agents.dynprog.utils import backward_induction_in_place
+from rlberry.agents.dynprog.utils import backward_induction_in_place, backward_induction_sd
 
 logger = logging.getLogger(__name__)
 
 
-class UCBVIAgent(AgentWithSimplePolicy):
+class PSRLAgent(AgentWithSimplePolicy):
     """
-    UCBVI [1]_ with custom exploration bonus.
+    PSRL algorithm from [1] with beta prior for the "Bernoullized" rewards
+    (instead of Gaussian-gamma prior).
 
     Notes
     -----
@@ -30,54 +29,46 @@ class UCBVIAgent(AgentWithSimplePolicy):
     horizon : int
         Horizon of the objective function. If None and gamma<1, set to
         1/(1-gamma).
-    bonus_scale_factor : double, default: 1.0
-        Constant by which to multiply the exploration bonus, controls
-        the level of exploration.
-    bonus_type : {"simplified_bernstein"}
-        Type of exploration bonus. Currently, only "simplified_bernstein"
-        is implemented. If `reward_free` is true, this parameter is ignored
-        and the algorithm uses 1/n bonuses.
+    scale_prior_reward : double, delfault: 1.0
+        scale of the Beta (uniform) prior,
+        i.e prior is Beta(scale_prior_reward*(1,1))
+    scale_prior_transition : double, default: 1/number of state
+        scale of the (uniform) Dirichlet prior,
+        i.e prior is Dirichlet(scale_prior_transition*(1,...,1))
     reward_free : bool, default: False
         If true, ignores rewards and uses only 1/n bonuses.
     stage_dependent : bool, default: False
         If true, assume that transitions and rewards can change with the stage h.
-    real_time_dp : bool, default: False
-        If true, uses real-time dynamic programming [2]_ instead of full backward induction
-        for the sampling policy.
 
     References
     ----------
-    .. [1] Azar et al., 2017
-        Minimax Regret Bounds for Reinforcement Learning
-        https://arxiv.org/abs/1703.05449
+    .. [1] Osband et al., 2013
+        (More) Efficient Reinforcement Learning via Posterior Sampling
+        https://arxiv.org/abs/1306.0940
 
-    .. [2] Efroni, Yonathan, et al.
-          Tight regret bounds for model-based reinforcement learning with greedy policies.
-          Advances in Neural Information Processing Systems. 2019.
-          https://papers.nips.cc/paper/2019/file/25caef3a545a1fff2ff4055484f0e758-Paper.pdf
     """
-    name = "UCBVI"
+    name = "PSRL"
 
     def __init__(self,
                  env,
                  gamma=1.0,
                  horizon=100,
-                 bonus_scale_factor=1.0,
-                 bonus_type="simplified_bernstein",
+                 scale_prior_reward=1,
+                 scale_prior_transition=None,
                  reward_free=False,
                  stage_dependent=False,
-                 real_time_dp=False,
                  **kwargs):
         # init base class
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
         self.gamma = gamma
         self.horizon = horizon
-        self.bonus_scale_factor = bonus_scale_factor
-        self.bonus_type = bonus_type
+        self.scale_prior_reward = scale_prior_reward
+        self.scale_prior_transition = scale_prior_transition
+        if scale_prior_transition is None:
+            self.scale_prior_transition = 1.0 / self.env.observation_space.n
         self.reward_free = reward_free
         self.stage_dependent = stage_dependent
-        self.real_time_dp = real_time_dp
 
         # check environment
         assert isinstance(self.env.observation_space, spaces.Discrete)
@@ -117,26 +108,18 @@ class UCBVIAgent(AgentWithSimplePolicy):
             shape_hsa = (S, A)
             shape_hsas = (S, A, S)
 
-        # visit counter
-        self.N_sa = np.zeros(shape_hsa)
-        # bonus
-        self.B_sa = np.zeros((H, S, A))
+        # Prior transitions
+        self.N_sas = self.scale_prior_transition * np.ones(shape_hsas)
 
-        # MDP estimator
-        self.R_hat = np.zeros(shape_hsa)
-        self.P_hat = np.ones(shape_hsas) * 1.0 / S
+        # Prior rewards
+        self.M_sa = self.scale_prior_reward * np.ones(shape_hsa + (2,))
 
         # Value functions
-        self.V = np.ones((H, S))
+        self.V = np.zeros((H, S))
         self.Q = np.zeros((H, S, A))
         # for rec. policy
         self.V_policy = np.zeros((H, S))
         self.Q_policy = np.zeros((H, S, A))
-
-        # Init V and bonus
-        for hh in range(self.horizon):
-            self.B_sa[hh, :, :] = self.v_max[hh]
-            self.V[hh, :] = self.v_max[hh]
 
         # ep counter
         self.episode = 0
@@ -145,10 +128,6 @@ class UCBVIAgent(AgentWithSimplePolicy):
         self.counter = DiscreteCounter(self.env.observation_space,
                                        self.env.action_space)
 
-        # update name
-        if self.real_time_dp:
-            self.name = 'UCBVI-RTDP'
-
     def policy(self, observation):
         state = observation
         assert self.Q_policy is not None
@@ -156,69 +135,45 @@ class UCBVIAgent(AgentWithSimplePolicy):
 
     def _get_action(self, state, hh=0):
         """ Sampling policy. """
-        if not self.real_time_dp:
-            assert self.Q is not None
-            return self.Q[hh, state, :].argmax()
-        else:
-            if self.stage_dependent:
-                update_fn = update_value_and_get_action_sd
-            else:
-                update_fn = update_value_and_get_action
-            return update_fn(
-                state,
-                hh,
-                self.V,
-                self.R_hat,
-                self.P_hat,
-                self.B_sa,
-                self.gamma,
-                self.v_max)
-
-    def _compute_bonus(self, n, hh):
-        # reward-free
-        if self.reward_free:
-            bonus = 1.0 / n
-            return bonus
-
-        # not reward-free
-        if self.bonus_type == "simplified_bernstein":
-            bonus = self.bonus_scale_factor * np.sqrt(1.0 / n) + self.v_max[hh] / n
-            bonus = min(bonus, self.v_max[hh])
-            return bonus
-        else:
-            raise ValueError(
-                "Error: bonus type {} not implemented".format(self.bonus_type))
+        assert self.Q is not None
+        return self.Q[hh, state, :].argmax()
 
     def _update(self, state, action, next_state, reward, hh):
+        bern_reward = self.rng.binomial(1, reward)
+        # update posterior
         if self.stage_dependent:
-            self.N_sa[hh, state, action] += 1
-
-            nn = self.N_sa[hh, state, action]
-            prev_r = self.R_hat[hh, state, action]
-            prev_p = self.P_hat[hh, state, action, :]
-
-            self.R_hat[hh, state, action] = (1.0 - 1.0 / nn) * prev_r + reward * 1.0 / nn
-
-            self.P_hat[hh, state, action, :] = (1.0 - 1.0 / nn) * prev_p
-            self.P_hat[hh, state, action, next_state] += 1.0 / nn
-
-            self.B_sa[hh, state, action] = self._compute_bonus(nn, hh)
+            self.N_sas[hh, state, action, next_state] += 1
+            self.M_sa[hh, state, action, 0] += bern_reward
+            self.M_sa[hh, state, action, 1] += (1 - bern_reward)
 
         else:
-            self.N_sa[state, action] += 1
-
-            nn = self.N_sa[state, action]
-            prev_r = self.R_hat[state, action]
-            prev_p = self.P_hat[state, action, :]
-
-            self.R_hat[state, action] = (1.0 - 1.0 / nn) * prev_r + reward * 1.0 / nn
-
-            self.P_hat[state, action, :] = (1.0 - 1.0 / nn) * prev_p
-            self.P_hat[state, action, next_state] += 1.0 / nn
-
-            self.B_sa[hh, state, action] = self._compute_bonus(nn, hh)
+            self.N_sas[state, action, next_state] += 1
+            self.M_sa[state, action, 0] += bern_reward
+            self.M_sa[state, action, 1] += (1 - bern_reward)
 
     def _run_episode(self):
+        # sample reward and transitions from posterior
+        self.R_sample = self.rng.beta(self.M_sa[..., 0], self.M_sa[..., 1])
+        self.P_sample = self.rng.gamma(self.N_sas)
+        self.P_sample = self.P_sample / self.P_sample.sum(-1, keepdims=True)
+        # run backward induction
+        if self.stage_dependent:
+            backward_induction_sd(
+                self.Q,
+                self.V,
+                self.R_sample,
+                self.P_sample,
+                self.gamma,
+                self.v_max[0])
+        else:
+            backward_induction_in_place(
+                self.Q,
+                self.V,
+                self.R_sample,
+                self.P_sample,
+                self.horizon,
+                self.gamma,
+                self.v_max[0])
         # interact for H steps
         episode_rewards = 0
         state = self.env.reset()
@@ -237,25 +192,6 @@ class UCBVIAgent(AgentWithSimplePolicy):
             state = next_state
             if done:
                 break
-
-        # run backward induction
-        if not self.real_time_dp:
-            if self.stage_dependent:
-                backward_induction_sd(
-                    self.Q,
-                    self.V,
-                    self.R_hat + self.B_sa,
-                    self.P_hat,
-                    self.gamma,
-                    self.v_max[0])
-            else:
-                backward_induction_reward_sd(
-                    self.Q,
-                    self.V,
-                    self.R_hat + self.B_sa,
-                    self.P_hat,
-                    self.gamma,
-                    self.v_max[0])
 
         # update info
         self.episode += 1
@@ -277,20 +213,22 @@ class UCBVIAgent(AgentWithSimplePolicy):
             count += 1
 
         # compute Q function for the recommended policy
+        R_hat = self.M_sa[..., 0] / (self.M_sa[..., 0] + self.M_sa[..., 1])
+        P_hat = self.N_sas / self.N_sas.sum(-1, keepdims=True)
         if self.stage_dependent:
             backward_induction_sd(
                 self.Q_policy,
                 self.V_policy,
-                self.R_hat,
-                self.P_hat,
+                R_hat,
+                P_hat,
                 self.gamma,
                 self.v_max[0])
         else:
             backward_induction_in_place(
                 self.Q_policy,
                 self.V_policy,
-                self.R_hat,
-                self.P_hat,
+                R_hat,
+                P_hat,
                 self.horizon,
                 self.gamma,
                 self.v_max[0])
