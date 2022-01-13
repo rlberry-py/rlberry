@@ -173,6 +173,12 @@ class AgentManager:
         Directory where to store data.
     parallelization: {'thread', 'process'}, default: 'process'
         Whether to parallelize  agent training using threads or processes.
+    max_workers: None or int, default: None
+        Number of processes/threads used in a call to fit().
+        If None and parallelization='process', it will default to the
+        number of processors on the machine.
+        If None and parallelization='thread', :it will default to the 
+        number of processors on the machine, multiplied by 5.
     mp_context: {'spawn', 'fork'}, default: 'spawn'.
         Context for python multiprocessing module.
         Warning: If you're using JAX, it only works with 'spawn'.
@@ -212,6 +218,7 @@ class AgentManager:
                  n_fit=4,
                  output_dir=None,
                  parallelization='thread',
+                 max_workers=None,
                  mp_context='spawn',
                  worker_logging_level='INFO',
                  seed=None,
@@ -270,6 +277,7 @@ class AgentManager:
         self.eval_kwargs = deepcopy(eval_kwargs)
         self.n_fit = n_fit
         self.parallelization = parallelization
+        self.max_workers = max_workers
         self.mp_context = mp_context
         self.worker_logging_level = worker_logging_level
         if fit_budget is not None:
@@ -505,7 +513,7 @@ class AgentManager:
             workers_output = [_fit_worker(args[0])]
 
         else:
-            with executor_class() as executor:
+            with executor_class(max_workers=self.max_workers) as executor:
                 futures = []
                 for arg in args:
                     futures.append(executor.submit(_fit_worker, arg))
