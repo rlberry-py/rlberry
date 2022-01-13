@@ -2,22 +2,21 @@
 runs/
 
 # videos
-*.mp4
+#*.mp4
 notebooks/videos/*
 
 # pickled objects and csv
 *.pickle
 *.csv
 
-# test coverage folder 
+# test coverage folder
 cov_html/*
 
 # dev and results folder
 dev/*
 results/*
 temp/*
-client_data/*
-remote_data/*
+rlberry_data/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -91,6 +90,10 @@ instance/
 
 # Sphinx documentation
 docs/_build/
+docs/generated
+docs/auto_examples
+
+
 
 # PyBuilder
 target/
@@ -152,7 +155,7 @@ dmypy.json
 # macOS
 .DS_Store
 
-# vscode 
+# vscode
 .vscode
 
 # PyCharm

@@ -67,7 +67,7 @@ class GridWorld(RenderInterface2D, FiniteMDP):
         if terminal_states is not None:
             self.terminal_states = terminal_states
         else:
-            self.terminal_states = ((nrows - 1, ncols - 1),)
+            self.terminal_states = ()
 
         # Probability of going left/right/up/down when choosing the
         # correspondent action
@@ -79,8 +79,8 @@ class GridWorld(RenderInterface2D, FiniteMDP):
         self.start_coord = tuple(start_coord)
 
         # Actions (string to index & index to string)
-        self.a_str2idx = {'left': 0, 'right': 1, 'up': 2, 'down': 3}
-        self.a_idx2str = {0: 'left', 1: 'right', 2: 'up', 3: 'down'}
+        self.a_str2idx = {'left': 0, 'right': 1, 'down': 2, 'up': 3}
+        self.a_idx2str = {0: 'left', 1: 'right', 2: 'down', 3: 'up'}
 
         # --------------------------------------------
         # The variables below are defined in _build()
@@ -354,7 +354,8 @@ class GridWorld(RenderInterface2D, FiniteMDP):
         # map data to [0.0, 1.0]
         if state_data is not None:
             state_data = state_data - state_data.min()
-            state_data = state_data / state_data.max()
+            if state_data.max() > 0.0:
+                state_data = state_data / state_data.max()
 
         colormap_fn = plt.get_cmap(colormap_name)
         layout = self.get_layout_array(state_data, fill_walls_with=np.nan)
@@ -364,9 +365,9 @@ class GridWorld(RenderInterface2D, FiniteMDP):
         for rr in range(layout.shape[0]):
             for cc in range(layout.shape[1]):
                 if np.isnan(layout[rr, cc]):
-                    img[rr, cc, :] = wall_color
+                    img[self.nrows - 1 - rr, cc, :] = wall_color
                 else:
-                    img[rr, cc, :3] = scalar_map.to_rgba(layout[rr, cc])[:3]
+                    img[self.nrows - 1 - rr, cc, :3] = scalar_map.to_rgba(layout[rr, cc])[:3]
         return img
 
     def get_background(self):

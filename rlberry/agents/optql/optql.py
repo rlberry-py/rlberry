@@ -4,7 +4,6 @@ import numpy as np
 import gym.spaces as spaces
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.exploration_tools.discrete_counter import DiscreteCounter
-from rlberry.utils.writers import DefaultWriter
 
 logger = logging.getLogger(__name__)
 
@@ -102,9 +101,6 @@ class OptQLAgent(AgentWithSimplePolicy):
         # useful object to compute total number of visited states & entropy of visited states
         self.counter = DiscreteCounter(self.env.observation_space,
                                        self.env.action_space)
-
-        # default writer
-        self.writer = DefaultWriter(self.name, metadata=self._metadata)
 
     def policy(self, observation):
         """ Recommended policy. """

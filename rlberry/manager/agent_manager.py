@@ -1,10 +1,10 @@
 import concurrent.futures
 from copy import deepcopy
-from datetime import datetime
 from pathlib import Path
 
 from rlberry.seeding import safe_reseed, set_external_seed
 from rlberry.seeding import Seeder
+from rlberry import metadata_utils
 
 import functools
 import json
@@ -17,7 +17,6 @@ import shutil
 import threading
 import multiprocessing
 import numpy as np
-import uuid
 from rlberry.envs.utils import process_env
 from rlberry.utils.logging import configure_logging
 from rlberry.utils.writers import DefaultWriter
@@ -55,7 +54,7 @@ class AgentHandler:
         Class of the agent to be wrapped
     agent_instance:
         An instance of agent_class, or None (if not loaded).
-    **agent_kwargs:
+    agent_kwargs:
         Arguments required by __init__ method of agent_class.
     """
 
@@ -65,13 +64,13 @@ class AgentHandler:
                  seeder,
                  agent_class,
                  agent_instance=None,
-                 **agent_kwargs) -> None:
+                 agent_kwargs=None) -> None:
         self._id = id
         self._fname = Path(filename)
         self._seeder = seeder
         self._agent_class = agent_class
         self._agent_instance = agent_instance
-        self._agent_kwargs = agent_kwargs
+        self._agent_kwargs = agent_kwargs or {}
 
     @property
     def id(self):
@@ -79,6 +78,11 @@ class AgentHandler:
 
     def set_instance(self, agent_instance):
         self._agent_instance = agent_instance
+
+    def get_instance(self):
+        if not self.is_loaded():
+            self.load()
+        return self._agent_instance
 
     def is_empty(self):
         return self._agent_instance is None and (not self._fname.exists())
@@ -156,7 +160,7 @@ class AgentManager:
     eval_env : Tuple (constructor, kwargs)
         Environment used to evaluate the agent. If None, set train_env.
     init_kwargs : dict
-        Arguments required by the agent's constructor.
+        Arguments required by the agent's constructor. Shared across all n_fit instances.
     fit_kwargs : dict
         Extra required to call agent.fit(bugdet, **fit_kwargs).
     eval_kwargs : dict
@@ -169,16 +173,31 @@ class AgentManager:
         Directory where to store data.
     parallelization: {'thread', 'process'}, default: 'process'
         Whether to parallelize  agent training using threads or processes.
-    thread_logging_level : str, default: 'INFO'
-        Logging level in each of the threads used to fit agents.
+    mp_context: {'spawn', 'fork'}, default: 'spawn'.
+        Context for python multiprocessing module.
+        Warning: If you're using JAX, it only works with 'spawn'.
+                 If running code on a notebook or interpreter, use 'fork'.
+    worker_logging_level : str, default: 'INFO'
+        Logging level in each of the threads/processes used to fit agents.
     seed : np.random.SeedSequence, rlberry.seeding.Seeder or int, default : None
         Seed sequence from which to spawn the random number generator.
         If None, generate random seed.
         If int, use as entropy for SeedSequence.
         If seeder, use seeder.seed_seq
-    create_unique_out_dir : bool, default = True
-        If true, data is saved to output_dir/manager_data/<AGENT_NAME_UNIQUE_ID>
-        Otherwise, data is saved to output_dir/manager_data
+    enable_tensorboard : bool, default = False
+        If True, enable tensorboard logging in Agent's DefaultWriter.
+    outdir_id_style: {None, 'unique', 'timestamp'}, default = 'timestamp'
+        If None, data is saved to output_dir/manager_data
+        If 'unique', data is saved to output_dir/manager_data/<AGENT_NAME_UNIQUE_ID>
+        If 'timestamp', data is saved to output_dir/manager_data/<AGENT_NAME_TIMESTAMP_SHORT_ID>
+    default_writer_kwargs : dict
+        Optional arguments for DefaultWriter.
+    init_kwargs_per_instance : List[dict] (optional)
+        List of length n_fit containing the params to be passed to each of
+        the n_fit agent instances. It can be useful if different instances
+        require different parameters. If the same parameter is defined by
+        init_kwargs and init_kwargs_per_instance, the value given by
+        init_kwargs_per_instance will be used.
     """
 
     def __init__(self,
@@ -193,9 +212,13 @@ class AgentManager:
                  n_fit=4,
                  output_dir=None,
                  parallelization='thread',
-                 thread_logging_level='INFO',
+                 mp_context='spawn',
+                 worker_logging_level='INFO',
                  seed=None,
-                 create_unique_out_dir=True):
+                 enable_tensorboard=False,
+                 outdir_id_style='timestamp',
+                 default_writer_kwargs=None,
+                 init_kwargs_per_instance=None):
         # agent_class should only be None when the constructor is called
         # by the class method AgentManager.load(), since the agent class
         # will be loaded.
@@ -217,10 +240,12 @@ class AgentManager:
             assert isinstance(
                 eval_env, Tuple), "[AgentManager]train_env must be Tuple (constructor, kwargs)"
 
+        # check options
+        assert outdir_id_style in [None, 'unique', 'timestamp']
+
         # create oject identifier
-        timestamp = datetime.timestamp(datetime.now())
-        self.timestamp = str(timestamp).replace('.', '')
-        self.unique_id = str(id(self)) + self.timestamp
+        self.unique_id = metadata_utils.get_unique_id(self)
+        self.timestamp_id = metadata_utils.get_readable_id(self)
 
         # Agent class
         self.agent_class = agent_class
@@ -235,17 +260,18 @@ class AgentManager:
         self._eval_env = eval_env
 
         # check kwargs
-        init_kwargs = init_kwargs or {}
         fit_kwargs = fit_kwargs or {}
         eval_kwargs = eval_kwargs or {}
 
         # params
-        self.init_kwargs = deepcopy(init_kwargs)
+        base_init_kwargs = init_kwargs or {}
+        self._base_init_kwargs = deepcopy(base_init_kwargs)
         self.fit_kwargs = deepcopy(fit_kwargs)
         self.eval_kwargs = deepcopy(eval_kwargs)
         self.n_fit = n_fit
         self.parallelization = parallelization
-        self.thread_logging_level = thread_logging_level
+        self.mp_context = mp_context
+        self.worker_logging_level = worker_logging_level
         if fit_budget is not None:
             self.fit_budget = fit_budget
         else:
@@ -253,18 +279,52 @@ class AgentManager:
                 self.fit_budget = self.fit_kwargs.pop('fit_budget')
             except KeyError:
                 raise ValueError('[AgentManager] fit_budget missing in __init__().')
+        # extra params per instance
+        if init_kwargs_per_instance is not None:
+            assert len(init_kwargs_per_instance) == n_fit
+            init_kwargs_per_instance = deepcopy(init_kwargs_per_instance)
+        self.init_kwargs_per_instance = init_kwargs_per_instance or [dict() for _ in range(n_fit)]
 
         # output dir
         if output_dir is None:
-            output_dir = 'temp/'
+            output_dir = metadata_utils.RLBERRY_TEMP_DATA_DIR
         self.output_dir = Path(output_dir) / 'manager_data'
-        if create_unique_out_dir:
-            self.output_dir = self.output_dir / (self.agent_name + '_id' + self.unique_id)
+        if outdir_id_style == 'unique':
+            self.output_dir = self.output_dir / (self.agent_name + '_' + self.unique_id)
+        elif outdir_id_style == 'timestamp':
+            self.output_dir = self.output_dir / (self.agent_name + '_' + self.timestamp_id)
 
         # Create list of writers for each agent that will be trained
+        # 'default' will keep Agent's use of DefaultWriter.
         self.writers = [('default', None) for _ in range(n_fit)]
 
-        #
+        # Parameters to setup Agent's DefaultWriter
+        self.agent_default_writer_kwargs = [
+            dict(
+                name=self.agent_name,
+                log_interval=3,
+                tensorboard_kwargs=None,
+                execution_metadata=metadata_utils.ExecutionMetadata(obj_worker_id=idx)
+            )
+            for idx in range(n_fit)
+        ]
+        self.tensorboard_dir = None
+        if enable_tensorboard:
+            self.tensorboard_dir = self.output_dir / 'tensorboard'
+            for idx, params in enumerate(self.agent_default_writer_kwargs):
+                params['tensorboard_kwargs'] = dict(
+                    log_dir=self.tensorboard_dir / str(idx)
+                )
+        # Update DefaultWriter according to user's settings.
+        default_writer_kwargs = default_writer_kwargs or {}
+        if default_writer_kwargs:
+            logger.warning('(Re)defining the following DefaultWriter'
+                           f' parameters in AgentManager: {list(default_writer_kwargs.keys())}')
+        for ii in range(n_fit):
+            self.agent_default_writer_kwargs[ii].update(default_writer_kwargs)
+
+        # agent handlers and init kwargs
+        self._set_init_kwargs()  # init_kwargs for each agent
         self.agent_handlers = None
         self._reset_agent_handlers()
         self.default_writer_data = None
@@ -285,6 +345,26 @@ class AgentManager:
             self.optuna_storage_url = "sqlite:///:memory:"
             logger.warning(f'Unable to create databate {self.db_filename}. Using sqlite:///:memory:')
 
+    def _set_init_kwargs(self):
+        init_seeders = self.seeder.spawn(self.n_fit, squeeze=False)
+        self.init_kwargs = []
+        for ii in range(self.n_fit):
+            kwargs_ii = deepcopy(self._base_init_kwargs)
+            kwargs_ii.update(
+                dict(
+                    env=self.train_env,
+                    eval_env=self._eval_env,
+                    copy_env=False,
+                    seeder=init_seeders[ii],
+                    output_dir=Path(self.output_dir) / f"output_{ii}",
+                    _execution_metadata=self.agent_default_writer_kwargs[ii]['execution_metadata'],
+                    _default_writer_kwargs=self.agent_default_writer_kwargs[ii],
+                )
+            )
+            per_instance_kwargs = self.init_kwargs_per_instance[ii]
+            kwargs_ii.update(per_instance_kwargs)
+            self.init_kwargs.append(kwargs_ii)
+
     def _reset_agent_handlers(self):
         handlers_seeders = self.seeder.spawn(self.n_fit, squeeze=False)
         self.agent_handlers = [
@@ -295,8 +375,7 @@ class AgentManager:
                 agent_class=self.agent_class,
                 agent_instance=None,
                 # kwargs
-                env=self.train_env,
-                **self.init_kwargs,
+                agent_kwargs=self.init_kwargs[ii],
             )
             for ii in range(self.n_fit)
         ]
@@ -310,6 +389,11 @@ class AgentManager:
 
     def get_writer_data(self):
         return self.default_writer_data
+
+    def get_agent_instances(self):
+        if self.agent_handlers:
+            return [agent_handler.get_instance() for agent_handler in self.agent_handlers]
+        return []
 
     def eval_agents(self, n_simulations: Optional[int] = None) -> list:
         """
@@ -399,26 +483,23 @@ class AgentManager:
         elif self.parallelization == 'process':
             executor_class = functools.partial(
                 concurrent.futures.ProcessPoolExecutor,
-                mp_context=multiprocessing.get_context('spawn'))
+                mp_context=multiprocessing.get_context(self.mp_context))
             lock = multiprocessing.Manager().Lock()
         else:
             raise ValueError(f'Invalid backend for parallelization: {self.parallelization}')
 
         args = [(
-            idx,
             lock,
             handler,
             self.agent_class,
-            self.train_env,
-            self._eval_env,
             budget,
-            deepcopy(self.init_kwargs),
+            init_kwargs,
             deepcopy(self.fit_kwargs),
             writer,
-            self.thread_logging_level,
+            self.worker_logging_level,
             seeder)
-            for idx, (handler, seeder, writer)
-            in enumerate(zip(self.agent_handlers, seeders, self.writers))]
+            for init_kwargs, handler, seeder, writer
+            in zip(self.init_kwargs, self.agent_handlers, seeders, self.writers)]
 
         if len(args) == 1:
             workers_output = [_fit_worker(args[0])]
@@ -667,7 +748,7 @@ class AgentManager:
         #
         objective = functools.partial(
             _optuna_objective,
-            init_kwargs=self.init_kwargs,  # self.init_kwargs
+            base_init_kwargs=self._base_init_kwargs,  # self._base_init_kwargs
             agent_class=self.agent_class,  # self.agent_class
             train_env=self.train_env,  # self.train_env
             eval_env=self._eval_env,
@@ -692,7 +773,7 @@ class AgentManager:
                     executor.shutdown()
             elif optuna_parallelization == 'process':
                 with concurrent.futures.ProcessPoolExecutor(
-                        mp_context=multiprocessing.get_context('spawn')) as executor:
+                        mp_context=multiprocessing.get_context(self.mp_context)) as executor:
                     for _ in range(n_optuna_workers):
                         executor.submit(
                             study.optimize,
@@ -731,9 +812,10 @@ class AgentManager:
         self.best_hyperparams = best_trial.params
 
         # update using best parameters
-        self.init_kwargs.update(best_trial.params)
+        self._base_init_kwargs.update(best_trial.params)
 
-        # reset agent handlers, so that they take the new parameters
+        # reset init_kwargs and agent handlers, so that they take the new parameters
+        self._set_init_kwargs()
         self._reset_agent_handlers()
 
         return deepcopy(best_trial.params)
@@ -748,37 +830,29 @@ def _fit_worker(args):
     """
     Create and fit an agent instance
     """
-    idx, lock, agent_handler, agent_class, train_env, eval_env, fit_budget, init_kwargs, \
-        fit_kwargs, writer, thread_logging_level, seeder = args
+    (lock, agent_handler, agent_class, fit_budget, init_kwargs,
+     fit_kwargs, writer, worker_logging_level, seeder) = args
 
     # reseed external libraries
     set_external_seed(seeder)
 
     # logging level in thread
-    configure_logging(thread_logging_level)
+    configure_logging(worker_logging_level)
 
     # Using a lock when creating envs and agents, to avoid problems
     # as here: https://github.com/openai/gym/issues/281
     with lock:
         if agent_handler.is_empty():
             # create agent
-            agent = agent_class(
-                env=train_env,
-                eval_env=eval_env,
-                copy_env=False,
-                seeder=seeder,
-                _metadata=dict(
-                    worker=idx,
-                ),
-                **init_kwargs)
+            agent = agent_class(**init_kwargs)
             # seed agent
-            agent.reseed(seeder)
+            agent.reseed(seeder)    # TODO: check if extra reseeding here is necessary
             agent_handler.set_instance(agent)
 
     # set writer
     if writer[0] is None:
         agent_handler.set_writer(None)
-    elif writer[0] != 'default':
+    elif writer[0] != 'default':  # 'default' corresponds to DefaultWriter created by Agent.__init__()
         writer_fn = writer[0]
         writer_kwargs = writer[1]
         agent_handler.set_writer(writer_fn(**writer_kwargs))
@@ -813,7 +887,7 @@ def _safe_serialize_json(obj, filename):
 
 def _optuna_objective(
         trial,
-        init_kwargs,  # self.init_kwargs
+        base_init_kwargs,  # self._base_init_kwargs
         agent_class,  # self.agent_class
         train_env,  # self.train_env
         eval_env,
@@ -824,7 +898,7 @@ def _optuna_objective(
         disable_evaluation_writers,
         fit_fraction
 ):
-    kwargs = deepcopy(init_kwargs)
+    kwargs = deepcopy(base_init_kwargs)
 
     # will raise exception if sample_parameters() is not
     # implemented by the agent class
@@ -841,12 +915,13 @@ def _optuna_objective(
         eval_env=eval_env,
         init_kwargs=kwargs,  # kwargs are being optimized
         eval_kwargs=deepcopy(eval_kwargs),
-        agent_name='optim_' + uuid.uuid4().hex,
+        agent_name='optim',
         n_fit=n_fit,
-        thread_logging_level='INFO',
+        worker_logging_level='INFO',
         parallelization='thread',
         output_dir=temp_dir,
-        create_unique_out_dir=True)
+        enable_tensorboard=False,
+        outdir_id_style='unique')
 
     if disable_evaluation_writers:
         for ii in range(params_stats.n_fit):

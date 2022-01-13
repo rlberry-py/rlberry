@@ -1,6 +1,7 @@
 from rlberry.seeding import Seeder, safe_reseed
 import numpy as np
 from rlberry.envs.interface import Model
+from rlberry.spaces.from_gym import convert_space_from_gym
 
 
 class Wrapper(Model):
@@ -12,22 +13,33 @@ class Wrapper(Model):
         The input environment is not copied (Wrapper.env points
         to the input env).
 
+    Parameters
+    ----------
+    env: gym.Env
+        Environment to be wrapped.
+    wrap_spaces: bool, default = False
+        If True, gym.spaces are converted to rlberry.spaces, which defined a reseed() method.
+
     See also:
     https://stackoverflow.com/questions/1443129/completely-wrap-an-object-in-python
 
     [1] https://github.com/openai/gym/blob/master/gym/core.py
     """
 
-    def __init__(self, env):
+    def __init__(self, env, wrap_spaces=False):
         # Init base class
         Model.__init__(self)
 
         # Save reference to env
         self.env = env
-
-        self.observation_space = self.env.observation_space
-        self.action_space = self.env.action_space
         self.metadata = self.env.metadata
+
+        if wrap_spaces:
+            self.observation_space = convert_space_from_gym(self.env.observation_space)
+            self.action_space = convert_space_from_gym(self.env.action_space)
+        else:
+            self.observation_space = self.env.observation_space
+            self.action_space = self.env.action_space
 
         try:
             self.reward_range = self.env.reward_range
@@ -65,8 +77,8 @@ class Wrapper(Model):
             self.seeder = Seeder(seed_seq)
         # seed gym.Env that is not a rlberry Model
         if not isinstance(self.env, Model):
-            # get a seed for gym environment
-            safe_reseed(self.env, self.seeder)
+            # get a seed for gym environment; spaces are reseeded below.
+            safe_reseed(self.env, self.seeder, reseed_spaces=False)
         # seed rlberry Model
         else:
             self.env.reseed(self.seeder)

@@ -2,7 +2,6 @@ import logging
 import numpy as np
 from rlberry.agents import AgentWithSimplePolicy
 from gym.spaces import Discrete
-from rlberry.utils.writers import DefaultWriter
 from rlberry.utils.jit_setup import numba_jit
 
 logger = logging.getLogger(__name__)
@@ -202,9 +201,6 @@ class LSVIUCBAgent(AgentWithSimplePolicy):
                                              self.dim))
         #
         self.w_policy = None
-
-        # default writer
-        self.writer = DefaultWriter(name=self.name, metadata=self._metadata)
 
     def fit(self, budget, **kwargs):
         del kwargs

@@ -2,10 +2,20 @@ import gym
 from rlberry.envs.basewrapper import Wrapper
 
 
-def gym_make(id, **kwargs):
+def gym_make(id, wrap_spaces=False, **kwargs):
     """
     Same as gym.make, but wraps the environment
     to ensure unified seeding with rlberry.
+
+    Parameters
+    ----------
+    id : str
+        Environment id.
+    wrap_spaces : bool, default = False
+        If true, also wraps observation_space and action_space using classes in rlberry.spaces,
+        that define a reseed() method.
+    **kwargs
+        Optional arguments to configure the environment.
     """
     if "module_import" in kwargs:
         __import__(kwargs.pop("module_import"))
@@ -14,7 +24,7 @@ def gym_make(id, **kwargs):
         env.configure(kwargs)
     except AttributeError:
         pass
-    return Wrapper(env)
+    return Wrapper(env, wrap_spaces=wrap_spaces)
 
 
 def atari_make(id, scalarize=True, **kwargs):

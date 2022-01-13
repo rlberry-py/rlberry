@@ -7,7 +7,7 @@ Evaluate an agent and optimize its hyperparameters
 ==================================================
 
 With rlberry_, once you created your agent, it is very easy to train in parallel
-several instances of it, analyze the results and optimize hyperparameters. 
+several instances of it, analyze the results and optimize hyperparameters.
 
 This is one of the purposes of the :class:`~rlberry.manager.agent_manager.AgentManager` class,
 as shown in the examples below.
@@ -53,7 +53,7 @@ as shown in the examples below.
 
 
 To run hyperparameter optimization, the agent class needs to implement a
-:meth:`sample_paratemers` method (see :class:`~rlberry.agents.agent.Agent` class). 
+:meth:`sample_paratemers` method (see :class:`~rlberry.agents.agent.Agent` class).
 
 For :class:`~rlberry.agents.reinforce.reinforce.REINFORCEAgent`, this method looks like:
 
@@ -85,7 +85,7 @@ For :class:`~rlberry.agents.reinforce.reinforce.REINFORCEAgent`, this method loo
                 }
 
 
-Now we can use the :meth:`optimize_hyperparams` method 
+Now we can use the :meth:`optimize_hyperparams` method
 of :class:`~rlberry.manager.agent_manager.AgentManager` to find good parameters for our agent:
 
 .. code-block:: python

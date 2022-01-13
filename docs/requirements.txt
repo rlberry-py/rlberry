@@ -1,11 +1,5 @@
-numpy>=1.17
-pygame
+sphinx-gallery
+numpydoc
+myst-parser
+git+https://github.com/sphinx-contrib/video
 matplotlib
-seaborn
-pandas
-gym
-dill
-docopt
-pytest
---find-links https://download.pytorch.org/whl/torch_stable.html
-torch>=1.6.0+cpu

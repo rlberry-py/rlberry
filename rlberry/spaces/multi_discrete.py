@@ -1,4 +1,5 @@
 import gym
+import numpy as np
 from rlberry.seeding import Seeder
 
 
@@ -21,8 +22,8 @@ class MultiDiscrete(gym.spaces.MultiDiscrete):
         get new random number generator
     """
 
-    def __init__(self, nvec):
-        gym.spaces.MultiDiscrete.__init__(self, nvec)
+    def __init__(self, nvec, dtype=np.int64):
+        gym.spaces.MultiDiscrete.__init__(self, nvec, dtype=dtype)
         self.seeder = Seeder()
 
     @property

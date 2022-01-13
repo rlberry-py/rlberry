@@ -2,7 +2,6 @@ import logging
 import gym.spaces as spaces
 import numpy as np
 from rlberry.agents import AgentWithSimplePolicy
-from rlberry.utils.writers import DefaultWriter
 from rlberry.agents.adaptiveql.tree import MDPTreePartition
 
 logger = logging.getLogger(__name__)
@@ -84,9 +83,6 @@ class AdaptiveQLAgent(AgentWithSimplePolicy):
 
         # info
         self.episode = 0
-
-        # default writer
-        self.writer = DefaultWriter(self.name, metadata=self._metadata)
 
     def policy(self, observation):
         action, _ = self.Qtree.get_argmax_and_node(observation, 0)
