@@ -142,7 +142,7 @@ class PSRLAgent(AgentWithSimplePolicy):
         # update posterior
         if self.stage_dependent:
             self.N_sas[hh, state, action, next_state] += 1
-            bern_reward = np.random.binomial(1, reward)
+            bern_reward = self.rng.binomial(1, reward)
             self.M_sa[hh, state, action, 0] += bern_reward
             self.M_sa[hh, state, action, 1] += (1 - bern_reward)
 
@@ -153,8 +153,8 @@ class PSRLAgent(AgentWithSimplePolicy):
 
     def _run_episode(self):
         # sample reward and transitions from posterior
-        self.R_sample = np.random.beta(self.M_sa[..., 0], self.M_sa[..., 1])
-        self.P_sample = np.random.gamma(self.N_sas)
+        self.R_sample = self.rng.beta(self.M_sa[..., 0], self.M_sa[..., 1])
+        self.P_sample = self.rng.gamma(self.N_sas)
         self.P_sample = self.P_sample / self.P_sample.sum(-1, keepdims=True)
         # run backward induction
         if self.stage_dependent:
