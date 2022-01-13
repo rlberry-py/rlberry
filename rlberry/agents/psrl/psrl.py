@@ -108,10 +108,10 @@ class PSRLAgent(AgentWithSimplePolicy):
             shape_hsa = (S, A)
             shape_hsas = (S, A, S)
 
-        # Prior transition
+        # Prior transitions
         self.N_sas = self.scale_prior_transition * np.ones(shape_hsas)
 
-        # Prior reward
+        # Prior rewards
         self.M_sa = self.scale_prior_reward * np.ones(shape_hsa + (2,))
 
         # Value functions
@@ -139,17 +139,17 @@ class PSRLAgent(AgentWithSimplePolicy):
         return self.Q[hh, state, :].argmax()
 
     def _update(self, state, action, next_state, reward, hh):
+        bern_reward = self.rng.binomial(1, reward)
         # update posterior
         if self.stage_dependent:
             self.N_sas[hh, state, action, next_state] += 1
-            bern_reward = self.rng.binomial(1, reward)
             self.M_sa[hh, state, action, 0] += bern_reward
             self.M_sa[hh, state, action, 1] += (1 - bern_reward)
 
         else:
             self.N_sas[state, action, next_state] += 1
-            self.M_sa[state, action, 0] += reward
-            self.M_sa[state, action, 1] += (1 - reward)
+            self.M_sa[state, action, 0] += bern_reward
+            self.M_sa[state, action, 1] += (1 - bern_reward)
 
     def _run_episode(self):
         # sample reward and transitions from posterior
