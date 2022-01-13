@@ -51,6 +51,57 @@ def backward_induction(R, P, horizon, gamma=1.0, vmax=np.inf):
 
 
 @numba_jit
+def backward_induction_reward_sd(Q, V, R, P, gamma=1.0, vmax=np.inf):
+    """
+    Backward induction to compute Q and V functions in
+    the finite horizon setting.
+
+    Assumes R is stage-dependent, but P is stage-independent.
+
+    Takes as input the arrays where to store Q and V.
+
+    Parameters
+    ----------
+    Q:  numpy.ndarray
+        array of shape (horizon, S, A) where to store the Q function
+    V:  numpy.ndarray
+        array of shape (horizon, S) where to store the V function
+    R : numpy.ndarray
+        array of shape (horizon, S, A) contaning the rewards, where S is the number
+        of states and A is the number of actions
+    P : numpy.ndarray
+        array of shape (S, A, S) such that P[s,a,ns] is the probability of
+        arriving at ns by taking action a in state s.
+    horizon : int
+        problem horizon
+    gamma : double
+        discount factor, default = 1.0
+    vmax : double
+        maximum possible value in V
+        default = np.inf
+    """
+    H, S, A = R.shape
+    horizon = H
+    for hh in range(horizon - 1, -1, -1):
+        for ss in range(S):
+            max_q = -np.inf
+            for aa in range(A):
+                q_aa = R[hh, ss, aa]
+                if hh < horizon - 1:
+                    # not using .dot instead of loop to avoid scipy dependency
+                    # (numba seems to require scipy for linear algebra
+                    #  operations in numpy)
+                    for ns in range(S):
+                        q_aa += gamma * P[ss, aa, ns] * V[hh + 1, ns]
+                if q_aa > max_q:
+                    max_q = q_aa
+                Q[hh, ss, aa] = q_aa
+            V[hh, ss] = max_q
+            if V[hh, ss] > vmax:
+                V[hh, ss] = vmax
+
+
+@numba_jit
 def backward_induction_in_place(Q, V, R, P, horizon, gamma=1.0, vmax=np.inf):
     """
     Backward induction to compute Q and V functions in
