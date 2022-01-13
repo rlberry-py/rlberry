@@ -476,7 +476,9 @@ class AgentManager:
         del kwargs
         budget = budget or self.fit_budget
 
-        logger.info(f"Running AgentManager fit() for {self.agent_name}... ")
+        logger.info(
+            f"Running AgentManager fit() for {self.agent_name}"
+            f" with n_fit = {self.n_fit} and max_workers = {self.max_workers}.")
         seeders = self.seeder.spawn(self.n_fit)
         if not isinstance(seeders, list):
             seeders = [seeders]
