@@ -14,9 +14,6 @@ coverage:
         # basic
         target: auto
         threshold: 1% # allow coverage to drop at most 1%
-    patch:
-      default:
-        target: 50% # new contributions should have a coverage at least.
 
 parsers:
   gcov:
