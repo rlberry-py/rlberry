@@ -30,6 +30,7 @@ jobs:
       pip install pytest pytest-azurepipelines pytest-cov codecov pytest-xvfb
       # run doctests in the documentation
       # TODO: use following line for doctest ?
+      export NUMBA_DISABLE_JIT = "1"
       pytest docs/*rst || echo "Ignoring exit status"
       pytest --cov=rlberry --cov-report xml rlberry
     displayName: 'Test and coverage'
