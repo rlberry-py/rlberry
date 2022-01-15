@@ -12,6 +12,8 @@ jobs:
     matrix:
       Python38:
         python.version: '3.8'
+  variables:
+    NUMBA_DISABLE_JIT: "1"
 
   steps:
   - task: UsePythonVersion@0
@@ -32,7 +34,7 @@ jobs:
       # TODO: use following line for doctest ?
       pytest docs/*rst || echo "Ignoring exit status"
       pytest --cov=rlberry --cov-report xml rlberry
-    displayName: 'Test and coverage'
+    displayName: 'Test and coverage' 
   - script: |
       curl -Os https://uploader.codecov.io/latest/linux/codecov
       chmod +x codecov
