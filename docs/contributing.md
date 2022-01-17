@@ -142,9 +142,9 @@ Please note that if you want to skip the CI (azure pipeline is long to run), use
 
 # Documentation
 
-We are glad to accept any sort of documentation: function docstrings, reStructuredText or markdown documents (like this one), tutorials, examples, etc. reStructuredText and markdown documents live in the source code repository under the doc/ directory.
+We are glad to accept any sort of documentation: function docstrings, reStructuredText or markdown documents (like this one), tutorials, examples, etc. reStructuredText and markdown documents live in the source code repository under the docs/ directory.
 
-You can edit the documentation using any text editor, and then generate the HTML output by typing make from the doc/ directory. Alternatively, make html may be used to generate the documentation with the example gallery (which takes quite some time). The resulting HTML files will be placed in _build/html/stable and are viewable in a web browser.
+You can edit the documentation using any text editor, and then generate the HTML output by typing make from the docs/ directory. Alternatively, make html may be used to generate the documentation with the example gallery (which takes quite some time). The resulting HTML files will be placed in _build/html/stable and are viewable in a web browser.
 
 ## Building the documentation
 
@@ -155,7 +155,7 @@ pip install sphinx sphinx-gallery numpydoc myst-parser --user
 ```
 To build the documentation, you need to be in the doc folder:
 ```bash
-cd doc
+cd docs
 ```
 You may only need to generate the full web site, without the example gallery:
 ```bash
