@@ -341,4 +341,3 @@ configure_logging(level="INFO")
 # Acknowledgements
 
 Part of this page was copied from [scikit-learn contributing guideling](https://scikit-learn.org/dev/developers/contributing.html#documentation).
-=======
