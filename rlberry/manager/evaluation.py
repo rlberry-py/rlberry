@@ -2,7 +2,7 @@ import logging
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-from os import listdir
+import os
 from pathlib import Path
 from datetime import datetime
 from rlberry.manager.agent_manager import AgentHandler
@@ -139,6 +139,9 @@ def read_writer_data(agent_manager,
             preprocess_funcs = preprocess_func
 
     if input_dir is not None:
+        if not os.path.isdir(input_dir):
+            print(input_dir)
+            raise ValueError('input_dir does not exists')
         writer_datas = []
         dir_name =  Path(input_dir) / 'manager_data'
         # Identify agent folders
