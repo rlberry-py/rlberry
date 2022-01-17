@@ -34,3 +34,4 @@ def test_plot_writer_data():
                                   title="Cumulative Reward", show = False,
                                   savefig_fname=tmpdirname+"test.png")
         assert os.path.getsize(tmpdirname+'test.png')>1000 # check that the file is not empty
+        assert len(output)>1
