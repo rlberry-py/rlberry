@@ -34,6 +34,11 @@ class RenderInterface(ABC):
         Save video file.
         """
         pass
+    def get_video(self, **kwargs):
+        """
+        Get video data.
+        """
+        pass
 
     @abstractmethod
     def render(self, **kwargs):
@@ -131,7 +136,7 @@ class RenderInterface2D(RenderInterface):
             logger.info("Rendering not enabled for the environment.")
             return 1
 
-    def save_video(self, filename, framerate=25, **kwargs):
+    def get_video(self, framerate=25, **kwargs):
 
         # background and data
         background, data = self._get_background_and_scenes()
@@ -148,5 +153,10 @@ class RenderInterface2D(RenderInterface):
         renderer.set_data(data)
         renderer.set_background(background)
 
-        video_data = renderer.get_video_data()
+        return renderer.get_video_data()
+
+
+
+    def save_video(self, filename, framerate=25, **kwargs):
+        video_data = self.get_video(framerate=framerate, **kwargs)
         video_write(filename, video_data, framerate=framerate)

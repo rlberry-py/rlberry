@@ -2,13 +2,12 @@
 
 # Contributing
 
-There are a number of ways to contribute:
+Currently, we are accepting the following forms of contributions:
 
 - Bug reports (open
   an [Issue](https://github.com/rlberry-py/rlberry/issues/new?assignees=&labels=&template=bug_report.md&title=)
   indicating your system information, the current behavior, the expected behavior, a standalone code to reproduce the
   issue and other information as needed).
-- Propose an interesting new feature
 - Pull requests for bug fixes.
 - Improvements/benchmarks for deep RL agents.
 - Documentation improvements.
@@ -198,13 +197,59 @@ some text.
 If you want to look at some examples, you can look at doc/index.rst file for rst file example and the present file (contributing.md) for example of markdown syntax.
 
 # Guidelines for new agents
+=======
+
+## Guidelines for docstring
+
+* Follow the [numpydoc docstring guide](https://numpydoc.readthedocs.io/en/latest/format.html).
+
+## Have a video for an example in the documentation
+
+To generate the videos for the examples, cd to the docs folder  and then use `make video`.
+
+Here is a template of the python script of a video example:
+```python
+"""
+===============
+Some good title
+===============
+Some explanation text of what you are doing
+
+.. video:: ../video_plot_my_experiment.mp4
+   :width: 600
+
+.. In the path for the video described before, use an additional ".." if your
+    experiment is in a sub-folder of the examples folder.
+"""
+# sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_my_experiment.jpg'
+
+# Write here the code that generates the video
+
+
+# Save the video
+video = env.save_video("../docs/_video/video_plot_my_experiment.mp4", framerate=10)
+```
+
+For a video to be automatically compiled with `make video`, you must follow this
+template replacing the "my_experiment" with the name of your example. It may be
+useful to change the framerate in the last line of the code to have a faster or
+slower framerate depending on your environment.
+
+After running `make video`, you should have your video available in `docs/_video`
+you should add this video to the git repo with `git add docs/_video/video_plot_my_experiment.mp4`
+and `git add docs/thumbnails/video_plot_my_experiment.jpg` to add the associated thumbnail.
+
+Then just push the new examples, the mp4 and the jpg files, they should be included in the doc.
+
+
+## Guidelines for new agents
 
 * Create a folder for the agent `rlberry/agents/agent_name`.
 * Create `rlberry/agents/agent_name/__init__.py`.
 * Write a test to check that the agent is running `rlberry/agents/test_agent_name.py`.
 * Write an example `examples/demo_agent_name.py`.
 
-## Agent code template
+### Agent code template
 
 The template below gives the general structure that the Agent code must follow. See more options in the abstract `Agent`
 class (`rlberry/agents/agent.py`).
@@ -265,7 +310,7 @@ class MyAgent(Agent):
         }
 ```
 
-## Implementation notes
+### Implementation notes
 
 * When inheriting from the `Agent` class, make sure to call `Agent.__init__(self, env, **kwargs)` using `**kwargs` in
   case new features are added to the base class.
@@ -296,3 +341,4 @@ configure_logging(level="INFO")
 # Acknowledgements
 
 Part of this page was copied from [scikit-learn contributing guideling](https://scikit-learn.org/dev/developers/contributing.html#documentation).
+=======

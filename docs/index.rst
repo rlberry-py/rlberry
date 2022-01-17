@@ -45,8 +45,9 @@ and allows us to create independent random number generators for different objec
 :class:`~rlberry.seeding.seeder.Seeder` instance. See :ref:`Seeding <seeding>`.
 
 
-How to contribute ?
-===================
+
+Contributing to rlberry
+=======================
 
 If you want to contribute to rlberry, check out :ref:`the contribution guidelines<contributing>`.
 

@@ -83,8 +83,8 @@ how to use `rlberry`:
 
 | Content | Description | Link |
 |-|-|-|
-| Introduction to `rlberry` | How to create an agent, optimize its hyperparameters and compare to a baseline.| <a href="https://github.com/rlberry-py/notebooks/blob/main/introduction_to_rlberry.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg"></a>|
-| Evaluating and optimizing agents | Train a REINFORCE agent and optimize its hyperparameters|  <a href="https://github.com/rlberry-py/notebooks/blob/main/rlberry_evaluate_and_optimize_agent.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg"></a>
+| Introduction to `rlberry` | How to create an agent, optimize its hyperparameters and compare to a baseline.| <a href="https://colab.research.google.com/github/rlberry-py/notebooks/blob/main/introduction_to_rlberry.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg"></a>|
+| Evaluating and optimizing agents | Train a REINFORCE agent and optimize its hyperparameters|  <a href="https://colab.research.google.com/github/rlberry-py/notebooks/blob/main/rlberry_evaluate_and_optimize_agent.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg"></a>
 
 ## Citing rlberry
 
@@ -106,12 +106,12 @@ If you use `rlberry` in scientific publications, we would appreciate citations u
 
 The modules listed below are experimental at the moment, that is, they are not thoroughly tested and are susceptible to evolve.
 
-* `rlberry.network`: Allows communication between between a server and client via sockets, and can be used to run agents remotely.
+* `rlberry.network`: Allows communication between a server and client via sockets, and can be used to run agents remotely.
 
 * `rlberry.agents.torch`, `rlberry.agents.jax`, `rlberry.exploration_tools.torch`: Deep RL agents are currently not stable, and their main purpose now is to illustrate how to implement and run those algorithms with the `rlberry` interface
 (e.g., run several agents in parallel, optimize hyperparameters etc.).
 Other libraries, such as [Stable Baselines](https://stable-baselines3.readthedocs.io/en/master/) provide reliable implementations of deep RL algorithms, and **can be used with `rlberry`**, as shown by
-[this example](https://github.com/rlberry-py/rlberry/blob/main/examples/demo_from_stable_baselines.py).
+[this example](https://github.com/rlberry-py/rlberry/blob/main/examples/demo_examples/demo_from_stable_baselines.py).
 
 ## Tests
 
