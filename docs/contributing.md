@@ -43,7 +43,7 @@ When you submit an issue to Github, please do your best to follow these guidelin
 
 ```{admonition} Note
 
-To avoid duplicating work, it is highly advised that you search through the issue tracker and the PR list. If in doubt about duplicated work, or if you want to work on a non-trivial feature, it’s recommended to first open an issue in the issue tracker to get some feedbacks from core developers.
+To avoid duplicating work, it is highly advised that you search through the issue tracker and the PR list. If in doubt about duplicated work, or if you want to work on a non-trivial feature, it’s recommended to first open an issue in the issue tracker to get some feedback from core developers.
 
 One easy way to find an issue to work on is by applying the “help wanted” label in your search. This lists all the issues that have been unclaimed so far.
 
@@ -156,7 +156,7 @@ To build the documentation, you need to be in the doc folder:
 ```bash
 cd docs
 ```
-You may only need to generate the full web site, without the example gallery:
+You may only need to generate the full website, without the example gallery:
 ```bash
 make
 ```
@@ -179,7 +179,7 @@ The examples gallery is constructed using sphinx-gallery, see its [documentation
 
 ### Other documentation
 
-THe documentation is done using sphinx, each article can be writen either in reStructuredText (rst) format or in markdown. For markdown support, we use myst-parser (see its [documentation](https://myst-parser.readthedocs.io/en/latest/using/intro.html)).
+The documentation is done using sphinx, each article can be written either in reStructuredText (rst) format or in markdown. For markdown support, we use myst-parser (see its [documentation](https://myst-parser.readthedocs.io/en/latest/using/intro.html)).
 
 If you need to cross-reference your documentations, you can use
 for rst:
@@ -233,7 +233,7 @@ video = env.save_video("../docs/_video/video_plot_my_experiment.mp4", framerate=
 For a video to be automatically compiled with `make video`, you must follow this
 template replacing the "my_experiment" with the name of your example. It may be
 useful to change the framerate in the last line of the code to have a faster or
-slower framerate depending on your environment.
+slower frame rate depending on your environment.
 
 After running `make video`, you should have your video available in `docs/_video`
 you should add this video to the git repo with `git add docs/_video/video_plot_my_experiment.mp4`
@@ -318,7 +318,7 @@ class MyAgent(Agent):
 Infos, errors and warnings are printed using the `logging` library.
 
 * From `gym` to `rlberry`:
-    * `reseed` (rlberry) should be called instead of `seed` (gym). `seed` keeps compatilibity with gym, whereas `reseed`
+    * `reseed` (rlberry) should be called instead of `seed` (gym). `seed` keeps compatibility with gym, whereas `reseed`
       uses the unified seeding mechanism of `rlberry`.
 
 ## Guidelines for logging
