@@ -104,7 +104,7 @@ then spawn agents as desired during the experiment.
         UCBVIAgent,
         (env_ctor, env_kwargs),
         fit_budget=100,
-        eval_kwargs=dict(eval_horizon=20,n_simimulations=10),
+        eval_kwargs=dict(eval_horizon=20,n_simulations=10),
         init_kwargs=ucbvi_params,
         n_fit=1)
     ucbvi_stats.fit()
@@ -114,7 +114,7 @@ then spawn agents as desired during the experiment.
         RandomAgent,
         (env_ctor, env_kwargs),
         fit_budget=100,
-        eval_kwargs=dict(eval_horizon=20,n_simimulations=10),
+        eval_kwargs=dict(eval_horizon=20,n_simulations=10),
         n_fit=1)
     baseline_stats.fit()
 
