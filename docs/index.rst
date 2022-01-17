@@ -45,6 +45,7 @@ and allows us to create independent random number generators for different objec
 :class:`~rlberry.seeding.seeder.Seeder` instance. See :ref:`Seeding <seeding>`.
 
 
+
 Contributing to rlberry
 =======================
 
@@ -57,15 +58,9 @@ Documentation Contents
 
 .. toctree::
   :maxdepth: 2
-  :caption: Quick start
 
   installation
   quickstart
   external
-  source/modules
-
-.. toctree::
-   :maxdepth: 2
-   :caption: User Guide
-
-   user_guide
+  api
+  user_guide
