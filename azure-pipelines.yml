@@ -56,7 +56,6 @@ jobs:
       black --check examples rlberry *py
       # ensure there is no unused imports with
       flake8 --select F401 --exclude=rlberry/check_packages.py --per-file-ignores="__init__.py:F401"
-    failOnStderr: true 
     displayName: 'Check flake8 and black'
 
 
