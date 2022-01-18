@@ -3,7 +3,7 @@ from rlberry.agents import AgentWithSimplePolicy
 from rlberry.agents.dynprog.value_iteration import ValueIterationAgent
 from rlberry.manager import AgentManager
 from optuna.samplers import TPESampler
-
+import pytest
 
 class DummyAgent(AgentWithSimplePolicy):
     def __init__(self,
@@ -55,8 +55,8 @@ def test_hyperparam_optim_tpe():
     stats_agent.optimize_hyperparams(sampler_kwargs=sampler_kwargs, n_trials=5)
     stats_agent.clear_output_dir()
 
-
-def test_hyperparam_optim_random():
+@pytest.mark.parametrize("parallelization", ["process", "thread"])
+def test_hyperparam_optim_random(parallelization):
     # Define train env
     train_env = (GridWorld, {})
 
@@ -66,10 +66,13 @@ def test_hyperparam_optim_random():
                              init_kwargs={},
                              fit_budget=1,
                              eval_kwargs={'eval_horizon': 5},
-                             n_fit=4)
+                             n_fit=4,
+                             parallelization=parallelization)
 
     # test hyperparameter optimization with random sampler
-    stats_agent.optimize_hyperparams(sampler_method="random", n_trials=5)
+    stats_agent.optimize_hyperparams(sampler_method="random",
+                                     n_trials=5,
+                                     optuna_parallelization=parallelization)
     stats_agent.clear_output_dir()
 
 

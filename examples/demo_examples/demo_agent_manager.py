@@ -1,6 +1,6 @@
 """ 
- ===================== 
- Demo: demo_agent_manager 
+ =====================
+ Demo: demo_agent_manager
  =====================
 """
 import numpy as np
@@ -85,7 +85,8 @@ if __name__ == '__main__':
         eval_kwargs=eval_kwargs,
         n_fit=4,
         seed=123,
-        parallelization='process')
+        parallelization='process',
+        max_workers=2)
 
     agent_manager_list = [rsucbvi_stats, rskernel_stats, a2c_stats]
 
@@ -101,7 +102,7 @@ if __name__ == '__main__':
                      preprocess_func=np.cumsum,
                      title='cumulative rewards',
                      show=False)
-        
+
     plot_writer_data(agent_manager_list,
                      tag='episode_rewards',
                      title='episode rewards',

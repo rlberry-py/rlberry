@@ -12,6 +12,8 @@ jobs:
     matrix:
       Python38:
         python.version: '3.8'
+  variables:
+    NUMBA_DISABLE_JIT: "1"
 
   steps:
   - task: UsePythonVersion@0
@@ -43,7 +45,7 @@ jobs:
 
 - job: 'macOS'
   pool:
-    vmImage: 'macOS-11'
+    vmImage: 'macOS-latest'
   strategy:
     matrix:
       Python38:

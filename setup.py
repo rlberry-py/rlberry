@@ -43,7 +43,7 @@ jax_agents_requires = default_requires + [
     'chex',
     'dm-haiku',
     'optax',
-    'dm-reverb[tensorflow]==0.5.0',
+    'dm-reverb[tensorflow]==0.6.1',
     'dm-tree',
     'rlax'
 ]
@@ -60,7 +60,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='rlberry',
-    version='0.2.1',
+    version='0.2.2-dev',
     description='An easy-to-use reinforcement learning library for research and education',
     long_description=long_description,
     long_description_content_type="text/markdown",

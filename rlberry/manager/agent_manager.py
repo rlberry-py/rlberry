@@ -173,6 +173,16 @@ class AgentManager:
         Directory where to store data.
     parallelization: {'thread', 'process'}, default: 'process'
         Whether to parallelize  agent training using threads or processes.
+    max_workers: None or int, default: None
+        Number of processes/threads used in a call to fit().
+        If None and parallelization='process', it will default to the
+        number of processors on the machine.
+        If None and parallelization='thread', it will default to the
+        number of processors on the machine, multiplied by 5.
+    mp_context: {'spawn', 'fork'}, default: 'spawn'.
+        Context for python multiprocessing module.
+        Warning: If you're using JAX, it only works with 'spawn'.
+                 If running code on a notebook or interpreter, use 'fork'.
     worker_logging_level : str, default: 'INFO'
         Logging level in each of the threads/processes used to fit agents.
     seed : np.random.SeedSequence, rlberry.seeding.Seeder or int, default : None
@@ -182,9 +192,10 @@ class AgentManager:
         If seeder, use seeder.seed_seq
     enable_tensorboard : bool, default = False
         If True, enable tensorboard logging in Agent's DefaultWriter.
-    create_unique_out_dir : bool, default = True
-        If true, data is saved to output_dir/manager_data/<AGENT_NAME_UNIQUE_ID>
-        Otherwise, data is saved to output_dir/manager_data
+    outdir_id_style: {None, 'unique', 'timestamp'}, default = 'timestamp'
+        If None, data is saved to output_dir/manager_data
+        If 'unique', data is saved to output_dir/manager_data/<AGENT_NAME_UNIQUE_ID>
+        If 'timestamp', data is saved to output_dir/manager_data/<AGENT_NAME_TIMESTAMP_SHORT_ID>
     default_writer_kwargs : dict
         Optional arguments for DefaultWriter.
     init_kwargs_per_instance : List[dict] (optional)
@@ -207,10 +218,12 @@ class AgentManager:
                  n_fit=4,
                  output_dir=None,
                  parallelization='thread',
+                 max_workers=None,
+                 mp_context='spawn',
                  worker_logging_level='INFO',
                  seed=None,
                  enable_tensorboard=False,
-                 create_unique_out_dir=True,
+                 outdir_id_style='timestamp',
                  default_writer_kwargs=None,
                  init_kwargs_per_instance=None):
         # agent_class should only be None when the constructor is called
@@ -234,8 +247,12 @@ class AgentManager:
             assert isinstance(
                 eval_env, Tuple), "[AgentManager]train_env must be Tuple (constructor, kwargs)"
 
+        # check options
+        assert outdir_id_style in [None, 'unique', 'timestamp']
+
         # create oject identifier
         self.unique_id = metadata_utils.get_unique_id(self)
+        self.timestamp_id = metadata_utils.get_readable_id(self)
 
         # Agent class
         self.agent_class = agent_class
@@ -260,6 +277,8 @@ class AgentManager:
         self.eval_kwargs = deepcopy(eval_kwargs)
         self.n_fit = n_fit
         self.parallelization = parallelization
+        self.max_workers = max_workers
+        self.mp_context = mp_context
         self.worker_logging_level = worker_logging_level
         if fit_budget is not None:
             self.fit_budget = fit_budget
@@ -278,8 +297,10 @@ class AgentManager:
         if output_dir is None:
             output_dir = metadata_utils.RLBERRY_TEMP_DATA_DIR
         self.output_dir = Path(output_dir) / 'manager_data'
-        if create_unique_out_dir:
+        if outdir_id_style == 'unique':
             self.output_dir = self.output_dir / (self.agent_name + '_' + self.unique_id)
+        elif outdir_id_style == 'timestamp':
+            self.output_dir = self.output_dir / (self.agent_name + '_' + self.timestamp_id)
 
         # Create list of writers for each agent that will be trained
         # 'default' will keep Agent's use of DefaultWriter.
@@ -455,7 +476,9 @@ class AgentManager:
         del kwargs
         budget = budget or self.fit_budget
 
-        logger.info(f"Running AgentManager fit() for {self.agent_name}... ")
+        logger.info(
+            f"Running AgentManager fit() for {self.agent_name}"
+            f" with n_fit = {self.n_fit} and max_workers = {self.max_workers}.")
         seeders = self.seeder.spawn(self.n_fit)
         if not isinstance(seeders, list):
             seeders = [seeders]
@@ -470,7 +493,7 @@ class AgentManager:
         elif self.parallelization == 'process':
             executor_class = functools.partial(
                 concurrent.futures.ProcessPoolExecutor,
-                mp_context=multiprocessing.get_context('spawn'))
+                mp_context=multiprocessing.get_context(self.mp_context))
             lock = multiprocessing.Manager().Lock()
         else:
             raise ValueError(f'Invalid backend for parallelization: {self.parallelization}')
@@ -492,7 +515,7 @@ class AgentManager:
             workers_output = [_fit_worker(args[0])]
 
         else:
-            with executor_class() as executor:
+            with executor_class(max_workers=self.max_workers) as executor:
                 futures = []
                 for arg in args:
                     futures.append(executor.submit(_fit_worker, arg))
@@ -760,7 +783,7 @@ class AgentManager:
                     executor.shutdown()
             elif optuna_parallelization == 'process':
                 with concurrent.futures.ProcessPoolExecutor(
-                        mp_context=multiprocessing.get_context('spawn')) as executor:
+                        mp_context=multiprocessing.get_context(self.mp_context)) as executor:
                     for _ in range(n_optuna_workers):
                         executor.submit(
                             study.optimize,
@@ -908,7 +931,7 @@ def _optuna_objective(
         parallelization='thread',
         output_dir=temp_dir,
         enable_tensorboard=False,
-        create_unique_out_dir=True)
+        outdir_id_style='unique')
 
     if disable_evaluation_writers:
         for ii in range(params_stats.n_fit):
