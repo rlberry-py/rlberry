@@ -4,20 +4,20 @@ import numpy as np
 import gym.spaces as spaces
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.exploration_tools.discrete_counter import DiscreteCounter
-from rlberry.agents.dynprog.utils import backward_induction_in_place, backward_induction_sd
+from rlberry.agents.dynprog.utils import backward_induction_in_place,\
+                             backward_induction_reward_sd, backward_induction_sd
 
 logger = logging.getLogger(__name__)
 
 
-class PSRLAgent(AgentWithSimplePolicy):
+class RLSVIAgent(AgentWithSimplePolicy):
     """
-    PSRL algorithm from [1] with beta prior for the "Bernoullized" rewards
-    (instead of Gaussian-gamma prior).
+    RLSVI algorithm from [1,2] with Gaussian noise.
 
     Notes
     -----
-    The recommended policy after all the episodes is computed without
-    exploration bonuses.
+    The recommended policy after all the episodes is computed with the empirical
+    MDP.
 
     Parameters
     ----------
@@ -29,48 +29,43 @@ class PSRLAgent(AgentWithSimplePolicy):
     horizon : int
         Horizon of the objective function. If None and gamma<1, set to
         1/(1-gamma).
-    scale_prior_reward : double, delfault: 1.0
-        scale of the Beta (uniform) prior,
-        i.e prior is Beta(scale_prior_reward*(1,1))
-    scale_prior_transition : double, default: 1/number of state
-        scale of the (uniform) Dirichlet prior,
-        i.e prior is Dirichlet(scale_prior_transition*(1,...,1))
-    bernoullized_reward: bool, default: True
-        If true the rewards are Bernoullized
+    scale_std_prior : double, delfault: 0.33
+        scale std of the prior. 
+        The model is at step h: prior N(0,(scale_std_prior*(H-h+1))^2) and
+        observation|prior ~ N(0,(scale_std_prior*(H-h+1))^2).
     reward_free : bool, default: False
-        If true, ignores rewards and uses only 1/n bonuses.
+        If true, ignores rewards.
     stage_dependent : bool, default: False
         If true, assume that transitions and rewards can change with the stage h.
 
     References
     ----------
-    .. [1] Osband et al., 2013
-        (More) Efficient Reinforcement Learning via Posterior Sampling
-        https://arxiv.org/abs/1306.0940
+    .. [1] Osband et al., 2014
+        Generalization and Exploration via Randomized Value Functions
+        https://arxiv.org/abs/1402.0635
+        
+    .. [2] Russo, 2019
+        Worst-Case Regret Bounds for Exploration via Randomized Value Functions
+        https://arxiv.org/abs/1906.02870
 
     """
-    name = "PSRL"
+    name = "RLSVI"
+
 
     def __init__(self,
-                 env,
-                 gamma=1.0,
-                 horizon=100,
-                 scale_prior_reward=1,
-                 scale_prior_transition=None,
-                 bernoullized_reward=True,
-                 reward_free=False,
-                 stage_dependent=False,
-                 **kwargs):
+                    env,
+                    gamma=1.0,
+                    horizon=100,
+                    scale_std_prior= 1.0,
+                    reward_free=False,
+                    stage_dependent=False,
+                    **kwargs):
         # init base class
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
         self.gamma = gamma
         self.horizon = horizon
-        self.scale_prior_reward = scale_prior_reward
-        self.scale_prior_transition = scale_prior_transition
-        if scale_prior_transition is None:
-            self.scale_prior_transition = 1.0 / self.env.observation_space.n
-        self.bernoullized_reward = bernoullized_reward
+        self.scale_std_prior = scale_std_prior
         self.reward_free = reward_free
         self.stage_dependent = stage_dependent
 
@@ -111,12 +106,17 @@ class PSRLAgent(AgentWithSimplePolicy):
         else:
             shape_hsa = (S, A)
             shape_hsas = (S, A, S)
+        
+        #stds prior
+        self.std_sa = self.scale_std_prior*np.ones((H ,S , A))
 
-        # Prior transitions
-        self.N_sas = self.scale_prior_transition * np.ones(shape_hsas)
+        # visit counter
+        self.N_sa = np.ones(shape_hsa)
 
-        # Prior rewards
-        self.M_sa = self.scale_prior_reward * np.ones(shape_hsa + (2,))
+
+        # MDP estimator
+        self.R_hat = np.zeros(shape_hsa)
+        self.P_hat = np.ones(shape_hsas) * 1.0 / S
 
         # Value functions
         self.V = np.zeros((H, S))
@@ -124,6 +124,10 @@ class PSRLAgent(AgentWithSimplePolicy):
         # for rec. policy
         self.V_policy = np.zeros((H, S))
         self.Q_policy = np.zeros((H, S, A))
+
+        # Init V and variances
+        for hh in range(self.horizon):
+            self.std_sa[hh,:,:] *= self.v_max[hh]
 
         # ep counter
         self.episode = 0
@@ -142,46 +146,55 @@ class PSRLAgent(AgentWithSimplePolicy):
         assert self.Q is not None
         return self.Q[hh, state, :].argmax()
 
+
     def _update(self, state, action, next_state, reward, hh):
-        bern_reward = reward
-        if self.bernoullized_reward:
-            bern_reward = self.rng.binomial(1, reward)
-        # update posterior
         if self.stage_dependent:
-            self.N_sas[hh, state, action, next_state] += 1
-            self.M_sa[hh, state, action, 0] += bern_reward
-            self.M_sa[hh, state, action, 1] += (1 - bern_reward)
+            self.N_sa[hh, state, action] += 1
+
+            nn = self.N_sa[hh, state, action]
+            prev_r = self.R_hat[hh, state, action]
+            prev_p = self.P_hat[hh, state, action, :]
+
+            self.R_hat[hh, state, action] = (1.0 - 1.0 / nn) * prev_r + reward * 1.0 / nn
+
+            self.P_hat[hh, state, action, :] = (1.0 - 1.0 / nn) * prev_p
+            self.P_hat[hh, state, action, next_state] += 1.0 / nn
 
         else:
-            self.N_sas[state, action, next_state] += 1
-            self.M_sa[state, action, 0] += bern_reward
-            self.M_sa[state, action, 1] += (1 - bern_reward)
+            self.N_sa[state, action] += 1
+
+            nn = self.N_sa[state, action]
+            prev_r = self.R_hat[state, action]
+            prev_p = self.P_hat[state, action, :]
+
+            self.R_hat[state, action] = (1.0 - 1.0 / nn) * prev_r + reward * 1.0 / nn
+
+            self.P_hat[state, action, :] = (1.0 - 1.0 / nn) * prev_p
+            self.P_hat[state, action, next_state] += 1.0 / nn
 
     def _run_episode(self):
-        # sample reward and transitions from posterior
-        self.R_sample = self.rng.beta(self.M_sa[..., 0], self.M_sa[..., 1])
-        self.P_sample = self.rng.gamma(self.N_sas)
-        self.P_sample = self.P_sample / self.P_sample.sum(-1, keepdims=True)
-        # run backward induction
+        # interact for H steps
+        episode_rewards = 0
+        #sample noises 
+        noise_sa = self.rng.normal(self.R_hat,self.std_sa/np.sqrt(self.N_sa))
+        # run backward noisy induction
         if self.stage_dependent:
             backward_induction_sd(
                 self.Q,
                 self.V,
-                self.R_sample,
-                self.P_sample,
+                self.R_hat + noise_sa,
+                self.P_hat,
                 self.gamma,
                 self.v_max[0])
         else:
-            backward_induction_in_place(
+            backward_induction_reward_sd(
                 self.Q,
                 self.V,
-                self.R_sample,
-                self.P_sample,
-                self.horizon,
+                self.R_hat + noise_sa,
+                self.P_hat,
                 self.gamma,
                 self.v_max[0])
-        # interact for H steps
-        episode_rewards = 0
+                
         state = self.env.reset()
         for hh in range(self.horizon):
             action = self._get_action(state, hh)
@@ -219,22 +232,20 @@ class PSRLAgent(AgentWithSimplePolicy):
             count += 1
 
         # compute Q function for the recommended policy
-        R_hat = self.M_sa[..., 0] / (self.M_sa[..., 0] + self.M_sa[..., 1])
-        P_hat = self.N_sas / self.N_sas.sum(-1, keepdims=True)
         if self.stage_dependent:
             backward_induction_sd(
                 self.Q_policy,
                 self.V_policy,
-                R_hat,
-                P_hat,
+                self.R_hat,
+                self.P_hat,
                 self.gamma,
                 self.v_max[0])
         else:
             backward_induction_in_place(
                 self.Q_policy,
                 self.V_policy,
-                R_hat,
-                P_hat,
+                self.R_hat,
+                self.P_hat,
                 self.horizon,
                 self.gamma,
                 self.v_max[0])
