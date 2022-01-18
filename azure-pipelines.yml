@@ -54,9 +54,11 @@ jobs:
       python -m pip install --upgrade pip
       pip install  black flake8
       black --check examples rlberry *py
+    displayName: "black"
+  - script: |
       # ensure there is no unused imports with
       flake8 --select F401 --exclude=rlberry/check_packages.py --per-file-ignores="__init__.py:F401"
-    displayName: 'Check flake8 and black'
+    displayName: 'flake8'
 
 
 
