@@ -3,22 +3,29 @@
 A demo of Agent Manager
 =======================
 In this example, we use the agent manager.
+
+First, we initialize a grid world environment with finite state space and actions.
+A grid world is a simple environment with finite states and actions, on which
+we can test simple algorithms. The reward function can be accessed by: ``env.R[state, action]``, while the transitions by: ``env.P[state, action, next_state]``.
+
+Then, we implement a value iteration algorithm for the action values:
+
+.. math::
+
+    Q(s, a) \\leftarrow \sum_{s^{\prime}} p(s'|a, s)\\left( R(s, a)+\gamma \max _{a^{\prime}} Q(s^{\prime}, a^{\prime}) \\right).
+
+Finally, we compare with a baseline provided by a random policy using the Agent Manager class which trains, evaluates and gathers statistics about the two agents.
 """
 
 from rlberry.envs import GridWorld
 
-# A grid world is a simple environment with finite states and actions, on which
-# we can test simple algorithms.
-# -> The reward function can be accessed by: env.R[state, action]
-# -> And the transitions: env.P[state, action, next_state]
+# Create a grid world environment and an agent with a value iteration policy
 env_ctor = GridWorld
 env_kwargs =dict(nrows=3, ncols=10,
                 reward_at = {(1,1):0.1, (2, 9):1.0},
                 walls=((1,4),(2,4), (1,5)),
                 success_probability=0.9)
 env = env_ctor(**env_kwargs)
-
-
 
 import numpy as np
 from rlberry.agents import AgentWithSimplePolicy
