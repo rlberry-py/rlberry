@@ -18,6 +18,9 @@ class RLSVIAgent(AgentWithSimplePolicy):
     -----
     The recommended policy after all the episodes is computed with the empirical
     MDP.
+    The std of the noise is of the form:
+    scale/sqrt(n)+ V_max/n
+    as for simplified Bernstein bonuses.
 
     Parameters
     ----------
@@ -29,10 +32,9 @@ class RLSVIAgent(AgentWithSimplePolicy):
     horizon : int
         Horizon of the objective function. If None and gamma<1, set to
         1/(1-gamma).
-    scale_std_prior : double, delfault: 0.33
-        scale std of the prior. 
-        The model is at step h: prior N(0,(scale_std_prior*(H-h+1))^2) and
-        observation|prior ~ N(0,(scale_std_prior*(H-h+1))^2).
+    scale_std_noise : double, delfault: 1.0
+        scale the std of the noise. At step h the std is  
+        scale_std_noise/sqrt(n)+(H-h+1)/n
     reward_free : bool, default: False
         If true, ignores rewards.
     stage_dependent : bool, default: False
@@ -56,7 +58,7 @@ class RLSVIAgent(AgentWithSimplePolicy):
                     env,
                     gamma=1.0,
                     horizon=100,
-                    scale_std_prior= 1.0,
+                    scale_std_noise= 1.0,
                     reward_free=False,
                     stage_dependent=False,
                     **kwargs):
@@ -65,7 +67,7 @@ class RLSVIAgent(AgentWithSimplePolicy):
 
         self.gamma = gamma
         self.horizon = horizon
-        self.scale_std_prior = scale_std_prior
+        self.scale_std_noise = scale_std_noise
         self.reward_free = reward_free
         self.stage_dependent = stage_dependent
 
@@ -108,8 +110,8 @@ class RLSVIAgent(AgentWithSimplePolicy):
             shape_hsas = (S, A, S)
         
         #stds prior
-        self.std_sa = self.scale_std_prior*np.ones((H ,S , A))
-
+        self.std1_sa = self.scale_std_noise*np.ones((H ,S , A))
+        self.std2_sa = np.ones((H ,S , A))
         # visit counter
         self.N_sa = np.ones(shape_hsa)
 
@@ -127,7 +129,7 @@ class RLSVIAgent(AgentWithSimplePolicy):
 
         # Init V and variances
         for hh in range(self.horizon):
-            self.std_sa[hh,:,:] *= self.v_max[hh]
+            self.std2_sa[hh,:,:] *= self.v_max[hh]
 
         # ep counter
         self.episode = 0
@@ -175,8 +177,9 @@ class RLSVIAgent(AgentWithSimplePolicy):
     def _run_episode(self):
         # interact for H steps
         episode_rewards = 0
-        #sample noises 
-        noise_sa = self.rng.normal(self.R_hat,self.std_sa/np.sqrt(self.N_sa))
+        #stds scale/sqrt(n)+(H-h+1)/n
+        std_sa = self.std1_sa/np.sqrt(self.N_sa) + self.std2_sa/self.N_sa
+        noise_sa = self.rng.normal(self.R_hat,std_sa)
         # run backward noisy induction
         if self.stage_dependent:
             backward_induction_sd(
