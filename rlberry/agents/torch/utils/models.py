@@ -23,35 +23,50 @@ def default_policy_net_fn(env):
     elif isinstance(env.observation_space, spaces.Tuple):
         obs_shape = env.observation_space.spaces[0].shape
     else:
-        raise ValueError("Incompatible observation space: {}".format(env.observation_space))
+        raise ValueError(
+            "Incompatible observation space: {}".format(env.observation_space)
+        )
 
     if len(obs_shape) == 3:
         if obs_shape[0] < obs_shape[1] and obs_shape[0] < obs_shape[1]:
             # Assume CHW observation space
-            model_config = {"type": "ConvolutionalNetwork",
-                            "is_policy": True,
-                            "in_channels": int(obs_shape[0]),
-                            "in_height": int(obs_shape[1]),
-                            "in_width": int(obs_shape[2])}
+            model_config = {
+                "type": "ConvolutionalNetwork",
+                "is_policy": True,
+                "in_channels": int(obs_shape[0]),
+                "in_height": int(obs_shape[1]),
+                "in_width": int(obs_shape[2]),
+            }
         elif obs_shape[2] < obs_shape[0] and obs_shape[2] < obs_shape[1]:
             # Assume WHC observation space
-            model_config = {"type": "ConvolutionalNetwork",
-                            "is_policy": True,
-                            "transpose_obs": True,
-                            "in_channels": int(obs_shape[2]),
-                            "in_height": int(obs_shape[1]),
-                            "in_width": int(obs_shape[0])}
+            model_config = {
+                "type": "ConvolutionalNetwork",
+                "is_policy": True,
+                "transpose_obs": True,
+                "in_channels": int(obs_shape[2]),
+                "in_height": int(obs_shape[1]),
+                "in_width": int(obs_shape[0]),
+            }
     elif len(obs_shape) == 2:
-        model_config = {"type": "ConvolutionalNetwork",
-                        "is_policy": True,
-                        "in_channels": int(1),
-                        "in_height": int(obs_shape[0]),
-                        "in_width": int(obs_shape[1])}
+        model_config = {
+            "type": "ConvolutionalNetwork",
+            "is_policy": True,
+            "in_channels": int(1),
+            "in_height": int(obs_shape[0]),
+            "in_width": int(obs_shape[1]),
+        }
     elif len(obs_shape) == 1:
-        model_config = {"type": "MultiLayerPerceptron", "in_size": int(obs_shape[0]),
-                        "layer_sizes": [64, 64], "reshape": False, "is_policy": True}
+        model_config = {
+            "type": "MultiLayerPerceptron",
+            "in_size": int(obs_shape[0]),
+            "layer_sizes": [64, 64],
+            "reshape": False,
+            "is_policy": True,
+        }
     else:
-        raise ValueError("Incompatible observation shape: {}".format(env.observation_space.shape))
+        raise ValueError(
+            "Incompatible observation shape: {}".format(env.observation_space.shape)
+        )
 
     if isinstance(env.action_space, spaces.Discrete):
         model_config["out_size"] = env.action_space.n
@@ -70,21 +85,34 @@ def default_value_net_fn(env):
     elif isinstance(env.observation_space, spaces.Tuple):
         obs_shape = env.observation_space.spaces[0].shape
     else:
-        raise ValueError("Incompatible observation space: {}".format(env.observation_space))
+        raise ValueError(
+            "Incompatible observation space: {}".format(env.observation_space)
+        )
     # Assume CHW observation space
     if len(obs_shape) == 3:
-        model_config = {"type": "ConvolutionalNetwork", "in_channels": int(obs_shape[0]),
-                        "in_height": int(obs_shape[1]),
-                        "in_width": int(obs_shape[2])}
+        model_config = {
+            "type": "ConvolutionalNetwork",
+            "in_channels": int(obs_shape[0]),
+            "in_height": int(obs_shape[1]),
+            "in_width": int(obs_shape[2]),
+        }
     elif len(obs_shape) == 2:
-        model_config = {"type": "ConvolutionalNetwork", "in_channels": int(1),
-                        "in_height": int(obs_shape[0]),
-                        "in_width": int(obs_shape[1])}
+        model_config = {
+            "type": "ConvolutionalNetwork",
+            "in_channels": int(1),
+            "in_height": int(obs_shape[0]),
+            "in_width": int(obs_shape[1]),
+        }
     elif len(obs_shape) == 1:
-        model_config = {"type": "MultiLayerPerceptron", "in_size": int(obs_shape[0]),
-                        "layer_sizes": [64, 64]}
+        model_config = {
+            "type": "MultiLayerPerceptron",
+            "in_size": int(obs_shape[0]),
+            "layer_sizes": [64, 64],
+        }
     else:
-        raise ValueError("Incompatible observation shape: {}".format(env.observation_space.shape))
+        raise ValueError(
+            "Incompatible observation shape: {}".format(env.observation_space.shape)
+        )
 
     model_config["out_size"] = 1
 
@@ -97,7 +125,7 @@ class Net(nn.Module):
         self.net = nn.Sequential(
             nn.Linear(obs_size, hidden_size),
             nn.ReLU(),
-            nn.Linear(hidden_size, n_actions)
+            nn.Linear(hidden_size, n_actions),
         )
 
     def forward(self, x):
@@ -117,15 +145,15 @@ class BaseModule(torch.nn.Module):
         self.reset_type = reset_type
 
     def _init_weights(self, m):
-        if hasattr(m, 'weight'):
+        if hasattr(m, "weight"):
             if self.reset_type == "XAVIER":
                 torch.nn.init.xavier_uniform_(m.weight.data)
             elif self.reset_type == "ZEROS":
-                torch.nn.init.constant_(m.weight.data, 0.)
+                torch.nn.init.constant_(m.weight.data, 0.0)
             else:
                 raise ValueError("Unknown reset type")
-        if hasattr(m, 'bias') and m.bias is not None:
-            torch.nn.init.constant_(m.bias.data, 0.)
+        if hasattr(m, "bias") and m.bias is not None:
+            torch.nn.init.constant_(m.bias.data, 0.0)
 
     def reset(self):
         self.apply(self._init_weights)
@@ -134,7 +162,9 @@ class BaseModule(torch.nn.Module):
 class Table(torch.nn.Module):
     def __init__(self, state_size, action_size):
         super().__init__()
-        self.policy = nn.Embedding.from_pretrained(torch.zeros(state_size, action_size), freeze=False)
+        self.policy = nn.Embedding.from_pretrained(
+            torch.zeros(state_size, action_size), freeze=False
+        )
         self.softmax = nn.Softmax(dim=-1)
 
     def forward(self, x):
@@ -146,14 +176,16 @@ class Table(torch.nn.Module):
 
 
 class MultiLayerPerceptron(BaseModule):
-    def __init__(self,
-                 in_size=None,
-                 layer_sizes=None,
-                 reshape=True,
-                 out_size=None,
-                 activation="RELU",
-                 is_policy=False,
-                 **kwargs):
+    def __init__(
+        self,
+        in_size=None,
+        layer_sizes=None,
+        reshape=True,
+        out_size=None,
+        activation="RELU",
+        is_policy=False,
+        **kwargs
+    ):
         super().__init__(**kwargs)
         self.reshape = reshape
         self.layer_sizes = layer_sizes or [64, 64]
@@ -162,8 +194,7 @@ class MultiLayerPerceptron(BaseModule):
         self.is_policy = is_policy
         self.softmax = nn.Softmax(dim=-1)
         sizes = [in_size] + self.layer_sizes
-        layers_list = [nn.Linear(sizes[i], sizes[i + 1])
-                       for i in range(len(sizes) - 1)]
+        layers_list = [nn.Linear(sizes[i], sizes[i + 1]) for i in range(len(sizes) - 1)]
         self.layers = nn.ModuleList(layers_list)
         if out_size:
             self.predict = nn.Linear(sizes[-1], out_size)
@@ -193,12 +224,14 @@ class MultiLayerPerceptron(BaseModule):
 
 
 class DuelingNetwork(BaseModule):
-    def __init__(self,
-                 in_size=None,
-                 base_module_kwargs=None,
-                 value_kwargs=None,
-                 advantage_kwargs=None,
-                 out_size=None):
+    def __init__(
+        self,
+        in_size=None,
+        base_module_kwargs=None,
+        value_kwargs=None,
+        advantage_kwargs=None,
+        out_size=None,
+    ):
         super().__init__()
         self.out_size = out_size
         base_module_kwargs = base_module_kwargs or {}
@@ -217,21 +250,24 @@ class DuelingNetwork(BaseModule):
         x = self.base_module(x)
         value = self.value(x).expand(-1, self.out_size)
         advantage = self.advantage(x)
-        return value + advantage \
-               - advantage.mean(1).unsqueeze(1).expand(-1, self.out_size)
+        return (
+            value + advantage - advantage.mean(1).unsqueeze(1).expand(-1, self.out_size)
+        )
 
 
 class ConvolutionalNetwork(nn.Module):
-    def __init__(self,
-                 activation="RELU",
-                 in_channels=None,
-                 in_height=None,
-                 in_width=None,
-                 head_mlp_kwargs=None,
-                 out_size=None,
-                 is_policy=False,
-                 transpose_obs=False,
-                 **kwargs):
+    def __init__(
+        self,
+        activation="RELU",
+        in_channels=None,
+        in_height=None,
+        in_width=None,
+        head_mlp_kwargs=None,
+        out_size=None,
+        is_policy=False,
+        transpose_obs=False,
+        **kwargs
+    ):
         super().__init__()
         self.activation = activation_factory(activation)
         self.conv1 = nn.Conv2d(in_channels, 16, kernel_size=2, stride=2)

@@ -63,7 +63,7 @@ class Wrapper(Model):
         The first condition is to avoid infinite recursion when deep copying.
         See https://stackoverflow.com/a/47300262
         """
-        if attr[:2] == '__':
+        if attr[:2] == "__":
             raise AttributeError(attr)
         if attr in self.__dict__:
             return getattr(self, attr)
@@ -94,7 +94,7 @@ class Wrapper(Model):
     def sample(self, state, action):
         return self.env.sample(state, action)
 
-    def render(self, mode='human', **kwargs):
+    def render(self, mode="human", **kwargs):
         return self.env.render(mode=mode, **kwargs)
 
     def close(self):
@@ -116,8 +116,9 @@ class Wrapper(Model):
 
     def is_generative(self):
         try:
-            self.env.sample(self.env.observation_space.sample(),
-                            self.env.action_space.sample())
+            self.env.sample(
+                self.env.observation_space.sample(), self.env.action_space.sample()
+            )
             return True
         except Exception:
             return False
@@ -126,4 +127,4 @@ class Wrapper(Model):
         return str(self)
 
     def __str__(self):
-        return '<{}{}>'.format(type(self).__name__, self.env)
+        return "<{}{}>".format(type(self).__name__, self.env)

@@ -62,29 +62,33 @@ class A2CAgent(AgentWithSimplePolicy):
 
     name = "A2C"
 
-    def __init__(self, env,
-                 batch_size=8,
-                 horizon=256,
-                 gamma=0.99,
-                 entr_coef=0.01,
-                 learning_rate=0.01,
-                 optimizer_type='ADAM',
-                 k_epochs=5,
-                 policy_net_fn=None,
-                 value_net_fn=None,
-                 policy_net_kwargs=None,
-                 value_net_kwargs=None,
-                 use_bonus=False,
-                 uncertainty_estimator_kwargs=None,
-                 device="cuda:best",
-                 **kwargs):
+    def __init__(
+        self,
+        env,
+        batch_size=8,
+        horizon=256,
+        gamma=0.99,
+        entr_coef=0.01,
+        learning_rate=0.01,
+        optimizer_type="ADAM",
+        k_epochs=5,
+        policy_net_fn=None,
+        value_net_fn=None,
+        policy_net_kwargs=None,
+        value_net_kwargs=None,
+        use_bonus=False,
+        uncertainty_estimator_kwargs=None,
+        device="cuda:best",
+        **kwargs
+    ):
 
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
         self.use_bonus = use_bonus
         if self.use_bonus:
             self.env = UncertaintyEstimatorWrapper(
-                self.env, **uncertainty_estimator_kwargs)
+                self.env, **uncertainty_estimator_kwargs
+            )
 
         self.batch_size = batch_size
         self.horizon = horizon
@@ -104,8 +108,7 @@ class A2CAgent(AgentWithSimplePolicy):
         self.policy_net_fn = policy_net_fn or default_policy_net_fn
         self.value_net_fn = value_net_fn or default_value_net_fn
 
-        self.optimizer_kwargs = {'optimizer_type': optimizer_type,
-                                 'lr': learning_rate}
+        self.optimizer_kwargs = {"optimizer_type": optimizer_type, "lr": learning_rate}
 
         # check environment
         assert isinstance(self.env.observation_space, spaces.Box)
@@ -117,24 +120,24 @@ class A2CAgent(AgentWithSimplePolicy):
         self.reset()
 
     def reset(self, **kwargs):
-        self.cat_policy = self.policy_net_fn(
-            self.env,
-            **self.policy_net_kwargs).to(self.device)
+        self.cat_policy = self.policy_net_fn(self.env, **self.policy_net_kwargs).to(
+            self.device
+        )
         self.policy_optimizer = optimizer_factory(
-            self.cat_policy.parameters(),
-            **self.optimizer_kwargs)
+            self.cat_policy.parameters(), **self.optimizer_kwargs
+        )
 
-        self.value_net = self.value_net_fn(
-            self.env,
-            **self.value_net_kwargs).to(self.device)
+        self.value_net = self.value_net_fn(self.env, **self.value_net_kwargs).to(
+            self.device
+        )
 
         self.value_optimizer = optimizer_factory(
-            self.value_net.parameters(),
-            **self.optimizer_kwargs)
+            self.value_net.parameters(), **self.optimizer_kwargs
+        )
 
-        self.cat_policy_old = self.policy_net_fn(
-            self.env,
-            **self.policy_net_kwargs).to(self.device)
+        self.cat_policy_old = self.policy_net_fn(self.env, **self.policy_net_kwargs).to(
+            self.device
+        )
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
 
         self.MseLoss = nn.MSELoss()
@@ -183,8 +186,8 @@ class A2CAgent(AgentWithSimplePolicy):
             # check whether to use bonus
             bonus = 0.0
             if self.use_bonus:
-                if info is not None and 'exploration_bonus' in info:
-                    bonus = info['exploration_bonus']
+                if info is not None and "exploration_bonus" in info:
+                    bonus = info["exploration_bonus"]
 
             # save in batch
             self.memory.rewards.append(reward + bonus)  # add bonus here
@@ -214,8 +217,9 @@ class A2CAgent(AgentWithSimplePolicy):
         # monte carlo estimate of rewards
         rewards = []
         discounted_reward = 0
-        for reward, is_terminal in zip(reversed(self.memory.rewards),
-                                       reversed(self.memory.is_terminals)):
+        for reward, is_terminal in zip(
+            reversed(self.memory.rewards), reversed(self.memory.is_terminals)
+        ):
             if is_terminal:
                 discounted_reward = 0
             discounted_reward = reward + (self.gamma * discounted_reward)
@@ -239,13 +243,14 @@ class A2CAgent(AgentWithSimplePolicy):
 
             # normalize the advantages
             advantages = rewards - state_values.detach()
-            advantages = (advantages - advantages.mean()) \
-                / (advantages.std() + 1e-8)
+            advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
             # find pg loss
-            pg_loss = - logprobs * advantages
-            loss = pg_loss \
-                + 0.5 * self.MseLoss(state_values, rewards) \
+            pg_loss = -logprobs * advantages
+            loss = (
+                pg_loss
+                + 0.5 * self.MseLoss(state_values, rewards)
                 - self.entr_coef * dist_entropy
+            )
 
             # take gradient step
             self.policy_optimizer.zero_grad()
@@ -264,21 +269,18 @@ class A2CAgent(AgentWithSimplePolicy):
     #
     @classmethod
     def sample_parameters(cls, trial):
-        batch_size = trial.suggest_categorical('batch_size',
-                                               [1, 4, 8, 16, 32])
-        gamma = trial.suggest_categorical('gamma',
-                                          [0.9, 0.95, 0.99])
-        learning_rate = trial.suggest_loguniform('learning_rate', 1e-5, 1)
+        batch_size = trial.suggest_categorical("batch_size", [1, 4, 8, 16, 32])
+        gamma = trial.suggest_categorical("gamma", [0.9, 0.95, 0.99])
+        learning_rate = trial.suggest_loguniform("learning_rate", 1e-5, 1)
 
-        entr_coef = trial.suggest_loguniform('entr_coef', 1e-8, 0.1)
+        entr_coef = trial.suggest_loguniform("entr_coef", 1e-8, 0.1)
 
-        k_epochs = trial.suggest_categorical('k_epochs',
-                                             [1, 5, 10, 20])
+        k_epochs = trial.suggest_categorical("k_epochs", [1, 5, 10, 20])
 
         return {
-            'batch_size': batch_size,
-            'gamma': gamma,
-            'learning_rate': learning_rate,
-            'entr_coef': entr_coef,
-            'k_epochs': k_epochs,
+            "batch_size": batch_size,
+            "gamma": gamma,
+            "learning_rate": learning_rate,
+            "entr_coef": entr_coef,
+            "k_epochs": k_epochs,
         }

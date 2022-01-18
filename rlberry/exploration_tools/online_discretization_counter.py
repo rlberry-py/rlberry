@@ -10,29 +10,32 @@ logger = logging.getLogger(__name__)
 
 
 @numba_jit
-def map_to_representative(state,
-                          lp_metric,
-                          representative_states,
-                          n_representatives,
-                          min_dist,
-                          scaling,
-                          accept_new_repr):
+def map_to_representative(
+    state,
+    lp_metric,
+    representative_states,
+    n_representatives,
+    min_dist,
+    scaling,
+    accept_new_repr,
+):
     """
     Map state to representative state.
     """
     dist_to_closest = np.inf
     argmin = -1
     for ii in range(n_representatives):
-        dist = metric_lp(state, representative_states[ii, :],
-                         lp_metric, scaling)
+        dist = metric_lp(state, representative_states[ii, :], lp_metric, scaling)
         if dist < dist_to_closest:
             dist_to_closest = dist
             argmin = ii
 
     max_representatives = representative_states.shape[0]
-    if dist_to_closest > min_dist \
-            and n_representatives < max_representatives \
-            and accept_new_repr:
+    if (
+        dist_to_closest > min_dist
+        and n_representatives < max_representatives
+        and accept_new_repr
+    ):
         new_index = n_representatives
         representative_states[new_index, :] = state
         return new_index, 0.0
@@ -69,15 +72,17 @@ class OnlineDiscretizationCounter(UncertaintyEstimator):
         returns bonuses in n^power.
     """
 
-    def __init__(self,
-                 observation_space,
-                 action_space,
-                 lp_metric=2,
-                 min_dist=0.1,
-                 max_repr=1000,
-                 scaling=None,
-                 rate_power=1,
-                 **kwargs):
+    def __init__(
+        self,
+        observation_space,
+        action_space,
+        lp_metric=2,
+        min_dist=0.1,
+        max_repr=1000,
+        scaling=None,
+        rate_power=1,
+        **kwargs
+    ):
         UncertaintyEstimator.__init__(self, observation_space, action_space)
 
         assert isinstance(action_space, Discrete)
@@ -94,8 +99,7 @@ class OnlineDiscretizationCounter(UncertaintyEstimator):
         if scaling is None:
             # if high and low are bounded
             if self.observation_space.is_bounded():
-                scaling = self.observation_space.high \
-                          - self.observation_space.low
+                scaling = self.observation_space.high - self.observation_space.low
                 # if high or low are unbounded
             else:
                 scaling = np.ones(self.state_dim)
@@ -118,40 +122,42 @@ class OnlineDiscretizationCounter(UncertaintyEstimator):
         self._overflow_warning = False
 
     def _get_representative_state(self, state, accept_new_repr=True):
-        state_idx, dist_to_closest \
-            = map_to_representative(state,
-                                    self.lp_metric,
-                                    self.representative_states,
-                                    self.n_representatives,
-                                    self.min_dist,
-                                    self.scaling,
-                                    accept_new_repr)
+        state_idx, dist_to_closest = map_to_representative(
+            state,
+            self.lp_metric,
+            self.representative_states,
+            self.n_representatives,
+            self.min_dist,
+            self.scaling,
+            accept_new_repr,
+        )
         # check if new representative state
         if state_idx == self.n_representatives:
             self.n_representatives += 1
 
-        if self.n_representatives >= self.max_repr \
-                and (not self._overflow_warning):
-            logger.warning("OnlineDiscretizationCounter reached \
-the maximum number of representative states.")
+        if self.n_representatives >= self.max_repr and (not self._overflow_warning):
+            logger.warning(
+                "OnlineDiscretizationCounter reached \
+the maximum number of representative states."
+            )
             self._overflow_warning = True
 
         return state_idx, dist_to_closest
 
-    @preprocess_args(expected_type='numpy')
+    @preprocess_args(expected_type="numpy")
     def update(self, state, action, next_state=None, reward=None, **kwargs):
         state_idx, _ = self._get_representative_state(state)
         self.N_sa[state_idx, action] += 1
 
-    @preprocess_args(expected_type='numpy')
+    @preprocess_args(expected_type="numpy")
     def measure(self, state, action, **kwargs):
         n = np.maximum(1.0, self.count(state, action))
         return np.power(1 / n, self.rate_power)
 
     def count(self, state, action):
         state_idx, dist_to_closest = self._get_representative_state(
-            state,
-            accept_new_repr=False)
+            state, accept_new_repr=False
+        )
         # if state is too far from the closest representative,
         # its count is zero.
         if dist_to_closest > self.min_dist:

@@ -31,8 +31,9 @@ class ValueIterationAgent(AgentWithSimplePolicy):
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
         # initialize base class
-        assert isinstance(self.env, FiniteMDP), \
-            "Value iteration requires a FiniteMDP model."
+        assert isinstance(
+            self.env, FiniteMDP
+        ), "Value iteration requires a FiniteMDP model."
         #
 
         self.gamma = gamma
@@ -50,15 +51,16 @@ class ValueIterationAgent(AgentWithSimplePolicy):
         del kwargs
         info = {}
         if self.horizon is None:
-            assert self.gamma < 1.0, \
-                "The discounted setting requires gamma < 1.0"
-            self.Q, self.V, n_it = value_iteration(self.env.R, self.env.P,
-                                                   self.gamma, self.epsilon)
+            assert self.gamma < 1.0, "The discounted setting requires gamma < 1.0"
+            self.Q, self.V, n_it = value_iteration(
+                self.env.R, self.env.P, self.gamma, self.epsilon
+            )
             info["n_iterations"] = n_it
             info["precision"] = self.epsilon
         else:
-            self.Q, self.V = backward_induction(self.env.R, self.env.P,
-                                                self.horizon, self.gamma)
+            self.Q, self.V = backward_induction(
+                self.env.R, self.env.P, self.horizon, self.gamma
+            )
             info["n_iterations"] = self.horizon
             info["precision"] = 0.0
         return info

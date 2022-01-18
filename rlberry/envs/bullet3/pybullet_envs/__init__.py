@@ -12,29 +12,29 @@ def register(id, *args, **kvargs):
 # ------------bullet-------------
 
 register(
-    id='PendulumBulletEnv-v0',
-    entry_point='rlberry.envs.bullet3.pybullet_envs.gym_pendulum_envs:PendulumBulletEnv',
+    id="PendulumBulletEnv-v0",
+    entry_point="rlberry.envs.bullet3.pybullet_envs.gym_pendulum_envs:PendulumBulletEnv",
     max_episode_steps=1000,
     reward_threshold=950.0,
 )
 
 register(
-    id='PendulumSwingupBulletEnv-v0',
-    entry_point='rlberry.envs.bullet3.pybullet_envs.gym_pendulum_envs:PendulumSwingupBulletEnv',
+    id="PendulumSwingupBulletEnv-v0",
+    entry_point="rlberry.envs.bullet3.pybullet_envs.gym_pendulum_envs:PendulumSwingupBulletEnv",
     max_episode_steps=1000,
     reward_threshold=800.0,
 )
 
 register(
-    id='DiscretePendulumBulletEnv-v0',
-    entry_point='rlberry.envs.bullet3.pybullet_envs.gym_pendulum_envs:DiscretePendulumBulletEnv',
+    id="DiscretePendulumBulletEnv-v0",
+    entry_point="rlberry.envs.bullet3.pybullet_envs.gym_pendulum_envs:DiscretePendulumBulletEnv",
     max_episode_steps=1000,
     reward_threshold=950.0,
 )
 
 register(
-    id='DiscretePendulumSwingupBulletEnv-v0',
-    entry_point='rlberry.envs.bullet3.pybullet_envs.gym_pendulum_envs:DiscretePendulumSwingupBulletEnv',
+    id="DiscretePendulumSwingupBulletEnv-v0",
+    entry_point="rlberry.envs.bullet3.pybullet_envs.gym_pendulum_envs:DiscretePendulumSwingupBulletEnv",
     max_episode_steps=1000,
     reward_threshold=800.0,
 )
