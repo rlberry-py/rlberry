@@ -44,8 +44,10 @@ extensions = ['sphinx.ext.doctest',
               "numpydoc",
               "sphinx_gallery.gen_gallery",
               'myst_parser',]
-autodoc_default_flags = ["members", "inherited-members"]
 
+autodoc_default_options = {"members": True, "inherited-members": True}
+# generate autosummary even if no references
+autosummary_generate = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['templates']
