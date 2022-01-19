@@ -25,8 +25,8 @@ class DiscreteDistribution(ABC):
         """
         distribution = self.get_distribution()
         return self.np_random.choice(
-            list(distribution.keys()), 1,
-            p=np.array(list(distribution.values())))[0]
+            list(distribution.keys()), 1, p=np.array(list(distribution.values()))
+        )[0]
 
     def seed(self, seeder=None):
         """
@@ -58,12 +58,9 @@ class EpsilonGreedy(DiscreteDistribution):
     probability 1-epsilon.
     """
 
-    def __init__(self,
-                 action_space,
-                 temperature=1.0,
-                 final_temperature=0.1,
-                 tau=5000,
-                 **kwargs):
+    def __init__(
+        self, action_space, temperature=1.0, final_temperature=0.1, tau=5000, **kwargs
+    ):
         super().__init__(**kwargs)
         self.action_space = action_space
         self.temperature = temperature
@@ -81,8 +78,10 @@ class EpsilonGreedy(DiscreteDistribution):
         self.seed()
 
     def get_distribution(self):
-        distribution = {action: self.epsilon / self.action_space.n
-                        for action in range(self.action_space.n)}
+        distribution = {
+            action: self.epsilon / self.action_space.n
+            for action in range(self.action_space.n)
+        }
         distribution[self.optimal_action] += 1 - self.epsilon
         return distribution
 
@@ -98,13 +97,11 @@ class EpsilonGreedy(DiscreteDistribution):
             Whether to update epsilon schedule
         """
         self.optimal_action = np.argmax(values)
-        self.epsilon = self.final_temperature \
-                       + (self.temperature - self.final_temperature) * \
-                       np.exp(- self.time / self.tau)
+        self.epsilon = self.final_temperature + (
+            self.temperature - self.final_temperature
+        ) * np.exp(-self.time / self.tau)
         if self.writer:
-            self.writer.add_scalar('exploration/epsilon',
-                                   self.epsilon,
-                                   self.time)
+            self.writer.add_scalar("exploration/epsilon", self.epsilon, self.time)
 
     def step_time(self):
         self.time += 1
@@ -133,8 +130,10 @@ class Greedy(DiscreteDistribution):
 
     def get_distribution(self):
         optimal_action = np.argmax(self.values)
-        return {action: 1 if action == optimal_action
-        else 0 for action in range(self.action_space.n)}
+        return {
+            action: 1 if action == optimal_action else 0
+            for action in range(self.action_space.n)
+        }
 
     def update(self, values):
         self.values = values
@@ -155,9 +154,9 @@ def exploration_factory(action_space, method="EpsilonGreedy", **kwargs):
     -------
     A new exploration policy.
     """
-    if method == 'Greedy':
+    if method == "Greedy":
         return Greedy(action_space, **kwargs)
-    elif method == 'EpsilonGreedy':
+    elif method == "EpsilonGreedy":
         return EpsilonGreedy(action_space, **kwargs)
     else:
         raise ValueError("Unknown exploration method")

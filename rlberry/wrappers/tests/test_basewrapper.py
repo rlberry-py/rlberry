@@ -14,12 +14,11 @@ def test_wrapper():
     # calling some functions
     wrapped.reset()
     wrapped.step(wrapped.action_space.sample())
-    wrapped.sample(wrapped.observation_space.sample(),
-                   wrapped.action_space.sample())
+    wrapped.sample(wrapped.observation_space.sample(), wrapped.action_space.sample())
 
 
 def test_gym_wrapper():
-    gym_env = gym.make('Acrobot-v1')
+    gym_env = gym.make("Acrobot-v1")
     wrapped = Wrapper(gym_env)
     assert isinstance(wrapped, Model)
     assert wrapped.is_online()

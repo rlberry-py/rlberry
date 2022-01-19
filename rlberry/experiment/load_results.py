@@ -45,10 +45,10 @@ def load_experiment_results(output_dir, experiment_name):
         output_data['data_dir'][agent_name] = directory from which the results were loaded
     """
     output_data = {}
-    output_data['agent_list'] = []
-    output_data['manager'] = {}
-    output_data['dataframes'] = {}
-    output_data['data_dir'] = {}
+    output_data["agent_list"] = []
+    output_data["manager"] = {}
+    output_data["dataframes"] = {}
+    output_data["data_dir"] = {}
 
     # preprocess input
     if not isinstance(output_dir, list):
@@ -58,14 +58,16 @@ def load_experiment_results(output_dir, experiment_name):
     ndirs = len(output_dir)
 
     if ndirs > 1:
-        assert len(experiment_name) == ndirs, "Number of experiment names must match the number of output_dirs "
+        assert (
+            len(experiment_name) == ndirs
+        ), "Number of experiment names must match the number of output_dirs "
     else:
         output_dir = len(experiment_name) * output_dir
 
     results_dirs = []
     for dd, exper in zip(output_dir, experiment_name):
         results_dirs.append(Path(dd) / Path(exper).stem)
-    output_data['experiment_dirs'] = results_dirs
+    output_data["experiment_dirs"] = results_dirs
 
     # Subdirectories with data for each agent
     subdirs = []
@@ -75,31 +77,33 @@ def load_experiment_results(output_dir, experiment_name):
     # Create dictionary dict[agent_name] = most recent result dir
     data_dirs = {}
     for dd in subdirs:
-        data_dirs[dd.name] = _get_most_recent_path([f for f in dd.iterdir() if f.is_dir()])
-        data_dirs[dd.name] = data_dirs[dd.name] / 'manager_data'
+        data_dirs[dd.name] = _get_most_recent_path(
+            [f for f in dd.iterdir() if f.is_dir()]
+        )
+        data_dirs[dd.name] = data_dirs[dd.name] / "manager_data"
 
     # Load data from each subdir
     for agent_name in data_dirs:
-        output_data['agent_list'].append(agent_name)
+        output_data["agent_list"].append(agent_name)
 
         # store data_dir
-        output_data['data_dir'][agent_name] = data_dirs[agent_name]
+        output_data["data_dir"][agent_name] = data_dirs[agent_name]
 
         # store AgentManager
-        output_data['manager'][agent_name] = None
-        fname = data_dirs[agent_name] / 'manager_obj.pickle'
+        output_data["manager"][agent_name] = None
+        fname = data_dirs[agent_name] / "manager_obj.pickle"
         try:
-            output_data['manager'][agent_name] = AgentManager.load(fname)
+            output_data["manager"][agent_name] = AgentManager.load(fname)
         except Exception:
-            logger.warning(f'Could not load AgentManager instance for {agent_name}.')
+            logger.warning(f"Could not load AgentManager instance for {agent_name}.")
         logger.info("... loaded " + str(fname))
 
         # store data frames
         dataframes = {}
-        csv_files = [f for f in data_dirs[agent_name].iterdir() if f.suffix == '.csv']
+        csv_files = [f for f in data_dirs[agent_name].iterdir() if f.suffix == ".csv"]
         for ff in csv_files:
             dataframes[ff.stem] = pd.read_csv(ff)
             logger.info("... loaded " + str(ff))
-        output_data['dataframes'][agent_name] = dataframes
+        output_data["dataframes"][agent_name] = dataframes
 
     return output_data

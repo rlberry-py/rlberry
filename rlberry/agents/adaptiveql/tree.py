@@ -122,18 +122,22 @@ class TreePartition:
         # return value at leaf
         return node
 
-    def plot(self,
-             fignum="tree plot",
-             colormap_name='cool',
-             max_value=10,
-             node=None,
-             root=True, ):
+    def plot(
+        self,
+        fignum="tree plot",
+        colormap_name="cool",
+        max_value=10,
+        node=None,
+        root=True,
+    ):
         """
         Visualize the function (2d domain only).
         Shows the hierarchical partition.
         """
         if root:
-            assert self.dim == 2, "TreePartition plot only available for 2-dimensional spaces."
+            assert (
+                self.dim == 2
+            ), "TreePartition plot only available for 2-dimensional spaces."
             node = self.root
             plt.figure(fignum)
 
@@ -144,13 +148,20 @@ class TreePartition:
 
             colormap_fn = plt.get_cmap(colormap_name)
             color = colormap_fn(node.qvalue / max_value)
-            rectangle = plt.Rectangle((x0, y0), x1 - x0, y1 - y0, ec="black", color=color)
+            rectangle = plt.Rectangle(
+                (x0, y0), x1 - x0, y1 - y0, ec="black", color=color
+            )
             plt.gca().add_patch(rectangle)
-            plt.axis('scaled')
+            plt.axis("scaled")
 
         else:
             for cc in node.children:
-                self.plot(max_value=max_value, colormap_name=colormap_name, node=cc, root=False)
+                self.plot(
+                    max_value=max_value,
+                    colormap_name=colormap_name,
+                    node=cc,
+                    root=False,
+                )
 
 
 class MDPTreePartition:
@@ -167,8 +178,9 @@ class MDPTreePartition:
         for hh in range(horizon):
             self.trees.append({})
             for aa in range(self.n_actions):
-                self.trees[hh][aa] = TreePartition(observation_space,
-                                                   initial_value=horizon - hh)
+                self.trees[hh][aa] = TreePartition(
+                    observation_space, initial_value=horizon - hh
+                )
 
         self.dmax = self.trees[0][0].dmax
 

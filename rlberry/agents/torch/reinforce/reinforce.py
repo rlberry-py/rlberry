@@ -54,19 +54,22 @@ class REINFORCEAgent(AgentWithSimplePolicy):
 
     name = "REINFORCE"
 
-    def __init__(self, env,
-                 batch_size=8,
-                 horizon=256,
-                 gamma=0.99,
-                 entr_coef=0.01,
-                 learning_rate=0.0001,
-                 normalize=True,
-                 optimizer_type='ADAM',
-                 policy_net_fn=None,
-                 policy_net_kwargs=None,
-                 use_bonus_if_available=False,
-                 device="cuda:best",
-                 **kwargs):
+    def __init__(
+        self,
+        env,
+        batch_size=8,
+        horizon=256,
+        gamma=0.99,
+        entr_coef=0.01,
+        learning_rate=0.0001,
+        normalize=True,
+        optimizer_type="ADAM",
+        policy_net_fn=None,
+        policy_net_kwargs=None,
+        use_bonus_if_available=False,
+        device="cuda:best",
+        **kwargs
+    ):
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
         self.batch_size = batch_size
@@ -86,8 +89,7 @@ class REINFORCEAgent(AgentWithSimplePolicy):
         #
         self.policy_net_fn = policy_net_fn or default_policy_net_fn
 
-        self.optimizer_kwargs = {'optimizer_type': optimizer_type,
-                                 'lr': learning_rate}
+        self.optimizer_kwargs = {"optimizer_type": optimizer_type, "lr": learning_rate}
 
         # check environment
         assert isinstance(self.env.observation_space, spaces.Box)
@@ -99,14 +101,13 @@ class REINFORCEAgent(AgentWithSimplePolicy):
         self.reset()
 
     def reset(self, **kwargs):
-        self.policy_net = self.policy_net_fn(
-            self.env,
-            **self.policy_net_kwargs
-        ).to(self.device)
+        self.policy_net = self.policy_net_fn(self.env, **self.policy_net_kwargs).to(
+            self.device
+        )
 
         self.policy_optimizer = optimizer_factory(
-            self.policy_net.parameters(),
-            **self.optimizer_kwargs)
+            self.policy_net.parameters(), **self.optimizer_kwargs
+        )
 
         self.memory = Memory()
 
@@ -140,8 +141,8 @@ class REINFORCEAgent(AgentWithSimplePolicy):
             # check whether to use bonus
             bonus = 0.0
             if self.use_bonus_if_available:
-                if info is not None and 'exploration_bonus' in info:
-                    bonus = info['exploration_bonus']
+                if info is not None and "exploration_bonus" in info:
+                    bonus = info["exploration_bonus"]
 
             # save in batch
             self.memory.states.append(state)
@@ -177,8 +178,9 @@ class REINFORCEAgent(AgentWithSimplePolicy):
         # monte carlo estimate of rewards
         rewards = []
         discounted_reward = 0
-        for reward, is_terminal in zip(reversed(self.memory.rewards),
-                                       reversed(self.memory.is_terminals)):
+        for reward, is_terminal in zip(
+            reversed(self.memory.rewards), reversed(self.memory.is_terminals)
+        ):
             if is_terminal:
                 discounted_reward = 0
             discounted_reward = reward + (self.gamma * discounted_reward)
@@ -211,17 +213,15 @@ class REINFORCEAgent(AgentWithSimplePolicy):
     #
     @classmethod
     def sample_parameters(cls, trial):
-        batch_size = trial.suggest_categorical('batch_size',
-                                               [1, 4, 8, 16, 32])
-        gamma = trial.suggest_categorical('gamma',
-                                          [0.9, 0.95, 0.99])
-        learning_rate = trial.suggest_loguniform('learning_rate', 1e-5, 1)
+        batch_size = trial.suggest_categorical("batch_size", [1, 4, 8, 16, 32])
+        gamma = trial.suggest_categorical("gamma", [0.9, 0.95, 0.99])
+        learning_rate = trial.suggest_loguniform("learning_rate", 1e-5, 1)
 
-        entr_coef = trial.suggest_loguniform('entr_coef', 1e-8, 0.1)
+        entr_coef = trial.suggest_loguniform("entr_coef", 1e-8, 0.1)
 
         return {
-            'batch_size': batch_size,
-            'gamma': gamma,
-            'learning_rate': learning_rate,
-            'entr_coef': entr_coef,
+            "batch_size": batch_size,
+            "gamma": gamma,
+            "learning_rate": learning_rate,
+            "entr_coef": entr_coef,
         }
