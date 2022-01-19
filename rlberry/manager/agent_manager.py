@@ -176,7 +176,7 @@ class AgentManager:
         Number of agent instances to fit.
     output_dir : str
         Directory where to store data.
-    parallelization: {'thread', 'process'}, default: 'process'
+    parallelization: {'thread', 'process'}, default: 'thread'
         Whether to parallelize  agent training using threads or processes.
     max_workers: None or int, default: None
         Number of processes/threads used in a call to fit().
@@ -415,6 +415,9 @@ class AgentManager:
         return process_env(self._eval_env, self.seeder)
 
     def get_writer_data(self):
+        """
+        Return a dataframe containing data from the writer of the agent.
+        """
         return self.default_writer_data
 
     def get_agent_instances(self):

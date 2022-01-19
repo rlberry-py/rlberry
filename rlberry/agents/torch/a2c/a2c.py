@@ -16,6 +16,14 @@ logger = logging.getLogger(__name__)
 
 class A2CAgent(AgentWithSimplePolicy):
     """
+    Advantage Actor Critic Agent.
+
+    A2C, or Advantage Actor Critic, is a synchronous version of the A3C policy
+    gradient method. As an alternative to the asynchronous implementation of
+    A3C, A2C is a synchronous, deterministic implementation that waits for each
+    actor to finish its segment of experience before updating, averaging over
+    all of the actors. This more effectively uses GPUs due to larger batch sizes.
+
     Parameters
     ----------
     env : Model
