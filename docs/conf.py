@@ -16,54 +16,56 @@ import sys
 import sphinx_gallery  # noqa
 
 
-sys.path.insert(0, os.path.abspath('.'))
-sys.path.insert(0, os.path.abspath('../'))
+sys.path.insert(0, os.path.abspath("."))
+sys.path.insert(0, os.path.abspath("../"))
 
 # -- Project information -----------------------------------------------------
 
-project = 'rlberry'
-copyright = '2021, rlberry team'
-author = 'rlberry team'
+project = "rlberry"
+copyright = "2021, rlberry team"
+author = "rlberry team"
 
 # The full version, including alpha/beta/rc tags
-release = '0.1'
+release = "0.1"
 
 # -- General configuration ---------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.doctest',
-              'sphinx.ext.todo',
-              'sphinx.ext.viewcode',
-              'sphinx.ext.autodoc',
-              'sphinx.ext.autosummary',
-              'sphinx.ext.mathjax',
-              'sphinx.ext.autosectionlabel',
-              'sphinxcontrib.video',
-              "numpydoc",
-              "sphinx_gallery.gen_gallery",
-              'myst_parser',]
+extensions = [
+    "sphinx.ext.doctest",
+    "sphinx.ext.todo",
+    "sphinx.ext.viewcode",
+    "sphinx.ext.autodoc",
+    "sphinx.ext.autosummary",
+    "sphinx.ext.mathjax",
+    "sphinx.ext.autosectionlabel",
+    "sphinxcontrib.video",
+    "numpydoc",
+    "sphinx_gallery.gen_gallery",
+    "myst_parser",
+]
 
 autodoc_default_options = {"members": True, "inherited-members": True}
 # generate autosummary even if no references
 autosummary_generate = True
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['templates']
+templates_path = ["templates"]
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'themes']
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "themes"]
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #
-source_suffix = ['.rst', '.md']
+source_suffix = [".rst", ".md"]
 
 # The master toctree document.
-master_doc = 'index'
+master_doc = "index"
 
 # Copied from scikit-learn:
 # For maths, use mathjax by default and svg if NO_MATHJAX env variable is set
@@ -83,7 +85,7 @@ else:
 #
 html_theme = "scikit-learn-fork"
 
-html_theme_options = { "mathjax_path": mathjax_path}
+html_theme_options = {"mathjax_path": mathjax_path}
 
 html_theme_path = ["themes"]
 
@@ -100,6 +102,6 @@ sphinx_gallery_conf = {
     "doc_module": "rlberry",
     "backreferences_dir": os.path.join("generated"),
     "reference_url": {"rlberry": None},
-    'matplotlib_animations':True,
-    'remove_config_comments': True,
+    "matplotlib_animations": True,
+    "remove_config_comments": True,
 }
