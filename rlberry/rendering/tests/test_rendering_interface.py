@@ -31,7 +31,7 @@ classes = [
     SimplePBallND,
     FourRoom,
     SixRoom,
-    AppleGold
+    AppleGold,
 ]
 
 
@@ -62,10 +62,10 @@ def test_render2d_interface(ModelClass):
                     next_s, _, _, _ = env.step(action)
                     state = next_s
                 env.render(loop=False)
-            env.save_video('test_video.mp4')
+            env.save_video("test_video.mp4")
             env.clear_render_buffer()
         try:
-            os.remove('test_video.mp4')
+            os.remove("test_video.mp4")
         except Exception:
             pass
 
@@ -85,9 +85,9 @@ def test_render2d_interface_wrapped(ModelClass):
                     next_s, _, _, _ = env.step(action)
                     state = next_s
                 env.render(loop=False)
-            env.save_video('test_video.mp4')
+            env.save_video("test_video.mp4")
             env.clear_render_buffer()
         try:
-            os.remove('test_video.mp4')
+            os.remove("test_video.mp4")
         except Exception:
             pass

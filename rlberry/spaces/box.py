@@ -64,8 +64,7 @@ class Box(gym.spaces.Box):
         * (-oo, b] : shifted negative exponential distribution
         * (-oo, oo) : normal distribution
         """
-        high = self.high if self.dtype.kind == 'f' \
-            else self.high.astype('int64') + 1
+        high = self.high if self.dtype.kind == "f" else self.high.astype("int64") + 1
         sample = np.empty(self.shape)
 
         # Masking arrays which classify the coordinates according to interval
@@ -76,19 +75,22 @@ class Box(gym.spaces.Box):
         bounded = self.bounded_below & self.bounded_above
 
         # Vectorized sampling by interval type
-        sample[unbounded] = self.rng.normal(
-            size=unbounded[unbounded].shape)
+        sample[unbounded] = self.rng.normal(size=unbounded[unbounded].shape)
 
-        sample[low_bounded] = self.rng.exponential(
-            size=low_bounded[low_bounded].shape) + self.low[low_bounded]
+        sample[low_bounded] = (
+            self.rng.exponential(size=low_bounded[low_bounded].shape)
+            + self.low[low_bounded]
+        )
 
-        sample[upp_bounded] = -self.rng.exponential(
-            size=upp_bounded[upp_bounded].shape) + self.high[upp_bounded]
+        sample[upp_bounded] = (
+            -self.rng.exponential(size=upp_bounded[upp_bounded].shape)
+            + self.high[upp_bounded]
+        )
 
-        sample[bounded] = self.rng.uniform(low=self.low[bounded],
-                                           high=high[bounded],
-                                           size=bounded[bounded].shape)
-        if self.dtype.kind == 'i':
+        sample[bounded] = self.rng.uniform(
+            low=self.low[bounded], high=high[bounded], size=bounded[bounded].shape
+        )
+        if self.dtype.kind == "i":
             sample = np.floor(sample)
 
         return sample.astype(self.dtype)

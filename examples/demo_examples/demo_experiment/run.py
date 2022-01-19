@@ -18,7 +18,7 @@ from rlberry.experiment import experiment_generator
 from rlberry.manager.multiple_managers import MultipleManagers
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     multimanagers = MultipleManagers()
 
     for agent_manager in experiment_generator():
@@ -30,10 +30,10 @@ if __name__ == '__main__':
     # Reading the results
     del multimanagers
 
-    data = load_experiment_results('results', 'params_experiment')
+    data = load_experiment_results("results", "params_experiment")
 
     print(data)
 
     # Fit one of the managers for a few more episodes
     # If tensorboard is enabled, you should see more episodes ran for 'rsucbvi_alternative'
-    data['manager']['rsucbvi_alternative'].fit(50)
+    data["manager"]["rsucbvi_alternative"].fit(50)

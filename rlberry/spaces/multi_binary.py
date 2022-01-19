@@ -44,5 +44,4 @@ class MultiBinary(gym.spaces.MultiBinary):
         self.seeder.reseed(seed_seq)
 
     def sample(self):
-        return self.rng.integers(low=0, high=2,
-                                 size=self.n, dtype=self.dtype)
+        return self.rng.integers(low=0, high=2, size=self.n, dtype=self.dtype)

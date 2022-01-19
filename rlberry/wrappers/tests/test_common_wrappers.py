@@ -10,8 +10,7 @@ from rlberry.wrappers.discretize_state import DiscretizeStateWrapper
 from rlberry.wrappers.rescale_reward import RescaleRewardWrapper
 from rlberry.agents import RSUCBVIAgent
 from rlberry.wrappers.autoreset import AutoResetWrapper
-from rlberry.wrappers.uncertainty_estimator_wrapper import \
-    UncertaintyEstimatorWrapper
+from rlberry.wrappers.uncertainty_estimator_wrapper import UncertaintyEstimatorWrapper
 from rlberry.wrappers.vis2d import Vis2dWrapper
 
 
@@ -58,8 +57,8 @@ def test_rescale_reward():
         _ = wrapped.reset()
         for _ in range(100):
             _, reward, _, _ = wrapped.sample(
-                wrapped.observation_space.sample(),
-                wrapped.action_space.sample())
+                wrapped.observation_space.sample(), wrapped.action_space.sample()
+            )
             assert reward <= 10 + tol and reward >= -10 - tol
 
         _ = wrapped.reset()
@@ -140,28 +139,30 @@ def test_uncertainty_est_wrapper():
     env = GridWorld()
 
     def uncertainty_est_fn(observation_space, action_space):
-        return DiscreteCounter(observation_space,
-                               action_space)
+        return DiscreteCounter(observation_space, action_space)
 
-    w_env = UncertaintyEstimatorWrapper(
-        env,
-        uncertainty_est_fn,
-        bonus_scale_factor=1.0)
+    w_env = UncertaintyEstimatorWrapper(env, uncertainty_est_fn, bonus_scale_factor=1.0)
 
     for ii in range(10):
         w_env.reset()
         _, _, _, info = w_env.step(0)
         nn = w_env.uncertainty_estimator.count(0, 0)
         assert nn == ii + 1
-        assert info['exploration_bonus'] == pytest.approx(1 / np.sqrt(nn))
+        assert info["exploration_bonus"] == pytest.approx(1 / np.sqrt(nn))
 
 
 def test_vis2dwrapper():
     env = MountainCar()
     env = Vis2dWrapper(env, n_bins_obs=20, memory_size=200)
 
-    agent = RSUCBVIAgent(env, gamma=0.99, horizon=200,
-                         bonus_scale_factor=0.1, copy_env=False, min_dist=0.1)
+    agent = RSUCBVIAgent(
+        env,
+        gamma=0.99,
+        horizon=200,
+        bonus_scale_factor=0.1,
+        copy_env=False,
+        min_dist=0.1,
+    )
 
     agent.fit(budget=15)
     env.plot_trajectories(show=False)

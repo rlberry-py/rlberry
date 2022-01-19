@@ -86,17 +86,20 @@ class RSUCBVIAgent(AgentWithSimplePolicy):
 
     name = "RSUCBVI"
 
-    def __init__(self, env,
-                 gamma=0.99,
-                 horizon=100,
-                 lp_metric=2,
-                 scaling=None,
-                 min_dist=0.1,
-                 max_repr=1000,
-                 bonus_scale_factor=1.0,
-                 bonus_type="simplified_bernstein",
-                 reward_free=False,
-                 **kwargs):
+    def __init__(
+        self,
+        env,
+        gamma=0.99,
+        horizon=100,
+        lp_metric=2,
+        scaling=None,
+        min_dist=0.1,
+        max_repr=1000,
+        bonus_scale_factor=1.0,
+        bonus_type="simplified_bernstein",
+        reward_free=False,
+        **kwargs
+    ):
         # init base class
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
@@ -115,8 +118,7 @@ class RSUCBVIAgent(AgentWithSimplePolicy):
         # other checks
         assert gamma >= 0 and gamma <= 1.0
         if self.horizon is None:
-            assert gamma < 1.0, \
-                "If no horizon is given, gamma must be smaller than 1."
+            assert gamma < 1.0, "If no horizon is given, gamma must be smaller than 1."
             self.horizon = int(np.ceil(1.0 / (1.0 - gamma)))
 
         # state dimension
@@ -125,10 +127,12 @@ class RSUCBVIAgent(AgentWithSimplePolicy):
         # compute scaling, if it is None
         if scaling is None:
             # if high and low are bounded
-            if (self.env.observation_space.high == np.inf).sum() == 0 \
-                    and (self.env.observation_space.low == -np.inf).sum() == 0:
-                scaling = self.env.observation_space.high \
-                    - self.env.observation_space.low
+            if (self.env.observation_space.high == np.inf).sum() == 0 and (
+                self.env.observation_space.low == -np.inf
+            ).sum() == 0:
+                scaling = (
+                    self.env.observation_space.high - self.env.observation_space.low
+                )
                 # if high or low are unbounded
             else:
                 scaling = np.ones(self.state_dim)
@@ -140,20 +144,28 @@ class RSUCBVIAgent(AgentWithSimplePolicy):
         # maximum value
         r_range = self.env.reward_range[1] - self.env.reward_range[0]
         if r_range == np.inf or r_range == 0.0:
-            logger.warning("{}: Reward range is  zero or infinity. ".format(self.name)
-                           + "Setting it to 1.")
+            logger.warning(
+                "{}: Reward range is  zero or infinity. ".format(self.name)
+                + "Setting it to 1."
+            )
             r_range = 1.0
 
         if self.gamma == 1.0:
             self.v_max = r_range * horizon
         else:
-            self.v_max = r_range * (1.0 - np.power(self.gamma, self.horizon)) \
+            self.v_max = (
+                r_range
+                * (1.0 - np.power(self.gamma, self.horizon))
                 / (1.0 - self.gamma)
+            )
 
         # number of representative states and number of actions
         if max_repr is None:
-            max_repr = int(np.ceil((1.0 * np.sqrt(self.state_dim) /
-                                    self.min_dist) ** self.state_dim))
+            max_repr = int(
+                np.ceil(
+                    (1.0 * np.sqrt(self.state_dim) / self.min_dist) ** self.state_dim
+                )
+            )
         self.max_repr = max_repr
 
         # current number of representative states
@@ -207,18 +219,23 @@ class RSUCBVIAgent(AgentWithSimplePolicy):
             count += 1
 
         # compute Q function for the recommended policy
-        self.Q_policy, _ = backward_induction(self.R_hat[:self.M, :],
-                                              self.P_hat[:self.M, :, :self.M],
-                                              self.horizon, self.gamma)
+        self.Q_policy, _ = backward_induction(
+            self.R_hat[: self.M, :],
+            self.P_hat[: self.M, :, : self.M],
+            self.horizon,
+            self.gamma,
+        )
 
     def _map_to_repr(self, state, accept_new_repr=True):
-        repr_state = map_to_representative(state,
-                                           self.lp_metric,
-                                           self.representative_states,
-                                           self.M,
-                                           self.min_dist,
-                                           self.scaling,
-                                           accept_new_repr)
+        repr_state = map_to_representative(
+            state,
+            self.lp_metric,
+            self.representative_states,
+            self.M,
+            self.min_dist,
+            self.scaling,
+            accept_new_repr,
+        )
         # check if new representative state
         if repr_state == self.M:
             self.M += 1
@@ -232,12 +249,15 @@ class RSUCBVIAgent(AgentWithSimplePolicy):
         self.N_sas[repr_state, action, repr_next_state] += 1
         self.S_sa[repr_state, action] += reward
 
-        self.R_hat[repr_state, action] = self.S_sa[repr_state, action] \
-            / self.N_sa[repr_state, action]
-        self.P_hat[repr_state, action, :] = self.N_sas[repr_state, action, :] \
-            / self.N_sa[repr_state, action]
-        self.B_sa[repr_state, action] = \
-            self._compute_bonus(self.N_sa[repr_state, action])
+        self.R_hat[repr_state, action] = (
+            self.S_sa[repr_state, action] / self.N_sa[repr_state, action]
+        )
+        self.P_hat[repr_state, action, :] = (
+            self.N_sas[repr_state, action, :] / self.N_sa[repr_state, action]
+        )
+        self.B_sa[repr_state, action] = self._compute_bonus(
+            self.N_sa[repr_state, action]
+        )
 
     def _compute_bonus(self, n):
         # reward-free
@@ -252,7 +272,8 @@ class RSUCBVIAgent(AgentWithSimplePolicy):
             return bonus
         else:
             raise NotImplementedError(
-                "Error: bonus type {} not implemented".format(self.bonus_type))
+                "Error: bonus type {} not implemented".format(self.bonus_type)
+            )
 
     def _get_action(self, state, hh=0):
         assert self.Q is not None
@@ -279,10 +300,14 @@ class RSUCBVIAgent(AgentWithSimplePolicy):
 
         # run backward induction
         backward_induction_in_place(
-            self.Q[:, :self.M, :], self.V[:, :self.M],
-            self.R_hat[:self.M, :] + self.B_sa[:self.M, :],
-            self.P_hat[:self.M, :, :self.M],
-            self.horizon, self.gamma, self.v_max)
+            self.Q[:, : self.M, :],
+            self.V[:, : self.M],
+            self.R_hat[: self.M, :] + self.B_sa[: self.M, :],
+            self.P_hat[: self.M, :, : self.M],
+            self.horizon,
+            self.gamma,
+            self.v_max,
+        )
 
         self.episode += 1
         #

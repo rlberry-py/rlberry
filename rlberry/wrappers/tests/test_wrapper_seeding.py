@@ -16,14 +16,7 @@ try:
 except Exception:
     _GYM_INSTALLED = False
 
-classes = [
-    MountainCar,
-    GridWorld,
-    Chain,
-    PBall2D,
-    SimplePBallND,
-    Acrobot
-]
+classes = [MountainCar, GridWorld, Chain, PBall2D, SimplePBallND, Acrobot]
 
 
 def get_env_trajectory(env, horizon):
@@ -121,7 +114,7 @@ def test_double_wrapper_copy_reseeding(ModelClass):
 def test_gym_copy_reseeding():
     seeder = Seeder(123)
     if _GYM_INSTALLED:
-        gym_env = gym.make('Acrobot-v1')
+        gym_env = gym.make("Acrobot-v1")
         env = Wrapper(gym_env)
         env.reseed(seeder)
 
@@ -137,7 +130,7 @@ def test_gym_copy_reseeding():
 def test_gym_copy_reseeding_2():
     seeder = Seeder(123)
     if _GYM_INSTALLED:
-        gym_env = gym.make('Acrobot-v1')
+        gym_env = gym.make("Acrobot-v1")
         # nested wrapping
         env = RescaleRewardWrapper(Wrapper(Wrapper(gym_env)), (0, 1))
         env.reseed(seeder)

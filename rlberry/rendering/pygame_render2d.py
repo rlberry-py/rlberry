@@ -9,10 +9,10 @@ from rlberry.rendering import Scene
 
 logger = logging.getLogger(__name__)
 
-environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
+environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "1"
 
 _IMPORT_SUCESSFUL = True
-_IMPORT_ERROR_MSG = ''
+_IMPORT_ERROR_MSG = ""
 try:
     import pygame as pg
 
@@ -97,7 +97,7 @@ class PyGameRender2D:
         """
         Draw a 2D shape, of type GeometricPrimitive
         """
-        if shape.type in ['POLYGON']:
+        if shape.type in ["POLYGON"]:
             area = self.clipping_area
             width_range = area[1] - area[0]
             height_range = area[3] - area[2]
@@ -113,15 +113,13 @@ class PyGameRender2D:
                 pg_vertex = (xx, yy)
                 vertices.append(pg_vertex)
 
-            color = (255 * shape.color[0],
-                     255 * shape.color[1],
-                     255 * shape.color[2])
+            color = (255 * shape.color[0], 255 * shape.color[1], 255 * shape.color[2])
             pg.draw.polygon(self.screen, color, vertices)
 
         else:
             raise NotImplementedError(
-                "Shape type %s not implemented in pygame renderer."
-                % shape.type)
+                "Shape type %s not implemented in pygame renderer." % shape.type
+            )
 
     def run_graphics(self, loop=True):
         """
@@ -180,10 +178,10 @@ class PyGameRender2D:
                 #
                 # See https://stackoverflow.com/a/42754578/5691288
                 #
-                string_image = pg.image.tostring(self.screen, 'RGB')
-                temp_surf = pg.image.fromstring(string_image,
-                                                (self.window_width,
-                                                 self.window_height), 'RGB')
+                string_image = pg.image.tostring(self.screen, "RGB")
+                temp_surf = pg.image.fromstring(
+                    string_image, (self.window_width, self.window_height), "RGB"
+                )
                 tmp_arr = pg.surfarray.array3d(temp_surf)
                 imgdata = np.moveaxis(tmp_arr, 0, 1)
                 video_data.append(imgdata)

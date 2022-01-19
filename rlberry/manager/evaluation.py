@@ -6,12 +6,14 @@ import seaborn as sns
 logger = logging.getLogger(__name__)
 
 
-def evaluate_agents(agent_manager_list,
-                    n_simulations=5,
-                    fignum=None,
-                    show=True,
-                    plot=True,
-                    sns_kwargs=None):
+def evaluate_agents(
+    agent_manager_list,
+    n_simulations=5,
+    fignum=None,
+    show=True,
+    plot=True,
+    sns_kwargs=None,
+):
     """
     Evaluate and compare each of the agents in agent_manager_list.
 
@@ -41,13 +43,15 @@ def evaluate_agents(agent_manager_list,
 
     eval_outputs = []
     for agent_manager in agent_manager_list:
-        logger.info(f'Evaluating {agent_manager.agent_name}...')
+        logger.info(f"Evaluating {agent_manager.agent_name}...")
         outputs = agent_manager.eval_agents(n_simulations)
         if len(outputs) > 0:
             eval_outputs.append(outputs)
 
     if len(eval_outputs) == 0:
-        logger.error('[evaluate_agents]: No evaluation data. Make sure AgentManager.fit() has been called.')
+        logger.error(
+            "[evaluate_agents]: No evaluation data. Make sure AgentManager.fit() has been called."
+        )
         return
 
     #
@@ -85,14 +89,16 @@ def evaluate_agents(agent_manager_list,
     return output
 
 
-def plot_writer_data(agent_manager,
-                     tag,
-                     xtag=None,
-                     fignum=None,
-                     show=True,
-                     preprocess_func=None,
-                     title=None,
-                     sns_kwargs=None):
+def plot_writer_data(
+    agent_manager,
+    tag,
+    xtag=None,
+    fignum=None,
+    show=True,
+    preprocess_func=None,
+    title=None,
+    sns_kwargs=None,
+):
     """
     Given a list of AgentManager, plot data (corresponding to info) obtained in each episode.
     The dictionary returned by agents' .fit() method must contain a key equal to `info`.
@@ -120,11 +126,11 @@ def plot_writer_data(agent_manager,
     -------
     Pandas DataFrame with processed data used by seaborn's lineplot.
     """
-    sns_kwargs = sns_kwargs or {'ci': 'sd'}
+    sns_kwargs = sns_kwargs or {"ci": "sd"}
 
     title = title or tag
     if preprocess_func is not None:
-        ylabel = 'value'
+        ylabel = "value"
     else:
         ylabel = tag
     preprocess_func = preprocess_func or (lambda x: x)
@@ -143,34 +149,36 @@ def plot_writer_data(agent_manager,
         if writer_data is not None:
             for idx in writer_data:
                 df = writer_data[idx]
-                processed_df = pd.DataFrame(df[df['tag'] == tag])
-                processed_df['value'] = preprocess_func(processed_df['value'].values)
+                processed_df = pd.DataFrame(df[df["tag"] == tag])
+                processed_df["value"] = preprocess_func(processed_df["value"].values)
                 # update name according to AgentManager name
-                processed_df['name'] = agent_name
+                processed_df["name"] = agent_name
                 # add column with xtag, if given
                 if xtag is not None:
-                    df_xtag = pd.DataFrame(df[df['tag'] == xtag])
-                    processed_df[xtag] = df_xtag['value'].values
+                    df_xtag = pd.DataFrame(df[df["tag"] == xtag])
+                    processed_df[xtag] = df_xtag["value"].values
                 data_list.append(processed_df)
     if len(data_list) == 0:
-        logger.error('[plot_writer_data]: No data to be plotted.')
+        logger.error("[plot_writer_data]: No data to be plotted.")
         return
 
     all_writer_data = pd.concat(data_list, ignore_index=True)
 
-    data = all_writer_data[all_writer_data['tag'] == tag]
+    data = all_writer_data[all_writer_data["tag"] == tag]
     if xtag is None:
-        xtag = 'global_step'
+        xtag = "global_step"
 
     if data[xtag].notnull().sum() > 0:
         xx = xtag
-        if data['global_step'].isna().sum() > 0:
-            logger.warning(f'Plotting {tag} vs {xtag}, but {xtag} might be missing for some agents.')
+        if data["global_step"].isna().sum() > 0:
+            logger.warning(
+                f"Plotting {tag} vs {xtag}, but {xtag} might be missing for some agents."
+            )
     else:
         xx = data.index
 
     plt.figure(fignum)
-    lineplot_kwargs = dict(x=xx, y='value', hue='name', style='name', data=data)
+    lineplot_kwargs = dict(x=xx, y="value", hue="name", style="name", data=data)
     lineplot_kwargs.update(sns_kwargs)
     sns.lineplot(**lineplot_kwargs)
     plt.title(title)

@@ -10,6 +10,7 @@ if check_packages.NUMBA_INSTALLED:
 
     numba_jit = jit(nopython=True)
 else:
+
     def numba_jit(func, **options):
         """This decorator does not modify the decorated function."""
         return func

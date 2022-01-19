@@ -34,6 +34,7 @@ class RenderInterface(ABC):
         Save video file.
         """
         pass
+
     def get_video(self, **kwargs):
         """
         Get video data.
@@ -62,12 +63,12 @@ class RenderInterface2D(RenderInterface):
         self._clipping_area = (-1.0, 1.0, -1.0, 1.0)  # (left,right,bottom,top)
 
         # rendering type, either 'pygame' or 'opengl'
-        self.renderer_type = 'opengl'
+        self.renderer_type = "opengl"
 
     def get_renderer(self):
-        if self.renderer_type == 'opengl':
+        if self.renderer_type == "opengl":
             return OpenGLRender2D()
-        elif self.renderer_type == 'pygame':
+        elif self.renderer_type == "pygame":
             return PyGameRender2D()
         else:
             raise NotImplementedError("Unknown renderer type.")
@@ -154,8 +155,6 @@ class RenderInterface2D(RenderInterface):
         renderer.set_background(background)
 
         return renderer.get_video_data()
-
-
 
     def save_video(self, filename, framerate=25, **kwargs):
         video_data = self.get_video(framerate=framerate, **kwargs)

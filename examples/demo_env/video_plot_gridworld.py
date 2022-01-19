@@ -1,4 +1,6 @@
 """
+.. _gridworld_example:
+
 ========================================================
 A demo of Gridworld environment with ValueIterationAgent
 ========================================================
@@ -12,7 +14,6 @@ Gridworld environment.
 
 from rlberry.agents.dynprog import ValueIterationAgent
 from rlberry.envs.finite import GridWorld
-
 
 
 env = GridWorld(7, 10, walls=((2, 2), (3, 3)))

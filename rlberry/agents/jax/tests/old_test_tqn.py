@@ -18,12 +18,9 @@ def test_jax_dqn(lambda_):
     if not _IMPORT_SUCCESSFUL:
         return
 
-    env = (gym_make, dict(id='CartPole-v0'))
+    env = (gym_make, dict(id="CartPole-v0"))
     params = dict(
-        chunk_size=4,
-        batch_size=128,
-        target_update_interval=5,
-        lambda_=lambda_
+        chunk_size=4, batch_size=128, target_update_interval=5, lambda_=lambda_
     )
 
     stats = AgentManager(
@@ -33,7 +30,7 @@ def test_jax_dqn(lambda_):
         eval_env=env,
         init_kwargs=params,
         n_fit=1,
-        parallelization='thread',
+        parallelization="thread",
     )
     stats.fit()
     stats.clear_output_dir()

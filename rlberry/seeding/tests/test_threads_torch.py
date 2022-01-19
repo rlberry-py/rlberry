@@ -30,7 +30,5 @@ def test_torch_multithread_seeding():
 
                 results = []
                 for future in concurrent.futures.as_completed(futures):
-                    results.append(
-                        future.result()
-                    )
+                    results.append(future.result())
                 assert results[0] != results[1], f"error in simulation {(ii, jj)}"

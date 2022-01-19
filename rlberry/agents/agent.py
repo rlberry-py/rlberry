@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 class Agent(ABC):
-    """ Basic interface for agents.
+    """Basic interface for agents.
 
     Parameters
     ----------
@@ -59,18 +59,19 @@ class Agent(ABC):
 
     name = ""
 
-    def __init__(self,
-                 env: types.Env,
-                 eval_env: Optional[types.Env] = None,
-                 copy_env: bool = True,
-                 seeder: Optional[types.Seed] = None,
-                 output_dir: Optional[str] = None,
-                 _execution_metadata: Optional[metadata_utils.ExecutionMetadata] = None,
-                 _default_writer_kwargs: Optional[dict] = None,
-                 **kwargs):
+    def __init__(
+        self,
+        env: types.Env,
+        eval_env: Optional[types.Env] = None,
+        copy_env: bool = True,
+        seeder: Optional[types.Seed] = None,
+        output_dir: Optional[str] = None,
+        _execution_metadata: Optional[metadata_utils.ExecutionMetadata] = None,
+        _default_writer_kwargs: Optional[dict] = None,
+        **kwargs,
+    ):
         # Check if wrong parameters have been sent to an agent.
-        assert kwargs == {}, \
-            'Unknown parameters sent to agent:' + str(kwargs.keys())
+        assert kwargs == {}, "Unknown parameters sent to agent:" + str(kwargs.keys())
 
         self.seeder = Seeder(seeder)
         self.env = process_env(env, self.seeder, copy_env=copy_env)
@@ -80,14 +81,17 @@ class Agent(ABC):
         self.eval_env = process_env(eval_env, self.seeder, copy_env=True)
 
         # metadata
-        self._execution_metadata = _execution_metadata or metadata_utils.ExecutionMetadata()
+        self._execution_metadata = (
+            _execution_metadata or metadata_utils.ExecutionMetadata()
+        )
         self._unique_id = metadata_utils.get_unique_id(self)
         if self.name:
-            self._unique_id = self.name + '_' + self._unique_id
+            self._unique_id = self.name + "_" + self._unique_id
 
         # create writer
         _default_writer_kwargs = _default_writer_kwargs or dict(
-            name=self.name, execution_metadata=self._execution_metadata)
+            name=self.name, execution_metadata=self._execution_metadata
+        )
         self._writer = DefaultWriter(**_default_writer_kwargs)
 
         # output directory for the agent instance
@@ -174,7 +178,7 @@ class Agent(ABC):
 
     @property
     def rng(self):
-        """ Random number generator. """
+        """Random number generator."""
         return self.seeder.rng
 
     def reseed(self, seed_seq=None):
@@ -230,7 +234,7 @@ class Agent(ABC):
         if not dill.pickles(self.writer):
             self.set_writer(None)
         # save
-        filename = Path(filename).with_suffix('.pickle')
+        filename = Path(filename).with_suffix(".pickle")
         filename.parent.mkdir(parents=True, exist_ok=True)
         try:
             with filename.open("wb") as ff:
@@ -256,14 +260,14 @@ class Agent(ABC):
         **kwargs: dict
             Arguments to required by the __init__ method of the Agent subclass.
         """
-        filename = Path(filename).with_suffix('.pickle')
+        filename = Path(filename).with_suffix(".pickle")
 
         obj = cls(**kwargs)
         try:
-            with filename.open('rb') as ff:
+            with filename.open("rb") as ff:
                 tmp_dict = pickle.load(ff)
         except Exception:
-            with filename.open('rb') as ff:
+            with filename.open("rb") as ff:
                 tmp_dict = dill.load(ff)
 
         obj.__dict__.clear()
@@ -322,11 +326,7 @@ class AgentWithSimplePolicy(Agent):
         """Returns an action, given an observation."""
         pass
 
-    def eval(self,
-             eval_horizon=10 ** 5,
-             n_simulations=10,
-             gamma=1.0,
-             **kwargs):
+    def eval(self, eval_horizon=10 ** 5, n_simulations=10, gamma=1.0, **kwargs):
         """
         Monte-Carlo policy evaluation [1]_ of an agent to estimate the value at the initial state.
 
@@ -346,7 +346,7 @@ class AgentWithSimplePolicy(Agent):
         References
         ----------
         .. [1] http://incompleteideas.net/book/first/ebook/node50.html
-            """
+        """
         del kwargs  # unused
         episode_rewards = np.zeros(n_simulations)
         for sim in range(n_simulations):
