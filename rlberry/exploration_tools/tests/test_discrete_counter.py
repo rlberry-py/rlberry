@@ -4,13 +4,17 @@ from rlberry.envs import GridWorld
 from rlberry.envs import MountainCar
 from rlberry.envs.benchmarks.grid_exploration.nroom import NRoom
 from rlberry.exploration_tools.discrete_counter import DiscreteCounter
-from rlberry.exploration_tools.online_discretization_counter import OnlineDiscretizationCounter
+from rlberry.exploration_tools.online_discretization_counter import (
+    OnlineDiscretizationCounter,
+)
 
 
 @pytest.mark.parametrize("rate_power", [0.5, 1])
 def test_discrete_env(rate_power):
     env = GridWorld()
-    counter = DiscreteCounter(env.observation_space, env.action_space, rate_power=rate_power)
+    counter = DiscreteCounter(
+        env.observation_space, env.action_space, rate_power=rate_power
+    )
 
     for N in range(10, 20):
         assert counter.get_n_visited_states() == 0
@@ -37,7 +41,9 @@ def test_discrete_env(rate_power):
 @pytest.mark.parametrize("rate_power", [0.5, 1])
 def test_continuous_state_env(rate_power):
     env = MountainCar()
-    counter = DiscreteCounter(env.observation_space, env.action_space, rate_power=rate_power)
+    counter = DiscreteCounter(
+        env.observation_space, env.action_space, rate_power=rate_power
+    )
 
     for N in [10, 20]:
         for _ in range(50):
@@ -60,9 +66,9 @@ def test_continuous_state_env(rate_power):
 @pytest.mark.parametrize("rate_power", [True, False])
 def test_continuous_state_env_2(rate_power):
     env = MountainCar()
-    counter = OnlineDiscretizationCounter(env.observation_space,
-                                          env.action_space,
-                                          rate_power=rate_power)
+    counter = OnlineDiscretizationCounter(
+        env.observation_space, env.action_space, rate_power=rate_power
+    )
 
     for N in [10, 20]:
         for _ in range(50):
@@ -81,10 +87,9 @@ def test_continuous_state_env_2(rate_power):
 
 def test_continuous_state_env_3():
     env = NRoom(nrooms=3, array_observation=True)
-    counter = OnlineDiscretizationCounter(env.observation_space,
-                                          env.action_space,
-                                          rate_power=0.5,
-                                          min_dist=0.0)
+    counter = OnlineDiscretizationCounter(
+        env.observation_space, env.action_space, rate_power=0.5, min_dist=0.0
+    )
 
     for N in range(10, 20):
         assert counter.get_n_visited_states() == 0
@@ -101,6 +106,8 @@ def test_continuous_state_env_3():
                 assert np.allclose(counter.measure(continuous_ss, aa), np.sqrt(1.0 / N))
 
         assert counter.get_n_visited_states() == env.discrete_observation_space.n
-        assert np.allclose(counter.get_entropy(), np.log2(env.discrete_observation_space.n))
+        assert np.allclose(
+            counter.get_entropy(), np.log2(env.discrete_observation_space.n)
+        )
 
         counter.reset()

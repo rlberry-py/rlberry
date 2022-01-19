@@ -90,8 +90,10 @@ class Model(gym.Env):
         raise NotImplementedError("sample() method not implemented.")
 
     def is_online(self):
-        logger.warning("Checking if Model is\
-online calls reset() and step() methods.")
+        logger.warning(
+            "Checking if Model is\
+online calls reset() and step() methods."
+        )
         try:
             self.reset()
             self.step(self.action_space.sample())
@@ -103,11 +105,12 @@ online calls reset() and step() methods.")
                 raise
 
     def is_generative(self):
-        logger.warning("Checking if Model is \
-generative calls sample() method.")
+        logger.warning(
+            "Checking if Model is \
+generative calls sample() method."
+        )
         try:
-            self.sample(self.observation_space.sample(),
-                        self.action_space.sample())
+            self.sample(self.observation_space.sample(), self.action_space.sample())
             return True
         except Exception as ex:
             if isinstance(ex, NotImplementedError):
@@ -121,5 +124,5 @@ generative calls sample() method.")
 
     @property
     def rng(self):
-        """ Random number generator. """
+        """Random number generator."""
         return self.seeder.rng

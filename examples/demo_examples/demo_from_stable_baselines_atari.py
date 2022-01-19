@@ -13,31 +13,33 @@ from pathlib import Path
 
 
 class A2CAgent(AgentWithSimplePolicy):
-    name = 'A2C'
+    name = "A2C"
 
-    def __init__(self,
-                 env,
-                 policy,
-                 learning_rate=7e-4,
-                 n_steps: int = 5,
-                 gamma: float = 0.99,
-                 gae_lambda: float = 1.0,
-                 ent_coef: float = 0.0,
-                 vf_coef: float = 0.5,
-                 max_grad_norm: float = 0.5,
-                 rms_prop_eps: float = 1e-5,
-                 use_rms_prop: bool = True,
-                 use_sde: bool = False,
-                 sde_sample_freq: int = -1,
-                 normalize_advantage: bool = False,
-                 tensorboard_log=None,
-                 create_eval_env=False,
-                 policy_kwargs=None,
-                 verbose: int = 0,
-                 seed=None,
-                 device="auto",
-                 _init_setup_model: bool = True,
-                 **kwargs):
+    def __init__(
+        self,
+        env,
+        policy,
+        learning_rate=7e-4,
+        n_steps: int = 5,
+        gamma: float = 0.99,
+        gae_lambda: float = 1.0,
+        ent_coef: float = 0.0,
+        vf_coef: float = 0.5,
+        max_grad_norm: float = 0.5,
+        rms_prop_eps: float = 1e-5,
+        use_rms_prop: bool = True,
+        use_sde: bool = False,
+        sde_sample_freq: int = -1,
+        normalize_advantage: bool = False,
+        tensorboard_log=None,
+        create_eval_env=False,
+        policy_kwargs=None,
+        verbose: int = 0,
+        seed=None,
+        device="auto",
+        _init_setup_model: bool = True,
+        **kwargs
+    ):
         # init rlberry base class
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
         # rlberry accepts tuples (env_constructor, env_kwargs) as env
@@ -69,7 +71,8 @@ class A2CAgent(AgentWithSimplePolicy):
             verbose,
             seed,
             device,
-            _init_setup_model)
+            _init_setup_model,
+        )
 
     def fit(self, budget):
         self.wrapped.learn(total_timesteps=budget)
@@ -83,7 +86,7 @@ class A2CAgent(AgentWithSimplePolicy):
     #
     def save(self, filename):
         self.wrapped.save(filename)
-        return Path(filename).with_suffix('.zip')
+        return Path(filename).with_suffix(".zip")
 
     @classmethod
     def load(cls, filename, **kwargs):
@@ -96,16 +99,16 @@ class A2CAgent(AgentWithSimplePolicy):
     #
     @classmethod
     def sample_parameters(cls, trial):
-        learning_rate = trial.suggest_loguniform('learning_rate', 1e-5, 1)
+        learning_rate = trial.suggest_loguniform("learning_rate", 1e-5, 1)
 
-        return {'learning_rate': learning_rate}
+        return {"learning_rate": learning_rate}
 
 
 #
 # Train and eval env constructors
 #
 def env_constructor(n_envs=4):
-    env = make_atari_env('MontezumaRevenge-v0', n_envs=n_envs)
+    env = make_atari_env("MontezumaRevenge-v0", n_envs=n_envs)
     env = VecFrameStack(env, n_stack=4)
     return env
 
@@ -114,7 +117,7 @@ def eval_env_constructor(n_envs=1):
     """
     Evaluation should be in a scalar environment.
     """
-    env = make_atari_env('MontezumaRevenge-v0', n_envs=n_envs)
+    env = make_atari_env("MontezumaRevenge-v0", n_envs=n_envs)
     env = VecFrameStack(env, n_stack=4)
     env = ScalarizeEnvWrapper(env)
     return env
@@ -125,7 +128,7 @@ def eval_env_constructor(n_envs=1):
 #
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     #
     # Training several agents and comparing different hyperparams
     #
@@ -135,13 +138,14 @@ if __name__ == '__main__':
         train_env=(env_constructor, None),
         eval_env=(eval_env_constructor, None),
         eval_kwargs=dict(eval_horizon=200),
-        agent_name='A2C baseline',
+        agent_name="A2C baseline",
         fit_budget=5000,
-        init_kwargs=dict(policy='CnnPolicy', verbose=10),
+        init_kwargs=dict(policy="CnnPolicy", verbose=10),
         n_fit=4,
-        parallelization='process',
-        output_dir='dev/stable_baselines_atari',
-        seed=123)
+        parallelization="process",
+        output_dir="dev/stable_baselines_atari",
+        seed=123,
+    )
 
     stats.fit()
     stats.optimize_hyperparams(timeout=60, n_fit=2)

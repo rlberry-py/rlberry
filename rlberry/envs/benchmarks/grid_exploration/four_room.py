@@ -30,12 +30,10 @@ class FourRoom(GridWorld):
     when array_observation is True. Only the functions env.reset() and
     env.step() are covered.
     """
+
     name = "FourRoom"
 
-    def __init__(self,
-                 reward_free=False,
-                 difficulty=0,
-                 array_observation=False):
+    def __init__(self, reward_free=False, difficulty=0, array_observation=False):
         self.reward_free = reward_free
         self.difficulty = difficulty
         self.array_observation = array_observation
@@ -77,15 +75,17 @@ class FourRoom(GridWorld):
                 }
 
         # Init base class
-        GridWorld.__init__(self,
-                           nrows=nrows,
-                           ncols=ncols,
-                           start_coord=start_coord,
-                           terminal_states=terminal_states,
-                           success_probability=success_probability,
-                           reward_at=reward_at,
-                           walls=walls,
-                           default_reward=default_reward)
+        GridWorld.__init__(
+            self,
+            nrows=nrows,
+            ncols=ncols,
+            start_coord=start_coord,
+            terminal_states=terminal_states,
+            success_probability=success_probability,
+            reward_at=reward_at,
+            walls=walls,
+            default_reward=default_reward,
+        )
 
         # spaces
         if self.array_observation:

@@ -37,10 +37,9 @@ def test_lsvi_ucb_matrix_inversion(FeatMapClass):
         return FeatMapClass(_env.observation_space.n, _env.action_space.n)
 
     reg_factor = 0.1
-    agent = LSVIUCBAgent(env,
-                         feature_map_fn=feature_map_fn,
-                         horizon=10,
-                         reg_factor=reg_factor)
+    agent = LSVIUCBAgent(
+        env, feature_map_fn=feature_map_fn, horizon=10, reg_factor=reg_factor
+    )
     agent.reseed(123)
     agent.fit(budget=50)
     assert np.allclose(np.linalg.inv(agent.lambda_mat), agent.lambda_mat_inv)
@@ -57,14 +56,17 @@ def test_lsvi_ucb_matrix_inversion(FeatMapClass):
     for state, action in zip(agent.state_hist, agent.action_hist):
         N_sa[state, action] += 1.0
 
-    assert np.allclose(agent.lambda_mat_inv.diagonal(),
-                       1.0 / (N_sa.flatten() + reg_factor))
+    assert np.allclose(
+        agent.lambda_mat_inv.diagonal(), 1.0 / (N_sa.flatten() + reg_factor)
+    )
 
     for ss in range(S):
         for aa in range(A):
             feat = agent.feature_map.map(ss, aa)
-            assert np.allclose(feat @ (agent.lambda_mat_inv.T @ feat),
-                               1.0 / (N_sa[ss, aa] + reg_factor))
+            assert np.allclose(
+                feat @ (agent.lambda_mat_inv.T @ feat),
+                1.0 / (N_sa[ss, aa] + reg_factor),
+            )
 
 
 def test_lsvi_without_bonus():
@@ -88,8 +90,7 @@ def test_lsvi_without_bonus():
             #
             agent.lambda_mat += np.outer(feat, feat)
             # update inverse
-            agent.lambda_mat_inv -= \
-                (inv @ outer_prod @ inv) / (1 + feat @ inv.T @ feat)
+            agent.lambda_mat_inv -= (inv @ outer_prod @ inv) / (1 + feat @ inv.T @ feat)
 
             # update history
             agent.reward_hist[count] = reward
@@ -101,8 +102,9 @@ def test_lsvi_without_bonus():
             tt = agent.total_time_steps
             agent.feat_hist[tt, :] = agent.feature_map.map(state, action)
             for aa in range(agent.env.action_space.n):
-                agent.feat_ns_all_actions[tt, aa, :] = \
-                    agent.feature_map.map(next_state, aa)
+                agent.feat_ns_all_actions[tt, aa, :] = agent.feature_map.map(
+                    next_state, aa
+                )
 
             # increments
             agent.total_time_steps += 1
@@ -114,11 +116,9 @@ def test_lsvi_without_bonus():
     def feature_map_fn(_env):
         return OneHotFeatureMap(_env.observation_space.n, _env.action_space.n)
 
-    agent = LSVIUCBAgent(env,
-                         feature_map_fn=feature_map_fn,
-                         horizon=20,
-                         gamma=0.99,
-                         reg_factor=1e-5)
+    agent = LSVIUCBAgent(
+        env, feature_map_fn=feature_map_fn, horizon=20, gamma=0.99, reg_factor=1e-5
+    )
     agent.reseed(123)
     agent.n_episodes = 100
     agent.reset()
@@ -150,12 +150,14 @@ def test_lsvi_random_exploration():
     def feature_map_fn(_env):
         return OneHotFeatureMap(_env.observation_space.n, _env.action_space.n)
 
-    agent = LSVIUCBAgent(env,
-                         feature_map_fn=feature_map_fn,
-                         horizon=20,
-                         gamma=0.99,
-                         reg_factor=1e-5,
-                         bonus_scale_factor=0.0)
+    agent = LSVIUCBAgent(
+        env,
+        feature_map_fn=feature_map_fn,
+        horizon=20,
+        gamma=0.99,
+        reg_factor=1e-5,
+        bonus_scale_factor=0.0,
+    )
     agent.reseed(123)
     agent.fit(budget=250)
 
@@ -184,11 +186,14 @@ def test_lsvi_optimism():
     def feature_map_fn(_env):
         return OneHotFeatureMap(_env.observation_space.n, _env.action_space.n)
 
-    agent = LSVIUCBAgent(env, gamma=0.99,
-                         feature_map_fn=feature_map_fn,
-                         horizon=3,
-                         bonus_scale_factor=3,
-                         reg_factor=0.000001)
+    agent = LSVIUCBAgent(
+        env,
+        gamma=0.99,
+        feature_map_fn=feature_map_fn,
+        horizon=3,
+        bonus_scale_factor=3,
+        reg_factor=0.000001,
+    )
     agent.fit(budget=250)
 
     # near optimal Q
@@ -202,9 +207,8 @@ def test_lsvi_optimism():
     Q_optimistic = np.zeros((S, A))
     for ss in range(S):
         Q_optimistic[ss, :] = agent._compute_q_vec(
-            agent.w_vec[0, :],
-            ss,
-            agent.bonus_scale_factor)
+            agent.w_vec[0, :], ss, agent.bonus_scale_factor
+        )
 
     print(Q)
     print(Q_optimistic)

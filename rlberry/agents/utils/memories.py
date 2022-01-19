@@ -2,8 +2,9 @@ import numpy as np
 import operator
 from collections import namedtuple
 
-Transition = namedtuple('Transition',
-                        ('state', 'action', 'reward', 'next_state', 'terminal', 'info'))
+Transition = namedtuple(
+    "Transition", ("state", "action", "reward", "next_state", "terminal", "info")
+)
 
 
 class ReplayMemory(object):
@@ -11,9 +12,7 @@ class ReplayMemory(object):
     Container that stores and samples transitions.
     """
 
-    def __init__(self,
-                 capacity=10000,
-                 **kwargs):
+    def __init__(self, capacity=10000, **kwargs):
         self.capacity = int(capacity)
         self.memory = []
         self.position = 0
@@ -59,22 +58,20 @@ class TransitionReplayMemory(ReplayMemory):
             rewards.append(reward)
             next_states.append(np.array(next_state, copy=False))
             dones.append(done)
-        return Transition(np.array(states),
-                          np.array(actions),
-                          np.array(rewards),
-                          np.array(next_states),
-                          np.array(dones),
-                          {})
+        return Transition(
+            np.array(states),
+            np.array(actions),
+            np.array(rewards),
+            np.array(next_states),
+            np.array(dones),
+            {},
+        )
 
 
 class PrioritizedReplayMemory(TransitionReplayMemory):
     """Code from https://github.com/openai/baselines/blob/master/baselines/deepq/replay_buffer.py"""
 
-    def __init__(self,
-                 capacity=10000,
-                 alpha=0.5,
-                 beta=0.5,
-                 **kwargs):
+    def __init__(self, capacity=10000, alpha=0.5, beta=0.5, **kwargs):
         """Create Prioritized Replay buffer.
         Parameters
         ----------
@@ -251,7 +248,9 @@ class SegmentTree(object):
             neutral element for the operation above. eg. float('-inf')
             for max and 0 for sum.
         """
-        assert capacity > 0 and capacity & (capacity - 1) == 0, "capacity must be positive and a power of 2."
+        assert (
+            capacity > 0 and capacity & (capacity - 1) == 0
+        ), "capacity must be positive and a power of 2."
         self._capacity = capacity
         self._value = [neutral_element for _ in range(2 * capacity)]
         self._operation = operation
@@ -268,7 +267,7 @@ class SegmentTree(object):
             else:
                 return self._operation(
                     self._reduce_helper(start, mid, 2 * node, node_start, mid),
-                    self._reduce_helper(mid + 1, end, 2 * node + 1, mid + 1, node_end)
+                    self._reduce_helper(mid + 1, end, 2 * node + 1, mid + 1, node_end),
                 )
 
     def reduce(self, start=0, end=None):
@@ -303,8 +302,7 @@ class SegmentTree(object):
         idx //= 2
         while idx >= 1:
             self._value[idx] = self._operation(
-                self._value[2 * idx],
-                self._value[2 * idx + 1]
+                self._value[2 * idx], self._value[2 * idx + 1]
             )
             idx //= 2
 
@@ -316,9 +314,7 @@ class SegmentTree(object):
 class SumSegmentTree(SegmentTree):
     def __init__(self, capacity):
         super(SumSegmentTree, self).__init__(
-            capacity=capacity,
-            operation=operator.add,
-            neutral_element=0.0
+            capacity=capacity, operation=operator.add, neutral_element=0.0
         )
 
     def sum(self, start=0, end=None):
@@ -357,9 +353,7 @@ class SumSegmentTree(SegmentTree):
 class MinSegmentTree(SegmentTree):
     def __init__(self, capacity):
         super(MinSegmentTree, self).__init__(
-            capacity=capacity,
-            operation=min,
-            neutral_element=float('inf')
+            capacity=capacity, operation=min, neutral_element=float("inf")
         )
 
     def min(self, start=0, end=None):

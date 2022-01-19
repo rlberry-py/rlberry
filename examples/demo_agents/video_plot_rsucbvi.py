@@ -17,8 +17,7 @@ from rlberry.envs.classic_control import MountainCar
 env = MountainCar()
 horizon = 170
 print("Running RS-UCBVI on %s" % env.name)
-agent = RSUCBVIAgent(env, gamma=0.99, horizon=horizon,
-                     bonus_scale_factor=0.1)
+agent = RSUCBVIAgent(env, gamma=0.99, horizon=horizon, bonus_scale_factor=0.1)
 agent.fit(budget=500)
 
 env.enable_rendering()

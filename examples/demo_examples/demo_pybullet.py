@@ -1,12 +1,10 @@
-""" 
- ===================== 
- Demo: demo_pybullet 
+"""
+ =====================
+ Demo: demo_pybullet
  =====================
 """
 from torch.utils.tensorboard import SummaryWriter
 
-import rlberry.envs.bullet3.pybullet_envs
-import space_wrappers
 import gym
 
 from rlberry.agents.torch.dqn import DQNAgent

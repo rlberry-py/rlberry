@@ -8,10 +8,10 @@ import logging
 from rlberry.rendering import Scene
 
 logger = logging.getLogger(__name__)
-environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
+environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "1"
 
 _IMPORT_SUCESSFUL = True
-_IMPORT_ERROR_MSG = ''
+_IMPORT_ERROR_MSG = ""
 try:
     import pygame as pg
     from pygame.locals import DOUBLEBUF, OPENGL
@@ -93,16 +93,24 @@ class OpenGLRender2D:
         """
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
-        gluOrtho2D(self.clipping_area[0], self.clipping_area[1],
-                   self.clipping_area[2], self.clipping_area[3])
+        gluOrtho2D(
+            self.clipping_area[0],
+            self.clipping_area[1],
+            self.clipping_area[2],
+            self.clipping_area[3],
+        )
 
     def display(self):
         """
         Callback function, handler for window re-paint
         """
         # Set background color (clear background)
-        glClearColor(self.background_color[0], self.background_color[1],
-                     self.background_color[2], 1.0)
+        glClearColor(
+            self.background_color[0],
+            self.background_color[1],
+            self.background_color[2],
+            1.0,
+        )
         glClear(GL_COLOR_BUFFER_BIT)
 
         # Display background
@@ -193,7 +201,9 @@ class OpenGLRender2D:
     def get_gl_image_str(self):
         # see https://gist.github.com/Jerdak/7364746
         glReadBuffer(GL_FRONT)
-        pixels = glReadPixels(0, 0, self.window_width, self.window_height, GL_RGB, GL_UNSIGNED_BYTE)
+        pixels = glReadPixels(
+            0, 0, self.window_width, self.window_height, GL_RGB, GL_UNSIGNED_BYTE
+        )
         return pixels
 
     def get_video_data(self):
@@ -223,9 +233,9 @@ class OpenGLRender2D:
                 # See https://stackoverflow.com/a/42754578/5691288
                 #
                 string_image = self.get_gl_image_str()
-                temp_surf = pg.image.fromstring(string_image,
-                                                (self.window_width,
-                                                 self.window_height), 'RGB')
+                temp_surf = pg.image.fromstring(
+                    string_image, (self.window_width, self.window_height), "RGB"
+                )
                 tmp_arr = pg.surfarray.array3d(temp_surf)
                 imgdata = np.moveaxis(tmp_arr, 0, 1)
                 imgdata = np.flipud(imgdata)

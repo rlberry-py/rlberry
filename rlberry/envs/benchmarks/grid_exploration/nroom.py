@@ -55,20 +55,23 @@ class NRoom(GridWorld):
     when array_observation is True. Only the functions env.reset() and
     env.step() are covered.
     """
+
     name = "N-Room"
 
-    def __init__(self,
-                 nrooms=7,
-                 reward_free=False,
-                 array_observation=False,
-                 room_size=5,
-                 success_probability=0.95,
-                 remove_walls=False,
-                 initial_state_distribution='center',
-                 include_traps=False):
+    def __init__(
+        self,
+        nrooms=7,
+        reward_free=False,
+        array_observation=False,
+        room_size=5,
+        success_probability=0.95,
+        remove_walls=False,
+        initial_state_distribution="center",
+        include_traps=False,
+    ):
 
         assert nrooms > 0, "nrooms must be > 0"
-        assert initial_state_distribution in ('center', 'uniform')
+        assert initial_state_distribution in ("center", "uniform")
 
         self.reward_free = reward_free
         self.array_observation = array_observation
@@ -116,12 +119,13 @@ class NRoom(GridWorld):
                 # existing rooms
                 if count < self.nrooms:
                     # remove top wall
-                    if ((room_c == self.room_ncols - 1) and (room_r % 2 == 0)) \
-                            or ((room_c == 0) and (room_r % 2 == 1)):
+                    if ((room_c == self.room_ncols - 1) and (room_r % 2 == 0)) or (
+                        (room_c == 0) and (room_r % 2 == 1)
+                    ):
                         if room_r != self.room_nrows - 1:
                             wall_to_remove = self._convert_room_coord_to_global(
-                                room_r, room_c,
-                                self.room_size, self.room_size // 2)
+                                room_r, room_c, self.room_size, self.room_size // 2
+                            )
                             if wall_to_remove in walls:
                                 walls.remove(wall_to_remove)
                 # rooms to remove
@@ -129,30 +133,37 @@ class NRoom(GridWorld):
                     for ii in range(-1, self.room_size + 1):
                         for jj in range(-1, self.room_size + 1):
                             wall_to_include = self._convert_room_coord_to_global(
-                                room_r, room_c,
-                                ii, jj)
-                            if wall_to_include[0] >= 0 and wall_to_include[0] < nrows \
-                                    and wall_to_include[1] >= 0 and wall_to_include[1] < ncols \
-                                    and (wall_to_include not in walls):
+                                room_r, room_c, ii, jj
+                            )
+                            if (
+                                wall_to_include[0] >= 0
+                                and wall_to_include[0] < nrows
+                                and wall_to_include[1] >= 0
+                                and wall_to_include[1] < ncols
+                                and (wall_to_include not in walls)
+                            ):
                                 walls.append(wall_to_include)
                     pass
 
                 # start coord
                 if count == nrooms // 2:
                     start_coord = self._convert_room_coord_to_global(
-                        room_r, room_c,
-                        self.room_size // 2, self.room_size // 2)
+                        room_r, room_c, self.room_size // 2, self.room_size // 2
+                    )
                 # terminal state
                 if count == nrooms - 1:
                     terminal_state = self._convert_room_coord_to_global(
-                        room_r, room_c,
-                        self.room_size // 2, self.room_size // 2)
+                        room_r, room_c, self.room_size // 2, self.room_size // 2
+                    )
                 # trap
                 if include_traps:
                     self.traps.append(
                         self._convert_room_coord_to_global(
-                            room_r, room_c,
-                            self.room_size // 2 + 1, self.room_size // 2 + 1)
+                            room_r,
+                            room_c,
+                            self.room_size // 2 + 1,
+                            self.room_size // 2 + 1,
+                        )
                     )
                 count += 1
 
@@ -164,7 +175,7 @@ class NRoom(GridWorld):
             reward_at = {
                 terminal_state: 1.0,
                 start_coord: 0.01,
-                (self.room_size // 2, self.room_size // 2): 0.1
+                (self.room_size // 2, self.room_size // 2): 0.1,
             }
 
         # Check remove_walls
@@ -172,18 +183,20 @@ class NRoom(GridWorld):
             walls = ()
 
         # Init base class
-        GridWorld.__init__(self,
-                           nrows=nrows,
-                           ncols=ncols,
-                           start_coord=start_coord,
-                           terminal_states=terminal_states,
-                           success_probability=success_probability,
-                           reward_at=reward_at,
-                           walls=walls,
-                           default_reward=0.0)
+        GridWorld.__init__(
+            self,
+            nrows=nrows,
+            ncols=ncols,
+            start_coord=start_coord,
+            terminal_states=terminal_states,
+            success_probability=success_probability,
+            reward_at=reward_at,
+            walls=walls,
+            default_reward=0.0,
+        )
 
         # Check initial distribution
-        if initial_state_distribution == 'uniform':
+        if initial_state_distribution == "uniform":
             distr = np.ones(self.observation_space.n) / self.observation_space.n
             self.set_initial_state_distribution(distr)
 
@@ -192,7 +205,9 @@ class NRoom(GridWorld):
             self.discrete_observation_space = self.observation_space
             self.observation_space = spaces.Box(0.0, 1.0, shape=(2,))
 
-    def _convert_room_coord_to_global(self, room_row, room_col, room_coord_row, room_coord_col):
+    def _convert_room_coord_to_global(
+        self, room_row, room_col, room_coord_row, room_coord_col
+    ):
         col_offset = (self.room_size + 1) * room_col
         row_offset = (self.room_size + 1) * room_row
 
