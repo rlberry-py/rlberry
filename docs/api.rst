@@ -99,8 +99,8 @@ Importation tools
    :toctree: generated/
    :template: function.rst
 
-    envs.gym_make.gym_make
-    envs.gym_make.atari_make
+    envs.gym_make
+    envs.atari_make
 
 
 
