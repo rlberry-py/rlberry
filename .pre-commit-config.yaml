@@ -21,7 +21,8 @@ repos:
         additional_dependencies: [black==21.12b0]
 
 -   repo: https://gitlab.com/pycqa/flake8
-    rev: 3.9.0
+    rev: 4.0.1
     hooks:
     -   id: flake8
         types: [file, python]
+        args: ['--max-line-length=88']

@@ -135,10 +135,14 @@ pre-commit install
 and then you are done. When next you do a commit, some checks will be run on the
 changes you made and if your code need some reformatting, it will automatically
 be done for you, you will only need to recommit to add the changes made by pre-commit.
+Once pre-commit is installed, if you want to skip it you can with
+`git commit . -m 'quick fix' --no-verify`.
 
 ## Pull request checklist
 
 Before a PR can be merged, it needs to be approved. Please prefix the title of your pull request with [MRG] if the contribution is complete and should be subjected to a detailed review. An incomplete contribution – where you expect to do more work before receiving a full review – should be prefixed [WIP] (to indicate a work in progress) and changed to [MRG] when it matures. WIPs may be useful to: indicate you are working on something to avoid duplicated work, request broad review of functionality or API, or seek collaborators. WIPs often benefit from the inclusion of a [task list](https://github.com/blog/1375-task-lists-in-gfm-issues-pulls-comments) in the PR description.
+
+It can also be usefull to use `autopep8 -a -a -i yourfile` to fix flake8 issues.
 
 1. Give your PR a helpful title
 2. Make sure your PR passes the test. You can check this by typing `pytest` from the main folder `rlberry`, or you can run a particular test by running for instance `pytest rlberry/agents/tests/` for instance, replacing `rlberry/agents/tests/` by the folder of the test you want to run.
