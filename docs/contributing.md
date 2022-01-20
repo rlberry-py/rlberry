@@ -51,7 +51,8 @@ One easy way to find an issue to work on is by applying the “help wanted” la
 
 
 
-## How to contribute -- git crash-course
+## How to contribute
+### git crash-course
 
 The preferred way to contribute to rlberry is to fork the main repository on GitHub, then submit a “pull request” (PR).
 
@@ -113,6 +114,25 @@ git rebase upstream/main
 to have the same commit has the main repo.
 ````
 
+### Pre-commit
+
+You may want to use [pre-commit](https://pre-commit.com/) to check some issues
+with your code. pre-commit is a software that will automatically run every time you
+do `git commit` and it will do some style changes (black, flake8...) before the commit.
+
+To use, do
+
+```
+pip install pre-commit
+```
+
+Then, in the rlberry folder,
+
+```
+pre-commit install
+```
+
+and then you are done. Do a commit and see it working for you !
 ## Pull request checklist
 
 Before a PR can be merged, it needs to be approved. Please prefix the title of your pull request with [MRG] if the contribution is complete and should be subjected to a detailed review. An incomplete contribution – where you expect to do more work before receiving a full review – should be prefixed [WIP] (to indicate a work in progress) and changed to [MRG] when it matures. WIPs may be useful to: indicate you are working on something to avoid duplicated work, request broad review of functionality or API, or seek collaborators. WIPs often benefit from the inclusion of a [task list](https://github.com/blog/1375-task-lists-in-gfm-issues-pulls-comments) in the PR description.
@@ -196,6 +216,7 @@ some text.
 ```
 If you want to look at some examples, you can look at doc/index.rst file for rst file example and the present file (contributing.md) for example of markdown syntax.
 
+
 # Guidelines for new agents
 =======
 
@@ -255,16 +276,10 @@ The template below gives the general structure that the Agent code must follow. 
 class (`rlberry/agents/agent.py`).
 
 ```python
-
 class MyAgent(Agent):
     name = "MyAgent"
 
-    def __init__(self,
-                 env,
-                 param_1,
-                 param_2,
-                 param_n,
-                 **kwargs):
+    def __init__(self, env, param_1, param_2, param_n, **kwargs):
         Agent.__init__(self, env, **kwargs)
 
     def fit(self, budget: int):
@@ -300,13 +315,12 @@ class MyAgent(Agent):
         # Note: param_1 and param_2 are in the constructor.
 
         # for example, param_1 could be the batch_size...
-        param_1 = trial.suggest_categorical('param_1',
-                                            [1, 4, 8, 16, 32, 64])
+        param_1 = trial.suggest_categorical("param_1", [1, 4, 8, 16, 32, 64])
         # ... and param_2 could be a learning_rate
-        param_2 = trial.suggest_loguniform('param_2', 1e-5, 1)
+        param_2 = trial.suggest_loguniform("param_2", 1e-5, 1)
         return {
-            'param_1': param_1,
-            'param_2': param_2,
+            "param_1": param_1,
+            "param_2": param_2,
         }
 ```
 
