@@ -43,7 +43,9 @@ class MultipleManagers:
             If true, save AgentManager intances immediately after fitting.
             AgentManager.save() is called.
         """
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+        with concurrent.futures.ThreadPoolExecutor(
+            max_workers=self.max_workers
+        ) as executor:
             futures = []
             for inst in self.instances:
                 futures.append(executor.submit(fit_stats, inst, save=save))
