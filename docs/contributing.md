@@ -146,11 +146,11 @@ We are glad to accept any sort of documentation: function docstrings, reStructur
 You can edit the documentation using any text editor, and then generate the HTML output by typing make from the docs/ directory. Alternatively, make html may be used to generate the documentation with the example gallery (which takes quite some time). The resulting HTML files will be placed in _build/html/stable and are viewable in a web browser.
 
 ## Building the documentation
-
+In the following section, we assume that you are in the main rlberry directory.
 
 Building the documentation requires installing some additional packages:
 ```bash
-pip install sphinx sphinx-gallery numpydoc myst-parser --user
+pip install -r docs/requirements.txt --user
 ```
 To build the documentation, you need to be in the doc folder:
 ```bash
@@ -177,9 +177,9 @@ Please follow the [numpydoc docstring guide](https://numpydoc.readthedocs.io/en/
 
 The examples gallery is constructed using sphinx-gallery, see its [documentation](https://sphinx-gallery.readthedocs.io/en/latest/) for more information.
 
-### Other documentation
+### Markdown and link between documentation pages.
 
-The documentation is done using sphinx, each article can be written either in reStructuredText (rst) format or in markdown. For markdown support, we use myst-parser (see its [documentation](https://myst-parser.readthedocs.io/en/latest/using/intro.html)).
+The documentation is done using sphinx, each article can be written either in reStructuredText (rst) format or in markdown. For markdown support, we use myst-parser (see its [documentation](https://myst-parser.readthedocs.io/en/latest/using/intro.html)). The examples and docstrings on the other hand use only rst.
 
 If you need to cross-reference your documentations, you can use
 for rst:
