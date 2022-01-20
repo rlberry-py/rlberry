@@ -114,7 +114,7 @@ git rebase upstream/main
 to have the same commit has the main repo.
 ````
 
-### Pre-commit
+### Pre-commit (optional)
 
 You may want to use [pre-commit](https://pre-commit.com/) to check some issues
 with your code. pre-commit is a software that will automatically run every time you
@@ -132,7 +132,10 @@ Then, in the rlberry folder,
 pre-commit install
 ```
 
-and then you are done. Do a commit and see it working for you !
+and then you are done. When next you do a commit, some checks will be run on the
+changes you made and if your code need some reformatting, it will automatically
+be done for you, you will only need to recommit to add the changes made by pre-commit.
+
 ## Pull request checklist
 
 Before a PR can be merged, it needs to be approved. Please prefix the title of your pull request with [MRG] if the contribution is complete and should be subjected to a detailed review. An incomplete contribution – where you expect to do more work before receiving a full review – should be prefixed [WIP] (to indicate a work in progress) and changed to [MRG] when it matures. WIPs may be useful to: indicate you are working on something to avoid duplicated work, request broad review of functionality or API, or seek collaborators. WIPs often benefit from the inclusion of a [task list](https://github.com/blog/1375-task-lists-in-gfm-issues-pulls-comments) in the PR description.
