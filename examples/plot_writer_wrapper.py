@@ -15,7 +15,10 @@ from rlberry.envs import GridWorld
 from rlberry.manager import plot_writer_data, AgentManager
 from rlberry.agents import UCBVIAgent
 
-# We wrape the default writer of the agent in a WriterWrapper to record rewards.
+# We wrape the default writer of the agent in a WriterWrapper
+# to record rewards.
+
+
 class VIAgent(UCBVIAgent):
     name = "UCBVIAgent"
 
@@ -24,7 +27,8 @@ class VIAgent(UCBVIAgent):
         self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
 
         # we could also record actions with
-        # self.env = WriterWrapper(self.env, self.writer, write_scalar = "action")
+        # self.env = WriterWrapper(self.env, self.writer,
+        #                          write_scalar = "action")
 
 
 env_ctor = GridWorld
@@ -42,6 +46,8 @@ agent = AgentManager(VIAgent, (env_ctor, env_kwargs), fit_budget=10, n_fit=3)
 agent.fit(budget=10)
 
 # We use the following preprocessing function to plot the cumulative reward.
+
+
 def compute_reward(rewards):
     return np.cumsum(rewards)
 

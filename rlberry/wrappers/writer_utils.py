@@ -14,7 +14,8 @@ class WriterWrapper(Wrapper):
     writer : object, default: None
         Writer object (e.g. tensorboard SummaryWriter).
 
-    write_scalar : string in {"reward", "action", "action_and_reward"}, default = "reward"
+    write_scalar : string in {"reward", "action", "action_and_reward"},
+                    default = "reward"
         Scalar that will be recorded in the writer.
 
     """
