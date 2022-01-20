@@ -22,6 +22,7 @@ class VIAgent(UCBVIAgent):
     def __init__(self, env, **kwargs):
         UCBVIAgent.__init__(self, env, horizon=50, **kwargs)
         self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
+
         # we could also record actions with
         # self.env = WriterWrapper(self.env, self.writer, write_scalar = "action")
 
