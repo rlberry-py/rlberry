@@ -15,7 +15,7 @@ from rlberry.manager.remote_agent_manager import RemoteAgentManager
 from rlberry.manager.evaluation import evaluate_agents, plot_writer_data
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     port = int(input("Select server port: "))
     client = BerryClient(port=port)
 
@@ -23,39 +23,41 @@ if __name__ == '__main__':
 
     local_manager = AgentManager(
         agent_class=REINFORCEAgent,
-        train_env=(gym_make, dict(id='CartPole-v0')),
+        train_env=(gym_make, dict(id="CartPole-v0")),
         fit_budget=FIT_BUDGET,
         init_kwargs=dict(gamma=0.99),
         eval_kwargs=dict(eval_horizon=200, n_simulations=20),
         n_fit=2,
         seed=10,
-        agent_name='REINFORCE(local)',
-        parallelization='process'
+        agent_name="REINFORCE(local)",
+        parallelization="process",
     )
 
     remote_manager = RemoteAgentManager(
         client,
-        agent_class=ResourceRequest(name='REINFORCEAgent'),
-        train_env=ResourceRequest(name='gym_make', kwargs=dict(id='CartPole-v0')),
+        agent_class=ResourceRequest(name="REINFORCEAgent"),
+        train_env=ResourceRequest(name="gym_make", kwargs=dict(id="CartPole-v0")),
         fit_budget=FIT_BUDGET,
         init_kwargs=dict(gamma=0.99),
         eval_kwargs=dict(eval_horizon=200, n_simulations=20),
         n_fit=3,
         seed=10,
-        agent_name='REINFORCE(remote)',
-        parallelization='process',
+        agent_name="REINFORCE(remote)",
+        parallelization="process",
         enable_tensorboard=True,
     )
 
     remote_manager.set_writer(
         idx=0,
-        writer_fn=ResourceRequest(name='DefaultWriter'),
-        writer_kwargs=dict(name='debug_reinforce_writer')
+        writer_fn=ResourceRequest(name="DefaultWriter"),
+        writer_kwargs=dict(name="debug_reinforce_writer"),
     )
 
     # Optimize hyperparams of remote agent
-    best_params = remote_manager.optimize_hyperparams(timeout=60, optuna_parallelization='process')
-    print(f'best params = {best_params}')
+    best_params = remote_manager.optimize_hyperparams(
+        timeout=60, optuna_parallelization="process"
+    )
+    print(f"best params = {best_params}")
 
     # Test save/load
     fname1 = remote_manager.save()
@@ -72,7 +74,7 @@ if __name__ == '__main__':
     remote_manager.fit(budget=100)
 
     # plot
-    plot_writer_data(mmanagers.managers, tag='episode_rewards', show=False)
+    plot_writer_data(mmanagers.managers, tag="episode_rewards", show=False)
     evaluate_agents(mmanagers.managers, n_simulations=10, show=True)
 
     # Test some methods

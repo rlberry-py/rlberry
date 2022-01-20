@@ -3,10 +3,12 @@ from pathlib import Path
 import gym
 
 
-def configure_logging(level: str = "INFO",
-                      file_path: Path = None,
-                      file_level: str = "DEBUG",
-                      default_msg: str = "") -> None:
+def configure_logging(
+    level: str = "INFO",
+    file_path: Path = None,
+    file_level: str = "DEBUG",
+    default_msg: str = "",
+) -> None:
     """
     Set the logging configuration
 
@@ -28,29 +30,19 @@ def configure_logging(level: str = "INFO",
         "version": 1,
         "disable_existing_loggers": False,
         "formatters": {
-            "standard": {
-                "format": default_msg + "[%(levelname)s] %(message)s "
-            },
+            "standard": {"format": default_msg + "[%(levelname)s] %(message)s "},
             "detailed": {
                 "format": default_msg + "[%(name)s:%(levelname)s] %(message)s "
-            }
+            },
         },
         "handlers": {
             "default": {
                 "level": level,
                 "formatter": "standard",
-                "class": "logging.StreamHandler"
+                "class": "logging.StreamHandler",
             }
         },
-        "loggers": {
-            "": {
-                "handlers": [
-                    "default"
-                ],
-                "level": "DEBUG",
-                "propagate": True
-            }
-        }
+        "loggers": {"": {"handlers": ["default"], "level": "DEBUG", "propagate": True}},
     }
     if file_path:
         config["handlers"][file_path.name] = {
@@ -58,10 +50,10 @@ def configure_logging(level: str = "INFO",
             "filename": file_path,
             "level": file_level,
             "formatter": "detailed",
-            "mode": 'w'
+            "mode": "w",
         }
         config["loggers"][""]["handlers"].append(file_path.name)
     logging.config.dictConfig(config)
     gym.logger.set_level(logging.getLevelName(level))
-    numba_logger = logging.getLogger('numba')
+    numba_logger = logging.getLogger("numba")
     numba_logger.setLevel(logging.WARNING)

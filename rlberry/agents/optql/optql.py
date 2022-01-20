@@ -36,16 +36,19 @@ class OptQLAgent(AgentWithSimplePolicy):
            Is Q-Learning Provably Efficient?
            https://arxiv.org/abs/1807.03765
     """
+
     name = "OptQL"
 
-    def __init__(self,
-                 env,
-                 gamma=1.0,
-                 horizon=100,
-                 bonus_scale_factor=1.0,
-                 bonus_type="simplified_bernstein",
-                 add_bonus_after_update=False,
-                 **kwargs):
+    def __init__(
+        self,
+        env,
+        gamma=1.0,
+        horizon=100,
+        bonus_scale_factor=1.0,
+        bonus_type="simplified_bernstein",
+        add_bonus_after_update=False,
+        **kwargs
+    ):
         # init base class
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
@@ -62,8 +65,10 @@ class OptQLAgent(AgentWithSimplePolicy):
         # maximum value
         r_range = self.env.reward_range[1] - self.env.reward_range[0]
         if r_range == np.inf or r_range == 0.0:
-            logger.warning("{}: Reward range is  zero or infinity. ".format(self.name)
-                           + "Setting it to 1.")
+            logger.warning(
+                "{}: Reward range is  zero or infinity. ".format(self.name)
+                + "Setting it to 1."
+            )
             r_range = 1.0
 
         self.v_max = np.zeros(self.horizon)
@@ -88,9 +93,9 @@ class OptQLAgent(AgentWithSimplePolicy):
         self.Q = np.ones((H, S, A))
         self.Q_bar = np.ones((H, S, A))
         for hh in range(self.horizon):
-            self.V[hh, :] *= (self.horizon - hh)
-            self.Q[hh, :, :] *= (self.horizon - hh)
-            self.Q_bar[hh, :, :] *= (self.horizon - hh)
+            self.V[hh, :] *= self.horizon - hh
+            self.Q[hh, :, :] *= self.horizon - hh
+            self.Q_bar[hh, :, :] *= self.horizon - hh
 
         if self.add_bonus_after_update:
             self.Q *= 0.0
@@ -99,16 +104,17 @@ class OptQLAgent(AgentWithSimplePolicy):
         self.episode = 0
 
         # useful object to compute total number of visited states & entropy of visited states
-        self.counter = DiscreteCounter(self.env.observation_space,
-                                       self.env.action_space)
+        self.counter = DiscreteCounter(
+            self.env.observation_space, self.env.action_space
+        )
 
     def policy(self, observation):
-        """ Recommended policy. """
+        """Recommended policy."""
         state = observation
         return self.Q_bar[0, state, :].argmax()
 
     def _get_action(self, state, hh=0):
-        """ Sampling policy. """
+        """Sampling policy."""
         return self.Q_bar[hh, state, :].argmax()
 
     def _compute_bonus(self, n, hh):
@@ -118,7 +124,8 @@ class OptQLAgent(AgentWithSimplePolicy):
             return bonus
         else:
             raise ValueError(
-                "Error: bonus type {} not implemented".format(self.bonus_type))
+                "Error: bonus type {} not implemented".format(self.bonus_type)
+            )
 
     def _update(self, state, action, next_state, reward, hh):
         self.N_sa[hh, state, action] += 1
@@ -131,14 +138,20 @@ class OptQLAgent(AgentWithSimplePolicy):
         # bonus in the update
         if not self.add_bonus_after_update:
             target = reward + bonus + self.gamma * self.V[hh + 1, next_state]
-            self.Q[hh, state, action] = (1 - alpha) * self.Q[hh, state, action] + alpha * target
+            self.Q[hh, state, action] = (1 - alpha) * self.Q[
+                hh, state, action
+            ] + alpha * target
             self.V[hh, state] = min(self.v_max[hh], self.Q[hh, state, :].max())
             self.Q_bar[hh, state, action] = self.Q[hh, state, action]
         # bonus outside the update
         else:
             target = reward + self.gamma * self.V[hh + 1, next_state]  # bonus not here
-            self.Q[hh, state, action] = (1 - alpha) * self.Q[hh, state, action] + alpha * target
-            self.Q_bar[hh, state, action] = self.Q[hh, state, action] + bonus  # bonus here
+            self.Q[hh, state, action] = (1 - alpha) * self.Q[
+                hh, state, action
+            ] + alpha * target
+            self.Q_bar[hh, state, action] = (
+                self.Q[hh, state, action] + bonus
+            )  # bonus here
             self.V[hh, state] = min(self.v_max[hh], self.Q_bar[hh, state, :].max())
 
     def _run_episode(self):
@@ -164,7 +177,9 @@ class OptQLAgent(AgentWithSimplePolicy):
         # writer
         if self.writer is not None:
             self.writer.add_scalar("episode_rewards", episode_rewards, self.episode)
-            self.writer.add_scalar("n_visited_states", self.counter.get_n_visited_states(), self.episode)
+            self.writer.add_scalar(
+                "n_visited_states", self.counter.get_n_visited_states(), self.episode
+            )
 
         # return sum of rewards collected in the episode
         return episode_rewards

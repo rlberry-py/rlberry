@@ -30,12 +30,10 @@ HORIZON = 30
 params_oracle = {
     "n_samples": 20,  # samples per state-action
     "gamma": GAMMA,
-    "horizon": HORIZON
+    "horizon": HORIZON,
 }
 
-params_ppo = {"gamma": GAMMA,
-              "horizon": HORIZON,
-              "learning_rate": 0.0003}
+params_ppo = {"gamma": GAMMA, "horizon": HORIZON, "learning_rate": 0.0003}
 
 eval_kwargs = dict(eval_horizon=HORIZON, n_simulations=20)
 
@@ -43,15 +41,23 @@ eval_kwargs = dict(eval_horizon=HORIZON, n_simulations=20)
 # Run AgentManager
 # -----------------------------
 oracle_stats = AgentManager(
-    MBQVIAgent, d_train_env, fit_budget=0,
+    MBQVIAgent,
+    d_train_env,
+    fit_budget=0,
     init_kwargs=params_oracle,
     eval_kwargs=eval_kwargs,
-    n_fit=4, agent_name="Oracle")
+    n_fit=4,
+    agent_name="Oracle",
+)
 ppo_stats = AgentManager(
-    PPOAgent, train_env, fit_budget=N_EPISODES,
+    PPOAgent,
+    train_env,
+    fit_budget=N_EPISODES,
     init_kwargs=params_ppo,
     eval_kwargs=eval_kwargs,
-    n_fit=4, agent_name="PPO")
+    n_fit=4,
+    agent_name="PPO",
+)
 
 agent_manager_list = [oracle_stats, ppo_stats]
 
@@ -59,9 +65,13 @@ for manager in agent_manager_list:
     manager.fit()
 
 # learning curves
-plot_writer_data(agent_manager_list, tag='episode_rewards',
-                 preprocess_func=np.cumsum,
-                 title='Cumulative Rewards', show=False)
+plot_writer_data(
+    agent_manager_list,
+    tag="episode_rewards",
+    preprocess_func=np.cumsum,
+    title="Cumulative Rewards",
+    show=False,
+)
 
 # compare final policies
 output = evaluate_agents(agent_manager_list)

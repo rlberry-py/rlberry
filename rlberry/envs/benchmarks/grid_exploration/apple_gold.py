@@ -34,6 +34,7 @@ class AppleGold(GridWorld):
         for Hard-Exploration Tasks
         arXiv preprint arXiv:1907.10247
     """
+
     name = "AppleGold"
 
     def __init__(self, reward_free=False, array_observation=False):
@@ -70,26 +71,24 @@ class AppleGold(GridWorld):
         if self.reward_free:
             reward_at = {}
         else:
-            reward_at = {
-                (7, 7): 10.0,
-                (8, 2): 1.0,
-                (10, 3): 1.0
-            }
+            reward_at = {(7, 7): 10.0, (8, 2): 1.0, (10, 3): 1.0}
             for jj in range(7, 16):
                 for ii in range(1, 12):
                     if (ii, jj) not in walls and (ii, jj) != (7, 7):
                         reward_at[(ii, jj)] = -0.05
 
         # Init base class
-        GridWorld.__init__(self,
-                           nrows=nrows,
-                           ncols=ncols,
-                           start_coord=start_coord,
-                           terminal_states=terminal_states,
-                           success_probability=success_probability,
-                           reward_at=reward_at,
-                           walls=walls,
-                           default_reward=default_reward)
+        GridWorld.__init__(
+            self,
+            nrows=nrows,
+            ncols=ncols,
+            start_coord=start_coord,
+            terminal_states=terminal_states,
+            success_probability=success_probability,
+            reward_at=reward_at,
+            walls=walls,
+            default_reward=default_reward,
+        )
 
         # spaces
         if self.array_observation:

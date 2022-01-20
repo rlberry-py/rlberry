@@ -29,8 +29,13 @@ def optimizer_factory(params, optimizer_type="ADAM", **kwargs):
 
 def model_factory(type="MultiLayerPerceptron", **kwargs) -> nn.Module:
     from rlberry.agents.torch.utils.attention_models import EgoAttentionNetwork
-    from rlberry.agents.torch.utils.models import MultiLayerPerceptron, DuelingNetwork, ConvolutionalNetwork, \
-        Table
+    from rlberry.agents.torch.utils.models import (
+        MultiLayerPerceptron,
+        DuelingNetwork,
+        ConvolutionalNetwork,
+        Table,
+    )
+
     if type == "MultiLayerPerceptron":
         return MultiLayerPerceptron(**kwargs)
     elif type == "DuelingNetwork":
@@ -50,8 +55,7 @@ def model_factory_from_env(env, **kwargs):
     return model_factory(**kwargs)
 
 
-def size_model_config(env,
-                      **model_config):
+def size_model_config(env, **model_config):
     """
     Update the configuration of a model depending on the environment
     observation/action spaces.

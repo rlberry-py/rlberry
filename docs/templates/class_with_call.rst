@@ -1,10 +1,13 @@
 :mod:`{{module}}`.{{objname}}
-{{ underline }}==============
+{{ underline }}===============
 
 .. currentmodule:: {{ module }}
 
 .. autoclass:: {{ objname }}
 
+   {% block methods %}
+   .. automethod:: __call__
+   {% endblock %}
 
 .. include:: {{module}}.{{objname}}.examples
 

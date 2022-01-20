@@ -34,12 +34,31 @@ jobs:
       # TODO: use following line for doctest ?
       pytest docs/*rst || echo "Ignoring exit status"
       pytest --cov=rlberry --cov-report xml rlberry
-    displayName: 'Test and coverage' 
+    displayName: 'Test and coverage'
   - script: |
       curl -Os https://uploader.codecov.io/latest/linux/codecov
       chmod +x codecov
       ./codecov
     displayName: 'Upload to codecov.io'
+
+- job: 'Formatting'
+  pool:
+    vmImage: ubuntu-latest
+  strategy:
+    matrix:
+      Python38:
+        python.version: '3.8'
+
+  steps:
+  - script: |
+      python -m pip install --upgrade pip
+      pip install  black flake8
+      black --check examples rlberry *py
+    displayName: "black"
+  - script: |
+      # ensure there is no unused imports with
+      flake8 --select F401 --exclude=rlberry/check_packages.py --per-file-ignores="__init__.py:F401"
+    displayName: 'flake8'
 
 
 

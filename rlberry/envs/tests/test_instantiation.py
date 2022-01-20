@@ -23,7 +23,7 @@ classes = [
     FourRoom,
     SixRoom,
     AppleGold,
-    NRoom
+    NRoom,
 ]
 
 
@@ -57,13 +57,14 @@ def test_rendering_calls(ModelClass):
 
 
 def test_gridworld_aux_functions():
-    env = GridWorld(nrows=5, ncols=8, walls=((1, 1),),
-                    reward_at={(4, 4): 1, (4, 3): -1})
+    env = GridWorld(
+        nrows=5, ncols=8, walls=((1, 1),), reward_at={(4, 4): 1, (4, 3): -1}
+    )
     env.log()  # from FiniteMDP
     env.render_ascii()  # from GridWorld
     vals = np.arange(env.observation_space.n)
     env.display_values(vals)
-    env.print_transition_at(0, 0, 'up')
+    env.print_transition_at(0, 0, "up")
 
     layout = env.get_layout_array(vals, fill_walls_with=np.inf)
     for rr in range(env.nrows):
@@ -89,20 +90,24 @@ def test_pball_env(p):
     env.get_transitions_lipschitz_constant()
 
 
-@pytest.mark.parametrize("reward_free, difficulty, array_observation",
-                         [
-                             (True, 0, False),
-                             (False, 0, False),
-                             (False, 0, True),
-                             (False, 1, False),
-                             (False, 1, True),
-                             (False, 2, False),
-                             (False, 2, True),
-                         ])
+@pytest.mark.parametrize(
+    "reward_free, difficulty, array_observation",
+    [
+        (True, 0, False),
+        (False, 0, False),
+        (False, 0, True),
+        (False, 1, False),
+        (False, 1, True),
+        (False, 2, False),
+        (False, 2, True),
+    ],
+)
 def test_four_room(reward_free, difficulty, array_observation):
-    env = FourRoom(reward_free=reward_free,
-                   difficulty=difficulty,
-                   array_observation=array_observation)
+    env = FourRoom(
+        reward_free=reward_free,
+        difficulty=difficulty,
+        array_observation=array_observation,
+    )
 
     initial_state = env.reset()
     next_state, reward, _, _ = env.step(1)
@@ -121,13 +126,15 @@ def test_four_room(reward_free, difficulty, array_observation):
         assert isinstance(next_state, np.ndarray)
 
 
-@pytest.mark.parametrize("reward_free, array_observation",
-                         [
-                             (False, False),
-                             (False, True),
-                             (True, False),
-                             (True, True),
-                         ])
+@pytest.mark.parametrize(
+    "reward_free, array_observation",
+    [
+        (False, False),
+        (False, True),
+        (True, False),
+        (True, True),
+    ],
+)
 def test_six_room(reward_free, array_observation):
     env = SixRoom(reward_free=reward_free, array_observation=array_observation)
 
@@ -145,13 +152,15 @@ def test_six_room(reward_free, array_observation):
         assert isinstance(next_state, np.ndarray)
 
 
-@pytest.mark.parametrize("reward_free, array_observation",
-                         [
-                             (False, False),
-                             (False, True),
-                             (True, False),
-                             (True, True),
-                         ])
+@pytest.mark.parametrize(
+    "reward_free, array_observation",
+    [
+        (False, False),
+        (False, True),
+        (True, False),
+        (True, True),
+    ],
+)
 def test_apple_gold(reward_free, array_observation):
     env = AppleGold(reward_free=reward_free, array_observation=array_observation)
 
@@ -168,23 +177,27 @@ def test_apple_gold(reward_free, array_observation):
         assert isinstance(next_state, np.ndarray)
 
 
-@pytest.mark.parametrize("reward_free, array_observation, initial_state_distribution",
-                         [
-                             (False, False, 'center'),
-                             (False, True, 'center'),
-                             (True, False, 'center'),
-                             (True, True, 'center'),
-                             (True, False, 'uniform'),
-                         ])
+@pytest.mark.parametrize(
+    "reward_free, array_observation, initial_state_distribution",
+    [
+        (False, False, "center"),
+        (False, True, "center"),
+        (True, False, "center"),
+        (True, True, "center"),
+        (True, False, "uniform"),
+    ],
+)
 def test_n_room(reward_free, array_observation, initial_state_distribution):
-    env = NRoom(reward_free=reward_free,
-                array_observation=array_observation,
-                initial_state_distribution=initial_state_distribution)
+    env = NRoom(
+        reward_free=reward_free,
+        array_observation=array_observation,
+        initial_state_distribution=initial_state_distribution,
+    )
 
     initial_state = env.reset()
     next_state, reward, _, _ = env.step(1)
 
-    if initial_state_distribution == 'uniform':
+    if initial_state_distribution == "uniform":
         assert env.initial_state_distribution[0] == 1.0 / env.observation_space.n
 
     assert env.observation_space.contains(initial_state)

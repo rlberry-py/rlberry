@@ -1,11 +1,7 @@
 import numpy as np
 from typing import Union, Tuple
 
-Interval = Union[
-    np.ndarray,
-    Tuple[float, float],
-    Tuple[np.ndarray, np.ndarray]
-]
+Interval = Union[np.ndarray, Tuple[float, float], Tuple[np.ndarray, np.ndarray]]
 
 
 def lmap(v: np.ndarray, x: Interval, y: Interval) -> np.ndarray:

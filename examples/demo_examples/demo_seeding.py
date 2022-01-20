@@ -20,7 +20,7 @@ print(type(seeder.rng))
 from rlberry.envs import gym_make
 from rlberry.agents import RSUCBVIAgent
 
-env = gym_make('MountainCar-v0')
+env = gym_make("MountainCar-v0")
 env.reseed(seeder)
 
 agent = RSUCBVIAgent(env)

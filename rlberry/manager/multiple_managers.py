@@ -46,15 +46,11 @@ class MultipleManagers:
         with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_workers) as executor:
             futures = []
             for inst in self.instances:
-                futures.append(
-                    executor.submit(fit_stats, inst, save=save)
-                )
+                futures.append(executor.submit(fit_stats, inst, save=save))
 
             fitted_instances = []
             for future in concurrent.futures.as_completed(futures):
-                fitted_instances.append(
-                    future.result()
-                )
+                fitted_instances.append(future.result())
 
             self.instances = fitted_instances
 
