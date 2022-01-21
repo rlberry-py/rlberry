@@ -2,10 +2,8 @@ import logging
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-from os import listdir
 from pathlib import Path
 from datetime import datetime
-from rlberry.manager.agent_manager import AgentHandler
 import pickle
 
 logger = logging.getLogger(__name__)
