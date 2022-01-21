@@ -1,10 +1,10 @@
 import numpy as np
 
-WALL_SYMBOL = '#'
-REWARD_TERMINAL_SYMBOL = 'r'
-REWARD_SYMBOL = 'R'
-TERMINAL_STATE_SYMBOL = 'T'
-INITIAL_STATE_SYMBOL = 'I'
+WALL_SYMBOL = "#"
+REWARD_TERMINAL_SYMBOL = "r"
+REWARD_SYMBOL = "R"
+TERMINAL_STATE_SYMBOL = "T"
+INITIAL_STATE_SYMBOL = "I"
 
 
 # spaces are ignored
@@ -20,24 +20,26 @@ IOOOO # OOOOO  # OOOOr
 def _preprocess_layout(layout):
     layout = layout.replace(" ", "")  # remove spaces
     # remove first and last line breaks
-    if layout[0] == '\n':
+    if layout[0] == "\n":
         layout = layout[1:]
-    if layout[-1] == '\n':
+    if layout[-1] == "\n":
         layout = layout[:-1]
 
     # make sure all lines have the same length
-    lines = layout.split('\n')
+    lines = layout.split("\n")
     len_lines = [len(line) for line in lines]
     max_len = np.max(len_lines)
     # below, also reverse lines (so that render is not inversed in the y-direction)
-    adjusted_lines = [line.ljust(max_len, 'O') for line in reversed(lines)]  # fill with empty state
-    layout = '\n'.join(adjusted_lines)
+    adjusted_lines = [
+        line.ljust(max_len, "O") for line in reversed(lines)
+    ]  # fill with empty state
+    layout = "\n".join(adjusted_lines)
     return layout
 
 
 def get_layout_info(layout):
     layout = _preprocess_layout(layout)
-    lines = layout.split('\n')
+    lines = layout.split("\n")
     nrows = len(lines)
     ncols = len(lines[0])
     walls = []
