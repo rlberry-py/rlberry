@@ -52,4 +52,4 @@ Agents, hyperparameter optimization and experiment setup
 How to contribute?
 ==================
 
-If you want to contribute to rlberry, check out :ref:`the contribution guidelines<contributing>`.
+If you want to contribute to rlberry, check out :doc:`the contribution guidelines<contributing>`.
