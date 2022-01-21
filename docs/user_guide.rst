@@ -37,3 +37,9 @@ Comparing agents
   basics/evaluate_agent.rst
   basics/compare_agents.rst
   basics/seeding.rst
+
+
+How to contribute ?
+===================
+
+If you want to contribute to rlberry, check out :ref:`the contribution guidelines<contributing>`.

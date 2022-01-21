@@ -14,7 +14,8 @@ class WriterWrapper(Wrapper):
     writer : object, default: None
         Writer object (e.g. tensorboard SummaryWriter).
 
-    write_scalar : string in {"reward", "action", "action_and_reward"}, default = "reward"
+    write_scalar : string in {"reward", "action", "action_and_reward"},
+                    default = "reward"
         Scalar that will be recorded in the writer.
 
     """
@@ -30,13 +31,13 @@ class WriterWrapper(Wrapper):
 
         self.iteration_ += 1
         if self.write_scalar == "reward":
-            self.writer.add_scalar('reward', reward, self.iteration_)
+            self.writer.add_scalar("reward", reward, self.iteration_)
         elif self.write_scalar == "action":
-            self.writer.add_scalar('action', action, self.iteration_)
+            self.writer.add_scalar("action", action, self.iteration_)
         elif self.write_scalar == "action_and_reward":
-            self.writer.add_scalar('reward', reward, self.iteration_)
-            self.writer.add_scalar('action', action, self.iteration_)
+            self.writer.add_scalar("reward", reward, self.iteration_)
+            self.writer.add_scalar("action", action, self.iteration_)
         else:
-            raise ValueError("write_scalar %s is not known" %(self.write_scalar))
+            raise ValueError("write_scalar %s is not known" % (self.write_scalar))
 
         return observation, reward, done, info

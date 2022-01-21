@@ -21,7 +21,7 @@ classes = [
     Pendulum,
     FourRoom,
     SixRoom,
-    AppleGold
+    AppleGold,
 ]
 
 
@@ -63,7 +63,9 @@ def test_env_seeding(ModelClass):
     env4.reseed(seeder4)
 
     env5 = ModelClass()
-    env5.reseed(seeder1)  # same seeder as env1, but different trajectories. This is expected.
+    env5.reseed(
+        seeder1
+    )  # same seeder as env1, but different trajectories. This is expected.
 
     seeding.safe_reseed(env4, seeder4)
 

@@ -26,6 +26,7 @@ class RemoteAgentManager:
         Parameters for AgentManager instance.
         Some parameters (as agent_class, train_env, eval_env) can be defined using a ResourceRequest.
     """
+
     def __init__(
         self,
         client: BerryClient,
@@ -46,13 +47,11 @@ class RemoteAgentManager:
             if msg.command == interface.Command.RAISE_EXCEPTION:
                 raise Exception(msg.message)
 
-            self._remote_agent_manager_filename = pathlib.Path(
-                msg.info['filename']
-            )
+            self._remote_agent_manager_filename = pathlib.Path(msg.info["filename"])
 
             # get useful attributes
-            self.agent_name = msg.info['agent_name']
-            self.output_dir = pathlib.Path(msg.info['output_dir'])  # to save locally
+            self.agent_name = msg.info["agent_name"]
+            self.output_dir = pathlib.Path(msg.info["output_dir"])  # to save locally
 
     def set_client(self, client: BerryClient):
         self._client = client
@@ -75,21 +74,25 @@ class RemoteAgentManager:
         )
         if msg.command == interface.Command.RAISE_EXCEPTION:
             raise Exception(msg.message)
-        raw_data = msg.data['writer_data']
+        raw_data = msg.data["writer_data"]
         writer_data = dict()
         for idx in raw_data:
             csv_content = raw_data[idx]
-            writer_data[idx] = pd.read_csv(io.StringIO(csv_content), sep=',')
+            writer_data[idx] = pd.read_csv(io.StringIO(csv_content), sep=",")
 
         # check if tensorboard data was received
         # If so, read file and unzip it.
-        tensorboard_bin_data = msg.data['tensorboard_bin_data']
+        tensorboard_bin_data = msg.data["tensorboard_bin_data"]
         if tensorboard_bin_data is not None:
-            tensorboard_bin_data = base64.b64decode(tensorboard_bin_data.encode('ascii'))
-            zip_file = open(self.output_dir / 'tensorboard_data.zip', "wb")
+            tensorboard_bin_data = base64.b64decode(
+                tensorboard_bin_data.encode("ascii")
+            )
+            zip_file = open(self.output_dir / "tensorboard_data.zip", "wb")
             zip_file.write(tensorboard_bin_data)
             zip_file.close()
-            with zipfile.ZipFile(self.output_dir / 'tensorboard_data.zip', 'r') as zip_ref:
+            with zipfile.ZipFile(
+                self.output_dir / "tensorboard_data.zip", "r"
+            ) as zip_ref:
                 zip_ref.extractall(self.output_dir)
         return writer_data
 
@@ -98,9 +101,8 @@ class RemoteAgentManager:
             interface.Message.create(
                 command=interface.Command.AGENT_MANAGER_FIT,
                 params=dict(
-                    filename=self.remote_file,
-                    budget=budget,
-                    extra_params=kwargs),
+                    filename=self.remote_file, budget=budget, extra_params=kwargs
+                ),
                 data=None,
             )
         )
@@ -111,15 +113,13 @@ class RemoteAgentManager:
         msg = self._client.send(
             interface.Message.create(
                 command=interface.Command.AGENT_MANAGER_EVAL,
-                params=dict(
-                    filename=self.remote_file,
-                    n_simulations=n_simulations),
+                params=dict(filename=self.remote_file, n_simulations=n_simulations),
                 data=None,
             )
         )
         if msg.command == interface.Command.RAISE_EXCEPTION:
             raise Exception(msg.message)
-        out = msg.data['output']
+        out = msg.data["output"]
         return out
 
     def clear_output_dir(self):
@@ -146,11 +146,7 @@ class RemoteAgentManager:
 
     def set_writer(self, idx, writer_fn, writer_kwargs=None):
         """Note: Use ResourceRequest for writer_fn."""
-        params = dict(
-            idx=idx,
-            writer_fn=writer_fn,
-            writer_kwargs=writer_kwargs
-        )
+        params = dict(idx=idx, writer_fn=writer_fn, writer_kwargs=writer_kwargs)
         msg = self._client.send(
             interface.Message.create(
                 command=interface.Command.AGENT_MANAGER_SET_WRITER,
@@ -189,34 +185,40 @@ class RemoteAgentManager:
         output_dir.mkdir(parents=True, exist_ok=True)
 
         # save
-        filename = pathlib.Path('remote_manager_obj').with_suffix('.pickle')
+        filename = pathlib.Path("remote_manager_obj").with_suffix(".pickle")
         filename = output_dir / filename
         filename.parent.mkdir(parents=True, exist_ok=True)
         try:
             with filename.open("wb") as ff:
                 pickle.dump(self.__dict__, ff)
-            logger.info("Saved RemoteAgentManager({}) using pickle.".format(self.agent_name))
+            logger.info(
+                "Saved RemoteAgentManager({}) using pickle.".format(self.agent_name)
+            )
         except Exception:
             try:
                 with filename.open("wb") as ff:
                     dill.dump(self.__dict__, ff)
-                logger.info("Saved RemoteAgentManager({}) using dill.".format(self.agent_name))
+                logger.info(
+                    "Saved RemoteAgentManager({}) using dill.".format(self.agent_name)
+                )
             except Exception as ex:
-                logger.warning("[RemoteAgentManager] Instance cannot be pickled: " + str(ex))
+                logger.warning(
+                    "[RemoteAgentManager] Instance cannot be pickled: " + str(ex)
+                )
 
         return filename
 
     @classmethod
     def load(cls, filename):
-        filename = pathlib.Path(filename).with_suffix('.pickle')
+        filename = pathlib.Path(filename).with_suffix(".pickle")
 
         obj = cls(None)
         try:
-            with filename.open('rb') as ff:
+            with filename.open("rb") as ff:
                 tmp_dict = pickle.load(ff)
             logger.info("Loaded RemoteAgentManager using pickle.")
         except Exception:
-            with filename.open('rb') as ff:
+            with filename.open("rb") as ff:
                 tmp_dict = dill.load(ff)
             logger.info("Loaded RemoteAgentManager using dill.")
 

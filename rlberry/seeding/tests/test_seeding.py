@@ -13,8 +13,12 @@ def test_seeder_basic():
 
     assert (data1 != data2).sum() > 5
     assert (data2 != data3).sum() == 0
-    assert seeder2.spawn(1).generate_state(1)[0] == seeder3.spawn(1).generate_state(1)[0]
-    assert seeder1.spawn(1).generate_state(1)[0] != seeder3.spawn(1).generate_state(1)[0]
+    assert (
+        seeder2.spawn(1).generate_state(1)[0] == seeder3.spawn(1).generate_state(1)[0]
+    )
+    assert (
+        seeder1.spawn(1).generate_state(1)[0] != seeder3.spawn(1).generate_state(1)[0]
+    )
 
 
 def test_seeder_initialized_from_seeder():

@@ -13,10 +13,7 @@ def convert_space_from_gym(gym_space):
     #
     #
     elif isinstance(gym_space, gym.spaces.Box):
-        return Box(gym_space.low,
-                   gym_space.high,
-                   gym_space.shape,
-                   gym_space.dtype)
+        return Box(gym_space.low, gym_space.high, gym_space.shape, gym_space.dtype)
     #
     #
     elif isinstance(gym_space, gym.spaces.Tuple):

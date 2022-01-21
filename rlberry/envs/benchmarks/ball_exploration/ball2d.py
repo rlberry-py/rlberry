@@ -55,11 +55,13 @@ class BallLevel0(PBall2D):
         self.horizon = 30
         #
         self.p = 2
-        self.action_list = [np.array([0.0, 0.0]),
-                            0.05 * np.array([1.0, 0.0]),
-                            -0.05 * np.array([1.0, 0.0]),
-                            0.05 * np.array([0.0, 1.0]),
-                            -0.05 * np.array([0.0, 1.0])]
+        self.action_list = [
+            np.array([0.0, 0.0]),
+            0.05 * np.array([1.0, 0.0]),
+            -0.05 * np.array([1.0, 0.0]),
+            0.05 * np.array([0.0, 1.0]),
+            -0.05 * np.array([0.0, 1.0]),
+        ]
 
         self.reward_amplitudes = []
         self.reward_smoothness = []
@@ -70,23 +72,26 @@ class BallLevel0(PBall2D):
         self.sigma_init = 0.001
         self.mu_init = np.array([0.0, 0.0])
 
-        PBall2D.__init__(self,
-                         self.p,
-                         self.action_list,
-                         self.reward_amplitudes,
-                         self.reward_smoothness,
-                         self.reward_centers,
-                         self.A,
-                         self.B,
-                         self.sigma,
-                         self.sigma_init,
-                         self.mu_init)
+        PBall2D.__init__(
+            self,
+            self.p,
+            self.action_list,
+            self.reward_amplitudes,
+            self.reward_smoothness,
+            self.reward_centers,
+            self.A,
+            self.B,
+            self.sigma,
+            self.sigma_init,
+            self.mu_init,
+        )
         self.name = "Ball Exploration Benchmark - Level 0 (Reward-Free)"
 
 
 #
 # Level 1
 #
+
 
 class BallLevel1(PBall2D):
     """
@@ -97,11 +102,13 @@ class BallLevel1(PBall2D):
         self.horizon = 30
         #
         self.p = 2
-        self.action_list = [np.array([0.0, 0.0]),
-                            0.05 * np.array([1.0, 0.0]),
-                            -0.05 * np.array([1.0, 0.0]),
-                            0.05 * np.array([0.0, 1.0]),
-                            -0.05 * np.array([0.0, 1.0])]
+        self.action_list = [
+            np.array([0.0, 0.0]),
+            0.05 * np.array([1.0, 0.0]),
+            -0.05 * np.array([1.0, 0.0]),
+            0.05 * np.array([0.0, 1.0]),
+            -0.05 * np.array([0.0, 1.0]),
+        ]
 
         self.reward_amplitudes = np.array([1.0])
         self.reward_smoothness = np.array([0.5 * np.sqrt(2)])
@@ -112,23 +119,26 @@ class BallLevel1(PBall2D):
         self.sigma_init = 0.001
         self.mu_init = np.array([0.0, 0.0])
 
-        PBall2D.__init__(self,
-                         self.p,
-                         self.action_list,
-                         self.reward_amplitudes,
-                         self.reward_smoothness,
-                         self.reward_centers,
-                         self.A,
-                         self.B,
-                         self.sigma,
-                         self.sigma_init,
-                         self.mu_init)
+        PBall2D.__init__(
+            self,
+            self.p,
+            self.action_list,
+            self.reward_amplitudes,
+            self.reward_smoothness,
+            self.reward_centers,
+            self.A,
+            self.B,
+            self.sigma,
+            self.sigma_init,
+            self.mu_init,
+        )
         self.name = "Ball Exploration Benchmark - Level 1"
 
 
 #
 # Level 2
 #
+
 
 class BallLevel2(BallLevel1):
     """
@@ -174,14 +184,17 @@ class BallLevel4(BallLevel1):
 
         self.reward_amplitudes = np.array([1.0, 0.1])
         self.reward_smoothness = np.array([0.2, 0.5 * np.sqrt(2)])
-        self.reward_centers = [np.array([-0.5, -0.5]),  # far sparse
-                               np.array([0.5, 0.5])]  # dense
+        self.reward_centers = [
+            np.array([-0.5, -0.5]),  # far sparse
+            np.array([0.5, 0.5]),
+        ]  # dense
         self.name = "Ball Exploration Benchmark - Level 4"
 
 
 #
 # Level 5
 #
+
 
 class BallLevel5(BallLevel4):
     """
@@ -192,6 +205,7 @@ class BallLevel5(BallLevel4):
         BallLevel4.__init__(self)
         self.sigma = 0.025
         self.name = "Ball Exploration Benchmark - Level 5"
+
 
 # if __name__ == '__main__':
 #     env = get_benchmark_env(1)
