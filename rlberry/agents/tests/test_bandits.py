@@ -1,12 +1,8 @@
 import numpy as np
 from rlberry.envs.bandits import NormalBandit
 from rlberry.agents.bandits import IndexAgent, RecursiveIndexAgent
-from rlberry.manager import AgentManager, plot_writer_data
-import matplotlib.pyplot as plt
 from rlberry.wrappers import WriterWrapper
-
-
-############ Agents ###############################
+from rlberry.manager import AgentManager
 
 
 class UCBAgent(IndexAgent):
@@ -17,7 +13,9 @@ class UCBAgent(IndexAgent):
     def __init__(self, env, B=1, **kwargs):
         # upper bound mean + B*0.5*sqrt(2*log(t**2)/n)
         # if bounded by B or B subgaussian
-        index = lambda r, t: np.mean(r) + B * 0.5 * np.sqrt(2 * np.log(t ** 2) / len(r))
+        def index(r, t):
+            return np.mean(r) + B * 0.5 * np.sqrt(2 * np.log(t ** 2) / len(r))
+
         IndexAgent.__init__(self, env, index, **kwargs)
         # record rewards
         self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
@@ -38,7 +36,9 @@ class RecursiveUCBAgent(RecursiveIndexAgent):
             stat[action] = (Na[action] - 1) / Na[action] * stat[action] + reward
             return stat
 
-        index = lambda stat, Na, t: stat + B * 0.5 * np.sqrt(2 * np.log(t ** 2) / Na)
+        def index(stat, Na, t):
+            return stat + B * 0.5 * np.sqrt(2 * np.log(t ** 2) / Na)
+
         RecursiveIndexAgent.__init__(self, env, stat_function, index, **kwargs)
         # record rewards
         self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
@@ -46,8 +46,6 @@ class RecursiveUCBAgent(RecursiveIndexAgent):
 
 def test_bandits():
     means = [0, 0.9, 1]
-
-    ############# Construction of the experiment ########
 
     env_ctor = NormalBandit
     env_kwargs = {"means": means, "stds": 2 * np.ones(len(means))}
