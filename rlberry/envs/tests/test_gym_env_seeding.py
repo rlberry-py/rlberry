@@ -8,9 +8,9 @@ from rlberry.envs import gym_make
 from copy import deepcopy
 
 gym_envs = [
-    'Acrobot-v1',
-    'CartPole-v1',
-    'MountainCar-v0',
+    "Acrobot-v1",
+    "CartPole-v1",
+    "MountainCar-v0",
 ]
 
 

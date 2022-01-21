@@ -20,10 +20,7 @@ class MLPQNetwork(hk.Module):
     """
 
     def __init__(
-            self,
-            num_actions: int,
-            hidden_sizes: Tuple[int, ...],
-            name: str = 'MLPQNetwork'
+        self, num_actions: int, hidden_sizes: Tuple[int, ...], name: str = "MLPQNetwork"
     ):
         super().__init__(name=name)
         self._mlp = hk.nets.MLP(output_sizes=hidden_sizes + (num_actions,))

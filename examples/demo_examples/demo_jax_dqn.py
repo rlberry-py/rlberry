@@ -8,13 +8,13 @@ from rlberry.agents.jax.dqn.dqn import DQNAgent
 from rlberry.envs import gym_make
 from rlberry.manager import AgentManager, MultipleManagers, plot_writer_data
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # global params
     fit_budget = 10000
     n_fit = 2
 
     # env and algorithm params
-    env = (gym_make, dict(id='CartPole-v0'))
+    env = (gym_make, dict(id="CartPole-v0"))
     params = dict(
         chunk_size=8,
         batch_size=64,
@@ -25,17 +25,15 @@ if __name__ == '__main__':
         learning_rate=0.0015,
         net_constructor=nets.MLPQNetwork,
         net_kwargs=dict(
-            num_actions=env[0](**env[1]).action_space.n,
-            hidden_sizes=(64, 64)
-        )
+            num_actions=env[0](**env[1]).action_space.n, hidden_sizes=(64, 64)
+        ),
     )
 
     params_alternative = params.copy()
     params_alternative.update(
         dict(
             net_kwargs=dict(
-                num_actions=env[0](**env[1]).action_space.n,
-                hidden_sizes=(16, 16)
+                num_actions=env[0](**env[1]).action_space.n, hidden_sizes=(16, 16)
             )
         )
     )
@@ -47,8 +45,8 @@ if __name__ == '__main__':
         eval_env=env,
         init_kwargs=params,
         n_fit=n_fit,
-        parallelization='process',
-        agent_name='dqn',
+        parallelization="process",
+        agent_name="dqn",
     )
 
     stats_alternative = AgentManager(
@@ -58,8 +56,8 @@ if __name__ == '__main__':
         eval_env=env,
         init_kwargs=params_alternative,
         n_fit=n_fit,
-        parallelization='process',
-        agent_name='dqn_smaller_net'
+        parallelization="process",
+        agent_name="dqn_smaller_net",
     )
 
     # fit everything in parallel
@@ -68,10 +66,10 @@ if __name__ == '__main__':
     multimanagers.append(stats_alternative)
     multimanagers.run()
 
-    plot_writer_data(multimanagers.managers, tag='episode_rewards', show=False)
-    plot_writer_data(multimanagers.managers, tag='dw_time_elapsed', show=False)
-    plot_writer_data(multimanagers.managers, tag='eval_rewards', show=False)
-    plot_writer_data(multimanagers.managers, tag='q_loss')
+    plot_writer_data(multimanagers.managers, tag="episode_rewards", show=False)
+    plot_writer_data(multimanagers.managers, tag="dw_time_elapsed", show=False)
+    plot_writer_data(multimanagers.managers, tag="eval_rewards", show=False)
+    plot_writer_data(multimanagers.managers, tag="q_loss")
 
     stats.save()
     stats.clear_output_dir()

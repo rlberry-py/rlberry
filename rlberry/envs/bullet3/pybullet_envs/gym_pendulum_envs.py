@@ -1,6 +1,6 @@
 from gym import spaces
 from pybullet_envs.env_bases import MJCFBaseBulletEnv
-from pybullet_envs.gym_pendulum_envs import InvertedPendulumBulletEnv, InvertedPendulumSwingupBulletEnv
+from pybullet_envs.gym_pendulum_envs import InvertedPendulumBulletEnv
 from pybullet_envs.scene_abstract import SingleRobotEmptyScene
 
 from rlberry.envs.bullet3.pybullet_envs.robot_pendula import Pendulum, PendulumSwingup
@@ -16,19 +16,20 @@ class PendulumBulletEnv(InvertedPendulumBulletEnv):
         self.stateId = -1
 
     def create_single_player_scene(self, bullet_client):
-        return SingleRobotEmptyScene(bullet_client, gravity=9.81, timestep=0.02, frame_skip=1)
+        return SingleRobotEmptyScene(
+            bullet_client, gravity=9.81, timestep=0.02, frame_skip=1
+        )
 
     def step(self, a):
         self.robot.apply_action(a)
         self.scene.global_step()
         state = self.robot.calc_state()  # sets self.pos_x self.pos_y
-        vel_penalty = 0
         if self.robot.swingup:
             reward = np.cos(self.robot.theta)
             done = False
         else:
             reward = 1.0
-            done = np.abs(self.robot.theta) > .2
+            done = np.abs(self.robot.theta) > 0.2
         self.rewards = [float(reward)]
         self.HUD(state, a, done)
         return state, sum(self.rewards), done, {}

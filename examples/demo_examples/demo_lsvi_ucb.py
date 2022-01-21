@@ -16,7 +16,9 @@ from rlberry.agents.ucbvi import UCBVIAgent
 
 
 class GridWorldFeatureMap(FeatureMap):
-    def __init__(self, n_states, n_actions, n_rows, n_cols, index2coord, dim=15, sigma=0.25):
+    def __init__(
+        self, n_states, n_actions, n_rows, n_cols, index2coord, dim=15, sigma=0.25
+    ):
         self.index2coord = index2coord
         self.n_states = n_states
         self.n_actions = n_actions
@@ -35,7 +37,7 @@ class GridWorldFeatureMap(FeatureMap):
                 x_jj = row_jj / n_rows
                 y_jj = col_jj / n_cols
                 dist = np.sqrt((x_jj - x_ii) ** 2.0 + (y_jj - y_ii) ** 2.0)
-                sim_matrix[ii, jj] = np.exp(-(dist / sigma) ** 2.0)
+                sim_matrix[ii, jj] = np.exp(-((dist / sigma) ** 2.0))
 
         # factorize similarity matrix to obtain features
         uu, ss, vh = np.linalg.svd(sim_matrix, hermitian=True)
@@ -54,16 +56,17 @@ def feature_map_fn(env):
         env.action_space.n,
         env.nrows,
         env.ncols,
-        env.index2coord)
+        env.index2coord,
+    )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parameters
     n_episodes = 750
     horizon = 10
     gamma = 0.99
     eval_kwargs = dict(eval_horizon=10)
-    parallelization = 'process'
+    parallelization = "process"
 
     # Define environment (constructor, kwargs)
     env = (GridWorld, dict(nrows=5, ncols=5, walls=(), success_probability=0.95))
@@ -72,7 +75,7 @@ if __name__ == '__main__':
         feature_map_fn=feature_map_fn,
         horizon=horizon,
         bonus_scale_factor=0.01,
-        gamma=gamma
+        gamma=gamma,
     )
 
     params_ucbvi = dict(
@@ -80,20 +83,17 @@ if __name__ == '__main__':
         gamma=gamma,
         real_time_dp=False,
         stage_dependent=False,
-        bonus_scale_factor=0.01
+        bonus_scale_factor=0.01,
     )
 
     params_greedy = dict(
         feature_map_fn=feature_map_fn,
         horizon=horizon,
         bonus_scale_factor=0.0,
-        gamma=gamma
+        gamma=gamma,
     )
 
-    params_oracle = dict(
-        horizon=horizon,
-        gamma=gamma
-    )
+    params_oracle = dict(horizon=horizon, gamma=gamma)
 
     stats = AgentManager(
         LSVIUCBAgent,
@@ -102,7 +102,8 @@ if __name__ == '__main__':
         fit_budget=n_episodes,
         eval_kwargs=eval_kwargs,
         n_fit=4,
-        parallelization=parallelization)
+        parallelization=parallelization,
+    )
 
     # UCBVI baseline
     stats_ucbvi = AgentManager(
@@ -112,7 +113,8 @@ if __name__ == '__main__':
         fit_budget=n_episodes,
         eval_kwargs=eval_kwargs,
         n_fit=4,
-        parallelization=parallelization)
+        parallelization=parallelization,
+    )
 
     # Random exploration baseline
     stats_random = AgentManager(
@@ -122,8 +124,9 @@ if __name__ == '__main__':
         fit_budget=n_episodes,
         eval_kwargs=eval_kwargs,
         n_fit=4,
-        agent_name='LSVI (random exploration)',
-        parallelization=parallelization)
+        agent_name="LSVI (random exploration)",
+        parallelization=parallelization,
+    )
 
     # Oracle (optimal policy)
     oracle_stats = AgentManager(
@@ -132,7 +135,8 @@ if __name__ == '__main__':
         init_kwargs=params_oracle,
         fit_budget=n_episodes,
         eval_kwargs=eval_kwargs,
-        n_fit=1)
+        n_fit=1,
+    )
 
     # fit
     stats.fit()
@@ -143,12 +147,12 @@ if __name__ == '__main__':
     # visualize results
     plot_writer_data(
         [stats, stats_ucbvi, stats_random],
-        tag='episode_rewards',
+        tag="episode_rewards",
         preprocess_func=np.cumsum,
-        title='Cumulative Rewards',
-        show=False)
+        title="Cumulative Rewards",
+        show=False,
+    )
     plot_writer_data(
-        [stats, stats_ucbvi, stats_random],
-        tag='dw_time_elapsed',
-        show=False)
+        [stats, stats_ucbvi, stats_random], tag="dw_time_elapsed", show=False
+    )
     evaluate_agents([stats, stats_ucbvi, stats_random, oracle_stats], n_simulations=20)
