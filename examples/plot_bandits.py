@@ -35,7 +35,7 @@ class UCBAgent(IndexAgent):
 class RecursiveUCBAgent(RecursiveIndexAgent):
     """Same as above but defined recursively"""
 
-    name = "UCB Agent"
+    name = "Recursive UCB Agent"
 
     def __init__(self, env, B=1, **kwargs):
         # upper bound mean + B*0.5*sqrt(2*log(t**2)/n)
@@ -72,7 +72,7 @@ M = 20  # number of MC simu
 
 
 env_ctor = NormalBandit
-env_kwargs = {"means": means, "stds": np.ones(len(means)) / 3}
+env_kwargs = {"means": means, "stds": 2*np.ones(len(means))}
 
 agent1 = AgentManager(
     UCBAgent,
