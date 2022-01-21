@@ -6,28 +6,50 @@
 User guide
 ==========
 
-If you are new to rlberry, check the :ref:`Tutorial` below and the :ref:`the quickstart<quick_start>` documentation.
+If you are new to rlberry, check the :ref:`Tutorials` below and the :ref:`the quickstart<quick_start>` documentation.
 In the quick start, you will learn how to set up an experiment and evaluate the
 efficiency of different agents.
 
 For more information see :ref:`the gallery of examples<examples>`.
 
 
-Tutorial
+Tutorials
 =========
 
 The tutorials below will present to you the main functionalities of ``rlberry`` in a few minutes.
 
-- :ref:`Install rlberry <installation>`.
-- :ref:`Create an agent <create_agent>`.
-- :ref:`Evaluate an agent and optimize its hyperparameters <evaluate_agent>`.
-- :ref:`Compare different agents <compare_agents>`.
-- :ref:`Setup and run experiments using yaml config files <experiment_setup>`.
-- :ref:`Quick start: setup an experiment and evaluate different agents <quick_start>`.
-- :ref:`Seeding & Reproducibility <seeding>`.
+Installation
+------------
+
+.. toctree::
+   :maxdepth: 2
+   
+   installation.rst
 
 
-Contributing
-===================
+Quick start: setup an experiment and evaluate different agents
+--------------------------------------------------------------
+
+.. toctree::
+   :maxdepth: 2
+   
+   basics/quick_start.rst
+
+
+Agents, hyperparameter optimization and experiment setup
+---------------------------------------------------------
+
+.. toctree::
+   :maxdepth: 2
+
+   basics/create_agent.rst
+   basics/evaluate_agent.rst
+   basics/compare_agents.rst
+   basics/experiment_setup.rst
+   basics/seeding.rst
+
+
+How to contribute?
+==================
 
 If you want to contribute to rlberry, check out :ref:`the contribution guidelines<contributing>`.

@@ -297,7 +297,46 @@ class AgentWithSimplePolicy(Agent):
 
     The :meth:`policy` method takes an observation as input and returns an action.
 
-    For attributes documentation, see :class:`~rlberry.agents.agent.Agent`.
+    Parameters
+    ----------
+    env : gym.Env or tuple (constructor, kwargs)
+        Environment used to fit the agent.
+    eval_env : gym.Env or tuple (constructor, kwargs)
+        Environment on which to evaluate the agent. If None, copied from env.
+    copy_env : bool
+        If true, makes a deep copy of the environment.
+    seeder : :class:`~rlberry.seeding.seeder.Seeder`, int, or None
+        Seeder/seed for random number generation.
+    output_dir : str or Path
+        Directory that the agent can use to store data.
+    _execution_metadata : ExecutionMetadata, optional
+        Extra information about agent execution (e.g. about which is the process id where the agent is running).
+        Used by :class:`~rlberry.manager.AgentManager`.
+    _default_writer_kwargs : dict, optional
+        Parameters to initialize :class:`~rlberry.utils.writers.DefaultWriter` (attribute self.writer).
+        Used by :class:`~rlberry.manager.AgentManager`.
+
+    Attributes
+    ----------
+    name : string
+        Agent identifier (not necessarily unique).
+    env : :class:`gym.Env` or tuple (constructor, kwargs)
+        Environment on which to train the agent.
+    eval_env : :class:`gym.Env` or tuple (constructor, kwargs)
+        Environment on which to evaluate the agent. If None, copied from env.
+    writer : object, default: None
+        Writer object (e.g. tensorboard SummaryWriter).
+    seeder : :class:`~rlberry.seeding.seeder.Seeder`, int, or None
+        Seeder/seed for random number generation.
+    rng : :class:`numpy.random._generator.Generator`
+        Random number generator. If you use random numbers in your agent, this
+        attribute must be used in order to ensure reproducibility. See `numpy's
+        documentation <https://numpy.org/doc/stable/reference/random/generator.html>`_.
+    output_dir : str or Path
+        Directory that the agent can use to store data.
+    unique_id : str
+        Unique identifier for the agent instance. Can be used, for example,
+        to create files/directories for the agent to log data safely.
     """
 
     @abstractmethod
