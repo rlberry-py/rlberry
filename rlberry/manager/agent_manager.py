@@ -70,7 +70,7 @@ class AgentHandler:
         seeder: Seeder,
         agent_class,
         agent_instance=None,
-        agent_kwargs=None
+        agent_kwargs=None,
     ) -> None:
         self._id = id
         self._fname = Path(filename)
