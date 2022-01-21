@@ -3,10 +3,9 @@
 UCB Bandit cumulative regret
 =============================
 
-This script shows how to define a
+This script shows how to define a bandit environment and an Index-based algorithm.
 """
 
-#! pip install git+https://github.com/TimotheeMathieu/rlberry@bandits-perso
 import numpy as np
 from rlberry.envs.bandits import NormalBandit
 from rlberry.agents.bandits import IndexAgent, RecursiveIndexAgent
