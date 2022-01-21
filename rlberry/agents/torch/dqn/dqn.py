@@ -134,9 +134,8 @@ class DQNAgent(AgentWithSimplePolicy):
         self.target_update = target_update
         self.double = double
 
-        assert isinstance(
-            self.env.action_space, spaces.Discrete
-        ), "Only compatible with Discrete action spaces."
+        assert isinstance(self.env.action_space, spaces.Discrete), \
+            "Only compatible with Discrete action spaces."
 
         self.prioritized_replay = prioritized_replay
         memory_class = (
