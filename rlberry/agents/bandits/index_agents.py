@@ -33,10 +33,18 @@ class IndexAgent(AgentWithSimplePolicy):
         If True, compute "phased bandit" where the index is computed only every
         phase**j. If None, the Bandit is not phased.
     """
-    name = 'IndexAgent'
-    def __init__(self, env, index_function = lambda rew, t : np.mean(rew),
-                 recursive_index_function=None, record_action = False,
-                 phase = None, **kwargs):
+
+    name = "IndexAgent"
+
+    def __init__(
+        self,
+        env,
+        index_function=lambda rew, t: np.mean(rew),
+        recursive_index_function=None,
+        record_action=False,
+        phase=None,
+        **kwargs
+    ):
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
         self.n_arms = self.env.action_space.n
         self.index_function = index_function
@@ -44,17 +52,18 @@ class IndexAgent(AgentWithSimplePolicy):
         self.record_action = record_action
         self.phase = phase
         self.total_time = 0
+
     def fit(self, budget=None, **kwargs):
         n_episodes = budget
         rewards = np.zeros(n_episodes)
-        actions = np.ones(n_episodes)*np.nan
+        actions = np.ones(n_episodes) * np.nan
 
-        indexes = np.inf*np.ones(self.n_arms)
+        indexes = np.inf * np.ones(self.n_arms)
         for ep in range(n_episodes):
-           self.total_time += 1
-           if self.total_time < self.n_arms:
-               action = self.global_time
-           else:
+            self.total_time += 1
+            if self.total_time < self.n_arms:
+                action = self.global_time
+            else:
                 indexes = self.get_indexes(rewards, actions, ep)
                 action = np.argmax(indexes)
                 next_state, reward, done, _ = self.env.step(action)
@@ -62,11 +71,11 @@ class IndexAgent(AgentWithSimplePolicy):
                 actions[ep] = action
 
         self.optimal_action = np.argmax(indexes)
-        Na = [ np.sum(actions == a) for a in range(self.n_arms)]
+        Na = [np.sum(actions == a) for a in range(self.n_arms)]
         if self.record_action:
             for a in range(self.n_arms):
-                self.writer.add_scalar('episode_Na'+str(a), Na[a], 1)
-        info = {"episode_reward":np.sum(rewards)}
+                self.writer.add_scalar("episode_Na" + str(a), Na[a], 1)
+        info = {"episode_reward": np.sum(rewards)}
         return info
 
     def get_indexes(self, rewards, actions, ep):
@@ -74,7 +83,6 @@ class IndexAgent(AgentWithSimplePolicy):
         for a in range(self.n_arms):
             indexes[a] = self.index_function(rewards[actions == a], ep)
         return indexes
-
 
     def policy(self, observation):
         return self.optimal_action
@@ -100,15 +108,17 @@ class IndexAgent(AgentWithSimplePolicy):
         if not dill.pickles(self.writer):
             self.set_writer(None)
 
-        dict = {"_writer" : self.writer,
-                "seeder" : self.seeder,
-                "_execution_metadata": self._execution_metadata,
-                "_unique_id" : self._unique_id,
-                "_output_dir" : self._output_dir,
-                "optimal_action" : self.optimal_action}
+        dict = {
+            "_writer": self.writer,
+            "seeder": self.seeder,
+            "_execution_metadata": self._execution_metadata,
+            "_unique_id": self._unique_id,
+            "_output_dir": self._output_dir,
+            "optimal_action": self.optimal_action,
+        }
 
         # save
-        filename = Path(filename).with_suffix('.pickle')
+        filename = Path(filename).with_suffix(".pickle")
         filename.parent.mkdir(parents=True, exist_ok=True)
         try:
             with filename.open("wb") as ff:
@@ -134,14 +144,14 @@ class IndexAgent(AgentWithSimplePolicy):
         **kwargs: dict
             Arguments to required by the __init__ method of the Agent subclass.
         """
-        filename = Path(filename).with_suffix('.pickle')
+        filename = Path(filename).with_suffix(".pickle")
 
         obj = cls(**kwargs)
         try:
-            with filename.open('rb') as ff:
+            with filename.open("rb") as ff:
                 tmp_dict = pickle.load(ff)
         except Exception:
-            with filename.open('rb') as ff:
+            with filename.open("rb") as ff:
                 tmp_dict = dill.load(ff)
 
         obj.__dict__.update(tmp_dict)

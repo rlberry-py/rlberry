@@ -21,7 +21,9 @@ class Bandit(Model):
         has a method .rvs().
 
     """
+
     name = ""
+
     def __init__(self, laws=[]):
         Model.__init__(self)
         self.laws = laws
@@ -71,8 +73,11 @@ class CorruptedLaws:
             return self.cor_law.rvs(random_state=rng)
         else:
             return self.law.rvs(random_state=rng)
+
     def mean(self):
-        return (1-self.cor_prop)*self.law.mean()+self.cor_prop*self.cor_law.mean()
+        return (
+            1 - self.cor_prop
+        ) * self.law.mean() + self.cor_prop * self.cor_law.mean()
 
 
 class CorruptedNormalBandit(Bandit):
