@@ -32,7 +32,7 @@ class Bandit(Model):
         # test that the action exists
         assert action < len(self.laws)
 
-        reward = self.laws[action].rvs(rng=self.rng)
+        reward = self.laws[action].rvs(random_state=self.rng)
         done = True
 
         return 0, reward, done, {}
@@ -67,12 +67,12 @@ class CorruptedLaws:
         self.cor_prop = cor_prop
         self.cor_law = cor_law
 
-    def rvs(self, rng):
-        is_corrupted = rng.binomial(1, self.cor_prop)
+    def rvs(self, random_state):
+        is_corrupted = random_state.binomial(1, self.cor_prop)
         if is_corrupted == 1:
-            return self.cor_law.rvs(random_state=rng)
+            return self.cor_law.rvs(random_state=random_state)
         else:
-            return self.law.rvs(random_state=rng)
+            return self.law.rvs(random_state=random_state)
 
     def mean(self):
         return (
@@ -133,3 +133,39 @@ class CorruptedNormalBandit(Bandit):
             CorruptedLaws(inlier_laws[a], cor_prop, self.cor_laws[a])
             for a in range(len(means))
         ]
+
+
+class NormalBandit(Bandit):
+    """
+    Class for Normal Bandits
+
+    Parameters
+    ----------
+
+    means: array-like of size n_arms, default=array([0,1])
+        means of the law of inliers of each of the arms.
+
+    stds: array-like of size n_arms or None, default=None
+        stds of the law of inliers of each of the arms. If None, use array with
+        all ones.
+
+    """
+
+    def __init__(
+        self,
+        means=np.array([0, 1]),
+        stds=None,
+    ):
+        Bandit.__init__(self)
+        self.laws = self.make_laws(means, stds)
+        A = len(self.laws)
+        self.action_space = spaces.Discrete(A)
+        self._actions = np.arange(A)
+
+    def make_laws(self, means, stds):
+        if stds is None:
+            self.stds = np.ones(len(means))
+        else:
+            self.stds = stds
+        assert len(means) == len(self.stds)
+        return [stats.norm(loc=means[a], scale=self.stds[a]) for a in range(len(means))]

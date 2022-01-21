@@ -19,38 +19,14 @@ class IndexAgent(AgentWithSimplePolicy):
     index_function : callable, default = lambda rew, t : np.mean(rew)
         Compute the index for an arm using the past rewards on this arm and
         the current time t.
-
-    recursive_index_function : tuple of callable or None
-        Compute recursively a sufficient statistic with the first member of the
-        tuple, the second member is the size of this stat and the last compute the
-        index using the sufficient statistics.
-
-    record_action : bool, default=False
-        If True, record in the writer the number of time an action is played at
-        the end of each simulation.
-
-    phase : bool, default = None
-        If True, compute "phased bandit" where the index is computed only every
-        phase**j. If None, the Bandit is not phased.
     """
 
     name = "IndexAgent"
 
-    def __init__(
-        self,
-        env,
-        index_function=lambda rew, t: np.mean(rew),
-        recursive_index_function=None,
-        record_action=False,
-        phase=None,
-        **kwargs
-    ):
+    def __init__(self, env, index_function=lambda rew, t: np.mean(rew), **kwargs):
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
         self.n_arms = self.env.action_space.n
         self.index_function = index_function
-        self.recursive_index_function = recursive_index_function
-        self.record_action = record_action
-        self.phase = phase
         self.total_time = 0
 
     def fit(self, budget=None, **kwargs):
@@ -60,21 +36,17 @@ class IndexAgent(AgentWithSimplePolicy):
 
         indexes = np.inf * np.ones(self.n_arms)
         for ep in range(n_episodes):
-            self.total_time += 1
             if self.total_time < self.n_arms:
-                action = self.global_time
+                action = self.total_time
             else:
                 indexes = self.get_indexes(rewards, actions, ep)
                 action = np.argmax(indexes)
-                next_state, reward, done, _ = self.env.step(action)
-                rewards[ep] = reward
-                actions[ep] = action
+            self.total_time += 1
+            next_state, reward, done, _ = self.env.step(action)
+            rewards[ep] = reward
+            actions[ep] = action
 
         self.optimal_action = np.argmax(indexes)
-        Na = [np.sum(actions == a) for a in range(self.n_arms)]
-        if self.record_action:
-            for a in range(self.n_arms):
-                self.writer.add_scalar("episode_Na" + str(a), Na[a], 1)
         info = {"episode_reward": np.sum(rewards)}
         return info
 
@@ -157,3 +129,60 @@ class IndexAgent(AgentWithSimplePolicy):
         obj.__dict__.update(tmp_dict)
 
         return obj
+
+
+class RecursiveIndexAgent(IndexAgent):
+    """
+    Agent for bandit environment using a recursive Index-based policy.
+
+    Parameters
+    -----------
+    env : rlberry bandit environment
+
+    stat_function : tuple of callable or None
+        compute sufficient statistics using previous stats, Na and current action and rewards
+
+    index_function : callable
+        compute the index using the stats from stat_function, the number of  pull
+        of the arm and the current time.
+
+    """
+
+    name = "RecursiveIndexAgent"
+
+    def __init__(self, env, stat_function, index_function, **kwargs):
+        IndexAgent.__init__(self, env, **kwargs)
+        self.n_arms = self.env.action_space.n
+        self.stat_function = stat_function
+        self.index_function = index_function
+
+    def fit(self, budget=None, **kwargs):
+        n_episodes = budget
+        rewards = np.zeros(n_episodes)
+        actions = np.ones(n_episodes) * np.nan
+        indexes = np.inf * np.ones(self.n_arms)
+        stats = None
+        Na = np.zeros(self.n_arms)
+        for ep in range(n_episodes):
+            if self.total_time < self.n_arms:
+                action = self.total_time
+            else:
+                indexes = self.get_indexes(stats, Na, ep)
+                action = np.argmax(indexes)
+            self.total_time += 1
+            Na[action] += 1
+            next_state, reward, done, _ = self.env.step(action)
+            stats = self.stat_function(stats, Na, action, reward)
+            rewards[ep] = reward
+            actions[ep] = action
+
+        self.optimal_action = np.argmax(indexes)
+
+        info = {"episode_reward": np.sum(rewards)}
+        return info
+
+    def get_indexes(self, stats, Na, ep):
+        indexes = np.zeros(self.n_arms)
+        for a in range(self.n_arms):
+            indexes[a] = self.index_function(stats[a], Na[a], ep)
+        return indexes
