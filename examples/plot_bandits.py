@@ -72,7 +72,7 @@ M = 20  # number of MC simu
 
 
 env_ctor = NormalBandit
-env_kwargs = {"means": means, "stds": 2*np.ones(len(means))}
+env_kwargs = {"means": means, "stds": 2 * np.ones(len(means))}
 
 agent1 = AgentManager(
     UCBAgent,
