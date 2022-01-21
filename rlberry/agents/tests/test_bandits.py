@@ -22,6 +22,7 @@ class UCBAgent(IndexAgent):
         # record rewards
         self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
 
+
 class RecursiveUCBAgent(RecursiveIndexAgent):
     """Same as above but defined recursively"""
 
@@ -46,9 +47,7 @@ class RecursiveUCBAgent(RecursiveIndexAgent):
 def test_bandits():
     means = [0, 0.9, 1]
 
-
     ############# Construction of the experiment ########
-
 
     env_ctor = NormalBandit
     env_kwargs = {"means": means, "stds": 2 * np.ones(len(means))}
@@ -61,7 +60,6 @@ def test_bandits():
         n_fit=2,
         seed=42,
     )
-
 
     agent1bis = AgentManager(
         RecursiveUCBAgent,
