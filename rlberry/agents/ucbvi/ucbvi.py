@@ -3,9 +3,15 @@ import numpy as np
 
 import gym.spaces as spaces
 from rlberry.agents import AgentWithSimplePolicy
-from rlberry.agents.ucbvi.utils import update_value_and_get_action, update_value_and_get_action_sd
+from rlberry.agents.ucbvi.utils import (
+    update_value_and_get_action,
+    update_value_and_get_action_sd,
+)
 from rlberry.exploration_tools.discrete_counter import DiscreteCounter
-from rlberry.agents.dynprog.utils import backward_induction_sd, backward_induction_reward_sd
+from rlberry.agents.dynprog.utils import (
+    backward_induction_sd,
+    backward_induction_reward_sd,
+)
 from rlberry.agents.dynprog.utils import backward_induction_in_place
 
 logger = logging.getLogger(__name__)
@@ -56,18 +62,21 @@ class UCBVIAgent(AgentWithSimplePolicy):
           Advances in Neural Information Processing Systems. 2019.
           https://papers.nips.cc/paper/2019/file/25caef3a545a1fff2ff4055484f0e758-Paper.pdf
     """
+
     name = "UCBVI"
 
-    def __init__(self,
-                 env,
-                 gamma=1.0,
-                 horizon=100,
-                 bonus_scale_factor=1.0,
-                 bonus_type="simplified_bernstein",
-                 reward_free=False,
-                 stage_dependent=False,
-                 real_time_dp=False,
-                 **kwargs):
+    def __init__(
+        self,
+        env,
+        gamma=1.0,
+        horizon=100,
+        bonus_scale_factor=1.0,
+        bonus_type="simplified_bernstein",
+        reward_free=False,
+        stage_dependent=False,
+        real_time_dp=False,
+        **kwargs
+    ):
         # init base class
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
@@ -86,15 +95,16 @@ class UCBVIAgent(AgentWithSimplePolicy):
         # other checks
         assert gamma >= 0 and gamma <= 1.0
         if self.horizon is None:
-            assert gamma < 1.0, \
-                "If no horizon is given, gamma must be smaller than 1."
+            assert gamma < 1.0, "If no horizon is given, gamma must be smaller than 1."
             self.horizon = int(np.ceil(1.0 / (1.0 - gamma)))
 
         # maximum value
         r_range = self.env.reward_range[1] - self.env.reward_range[0]
         if r_range == np.inf or r_range == 0.0:
-            logger.warning("{}: Reward range is  zero or infinity. ".format(self.name)
-                           + "Setting it to 1.")
+            logger.warning(
+                "{}: Reward range is  zero or infinity. ".format(self.name)
+                + "Setting it to 1."
+            )
             r_range = 1.0
 
         self.v_max = np.zeros(self.horizon)
@@ -142,12 +152,13 @@ class UCBVIAgent(AgentWithSimplePolicy):
         self.episode = 0
 
         # useful object to compute total number of visited states & entropy of visited states
-        self.counter = DiscreteCounter(self.env.observation_space,
-                                       self.env.action_space)
+        self.counter = DiscreteCounter(
+            self.env.observation_space, self.env.action_space
+        )
 
         # update name
         if self.real_time_dp:
-            self.name = 'UCBVI-RTDP'
+            self.name = "UCBVI-RTDP"
 
     def policy(self, observation):
         state = observation
@@ -155,7 +166,7 @@ class UCBVIAgent(AgentWithSimplePolicy):
         return self.Q_policy[0, state, :].argmax()
 
     def _get_action(self, state, hh=0):
-        """ Sampling policy. """
+        """Sampling policy."""
         if not self.real_time_dp:
             assert self.Q is not None
             return self.Q[hh, state, :].argmax()
@@ -172,7 +183,8 @@ class UCBVIAgent(AgentWithSimplePolicy):
                 self.P_hat,
                 self.B_sa,
                 self.gamma,
-                self.v_max)
+                self.v_max,
+            )
 
     def _compute_bonus(self, n, hh):
         # reward-free
@@ -187,7 +199,8 @@ class UCBVIAgent(AgentWithSimplePolicy):
             return bonus
         else:
             raise ValueError(
-                "Error: bonus type {} not implemented".format(self.bonus_type))
+                "Error: bonus type {} not implemented".format(self.bonus_type)
+            )
 
     def _update(self, state, action, next_state, reward, hh):
         if self.stage_dependent:
@@ -197,7 +210,9 @@ class UCBVIAgent(AgentWithSimplePolicy):
             prev_r = self.R_hat[hh, state, action]
             prev_p = self.P_hat[hh, state, action, :]
 
-            self.R_hat[hh, state, action] = (1.0 - 1.0 / nn) * prev_r + reward * 1.0 / nn
+            self.R_hat[hh, state, action] = (
+                1.0 - 1.0 / nn
+            ) * prev_r + reward * 1.0 / nn
 
             self.P_hat[hh, state, action, :] = (1.0 - 1.0 / nn) * prev_p
             self.P_hat[hh, state, action, next_state] += 1.0 / nn
@@ -247,7 +262,8 @@ class UCBVIAgent(AgentWithSimplePolicy):
                     self.R_hat + self.B_sa,
                     self.P_hat,
                     self.gamma,
-                    self.v_max[0])
+                    self.v_max[0],
+                )
             else:
                 backward_induction_reward_sd(
                     self.Q,
@@ -255,7 +271,8 @@ class UCBVIAgent(AgentWithSimplePolicy):
                     self.R_hat + self.B_sa,
                     self.P_hat,
                     self.gamma,
-                    self.v_max[0])
+                    self.v_max[0],
+                )
 
         # update info
         self.episode += 1
@@ -263,7 +280,9 @@ class UCBVIAgent(AgentWithSimplePolicy):
         # writer
         if self.writer is not None:
             self.writer.add_scalar("episode_rewards", episode_rewards, self.episode)
-            self.writer.add_scalar("n_visited_states", self.counter.get_n_visited_states(), self.episode)
+            self.writer.add_scalar(
+                "n_visited_states", self.counter.get_n_visited_states(), self.episode
+            )
 
         # return sum of rewards collected in the episode
         return episode_rewards
@@ -284,7 +303,8 @@ class UCBVIAgent(AgentWithSimplePolicy):
                 self.R_hat,
                 self.P_hat,
                 self.gamma,
-                self.v_max[0])
+                self.v_max[0],
+            )
         else:
             backward_induction_in_place(
                 self.Q_policy,
@@ -293,4 +313,5 @@ class UCBVIAgent(AgentWithSimplePolicy):
                 self.P_hat,
                 self.horizon,
                 self.gamma,
-                self.v_max[0])
+                self.v_max[0],
+            )

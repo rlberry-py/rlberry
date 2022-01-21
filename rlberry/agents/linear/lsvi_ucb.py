@@ -9,16 +9,18 @@ logger = logging.getLogger(__name__)
 
 @numba_jit
 def run_lsvi_jit(
-        dim, horizon,
-        bonus_factor,
-        lambda_mat_inv,
-        reward_hist,
-        gamma,
-        feat_hist,
-        n_actions,
-        feat_ns_all_actions,
-        v_max,
-        total_time_steps):
+    dim,
+    horizon,
+    bonus_factor,
+    lambda_mat_inv,
+    reward_hist,
+    gamma,
+    feat_hist,
+    n_actions,
+    feat_ns_all_actions,
+    v_max,
+    total_time_steps,
+):
     """
     Jit version of Least-Squares Value Iteration.
 
@@ -61,10 +63,10 @@ def run_lsvi_jit(
             for aa in range(n_actions):
                 #
                 feat_ns_aa = feat_ns_all_actions[tt, aa, :]
-                inverse_counts = \
-                    feat_ns_aa.dot(lambda_mat_inv.T.dot(feat_ns_aa))
-                bonus = bonus_factor * np.sqrt(inverse_counts) \
-                    + v_max * inverse_counts * (bonus_factor > 0.0)
+                inverse_counts = feat_ns_aa.dot(lambda_mat_inv.T.dot(feat_ns_aa))
+                bonus = bonus_factor * np.sqrt(
+                    inverse_counts
+                ) + v_max * inverse_counts * (bonus_factor > 0.0)
                 #
                 q_ns[aa] = feat_ns_aa.dot(q_w[hh + 1, :]) + bonus
                 q_ns[aa] = min(q_ns[aa], v_max)
@@ -119,17 +121,19 @@ class LSVIUCBAgent(AgentWithSimplePolicy):
     function approximation. In Conference on Learning Theory (pp. 2137-2143).
     """
 
-    name = 'LSVI-UCB'
+    name = "LSVI-UCB"
 
-    def __init__(self,
-                 env,
-                 horizon,
-                 feature_map_fn,
-                 feature_map_kwargs=None,
-                 gamma=0.99,
-                 bonus_scale_factor=1.0,
-                 reg_factor=0.1,
-                 **kwargs):
+    def __init__(
+        self,
+        env,
+        horizon,
+        feature_map_fn,
+        feature_map_kwargs=None,
+        gamma=0.99,
+        bonus_scale_factor=1.0,
+        reg_factor=0.1,
+        **kwargs
+    ):
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
         self.n_episodes = None
@@ -142,23 +146,29 @@ class LSVIUCBAgent(AgentWithSimplePolicy):
 
         #
         if self.bonus_scale_factor == 0.0:
-            self.name = 'LSVI-Random-Expl'
+            self.name = "LSVI-Random-Expl"
 
         # maximum value
         r_range = self.env.reward_range[1] - self.env.reward_range[0]
         if r_range == np.inf:
-            logger.warning("{}: Reward range is infinity. ".format(self.name)
-                           + "Clipping it to 1.")
+            logger.warning(
+                "{}: Reward range is infinity. ".format(self.name) + "Clipping it to 1."
+            )
             r_range = 1.0
 
         if self.gamma == 1.0:
             self.v_max = r_range * horizon
         else:
-            self.v_max = r_range * (1.0 - np.power(self.gamma, self.horizon)) / (1.0 - self.gamma)
+            self.v_max = (
+                r_range
+                * (1.0 - np.power(self.gamma, self.horizon))
+                / (1.0 - self.gamma)
+            )
 
         #
-        assert isinstance(self.env.action_space, Discrete), \
-            "LSVI-UCB requires discrete actions."
+        assert isinstance(
+            self.env.action_space, Discrete
+        ), "LSVI-UCB requires discrete actions."
 
         #
         assert len(self.feature_map.shape) == 1
@@ -196,9 +206,9 @@ class LSVIUCBAgent(AgentWithSimplePolicy):
         self._rewards = np.zeros(self.n_episodes)
         #
         self.feat_hist = np.zeros((self.n_episodes * self.horizon, self.dim))
-        self.feat_ns_all_actions = np.zeros((self.n_episodes * self.horizon,
-                                             self.env.action_space.n,
-                                             self.dim))
+        self.feat_ns_all_actions = np.zeros(
+            (self.n_episodes * self.horizon, self.env.action_space.n, self.dim)
+        )
         #
         self.w_policy = None
 
@@ -210,7 +220,8 @@ class LSVIUCBAgent(AgentWithSimplePolicy):
         if self.n_episodes is not None:
             logger.warning(
                 "[LSVI-UCB]: Calling fit() more than once will reset the algorithm"
-                + " (to realocate memory according to the number of episodes).")
+                + " (to realocate memory according to the number of episodes)."
+            )
         self.n_episodes = budget
         self.reset()
 
@@ -252,8 +263,7 @@ class LSVIUCBAgent(AgentWithSimplePolicy):
             #
             self.lambda_mat += np.outer(feat, feat)
             # update inverse
-            self.lambda_mat_inv -= \
-                (inv @ outer_prod @ inv) / (1 + feat @ inv.T @ feat)
+            self.lambda_mat_inv -= (inv @ outer_prod @ inv) / (1 + feat @ inv.T @ feat)
 
             # update history
             self.reward_hist[self.total_time_steps] = reward
@@ -265,8 +275,9 @@ class LSVIUCBAgent(AgentWithSimplePolicy):
             tt = self.total_time_steps
             self.feat_hist[tt, :] = self.feature_map.map(state, action)
             for aa in range(self.env.action_space.n):
-                self.feat_ns_all_actions[tt, aa, :] = \
-                    self.feature_map.map(next_state, aa)
+                self.feat_ns_all_actions[tt, aa, :] = self.feature_map.map(
+                    next_state, aa
+                )
 
             # increments
             self.total_time_steps += 1
@@ -293,8 +304,9 @@ class LSVIUCBAgent(AgentWithSimplePolicy):
         """q_w is the vector representation of the Q function."""
         feat = self.feature_map.map(state, action)
         inverse_counts = feat @ (self.lambda_mat_inv.T @ feat)
-        bonus = bonus_factor * np.sqrt(inverse_counts) \
-            + self.v_max * inverse_counts * (bonus_factor > 0.0)
+        bonus = bonus_factor * np.sqrt(inverse_counts) + self.v_max * inverse_counts * (
+            bonus_factor > 0.0
+        )
         q = feat.dot(q_w) + bonus
         return q
 
@@ -305,23 +317,26 @@ class LSVIUCBAgent(AgentWithSimplePolicy):
             # q_vec[aa] = self._compute_q(q_w, state, aa, bonus_factor)
             feat = self.feature_map.map(state, aa)
             inverse_counts = feat @ (self.lambda_mat_inv.T @ feat)
-            bonus = bonus_factor * np.sqrt(inverse_counts) \
-                + self.v_max * inverse_counts * (bonus_factor > 0.0)
+            bonus = bonus_factor * np.sqrt(
+                inverse_counts
+            ) + self.v_max * inverse_counts * (bonus_factor > 0.0)
             q_vec[aa] = feat.dot(q_w) + bonus
             # q_vec[aa] = min(q_vec[aa], self.v_max)   # !!!!!!!!!
         return q_vec
 
     def _run_lsvi(self, bonus_factor):
         # run value iteration
-        q_w = run_lsvi_jit(self.dim,
-                           self.horizon,
-                           bonus_factor,
-                           self.lambda_mat_inv,
-                           self.reward_hist,
-                           self.gamma,
-                           self.feat_hist,
-                           self.env.action_space.n,
-                           self.feat_ns_all_actions,
-                           self.v_max,
-                           self.total_time_steps)
+        q_w = run_lsvi_jit(
+            self.dim,
+            self.horizon,
+            bonus_factor,
+            self.lambda_mat_inv,
+            self.reward_hist,
+            self.gamma,
+            self.feat_hist,
+            self.env.action_space.n,
+            self.feat_ns_all_actions,
+            self.v_max,
+            self.total_time_steps,
+        )
         return q_w

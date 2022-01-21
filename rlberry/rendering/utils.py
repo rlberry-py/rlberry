@@ -10,7 +10,7 @@ except Exception:
 logger = logging.getLogger(__name__)
 
 
-def video_write(fn, images, framerate=60, vcodec='libx264'):
+def video_write(fn, images, framerate=60, vcodec="libx264"):
     """
     Save list of images to a video file.
 
@@ -38,29 +38,34 @@ def video_write(fn, images, framerate=60, vcodec='libx264'):
         if not _FFMPEG_INSTALLED:
             logger.error(
                 "video_write(): Unable to save video, ffmpeg-python \
-    package required (https://github.com/kkroening/ffmpeg-python)")
+    package required (https://github.com/kkroening/ffmpeg-python)"
+            )
             return
 
         if not isinstance(images, np.ndarray):
             images = np.asarray(images)
         _, height, width, channels = images.shape
         process = (
-            ffmpeg
-                .input('pipe:', format='rawvideo', pix_fmt='rgb24',
-                       s='{}x{}'.format(width, height), r=framerate)
-                .output(fn, pix_fmt='yuv420p', vcodec=vcodec)
-                .overwrite_output()
-                .run_async(pipe_stdin=True)
+            ffmpeg.input(
+                "pipe:",
+                format="rawvideo",
+                pix_fmt="rgb24",
+                s="{}x{}".format(width, height),
+                r=framerate,
+            )
+            .output(fn, pix_fmt="yuv420p", vcodec=vcodec)
+            .overwrite_output()
+            .run_async(pipe_stdin=True)
         )
         for frame in images:
-            process.stdin.write(
-                frame
-                    .astype(np.uint8)
-                    .tobytes()
-            )
+            process.stdin.write(frame.astype(np.uint8).tobytes())
         process.stdin.close()
         process.wait()
 
     except Exception as ex:
-        logger.warning("Not possible to save \
-video, due to exception: {}".format(str(ex)))
+        logger.warning(
+            "Not possible to save \
+video, due to exception: {}".format(
+                str(ex)
+            )
+        )

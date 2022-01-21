@@ -5,10 +5,10 @@ from typing import Optional, NamedTuple
 
 
 # Default output directory used by the library.
-RLBERRY_DEFAULT_DATA_DIR = 'rlberry_data/'
+RLBERRY_DEFAULT_DATA_DIR = "rlberry_data/"
 
 # Temporary directory used by the library
-RLBERRY_TEMP_DATA_DIR = 'rlberry_data/temp/'
+RLBERRY_TEMP_DATA_DIR = "rlberry_data/temp/"
 
 
 def get_timestamp_str():
@@ -40,7 +40,7 @@ def get_unique_id(obj):
     # uuid4() is an universal id, but there might be issues if called simultaneously in different processes.
     # This function combines id(), uuid4(), and a timestamp in a single ID, and hashes it.
     timestamp = datetime.timestamp(datetime.now())
-    timestamp = str(timestamp).replace('.', '')
+    timestamp = str(timestamp).replace(".", "")
     str_id = timestamp + str(id(obj)) + uuid.uuid4().hex
     str_id = hashlib.md5(str_id.encode()).hexdigest()
     return str_id
@@ -59,5 +59,6 @@ class ExecutionMetadata(NamedTuple):
     obj_info : dict, default: None
         Extra info about the object.
     """
+
     obj_worker_id: int = -1
     obj_info: Optional[dict] = None

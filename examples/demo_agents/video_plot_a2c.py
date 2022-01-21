@@ -18,12 +18,7 @@ from rlberry.envs.benchmarks.ball_exploration import PBall2D
 env = PBall2D()
 n_episodes = 400
 horizon = 256
-agent = A2CAgent(
-    env,
-    horizon=horizon,
-    gamma=0.99,
-    learning_rate=0.001,
-    k_epochs=4)
+agent = A2CAgent(env, horizon=horizon, gamma=0.99, learning_rate=0.001, k_epochs=4)
 agent.fit(budget=n_episodes)
 
 env.enable_rendering()

@@ -18,18 +18,18 @@ env = (GridWorld, dict(nrows=5, ncols=10))
 
 params = {}
 
-params['ucbvi'] = {
-    'horizon': HORIZON,
-    'stage_dependent': True,
-    'gamma': GAMMA,
-    'real_time_dp': True,
-    'bonus_scale_factor': 1.0,
+params["ucbvi"] = {
+    "horizon": HORIZON,
+    "stage_dependent": True,
+    "gamma": GAMMA,
+    "real_time_dp": True,
+    "bonus_scale_factor": 1.0,
 }
 
-params['optql'] = {
-    'horizon': HORIZON,
-    'gamma': GAMMA,
-    'bonus_scale_factor': 1.0,
+params["optql"] = {
+    "horizon": HORIZON,
+    "gamma": GAMMA,
+    "bonus_scale_factor": 1.0,
 }
 
 eval_kwargs = dict(eval_horizon=HORIZON, n_simulations=20)
@@ -37,15 +37,30 @@ eval_kwargs = dict(eval_horizon=HORIZON, n_simulations=20)
 multimanagers = MultipleManagers()
 
 multimanagers.append(
-    AgentManager(UCBVIAgent, env, fit_budget=N_EP, init_kwargs=params['ucbvi'], eval_kwargs=eval_kwargs)
+    AgentManager(
+        UCBVIAgent,
+        env,
+        fit_budget=N_EP,
+        init_kwargs=params["ucbvi"],
+        eval_kwargs=eval_kwargs,
+    )
 )
 
 multimanagers.append(
-    AgentManager(OptQLAgent, env, fit_budget=N_EP, init_kwargs=params['optql'], eval_kwargs=eval_kwargs)
+    AgentManager(
+        OptQLAgent,
+        env,
+        fit_budget=N_EP,
+        init_kwargs=params["optql"],
+        eval_kwargs=eval_kwargs,
+    )
 )
 
 multimanagers.run()
 
-plot_writer_data(multimanagers.managers, tag='episode_rewards',
-                 preprocess_func=np.cumsum,
-                 title='Cumulative Rewards')
+plot_writer_data(
+    multimanagers.managers,
+    tag="episode_rewards",
+    preprocess_func=np.cumsum,
+    title="Cumulative Rewards",
+)
