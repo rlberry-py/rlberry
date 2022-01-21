@@ -43,26 +43,23 @@ class IndexAgent(AgentWithSimplePolicy):
         self.recursive_index_function = recursive_index_function
         self.record_action = record_action
         self.phase = phase
+        self.total_time = 0
     def fit(self, budget=None, **kwargs):
         n_episodes = budget
         rewards = np.zeros(n_episodes)
         actions = np.ones(n_episodes)*np.nan
-        # Initialization : pull all the arms once
-        for a in range(self.n_arms):
-            action = a
-            next_state, reward, done, _ = self.env.step(action)
-            rewards[a] = reward
-            actions[a] = action
-            if a == n_episodes-1:
-                break
 
         indexes = np.inf*np.ones(self.n_arms)
-        for ep in range(self.n_arms,n_episodes):
-            indexes = self.get_indexes(rewards, actions, ep)
-            action = np.argmax(indexes)
-            next_state, reward, done, _ = self.env.step(action)
-            rewards[ep] = reward
-            actions[ep] = action
+        for ep in range(n_episodes):
+           self.total_time += 1
+           if self.total_time < self.n_arms:
+               action = self.global_time
+           else:
+                indexes = self.get_indexes(rewards, actions, ep)
+                action = np.argmax(indexes)
+                next_state, reward, done, _ = self.env.step(action)
+                rewards[ep] = reward
+                actions[ep] = action
 
         self.optimal_action = np.argmax(indexes)
         Na = [ np.sum(actions == a) for a in range(self.n_arms)]
