@@ -82,8 +82,10 @@ class SACAgent(AgentWithSimplePolicy):
         k_epochs=5,
         policy_net_fn=None,
         value_net_fn=None,
+        twinq_net_fn=None,
         policy_net_kwargs=None,
         value_net_kwargs=None,
+        twinq_net_kwargs=None,
         use_bonus=False,
         uncertainty_estimator_kwargs=None,
         device="cuda:best",
@@ -108,6 +110,7 @@ class SACAgent(AgentWithSimplePolicy):
 
         self.policy_net_kwargs = policy_net_kwargs or {}
         self.value_net_kwargs = value_net_kwargs or {}
+        self.twinq_net_kwargs = twinq_net_kwargs or {}
 
         self.state_dim = self.env.observation_space.shape[0]
         self.action_dim = self.env.action_space.n
@@ -115,6 +118,7 @@ class SACAgent(AgentWithSimplePolicy):
         #
         self.policy_net_fn = policy_net_fn or default_policy_net_fn
         self.value_net_fn = value_net_fn or default_value_net_fn
+        self.twinq_net_fn = twinq_net_fn or default_twinq_net_fn
 
         self.optimizer_kwargs = {"optimizer_type": optimizer_type, "lr": learning_rate}
 
@@ -138,9 +142,15 @@ class SACAgent(AgentWithSimplePolicy):
         self.value_net = self.value_net_fn(self.env, **self.value_net_kwargs).to(
             self.device
         )
-
         self.value_optimizer = optimizer_factory(
             self.value_net.parameters(), **self.optimizer_kwargs
+        )
+
+        self.twinq_net = self.twinq_net_fn(self.env, **self.twinq_net_kwargs).to(
+            self.device
+        )
+        self.twinq_net_optimizer = optimizer_factory(
+            self.twinq_net.parameters(), **self.optimizer_kwargs
         )
 
         self.cat_policy_old = self.policy_net_fn(self.env, **self.policy_net_kwargs).to(
