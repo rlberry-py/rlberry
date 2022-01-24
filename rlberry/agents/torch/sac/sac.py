@@ -142,6 +142,7 @@ class SACAgent(AgentWithSimplePolicy):
         self.value_net = self.value_net_fn(self.env, **self.value_net_kwargs).to(
             self.device
         )
+
         self.value_optimizer = optimizer_factory(
             self.value_net.parameters(), **self.optimizer_kwargs
         )
