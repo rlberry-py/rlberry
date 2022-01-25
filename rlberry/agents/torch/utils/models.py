@@ -118,6 +118,13 @@ def default_value_net_fn(env):
 
     return model_factory(**model_config)
 
+def default_twinq_net_fn(env):
+    """
+    Returns a default twin Q network.
+    """
+    return 0
+
+
 
 class Net(nn.Module):
     def __init__(self, obs_size, hidden_size, n_actions):
