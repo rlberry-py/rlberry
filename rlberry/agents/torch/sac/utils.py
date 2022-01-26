@@ -4,6 +4,8 @@ import torch.distributions as distr
 from rlberry.agents.utils.memories import Memory
 from torch.nn.functional import one_hot
 
+import gym.spaces as spaces
+
 #implement next state function?
 #implement is_terminal function?
 
@@ -43,12 +45,11 @@ def get_qref(batch, target_val_net, gamma, device = "cpu"):
 
 
 @torch.no_grad()
-def get_vref(env, batch, val_net, twinq_net, policy_net,
-                     gamma: float, ent_alpha: float,
+def get_vref(env, batch, twinq_net, policy_net, ent_alpha: float,
                      device="cpu"):
 
-
-    assert isinstance(self.env.action_space, spaces.Discrete)
+    assert isinstance(twinq_net, tuple)
+    assert isinstance(env.action_space, spaces.Discrete)
     num_actions = env.action_space.n
 
     states, _, _, _, _ = unpack_batch(batch, device)

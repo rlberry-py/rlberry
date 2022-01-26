@@ -1,3 +1,5 @@
+from . import utils
+
 import torch
 import torch.nn as nn
 import logging
@@ -11,6 +13,8 @@ from rlberry.agents.torch.utils.models import default_value_net_fn
 from rlberry.agents.torch.utils.models import default_twinq_net_fn
 from rlberry.utils.torch import choose_device
 from rlberry.wrappers.uncertainty_estimator_wrapper import UncertaintyEstimatorWrapper
+
+from torch.nn.functional import one_hot
 
 logger = logging.getLogger(__name__)
 
@@ -152,11 +156,18 @@ class SACAgent(AgentWithSimplePolicy):
             self.value_net.parameters(), **self.optimizer_kwargs
         )
 
-        self.twinq_net = self.twinq_net_fn(self.env, **self.twinq_net_kwargs).to(
+        twinq_net = self.twinq_net_fn(self.env, **self.twinq_net_kwargs).to(
             self.device
         )
-        self.twinq_net_optimizer = optimizer_factory(
-            self.twinq_net.parameters(), **self.optimizer_kwargs
+        self.q1, self.q2 = twinq_net
+
+        self.q1_optimizer = optimizer_factory(
+            self.q1.parameters(), **self.optimizer_kwargs
+        )
+
+
+        self.q2_optimizer = optimizer_factory(
+            self.q2.parameters(), **self.optimizer_kwargs
         )
 
         self.cat_policy_old = self.policy_net_fn(self.env, **self.policy_net_kwargs).to(
@@ -241,23 +252,29 @@ class SACAgent(AgentWithSimplePolicy):
 
     def _update(self):
         # monte carlo estimate of rewards
-        rewards = []
-        discounted_reward = 0
-        for reward, is_terminal in zip(
-            reversed(self.memory.rewards), reversed(self.memory.is_terminals)
-        ):
-            if is_terminal:
-                discounted_reward = 0
-            discounted_reward = reward + (self.gamma * discounted_reward)
-            rewards.insert(0, discounted_reward)
+        # rewards = []
+        # discounted_reward = 0
+        # for reward, is_terminal in zip(
+        #     reversed(self.memory.rewards), reversed(self.memory.is_terminals)
+        # ):
+        #     if is_terminal:
+        #         discounted_reward = 0
+        #     discounted_reward = reward + (self.gamma * discounted_reward)
+        #     rewards.insert(0, discounted_reward)
 
-        # normalize the rewards
-        rewards = torch.tensor(rewards).to(self.device).float()
-        rewards = (rewards - rewards.mean()) / (rewards.std() + 1e-5)
-
+        # # normalize the rewards
+        # rewards = torch.tensor(rewards).to(self.device).float()
+        # rewards = (rewards - rewards.mean()) / (rewards.std() + 1e-5)
+        twinq_net = (self.q1, self.q2)
+        states_v, actions_v, logprobs_v, rewards_v, is_terminals_v = \
+                    utils.unpack_batch(self.memory, self.device)
         # convert list to tensor
-        old_states = torch.stack(self.memory.states).to(self.device).detach()
-        old_actions = torch.stack(self.memory.actions).to(self.device).detach()
+        # old_states = torch.stack(self.memory.states).to(self.device).detach()
+        # old_actions = torch.stack(self.memory.actions).to(self.device).detach()
+        qref = utils.get_qref(self.memory, self.target_value_net, self.gamma, self.device)
+        vref = utils.get_vref(self.env, self.memory, twinq_net, self.cat_policy, self.entr_coef, self.device)
+
+        # I HAVE STOPPED HERE!
 
         # optimize policy for K epochs
         for _ in range(self.k_epochs):
