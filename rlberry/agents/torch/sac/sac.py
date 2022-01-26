@@ -144,6 +144,10 @@ class SACAgent(AgentWithSimplePolicy):
             self.device
         )
 
+        self.target_value_net = self.value_net_fn(self.env, **self.value_net_kwargs).to(
+            self.device
+        )
+
         self.value_optimizer = optimizer_factory(
             self.value_net.parameters(), **self.optimizer_kwargs
         )
@@ -159,6 +163,7 @@ class SACAgent(AgentWithSimplePolicy):
             self.device
         )
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
+        self.target_value_net.load_state_dict(self.value_net.state_dict())
 
         self.MseLoss = nn.MSELoss()
 

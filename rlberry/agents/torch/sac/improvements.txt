@@ -1,2 +1,3 @@
 1) Usage of class memory for SAC is not the best. I believe replay buffer should be more efficient.
 2) Implement continuous action space, by learning gaussian distribution for actions
+3) Implement convolutional backbone

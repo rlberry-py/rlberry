@@ -46,13 +46,13 @@ def get_vref(batch, val_net, twinq_net, policy_net,
                      device="cpu"):
 
     states, _, _, _, _ = unpack_batch(batch, device)
-
+    q1, q2 = twinq_net()
     # references for the critic network
-    action_dist = policy_net(states)
+    act_dist = policy_net(states)
     # act_dist = distr.Normal(mu_v, torch.exp(policy_net.logstd))
     cur_actions = act_dist.sample()
     q1_v, q2_v = twinq_net(states, cur_actions)
     # element-wise minimum
     vref = torch.min(q1_v, q2_v).squeeze() - \
-                 ent_alpha * action_dist.log_prob(cur_actions).sum(dim=1)
+                 ent_alpha * act_dist.log_prob(cur_actions).sum(dim=1)
     return vref
