@@ -8,6 +8,7 @@ from rlberry.agents.utils.memories import Memory
 from rlberry.agents.torch.utils.training import optimizer_factory
 from rlberry.agents.torch.utils.models import default_policy_net_fn
 from rlberry.agents.torch.utils.models import default_value_net_fn
+from rlberry.agents.torch.utils.models import default_twinq_net_fn
 from rlberry.utils.torch import choose_device
 from rlberry.wrappers.uncertainty_estimator_wrapper import UncertaintyEstimatorWrapper
 
@@ -228,6 +229,7 @@ class SACAgent(AgentWithSimplePolicy):
         #
         if self.episode % self.batch_size == 0:
             self._update()
+            #is it really good to forget it completely ?????
             self.memory.clear_memory()
 
         return episode_rewards
