@@ -2,10 +2,12 @@ import numpy as np
 import torch
 import torch.distributions as distr
 from rlberry.agents.utils.memories import Memory
-
+from torch.nn.functional import one_hot
 
 #implement next state function?
 #implement is_terminal function?
+
+
 
 
 def unpack_batch(batch, device = "cpu"):
@@ -41,17 +43,24 @@ def get_qref(batch, target_val_net, gamma, device = "cpu"):
 
 
 @torch.no_grad()
-def get_vref(batch, val_net, twinq_net, policy_net,
+def get_vref(env, batch, val_net, twinq_net, policy_net,
                      gamma: float, ent_alpha: float,
                      device="cpu"):
 
+
+    assert isinstance(self.env.action_space, spaces.Discrete)
+    num_actions = env.action_space.n
+
     states, _, _, _, _ = unpack_batch(batch, device)
-    q1, q2 = twinq_net()
+    q1, q2 = twinq_net
     # references for the critic network
     act_dist = policy_net(states)
     # act_dist = distr.Normal(mu_v, torch.exp(policy_net.logstd))
     cur_actions = act_dist.sample()
-    q1_v, q2_v = twinq_net(states, cur_actions)
+    actions_one_hot = one_hot(cur_actions, num_actions)
+    q_input = torch.cat([states, actions_one_hot], dim=1)
+
+    q1_v, q2_v = q1(q_input), q2(q_input)
     # element-wise minimum
     vref = torch.min(q1_v, q2_v).squeeze() - \
                  ent_alpha * act_dist.log_prob(cur_actions).sum(dim=1)
