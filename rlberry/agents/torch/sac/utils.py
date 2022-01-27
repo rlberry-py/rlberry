@@ -66,3 +66,13 @@ def get_vref(env, batch, twinq_net, policy_net, ent_alpha: float,
     vref = torch.min(q1_v, q2_v).squeeze() - \
                  ent_alpha * act_dist.log_prob(cur_actions).sum(dim=1)
     return vref
+
+
+def alpha_sync(model, target_model, alpha):
+    assert isinstance(alpha, float)
+    assert 0.0 < alpha <= 1.0
+    state = model.state_dict()
+    tgt_state = target_model.state_dict()
+    for k, v in state.items():
+        tgt_state[k] = tgt_state[k] * alpha + (1 - alpha) * v
+    return target_model.load_state_dict(tgt_state)
