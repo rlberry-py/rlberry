@@ -137,49 +137,42 @@ class SACAgent(AgentWithSimplePolicy):
         self.reset()
 
     def reset(self, **kwargs):
+        # actor
         self.cat_policy = self.policy_net_fn(self.env, **self.policy_net_kwargs).to(
             self.device
         )
         self.policy_optimizer = optimizer_factory(
             self.cat_policy.parameters(), **self.optimizer_kwargs
         )
-
-        self.value_net = self.value_net_fn(self.env, **self.value_net_kwargs).to(
-            self.device
-        )
-
-        self.target_value_net = self.value_net_fn(self.env, **self.value_net_kwargs).to(
-            self.device
-        )
-
-        self.value_optimizer = optimizer_factory(
-            self.value_net.parameters(), **self.optimizer_kwargs
-        )
-
-        twinq_net = self.twinq_net_fn(self.env, **self.twinq_net_kwargs).to(
-            self.device
-        )
-        self.q1, self.q2 = twinq_net
-
-        self.q1_optimizer = optimizer_factory(
-            self.q1.parameters(), **self.optimizer_kwargs
-        )
-
-
-        self.q2_optimizer = optimizer_factory(
-            self.q2.parameters(), **self.optimizer_kwargs
-        )
-
         self.cat_policy_old = self.policy_net_fn(self.env, **self.policy_net_kwargs).to(
             self.device
         )
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
+        # critic
+        self.value_net = self.value_net_fn(self.env, **self.value_net_kwargs).to(
+            self.device
+        )
+        self.target_value_net = self.value_net_fn(self.env, **self.value_net_kwargs).to(
+            self.device
+        )
+        self.value_optimizer = optimizer_factory(
+            self.value_net.parameters(), **self.optimizer_kwargs
+        )
         self.target_value_net.load_state_dict(self.value_net.state_dict())
-
+        # twinq networks
+        twinq_net = self.twinq_net_fn(self.env, **self.twinq_net_kwargs).to(
+            self.device
+        )
+        self.q1, self.q2 = twinq_net
+        self.q1_optimizer = optimizer_factory(
+            self.q1.parameters(), **self.optimizer_kwargs
+        )
+        self.q2_optimizer = optimizer_factory(
+            self.q2.parameters(), **self.optimizer_kwargs
+        )
+        # 
         self.MseLoss = nn.MSELoss()
-
         self.memory = Memory()
-
         self.episode = 0
 
     def policy(self, observation):
@@ -277,7 +270,41 @@ class SACAgent(AgentWithSimplePolicy):
         # I HAVE STOPPED HERE!
 
         # optimize policy for K epochs
-        for _ in range(self.k_epochs):
+        for epoch in range(self.k_epochs):
+            
+            # Critic
+            self.value_optimizer.zero_grad()
+            val_v = self.value_net(states_v)
+            v_loss_v = self.MseLoss(val_v.squeeze(),vref.detach())
+            v_loss_v.backward()
+            self.value_optimizer.step()
+            if self.writer is not None:
+                self.writer.add_scalar("loss_v", v_loss_v, epoch)
+
+            # train TwinQ
+            self.q1_optimizer.zero_grad()
+            self.q2_optimizer.zero_grad()
+            q1_v, q2_v = self.q1(states_v, actions_v) ,self.q2(states_v, actions_v)
+            q1_loss_v = self.MseLoss(q1_v.squeeze(), qref.detach())
+            q2_loss_v = self.MseLoss(q2_v.squeeze(), qref.detach())
+            q1_loss_v.backward()
+            q2_loss_v.backward()
+            q1_loss_v.step()
+            q2_loss_v.step()
+            if self.writer is not None:
+                self.writer.add_scalar("loss_q1", q1_loss_v, epoch)
+                self.writer.add_scalar("loss_q2", q2_loss_v, epoch)
+
+            # Actor
+            self.policy_optimizer.zero_grad()
+            acts_v = self._select_action(states_v)
+            q_out_v =  self.q1(states_v, acts_v)
+            act_loss = -q_out_v.mean()
+            self.policy_optimizer.backward()
+            self.policy_optimizer.step()
+            if self.writer is not None:
+                self.writer.add_scalar("loss_act", act_loss, epoch)
+
             # evaluate old actions and values
             action_dist = self.cat_policy(old_states)
             logprobs = action_dist.log_prob(old_actions)
