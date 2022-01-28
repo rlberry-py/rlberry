@@ -64,7 +64,7 @@ def get_vref(env, batch, twinq_net, policy_net, ent_alpha: float,
     q1_v, q2_v = q1(q_input), q2(q_input)
     # element-wise minimum
     vref = torch.min(q1_v, q2_v).squeeze() - \
-                 ent_alpha * act_dist.log_prob(cur_actions).sum(dim=1)
+                 ent_alpha * act_dist.log_prob(cur_actions)
     return vref
 
 
