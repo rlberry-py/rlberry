@@ -78,7 +78,21 @@ algorithms.
     ucbvi_params = {'gamma':0.1, 'horizon':100}
 
 There are a number of agents that are already coded in rlberry. See the
-module rlberry.agent for more informations.
+module :class:rlberry.agents for more informations.
+
+Agent Manager
+-------------
+
+One of the main feature of rlberry is its :class:rlberry.manager.AgentManager
+class. Here is a diagram to explain briefly what it does.
+
+.. image:: agent_manager_diagram.png
+
+In a few words, agent manager spawns agents and environments for training and
+then once the agents are trained, it uses these agents and new environments
+to evaluate how well the agent perform. All of these steps can be
+done several times to assess stochasticity of agents and/or environment.
+
 
 Evaluation-time comparison
 --------------------------
@@ -86,25 +100,17 @@ Evaluation-time comparison
 We want to assess the expected reward of our agents at a horizon of
 (say) :math:`T=20`.
 
-To do that we use 10 Monte-Carlo simulations, i.e. we do the experiment
-10 times for each agent and at the end we take the mean of the 10
-obtained reward.
-
-This gives us 1 value per agent. We do this 10 times (so 10 times 10
-equal 100 simulations) in order to have an idea of the variability of
-our estimation.
-
 In order to manage the agents, we use an Agent Manager. The manager will
 then spawn agents as desired during the experiment.
 
 .. code:: python
 
-    # Create AgentManager to fit 4 agents using 1 job
+    # Create AgentManager to fit 1
     ucbvi_stats = AgentManager(
         UCBVIAgent,
         (env_ctor, env_kwargs),
         fit_budget=100,
-        eval_kwargs=dict(eval_horizon=20,n_simimulations=10),
+        eval_kwargs=dict(eval_horizon=20,n_simulations=10),
         init_kwargs=ucbvi_params,
         n_fit=1)
     ucbvi_stats.fit()
@@ -114,7 +120,7 @@ then spawn agents as desired during the experiment.
         RandomAgent,
         (env_ctor, env_kwargs),
         fit_budget=100,
-        eval_kwargs=dict(eval_horizon=20,n_simimulations=10),
+        eval_kwargs=dict(eval_horizon=20,n_simulations=10),
         n_fit=1)
     baseline_stats.fit()
 
@@ -125,7 +131,8 @@ then spawn agents as desired during the experiment.
     output = evaluate_agents([ucbvi_stats, baseline_stats], n_simulations=10, plot=True)
 
 
-.. image:: output_14_1.png
+.. figure:: output_14_1.png
+    :align: center
 
 
 Training of agent and comparison of cumulative regret plot
