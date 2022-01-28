@@ -10,9 +10,10 @@ from rlberry.agents.utils.memories import Memory
 from rlberry.agents.torch.utils.training import optimizer_factory
 from rlberry.agents.torch.utils.models import default_policy_net_fn
 from rlberry.agents.torch.utils.models import default_value_net_fn
-from rlberry.agents.torch.utils.models import default_twinq_net_fn
+from rlberry.agents.torch.utils.models import default_twinq_net_fn 
 from rlberry.utils.torch import choose_device
 from rlberry.wrappers.uncertainty_estimator_wrapper import UncertaintyEstimatorWrapper
+from .utils import alpha_sync
 
 from torch.nn.functional import one_hot
 
@@ -161,7 +162,7 @@ class SACAgent(AgentWithSimplePolicy):
         self.target_value_net.load_state_dict(self.value_net.state_dict())
         # twinq networks
         twinq_net = self.twinq_net_fn(self.env, **self.twinq_net_kwargs)
-
+        
         self.q1, self.q2 = twinq_net
 
         self.q1.to(self.device)
@@ -265,15 +266,13 @@ class SACAgent(AgentWithSimplePolicy):
         twinq_net = (self.q1, self.q2)
         states_v, actions_v, logprobs_v, rewards_v, is_terminals_v = \
                     utils.unpack_batch(self.memory, self.device)
+        
 
-        num_actions = self.env.action_space.n
         # convert list to tensor
         # old_states = torch.stack(self.memory.states).to(self.device).detach()
         # old_actions = torch.stack(self.memory.actions).to(self.device).detach()
         qref = utils.get_qref(self.memory, self.target_value_net, self.gamma, self.device)
         vref = utils.get_vref(self.env, self.memory, twinq_net, self.cat_policy, self.entr_coef, self.device)
-
-        # I HAVE STOPPED HERE!
 
         # optimize policy for K epochs
         for epoch in range(self.k_epochs):
@@ -290,9 +289,9 @@ class SACAgent(AgentWithSimplePolicy):
             # train TwinQ
             self.q1_optimizer.zero_grad()
             self.q2_optimizer.zero_grad()
-            actions_oh_v = one_hot(actions_v, num_actions)
-            q_input = torch.cat([states_v, actions_oh_v], dim=1)
-            q1_v, q2_v = self.q1(q_input) ,self.q2(q_input)
+            actions_v_one_hot = one_hot(actions_v, self.env.action_space.n)
+            q1_v, q2_v = self.q1(torch.cat([states_v, actions_v_one_hot], dim=1)), \
+                            self.q2(torch.cat([states_v, actions_v_one_hot], dim=1))
             q1_loss_v = self.MseLoss(q1_v.squeeze(), qref.detach())
             q2_loss_v = self.MseLoss(q2_v.squeeze(), qref.detach())
             q1_loss_v.backward()
@@ -305,10 +304,10 @@ class SACAgent(AgentWithSimplePolicy):
 
             # Actor
             self.policy_optimizer.zero_grad()
-            acts_v = self._select_action(states_v)
-            acts_oh_v = one_hot(acts_v, num_actions)
-            q_input = torch.cat([states_v, acts_oh_v], dim=1)
-            q_out_v =  self.q1(q_input)
+            action_dist = self.cat_policy(states_v)
+            acts_v = action_dist.sample()
+            acts_v_one_hot = one_hot(acts_v, self.env.action_space.n)
+            q_out_v = self.q1(torch.cat([states_v, acts_v_one_hot], dim=1))
             act_loss = -q_out_v.mean()
             act_loss.backward()
             self.policy_optimizer.step()
@@ -321,7 +320,7 @@ class SACAgent(AgentWithSimplePolicy):
             # state_values = torch.squeeze(self.value_net(old_states))
             # dist_entropy = action_dist.entropy()
 
-            # # normalize the advantages
+            # normalize the advantages
             # advantages = rewards - state_values.detach()
             # advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
             # # find pg loss
@@ -343,8 +342,8 @@ class SACAgent(AgentWithSimplePolicy):
 
         # copy new weights into old policy
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
-        alpha_sync(self.value_net, self.target_value_net, 1-1e-3)
-
+        alpha_sync(self.value_net, self.target_value_net, 1-1e-3)  
+        
     #
     # For hyperparameter optimization
     #
