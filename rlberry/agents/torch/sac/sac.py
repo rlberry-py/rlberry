@@ -160,10 +160,14 @@ class SACAgent(AgentWithSimplePolicy):
         )
         self.target_value_net.load_state_dict(self.value_net.state_dict())
         # twinq networks
-        twinq_net = self.twinq_net_fn(self.env, **self.twinq_net_kwargs).to(
-            self.device
-        )
+        twinq_net = self.twinq_net_fn(self.env, **self.twinq_net_kwargs)
+
         self.q1, self.q2 = twinq_net
+
+        self.q1.to(self.device)
+        self.q2.to(self.device)
+
+
         self.q1_optimizer = optimizer_factory(
             self.q1.parameters(), **self.optimizer_kwargs
         )

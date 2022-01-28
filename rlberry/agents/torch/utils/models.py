@@ -18,7 +18,7 @@ def default_twinq_net_fn(env):
     """
     Returns a default Twinq network
     """
-    assert isinstance(self.env.action_space, spaces.Discrete)
+    assert isinstance(env.action_space, spaces.Discrete)
     if isinstance(env.observation_space, spaces.Box):
         obs_shape = env.observation_space.shape
     elif isinstance(env.observation_space, spaces.Tuple):
