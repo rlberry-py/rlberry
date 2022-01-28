@@ -2,7 +2,10 @@
 
 Quick Start
 ===========
-
+In this guide we will cover the basics of setting up an environment and
+creating an agent. We will also discuss one if the main features of rlberry:
+the :class:`~rlberry.manager.agent_manager.AgentManager`. It allows to
+quickly, yet rigorously, evaluate and compare learning algorithms.
 
 Libraries
 ---------
@@ -27,10 +30,10 @@ end of a chain to the other end.
 
     env_ctor = Chain
     env_kwargs =dict(L=10, fail_prob=0.1)
-    # chain of length 10. With proba 0.2, the agent will not be able to take the action it wants to take/
+    # chain of length 10. With proba 0.1, the agent will not be able to take the action it wants to take/
     env = env_ctor(**env_kwargs)
 
-Let us see a graphical representation
+Let us see a graphical representation to visualize the policy
 
 .. code:: python
 
@@ -47,7 +50,10 @@ fails sometimes due to fail_prob=0.1.
 .. video:: ../video_chain_quickstart.mp4
    :width: 600
 
-
+Calling save_video renders all buffered states. You can clear the
+buffer by calling clear_render_buffer. For more details, check
+the rendering class :class:`~rlberry.rendering.render_interface.RenderInterface2D`
+, inherited by the :class:`~rlberry.envs.Chain` environment.
 
 Agents definition
 -----------------
