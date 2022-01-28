@@ -86,7 +86,10 @@ Agent Manager
 One of the main feature of rlberry is its :class:rlberry.manager.AgentManager
 class. Here is a diagram to explain briefly what it does.
 
-.. image:: agent_manager_diagram.png
+
+.. figure:: agent_manager_diagram.png
+    :align: center
+
 
 In a few words, agent manager spawns agents and environments for training and
 then once the agents are trained, it uses these agents and new environments
@@ -246,4 +249,5 @@ Finally, we plot the cumulative regret using the 5000 reward values.
 
 
 
-.. image:: output_26_0.png
+.. figure:: output_26_0.png
+    :align: center
