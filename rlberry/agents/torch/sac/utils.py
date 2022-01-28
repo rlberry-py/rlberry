@@ -20,9 +20,9 @@ def unpack_batch(batch, device = "cpu"):
     assert isinstance(batch.is_terminals, list) 
     actions = torch.stack(batch.actions).to(device).detach()
     states = torch.stack(batch.states).to(device).detach()
-    rewards = torch.stack(batch.rewards).to(device).detach()
+    rewards = torch.tensor(batch.rewards).to(device).detach()
     logprobs = torch.stack(batch.logprobs).to(device).detach()
-    is_terminals = torch.stack(batch.is_terminals).to(device).detach()
+    is_terminals = torch.tensor(batch.is_terminals).to(device).detach()
     return states, actions, logprobs, rewards, is_terminals
 
 
