@@ -2,3 +2,7 @@
 2) Implement continuous action space, by learning gaussian distribution for actions
 3) Implement convolutional backbone
 4) policy loss: should it be like in the original paper? For now it is like in Maxim Lapan
+
+
+Stuff to check:
+1) how distribution of actions is actually working when sampling from it; can we get multiple distributions for all states
