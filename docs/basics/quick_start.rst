@@ -105,7 +105,7 @@ then spawn agents as desired during the experiment.
 
 .. code:: python
 
-    # Create AgentManager to fit 1
+    # Create AgentManager to fit 1 agent
     ucbvi_stats = AgentManager(
         UCBVIAgent,
         (env_ctor, env_kwargs),
