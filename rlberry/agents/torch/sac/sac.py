@@ -265,6 +265,8 @@ class SACAgent(AgentWithSimplePolicy):
         twinq_net = (self.q1, self.q2)
         states_v, actions_v, logprobs_v, rewards_v, is_terminals_v = \
                     utils.unpack_batch(self.memory, self.device)
+
+        num_actions = self.env.action_space.n
         # convert list to tensor
         # old_states = torch.stack(self.memory.states).to(self.device).detach()
         # old_actions = torch.stack(self.memory.actions).to(self.device).detach()
@@ -288,13 +290,15 @@ class SACAgent(AgentWithSimplePolicy):
             # train TwinQ
             self.q1_optimizer.zero_grad()
             self.q2_optimizer.zero_grad()
-            q1_v, q2_v = self.q1(states_v, actions_v) ,self.q2(states_v, actions_v)
+            actions_oh_v = one_hot(actions_v, num_actions)
+            q_input = torch.cat([states_v, actions_oh_v], dim=1)
+            q1_v, q2_v = self.q1(q_input) ,self.q2(q_input)
             q1_loss_v = self.MseLoss(q1_v.squeeze(), qref.detach())
             q2_loss_v = self.MseLoss(q2_v.squeeze(), qref.detach())
             q1_loss_v.backward()
             q2_loss_v.backward()
-            q1_loss_v.step()
-            q2_loss_v.step()
+            q1_optimizer.step()
+            q2_optimizer.step()
             if self.writer is not None:
                 self.writer.add_scalar("loss_q1", q1_loss_v, epoch)
                 self.writer.add_scalar("loss_q2", q2_loss_v, epoch)
@@ -302,41 +306,44 @@ class SACAgent(AgentWithSimplePolicy):
             # Actor
             self.policy_optimizer.zero_grad()
             acts_v = self._select_action(states_v)
-            q_out_v =  self.q1(states_v, acts_v)
+            acts_oh_v = one_hot(acts_v, num_actions)
+            q_input = torch.cat([states_v, acts_oh_v], dim=1)
+            q_out_v =  self.q1(q_input)
             act_loss = -q_out_v.mean()
-            self.policy_optimizer.backward()
+            act_loss.backward()
             self.policy_optimizer.step()
             if self.writer is not None:
                 self.writer.add_scalar("loss_act", act_loss, epoch)
 
-            # evaluate old actions and values
-            action_dist = self.cat_policy(old_states)
-            logprobs = action_dist.log_prob(old_actions)
-            state_values = torch.squeeze(self.value_net(old_states))
-            dist_entropy = action_dist.entropy()
+            # # evaluate old actions and values
+            # action_dist = self.cat_policy(old_states)
+            # logprobs = action_dist.log_prob(old_actions)
+            # state_values = torch.squeeze(self.value_net(old_states))
+            # dist_entropy = action_dist.entropy()
 
-            # normalize the advantages
-            advantages = rewards - state_values.detach()
-            advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
-            # find pg loss
-            pg_loss = -logprobs * advantages
-            loss = (
-                pg_loss
-                + 0.5 * self.MseLoss(state_values, rewards)
-                - self.entr_coef * dist_entropy
-            )
+            # # normalize the advantages
+            # advantages = rewards - state_values.detach()
+            # advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
+            # # find pg loss
+            # pg_loss = -logprobs * advantages
+            # loss = (
+            #     pg_loss
+            #     + 0.5 * self.MseLoss(state_values, rewards)
+            #     - self.entr_coef * dist_entropy
+            # )
 
-            # take gradient step
-            self.policy_optimizer.zero_grad()
-            self.value_optimizer.zero_grad()
+            # # take gradient step
+            # self.policy_optimizer.zero_grad()
+            # self.value_optimizer.zero_grad()
 
-            loss.mean().backward()
+            # loss.mean().backward()
 
-            self.policy_optimizer.step()
-            self.value_optimizer.step()
+            # self.policy_optimizer.step()
+            # self.value_optimizer.step()
 
         # copy new weights into old policy
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
+        alpha_sync(self.value_net, self.target_value_net, 1-1e-3)
 
     #
     # For hyperparameter optimization
