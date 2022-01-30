@@ -5,7 +5,7 @@ Quick Start
 In this guide we will cover the basics of setting up an environment and
 creating an agent. We will also discuss one if the main features of rlberry:
 the :class:`~rlberry.manager.agent_manager.AgentManager`. It allows to
-quickly, yet rigorously, evaluate and compare learning algorithms.
+quickly, yet rigorously, evaluate and compare RL algorithms.
 
 Libraries
 ---------
@@ -184,7 +184,7 @@ Then, we fit the two agents and plot the data in the writer.
 
 .. code:: python
 
-    # Create AgentManager to fit 4 agents using 1 job
+    # Create AgentManager to fit 10 agents using 1 job
     ucbvi_stats = AgentManager(
         UCBVIAgent2,
         (env_ctor, env_kwargs),
