@@ -111,7 +111,7 @@ The modules listed below are experimental at the moment, that is, they are not t
 * `rlberry.agents.torch`, `rlberry.agents.jax`, `rlberry.exploration_tools.torch`: Deep RL agents are currently not stable, and their main purpose now is to illustrate how to implement and run those algorithms with the `rlberry` interface
 (e.g., run several agents in parallel, optimize hyperparameters etc.).
 Other libraries, such as [Stable Baselines](https://stable-baselines3.readthedocs.io/en/master/) provide reliable implementations of deep RL algorithms, and **can be used with `rlberry`**, as shown by
-[this example](https://github.com/rlberry-py/rlberry/blob/main/examples/demo_from_stable_baselines.py).
+[this example](https://github.com/rlberry-py/rlberry/blob/main/examples/demo_examples/demo_from_stable_baselines.py).
 
 ## Tests
 

@@ -11,7 +11,7 @@ during the fit of the agent and then use the plot utils.
     in rlberry_data folder. Then, you can comment-out the line
 
     .. code-block:: python
-    
+
         agent.fit(budget=10)
 
     and avoid fitting the agent one more time, the statistics from the last
@@ -28,7 +28,10 @@ from rlberry.manager import plot_writer_data, AgentManager
 from rlberry.agents import UCBVIAgent
 import matplotlib.pyplot as plt
 
-# We wrape the default writer of the agent in a WriterWrapper to record rewards.
+# We wrape the default writer of the agent in a WriterWrapper
+# to record rewards.
+
+
 class VIAgent(UCBVIAgent):
     name = "UCBVIAgent"
 
@@ -36,7 +39,8 @@ class VIAgent(UCBVIAgent):
         UCBVIAgent.__init__(self, env, horizon=50, **kwargs)
         self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
         # we could also record actions with
-        # self.env = WriterWrapper(self.env, self.writer, write_scalar = "action")
+        # self.env = WriterWrapper(self.env, self.writer,
+        #                          write_scalar = "action")
 
 
 env_ctor = GridWorld
@@ -51,14 +55,11 @@ env_kwargs = dict(
 env = env_ctor(**env_kwargs)
 agent = AgentManager(VIAgent, (env_ctor, env_kwargs), fit_budget=10, n_fit=3)
 
-
 agent.fit(budget=10)
 # comment the line above if you only want to load data from rlberry_data.
 
 
 # We use the following preprocessing function to plot the cumulative reward.
-
-
 def compute_reward(rewards):
     return np.cumsum(rewards)
 

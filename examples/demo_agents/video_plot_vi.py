@@ -13,6 +13,7 @@ A demo of ValueIteration algorithm in Chain environment
 
 from rlberry.agents.dynprog import ValueIterationAgent
 from rlberry.envs.finite import Chain
+
 env = Chain()
 agent = ValueIterationAgent(env, gamma=0.95)
 info = agent.fit()

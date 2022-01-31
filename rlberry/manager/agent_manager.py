@@ -176,8 +176,14 @@ class AgentManager:
         Number of agent instances to fit.
     output_dir : str
         Directory where to store data.
-    parallelization: {'thread', 'process'}, default: 'process'
+    parallelization: {'thread', 'process'}, default: 'thread'
         Whether to parallelize  agent training using threads or processes.
+    max_workers: None or int, default: None
+        Number of processes/threads used in a call to fit().
+        If None and parallelization='process', it will default to the
+        number of processors on the machine.
+        If None and parallelization='thread', it will default to the
+        number of processors on the machine, multiplied by 5.
     mp_context: {'spawn', 'fork'}, default: 'spawn'.
         Context for python multiprocessing module.
         Warning: If you're using JAX, it only works with 'spawn'.
@@ -218,6 +224,7 @@ class AgentManager:
         n_fit=4,
         output_dir=None,
         parallelization="thread",
+        max_workers=None,
         mp_context="spawn",
         worker_logging_level="INFO",
         seed=None,
@@ -279,6 +286,7 @@ class AgentManager:
         self.eval_kwargs = deepcopy(eval_kwargs)
         self.n_fit = n_fit
         self.parallelization = parallelization
+        self.max_workers = max_workers
         self.mp_context = mp_context
         self.worker_logging_level = worker_logging_level
         self.output_dir = output_dir
@@ -358,6 +366,7 @@ class AgentManager:
     def _init_optuna_storage_url(self):
         self.output_dir_.mkdir(parents=True, exist_ok=True)
         self.db_filename = self.output_dir_ / "optuna_data.db"
+
         if create_database(self.db_filename):
             self.optuna_storage_url = f"sqlite:///{self.db_filename}"
         else:
@@ -412,6 +421,9 @@ class AgentManager:
         return process_env(self._eval_env, self.seeder)
 
     def get_writer_data(self):
+        """
+        Return a dataframe containing data from the writer of the agent.
+        """
         return self.default_writer_data
 
     def get_agent_instances(self):
@@ -497,12 +509,16 @@ class AgentManager:
         del kwargs
         budget = budget or self.fit_budget
 
-        logger.info(f"Running AgentManager fit() for {self.agent_name}... ")
+        logger.info(
+            f"Running AgentManager fit() for {self.agent_name}"
+            f" with n_fit = {self.n_fit} and max_workers = {self.max_workers}."
+        )
         seeders = self.seeder.spawn(self.n_fit)
         if not isinstance(seeders, list):
             seeders = [seeders]
 
-        # remove agent instances from memory so that the agent handlers can be sent to different workers
+        # remove agent instances from memory so that the agent handlers can be
+        # sent to different workers
         for handler in self.agent_handlers:
             handler.dump()
 
@@ -541,7 +557,7 @@ class AgentManager:
             workers_output = [_fit_worker(args[0])]
 
         else:
-            with executor_class() as executor:
+            with executor_class(max_workers=self.max_workers) as executor:
                 futures = []
                 for arg in args:
                     futures.append(executor.submit(_fit_worker, arg))
@@ -722,6 +738,7 @@ class AgentManager:
         # setup
         #
         TEMP_DIR = self.output_dir_ / "optim"
+
         global _OPTUNA_INSTALLED
         if not _OPTUNA_INSTALLED:
             logging.error("Optuna not installed.")
@@ -743,10 +760,9 @@ class AgentManager:
             if sampler_method == "random":
                 sampler = optuna.samplers.RandomSampler()
             elif sampler_method == "grid":
-                assert sampler_kwargs is not None, (
-                    "To use GridSampler, "
-                    + "a search_space dictionary must be provided."
-                )
+                assert (
+                    sampler_kwargs is not None
+                ), "To use GridSampler, a search_space dictionary must be provided."
                 sampler = optuna.samplers.GridSampler(**sampler_kwargs)
             elif sampler_method == "cmaes":
                 sampler = optuna.samplers.CmaEsSampler(**sampler_kwargs)
@@ -858,7 +874,8 @@ class AgentManager:
         # update using best parameters
         self._base_init_kwargs.update(best_trial.params)
 
-        # reset init_kwargs and agent handlers, so that they take the new parameters
+        # reset init_kwargs and agent handlers, so that they take the new
+        # parameters
         self._set_init_kwargs()
         self._reset_agent_handlers()
 
@@ -899,7 +916,8 @@ def _fit_worker(args):
             # create agent
             agent = agent_class(**init_kwargs)
             # seed agent
-            agent.reseed(seeder)  # TODO: check if extra reseeding here is necessary
+            # TODO: check if extra reseeding here is necessary
+            agent.reseed(seeder)
             agent_handler.set_instance(agent)
 
     # set writer

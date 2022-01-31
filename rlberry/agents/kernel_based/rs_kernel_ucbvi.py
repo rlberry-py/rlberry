@@ -15,11 +15,26 @@ logger = logging.getLogger(__name__)
 
 
 @numba_jit
-def update_model(repr_state, action, repr_next_state, reward,
-                 n_representatives, repr_states,
-                 lp_metric, scaling, bandwidth,
-                 bonus_scale_factor, beta, v_max, bonus_type,
-                 kernel_type, N_sa, B_sa, P_hat, R_hat):
+def update_model(
+    repr_state,
+    action,
+    repr_next_state,
+    reward,
+    n_representatives,
+    repr_states,
+    lp_metric,
+    scaling,
+    bandwidth,
+    bonus_scale_factor,
+    beta,
+    v_max,
+    bonus_type,
+    kernel_type,
+    N_sa,
+    B_sa,
+    P_hat,
+    R_hat,
+):
     """
     Model update function, lots of arguments so we can use JIT :)
     """
@@ -29,10 +44,9 @@ def update_model(repr_state, action, repr_next_state, reward,
 
     for u_repr_state in range(n_representatives):
         # compute weight
-        dist = metric_lp(repr_states[repr_state, :],
-                         repr_states[u_repr_state, :],
-                         lp_metric,
-                         scaling)
+        dist = metric_lp(
+            repr_states[repr_state, :], repr_states[u_repr_state, :], lp_metric, scaling
+        )
         weight = kernel_func(dist / bandwidth, kernel_type=kernel_type)
 
         # aux variables
@@ -43,19 +57,22 @@ def update_model(repr_state, action, repr_next_state, reward,
         N_sa[u_repr_state, action] += weight
 
         # update transitions
-        P_hat[u_repr_state, action, :n_representatives] = \
-            dirac_next_s * weight / current_N_sa + \
-            (prev_N_sa / current_N_sa) * \
-            P_hat[u_repr_state, action, :n_representatives]
+        P_hat[u_repr_state, action, :n_representatives] = (
+            dirac_next_s * weight / current_N_sa
+            + (prev_N_sa / current_N_sa)
+            * P_hat[u_repr_state, action, :n_representatives]
+        )
 
         # update rewards
-        R_hat[u_repr_state, action] = weight * reward / current_N_sa + \
-            (prev_N_sa / current_N_sa) * R_hat[u_repr_state, action]
+        R_hat[u_repr_state, action] = (
+            weight * reward / current_N_sa
+            + (prev_N_sa / current_N_sa) * R_hat[u_repr_state, action]
+        )
 
         # update bonus
-        B_sa[u_repr_state, action] = compute_bonus(N_sa[u_repr_state, action],
-                                                   beta, bonus_scale_factor,
-                                                   v_max, bonus_type)
+        B_sa[u_repr_state, action] = compute_bonus(
+            N_sa[u_repr_state, action], beta, bonus_scale_factor, v_max, bonus_type
+        )
 
 
 @numba_jit
@@ -142,19 +159,22 @@ class RSKernelUCBVIAgent(AgentWithSimplePolicy):
 
     name = "RSKernelUCBVI"
 
-    def __init__(self, env,
-                 gamma=0.99,
-                 horizon=None,
-                 lp_metric=2,
-                 kernel_type="epanechnikov",
-                 scaling=None,
-                 bandwidth=0.05,
-                 min_dist=0.1,
-                 max_repr=1000,
-                 bonus_scale_factor=1.0,
-                 beta=0.01,
-                 bonus_type="simplified_bernstein",
-                 **kwargs):
+    def __init__(
+        self,
+        env,
+        gamma=0.99,
+        horizon=None,
+        lp_metric=2,
+        kernel_type="epanechnikov",
+        scaling=None,
+        bandwidth=0.05,
+        min_dist=0.1,
+        max_repr=1000,
+        bonus_scale_factor=1.0,
+        beta=0.01,
+        bonus_type="simplified_bernstein",
+        **kwargs
+    ):
         # init base class
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
@@ -175,8 +195,7 @@ class RSKernelUCBVIAgent(AgentWithSimplePolicy):
         # other checks
         assert gamma >= 0 and gamma <= 1.0
         if self.horizon is None:
-            assert gamma < 1.0, \
-                "If no horizon is given, gamma must be smaller than 1."
+            assert gamma < 1.0, "If no horizon is given, gamma must be smaller than 1."
             self.horizon = int(np.ceil(1.0 / (1.0 - gamma)))
 
         # state dimension
@@ -185,10 +204,12 @@ class RSKernelUCBVIAgent(AgentWithSimplePolicy):
         # compute scaling, if it is None
         if scaling is None:
             # if high and low are bounded
-            if (self.env.observation_space.high == np.inf).sum() == 0 \
-                    and (self.env.observation_space.low == -np.inf).sum() == 0:
-                scaling = self.env.observation_space.high \
-                    - self.env.observation_space.low
+            if (self.env.observation_space.high == np.inf).sum() == 0 and (
+                self.env.observation_space.low == -np.inf
+            ).sum() == 0:
+                scaling = (
+                    self.env.observation_space.high - self.env.observation_space.low
+                )
                 # if high or low are unbounded
             else:
                 scaling = np.ones(self.state_dim)
@@ -200,19 +221,28 @@ class RSKernelUCBVIAgent(AgentWithSimplePolicy):
         # maximum value
         r_range = self.env.reward_range[1] - self.env.reward_range[0]
         if r_range == np.inf or r_range == 0.0:
-            logger.warning("{}: Reward range is  zero or infinity. ".format(self.name)
-                           + "Setting it to 1.")
+            logger.warning(
+                "{}: Reward range is  zero or infinity. ".format(self.name)
+                + "Setting it to 1."
+            )
             r_range = 1.0
 
         if self.gamma == 1.0:
             self.v_max = r_range * horizon
         else:
-            self.v_max = r_range * (1.0 - np.power(self.gamma, self.horizon)) / (1.0 - self.gamma)
+            self.v_max = (
+                r_range
+                * (1.0 - np.power(self.gamma, self.horizon))
+                / (1.0 - self.gamma)
+            )
 
         # number of representative states and number of actions
         if max_repr is None:
-            max_repr = int(np.ceil((1.0 * np.sqrt(self.state_dim)
-                                    / self.min_dist) ** self.state_dim))
+            max_repr = int(
+                np.ceil(
+                    (1.0 * np.sqrt(self.state_dim) / self.min_dist) ** self.state_dim
+                )
+            )
         self.max_repr = max_repr
 
         # current number of representative states
@@ -261,18 +291,23 @@ class RSKernelUCBVIAgent(AgentWithSimplePolicy):
             self._run_episode()
 
         # compute Q function for the recommended policy
-        self.Q_policy, _ = backward_induction(self.R_hat[:self.M, :],
-                                              self.P_hat[:self.M, :, :self.M],
-                                              self.horizon, self.gamma)
+        self.Q_policy, _ = backward_induction(
+            self.R_hat[: self.M, :],
+            self.P_hat[: self.M, :, : self.M],
+            self.horizon,
+            self.gamma,
+        )
 
     def _map_to_repr(self, state, accept_new_repr=True):
-        repr_state = map_to_representative(state,
-                                           self.lp_metric,
-                                           self.representative_states,
-                                           self.M,
-                                           self.min_dist,
-                                           self.scaling,
-                                           accept_new_repr)
+        repr_state = map_to_representative(
+            state,
+            self.lp_metric,
+            self.representative_states,
+            self.M,
+            self.min_dist,
+            self.scaling,
+            accept_new_repr,
+        )
         # check if new representative state
         if repr_state == self.M:
             self.M += 1
@@ -282,21 +317,26 @@ class RSKernelUCBVIAgent(AgentWithSimplePolicy):
         repr_state = self._map_to_repr(state)
         repr_next_state = self._map_to_repr(next_state)
 
-        update_model(repr_state, action, repr_next_state, reward,
-                     self.M,
-                     self.representative_states,
-                     self.lp_metric,
-                     self.scaling,
-                     self.bandwidth,
-                     self.bonus_scale_factor,
-                     self.beta,
-                     self.v_max,
-                     self.bonus_type,
-                     self.kernel_type,
-                     self.N_sa,
-                     self.B_sa,
-                     self.P_hat,
-                     self.R_hat)
+        update_model(
+            repr_state,
+            action,
+            repr_next_state,
+            reward,
+            self.M,
+            self.representative_states,
+            self.lp_metric,
+            self.scaling,
+            self.bandwidth,
+            self.bonus_scale_factor,
+            self.beta,
+            self.v_max,
+            self.bonus_type,
+            self.kernel_type,
+            self.N_sa,
+            self.B_sa,
+            self.P_hat,
+            self.R_hat,
+        )
 
     def _get_action(self, state, hh=0):
         assert self.Q is not None
@@ -319,10 +359,14 @@ class RSKernelUCBVIAgent(AgentWithSimplePolicy):
 
         # run backward induction
         backward_induction_in_place(
-            self.Q[:, :self.M, :], self.V[:, :self.M],
-            self.R_hat[:self.M, :] + self.B_sa[:self.M, :],
-            self.P_hat[:self.M, :, :self.M],
-            self.horizon, self.gamma, self.v_max)
+            self.Q[:, : self.M, :],
+            self.V[:, : self.M],
+            self.R_hat[: self.M, :] + self.B_sa[: self.M, :],
+            self.P_hat[: self.M, :, : self.M],
+            self.horizon,
+            self.gamma,
+            self.v_max,
+        )
 
         self.episode += 1
         #

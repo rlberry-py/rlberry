@@ -33,24 +33,28 @@ class UncertaintyEstimatorWrapper(Wrapper):
             Scale factor for the bonus.
     """
 
-    def __init__(self,
-                 env,
-                 uncertainty_estimator_fn,
-                 uncertainty_estimator_kwargs=None,
-                 bonus_scale_factor=1.0,
-                 bonus_max=np.inf):
+    def __init__(
+        self,
+        env,
+        uncertainty_estimator_fn,
+        uncertainty_estimator_kwargs=None,
+        bonus_scale_factor=1.0,
+        bonus_max=np.inf,
+    ):
         Wrapper.__init__(self, env)
 
         self.bonus_scale_factor = bonus_scale_factor
         self.bonus_max = bonus_max
         uncertainty_estimator_kwargs = uncertainty_estimator_kwargs or {}
 
-        uncertainty_estimator_fn = load(uncertainty_estimator_fn) if isinstance(uncertainty_estimator_fn, str) else \
-            uncertainty_estimator_fn
+        uncertainty_estimator_fn = (
+            load(uncertainty_estimator_fn)
+            if isinstance(uncertainty_estimator_fn, str)
+            else uncertainty_estimator_fn
+        )
         self.uncertainty_estimator = uncertainty_estimator_fn(
-            env.observation_space,
-            env.action_space,
-            **uncertainty_estimator_kwargs)
+            env.observation_space, env.action_space, **uncertainty_estimator_kwargs
+        )
         self.previous_obs = None
 
     def reset(self):
@@ -61,20 +65,16 @@ class UncertaintyEstimatorWrapper(Wrapper):
         if self.previous_obs is None:
             return 0.0
         #
-        self.uncertainty_estimator.update(state,
-                                          action,
-                                          next_state,
-                                          reward)
+        self.uncertainty_estimator.update(state, action, next_state, reward)
         return self.bonus(state, action)
 
     def step(self, action):
         observation, reward, done, info = self.env.step(action)
 
         # update uncertainty and compute bonus
-        bonus = self._update_and_get_bonus(self.previous_obs,
-                                           action,
-                                           observation,
-                                           reward)
+        bonus = self._update_and_get_bonus(
+            self.previous_obs, action, observation, reward
+        )
         #
         self.previous_obs = observation
 
@@ -82,25 +82,35 @@ class UncertaintyEstimatorWrapper(Wrapper):
         if info is None:
             info = {}
         else:
-            if 'exploration_bonus' in info:
-                logger.error("UncertaintyEstimatorWrapper Error: info has" +
-                             "  already a key named exploration_bonus!")
+            if "exploration_bonus" in info:
+                logger.error(
+                    "UncertaintyEstimatorWrapper Error: info has"
+                    + "  already a key named exploration_bonus!"
+                )
 
-        info['exploration_bonus'] = bonus
+        info["exploration_bonus"] = bonus
 
         return observation, reward, done, info
 
     def sample(self, state, action):
         logger.warning(
-            '[UncertaintyEstimatorWrapper]: sample()'
-            + ' method does not consider nor update bonuses.')
+            "[UncertaintyEstimatorWrapper]: sample()"
+            + " method does not consider nor update bonuses."
+        )
         return self.env.sample(state, action)
 
     def bonus(self, state, action=None):
-        bonus = self.bonus_scale_factor * self.uncertainty_estimator.measure(state, action)
+        bonus = self.bonus_scale_factor * self.uncertainty_estimator.measure(
+            state, action
+        )
         return np.clip(bonus, 0, self.bonus_max)
 
     def bonus_batch(self, states, actions=None):
-        bonus = self.bonus_scale_factor * self.uncertainty_estimator.measure_batch(states, actions)
-        return np.clip(bonus, 0, self.bonus_max) if isinstance(bonus, np.ndarray) else torch.clamp(bonus, 0,
-                                                                                                   self.bonus_max)
+        bonus = self.bonus_scale_factor * self.uncertainty_estimator.measure_batch(
+            states, actions
+        )
+        return (
+            np.clip(bonus, 0, self.bonus_max)
+            if isinstance(bonus, np.ndarray)
+            else torch.clamp(bonus, 0, self.bonus_max)
+        )

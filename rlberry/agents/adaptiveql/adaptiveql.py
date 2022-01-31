@@ -43,15 +43,17 @@ class AdaptiveQLAgent(AgentWithSimplePolicy):
     Uses the metric induced by the l-infinity norm.
     """
 
-    name = 'AdaptiveQLearning'
+    name = "AdaptiveQLearning"
 
-    def __init__(self,
-                 env,
-                 gamma=1.0,
-                 horizon=50,
-                 bonus_scale_factor=1.0,
-                 bonus_type="simplified_bernstein",
-                 **kwargs):
+    def __init__(
+        self,
+        env,
+        gamma=1.0,
+        horizon=50,
+        bonus_scale_factor=1.0,
+        bonus_type="simplified_bernstein",
+        **kwargs
+    ):
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
         assert isinstance(self.env.observation_space, spaces.Box)
@@ -65,8 +67,10 @@ class AdaptiveQLAgent(AgentWithSimplePolicy):
         # maximum value
         r_range = self.env.reward_range[1] - self.env.reward_range[0]
         if r_range == np.inf or r_range == 0.0:
-            logger.warning("{}: Reward range is  zero or infinity. ".format(self.name)
-                           + "Setting it to 1.")
+            logger.warning(
+                "{}: Reward range is  zero or infinity. ".format(self.name)
+                + "Setting it to 1."
+            )
             r_range = 1.0
 
         self.v_max = np.zeros(self.horizon)
@@ -77,9 +81,9 @@ class AdaptiveQLAgent(AgentWithSimplePolicy):
         self.reset()
 
     def reset(self):
-        self.Qtree = MDPTreePartition(self.env.observation_space,
-                                      self.env.action_space,
-                                      self.horizon)
+        self.Qtree = MDPTreePartition(
+            self.env.observation_space, self.env.action_space, self.horizon
+        )
 
         # info
         self.episode = 0
@@ -106,7 +110,7 @@ class AdaptiveQLAgent(AgentWithSimplePolicy):
         if hh < self.horizon - 1:
             value_next_state = min(
                 self.v_max[hh + 1],
-                self.Qtree.get_argmax_and_node(next_state, hh + 1)[1].qvalue
+                self.Qtree.get_argmax_and_node(next_state, hh + 1)[1].qvalue,
             )
 
         # learning rate
@@ -125,7 +129,8 @@ class AdaptiveQLAgent(AgentWithSimplePolicy):
             return bonus
         else:
             raise ValueError(
-                "Error: bonus type {} not implemented".format(self.bonus_type))
+                "Error: bonus type {} not implemented".format(self.bonus_type)
+            )
 
     def _run_episode(self):
         # interact for H steps

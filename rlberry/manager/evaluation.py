@@ -2,12 +2,10 @@ import logging
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-import os
 from pathlib import Path
 from datetime import datetime
 import pickle
 
-from rlberry.manager.agent_manager import AgentHandler
 from rlberry import metadata_utils
 
 
@@ -196,7 +194,8 @@ def read_writer_data(agent_manager, tag, preprocess_func=None):
     for id_agent, manager in enumerate(agent_manager_list):
         # Important: since manager can be a RemoteAgentManager,
         # it is important to avoid repeated accesses to its methods and properties.
-        # That is why writer_data is taken from the manager instance only in the line below.
+        # That is why writer_data is taken from the manager instance only in
+        # the line below.
         if input_dir is not None:
             writer_data = writer_datas[id_agent]
         else:
@@ -210,7 +209,8 @@ def read_writer_data(agent_manager, tag, preprocess_func=None):
                     processed_df["value"] = preprocess_funcs[id_tag](
                         processed_df["value"].values
                     )
-                    # update name according to AgentManager name and n_simulation
+                    # update name according to AgentManager name and
+                    # n_simulation
                     processed_df["name"] = agent_name
                     processed_df["n_simu"] = idx
                     # add column
@@ -285,6 +285,7 @@ def plot_writer_data(
         logger.error("[plot_writer_data]: No data to be plotted.")
         return
     data = processed_df[processed_df["tag"] == tag]
+
     if xtag is None:
         xtag = "global_step"
 
@@ -299,6 +300,7 @@ def plot_writer_data(
 
     if ax is None:
         figure, ax = plt.subplots(1, 1)
+
     lineplot_kwargs = dict(x=xx, y="value", hue="name", style="name", data=data)
     lineplot_kwargs.update(sns_kwargs)
     sns.lineplot(**lineplot_kwargs)

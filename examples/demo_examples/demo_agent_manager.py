@@ -1,6 +1,6 @@
 """ 
- ===================== 
- Demo: demo_agent_manager 
+ =====================
+ Demo: demo_agent_manager
  =====================
 """
 import numpy as np
@@ -11,7 +11,7 @@ from rlberry.manager import AgentManager, plot_writer_data, evaluate_agents
 from rlberry.seeding import set_external_seed
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     set_external_seed(123)
 
     # --------------------------------
@@ -46,9 +46,7 @@ if __name__ == '__main__':
         "kernel_type": "gaussian",
     }
 
-    params_a2c = {"gamma": GAMMA,
-                  "horizon": HORIZON,
-                  "learning_rate": 0.0003}
+    params_a2c = {"gamma": GAMMA, "horizon": HORIZON, "learning_rate": 0.0003}
 
     eval_kwargs = dict(eval_horizon=HORIZON, n_simulations=20)
 
@@ -67,7 +65,8 @@ if __name__ == '__main__':
         default_writer_kwargs=dict(
             maxlen=N_EPISODES - 10,
             log_interval=5.0,
-        ))
+        ),
+    )
     rskernel_stats = AgentManager(
         RSKernelUCBVIAgent,
         train_env,
@@ -76,7 +75,8 @@ if __name__ == '__main__':
         eval_kwargs=eval_kwargs,
         n_fit=4,
         seed=123,
-        enable_tensorboard=True)
+        enable_tensorboard=True,
+    )
     a2c_stats = AgentManager(
         A2CAgent,
         train_env,
@@ -85,7 +85,9 @@ if __name__ == '__main__':
         eval_kwargs=eval_kwargs,
         n_fit=4,
         seed=123,
-        parallelization='process')
+        parallelization="process",
+        max_workers=2,
+    )
 
     agent_manager_list = [rsucbvi_stats, rskernel_stats, a2c_stats]
 
@@ -96,16 +98,17 @@ if __name__ == '__main__':
     rsucbvi_stats.fit(budget=50)
 
     # learning curves
-    plot_writer_data(agent_manager_list,
-                     tag='episode_rewards',
-                     preprocess_func=np.cumsum,
-                     title='cumulative rewards',
-                     show=False)
-        
-    plot_writer_data(agent_manager_list,
-                     tag='episode_rewards',
-                     title='episode rewards',
-                     show=False)
+    plot_writer_data(
+        agent_manager_list,
+        tag="episode_rewards",
+        preprocess_func=np.cumsum,
+        title="cumulative rewards",
+        show=False,
+    )
+
+    plot_writer_data(
+        agent_manager_list, tag="episode_rewards", title="episode rewards", show=False
+    )
 
     # compare final policies
     output = evaluate_agents(agent_manager_list)

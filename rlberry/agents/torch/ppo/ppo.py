@@ -18,6 +18,12 @@ logger = logging.getLogger(__name__)
 
 class PPOAgent(AgentWithSimplePolicy):
     """
+    Proximal Policy Optimization Agent.
+
+    Policy gradient methods for reinforcement learning, which alternate between
+    sampling data through interaction with the environment, and optimizing a
+    “surrogate” objective function using stochastic gradient ascent
+
     Parameters
     ----------
     env : Model
@@ -71,34 +77,39 @@ class PPOAgent(AgentWithSimplePolicy):
 
     name = "PPO"
 
-    def __init__(self, env,
-                 batch_size=64,
-                 update_frequency=8,
-                 horizon=256,
-                 gamma=0.99,
-                 entr_coef=0.01,
-                 vf_coef=0.5,
-                 learning_rate=0.01,
-                 optimizer_type='ADAM',
-                 eps_clip=0.2,
-                 k_epochs=5,
-                 use_gae=True,
-                 gae_lambda=0.95,
-                 policy_net_fn=None,
-                 value_net_fn=None,
-                 policy_net_kwargs=None,
-                 value_net_kwargs=None,
-                 device="cuda:best",
-                 use_bonus=False,
-                 uncertainty_estimator_kwargs=None,
-                 **kwargs):  # TODO: sort arguments
+    def __init__(
+        self,
+        env,
+        batch_size=64,
+        update_frequency=8,
+        horizon=256,
+        gamma=0.99,
+        entr_coef=0.01,
+        vf_coef=0.5,
+        learning_rate=0.01,
+        optimizer_type="ADAM",
+        eps_clip=0.2,
+        k_epochs=5,
+        use_gae=True,
+        gae_lambda=0.95,
+        policy_net_fn=None,
+        value_net_fn=None,
+        policy_net_kwargs=None,
+        value_net_kwargs=None,
+        device="cuda:best",
+        use_bonus=False,
+        uncertainty_estimator_kwargs=None,
+        **kwargs
+    ):  # TODO: sort arguments
 
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
         # bonus
         self.use_bonus = use_bonus
         if self.use_bonus:
-            self.env = UncertaintyEstimatorWrapper(self.env, **uncertainty_estimator_kwargs)
+            self.env = UncertaintyEstimatorWrapper(
+                self.env, **uncertainty_estimator_kwargs
+            )
 
         # algorithm parameters
         self.gamma = gamma
@@ -137,8 +148,7 @@ class PPOAgent(AgentWithSimplePolicy):
 
         self.device = choose_device(device)
 
-        self.optimizer_kwargs = {'optimizer_type': optimizer_type,
-                                 'lr': learning_rate}
+        self.optimizer_kwargs = {"optimizer_type": optimizer_type, "lr": learning_rate}
 
         # check environment
         assert isinstance(self.env.observation_space, spaces.Box)
@@ -156,13 +166,23 @@ class PPOAgent(AgentWithSimplePolicy):
         return cls(**kwargs)
 
     def reset(self, **kwargs):
-        self.cat_policy = self.policy_net_fn(self.env, **self.policy_net_kwargs).to(self.device)
-        self.policy_optimizer = optimizer_factory(self.cat_policy.parameters(), **self.optimizer_kwargs)
+        self.cat_policy = self.policy_net_fn(self.env, **self.policy_net_kwargs).to(
+            self.device
+        )
+        self.policy_optimizer = optimizer_factory(
+            self.cat_policy.parameters(), **self.optimizer_kwargs
+        )
 
-        self.value_net = self.value_net_fn(self.env, **self.value_net_kwargs).to(self.device)
-        self.value_optimizer = optimizer_factory(self.value_net.parameters(), **self.optimizer_kwargs)
+        self.value_net = self.value_net_fn(self.env, **self.value_net_kwargs).to(
+            self.device
+        )
+        self.value_optimizer = optimizer_factory(
+            self.value_net.parameters(), **self.optimizer_kwargs
+        )
 
-        self.cat_policy_old = self.policy_net_fn(self.env, **self.policy_net_kwargs).to(self.device)
+        self.cat_policy_old = self.policy_net_fn(self.env, **self.policy_net_kwargs).to(
+            self.device
+        )
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
 
         self.MseLoss = nn.MSELoss()  # TODO: turn into argument
@@ -215,8 +235,8 @@ class PPOAgent(AgentWithSimplePolicy):
             # check whether to use bonus
             bonus = 0.0
             if self.use_bonus:
-                if info is not None and 'exploration_bonus' in info:
-                    bonus = info['exploration_bonus']
+                if info is not None and "exploration_bonus" in info:
+                    bonus = info["exploration_bonus"]
 
             # save transition
             states.append(state)
@@ -238,7 +258,9 @@ class PPOAgent(AgentWithSimplePolicy):
         state_values = torch.squeeze(state_values).tolist()
 
         # TODO: add the option to normalize before computing returns/advantages?
-        returns, advantages = self._compute_returns_avantages(rewards, is_terminals, state_values)
+        returns, advantages = self._compute_returns_avantages(
+            rewards, is_terminals, state_values
+        )
 
         # save in batch
         self.memory.states.extend(states)
@@ -258,7 +280,9 @@ class PPOAgent(AgentWithSimplePolicy):
             self.writer.add_scalar("episode_rewards", episode_rewards, self.episode)
 
         # update
-        if self.episode % self.update_frequency == 0:  # TODO: maybe change to update in function of n_steps instead
+        if (
+            self.episode % self.update_frequency == 0
+        ):  # TODO: maybe change to update in function of n_steps instead
             self._update()
             self.memory.clear_memory()
             del self.returns[:]  # TODO: add to memory (cf reset)
@@ -292,7 +316,9 @@ class PPOAgent(AgentWithSimplePolicy):
             for k in range(n_batches):
 
                 # sample batch
-                batch_idx = np.arange(k * self.batch_size, min((k + 1) * self.batch_size, n_samples))
+                batch_idx = np.arange(
+                    k * self.batch_size, min((k + 1) * self.batch_size, n_samples)
+                )
                 old_states = shuffled_states[batch_idx]
                 old_actions = shuffled_actions[batch_idx]
                 old_logprobs = shuffled_logprobs[batch_idx]
@@ -313,14 +339,21 @@ class PPOAgent(AgentWithSimplePolicy):
                 # rewards = (rewards - rewards.mean()) / (rewards.std() + 1e-5)
 
                 # normalize the advantages
-                old_advantages = old_advantages.view(-1, )
+                old_advantages = old_advantages.view(
+                    -1,
+                )
 
                 if self.normalize_advantages:
-                    old_advantages = (old_advantages - old_advantages.mean()) / (old_advantages.std() + 1e-10)
+                    old_advantages = (old_advantages - old_advantages.mean()) / (
+                        old_advantages.std() + 1e-10
+                    )
 
                 # compute surrogate loss
                 surr1 = ratios * old_advantages
-                surr2 = torch.clamp(ratios, 1 - self.eps_clip, 1 + self.eps_clip) * old_advantages
+                surr2 = (
+                    torch.clamp(ratios, 1 - self.eps_clip, 1 + self.eps_clip)
+                    * old_advantages
+                )
                 surr_loss = torch.min(surr1, surr2)
 
                 # compute value function loss
@@ -330,7 +363,7 @@ class PPOAgent(AgentWithSimplePolicy):
                 loss_entropy = self.entr_coef * dist_entropy
 
                 # compute total loss
-                loss = - surr_loss + loss_vf - loss_entropy
+                loss = -surr_loss + loss_vf - loss_entropy
 
                 # take gradient step
                 self.policy_optimizer.zero_grad()
@@ -343,8 +376,16 @@ class PPOAgent(AgentWithSimplePolicy):
 
         # log
         if self.writer:
-            self.writer.add_scalar("fit/surrogate_loss", surr_loss.mean().cpu().detach().numpy(), self.episode)
-            self.writer.add_scalar("fit/entropy_loss", dist_entropy.mean().cpu().detach().numpy(), self.episode)
+            self.writer.add_scalar(
+                "fit/surrogate_loss",
+                surr_loss.mean().cpu().detach().numpy(),
+                self.episode,
+            )
+            self.writer.add_scalar(
+                "fit/entropy_loss",
+                dist_entropy.mean().cpu().detach().numpy(),
+                self.episode,
+            )
 
         # copy new weights into old policy
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
@@ -357,22 +398,39 @@ class PPOAgent(AgentWithSimplePolicy):
         if not self.use_gae:
             for t in reversed(range(self.horizon)):
                 if t == self.horizon - 1:
-                    returns[t] = rewards[t] + self.gamma * (1 - is_terminals[t]) * state_values[-1]
+                    returns[t] = (
+                        rewards[t]
+                        + self.gamma * (1 - is_terminals[t]) * state_values[-1]
+                    )
                 else:
-                    returns[t] = rewards[t] + self.gamma * (1 - is_terminals[t]) * returns[t + 1]
+                    returns[t] = (
+                        rewards[t] + self.gamma * (1 - is_terminals[t]) * returns[t + 1]
+                    )
 
                 advantages[t] = returns[t] - state_values[t]
         else:
             last_adv = 0
             for t in reversed(range(self.horizon)):
                 if t == self.horizon - 1:
-                    returns[t] = rewards[t] + self.gamma * (1 - is_terminals[t]) * state_values[-1]
+                    returns[t] = (
+                        rewards[t]
+                        + self.gamma * (1 - is_terminals[t]) * state_values[-1]
+                    )
                     td_error = returns[t] - state_values[t]
                 else:
-                    returns[t] = rewards[t] + self.gamma * (1 - is_terminals[t]) * returns[t + 1]
-                    td_error = rewards[t] + self.gamma * (1 - is_terminals[t]) * state_values[t + 1] - state_values[t]
+                    returns[t] = (
+                        rewards[t] + self.gamma * (1 - is_terminals[t]) * returns[t + 1]
+                    )
+                    td_error = (
+                        rewards[t]
+                        + self.gamma * (1 - is_terminals[t]) * state_values[t + 1]
+                        - state_values[t]
+                    )
 
-                last_adv = self.gae_lambda * self.gamma * (1 - is_terminals[t]) * last_adv + td_error
+                last_adv = (
+                    self.gae_lambda * self.gamma * (1 - is_terminals[t]) * last_adv
+                    + td_error
+                )
                 advantages[t] = last_adv
 
         return returns, advantages
@@ -382,25 +440,21 @@ class PPOAgent(AgentWithSimplePolicy):
     #
     @classmethod
     def sample_parameters(cls, trial):
-        batch_size = trial.suggest_categorical('batch_size',
-                                               [1, 4, 8, 16, 32])
-        gamma = trial.suggest_categorical('gamma',
-                                          [0.9, 0.95, 0.99])
-        learning_rate = trial.suggest_loguniform('learning_rate', 1e-5, 1)
+        batch_size = trial.suggest_categorical("batch_size", [1, 4, 8, 16, 32])
+        gamma = trial.suggest_categorical("gamma", [0.9, 0.95, 0.99])
+        learning_rate = trial.suggest_loguniform("learning_rate", 1e-5, 1)
 
-        entr_coef = trial.suggest_loguniform('entr_coef', 1e-8, 0.1)
+        entr_coef = trial.suggest_loguniform("entr_coef", 1e-8, 0.1)
 
-        eps_clip = trial.suggest_categorical('eps_clip',
-                                             [0.1, 0.2, 0.3])
+        eps_clip = trial.suggest_categorical("eps_clip", [0.1, 0.2, 0.3])
 
-        k_epochs = trial.suggest_categorical('k_epochs',
-                                             [1, 5, 10, 20])
+        k_epochs = trial.suggest_categorical("k_epochs", [1, 5, 10, 20])
 
         return {
-            'batch_size': batch_size,
-            'gamma': gamma,
-            'learning_rate': learning_rate,
-            'entr_coef': entr_coef,
-            'eps_clip': eps_clip,
-            'k_epochs': k_epochs,
+            "batch_size": batch_size,
+            "gamma": gamma,
+            "learning_rate": learning_rate,
+            "entr_coef": entr_coef,
+            "eps_clip": eps_clip,
+            "k_epochs": k_epochs,
         }
