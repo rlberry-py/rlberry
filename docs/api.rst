@@ -51,6 +51,7 @@ Evaluation and plot
    :template: function.rst
 
    manager.evaluate_agents
+   manager.read_writer_data
    manager.plot_writer_data
 
 

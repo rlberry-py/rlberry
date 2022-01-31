@@ -36,6 +36,7 @@ logger = logging.getLogger(__name__)
 # Aux
 #
 
+
 class AgentHandler:
     """
     Wraps an Agent so that it can be either loaded in memory
@@ -58,13 +59,9 @@ class AgentHandler:
         Arguments required by __init__ method of agent_class.
     """
 
-    def __init__(self,
-                 id,
-                 filename,
-                 seeder,
-                 agent_class,
-                 agent_instance=None,
-                 agent_kwargs=None) -> None:
+    def __init__(
+        self, id, filename, seeder, agent_class, agent_instance=None, agent_kwargs=None
+    ) -> None:
         self._id = id
         self._fname = Path(filename)
         self._seeder = seeder
@@ -92,12 +89,16 @@ class AgentHandler:
 
     def load(self) -> bool:
         try:
-            self._agent_instance = self._agent_class.load(self._fname, **self._agent_kwargs)
+            self._agent_instance = self._agent_class.load(
+                self._fname, **self._agent_kwargs
+            )
             safe_reseed(self._agent_instance.env, self._seeder)
             return True
         except Exception as ex:
             self._agent_instance = None
-            logger.error(f'Failed call to AgentHandler.load() for {self._agent_class}: {ex}')
+            logger.error(
+                f"Failed call to AgentHandler.load() for {self._agent_class}: {ex}"
+            )
             return False
 
     def dump(self):
@@ -107,7 +108,9 @@ class AgentHandler:
             # saved_filename might have appended the correct extension, for instance,
             # so self._fname must be updated.
             if not saved_filename:
-                logger.warning(f'Instance of {self._agent_class} cannot be saved and will be kept in memory.')
+                logger.warning(
+                    f"Instance of {self._agent_class} cannot be saved and will be kept in memory."
+                )
                 return
             self._fname = Path(saved_filename)
             del self._agent_instance
@@ -117,16 +120,18 @@ class AgentHandler:
         """
         Allows AgentHandler to behave like the handled Agent.
         """
-        if attr[:2] == '__':
+        if attr[:2] == "__":
             raise AttributeError(attr)
         if attr in self.__dict__:
             return getattr(self, attr)
 
-        assert not self.is_empty(), 'Calling AgentHandler with no agent instance stored.'
+        assert (
+            not self.is_empty()
+        ), "Calling AgentHandler with no agent instance stored."
         if not self.is_loaded():
             loaded = self.load()
             if not loaded:
-                raise RuntimeError(f'Could not load Agent from {self._fname}.')
+                raise RuntimeError(f"Could not load Agent from {self._fname}.")
         return getattr(self._agent_instance, attr)
 
 
@@ -200,25 +205,27 @@ class AgentManager:
         init_kwargs_per_instance will be used.
     """
 
-    def __init__(self,
-                 agent_class,
-                 train_env,
-                 fit_budget=None,
-                 eval_env=None,
-                 init_kwargs=None,
-                 fit_kwargs=None,
-                 eval_kwargs=None,
-                 agent_name=None,
-                 n_fit=4,
-                 output_dir=None,
-                 parallelization='thread',
-                 mp_context='spawn',
-                 worker_logging_level='INFO',
-                 seed=None,
-                 enable_tensorboard=False,
-                 outdir_id_style='timestamp',
-                 default_writer_kwargs=None,
-                 init_kwargs_per_instance=None):
+    def __init__(
+        self,
+        agent_class,
+        train_env,
+        fit_budget=None,
+        eval_env=None,
+        init_kwargs=None,
+        fit_kwargs=None,
+        eval_kwargs=None,
+        agent_name=None,
+        n_fit=4,
+        output_dir=None,
+        parallelization="thread",
+        mp_context="spawn",
+        worker_logging_level="INFO",
+        seed=None,
+        enable_tensorboard=False,
+        outdir_id_style="timestamp",
+        default_writer_kwargs=None,
+        init_kwargs_per_instance=None,
+    ):
         # agent_class should only be None when the constructor is called
         # by the class method AgentManager.load(), since the agent class
         # will be loaded.
@@ -235,13 +242,15 @@ class AgentManager:
 
         # Check train_env and eval_env
         assert isinstance(
-            train_env, Tuple), "[AgentManager]train_env must be Tuple (constructor, kwargs)"
+            train_env, Tuple
+        ), "[AgentManager]train_env must be Tuple (constructor, kwargs)"
         if eval_env is not None:
             assert isinstance(
-                eval_env, Tuple), "[AgentManager]train_env must be Tuple (constructor, kwargs)"
+                eval_env, Tuple
+            ), "[AgentManager]train_env must be Tuple (constructor, kwargs)"
 
         # check options
-        assert outdir_id_style in [None, 'unique', 'timestamp']
+        assert outdir_id_style in [None, "unique", "timestamp"]
 
         # create oject identifier
         self.unique_id = metadata_utils.get_unique_id(self)
@@ -272,31 +281,40 @@ class AgentManager:
         self.parallelization = parallelization
         self.mp_context = mp_context
         self.worker_logging_level = worker_logging_level
+        self.output_dir = output_dir
         if fit_budget is not None:
             self.fit_budget = fit_budget
         else:
             try:
-                self.fit_budget = self.fit_kwargs.pop('fit_budget')
+                self.fit_budget = self.fit_kwargs.pop("fit_budget")
             except KeyError:
-                raise ValueError('[AgentManager] fit_budget missing in __init__().')
+                raise ValueError("[AgentManager] fit_budget missing in __init__().")
         # extra params per instance
         if init_kwargs_per_instance is not None:
             assert len(init_kwargs_per_instance) == n_fit
             init_kwargs_per_instance = deepcopy(init_kwargs_per_instance)
-        self.init_kwargs_per_instance = init_kwargs_per_instance or [dict() for _ in range(n_fit)]
+        self.init_kwargs_per_instance = init_kwargs_per_instance or [
+            dict() for _ in range(n_fit)
+        ]
 
         # output dir
         if output_dir is None:
-            output_dir = metadata_utils.RLBERRY_TEMP_DATA_DIR
-        self.output_dir = Path(output_dir) / 'manager_data'
-        if outdir_id_style == 'unique':
-            self.output_dir = self.output_dir / (self.agent_name + '_' + self.unique_id)
-        elif outdir_id_style == 'timestamp':
-            self.output_dir = self.output_dir / (self.agent_name + '_' + self.timestamp_id)
+            output_dir_ = metadata_utils.RLBERRY_TEMP_DATA_DIR
+        else:
+            output_dir_ = output_dir
+        self.output_dir_ = Path(output_dir_) / "manager_data"
+        if outdir_id_style == "unique":
+            self.output_dir_ = self.output_dir_ / (
+                self.agent_name + "_" + self.unique_id
+            )
+        elif outdir_id_style == "timestamp":
+            self.output_dir_ = self.output_dir_ / (
+                self.agent_name + "_" + self.timestamp_id
+            )
 
         # Create list of writers for each agent that will be trained
         # 'default' will keep Agent's use of DefaultWriter.
-        self.writers = [('default', None) for _ in range(n_fit)]
+        self.writers = [("default", None) for _ in range(n_fit)]
 
         # Parameters to setup Agent's DefaultWriter
         self.agent_default_writer_kwargs = [
@@ -304,22 +322,24 @@ class AgentManager:
                 name=self.agent_name,
                 log_interval=3,
                 tensorboard_kwargs=None,
-                execution_metadata=metadata_utils.ExecutionMetadata(obj_worker_id=idx)
+                execution_metadata=metadata_utils.ExecutionMetadata(obj_worker_id=idx),
             )
             for idx in range(n_fit)
         ]
         self.tensorboard_dir = None
         if enable_tensorboard:
-            self.tensorboard_dir = self.output_dir / 'tensorboard'
+            self.tensorboard_dir = self.output_dir_ / "tensorboard"
             for idx, params in enumerate(self.agent_default_writer_kwargs):
-                params['tensorboard_kwargs'] = dict(
+                params["tensorboard_kwargs"] = dict(
                     log_dir=self.tensorboard_dir / str(idx)
                 )
         # Update DefaultWriter according to user's settings.
         default_writer_kwargs = default_writer_kwargs or {}
         if default_writer_kwargs:
-            logger.warning('(Re)defining the following DefaultWriter'
-                           f' parameters in AgentManager: {list(default_writer_kwargs.keys())}')
+            logger.warning(
+                "(Re)defining the following DefaultWriter"
+                f" parameters in AgentManager: {list(default_writer_kwargs.keys())}"
+            )
         for ii in range(n_fit):
             self.agent_default_writer_kwargs[ii].update(default_writer_kwargs)
 
@@ -336,14 +356,16 @@ class AgentManager:
         self.optuna_storage_url = None
 
     def _init_optuna_storage_url(self):
-        self.output_dir.mkdir(parents=True, exist_ok=True)
-        self.db_filename = self.output_dir / 'optuna_data.db'
+        self.output_dir_.mkdir(parents=True, exist_ok=True)
+        self.db_filename = self.output_dir_ / "optuna_data.db"
         if create_database(self.db_filename):
             self.optuna_storage_url = f"sqlite:///{self.db_filename}"
         else:
             self.db_filename = None
             self.optuna_storage_url = "sqlite:///:memory:"
-            logger.warning(f'Unable to create databate {self.db_filename}. Using sqlite:///:memory:')
+            logger.warning(
+                f"Unable to create databate {self.db_filename}. Using sqlite:///:memory:"
+            )
 
     def _set_init_kwargs(self):
         init_seeders = self.seeder.spawn(self.n_fit, squeeze=False)
@@ -356,8 +378,10 @@ class AgentManager:
                     eval_env=self._eval_env,
                     copy_env=False,
                     seeder=init_seeders[ii],
-                    output_dir=Path(self.output_dir) / f"output_{ii}",
-                    _execution_metadata=self.agent_default_writer_kwargs[ii]['execution_metadata'],
+                    output_dir=Path(self.output_dir_) / f"output_{ii}",
+                    _execution_metadata=self.agent_default_writer_kwargs[ii][
+                        "execution_metadata"
+                    ],
                     _default_writer_kwargs=self.agent_default_writer_kwargs[ii],
                 )
             )
@@ -370,7 +394,7 @@ class AgentManager:
         self.agent_handlers = [
             AgentHandler(
                 id=ii,
-                filename=self.output_dir / Path(f'agent_handlers/idx_{ii}'),
+                filename=self.output_dir_ / Path(f"agent_handlers/idx_{ii}"),
                 seeder=handlers_seeders[ii],
                 agent_class=self.agent_class,
                 agent_instance=None,
@@ -392,7 +416,9 @@ class AgentManager:
 
     def get_agent_instances(self):
         if self.agent_handlers:
-            return [agent_handler.get_instance() for agent_handler in self.agent_handlers]
+            return [
+                agent_handler.get_instance() for agent_handler in self.agent_handlers
+            ]
         return []
 
     def eval_agents(self, n_simulations: Optional[int] = None) -> list:
@@ -416,19 +442,21 @@ class AgentManager:
             agent_idx = self.eval_seeder.rng.choice(len(self.agent_handlers))
             agent = self.agent_handlers[agent_idx]
             if agent.is_empty():
-                logger.error('Calling eval() in an AgentManager instance contaning an empty AgentHandler.'
-                             ' Returning [].')
+                logger.error(
+                    "Calling eval() in an AgentManager instance contaning an empty AgentHandler."
+                    " Returning []."
+                )
                 return []
             values.append(agent.eval(**self.eval_kwargs))
-            logger.info(f'[eval]... simulation {ii + 1}/{n_simulations}')
+            logger.info(f"[eval]... simulation {ii + 1}/{n_simulations}")
         return values
 
     def clear_output_dir(self):
         """Delete output_dir and all its data."""
         try:
-            shutil.rmtree(self.output_dir)
+            shutil.rmtree(self.output_dir_)
         except FileNotFoundError:
-            logger.warning(f'No directory {self.output_dir} found to be deleted.')
+            logger.warning(f"No directory {self.output_dir_} found to be deleted.")
 
     def clear_handlers(self):
         """Delete files from output_dir/agent_handlers that are managed by this class."""
@@ -456,8 +484,9 @@ class AgentManager:
             AgentManager fits `n_fit` agents, the writer of each one of them
             needs to be set separetely.
         """
-        assert idx >= 0 and idx < self.n_fit, \
-            "Invalid index sent to AgentManager.set_writer()"
+        assert (
+            idx >= 0 and idx < self.n_fit
+        ), "Invalid index sent to AgentManager.set_writer()"
         writer_kwargs = writer_kwargs or {}
         self.writers[idx] = (writer_fn, writer_kwargs)
 
@@ -477,29 +506,36 @@ class AgentManager:
         for handler in self.agent_handlers:
             handler.dump()
 
-        if self.parallelization == 'thread':
+        if self.parallelization == "thread":
             executor_class = concurrent.futures.ThreadPoolExecutor
             lock = threading.Lock()
-        elif self.parallelization == 'process':
+        elif self.parallelization == "process":
             executor_class = functools.partial(
                 concurrent.futures.ProcessPoolExecutor,
-                mp_context=multiprocessing.get_context(self.mp_context))
+                mp_context=multiprocessing.get_context(self.mp_context),
+            )
             lock = multiprocessing.Manager().Lock()
         else:
-            raise ValueError(f'Invalid backend for parallelization: {self.parallelization}')
+            raise ValueError(
+                f"Invalid backend for parallelization: {self.parallelization}"
+            )
 
-        args = [(
-            lock,
-            handler,
-            self.agent_class,
-            budget,
-            init_kwargs,
-            deepcopy(self.fit_kwargs),
-            writer,
-            self.worker_logging_level,
-            seeder)
-            for init_kwargs, handler, seeder, writer
-            in zip(self.init_kwargs, self.agent_handlers, seeders, self.writers)]
+        args = [
+            (
+                lock,
+                handler,
+                self.agent_class,
+                budget,
+                init_kwargs,
+                deepcopy(self.fit_kwargs),
+                writer,
+                self.worker_logging_level,
+                seeder,
+            )
+            for init_kwargs, handler, seeder, writer in zip(
+                self.init_kwargs, self.agent_handlers, seeders, self.writers
+            )
+        ]
 
         if len(args) == 1:
             workers_output = [_fit_worker(args[0])]
@@ -512,9 +548,7 @@ class AgentManager:
 
                 workers_output = []
                 for future in concurrent.futures.as_completed(futures):
-                    workers_output.append(
-                        future.result()
-                    )
+                    workers_output.append(future.result())
                 executor.shutdown()
 
         workers_output.sort(key=lambda x: x.id)
@@ -542,14 +576,14 @@ class AgentManager:
         filename where the AgentManager object was saved.
         """
         # use self.output_dir
-        output_dir = self.output_dir
+        output_dir = self.output_dir_
         output_dir = Path(output_dir)
 
         # create dir if it does not exist
         output_dir.mkdir(parents=True, exist_ok=True)
         # save optimized hyperparameters
         if self.best_hyperparams is not None:
-            fname = Path(output_dir) / 'best_hyperparams.json'
+            fname = Path(output_dir) / "best_hyperparams.json"
             _safe_serialize_json(self.best_hyperparams, fname)
         # save default_writer_data that can be aggregated in a pandas DataFrame
         if self.default_writer_data is not None:
@@ -562,7 +596,7 @@ class AgentManager:
                 try:
                     output = pd.DataFrame(all_writer_data)
                     # save
-                    fname = Path(output_dir) / 'data.csv'
+                    fname = Path(output_dir) / "data.csv"
                     output.to_csv(fname, index=None)
                 except Exception:
                     logger.warning("Could not save default_writer_data.")
@@ -576,7 +610,7 @@ class AgentManager:
             handler.dump()
 
         # save
-        filename = Path('manager_obj').with_suffix('.pickle')
+        filename = Path("manager_obj").with_suffix(".pickle")
         filename = output_dir / filename
         filename.parent.mkdir(parents=True, exist_ok=True)
         try:
@@ -587,7 +621,9 @@ class AgentManager:
             try:
                 with filename.open("wb") as ff:
                     dill.dump(self.__dict__, ff)
-                logger.info("Saved AgentManager({}) using dill.".format(self.agent_name))
+                logger.info(
+                    "Saved AgentManager({}) using dill.".format(self.agent_name)
+                )
             except Exception as ex:
                 logger.warning("[AgentManager] Instance cannot be pickled: " + str(ex))
 
@@ -595,15 +631,15 @@ class AgentManager:
 
     @classmethod
     def load(cls, filename):
-        filename = Path(filename).with_suffix('.pickle')
+        filename = Path(filename).with_suffix(".pickle")
 
         obj = cls(None, None, None)
         try:
-            with filename.open('rb') as ff:
+            with filename.open("rb") as ff:
                 tmp_dict = pickle.load(ff)
             logger.info("Loaded AgentManager using pickle.")
         except Exception:
-            with filename.open('rb') as ff:
+            with filename.open("rb") as ff:
                 tmp_dict = dill.load(ff)
             logger.info("Loaded AgentManager using dill.")
 
@@ -611,18 +647,20 @@ class AgentManager:
         obj.__dict__.update(tmp_dict)
         return obj
 
-    def optimize_hyperparams(self,
-                             n_trials=256,
-                             timeout=60,
-                             n_fit=2,
-                             n_optuna_workers=2,
-                             optuna_parallelization='thread',
-                             sampler_method='optuna_default',
-                             pruner_method='halving',
-                             continue_previous=False,
-                             fit_fraction=1.0,
-                             sampler_kwargs=None,
-                             disable_evaluation_writers=True):
+    def optimize_hyperparams(
+        self,
+        n_trials=256,
+        timeout=60,
+        n_fit=2,
+        n_optuna_workers=2,
+        optuna_parallelization="thread",
+        sampler_method="optuna_default",
+        pruner_method="halving",
+        continue_previous=False,
+        fit_fraction=1.0,
+        sampler_kwargs=None,
+        disable_evaluation_writers=True,
+    ):
         """
         Run hyperparameter optimization and updates init_kwargs with the
         best hyperparameters found.
@@ -683,7 +721,7 @@ class AgentManager:
         #
         # setup
         #
-        TEMP_DIR = self.output_dir / 'optim'
+        TEMP_DIR = self.output_dir_ / "optim"
         global _OPTUNA_INSTALLED
         if not _OPTUNA_INSTALLED:
             logging.error("Optuna not installed.")
@@ -702,42 +740,43 @@ class AgentManager:
             if sampler_kwargs is None:
                 sampler_kwargs = {}
             # get sampler
-            if sampler_method == 'random':
+            if sampler_method == "random":
                 sampler = optuna.samplers.RandomSampler()
-            elif sampler_method == 'grid':
-                assert sampler_kwargs is not None, \
-                    "To use GridSampler, " + \
-                    "a search_space dictionary must be provided."
+            elif sampler_method == "grid":
+                assert sampler_kwargs is not None, (
+                    "To use GridSampler, "
+                    + "a search_space dictionary must be provided."
+                )
                 sampler = optuna.samplers.GridSampler(**sampler_kwargs)
-            elif sampler_method == 'cmaes':
+            elif sampler_method == "cmaes":
                 sampler = optuna.samplers.CmaEsSampler(**sampler_kwargs)
-            elif sampler_method == 'optuna_default':
+            elif sampler_method == "optuna_default":
                 sampler = optuna.samplers.TPESampler(**sampler_kwargs)
             else:
                 raise NotImplementedError(
-                    "Sampler method %s is not implemented." % sampler_method)
+                    "Sampler method %s is not implemented." % sampler_method
+                )
 
             # get pruner
-            if pruner_method == 'halving':
+            if pruner_method == "halving":
                 pruner = optuna.pruners.SuccessiveHalvingPruner(
-                    min_resource=1,
-                    reduction_factor=4,
-                    min_early_stopping_rate=0)
-            elif pruner_method == 'none':
+                    min_resource=1, reduction_factor=4, min_early_stopping_rate=0
+                )
+            elif pruner_method == "none":
                 pruner = None
             else:
                 raise NotImplementedError(
-                    "Pruner method %s is not implemented." % pruner_method)
+                    "Pruner method %s is not implemented." % pruner_method
+                )
 
             # storage
             self._init_optuna_storage_url()
             storage = optuna.storages.RDBStorage(self.optuna_storage_url)
 
             # optuna study
-            study = optuna.create_study(sampler=sampler,
-                                        pruner=pruner,
-                                        storage=storage,
-                                        direction='maximize')
+            study = optuna.create_study(
+                sampler=sampler, pruner=pruner, storage=storage, direction="maximize"
+            )
             self.optuna_study = study
 
         # save, to that optimization can be resumed later
@@ -757,11 +796,11 @@ class AgentManager:
             n_fit=n_fit,
             temp_dir=TEMP_DIR,  # TEMP_DIR
             disable_evaluation_writers=disable_evaluation_writers,
-            fit_fraction=fit_fraction
+            fit_fraction=fit_fraction,
         )
 
         try:
-            if optuna_parallelization == 'thread':
+            if optuna_parallelization == "thread":
                 with concurrent.futures.ThreadPoolExecutor() as executor:
                     for _ in range(n_optuna_workers):
                         executor.submit(
@@ -769,21 +808,26 @@ class AgentManager:
                             objective,
                             n_trials=n_trials,
                             timeout=timeout,
-                            gc_after_trial=True)
+                            gc_after_trial=True,
+                        )
                     executor.shutdown()
-            elif optuna_parallelization == 'process':
+            elif optuna_parallelization == "process":
                 with concurrent.futures.ProcessPoolExecutor(
-                        mp_context=multiprocessing.get_context(self.mp_context)) as executor:
+                    mp_context=multiprocessing.get_context(self.mp_context)
+                ) as executor:
                     for _ in range(n_optuna_workers):
                         executor.submit(
                             study.optimize,
                             objective,
                             n_trials=n_trials // n_optuna_workers,
                             timeout=timeout,
-                            gc_after_trial=True)
+                            gc_after_trial=True,
+                        )
                     executor.shutdown()
             else:
-                raise ValueError(f'Invalid value for optuna_parallelization: {optuna_parallelization}.')
+                raise ValueError(
+                    f"Invalid value for optuna_parallelization: {optuna_parallelization}."
+                )
 
         except KeyboardInterrupt:
             logger.warning("Evaluation stopped.")
@@ -792,21 +836,21 @@ class AgentManager:
         try:
             shutil.rmtree(TEMP_DIR)
         except FileNotFoundError as ex:
-            logger.warning(f'Could not delete {TEMP_DIR}: {ex}')
+            logger.warning(f"Could not delete {TEMP_DIR}: {ex}")
 
         # continue
         try:
             best_trial = study.best_trial
         except ValueError as ex:
-            logger.error(f'Hyperparam optimization failed due to the error: {ex}')
+            logger.error(f"Hyperparam optimization failed due to the error: {ex}")
             return dict()
 
-        logger.info(f'Number of finished trials: {len(study.trials)}')
-        logger.info('Best trial:')
-        logger.info(f'Value: {best_trial.value}')
-        logger.info('Params:')
+        logger.info(f"Number of finished trials: {len(study.trials)}")
+        logger.info("Best trial:")
+        logger.info(f"Value: {best_trial.value}")
+        logger.info("Params:")
         for key, value in best_trial.params.items():
-            logger.info(f'    {key}: {value}')
+            logger.info(f"    {key}: {value}")
 
         # store best parameters
         self.best_hyperparams = best_trial.params
@@ -830,8 +874,17 @@ def _fit_worker(args):
     """
     Create and fit an agent instance
     """
-    (lock, agent_handler, agent_class, fit_budget, init_kwargs,
-     fit_kwargs, writer, worker_logging_level, seeder) = args
+    (
+        lock,
+        agent_handler,
+        agent_class,
+        fit_budget,
+        init_kwargs,
+        fit_kwargs,
+        writer,
+        worker_logging_level,
+        seeder,
+    ) = args
 
     # reseed external libraries
     set_external_seed(seeder)
@@ -846,13 +899,15 @@ def _fit_worker(args):
             # create agent
             agent = agent_class(**init_kwargs)
             # seed agent
-            agent.reseed(seeder)    # TODO: check if extra reseeding here is necessary
+            agent.reseed(seeder)  # TODO: check if extra reseeding here is necessary
             agent_handler.set_instance(agent)
 
     # set writer
     if writer[0] is None:
         agent_handler.set_writer(None)
-    elif writer[0] != 'default':  # 'default' corresponds to DefaultWriter created by Agent.__init__()
+    elif (
+        writer[0] != "default"
+    ):  # 'default' corresponds to DefaultWriter created by Agent.__init__()
         writer_fn = writer[0]
         writer_kwargs = writer[1]
         agent_handler.set_writer(writer_fn(**writer_kwargs))
@@ -881,22 +936,22 @@ def _safe_serialize_json(obj, filename):
     def default(obj):
         return f"<<non-serializable: {type(obj).__qualname__}>>"
 
-    with open(filename, 'w') as fp:
+    with open(filename, "w") as fp:
         json.dump(obj, fp, sort_keys=True, indent=4, default=default)
 
 
 def _optuna_objective(
-        trial,
-        base_init_kwargs,  # self._base_init_kwargs
-        agent_class,  # self.agent_class
-        train_env,  # self.train_env
-        eval_env,
-        fit_budget,  # self.fit_budget
-        eval_kwargs,  # self.eval_kwargs
-        n_fit,
-        temp_dir,  # TEMP_DIR
-        disable_evaluation_writers,
-        fit_fraction
+    trial,
+    base_init_kwargs,  # self._base_init_kwargs
+    agent_class,  # self.agent_class
+    train_env,  # self.train_env
+    eval_env,
+    fit_budget,  # self.fit_budget
+    eval_kwargs,  # self.eval_kwargs
+    n_fit,
+    temp_dir,  # TEMP_DIR
+    disable_evaluation_writers,
+    fit_fraction,
 ):
     kwargs = deepcopy(base_init_kwargs)
 
@@ -915,13 +970,14 @@ def _optuna_objective(
         eval_env=eval_env,
         init_kwargs=kwargs,  # kwargs are being optimized
         eval_kwargs=deepcopy(eval_kwargs),
-        agent_name='optim',
+        agent_name="optim",
         n_fit=n_fit,
-        worker_logging_level='INFO',
-        parallelization='thread',
+        worker_logging_level="INFO",
+        parallelization="thread",
         output_dir=temp_dir,
         enable_tensorboard=False,
-        outdir_id_style='unique')
+        outdir_id_style="unique",
+    )
 
     if disable_evaluation_writers:
         for ii in range(params_stats.n_fit):

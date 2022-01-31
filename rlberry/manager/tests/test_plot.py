@@ -27,7 +27,7 @@ def test_plot_writer_data():
 
         def compute_reward(rewards):
             return np.cumsum(rewards)
-        os.system('ls '+tmpdirname+"/rlberry_data")
+        os.system('ls '+tmpdirname+"/rlberry_data/manager_data")
 
         # Plot of the cumulative reward.
         output = plot_writer_data(agent, tag="reward", preprocess_func=compute_reward,
@@ -35,7 +35,3 @@ def test_plot_writer_data():
                                   savefig_fname=tmpdirname+"/test.png")
         assert os.path.getsize(tmpdirname+'/test.png')>1000 # check that the file is not empty
         assert len(output)>1
-        output2 = plot_writer_data(agent, tag="reward", preprocess_func=compute_reward,
-                          title="Cumulative Reward", show = False,
-                          input_dir=tmpdirname+"/rlberry_data")
-        assert len(output2)>1
