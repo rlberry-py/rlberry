@@ -134,7 +134,7 @@ class DQNAgent(AgentWithSimplePolicy):
     ):
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
         env = self.env
-        self.rng_key = jax.random.PRNGKey(self.rng.integers(2 ** 32).item())
+        self.rng_key = jax.random.PRNGKey(self.rng.integers(2**32).item())
 
         # checks
         if not isinstance(self.env.observation_space, spaces.Box):

@@ -44,7 +44,7 @@ def test_box_space_case_1(low, high, dim):
     sp = convert_space_from_gym(gym_sp)
     assert isinstance(sp, rlberry.spaces.Box)
     sp.reseed(123)
-    for _ in range(2 ** dim):
+    for _ in range(2**dim):
         assert sp.contains(sp.sample())
 
 
