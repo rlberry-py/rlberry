@@ -100,7 +100,6 @@ Importation tools
    :template: function.rst
 
     envs.gym_make
-    envs.atari_make
 
 
 

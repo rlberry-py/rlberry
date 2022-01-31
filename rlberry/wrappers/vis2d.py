@@ -254,7 +254,7 @@ class Vis2dWrapper(Wrapper):
                 raise ValueError()
 
             sizes = 1 + sizes
-            sizes = (dot_scale_factor ** 2) * 100 * epsilon * sizes / sizes.max()
+            sizes = (dot_scale_factor**2) * 100 * epsilon * sizes / sizes.max()
 
             ax.scatter(
                 x=states[:, 0], y=states[:, 1], color=color, s=sizes, alpha=alpha
@@ -386,7 +386,7 @@ class Vis2dWrapper(Wrapper):
                 states = np.array([traj[ii].state for ii in range(len(traj))])
                 actions = np.array([traj[ii].action for ii in range(len(traj))])
 
-                sizes = (dot_scale_factor ** 2) * 750 * epsilon
+                sizes = (dot_scale_factor**2) * 750 * epsilon
 
                 for aa in range(self.env.action_space.n):
                     states_aa = states[actions == aa]
