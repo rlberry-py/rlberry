@@ -5,6 +5,7 @@ import seaborn as sns
 from pathlib import Path
 from datetime import datetime
 import pickle
+from copy import deepcopy
 
 from rlberry import metadata_utils
 
@@ -128,7 +129,7 @@ def read_writer_data(agent_manager, tag, preprocess_func=None):
     Pandas DataFrame with data from writers.
     """
 
-    agent_manager_list = agent_manager
+    agent_manager_list = deepcopy(agent_manager)
     if not isinstance(agent_manager_list, list):
         agent_manager_list = [agent_manager_list]
     if isinstance(tag, str):
