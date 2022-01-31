@@ -25,4 +25,4 @@ repos:
     hooks:
     -   id: flake8
         types: [file, python]
-        args: ['--ignore=E501']
+        args: ['--ignore=E501,W503']
