@@ -1,7 +1,6 @@
 from rlberry.envs import Chain
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
-from rlberry.agents import ValueIterationAgent
-from rlberry.manager import AgentManager, evaluate_agents
+from rlberry.manager import AgentManager
 import numpy as np
 
 

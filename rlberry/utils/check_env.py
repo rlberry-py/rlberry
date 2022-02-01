@@ -1,6 +1,5 @@
 from rlberry.seeding import safe_reseed
 from rlberry.seeding import Seeder
-from copy import deepcopy
 import numpy as np
 
 seeder = Seeder(42)

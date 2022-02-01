@@ -10,3 +10,4 @@ from .kernel_based import *
 from .mbqvi import *
 from .optql import *
 from .ucbvi import *
+from .linear import *

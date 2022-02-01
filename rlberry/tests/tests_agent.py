@@ -1,7 +1,6 @@
 import pytest
 from rlberry.agents import *
 from rlberry.agents.torch import *
-from rlberry.envs.finite import Chain
 from rlberry.utils.check_discrete_action_agent import (
     check_finiteMDP_agent,
     check_continuous_state_agent,
