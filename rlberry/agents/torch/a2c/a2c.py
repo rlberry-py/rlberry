@@ -186,7 +186,7 @@ class A2CAgent(AgentWithSimplePolicy):
         # interact for H steps
         episode_rewards = 0
         state = self.env.reset()
-        for _ in range(self.horizon):
+        for i in range(self.horizon):
             # running policy_old
             action = self._select_action(state)
             next_state, reward, done, info = self.env.step(action)
@@ -204,9 +204,11 @@ class A2CAgent(AgentWithSimplePolicy):
 
             if done:
                 break
-
             # update state
             state = next_state
+            
+            if i == self.horizon:
+                self.memory.is_terminals[-1] = True
 
         # update
         self.episode += 1
