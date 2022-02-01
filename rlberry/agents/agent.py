@@ -130,29 +130,38 @@ class Agent(ABC):
     def fit(self, budget: int, **kwargs):
         """Train the agent using the provided environment.
 
-        Ideally, calling
-
-        .. code-block:: python
-
-            fit(budget1)
-            fit(budget2)
-
-        should be equivalent to one call
-
-        .. code-block:: python
-
-            fit(budget1+budget2)
-
-        This property is required to reduce the time required for hyperparameter
-        optimization (by allowing early stopping), but it is not strictly required
-        elsewhere in the library.
-
-        If the agent does not require a budget, set it to -1.
-
         Parameters
         ----------
         budget: int
             Computational (or sample complexity) budget.
+            It can be, for instance:
+
+            * The number of timesteps taken by the environment (env.step) or the number of episodes;
+
+            * The number of iterations for algorithms such as value/policy iteration;
+
+            * The number of searches in MCTS (Monte-Carlo Tree Search) algorithms;
+
+            among others.
+
+            Ideally, calling
+
+            .. code-block:: python
+
+                fit(budget1)
+                fit(budget2)
+
+            should be equivalent to one call
+
+            .. code-block:: python
+
+                fit(budget1+budget2)
+
+            This property is required to reduce the time required for hyperparameter
+            optimization (by allowing early stopping), but it is not strictly required
+            elsewhere in the library.
+
+            If the agent does not require a budget, set it to -1.
         **kwargs
             Extra arguments.
         """
@@ -353,7 +362,7 @@ class AgentWithSimplePolicy(Agent):
         """Returns an action, given an observation."""
         pass
 
-    def eval(self, eval_horizon=10**5, n_simulations=10, gamma=1.0, **kwargs):
+    def eval(self, eval_horizon=10 ** 5, n_simulations=10, gamma=1.0, **kwargs):
         """
         Monte-Carlo policy evaluation [1]_ of an agent to estimate the value at the initial state.
 
