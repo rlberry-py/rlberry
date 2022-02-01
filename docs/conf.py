@@ -15,7 +15,6 @@ import sys
 
 import sphinx_gallery  # noqa
 
-
 sys.path.insert(0, os.path.abspath("."))
 sys.path.insert(0, os.path.abspath("../"))
 
@@ -46,6 +45,7 @@ extensions = [
     "sphinx_gallery.gen_gallery",
     "myst_parser",
 ]
+
 
 autodoc_default_options = {"members": True, "inherited-members": True}
 # generate autosummary even if no references
