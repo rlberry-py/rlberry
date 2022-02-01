@@ -155,7 +155,7 @@ class Agent(ABC):
 
             .. code-block:: python
 
-                fit(budget1+budget2)
+                fit(budget1 + budget2)
 
             This property is required to reduce the time required for hyperparameter
             optimization (by allowing early stopping), but it is not strictly required
