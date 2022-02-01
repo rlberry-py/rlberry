@@ -41,6 +41,8 @@ def get_qref(batch, target_val_net, gamma, device = "cpu"):
 
     values = target_val_net(next_states)[:,0]
     qref[non_terminal] += gamma * values
+
+    qref = qref.type(torch.FloatTensor)
     return qref
 
 

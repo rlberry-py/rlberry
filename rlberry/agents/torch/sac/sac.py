@@ -296,8 +296,8 @@ class SACAgent(AgentWithSimplePolicy):
             q2_loss_v = self.MseLoss(q2_v.squeeze(), qref.detach())
             q1_loss_v.backward()
             q2_loss_v.backward()
-            q1_optimizer.step()
-            q2_optimizer.step()
+            self.q1_optimizer.step()
+            self.q2_optimizer.step()
             if self.writer is not None:
                 self.writer.add_scalar("loss_q1", q1_loss_v, epoch)
                 self.writer.add_scalar("loss_q2", q2_loss_v, epoch)
