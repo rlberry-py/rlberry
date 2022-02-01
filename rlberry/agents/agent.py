@@ -22,7 +22,7 @@ class Agent(ABC):
 
     .. note::
 
-        Classes that implement this interface should send ``**kwargs`` to :code:`Agent.__init__()`
+        Classes that implement this interface must send ``**kwargs`` to :code:`Agent.__init__()`
 
     Parameters
     ----------
@@ -42,6 +42,9 @@ class Agent(ABC):
     _default_writer_kwargs : dict, optional
         Parameters to initialize :class:`~rlberry.utils.writers.DefaultWriter` (attribute self.writer).
         Used by :class:`~rlberry.manager.AgentManager`.
+    **kwargs : dict
+        Classes that implement this interface must send ``**kwargs``
+        to :code:`Agent.__init__()`.
 
     Attributes
     ----------
@@ -297,6 +300,9 @@ class AgentWithSimplePolicy(Agent):
 
     The :meth:`policy` method takes an observation as input and returns an action.
 
+    Classes that implement this interface must send ``**kwargs``
+    to :code:`AgentWithSimplePolicy.__init__()`
+
     Parameters
     ----------
     env : gym.Env or tuple (constructor, kwargs)
@@ -315,6 +321,9 @@ class AgentWithSimplePolicy(Agent):
     _default_writer_kwargs : dict, optional
         Parameters to initialize :class:`~rlberry.utils.writers.DefaultWriter` (attribute self.writer).
         Used by :class:`~rlberry.manager.AgentManager`.
+    **kwargs : dict
+        Classes that implement this interface must send ``**kwargs``
+        to :code:`AgentWithSimplePolicy.__init__()`.
 
     Attributes
     ----------
