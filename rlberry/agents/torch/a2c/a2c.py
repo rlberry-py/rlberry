@@ -206,8 +206,8 @@ class A2CAgent(AgentWithSimplePolicy):
                 break
             # update state
             state = next_state
-            
-            if i == self.horizon:
+
+            if i == self.horizon-1:
                 self.memory.is_terminals[-1] = True
 
         # update
