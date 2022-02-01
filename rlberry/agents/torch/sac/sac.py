@@ -234,6 +234,7 @@ class SACAgent(AgentWithSimplePolicy):
             # update state
             state = next_state
 
+
             if i == self.horizon - 1:
                 self.memory.is_terminals[-1] = True
 
