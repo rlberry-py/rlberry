@@ -10,14 +10,14 @@ FINITE_MDP_AGENTS = [
     ValueIterationAgent,
     MBQVIAgent,
     UCBVIAgent,
+    OptQLAgent,
+    # LSVIUCBAgent, # for now excluded because feature map not specified
 ]
 
 
 CONTINUOUS_STATE_AGENTS = [
     RSUCBVIAgent,
     RSKernelUCBVIAgent,
-    OptQLAgent,
-    LSVIUCBAgent,
     DQNAgent,
     REINFORCEAgent,
 ]
@@ -28,6 +28,6 @@ def test_finite_state_agent(Agent):
     assert check_finiteMDP_agent(Agent)
 
 
-# @pytest.mark.parametrize("Agent", CONTINUOUS_STATE_AGENTS)
-# def test_continuous_state_agent(Agent):
-#     assert check_continuous_state_agent(Agent)
+@pytest.mark.parametrize("Agent", CONTINUOUS_STATE_AGENTS)
+def test_continuous_state_agent(Agent):
+    assert check_continuous_state_agent(Agent)

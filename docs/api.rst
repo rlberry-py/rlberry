@@ -23,7 +23,7 @@ Basic Agents
    agents.RSUCBVIAgent
    agents.RSKernelUCBVIAgent
    agents.OptQLAgent
-   agents.linear.LSVIUCBAgent
+   agents.LSVIUCBAgent
 
 
 
