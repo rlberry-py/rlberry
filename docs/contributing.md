@@ -202,7 +202,7 @@ EXAMPLES_PATTERN=your_regex_goes_here make html
 
 Please follow the [numpydoc docstring guide](https://numpydoc.readthedocs.io/en/latest/format.html), the minimal requirements should be to include the short description, parameters and  return section of the docstring.
 
-### Examples
+### Building examples
 
 The examples gallery is constructed using sphinx-gallery, see its [documentation](https://sphinx-gallery.readthedocs.io/en/latest/) for more information.
 

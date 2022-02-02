@@ -14,24 +14,31 @@ First, we suggest you to create a virtual environment using
     $ conda create -n rlberry python=3.8
     $ conda activate rlberry
 
-**Installing the latest version (0.2.1):**
+
+Latest version (0.2.1)
+-------------------------------------
+
+Install the latest version for a stable release.
 
 .. code:: bash
 
     $ pip install git+https://github.com/rlberry-py/rlberry.git@v0.2.1#egg=rlberry[default]
 
-Alternatively, you can clone the repository and run :code:`pip install -e .[default]`.
 
+Development version
+--------------------
 
-**Installing the development version:**
+Install the development version to test new features.
 
 .. code:: bash
 
     $ pip install git+https://github.com/rlberry-py/rlberry.git@dev#egg=rlberry[default]
 
 
-**Installing a previous version:**
+Previous versions
+-----------------
 
+If you used a previous version in your work, you can install it by running
 
 .. code:: bash
 
@@ -45,8 +52,8 @@ to install version 0.1.
     For `zsh` users, `zsh` uses brackets for globbing, therefore it is necessary to add quotes around the argument, e.g. :code:`pip install 'git+https://github.com/rlberry-py/rlberry.git#egg=rlberry[default]'`.
 
 
-Installation for Deep RL agents
-===============================
+Deep RL agents
+--------------
 
 Deep RL agents require extra libraries, like PyTorch and JAX.
 
