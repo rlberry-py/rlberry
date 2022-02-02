@@ -2,6 +2,7 @@ from rlberry.envs import Chain
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
 from rlberry.manager import AgentManager
 import numpy as np
+from rlberry.seeding import set_external_seed
 
 
 def check_finiteMDP_agent(Agent):
@@ -19,7 +20,9 @@ def check_finiteMDP_agent(Agent):
     agent2.fit()
     env = env_ctor(**env_kwargs)
     state = env.reset()
+    set_external_seed(42) # needed for torch policy
     action1 = agent1.agent_handlers[0].policy(state)
+    set_external_seed(42)
     action2 = agent2.agent_handlers[0].policy(state)
 
     return action1 == action2
@@ -51,7 +54,9 @@ def check_continuous_state_agent(Agent):
     env = env_ctor(**env_kwargs)
     state = env.reset()
 
+    set_external_seed(42) # needed for torch policy
     action1 = agent1.agent_handlers[0].policy(state)
+    set_external_seed(42)
     action2 = agent2.agent_handlers[0].policy(state)
 
     return np.mean(action1 == action2) == 1

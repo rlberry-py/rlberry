@@ -20,11 +20,15 @@ class OneHotFeatureMap(FeatureMap):
         feat[observation, action] = 1.0
         return feat.flatten()
 
+
 class OneHotLSVI(LSVIUCBAgent):
     def __init__(self, env, **kwargs):
         def feature_map_fn(_env):
-            return OneHotFeatureMap(5,2) # values for Chain
-        LSVIUCBAgent.__init__(self, env, feature_map_fn=feature_map_fn, horizon=10, **kwargs)
+            return OneHotFeatureMap(5, 2)  # values for Chain
+
+        LSVIUCBAgent.__init__(
+            self, env, feature_map_fn=feature_map_fn, horizon=10, **kwargs
+        )
 
 
 FINITE_MDP_AGENTS = [
@@ -34,7 +38,7 @@ FINITE_MDP_AGENTS = [
     OptQLAgent,
     OneHotLSVI,
     PSRLAgent,
-    RLSVIAgent
+    RLSVIAgent,
 ]
 
 
