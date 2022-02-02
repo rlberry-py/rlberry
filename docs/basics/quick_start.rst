@@ -4,8 +4,8 @@ Quick Start
 ===========
 
 
-Libraries
----------
+Importing required libraries
+----------------------------
 
 .. code:: python
 
@@ -17,10 +17,11 @@ Libraries
     from rlberry.manager import AgentManager, evaluate_agents, plot_writer_data
     from rlberry.wrappers import WriterWrapper
 
-Environment definition
-----------------------
+Choosing an RL environment
+--------------------------
 
-A Chain is a very simple environment where the agent has to go from one
+In this tutorial, we will use the :class:`~rlberry.envs.finite.chain.Chain`
+environment, which is a very simple environment where the agent has to go from one
 end of a chain to the other end.
 
 .. code:: python
@@ -41,20 +42,22 @@ Let us see a graphical representation
         state = next_s
     video = env.save_video("video_chain.mp4", framerate=5)
 
-Even though we take always the optimal step (go right), the agent nonetheless
-fails sometimes due to fail_prob=0.1.
+The agent has two actions, go to the left of to the right, but it might
+move to a random direction according to a failure probability ``fail_prob=0.1``.
 
 .. video:: ../video_chain_quickstart.mp4
    :width: 600
 
 
 
-Agents definition
------------------
+Defining an agent and a baseline
+--------------------------------
 
-We will compare a RandomAgent (which plays random action) to a
-:class:`~rlberry.agents.UCBVIAgent`. Our goal is then to assess the performance of the two
-algorithms.
+We will compare a RandomAgent (which plays random action) to the
+:class:`~rlberry.agents.ucbvi.ucbvi.UCBVIAgent`, which
+is a algorithm that is designed to perform an efficient exploration. 
+Our goal is then to assess the performance of the two algorithms.
+
 
 .. code:: python
 
@@ -98,11 +101,19 @@ to evaluate how well the agent perform. All of these steps can be
 done several times to assess stochasticity of agents and/or environment.
 
 
-Evaluation-time comparison
---------------------------
+Comparing the expected rewards of the final policies
+--------------------------------------------------
 
-We want to assess the expected reward of our agents at a horizon of
-(say) :math:`T=20`.
+We want to assess the expected reward of the policy learned by our agents
+for a time horizon of (say) :math:`T=20`.
+
+To do that we use 10 Monte-Carlo simulations, i.e., we do the experiment
+10 times for each agent and at the end we take the mean of the 10
+obtained reward.
+
+This gives us 1 value per agent. We do this 10 times (so 10 times 10
+equal 100 simulations) in order to have an idea of the variability of
+our estimation.
 
 In order to manage the agents, we use an Agent Manager. The manager will
 then spawn agents as desired during the experiment.
@@ -141,16 +152,21 @@ then spawn agents as desired during the experiment.
     :align: center
 
 
-Training of agent and comparison of cumulative regret plot
-----------------------------------------------------------
+Comparing the agents during the learning period
+------------------------------------------------
 
-To compare the training (fit) of several agents, we use the cumulative
-regret during fit.
+In the previous section, we compared the performance of the **final** policies learned by
+the agents, **after** the learning period.
 
-This is only doable if the agent is trained one step at a time.
+To compare the performance of the agents **during** the learning period 
+(in the fit method), we can estimate their cumulative regret, which is the difference
+between the rewards gathered by the agents during training and the
+rewards of an optimal agent. Alternatively, if the we cannot compute the optimal
+policy, we could simply compare the rewards gathered during learning, instead of the regret.
 
 First, we have to record the reward during the fit as this is not done
-automatically. To do this, we use the WriterWrapper module.
+automatically. To do this, we can use the :class:`~rlberry.wrappers.writer_utils.WriterWrapper`
+module, or simply the `Agent.writer` attribute.
 
 .. code:: python
 
@@ -169,8 +185,8 @@ automatically. To do this, we use the WriterWrapper module.
             UCBVIAgent.__init__(self, env, **kwargs)
             self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
 
-To compute the regret, we also define the optimal agent. Here its an
-agent going always right.
+To compute the regret, we also need to define an optimal agent. Here it's an
+agent that always chooses the action that moves to the right.
 
 .. code:: python
 

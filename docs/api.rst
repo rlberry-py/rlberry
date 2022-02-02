@@ -7,6 +7,16 @@ rlberry API
 Agents
 ====================
 
+Interface
+----------
+.. autosummary::
+   :toctree: generated/
+   :template: class.rst
+
+   agents.Agent
+   agents.AgentWithSimplePolicy
+
+
 Basic Agents
 --------------------
 
@@ -14,9 +24,6 @@ Basic Agents
    :toctree: generated/
    :template: class.rst
 
-   agents.Agent
-   agents.AgentWithSimplePolicy
-   agents.features.FeatureMap
    agents.ValueIterationAgent
    agents.MBQVIAgent
    agents.UCBVIAgent
@@ -26,8 +33,7 @@ Basic Agents
    agents.linear.LSVIUCBAgent
 
 
-
-Torch agents
+Torch Agents
 --------------------
 
 .. autosummary::
@@ -40,7 +46,7 @@ Torch agents
    agents.torch.AVECPPOAgent
    agents.torch.REINFORCEAgent
 
-Jax agents (experimental)
+Jax Agents (experimental)
 --------------------
 
 Still experimental. See source code rlberry.agents.jax for more info.
@@ -111,6 +117,16 @@ Seeding
    :template: class.rst
 
    seeding.seeder.Seeder
+
+
+Utilities & Logging
+====================
+.. autosummary::
+  :toctree: generated/
+  :template: class.rst
+  
+  utils.writers.DefaultWriter
+
 
 Wrappers
 ====================
