@@ -32,7 +32,9 @@ FINITE_MDP_AGENTS = [
     MBQVIAgent,
     UCBVIAgent,
     OptQLAgent,
-    OneHotLSVI
+    OneHotLSVI,
+    PSRLAgent,
+    RLSVIAgent
 ]
 
 
@@ -40,6 +42,8 @@ CONTINUOUS_STATE_AGENTS = [
     RSUCBVIAgent,
     RSKernelUCBVIAgent,
     DQNAgent,
+    PPOAgent,
+    AVECPPOAgent,
     REINFORCEAgent,
 ]
 
