@@ -44,16 +44,16 @@ class VIAgent(UCBVIAgent):
 
 
 env_ctor = GridWorld
-env_kwargs = dict(nrows=3, ncols=10,
-                 reward_at = {(1,1):0.1, (2, 9):1.0},
-                 walls=((1,4),(2,4), (1,5)),
-                 success_probability=0.7)
+env_kwargs = dict(
+    nrows=3,
+    ncols=10,
+    reward_at={(1, 1): 0.1, (2, 9): 1.0},
+    walls=((1, 4), (2, 4), (1, 5)),
+    success_probability=0.7,
+)
 
 env = env_ctor(**env_kwargs)
-agent = AgentManager(VIAgent,
-    (env_ctor, env_kwargs),
-    fit_budget=10,
-    n_fit=3)
+agent = AgentManager(VIAgent, (env_ctor, env_kwargs), fit_budget=10, n_fit=3)
 
 agent.fit(budget=10)
 # comment the line above if you only want to load data from rlberry_data.
@@ -62,6 +62,7 @@ agent.fit(budget=10)
 # We use the following preprocessing function to plot the cumulative reward.
 def compute_reward(rewards):
     return np.cumsum(rewards)
+
 
 # Plot of the cumulative reward.
 output = plot_writer_data(
