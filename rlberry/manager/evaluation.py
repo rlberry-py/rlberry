@@ -303,8 +303,9 @@ def plot_writer_data(
     if ax is None:
         figure, ax = plt.subplots(1, 1)
 
-    lineplot_kwargs = dict(x=xx, y="value", hue="name", style="name", data=data,
-                           ax=ax, ci="sd")
+    lineplot_kwargs = dict(
+        x=xx, y="value", hue="name", style="name", data=data, ax=ax, ci="sd"
+    )
     lineplot_kwargs.update(sns_kwargs)
     sns.lineplot(**lineplot_kwargs)
     ax.set_title(title)
