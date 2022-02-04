@@ -272,6 +272,7 @@ def plot_writer_data(
     -------
     Pandas DataFrame with processed data used by seaborn's lineplot.
     """
+    sns_kwargs = sns_kwargs or {}
 
     title = title or tag
     if preprocess_func is not None:
