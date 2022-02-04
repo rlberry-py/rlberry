@@ -1,10 +1,22 @@
 """
-=============================
-Record reward during training
-=============================
+==============================================
+Record reward during training and then plot it
+==============================================
 
 This script shows how to modify an agent to easily record reward or action
-during the fit of the agent.
+during the fit of the agent and then use the plot utils.
+
+.. note::
+    If you already ran this script once, the fitted agent has been saved
+    in rlberry_data folder. Then, you can comment-out the line
+
+    .. code-block:: python
+
+        agent.fit(budget=10)
+
+    and avoid fitting the agent one more time, the statistics from the last
+    time you fitted the agent will automatically be loaded. See
+    `rlberry.manager.plot_writer_data` documentation for more information.
 """
 
 
@@ -14,6 +26,7 @@ from rlberry.wrappers import WriterWrapper
 from rlberry.envs import GridWorld
 from rlberry.manager import plot_writer_data, AgentManager
 from rlberry.agents import UCBVIAgent
+import matplotlib.pyplot as plt
 
 # We wrape the default writer of the agent in a WriterWrapper
 # to record rewards.
@@ -25,7 +38,6 @@ class VIAgent(UCBVIAgent):
     def __init__(self, env, **kwargs):
         UCBVIAgent.__init__(self, env, horizon=50, **kwargs)
         self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
-
         # we could also record actions with
         # self.env = WriterWrapper(self.env, self.writer,
         #                          write_scalar = "action")
@@ -44,10 +56,10 @@ env = env_ctor(**env_kwargs)
 agent = AgentManager(VIAgent, (env_ctor, env_kwargs), fit_budget=10, n_fit=3)
 
 agent.fit(budget=10)
+# comment the line above if you only want to load data from rlberry_data.
+
 
 # We use the following preprocessing function to plot the cumulative reward.
-
-
 def compute_reward(rewards):
     return np.cumsum(rewards)
 
@@ -57,3 +69,18 @@ output = plot_writer_data(
     agent, tag="reward", preprocess_func=compute_reward, title="Cumulative Reward"
 )
 # The output is for 500 global steps because it uses 10 fit_budget * horizon
+
+# Log-Log plot :
+fig, ax = plt.subplots(1, 1)
+plot_writer_data(
+    agent,
+    tag="reward",
+    preprocess_func=compute_reward,
+    title="Cumulative Reward",
+    ax=ax,
+    show=False,  # necessary to customize axes
+)
+ax.set_xlim(100, 500)
+ax.relim()
+ax.set_xscale("log")
+ax.set_yscale("log")
