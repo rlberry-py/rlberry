@@ -2,6 +2,8 @@ import torch
 from gym import spaces
 import logging
 import numpy as np
+from pathlib import Path
+import pickle
 
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.agents.utils.memories import (
@@ -492,20 +494,31 @@ class DQNAgent(AgentWithSimplePolicy):
             self.env.action_space, **self.exploration_kwargs
         )
 
-    def save(self, filename, **kwargs):
-        state = {
-            "state_dict": self.value_net.state_dict(),
-            "optimizer": self.optimizer.state_dict(),
-        }
-        torch.save(state, filename)
-        return filename
-
-    def load(self, filename, **kwargs):
-        checkpoint = torch.load(filename, map_location=self.device)
-        self.value_net.load_state_dict(checkpoint["state_dict"])
-        self.target_net.load_state_dict(checkpoint["state_dict"])
-        self.optimizer.load_state_dict(checkpoint["optimizer"])
-        return filename
+    # def save(self, filename, **kwargs):
+    #     filename = Path(filename).with_suffix(".pickle")
+    #     filename.parent.mkdir(parents=True, exist_ok=True)
+    #     state = {
+    #         "state_dict": self.value_net.state_dict(),
+    #         "optimizer": self.optimizer.state_dict(),
+    #         "_writer": self._writer
+    #     }
+    #     #torch.save(state, filename)
+    #     with filename.open("wb") as ff:
+    #         pickle.dump(state, ff)
+    #     return filename
+    #
+    # @classmethod
+    # def load(cls, filename, **kwargs):
+    #     filename = Path(filename).with_suffix(".pickle")
+    #     obj = cls(**kwargs)
+    #
+    #     with filename.open("rb") as ff:
+    #         checkpoint = pickle.load(ff)
+    #
+    #     obj.value_net.load_state_dict(checkpoint["state_dict"])
+    #     obj.target_net.load_state_dict(checkpoint["state_dict"])
+    #     obj.optimizer.load_state_dict(checkpoint["optimizer"])
+    #     return obj
 
     def initialize_model(self):
         self.value_net.reset()

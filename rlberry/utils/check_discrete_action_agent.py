@@ -20,12 +20,17 @@ def check_finiteMDP_agent(Agent):
     agent2.fit()
     env = env_ctor(**env_kwargs)
     state = env.reset()
-    set_external_seed(42) # needed for torch policy
-    action1 = agent1.agent_handlers[0].policy(state)
-    set_external_seed(42)
-    action2 = agent2.agent_handlers[0].policy(state)
+    result = True
+    for f in range(5):
+        # test reproducibility on 5 actions
+        set_external_seed(42)  # needed for torch policy
+        action1 = agent1.agent_handlers[0].policy(state)
+        set_external_seed(42)
+        action2 = agent2.agent_handlers[0].policy(state)
+        if np.mean(action1 == action2) != 1:
+            result = False
 
-    return action1 == action2
+    return result
 
 
 def check_continuous_state_agent(Agent):
@@ -53,10 +58,14 @@ def check_continuous_state_agent(Agent):
     agent2.fit()
     env = env_ctor(**env_kwargs)
     state = env.reset()
+    result = True
+    for f in range(5):
+        # test reproducibility on 5 actions
+        set_external_seed(42)  # needed for torch policy
+        action1 = agent1.agent_handlers[0].policy(state)
+        set_external_seed(42)
+        action2 = agent2.agent_handlers[0].policy(state)
+        if np.mean(action1 == action2) != 1:
+            result = False
 
-    set_external_seed(42) # needed for torch policy
-    action1 = agent1.agent_handlers[0].policy(state)
-    set_external_seed(42)
-    action2 = agent2.agent_handlers[0].policy(state)
-
-    return np.mean(action1 == action2) == 1
+    return result
