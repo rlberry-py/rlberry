@@ -235,6 +235,7 @@ def plot_writer_data(
     """
     Given a list of AgentManager, plot data (corresponding to info) obtained in each episode.
     The dictionary returned by agents' .fit() method must contain a key equal to `info`.
+    If n_fit > 1, the mean plus/minus the std are plotted.
 
     This function can be called with agents that have been trained beforhand and
     which have been saved in `agent_manager.output_dir`. The last session for each
@@ -252,7 +253,8 @@ def plot_writer_data(
     xtag : str
         Tag of data to plot on x-axis. If None, use 'global_step'.
     ax: matplotlib axis
-        Matplotlib axis on which we plot. If None, create one
+        Matplotlib axis on which we plot. If None, create one. Can be used to
+        customize the plot.
     show: bool
         If true, calls plt.show().
     preprocess_func: Callable
@@ -270,7 +272,6 @@ def plot_writer_data(
     -------
     Pandas DataFrame with processed data used by seaborn's lineplot.
     """
-    sns_kwargs = sns_kwargs or {"ci": "sd"}
 
     title = title or tag
     if preprocess_func is not None:
@@ -302,7 +303,8 @@ def plot_writer_data(
     if ax is None:
         figure, ax = plt.subplots(1, 1)
 
-    lineplot_kwargs = dict(x=xx, y="value", hue="name", style="name", data=data, ax=ax)
+    lineplot_kwargs = dict(x=xx, y="value", hue="name", style="name", data=data,
+                           ax=ax, ci="sd")
     lineplot_kwargs.update(sns_kwargs)
     sns.lineplot(**lineplot_kwargs)
     ax.set_title(title)
