@@ -43,7 +43,7 @@ jax_agents_requires = default_requires + [
     "chex",
     "dm-haiku",
     "optax",
-    "dm-reverb[tensorflow]==0.6.1",
+    "dm-reverb[tensorflow]==0.7.0",
     "dm-tree",
     "rlax",
 ]
