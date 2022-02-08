@@ -55,7 +55,7 @@ Defining an agent and a baseline
 
 We will compare a RandomAgent (which plays random action) to the
 :class:`~rlberry.agents.ucbvi.ucbvi.UCBVIAgent`, which
-is a algorithm that is designed to perform an efficient exploration. 
+is a algorithm that is designed to perform an efficient exploration.
 Our goal is then to assess the performance of the two algorithms.
 
 
@@ -158,7 +158,7 @@ Comparing the agents during the learning period
 In the previous section, we compared the performance of the **final** policies learned by
 the agents, **after** the learning period.
 
-To compare the performance of the agents **during** the learning period 
+To compare the performance of the agents **during** the learning period
 (in the fit method), we can estimate their cumulative regret, which is the difference
 between the rewards gathered by the agents during training and the
 rewards of an optimal agent. Alternatively, if the we cannot compute the optimal

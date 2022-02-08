@@ -223,7 +223,7 @@ and for markdown:
 
 some text.
 ```
-If you want to look at some examples, you can look at doc/index.rst file for rst file example and the present file (contributing.md) for example of markdown syntax.
+If you want to look at some examples, you can look at docs/index.rst file for rst file example and the present file (contributing.md) for example of markdown syntax.
 
 
 # Guidelines for new agents
@@ -364,4 +364,3 @@ configure_logging(level="INFO")
 # Acknowledgements
 
 Part of this page was copied from [scikit-learn contributing guideling](https://scikit-learn.org/dev/developers/contributing.html#documentation).
-=======

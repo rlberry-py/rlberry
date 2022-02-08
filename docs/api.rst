@@ -33,8 +33,8 @@ Basic Agents
    agents.linear.LSVIUCBAgent
 
 
-Torch Agents
---------------------
+Torch Agents (experimental)
+---------------------------
 
 .. autosummary::
    :toctree: generated/
@@ -49,8 +49,7 @@ Torch Agents
 Jax Agents (experimental)
 --------------------
 
-Still experimental. See source code rlberry.agents.jax for more info.
-
+Still experimental. Look at the source of `rlberry.agents.jax` for more info.
 
 Manager
 ====================
@@ -125,7 +124,7 @@ Utilities & Logging
 .. autosummary::
   :toctree: generated/
   :template: class.rst
-  
+
   utils.writers.DefaultWriter
 
 
