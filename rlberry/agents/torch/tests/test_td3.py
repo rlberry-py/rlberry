@@ -34,5 +34,3 @@ def test_td3_agent(env_id):
     agent.reseed(123)
     agent.fit(20)
     agent.policy(agent.env.observation_space.sample())
-
-
