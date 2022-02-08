@@ -51,7 +51,8 @@ One easy way to find an issue to work on is by applying the “help wanted” la
 
 
 
-## How to contribute -- git crash-course
+## How to contribute
+### git crash-course
 
 The preferred way to contribute to rlberry is to fork the main repository on GitHub, then submit a “pull request” (PR).
 
@@ -113,9 +114,37 @@ git rebase upstream/main
 to have the same commit has the main repo.
 ````
 
+### Pre-commit (optional)
+
+You may want to use [pre-commit](https://pre-commit.com/) to check some issues
+with your code. pre-commit is a software that will automatically run every time you
+do `git commit` and it will do some style changes (black, flake8...) before the commit.
+
+To use, do
+
+```
+pip install pre-commit
+```
+
+Then, in the rlberry folder,
+
+```
+pre-commit install
+```
+
+and then you are done. When next you do a commit, some checks will be run on the
+changes you made and if your code need some reformatting, it will automatically
+be done for you, you will only need to recommit to add the changes made by pre-commit.
+Once pre-commit is installed, if you want to skip it you can with
+`git commit . -m 'quick fix' --no-verify`.
+
+It can also be usefull to use `autopep8 -a -a -i yourfile` to fix flake8 issues.
+
+
 ## Pull request checklist
 
 Before a PR can be merged, it needs to be approved. Please prefix the title of your pull request with [MRG] if the contribution is complete and should be subjected to a detailed review. An incomplete contribution – where you expect to do more work before receiving a full review – should be prefixed [WIP] (to indicate a work in progress) and changed to [MRG] when it matures. WIPs may be useful to: indicate you are working on something to avoid duplicated work, request broad review of functionality or API, or seek collaborators. WIPs often benefit from the inclusion of a [task list](https://github.com/blog/1375-task-lists-in-gfm-issues-pulls-comments) in the PR description.
+
 
 1. Give your PR a helpful title
 2. Make sure your PR passes the test. You can check this by typing `pytest` from the main folder `rlberry`, or you can run a particular test by running for instance `pytest rlberry/agents/tests/` for instance, replacing `rlberry/agents/tests/` by the folder of the test you want to run.
@@ -146,11 +175,11 @@ We are glad to accept any sort of documentation: function docstrings, reStructur
 You can edit the documentation using any text editor, and then generate the HTML output by typing make from the docs/ directory. Alternatively, make html may be used to generate the documentation with the example gallery (which takes quite some time). The resulting HTML files will be placed in _build/html/stable and are viewable in a web browser.
 
 ## Building the documentation
-
+In the following section, we assume that you are in the main rlberry directory.
 
 Building the documentation requires installing some additional packages:
 ```bash
-pip install sphinx sphinx-gallery numpydoc myst-parser --user
+pip install -r docs/requirements.txt --user
 ```
 To build the documentation, you need to be in the doc folder:
 ```bash
@@ -173,13 +202,13 @@ EXAMPLES_PATTERN=your_regex_goes_here make html
 
 Please follow the [numpydoc docstring guide](https://numpydoc.readthedocs.io/en/latest/format.html), the minimal requirements should be to include the short description, parameters and  return section of the docstring.
 
-### Examples
+### Building examples
 
 The examples gallery is constructed using sphinx-gallery, see its [documentation](https://sphinx-gallery.readthedocs.io/en/latest/) for more information.
 
-### Other documentation
+### Markdown and link between documentation pages.
 
-The documentation is done using sphinx, each article can be written either in reStructuredText (rst) format or in markdown. For markdown support, we use myst-parser (see its [documentation](https://myst-parser.readthedocs.io/en/latest/using/intro.html)).
+The documentation is done using sphinx, each article can be written either in reStructuredText (rst) format or in markdown. For markdown support, we use myst-parser (see its [documentation](https://myst-parser.readthedocs.io/en/latest/using/intro.html)). The examples and docstrings on the other hand use only rst.
 
 If you need to cross-reference your documentations, you can use
 for rst:
@@ -195,6 +224,7 @@ and for markdown:
 some text.
 ```
 If you want to look at some examples, you can look at docs/index.rst file for rst file example and the present file (contributing.md) for example of markdown syntax.
+
 
 # Guidelines for new agents
 =======
@@ -255,16 +285,10 @@ The template below gives the general structure that the Agent code must follow. 
 class (`rlberry/agents/agent.py`).
 
 ```python
-
 class MyAgent(Agent):
     name = "MyAgent"
 
-    def __init__(self,
-                 env,
-                 param_1,
-                 param_2,
-                 param_n,
-                 **kwargs):
+    def __init__(self, env, param_1, param_2, param_n, **kwargs):
         Agent.__init__(self, env, **kwargs)
 
     def fit(self, budget: int):
@@ -300,13 +324,12 @@ class MyAgent(Agent):
         # Note: param_1 and param_2 are in the constructor.
 
         # for example, param_1 could be the batch_size...
-        param_1 = trial.suggest_categorical('param_1',
-                                            [1, 4, 8, 16, 32, 64])
+        param_1 = trial.suggest_categorical("param_1", [1, 4, 8, 16, 32, 64])
         # ... and param_2 could be a learning_rate
-        param_2 = trial.suggest_loguniform('param_2', 1e-5, 1)
+        param_2 = trial.suggest_loguniform("param_2", 1e-5, 1)
         return {
-            'param_1': param_1,
-            'param_2': param_2,
+            "param_1": param_1,
+            "param_2": param_2,
         }
 ```
 

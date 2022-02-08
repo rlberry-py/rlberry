@@ -21,7 +21,6 @@ using the following command:
 # sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_dqn.jpg'
 
 from rlberry.envs import gym_make
-from pathlib import Path
 from torch.utils.tensorboard import SummaryWriter
 
 from rlberry.agents.torch.dqn import DQNAgent
@@ -39,7 +38,11 @@ agent.set_writer(SummaryWriter())
 print(f"Running DQN on {env}")
 
 agent.fit(budget=50)
-vid = video_recorder.VideoRecorder(env,path="_video/video_plot_dqn.mp4", enabled=True,)
+vid = video_recorder.VideoRecorder(
+    env,
+    path="_video/video_plot_dqn.mp4",
+    enabled=True,
+)
 
 for episode in range(3):
     done = False

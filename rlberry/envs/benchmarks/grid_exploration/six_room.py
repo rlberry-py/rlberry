@@ -25,6 +25,7 @@ class SixRoom(GridWorld):
     when array_observation is True. Only the functions env.reset() and
     env.step() are covered.
     """
+
     name = "SixRoom"
 
     def __init__(self, reward_free=False, array_observation=False):
@@ -60,15 +61,17 @@ class SixRoom(GridWorld):
             }
 
         # Init base class
-        GridWorld.__init__(self,
-                           nrows=nrows,
-                           ncols=ncols,
-                           start_coord=start_coord,
-                           terminal_states=terminal_states,
-                           success_probability=success_probability,
-                           reward_at=reward_at,
-                           walls=walls,
-                           default_reward=default_reward)
+        GridWorld.__init__(
+            self,
+            nrows=nrows,
+            ncols=ncols,
+            start_coord=start_coord,
+            terminal_states=terminal_states,
+            success_probability=success_probability,
+            reward_at=reward_at,
+            walls=walls,
+            default_reward=default_reward,
+        )
 
         # spaces
         if self.array_observation:

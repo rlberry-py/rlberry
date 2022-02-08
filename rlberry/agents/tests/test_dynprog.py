@@ -23,24 +23,26 @@ def get_random_mdp(S, A):
     return R, P
 
 
-@pytest.mark.parametrize("gamma, S, A",
-                         [
-                             (0.001, 2, 1),
-                             (0.25, 2, 1),
-                             (0.5, 2, 1),
-                             (0.75, 2, 1),
-                             (0.999, 2, 1),
-                             (0.001, 4, 2),
-                             (0.25, 4, 2),
-                             (0.5, 4, 2),
-                             (0.75, 4, 2),
-                             (0.999, 4, 2),
-                             (0.001, 20, 4),
-                             (0.25, 20, 4),
-                             (0.5, 20, 4),
-                             (0.75, 20, 4),
-                             (0.999, 20, 4)
-                         ])
+@pytest.mark.parametrize(
+    "gamma, S, A",
+    [
+        (0.001, 2, 1),
+        (0.25, 2, 1),
+        (0.5, 2, 1),
+        (0.75, 2, 1),
+        (0.999, 2, 1),
+        (0.001, 4, 2),
+        (0.25, 4, 2),
+        (0.5, 4, 2),
+        (0.75, 4, 2),
+        (0.999, 4, 2),
+        (0.001, 20, 4),
+        (0.25, 20, 4),
+        (0.5, 20, 4),
+        (0.75, 20, 4),
+        (0.999, 20, 4),
+    ],
+)
 def test_bellman_operator_monotonicity_and_contraction(gamma, S, A):
     rng = seeding.Seeder(123).rng
     vmax = 1.0 / (1.0 - gamma)
@@ -68,14 +70,10 @@ def test_bellman_operator_monotonicity_and_contraction(gamma, S, A):
         assert np.greater(TQ2, TQ3).sum() == 0
 
 
-@pytest.mark.parametrize("gamma, S, A",
-                         [
-                             (0.01, 10, 4),
-                             (0.25, 10, 4),
-                             (0.5, 10, 4),
-                             (0.75, 10, 4),
-                             (0.99, 10, 4)
-                         ])
+@pytest.mark.parametrize(
+    "gamma, S, A",
+    [(0.01, 10, 4), (0.25, 10, 4), (0.5, 10, 4), (0.75, 10, 4), (0.99, 10, 4)],
+)
 def test_value_iteration(gamma, S, A):
     for epsilon in np.logspace(-1, -6, num=5):
         for sim in range(5):
@@ -89,11 +87,7 @@ def test_value_iteration(gamma, S, A):
             assert np.abs(TQ - Q).max() <= epsilon
 
 
-@pytest.mark.parametrize("horizon, S, A",
-                         [
-                             (10, 5, 4),
-                             (20, 10, 4)
-                         ])
+@pytest.mark.parametrize("horizon, S, A", [(10, 5, 4), (20, 10, 4)])
 def test_backward_induction(horizon, S, A):
     for sim in range(5):
         # generate random MDP
@@ -117,11 +111,7 @@ def test_backward_induction(horizon, S, A):
         assert np.array_equal(V, V2)
 
 
-@pytest.mark.parametrize("horizon, S, A",
-                         [
-                             (10, 5, 4),
-                             (20, 10, 4)
-                         ])
+@pytest.mark.parametrize("horizon, S, A", [(10, 5, 4), (20, 10, 4)])
 def test_backward_induction_sd(horizon, S, A):
     """
     Test stage-dependent MDPs
@@ -154,11 +144,7 @@ def test_backward_induction_sd(horizon, S, A):
         assert np.array_equal(V2, Vstat)
 
 
-@pytest.mark.parametrize("horizon, gamma, S, A",
-                         [
-                             (None, 0.5, 10, 4),
-                             (10, 1.0, 10, 4)
-                         ])
+@pytest.mark.parametrize("horizon, gamma, S, A", [(None, 0.5, 10, 4), (10, 1.0, 10, 4)])
 def test_value_iteration_agent(horizon, gamma, S, A):
     for sim in range(5):
         # generate random MDP

@@ -18,32 +18,34 @@ def test_discrete_space(n):
         assert sp.contains(sp.sample())
 
 
-@pytest.mark.parametrize("low, high, dim",
-                         [
-                             (1.0, 10.0, 1),
-                             (1.0, 10.0, 2),
-                             (1.0, 10.0, 4),
-                             (-10.0, 1.0, 1),
-                             (-10.0, 1.0, 2),
-                             (-10.0, 1.0, 4),
-                             (-np.inf, 1.0, 1),
-                             (-np.inf, 1.0, 2),
-                             (-np.inf, 1.0, 4),
-                             (1.0, np.inf, 1),
-                             (1.0, np.inf, 2),
-                             (1.0, np.inf, 4),
-                             (-np.inf, np.inf, 1),
-                             (-np.inf, np.inf, 2),
-                             (-np.inf, np.inf, 4),
-                         ])
+@pytest.mark.parametrize(
+    "low, high, dim",
+    [
+        (1.0, 10.0, 1),
+        (1.0, 10.0, 2),
+        (1.0, 10.0, 4),
+        (-10.0, 1.0, 1),
+        (-10.0, 1.0, 2),
+        (-10.0, 1.0, 4),
+        (-np.inf, 1.0, 1),
+        (-np.inf, 1.0, 2),
+        (-np.inf, 1.0, 4),
+        (1.0, np.inf, 1),
+        (1.0, np.inf, 2),
+        (1.0, np.inf, 4),
+        (-np.inf, np.inf, 1),
+        (-np.inf, np.inf, 2),
+        (-np.inf, np.inf, 4),
+    ],
+)
 def test_box_space_case_1(low, high, dim):
     shape = (dim, 1)
     gym_sp = gym.spaces.Box(low, high, shape=shape)
     sp = convert_space_from_gym(gym_sp)
     assert isinstance(sp, rlberry.spaces.Box)
     sp.reseed(123)
-    for _ in range(2 ** dim):
-        assert (sp.contains(sp.sample()))
+    for _ in range(2**dim):
+        assert sp.contains(sp.sample())
 
 
 @pytest.mark.parametrize(
@@ -53,8 +55,9 @@ def test_box_space_case_1(low, high, dim):
         (np.array([-10.0, -10.0, -10.0]), np.array([10.0, 10.0, 10.0])),
         (np.array([-10.0, -10.0, -10.0]), np.array([10.0, 10.0, np.inf])),
         (np.array([-np.inf, -10.0, -10.0]), np.array([10.0, 10.0, np.inf])),
-        (np.array([-np.inf, -10.0, -10.0]), np.array([np.inf, 10.0, np.inf]))
-    ])
+        (np.array([-np.inf, -10.0, -10.0]), np.array([np.inf, 10.0, np.inf])),
+    ],
+)
 def test_box_space_case_2(low, high):
     gym_sp = gym.spaces.Box(low, high, dtype=np.float64)
     sp = convert_space_from_gym(gym_sp)
@@ -65,7 +68,7 @@ def test_box_space_case_2(low, high):
     else:
         assert sp.is_bounded()
     for ii in range(2 ** sp.shape[0]):
-        assert (sp.contains(sp.sample()))
+        assert sp.contains(sp.sample())
 
 
 def test_tuple():
@@ -101,26 +104,36 @@ def test_multibinary():
 
 
 def test_dict():
-    nested_observation_space = gym.spaces.Dict({
-        'sensors': gym.spaces.Dict({
-            'position': gym.spaces.Box(low=-100, high=100, shape=(3,)),
-            'velocity': gym.spaces.Box(low=-1, high=1, shape=(3,)),
-            'front_cam': gym.spaces.Tuple((
-                gym.spaces.Box(low=0, high=1, shape=(10, 10, 3)),
-                gym.spaces.Box(low=0, high=1, shape=(10, 10, 3))
-            )),
-            'rear_cam': gym.spaces.Box(low=0, high=1, shape=(10, 10, 3)),
-        }),
-        'ext_controller': gym.spaces.MultiDiscrete((5, 2, 2)),
-        'inner_state': gym.spaces.Dict({
-            'charge': gym.spaces.Discrete(100),
-            'system_checks': gym.spaces.MultiBinary(10),
-            'job_status': gym.spaces.Dict({
-                'task': gym.spaces.Discrete(5),
-                'progress': gym.spaces.Box(low=0, high=100, shape=()),
-            })
-        })
-    })
+    nested_observation_space = gym.spaces.Dict(
+        {
+            "sensors": gym.spaces.Dict(
+                {
+                    "position": gym.spaces.Box(low=-100, high=100, shape=(3,)),
+                    "velocity": gym.spaces.Box(low=-1, high=1, shape=(3,)),
+                    "front_cam": gym.spaces.Tuple(
+                        (
+                            gym.spaces.Box(low=0, high=1, shape=(10, 10, 3)),
+                            gym.spaces.Box(low=0, high=1, shape=(10, 10, 3)),
+                        )
+                    ),
+                    "rear_cam": gym.spaces.Box(low=0, high=1, shape=(10, 10, 3)),
+                }
+            ),
+            "ext_controller": gym.spaces.MultiDiscrete((5, 2, 2)),
+            "inner_state": gym.spaces.Dict(
+                {
+                    "charge": gym.spaces.Discrete(100),
+                    "system_checks": gym.spaces.MultiBinary(10),
+                    "job_status": gym.spaces.Dict(
+                        {
+                            "task": gym.spaces.Discrete(5),
+                            "progress": gym.spaces.Box(low=0, high=100, shape=()),
+                        }
+                    ),
+                }
+            ),
+        }
+    )
     gym_sp = nested_observation_space
     sp = convert_space_from_gym(gym_sp)
     assert isinstance(sp, rlberry.spaces.Dict)

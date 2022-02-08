@@ -31,15 +31,18 @@ def experiment_generator():
     if max_workers == -1:
         max_workers = None
     for (_, agent_manager_kwargs) in parse_experiment_config(
-            Path(args["<experiment_path>"]),
-            n_fit=int(args["--n_fit"]),
-            max_workers=max_workers,
-            output_base_dir=args["--output_dir"],
-            parallelization=args["--parallelization"]):
+        Path(args["<experiment_path>"]),
+        n_fit=int(args["--n_fit"]),
+        max_workers=max_workers,
+        output_base_dir=args["--output_dir"],
+        parallelization=args["--parallelization"],
+    ):
         if args["--enable_tensorboard"]:
             if check_packages.TENSORBOARD_INSTALLED:
                 agent_manager_kwargs.update(dict(enable_tensorboard=True))
             else:
-                logger.warning('Option --enable_tensorboard is not available: tensorboard is not installed.')
+                logger.warning(
+                    "Option --enable_tensorboard is not available: tensorboard is not installed."
+                )
 
         yield AgentManager(**agent_manager_kwargs)

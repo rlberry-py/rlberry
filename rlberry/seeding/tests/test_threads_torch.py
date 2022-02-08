@@ -11,7 +11,7 @@ except Exception:
 
 def get_torch_random_number_setting_seed(seeder):
     set_external_seed(seeder)
-    return torch.randint(2 ** 32, (1,))[0].item()
+    return torch.randint(2**32, (1,))[0].item()
 
 
 def test_torch_multithread_seeding():
@@ -30,7 +30,5 @@ def test_torch_multithread_seeding():
 
                 results = []
                 for future in concurrent.futures.as_completed(futures):
-                    results.append(
-                        future.result()
-                    )
+                    results.append(future.result())
                 assert results[0] != results[1], f"error in simulation {(ii, jj)}"

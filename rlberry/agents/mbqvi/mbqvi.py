@@ -41,21 +41,19 @@ class MBQVIAgent(AgentWithSimplePolicy):
 
     name = "MBQVI"
 
-    def __init__(self, env,
-                 n_samples=10,
-                 gamma=0.99,
-                 horizon=None,
-                 epsilon=1e-6,
-                 **kwargs):
+    def __init__(
+        self, env, n_samples=10, gamma=0.99, horizon=None, epsilon=1e-6, **kwargs
+    ):
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
         # initialize base class
-        assert self.env.is_generative(), \
-            "MBQVI requires a generative model."
-        assert isinstance(self.env.observation_space, Discrete), \
-            "MBQVI requires a finite state space."
-        assert isinstance(self.env.action_space, Discrete), \
-            "MBQVI requires a finite action space."
+        assert self.env.is_generative(), "MBQVI requires a generative model."
+        assert isinstance(
+            self.env.observation_space, Discrete
+        ), "MBQVI requires a finite state space."
+        assert isinstance(
+            self.env.action_space, Discrete
+        ), "MBQVI requires a finite action space."
 
         #
         self.n_samples = n_samples
@@ -102,15 +100,14 @@ class MBQVIAgent(AgentWithSimplePolicy):
                     count += 1
                     if count % 10000 == 0:
                         completed = 100 * count / total_samples
-                        logger.debug("[{}] ... {}/{} ({:0.0f}%)".format(
-                            self.name,
-                            count,
-                            total_samples,
-                            completed))
+                        logger.debug(
+                            "[{}] ... {}/{} ({:0.0f}%)".format(
+                                self.name, count, total_samples, completed
+                            )
+                        )
 
         # build model and run VI
-        logger.debug(
-            f"{self.name} building model and running backward induction...")
+        logger.debug(f"{self.name} building model and running backward induction...")
 
         N_sa = np.maximum(self.N_sa, 1)
         self.R_hat = self.S_sa / N_sa
@@ -122,15 +119,16 @@ class MBQVIAgent(AgentWithSimplePolicy):
         info["n_samples"] = self.n_samples
         info["total_samples"] = total_samples
         if self.horizon is None:
-            assert self.gamma < 1.0, \
-                "The discounted setting requires gamma < 1.0"
-            self.Q, self.V, n_it = value_iteration(self.R_hat, self.P_hat,
-                                                   self.gamma, self.epsilon)
+            assert self.gamma < 1.0, "The discounted setting requires gamma < 1.0"
+            self.Q, self.V, n_it = value_iteration(
+                self.R_hat, self.P_hat, self.gamma, self.epsilon
+            )
             info["n_iterations"] = n_it
             info["precision"] = self.epsilon
         else:
-            self.Q, self.V = backward_induction(self.R_hat, self.P_hat,
-                                                self.horizon, self.gamma)
+            self.Q, self.V = backward_induction(
+                self.R_hat, self.P_hat, self.horizon, self.gamma
+            )
             info["n_iterations"] = self.horizon
             info["precision"] = 0.0
         return info

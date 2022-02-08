@@ -16,8 +16,13 @@ from rlberry.rendering import Scene, GeometricPrimitive, RenderInterface2D
 from rlberry.rendering.common_shapes import bar_shape, circle_shape
 
 __copyright__ = "Copyright 2013, RLPy http://acl.mit.edu/RLPy"
-__credits__ = ["Alborz Geramifard", "Robert H. Klein", "Christoph Dann",
-               "William Dabney", "Jonathan P. How"]
+__credits__ = [
+    "Alborz Geramifard",
+    "Robert H. Klein",
+    "Christoph Dann",
+    "William Dabney",
+    "Jonathan P. How",
+]
 __license__ = "BSD 3-Clause"
 __author__ = "Christoph Dann <cdann@cdann.de>"
 
@@ -71,24 +76,25 @@ class Acrobot(RenderInterface2D, Model):
         than the original version which employs Euler integration,
         see the AcrobotLegacy class.
     """
+
     name = "Acrobot"
 
-    dt = .2
+    dt = 0.2
 
-    LINK_LENGTH_1 = 1.  # [m]
-    LINK_LENGTH_2 = 1.  # [m]
-    LINK_MASS_1 = 1.  #: [kg] mass of link 1
-    LINK_MASS_2 = 1.  #: [kg] mass of link 2
+    LINK_LENGTH_1 = 1.0  # [m]
+    LINK_LENGTH_2 = 1.0  # [m]
+    LINK_MASS_1 = 1.0  #: [kg] mass of link 1
+    LINK_MASS_2 = 1.0  #: [kg] mass of link 2
     LINK_COM_POS_1 = 0.5  #: [m] position of the center of mass of link 1
     LINK_COM_POS_2 = 0.5  #: [m] position of the center of mass of link 2
-    LINK_MOI = 1.  #: moments of inertia for both links
+    LINK_MOI = 1.0  #: moments of inertia for both links
 
     MAX_VEL_1 = 4 * np.pi
     MAX_VEL_2 = 9 * np.pi
 
-    AVAIL_TORQUE = [-1., 0., +1]
+    AVAIL_TORQUE = [-1.0, 0.0, +1]
 
-    torque_noise_max = 0.
+    torque_noise_max = 0.0
 
     #: use dynamics equations from the nips paper or the book
     book_or_nips = "book"
@@ -123,8 +129,10 @@ class Acrobot(RenderInterface2D, Model):
         return self._get_ob()
 
     def step(self, action):
-        assert self.action_space.contains(action), \
-            "%r (%s) invalid" % (action, type(action))
+        assert self.action_space.contains(action), "%r (%s) invalid" % (
+            action,
+            type(action),
+        )
 
         # save state for rendering
         if self.is_render_enabled():
@@ -135,8 +143,7 @@ class Acrobot(RenderInterface2D, Model):
 
         # Add noise to the force action
         if self.torque_noise_max > 0:
-            torque += self.rng.uniform(-self.torque_noise_max,
-                                       self.torque_noise_max)
+            torque += self.rng.uniform(-self.torque_noise_max, self.torque_noise_max)
 
         # Now, augment the state with our force action so it can be passed to
         # _dsdt
@@ -158,17 +165,18 @@ class Acrobot(RenderInterface2D, Model):
         ns[3] = bound(ns[3], -self.MAX_VEL_2, self.MAX_VEL_2)
         self.state = ns
         terminal = self._terminal()
-        reward = -1. if not terminal else 0.
+        reward = -1.0 if not terminal else 0.0
         return self._get_ob(), reward, terminal, {}
 
     def _get_ob(self):
         s = self.state
-        return np.array([np.cos(s[0]), np.sin(s[0]), np.cos(s[1]),
-                         np.sin(s[1]), s[2], s[3]])
+        return np.array(
+            [np.cos(s[0]), np.sin(s[0]), np.cos(s[1]), np.sin(s[1]), s[2], s[3]]
+        )
 
     def _terminal(self):
         s = self.state
-        return bool(-np.cos(s[0]) - np.cos(s[1] + s[0]) > 1.)
+        return bool(-np.cos(s[0]) - np.cos(s[1] + s[0]) > 1.0)
 
     def _dsdt(self, s_augmented, t):
         m1 = self.LINK_MASS_1
@@ -185,26 +193,35 @@ class Acrobot(RenderInterface2D, Model):
         theta2 = s[1]
         dtheta1 = s[2]
         dtheta2 = s[3]
-        d1 = m1 * lc1 ** 2 + m2 * \
-             (l1 ** 2 + lc2 ** 2 + 2 * l1 * lc2 * np.cos(theta2)) + I1 + I2
-        d2 = m2 * (lc2 ** 2 + l1 * lc2 * np.cos(theta2)) + I2
-        phi2 = m2 * lc2 * g * np.cos(theta1 + theta2 - np.pi / 2.)
-        phi1 = - m2 * l1 * lc2 * dtheta2 ** 2 * np.sin(theta2) \
-               - 2 * m2 * l1 * lc2 * dtheta2 * dtheta1 * np.sin(theta2) \
-               + (m1 * lc1 + m2 * l1) * g * np.cos(theta1 - np.pi / 2) + phi2
+        d1 = (
+            m1 * lc1**2
+            + m2 * (l1**2 + lc2**2 + 2 * l1 * lc2 * np.cos(theta2))
+            + I1
+            + I2
+        )
+        d2 = m2 * (lc2**2 + l1 * lc2 * np.cos(theta2)) + I2
+        phi2 = m2 * lc2 * g * np.cos(theta1 + theta2 - np.pi / 2.0)
+        phi1 = (
+            -m2 * l1 * lc2 * dtheta2**2 * np.sin(theta2)
+            - 2 * m2 * l1 * lc2 * dtheta2 * dtheta1 * np.sin(theta2)
+            + (m1 * lc1 + m2 * l1) * g * np.cos(theta1 - np.pi / 2)
+            + phi2
+        )
         if self.book_or_nips == "nips":
             # the following line is consistent with the description in the
             # paper
-            ddtheta2 = (a + d2 / d1 * phi1 - phi2) / \
-                       (m2 * lc2 ** 2 + I2 - d2 ** 2 / d1)
+            ddtheta2 = (a + d2 / d1 * phi1 - phi2) / (m2 * lc2**2 + I2 - d2**2 / d1)
         else:
             # the following line is consistent with the java implementation
             # and the book
-            ddtheta2 = (a + d2 / d1 * phi1 - m2 * l1 * lc2 * dtheta1 ** 2 *
-                        np.sin(theta2) - phi2) \
-                       / (m2 * lc2 ** 2 + I2 - d2 ** 2 / d1)
+            ddtheta2 = (
+                a
+                + d2 / d1 * phi1
+                - m2 * l1 * lc2 * dtheta1**2 * np.sin(theta2)
+                - phi2
+            ) / (m2 * lc2**2 + I2 - d2**2 / d1)
         ddtheta1 = -(d2 * ddtheta2 + phi1) / d1
-        return (dtheta1, dtheta2, ddtheta1, ddtheta2, 0.)
+        return (dtheta1, dtheta2, ddtheta1, ddtheta2, 0.0)
 
     #
     # Below: code for rendering
@@ -219,10 +236,14 @@ class Acrobot(RenderInterface2D, Model):
 
         p0 = (0.0, 0.0)
 
-        p1 = (self.LINK_LENGTH_1 * np.sin(state[0]),
-              -self.LINK_LENGTH_1 * np.cos(state[0]))
-        p2 = (p1[0] + self.LINK_LENGTH_2 * np.sin(state[0] + state[1]),
-              p1[1] - self.LINK_LENGTH_2 * np.cos(state[0] + state[1]))
+        p1 = (
+            self.LINK_LENGTH_1 * np.sin(state[0]),
+            -self.LINK_LENGTH_1 * np.cos(state[0]),
+        )
+        p2 = (
+            p1[0] + self.LINK_LENGTH_2 * np.sin(state[0] + state[1]),
+            p1[1] - self.LINK_LENGTH_2 * np.cos(state[0] + state[1]),
+        )
 
         link1 = bar_shape(p0, p1, 0.1)
         link1.set_color((255 / 255, 140 / 255, 0 / 255))

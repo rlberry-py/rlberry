@@ -30,9 +30,11 @@ def gym_make(id, wrap_spaces=False, **kwargs):
 def atari_make(id, scalarize=True, **kwargs):
     from stable_baselines3.common.env_util import make_atari_env
     from stable_baselines3.common.vec_env import VecFrameStack
+
     env = make_atari_env(env_id=id, **kwargs)
     env = VecFrameStack(env, n_stack=4)
     if scalarize:
         from rlberry.wrappers.scalarize import ScalarizeEnvWrapper
+
         env = ScalarizeEnvWrapper(env)
     return env

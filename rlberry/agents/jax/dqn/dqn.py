@@ -108,38 +108,39 @@ class DQNAgent(AgentWithSimplePolicy):
     max_gradient_norm : float, default: 100.0
         Maximum gradient norm.
     """
+
     name = "JaxDqnAgent"
 
     def __init__(
-            self,
-            env: types.Env,
-            gamma: float = 0.99,
-            batch_size: int = 64,
-            chunk_size: int = 8,
-            online_update_interval: int = 1,
-            target_update_interval: int = 512,
-            learning_rate: float = 0.001,
-            epsilon_init: float = 1.0,
-            epsilon_end: float = 0.05,
-            epsilon_steps: int = 5000,
-            max_replay_size: int = 100000,
-            eval_interval: Optional[int] = None,
-            max_episode_length: Optional[int] = None,
-            lambda_: Optional[float] = None,
-            net_constructor: Optional[Callable[..., hk.Module]] = None,
-            net_kwargs: Optional[Mapping[str, Any]] = None,
-            max_gradient_norm: float = 100.0,
-            **kwargs
+        self,
+        env: types.Env,
+        gamma: float = 0.99,
+        batch_size: int = 64,
+        chunk_size: int = 8,
+        online_update_interval: int = 1,
+        target_update_interval: int = 512,
+        learning_rate: float = 0.001,
+        epsilon_init: float = 1.0,
+        epsilon_end: float = 0.05,
+        epsilon_steps: int = 5000,
+        max_replay_size: int = 100000,
+        eval_interval: Optional[int] = None,
+        max_episode_length: Optional[int] = None,
+        lambda_: Optional[float] = None,
+        net_constructor: Optional[Callable[..., hk.Module]] = None,
+        net_kwargs: Optional[Mapping[str, Any]] = None,
+        max_gradient_norm: float = 100.0,
+        **kwargs
     ):
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
         env = self.env
-        self.rng_key = jax.random.PRNGKey(self.rng.integers(2 ** 32).item())
+        self.rng_key = jax.random.PRNGKey(self.rng.integers(2**32).item())
 
         # checks
         if not isinstance(self.env.observation_space, spaces.Box):
-            raise ValueError('DQN only implemented for Box observation spaces.')
+            raise ValueError("DQN only implemented for Box observation spaces.")
         if not isinstance(self.env.action_space, spaces.Discrete):
-            raise ValueError('DQN only implemented for Discrete action spaces.')
+            raise ValueError("DQN only implemented for Discrete action spaces.")
 
         # params
         self._gamma = gamma
@@ -164,7 +165,10 @@ class DQNAgent(AgentWithSimplePolicy):
         try:
             obs_shape, obs_dtype = sample_obs.shape, sample_obs.dtype
         except AttributeError:  # in case sample_obs has no .shape attribute
-            obs_shape, obs_dtype = env.observation_space.shape, env.observation_space.dtype
+            obs_shape, obs_dtype = (
+                env.observation_space.shape,
+                env.observation_space.dtype,
+            )
         action_shape, action_dtype = env.action_space.shape, env.action_space.dtype
 
         self._replay_buffer = ReplayBuffer(
@@ -172,23 +176,20 @@ class DQNAgent(AgentWithSimplePolicy):
             self._chunk_size,
             self._max_replay_size,
         )
-        self._replay_buffer.setup_entry('actions', action_shape, action_dtype)
-        self._replay_buffer.setup_entry('observations', obs_shape, obs_dtype)
-        self._replay_buffer.setup_entry('next_observations', obs_shape, obs_dtype)
-        self._replay_buffer.setup_entry('rewards', (), np.float32)
-        self._replay_buffer.setup_entry('discounts', (), np.float32)
+        self._replay_buffer.setup_entry("actions", action_shape, action_dtype)
+        self._replay_buffer.setup_entry("observations", obs_shape, obs_dtype)
+        self._replay_buffer.setup_entry("next_observations", obs_shape, obs_dtype)
+        self._replay_buffer.setup_entry("rewards", (), np.float32)
+        self._replay_buffer.setup_entry("discounts", (), np.float32)
         self._replay_buffer.build()
 
         # initialize network and params
         net_constructor = net_constructor or nets.MLPQNetwork
         net_kwargs = net_kwargs or dict(
-            num_actions=self.env.action_space.n,
-            hidden_sizes=(64, 64)
+            num_actions=self.env.action_space.n, hidden_sizes=(64, 64)
         )
         net_ctor = functools.partial(net_constructor, **net_kwargs)
-        self._q_net = hk.without_apply_rng(
-            hk.transform(lambda x: net_ctor()(x))
-        )
+        self._q_net = hk.without_apply_rng(hk.transform(lambda x: net_ctor()(x)))
 
         self._dummy_obs = jnp.ones(self.env.observation_space.shape)
 
@@ -197,13 +198,13 @@ class DQNAgent(AgentWithSimplePolicy):
 
         self._all_params = AllParams(
             online=self._q_net.init(subkey1, self._dummy_obs),
-            target=self._q_net.init(subkey2, self._dummy_obs)
+            target=self._q_net.init(subkey2, self._dummy_obs),
         )
 
         # initialize optimizer and states
         self._optimizer = optax.chain(
             optax.clip_by_global_norm(self._max_gradient_norm),
-            optax.adam(learning_rate)
+            optax.adam(learning_rate),
         )
         self._all_states = AllStates(
             optimizer=self._optimizer.init(self._all_params.online),
@@ -236,11 +237,7 @@ class DQNAgent(AgentWithSimplePolicy):
         action = actor_out.actions.item()
         return action
 
-    def fit(
-            self,
-            budget: int,
-            **kwargs
-    ):
+    def fit(self, budget: int, **kwargs):
         """
         Train DQN agent.
 
@@ -273,11 +270,16 @@ class DQNAgent(AgentWithSimplePolicy):
                 # store data
                 episode_rewards += reward
                 buffer_writer.append(
-                    {'actions': action,
-                     'observations': observation,
-                     'rewards': np.array(reward, dtype=np.float32),
-                     'discounts': np.array(self._gamma * (1.0 - done), dtype=np.float32),
-                     'next_observations': next_obs})
+                    {
+                        "actions": action,
+                        "observations": observation,
+                        "rewards": np.array(reward, dtype=np.float32),
+                        "discounts": np.array(
+                            self._gamma * (1.0 - done), dtype=np.float32
+                        ),
+                        "next_observations": next_obs,
+                    }
+                )
 
                 # counters and next obs
                 timesteps_counter += 1
@@ -291,44 +293,49 @@ class DQNAgent(AgentWithSimplePolicy):
                     if sample:
                         batch = sample.data
                         self._all_params, self._all_states, info = self.learner_step(
-                            self._all_params,
-                            self._all_states,
-                            batch
+                            self._all_params, self._all_states, batch
                         )
                         if self.writer:
-                            self.writer.add_scalar('q_loss', info['loss'].item(), total_timesteps)
                             self.writer.add_scalar(
-                                'learner_steps',
+                                "q_loss", info["loss"].item(), total_timesteps
+                            )
+                            self.writer.add_scalar(
+                                "learner_steps",
                                 self._all_states.learner_steps.item(),
-                                total_timesteps)
+                                total_timesteps,
+                            )
 
                 # eval
-                if self._eval_interval is not None and total_timesteps % self._eval_interval == 0:
+                if (
+                    self._eval_interval is not None
+                    and total_timesteps % self._eval_interval == 0
+                ):
                     eval_rewards = self.eval(
                         eval_horizon=self._max_episode_length,
                         n_simimulations=2,
-                        gamma=1.0)
+                        gamma=1.0,
+                    )
                     self.writer.add_scalar(
-                        'eval_rewards',
-                        eval_rewards,
-                        total_timesteps
+                        "eval_rewards", eval_rewards, total_timesteps
                     )
 
                 # check if episode ended
                 if done:
                     if self.writer:
-                        self.writer.add_scalar('episode_rewards', episode_rewards, total_timesteps)
+                        self.writer.add_scalar(
+                            "episode_rewards", episode_rewards, total_timesteps
+                        )
                     buffer_writer.end_episode()
                     episode_rewards = 0.0
                     episode_timesteps = 0
                     observation = self.env.reset()
 
     def _loss(self, all_params, batch):
-        obs_tm1 = batch['observations']
-        a_tm1 = batch['actions']
-        r_t = batch['rewards']
-        discount_t = batch['discounts']
-        obs_t = batch['next_observations']
+        obs_tm1 = batch["observations"]
+        a_tm1 = batch["actions"]
+        r_t = batch["rewards"]
+        discount_t = batch["discounts"]
+        obs_t = batch["next_observations"]
 
         if self._lambda is None:
             # remove time dim (batch has shape [batch, chunk_size, ...])
@@ -348,13 +355,13 @@ class DQNAgent(AgentWithSimplePolicy):
         else:
             batched_loss = jax.vmap(rlax.q_lambda)
             batch_lambda = self._lambda * jnp.ones(r_t.shape)
-            td_error = batched_loss(q_tm1, a_tm1, r_t, discount_t, q_t_val, batch_lambda)
+            td_error = batched_loss(
+                q_tm1, a_tm1, r_t, discount_t, q_t_val, batch_lambda
+            )
 
         loss = jnp.mean(rlax.l2_loss(td_error))
 
-        info = dict(
-            loss=loss
-        )
+        info = dict(loss=loss)
         return loss, info
 
     def _actor_step(self, all_params, all_states, observation, rng_key, evaluation):
@@ -365,13 +372,12 @@ class DQNAgent(AgentWithSimplePolicy):
         eval_action = rlax.greedy().sample(rng_key, q_val)
         action = jax.lax.select(evaluation, eval_action, train_action)
         return (
-            ActorOutput(
-                actions=action,
-                q_values=q_val),
+            ActorOutput(actions=action, q_values=q_val),
             AllStates(
                 optimizer=all_states.optimizer,
                 learner_steps=all_states.learner_steps,
-                actor_steps=all_states.actor_steps + 1),
+                actor_steps=all_states.actor_steps + 1,
+            ),
         )
 
     def _learner_step(self, all_params, all_states, batch):
@@ -379,30 +385,28 @@ class DQNAgent(AgentWithSimplePolicy):
             all_params.online,
             all_params.target,
             all_states.learner_steps,
-            self._target_update_interval)
-        grad, info = jax.grad(self._loss, has_aux=True)(
-            all_params,
-            batch)
+            self._target_update_interval,
+        )
+        grad, info = jax.grad(self._loss, has_aux=True)(all_params, batch)
         updates, optimizer_state = self._optimizer.update(
-            grad.online,
-            all_states.optimizer)
+            grad.online, all_states.optimizer
+        )
         online_params = optax.apply_updates(all_params.online, updates)
         return (
-            AllParams(
-                online=online_params,
-                target=target_params),
+            AllParams(online=online_params, target=target_params),
             AllStates(
                 optimizer=optimizer_state,
                 learner_steps=all_states.learner_steps + 1,
-                actor_steps=all_states.actor_steps),
-            info
+                actor_steps=all_states.actor_steps,
+            ),
+            info,
         )
 
     #
     # Custom save/load methods.
     #
     def save(self, filename):
-        filename = Path(filename).with_suffix('.pickle')
+        filename = Path(filename).with_suffix(".pickle")
         filename.parent.mkdir(parents=True, exist_ok=True)
 
         writer = None
@@ -422,14 +426,14 @@ class DQNAgent(AgentWithSimplePolicy):
 
     @classmethod
     def load(cls, filename, **kwargs):
-        filename = Path(filename).with_suffix('.pickle')
+        filename = Path(filename).with_suffix(".pickle")
         agent = cls(**kwargs)
-        with filename.open('rb') as ff:
+        with filename.open("rb") as ff:
             agent_data = dill.load(ff)
-        agent.key = agent_data['rng_key']
-        agent._all_params = agent_data['params']
-        agent._all_states = agent_data['states']
-        writer = agent_data['writer']
+        agent.key = agent_data["rng_key"]
+        agent._all_params = agent_data["params"]
+        agent._all_states = agent_data["states"]
+        writer = agent_data["writer"]
         if writer:
             agent._writer = writer
         return agent
@@ -439,13 +443,7 @@ class DQNAgent(AgentWithSimplePolicy):
     #
     @classmethod
     def sample_parameters(cls, trial):
-        learning_rate = trial.suggest_loguniform('learning_rate', 1e-5, 1e-1)
-        gamma = trial.suggest_uniform('gamma', 0.95, 0.99)
-        lambda_ = trial.suggest_categorical(
-            'lambda_',
-            [0.1, 0.5, 0.9, None])
-        return dict(
-            learning_rate=learning_rate,
-            gamma=gamma,
-            lambda_=lambda_
-        )
+        learning_rate = trial.suggest_loguniform("learning_rate", 1e-5, 1e-1)
+        gamma = trial.suggest_uniform("gamma", 0.95, 0.99)
+        lambda_ = trial.suggest_categorical("lambda_", [0.1, 0.5, 0.9, None])
+        return dict(learning_rate=learning_rate, gamma=gamma, lambda_=lambda_)

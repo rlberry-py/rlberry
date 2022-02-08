@@ -4,7 +4,10 @@ import numpy as np
 import gym.spaces as spaces
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.exploration_tools.discrete_counter import DiscreteCounter
-from rlberry.agents.dynprog.utils import backward_induction_in_place, backward_induction_sd
+from rlberry.agents.dynprog.utils import (
+    backward_induction_in_place,
+    backward_induction_sd,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -35,6 +38,8 @@ class PSRLAgent(AgentWithSimplePolicy):
     scale_prior_transition : double, default: 1/number of state
         scale of the (uniform) Dirichlet prior,
         i.e prior is Dirichlet(scale_prior_transition*(1,...,1))
+    bernoullized_reward: bool, default: True
+        If true the rewards are Bernoullized
     reward_free : bool, default: False
         If true, ignores rewards and uses only 1/n bonuses.
     stage_dependent : bool, default: False
@@ -47,17 +52,21 @@ class PSRLAgent(AgentWithSimplePolicy):
         https://arxiv.org/abs/1306.0940
 
     """
+
     name = "PSRL"
 
-    def __init__(self,
-                 env,
-                 gamma=1.0,
-                 horizon=100,
-                 scale_prior_reward=1,
-                 scale_prior_transition=None,
-                 reward_free=False,
-                 stage_dependent=False,
-                 **kwargs):
+    def __init__(
+        self,
+        env,
+        gamma=1.0,
+        horizon=100,
+        scale_prior_reward=1,
+        scale_prior_transition=None,
+        bernoullized_reward=True,
+        reward_free=False,
+        stage_dependent=False,
+        **kwargs
+    ):
         # init base class
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
@@ -67,6 +76,7 @@ class PSRLAgent(AgentWithSimplePolicy):
         self.scale_prior_transition = scale_prior_transition
         if scale_prior_transition is None:
             self.scale_prior_transition = 1.0 / self.env.observation_space.n
+        self.bernoullized_reward = bernoullized_reward
         self.reward_free = reward_free
         self.stage_dependent = stage_dependent
 
@@ -77,15 +87,16 @@ class PSRLAgent(AgentWithSimplePolicy):
         # other checks
         assert gamma >= 0 and gamma <= 1.0
         if self.horizon is None:
-            assert gamma < 1.0, \
-                "If no horizon is given, gamma must be smaller than 1."
+            assert gamma < 1.0, "If no horizon is given, gamma must be smaller than 1."
             self.horizon = int(np.ceil(1.0 / (1.0 - gamma)))
 
         # maximum value
         r_range = self.env.reward_range[1] - self.env.reward_range[0]
         if r_range == np.inf or r_range == 0.0:
-            logger.warning("{}: Reward range is  zero or infinity. ".format(self.name)
-                           + "Setting it to 1.")
+            logger.warning(
+                "{}: Reward range is  zero or infinity. ".format(self.name)
+                + "Setting it to 1."
+            )
             r_range = 1.0
 
         self.v_max = np.zeros(self.horizon)
@@ -125,8 +136,9 @@ class PSRLAgent(AgentWithSimplePolicy):
         self.episode = 0
 
         # useful object to compute total number of visited states & entropy of visited states
-        self.counter = DiscreteCounter(self.env.observation_space,
-                                       self.env.action_space)
+        self.counter = DiscreteCounter(
+            self.env.observation_space, self.env.action_space
+        )
 
     def policy(self, observation):
         state = observation
@@ -134,22 +146,24 @@ class PSRLAgent(AgentWithSimplePolicy):
         return self.Q_policy[0, state, :].argmax()
 
     def _get_action(self, state, hh=0):
-        """ Sampling policy. """
+        """Sampling policy."""
         assert self.Q is not None
         return self.Q[hh, state, :].argmax()
 
     def _update(self, state, action, next_state, reward, hh):
-        bern_reward = self.rng.binomial(1, reward)
+        bern_reward = reward
+        if self.bernoullized_reward:
+            bern_reward = self.rng.binomial(1, reward)
         # update posterior
         if self.stage_dependent:
             self.N_sas[hh, state, action, next_state] += 1
             self.M_sa[hh, state, action, 0] += bern_reward
-            self.M_sa[hh, state, action, 1] += (1 - bern_reward)
+            self.M_sa[hh, state, action, 1] += 1 - bern_reward
 
         else:
             self.N_sas[state, action, next_state] += 1
             self.M_sa[state, action, 0] += bern_reward
-            self.M_sa[state, action, 1] += (1 - bern_reward)
+            self.M_sa[state, action, 1] += 1 - bern_reward
 
     def _run_episode(self):
         # sample reward and transitions from posterior
@@ -159,12 +173,8 @@ class PSRLAgent(AgentWithSimplePolicy):
         # run backward induction
         if self.stage_dependent:
             backward_induction_sd(
-                self.Q,
-                self.V,
-                self.R_sample,
-                self.P_sample,
-                self.gamma,
-                self.v_max[0])
+                self.Q, self.V, self.R_sample, self.P_sample, self.gamma, self.v_max[0]
+            )
         else:
             backward_induction_in_place(
                 self.Q,
@@ -173,7 +183,8 @@ class PSRLAgent(AgentWithSimplePolicy):
                 self.P_sample,
                 self.horizon,
                 self.gamma,
-                self.v_max[0])
+                self.v_max[0],
+            )
         # interact for H steps
         episode_rewards = 0
         state = self.env.reset()
@@ -199,7 +210,9 @@ class PSRLAgent(AgentWithSimplePolicy):
         # writer
         if self.writer is not None:
             self.writer.add_scalar("episode_rewards", episode_rewards, self.episode)
-            self.writer.add_scalar("n_visited_states", self.counter.get_n_visited_states(), self.episode)
+            self.writer.add_scalar(
+                "n_visited_states", self.counter.get_n_visited_states(), self.episode
+            )
 
         # return sum of rewards collected in the episode
         return episode_rewards
@@ -217,12 +230,8 @@ class PSRLAgent(AgentWithSimplePolicy):
         P_hat = self.N_sas / self.N_sas.sum(-1, keepdims=True)
         if self.stage_dependent:
             backward_induction_sd(
-                self.Q_policy,
-                self.V_policy,
-                R_hat,
-                P_hat,
-                self.gamma,
-                self.v_max[0])
+                self.Q_policy, self.V_policy, R_hat, P_hat, self.gamma, self.v_max[0]
+            )
         else:
             backward_induction_in_place(
                 self.Q_policy,
@@ -231,4 +240,5 @@ class PSRLAgent(AgentWithSimplePolicy):
                 P_hat,
                 self.horizon,
                 self.gamma,
-                self.v_max[0])
+                self.v_max[0],
+            )

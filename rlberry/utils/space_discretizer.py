@@ -6,8 +6,9 @@ from rlberry.utils.binsearch import unravel_index_uniform_bin
 
 class Discretizer:
     def __init__(self, space, n_bins):
-        assert isinstance(space, Box), \
-            "Discretization is only implemented for Box spaces."
+        assert isinstance(
+            space, Box
+        ), "Discretization is only implemented for Box spaces."
         assert space.is_bounded()
         self.space = space
         self.n_bins = n_bins
@@ -17,7 +18,7 @@ class Discretizer:
         n_elements = 1
         tol = 1e-8
         self.dim = len(self.space.low)
-        n_elements = n_bins ** self.dim
+        n_elements = n_bins**self.dim
         self._bins = []
         self._open_bins = []
         for dd in range(self.dim):

@@ -6,7 +6,7 @@ from rlberry.network import interface
 from rlberry.network.utils import serialize_message
 
 
-class BerryClient():
+class BerryClient:
     """
     rlberry client
 
@@ -17,9 +17,10 @@ class BerryClient():
     port : int
         Integer from 1-65535
     """
+
     def __init__(
         self,
-        host='127.0.0.1',
+        host="127.0.0.1",
         port: int = 65432,
     ) -> None:
         assert port >= 1 and port <= 65535
@@ -27,9 +28,9 @@ class BerryClient():
         self._port = port
 
     def send(
-            self,
-            *messages: interface.Message,
-            print_response: bool = False,
+        self,
+        *messages: interface.Message,
+        print_response: bool = False,
     ) -> Union[List[interface.Message], interface.Message]:
         returned_messages = []
         pp = pprint.PrettyPrinter(indent=4)
