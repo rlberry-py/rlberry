@@ -33,7 +33,7 @@ if __name__ == "__main__":
     # Choose environment id.
     # Try also "CartPole-v0", which has discrete actions.
     # Pendulum has continuous actions.
-    env_id = "Pendulum-v1" 
+    env_id = "Pendulum-v1"
     env = (gym_make, dict(id=env_id))
 
     params = dict(
