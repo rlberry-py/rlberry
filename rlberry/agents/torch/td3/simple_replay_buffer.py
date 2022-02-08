@@ -3,6 +3,7 @@ import numpy as np
 
 class SimpleReplayBuffer:
     """Simple replay buffer that allows sampling data with shape (batch_size, time_size, ...)."""
+
     def __init__(self, max_replay_size, rng, max_episode_steps=None):
         self._rng = rng
         self._max_replay_size = max_replay_size
@@ -23,7 +24,7 @@ class SimpleReplayBuffer:
         tag : str
             Tag that identifies the entry (e.g "observation", "reward")
         dtype : obj
-            Data type of the entry (e.g. `np.float32`)        
+            Data type of the entry (e.g. `np.float32`)
         """
         if tag in self._data:
             raise ValueError(f"Entry {tag} already added to replay buffer.")
@@ -33,7 +34,7 @@ class SimpleReplayBuffer:
 
     def append(self, data):
         """Store data.
-        
+
         Parameters
         ----------
         data : dict
@@ -65,7 +66,7 @@ class SimpleReplayBuffer:
             end_index = self._rng.choice(trajectory_ends_indices)
             start_index = end_index - chunk_size
             assert start_index >= 0
-        
+
         chunk = dict()
         for tag in self.tags:
             chunk[tag] = np.array(self._data[tag][start_index:end_index])
@@ -75,7 +76,7 @@ class SimpleReplayBuffer:
         return len(self._data[self.tags[0]])
 
     def sample(self, batch_size, chunk_size):
-        """ Sample a batch.
+        """Sample a batch.
 
         Data have shape (B, T, ...), where
         B = batch_size

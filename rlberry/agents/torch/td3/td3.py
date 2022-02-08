@@ -8,7 +8,9 @@ import torch
 from gym.spaces import Discrete
 from rlberry import types
 from rlberry.agents import Agent
-from rlberry.agents.torch.td3.simple_replay_buffer import SimpleReplayBuffer as ReplayBuffer
+from rlberry.agents.torch.td3.simple_replay_buffer import (
+    SimpleReplayBuffer as ReplayBuffer,
+)
 from rlberry.agents.torch.td3.td3_env_wrapper import NormalizedContinuousEnvWrapper
 from rlberry.utils.torch import choose_device
 

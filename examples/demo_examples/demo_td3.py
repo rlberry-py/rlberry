@@ -40,10 +40,10 @@ if __name__ == "__main__":
         pi_net_constructor=pi_net_constructor,
         learning_starts=5_000,
         train_interval=-1,
-        gamma=0.98,
+        gamma=0.99,
     )
     fit_kwargs = dict(
-        fit_budget=20_000,
+        fit_budget=50_000,
     )
 
     manager = AgentManager(
