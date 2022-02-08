@@ -21,6 +21,9 @@ logger = logging.getLogger(__name__)
 class TD3Agent(Agent):
     """Twin Delayed DDPG (TD3) agent.
 
+    Paper: Fujimoto et al. (2018) https://arxiv.org/abs/1802.09477
+    See also: https://spinningup.openai.com/en/latest/algorithms/td3.html
+
     Parameters
     ----------
     env : types.Env
