@@ -20,7 +20,7 @@ def pi_net_constructor(env):
     )
 
 
-@pytest.mark.parametrize("env_id", ["CartPole-v0", "Pendulum-v0"])
+@pytest.mark.parametrize("env_id", ["CartPole-v0", "Pendulum-v1"])
 def test_td3_agent(env_id):
     env = (gym_make, dict(id=env_id))
     params = dict(

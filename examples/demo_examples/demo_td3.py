@@ -31,8 +31,9 @@ if __name__ == "__main__":
     # and continuous (spaces.Box) actions.
 
     # Choose environment id.
-    # Try also "Pendulum-v1", which has continuous actions!
-    env_id = "CartPole-v1"
+    # Try also "CartPole-v0", which has discrete actions.
+    # Pendulum has continuous actions.
+    env_id = "Pendulum-v1" 
     env = (gym_make, dict(id=env_id))
 
     params = dict(
@@ -43,7 +44,7 @@ if __name__ == "__main__":
         gamma=0.99,
     )
     fit_kwargs = dict(
-        fit_budget=50_000,
+        fit_budget=10_000,
     )
 
     manager = AgentManager(
@@ -59,9 +60,9 @@ if __name__ == "__main__":
 
     plot_writer_data(manager, tag="eval_rewards", show=False)
     plot_writer_data(manager, tag="buffer_size", show=False)
-    plot_writer_data(manager, tag="q_loss", xtag="total_updates", show=False)
-    plot_writer_data(manager, tag="policy_loss", xtag="total_updates", show=False)
-    plot_writer_data(manager, tag="policy_reg_loss", xtag="total_updates", show=False)
+    plot_writer_data(manager, tag="q_loss", show=False)
+    plot_writer_data(manager, tag="policy_loss", show=False)
+    plot_writer_data(manager, tag="policy_reg_loss", show=False)
     plot_writer_data(manager, tag="total_episodes", show=False)
     plot_writer_data(manager, tag="dw_time_elapsed", show=True)
 

@@ -81,7 +81,6 @@ class TD3MLPCritic(nn.Module):
         super(TD3MLPCritic, self).__init__()
         n_heads = 2
         heads_input_dim = state_dim + action_dim
-        self._shared_mlp = None
         self._heads = nn.ModuleList(
             [
                 MLP(
@@ -96,8 +95,6 @@ class TD3MLPCritic(nn.Module):
 
     def forward(self, states, actions):
         x = torch.cat((states, actions), dim=-1)
-        if self._shared_mlp is not None:
-            x = self._shared_mlp(x)
         head_outputs = [head(x) for head in self._heads]
         out = torch.cat(head_outputs, dim=-1)
         return out
