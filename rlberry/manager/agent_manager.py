@@ -303,6 +303,7 @@ class AgentManager:
         self.max_workers = max_workers
         self.mp_context = mp_context
         self.worker_logging_level = worker_logging_level
+        self.output_dir = output_dir
         if fit_budget is not None:
             self.fit_budget = fit_budget
         else:
@@ -320,12 +321,16 @@ class AgentManager:
 
         # output dir
         if output_dir is None:
-            output_dir = metadata_utils.RLBERRY_TEMP_DATA_DIR
-        self.output_dir = Path(output_dir) / "manager_data"
+            output_dir_ = metadata_utils.RLBERRY_TEMP_DATA_DIR
+        else:
+            output_dir_ = output_dir
+        self.output_dir_ = Path(output_dir_) / "manager_data"
         if outdir_id_style == "unique":
-            self.output_dir = self.output_dir / (self.agent_name + "_" + self.unique_id)
+            self.output_dir_ = self.output_dir_ / (
+                self.agent_name + "_" + self.unique_id
+            )
         elif outdir_id_style == "timestamp":
-            self.output_dir = self.output_dir / (
+            self.output_dir_ = self.output_dir_ / (
                 self.agent_name + "_" + self.timestamp_id
             )
 
@@ -345,7 +350,7 @@ class AgentManager:
         ]
         self.tensorboard_dir = None
         if enable_tensorboard:
-            self.tensorboard_dir = self.output_dir / "tensorboard"
+            self.tensorboard_dir = self.output_dir_ / "tensorboard"
             for idx, params in enumerate(self.agent_default_writer_kwargs):
                 params["tensorboard_kwargs"] = dict(
                     log_dir=self.tensorboard_dir / str(idx)
@@ -373,8 +378,9 @@ class AgentManager:
         self.optuna_storage_url = None
 
     def _init_optuna_storage_url(self):
-        self.output_dir.mkdir(parents=True, exist_ok=True)
-        self.db_filename = self.output_dir / "optuna_data.db"
+        self.output_dir_.mkdir(parents=True, exist_ok=True)
+        self.db_filename = self.output_dir_ / "optuna_data.db"
+
         if create_database(self.db_filename):
             self.optuna_storage_url = f"sqlite:///{self.db_filename}"
         else:
@@ -395,7 +401,7 @@ class AgentManager:
                     eval_env=self._eval_env,
                     copy_env=False,
                     seeder=init_seeders[ii],
-                    output_dir=Path(self.output_dir) / f"output_{ii}",
+                    output_dir=Path(self.output_dir_) / f"output_{ii}",
                     _execution_metadata=self.agent_default_writer_kwargs[ii][
                         "execution_metadata"
                     ],
@@ -411,7 +417,7 @@ class AgentManager:
         self.agent_handlers = [
             AgentHandler(
                 id=ii,
-                filename=self.output_dir / Path(f"agent_handlers/idx_{ii}"),
+                filename=self.output_dir_ / Path(f"agent_handlers/idx_{ii}"),
                 seeder=handlers_seeders[ii],
                 agent_class=self.agent_class,
                 agent_instance=None,
@@ -491,9 +497,9 @@ class AgentManager:
     def clear_output_dir(self):
         """Delete output_dir and all its data."""
         try:
-            shutil.rmtree(self.output_dir)
+            shutil.rmtree(self.output_dir_)
         except FileNotFoundError:
-            logger.warning(f"No directory {self.output_dir} found to be deleted.")
+            logger.warning(f"No directory {self.output_dir_} found to be deleted.")
 
     def clear_handlers(self):
         """Delete files from output_dir/agent_handlers that are managed by this class."""
@@ -547,7 +553,8 @@ class AgentManager:
         if not isinstance(seeders, list):
             seeders = [seeders]
 
-        # remove agent instances from memory so that the agent handlers can be sent to different workers
+        # remove agent instances from memory so that the agent handlers can be
+        # sent to different workers
         for handler in self.agent_handlers:
             handler.dump()
 
@@ -622,7 +629,7 @@ class AgentManager:
             Filename where the AgentManager object was saved.
         """
         # use self.output_dir
-        output_dir = self.output_dir
+        output_dir = self.output_dir_
         output_dir = Path(output_dir)
 
         # create dir if it does not exist
@@ -781,7 +788,8 @@ class AgentManager:
         #
         # setup
         #
-        TEMP_DIR = self.output_dir / "optim"
+        TEMP_DIR = self.output_dir_ / "optim"
+
         global _OPTUNA_INSTALLED
         if not _OPTUNA_INSTALLED:
             logging.error("Optuna not installed.")
@@ -803,10 +811,9 @@ class AgentManager:
             if sampler_method == "random":
                 sampler = optuna.samplers.RandomSampler()
             elif sampler_method == "grid":
-                assert sampler_kwargs is not None, (
-                    "To use GridSampler, "
-                    + "a search_space dictionary must be provided."
-                )
+                assert (
+                    sampler_kwargs is not None
+                ), "To use GridSampler, a search_space dictionary must be provided."
                 sampler = optuna.samplers.GridSampler(**sampler_kwargs)
             elif sampler_method == "cmaes":
                 sampler = optuna.samplers.CmaEsSampler(**sampler_kwargs)
@@ -918,7 +925,8 @@ class AgentManager:
         # update using best parameters
         self._base_init_kwargs.update(best_trial.params)
 
-        # reset init_kwargs and agent handlers, so that they take the new parameters
+        # reset init_kwargs and agent handlers, so that they take the new
+        # parameters
         self._set_init_kwargs()
         self._reset_agent_handlers()
 
@@ -957,7 +965,8 @@ def _fit_worker(args):
             # create agent
             agent = agent_class(**init_kwargs)
             # seed agent
-            agent.reseed(seeder)  # TODO: check if extra reseeding here is necessary
+            # TODO: check if extra reseeding here is necessary
+            agent.reseed(seeder)
             agent_handler.set_instance(agent)
 
     # set writer
