@@ -29,28 +29,6 @@ def lambda_returns(r_t, discount_t, v_t, lambda_):
   return returns
 
 
-@numba_jit
-def lambda_returns_no_batch(r_t, discount_t, v_t, lambda_):
-  """
-  Computer lambda returns
-  
-  r_t, discount_t, v_t: numpy arrays of shape (time,).
-  lambda_ : float in [0, 1]
-  """
-  # If scalar make into vector.
-  lambda_ = np.ones_like(discount_t) * lambda_
-
-  # Work backwards to compute `G_{T-1}`, ..., `G_0`.
-  returns = np.zeros_like(r_t)
-  g = v_t[-1]
-  T = v_t.shape[0]
-  for tt in range(T):
-    i = T - tt - 1
-    g = r_t[i] + discount_t[i] * ((1 - lambda_[i]) * v_t[i] + lambda_[i] * g)
-    returns[i] = g
-  return returns
-
-
 def scale_action(action_space, action):
     """
     Rescale the action from [low, high] to [-1, 1]

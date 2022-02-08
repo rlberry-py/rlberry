@@ -1,3 +1,9 @@
+""" 
+ ===================== 
+ Demo: demo_td3
+ =====================
+"""
+
 from rlberry.envs import gym_make
 from rlberry.manager import AgentManager, plot_writer_data
 from rlberry.agents.torch.td3 import nets as td3nets
@@ -5,17 +11,15 @@ from rlberry.agents.torch.td3.td3 import TD3Agent
 
 
 def q_net_constructor(env):
-    return td3nets.ED3MLPCritic(
+    return td3nets.TD3MLPCritic(
         state_dim=env.observation_space.shape[0],
         action_dim=env.action_space.shape[0],
-        n_heads=2,
-        shared_hidden_sizes=(),
-        head_hidden_sizes=(256, 256),
+        hidden_sizes=(256, 256),
     )
 
 
 def pi_net_constructor(env):
-    return td3nets.ED3MLPActor(
+    return td3nets.TD3MLPActor(
         state_dim=env.observation_space.shape[0],
         action_dim=env.action_space.shape[0],
         hidden_sizes=(256, 256),
@@ -23,12 +27,14 @@ def pi_net_constructor(env):
 
 
 if __name__ == "__main__":
-    env = (gym_make, dict(id="CartPole-v0"))
-    # env = (gym_make, dict(id='CartPole-v1'))
-    # env = (gym_make, dict(id='BipedalWalker-v3'))
-    # env = (gym_make, dict(id='Pendulum-v1'))
-    # env = (gym_make, dict(id="LunarLander-v2"))
-    # env = (gym_make, dict(id='LunarLanderContinuous-v2'))
+    # This implementation of TD3 supports both discrete (spaces.Discrete)
+    # and continuous (spaces.Box) actions.
+
+    # Choose environment id.
+    # Try also "Pendulum-v1", which has continuous actions!
+    env_id = "CartPole-v1"
+    env = (gym_make, dict(id=env_id))
+
     params = dict(
         q_net_constructor=q_net_constructor,
         pi_net_constructor=pi_net_constructor,
@@ -37,7 +43,7 @@ if __name__ == "__main__":
         gamma=0.98,
     )
     fit_kwargs = dict(
-        fit_budget=150_000,
+        fit_budget=20_000,
     )
 
     manager = AgentManager(

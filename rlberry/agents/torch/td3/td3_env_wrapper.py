@@ -1,7 +1,6 @@
 from gym.spaces import Box, Discrete
 import rlberry.agents.torch.td3.td3_utils as utils
 from rlberry.envs import Wrapper
-from scipy.special import softmax
 import numpy as np
 
 

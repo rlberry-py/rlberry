@@ -8,37 +8,39 @@ import torch
 from gym.spaces import Discrete
 from rlberry import types
 from rlberry.agents import Agent
-from rlberry.agents.torch.td3.simple_replay_buffer import ReplayBuffer
-from rlberry.agents.torch.td3.continuous_env_wrapper import (
-    NormalizedContinuousEnvWrapper,
-)
+from rlberry.agents.torch.td3.simple_replay_buffer import SimpleReplayBuffer as ReplayBuffer
+from rlberry.agents.torch.td3.td3_env_wrapper import NormalizedContinuousEnvWrapper
 from rlberry.utils.torch import choose_device
+
 
 logger = logging.getLogger(__name__)
 
 
-# Constants
-_NORMALIZATION_DECAY = 0.999
-
-
 class TD3Agent(Agent):
-    """
-    ED3 = Ensemble Delayed DDPG (instead of twin :))
+    """Twin Delayed DDPG (TD3) agent.
 
     Parameters
     ----------
     env : types.Env
         Environment.
     q_net_constructor : callable
-        Constructor for Q network. Takes an env as argument: q_net = q_net_constructor(env)
+        Constructor for Q-network. Takes an env as argument: q_net = q_net_constructor(env).
+        Given a batch of observations of shape (batch_size, time_size, observation_dim),
+        the Q-network's output must have the shape (batch_size, time_size, 2),
+        where the last dimension represents the output of the two critic networks
+        used by TD3.
     pi_net_constructor : callable
         Constructor for policy network. Takes an env as argument: pi_net = pi_net_constructor(env)
+        Given a batch of observations of shape (batch_size, time_size, observation_dim),
+        the policy network's output must have the shape (batch_size, time_size, action_dim),
+        where action_dim is the dimension of the actions (if the action space is Box)
+        or the number of actions (if the action space is Discrete).
     gamma : float
         Discount factor.
     batch_size : int
         Batch size (in number of chunks).
     chunk_size : int
-        Size of trajectory chunks to sample from the buffer.
+        Size of trajectory chunks (i.e., subtrajectories) to sample from the replay buffer.
     target_update_parameter : int or float
         If int: interval (in number total number of online updates) between updates of the target network.
         If float: soft update coefficient
@@ -71,9 +73,9 @@ class TD3Agent(Agent):
         Limit for absolute value of target policy smoothing noise.
     random_exploration_eps: float
         Probability of taking a random action (as in an epsilon-greedy strategy)
-        This is not needed for ED3 normally but can help exploring.
+        This is not needed for TD3 normally but can help exploring.
     reg_coef: float
-        Policy regularization coefficient
+        Policy regularization coefficient.
     """
 
     name = "TD3"
@@ -109,7 +111,7 @@ class TD3Agent(Agent):
         if isinstance(self.env.action_space, Discrete):
             self.action_process_fn = torch.nn.Softmax(dim=-1)
             logger.info(
-                "[ED3] Wrapping environment with discrete actions: "
+                "[TD3] Wrapping environment with discrete actions: "
                 "action_noise and target_policy_noise are now set to 0.0"
             )
             action_noise = 0.0
@@ -138,7 +140,7 @@ class TD3Agent(Agent):
         self._train_interval = train_interval
         self._gradient_steps = gradient_steps
 
-        # Parameters (ED3)
+        # Parameters (TD3)
         self.lambda_ = np.array(lambda_, dtype=np.float32)
         self.random_exploration_eps = random_exploration_eps
         self.policy_delay = policy_delay
@@ -181,31 +183,11 @@ class TD3Agent(Agent):
         self._replay_buffer = ReplayBuffer(
             max_replay_size, self.rng, self._max_episode_steps
         )
-
-        # # define specs
-        # # TODO: generalize. Observation is taken from reset() because gym is
-        # # mixing things up (returning double instead of float)
-        # sample_obs = env.reset()
-        # try:
-        #     obs_shape, obs_dtype = sample_obs.shape, sample_obs.dtype
-        # except AttributeError:  # in case sample_obs has no .shape attribute
-        #     obs_shape, obs_dtype = (
-        #         env.observation_space.shape,
-        #         env.observation_space.dtype,
-        #     )
-        # action_shape, action_dtype = env.action_space.shape, env.action_space.dtype
-        # self._replay_buffer = replay_buffer.ReverbReplayBuffer(
-        #     self._batch_size,
-        #     self._chunk_size,
-        #     self._max_replay_size,
-        #     checkpoint_path=self.output_dir / "reverb",
-        # )
-        # self._replay_buffer.setup_entry("actions", action_shape, action_dtype)
-        # self._replay_buffer.setup_entry("observations", obs_shape, obs_dtype)
-        # self._replay_buffer.setup_entry("next_observations", obs_shape, obs_dtype)
-        # self._replay_buffer.setup_entry("rewards", (), np.float32)
-        # self._replay_buffer.setup_entry("discounts", (), np.float32)
-        # self._replay_buffer.build()
+        self._replay_buffer.setup_entry("observations", np.float32)
+        self._replay_buffer.setup_entry("actions", np.float32)
+        self._replay_buffer.setup_entry("rewards", np.float32)
+        self._replay_buffer.setup_entry("discounts", np.float32)
+        self._replay_buffer.setup_entry("next_observations", np.float32)
 
         #
         # Counters
@@ -268,18 +250,18 @@ class TD3Agent(Agent):
         ).detach()  # shape (batch, chunk, n_heads)
 
         # Compute returns
-        v_tp1_aggregated, _ = torch.min(v_tp1, dim=-1)
+        v_tp1_min, _ = torch.min(v_tp1, dim=-1)
         lambda_returns = utils.lambda_returns(
             batch["rewards"],
             batch["discounts"],
-            v_tp1_aggregated.numpy().astype(np.float32),
+            v_tp1_min.numpy().astype(np.float32),
             self.lambda_,
         )
 
         # Targets
         targets = torch.tensor(lambda_returns).to(self.device)
 
-        # Update critic A
+        # Update critics
         n_heads = q_t.shape[-1]
         q_loss = torch.tensor(0.0).to(self.device)
         for ii in range(n_heads):
@@ -382,35 +364,30 @@ class TD3Agent(Agent):
     def total_timesteps(self):
         return self._total_timesteps
 
-    def compute_state(self, next_obs, state=None, action=None):
-        """(Optional) TO BE IMPLEMENTED BY CHILD CLASS
-        state = embedding of [obs(0), action(0), ..., obs(t-1), action(t-1), obs(t)]
-        """
-        state = next_obs
-        return state
-
     def fit(self, budget: int, **kwargs):
         del kwargs
         timesteps_counter = 0
         episode_rewards = 0.0
         episode_timesteps = 0
         observation = self.env.reset()
-        state = self.compute_state(observation)
         while timesteps_counter < budget:
             if self.total_timesteps < self._learning_starts:
                 action = self.env.action_space.sample()
             else:
                 self._timesteps_since_last_update += 1
-                action = self.policy(state, evaluation=False)
+                action = self.policy(observation, evaluation=False)
             next_obs, reward, done, _ = self.env.step(action)
-
-            # update state
-            state = self.compute_state(next_obs, state, action)
 
             # store data
             episode_rewards += reward
             self._replay_buffer.append(
-                observation, action, reward, self._gamma * (1.0 - done), next_obs
+                {
+                    "observations": observation,
+                    "actions": action,
+                    "rewards": reward,
+                    "discounts": self._gamma * (1.0 - done),
+                    "next_observations": next_obs,
+                }
             )
 
             # counters and next obs
@@ -464,13 +441,12 @@ class TD3Agent(Agent):
         episode_rewards = np.zeros(n_simimulations)
         for sim in range(n_simimulations):
             observation = self.eval_env.reset()
-            state = self.compute_state(observation)
             tt = 0
             while tt < eval_horizon:
-                action = self.policy(state, evaluation=True)
+                action = self.policy(observation, evaluation=True)
                 next_obs, reward, done, _ = self.eval_env.step(action)
-                state = self.compute_state(next_obs, state, action)
                 episode_rewards[sim] += reward * np.power(gamma, tt)
+                observation = next_obs
                 tt += 1
                 if done:
                     break

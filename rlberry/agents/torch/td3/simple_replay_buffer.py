@@ -1,33 +1,50 @@
 import numpy as np
-import collections
 
 
-ReplayData = collections.namedtuple(
-    "ReplayData",
-    ["observations", "actions", "rewards", "discounts", "next_observations"],
-)
-
-
-class ReplayBuffer:
+class SimpleReplayBuffer:
+    """Simple replay buffer that allows sampling data with shape (batch_size, time_size, ...)."""
     def __init__(self, max_replay_size, rng, max_episode_steps=None):
         self._rng = rng
         self._max_replay_size = max_replay_size
-        self._observations = []
-        self._actions = []
-        self._rewards = []
-        self._discounts = []
-        self._next_observations = []
-
+        self._tags = []
+        self._data = dict()
+        self._dtypes = dict()
         self._max_episode_steps = max_episode_steps
 
     @property
-    def data(self):
-        observations = self._observations
-        actions = self._actions
-        rewards = self._rewards
-        discounts = self._discounts
-        next_observations = self._next_observations
-        return ReplayData(observations, actions, rewards, discounts, next_observations)
+    def tags(self):
+        return self._tags
+
+    def setup_entry(self, tag, dtype):
+        """Configure replay buffer to store data.
+
+        Parameters
+        ----------
+        tag : str
+            Tag that identifies the entry (e.g "observation", "reward")
+        dtype : obj
+            Data type of the entry (e.g. `np.float32`)        
+        """
+        if tag in self._data:
+            raise ValueError(f"Entry {tag} already added to replay buffer.")
+        self._tags.append(tag)
+        self._data[tag] = []
+        self._dtypes[tag] = dtype
+
+    def append(self, data):
+        """Store data.
+        
+        Parameters
+        ----------
+        data : dict
+            Dictionary containing scalar values, whose keys must be in self.tags.
+        """
+        assert list(data.keys()) == self.tags
+        for tag in self.tags:
+            self._data[tag].append(data[tag])
+        if len(self) > self._max_replay_size:
+            for tag in self.tags:
+                self._data[tag].pop(0)
 
     def _sample_one_chunk(self, chunk_size):
         current_size = len(self)
@@ -48,32 +65,18 @@ class ReplayBuffer:
             end_index = self._rng.choice(trajectory_ends_indices)
             start_index = end_index - chunk_size
             assert start_index >= 0
-        observations = np.array(self._observations[start_index:end_index])
-        actions = np.array(self._actions[start_index:end_index])
-        rewards = np.array(self._rewards[start_index:end_index])
-        discounts = np.array(self._discounts[start_index:end_index])
-        next_observations = np.array(self._next_observations[start_index:end_index])
-
-        return observations, actions, rewards, discounts, next_observations
+        
+        chunk = dict()
+        for tag in self.tags:
+            chunk[tag] = np.array(self._data[tag][start_index:end_index])
+        return chunk
 
     def __len__(self):
-        return len(self._rewards)
-
-    def append(self, obs, action, reward, discount, next_obs):
-        self._observations.append(obs)
-        self._actions.append(action)
-        self._rewards.append(reward)
-        self._discounts.append(discount)
-        self._next_observations.append(next_obs)
-        if len(self) > self._max_replay_size:
-            self._observations.pop(0)
-            self._actions.pop(0)
-            self._rewards.pop(0)
-            self._discounts.pop(0)
-            self._next_observations.pop(0)
+        return len(self._data[self.tags[0]])
 
     def sample(self, batch_size, chunk_size):
-        """
+        """ Sample a batch.
+
         Data have shape (B, T, ...), where
         B = batch_size
         T = chunk_size
@@ -82,57 +85,45 @@ class ReplayBuffer:
         if len(self) <= chunk_size:
             return None
         batch = dict()
-        obs_trajectories = []
-        action_trajectories = []
-        reward_trajectories = []
-        discount_trajectories = []
-        next_obs_trajectories = []
+
+        trajectories = dict()
+        for tag in self.tags:
+            trajectories[tag] = []
         for _ in range(batch_size):
-            (
-                observations,
-                actions,
-                rewards,
-                discounts,
-                next_obs,
-            ) = self._sample_one_chunk(chunk_size)
-            obs_trajectories.append(observations)
-            action_trajectories.append(actions)
-            reward_trajectories.append(rewards)
-            discount_trajectories.append(discounts)
-            next_obs_trajectories.append(next_obs)
-        batch["observations"] = np.array(obs_trajectories)
-        batch["actions"] = np.array(action_trajectories)
-        batch["rewards"] = np.array(reward_trajectories, dtype=np.float32)
-        batch["discounts"] = np.array(discount_trajectories, dtype=np.float32)
-        batch["dones"] = batch["discounts"] == 0.0
-        batch["next_observations"] = np.array(next_obs_trajectories)
+            chunk = self._sample_one_chunk(chunk_size)
+            for tag in self.tags:
+                trajectories[tag].append(chunk[tag])
+        for tag in self.tags:
+            batch[tag] = np.array(trajectories[tag], dtype=self._dtypes[tag])
         return batch
 
 
-if __name__ == "__main__":
-    import matplotlib.pyplot as plt
-    import pickle
-    from numpy.random import default_rng
+# if __name__ == "__main__":
+#     import matplotlib.pyplot as plt
+#     import pickle
+#     from numpy.random import default_rng
 
-    replay = ReplayBuffer(max_replay_size=50000, rng=default_rng())
-    for _ in range(2):
-        initial_buffer_size = len(replay)
-        sampled_from_replay = []
-        for ii in range(10000):
-            state = (ii + initial_buffer_size) * np.ones((2,), dtype=np.float32)
-            state[1] += 0.1
-            replay.append(state, 1, 2, 3, 4)
-            batch = replay.sample(1, 1)
-            if batch:
-                sampled_from_replay.append(batch["observations"][0][0][0])
+#     replay = SimpleReplayBuffer(max_replay_size=50000, rng=default_rng())
+#     replay.setup_entry("state", np.float32)
 
-        plt.figure()
-        plt.plot(sampled_from_replay)
+#     for _ in range(2):
+#         initial_buffer_size = len(replay)
+#         sampled_from_replay = []
+#         for ii in range(10000):
+#             state = (ii + initial_buffer_size) * np.ones((2,), dtype=np.float32)
+#             state[1] += 0.1
+#             replay.append({"state": state})
+#             batch = replay.sample(1, 1)
+#             if batch:
+#                 sampled_from_replay.append(batch["state"][0][0][0])
 
-        print("-------------------------------------------------")
-        print("save and load replay")
-        pickle.dump(replay, open("temp/saved_replay.pickle", "wb"))
-        del replay
-        replay = pickle.load(open("temp/saved_replay.pickle", "rb"))
+#         plt.figure()
+#         plt.plot(sampled_from_replay)
 
-    plt.show()
+#         print("-------------------------------------------------")
+#         print("save and load replay")
+#         pickle.dump(replay, open("temp/saved_replay.pickle", "wb"))
+#         del replay
+#         replay = pickle.load(open("temp/saved_replay.pickle", "rb"))
+
+#     plt.show()
