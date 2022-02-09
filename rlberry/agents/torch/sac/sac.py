@@ -287,7 +287,7 @@ class SACAgent(AgentWithSimplePolicy):
             v_loss_v.backward()
             self.value_optimizer.step()
             if self.writer is not None:
-                self.writer.add_scalar("loss_v", v_loss_v, epoch)
+                self.writer.add_scalar("loss_v", float(v_loss_v.detach()), self.episode)
 
             # train TwinQ
             self.q1_optimizer.zero_grad()
@@ -302,8 +302,8 @@ class SACAgent(AgentWithSimplePolicy):
             self.q1_optimizer.step()
             self.q2_optimizer.step()
             if self.writer is not None:
-                self.writer.add_scalar("loss_q1", q1_loss_v, epoch)
-                self.writer.add_scalar("loss_q2", q2_loss_v, epoch)
+                self.writer.add_scalar("loss_q1", float(q1_loss_v.detach()), self.episode)
+                self.writer.add_scalar("loss_q2", float(q2_loss_v.detach()), self.episode)
 
             # Actor
             self.policy_optimizer.zero_grad()
@@ -315,7 +315,7 @@ class SACAgent(AgentWithSimplePolicy):
             act_loss.backward()
             self.policy_optimizer.step()
             if self.writer is not None:
-                self.writer.add_scalar("loss_act", act_loss, epoch)
+                self.writer.add_scalar("loss_act", float(act_loss.detach()), self.episode)
 
             # # evaluate old actions and values
             # action_dist = self.cat_policy(old_states)
