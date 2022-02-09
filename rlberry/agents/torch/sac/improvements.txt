@@ -5,4 +5,4 @@
 
 
 Stuff to check:
-1) how distribution of actions is actually working when sampling from it; can we get multiple distributions for all states
+1) maybe performing k_epochs on the same batch is not the optimal way of doing things

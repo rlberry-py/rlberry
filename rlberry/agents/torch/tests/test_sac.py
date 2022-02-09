@@ -1,5 +1,3 @@
-#### SO FAR IT IS A COPY OF A2C TEST
-
 from rlberry.agents.torch import SACAgent
 
 from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
@@ -25,6 +23,7 @@ def test_sac_agent():
         uncertainty_estimator_kwargs=dict(
             uncertainty_estimator_fn=uncertainty_estimator_fn, bonus_scale_factor=1.0
         ),
+        device = "cpu"
     )
     agent.fit(budget=n_episodes)
     agent.policy(env.observation_space.sample())
@@ -42,6 +41,7 @@ def test_sac_agent_partial_fit():
         learning_rate=0.001,
         k_epochs=4,
         use_bonus=False,
+        device="cpu"
     )
 
     agent.fit(budget=n_episodes // 2)
@@ -50,6 +50,7 @@ def test_sac_agent_partial_fit():
     agent.fit(budget=n_episodes // 2)
     assert agent.episode == 10
     agent.policy(env.observation_space.sample())
+
 
 
 test_sac_agent_partial_fit()
