@@ -23,7 +23,7 @@ def test_sac_agent():
         uncertainty_estimator_kwargs=dict(
             uncertainty_estimator_fn=uncertainty_estimator_fn, bonus_scale_factor=1.0
         ),
-        device = "cpu"
+        device="cpu",
     )
     agent.fit(budget=n_episodes)
     agent.policy(env.observation_space.sample())
@@ -41,7 +41,7 @@ def test_sac_agent_partial_fit():
         learning_rate=0.001,
         k_epochs=4,
         use_bonus=False,
-        device="cpu"
+        device="cpu",
     )
 
     agent.fit(budget=n_episodes // 2)
@@ -50,4 +50,3 @@ def test_sac_agent_partial_fit():
     agent.fit(budget=n_episodes // 2)
     assert agent.episode == 10
     agent.policy(env.observation_space.sample())
-

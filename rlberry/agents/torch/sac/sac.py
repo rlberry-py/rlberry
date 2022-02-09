@@ -10,7 +10,7 @@ from rlberry.agents.utils.memories import Memory
 from rlberry.agents.torch.utils.training import optimizer_factory
 from rlberry.agents.torch.utils.models import default_policy_net_fn
 from rlberry.agents.torch.utils.models import default_value_net_fn
-from rlberry.agents.torch.utils.models import default_twinq_net_fn 
+from rlberry.agents.torch.utils.models import default_twinq_net_fn
 from rlberry.utils.torch import choose_device
 from rlberry.wrappers.uncertainty_estimator_wrapper import UncertaintyEstimatorWrapper
 from .utils import alpha_sync
@@ -24,9 +24,9 @@ class SACAgent(AgentWithSimplePolicy):
     """
     Experimental Soft Actor Critic Agent (WIP).
 
-    SAC, or SOFT Actor Critic, an offpolicy actor-critic deep RL algorithm 
-    based on the maximum entropy reinforcement learning framework. In this 
-    framework, the actor aims to maximize expected reward while also 
+    SAC, or SOFT Actor Critic, an offpolicy actor-critic deep RL algorithm
+    based on the maximum entropy reinforcement learning framework. In this
+    framework, the actor aims to maximize expected reward while also
     maximizing entropy.
 
     Parameters
@@ -72,7 +72,7 @@ class SACAgent(AgentWithSimplePolicy):
 
     References
     ----------
-    Haarnoja, Tuomas, et al. "Soft actor-critic algorithms and applications." 
+    Haarnoja, Tuomas, et al. "Soft actor-critic algorithms and applications."
     arXiv preprint arXiv:1812.05905 (2018).
     """
 
@@ -164,12 +164,11 @@ class SACAgent(AgentWithSimplePolicy):
         self.target_value_net.load_state_dict(self.value_net.state_dict())
         # twinq networks
         twinq_net = self.twinq_net_fn(self.env, **self.twinq_net_kwargs)
-        
+
         self.q1, self.q2 = twinq_net
 
         self.q1.to(self.device)
         self.q2.to(self.device)
-
 
         self.q1_optimizer = optimizer_factory(
             self.q1.parameters(), **self.optimizer_kwargs
@@ -177,7 +176,7 @@ class SACAgent(AgentWithSimplePolicy):
         self.q2_optimizer = optimizer_factory(
             self.q2.parameters(), **self.optimizer_kwargs
         )
-        # 
+        #
         self.MseLoss = nn.MSELoss()
         self.memory = Memory()
         self.episode = 0
@@ -236,7 +235,6 @@ class SACAgent(AgentWithSimplePolicy):
             # update state
             state = next_state
 
-
             if i == self.horizon - 1:
                 self.memory.is_terminals[-1] = True
 
@@ -249,7 +247,7 @@ class SACAgent(AgentWithSimplePolicy):
         #
         if self.episode % self.batch_size == 0:
             self._update()
-            #is it really good to forget it completely ?????
+            # is it really good to forget it completely ?????
             self.memory.clear_memory()
 
         return episode_rewards
@@ -257,21 +255,30 @@ class SACAgent(AgentWithSimplePolicy):
     def _update(self):
 
         twinq_net = (self.q1, self.q2)
-        states_v, actions_v, logprobs_v, rewards_v, is_terminals_v = \
-                    utils.unpack_batch(self.memory, self.device)
-        
+        states_v, actions_v, logprobs_v, rewards_v, is_terminals_v = utils.unpack_batch(
+            self.memory, self.device
+        )
 
-        #obtain reference values for V and Q functions
-        qref = utils.get_qref(self.memory, self.target_value_net, self.gamma, self.device)
-        vref = utils.get_vref(self.env, self.memory, twinq_net, self.cat_policy, self.entr_coef, self.device)
+        # obtain reference values for V and Q functions
+        qref = utils.get_qref(
+            self.memory, self.target_value_net, self.gamma, self.device
+        )
+        vref = utils.get_vref(
+            self.env,
+            self.memory,
+            twinq_net,
+            self.cat_policy,
+            self.entr_coef,
+            self.device,
+        )
 
         # optimize policy for K epochs
         for epoch in range(self.k_epochs):
-            
+
             # Critic
             self.value_optimizer.zero_grad()
             val_v = self.value_net(states_v)
-            v_loss_v = self.MseLoss(val_v.squeeze(),vref.detach())
+            v_loss_v = self.MseLoss(val_v.squeeze(), vref.detach())
             v_loss_v.backward()
             self.value_optimizer.step()
             if self.writer is not None:
@@ -281,8 +288,9 @@ class SACAgent(AgentWithSimplePolicy):
             self.q1_optimizer.zero_grad()
             self.q2_optimizer.zero_grad()
             actions_v_one_hot = one_hot(actions_v, self.env.action_space.n)
-            q1_v, q2_v = self.q1(torch.cat([states_v, actions_v_one_hot], dim=1)), \
-                            self.q2(torch.cat([states_v, actions_v_one_hot], dim=1))
+            q1_v, q2_v = self.q1(
+                torch.cat([states_v, actions_v_one_hot], dim=1)
+            ), self.q2(torch.cat([states_v, actions_v_one_hot], dim=1))
             q1_loss_v = self.MseLoss(q1_v.squeeze(), qref.detach())
             q2_loss_v = self.MseLoss(q2_v.squeeze(), qref.detach())
             q1_loss_v.backward()
@@ -290,8 +298,12 @@ class SACAgent(AgentWithSimplePolicy):
             self.q1_optimizer.step()
             self.q2_optimizer.step()
             if self.writer is not None:
-                self.writer.add_scalar("loss_q1", float(q1_loss_v.detach()), self.episode)
-                self.writer.add_scalar("loss_q2", float(q2_loss_v.detach()), self.episode)
+                self.writer.add_scalar(
+                    "loss_q1", float(q1_loss_v.detach()), self.episode
+                )
+                self.writer.add_scalar(
+                    "loss_q2", float(q2_loss_v.detach()), self.episode
+                )
 
             # Actor
             self.policy_optimizer.zero_grad()
@@ -303,15 +315,16 @@ class SACAgent(AgentWithSimplePolicy):
             act_loss.backward()
             self.policy_optimizer.step()
             if self.writer is not None:
-                self.writer.add_scalar("loss_act", float(act_loss.detach()), self.episode)
-
+                self.writer.add_scalar(
+                    "loss_act", float(act_loss.detach()), self.episode
+                )
 
         # copy new weights into old policy
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
 
-        #update target_value_net
-        alpha_sync(self.value_net, self.target_value_net, 1-1e-3)  
-        
+        # update target_value_net
+        alpha_sync(self.value_net, self.target_value_net, 1 - 1e-3)
+
     #
     # For hyperparameter optimization
     #
