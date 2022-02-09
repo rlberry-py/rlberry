@@ -51,6 +51,3 @@ def test_sac_agent_partial_fit():
     assert agent.episode == 10
     agent.policy(env.observation_space.sample())
 
-
-
-test_sac_agent_partial_fit()

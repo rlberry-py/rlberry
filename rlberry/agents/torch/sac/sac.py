@@ -22,13 +22,12 @@ logger = logging.getLogger(__name__)
 
 class SACAgent(AgentWithSimplePolicy):
     """
-    Soft Actor Critic Agent (WIP). So far it is just a copy of A2C
+    Experimental Soft Actor Critic Agent (WIP).
 
-    A2C, or Advantage Actor Critic, is a synchronous version of the A3C policy
-    gradient method. As an alternative to the asynchronous implementation of
-    A3C, A2C is a synchronous, deterministic implementation that waits for each
-    actor to finish its segment of experience before updating, averaging over
-    all of the actors. This more effectively uses GPUs due to larger batch sizes.
+    SAC, or SOFT Actor Critic, an offpolicy actor-critic deep RL algorithm 
+    based on the maximum entropy reinforcement learning framework. In this 
+    framework, the actor aims to maximize expected reward while also 
+    maximizing entropy.
 
     Parameters
     ----------
@@ -54,10 +53,15 @@ class SACAgent(AgentWithSimplePolicy):
     value_net_fn : function(env, **kwargs)
         Function that returns an instance of a value network (pytorch).
         If None, a default net is used.
+    twinq_net_fn : function(env, **kwargs)
+        Function that returns a tuple composed of two Q networks (pytorch).
+        If None, a default net function is used.
     policy_net_kwargs : dict
         kwargs for policy_net_fn
     value_net_kwargs : dict
         kwargs for value_net_fn
+    twinq_net_kwargs : dict
+        kwargs for twinq_net_fn
     use_bonus : bool, default = False
         If true, compute an 'exploration_bonus' and add it to the reward.
         See also UncertaintyEstimatorWrapper.
@@ -68,10 +72,8 @@ class SACAgent(AgentWithSimplePolicy):
 
     References
     ----------
-    Mnih, V., Badia, A.P., Mirza, M., Graves, A., Lillicrap, T., Harley, T.,
-    Silver, D. & Kavukcuoglu, K. (2016).
-    "Asynchronous methods for deep reinforcement learning."
-    In International Conference on Machine Learning (pp. 1928-1937).
+    Haarnoja, Tuomas, et al. "Soft actor-critic algorithms and applications." 
+    arXiv preprint arXiv:1812.05905 (2018).
     """
 
     name = "SAC"
@@ -253,28 +255,13 @@ class SACAgent(AgentWithSimplePolicy):
         return episode_rewards
 
     def _update(self):
-        # monte carlo estimate of rewards
-        # rewards = []
-        # discounted_reward = 0
-        # for reward, is_terminal in zip(
-        #     reversed(self.memory.rewards), reversed(self.memory.is_terminals)
-        # ):
-        #     if is_terminal:
-        #         discounted_reward = 0
-        #     discounted_reward = reward + (self.gamma * discounted_reward)
-        #     rewards.insert(0, discounted_reward)
 
-        # # normalize the rewards
-        # rewards = torch.tensor(rewards).to(self.device).float()
-        # rewards = (rewards - rewards.mean()) / (rewards.std() + 1e-5)
         twinq_net = (self.q1, self.q2)
         states_v, actions_v, logprobs_v, rewards_v, is_terminals_v = \
                     utils.unpack_batch(self.memory, self.device)
         
 
-        # convert list to tensor
-        # old_states = torch.stack(self.memory.states).to(self.device).detach()
-        # old_actions = torch.stack(self.memory.actions).to(self.device).detach()
+        #obtain reference values for V and Q functions
         qref = utils.get_qref(self.memory, self.target_value_net, self.gamma, self.device)
         vref = utils.get_vref(self.env, self.memory, twinq_net, self.cat_policy, self.entr_coef, self.device)
 
@@ -318,34 +305,11 @@ class SACAgent(AgentWithSimplePolicy):
             if self.writer is not None:
                 self.writer.add_scalar("loss_act", float(act_loss.detach()), self.episode)
 
-            # # evaluate old actions and values
-            # action_dist = self.cat_policy(old_states)
-            # logprobs = action_dist.log_prob(old_actions)
-            # state_values = torch.squeeze(self.value_net(old_states))
-            # dist_entropy = action_dist.entropy()
-
-            # normalize the advantages
-            # advantages = rewards - state_values.detach()
-            # advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
-            # # find pg loss
-            # pg_loss = -logprobs * advantages
-            # loss = (
-            #     pg_loss
-            #     + 0.5 * self.MseLoss(state_values, rewards)
-            #     - self.entr_coef * dist_entropy
-            # )
-
-            # # take gradient step
-            # self.policy_optimizer.zero_grad()
-            # self.value_optimizer.zero_grad()
-
-            # loss.mean().backward()
-
-            # self.policy_optimizer.step()
-            # self.value_optimizer.step()
 
         # copy new weights into old policy
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
+
+        #update target_value_net
         alpha_sync(self.value_net, self.target_value_net, 1-1e-3)  
         
     #
