@@ -1,6 +1,6 @@
-""" 
- ===================== 
- Demo: demo_from_stable_baselines_atari 
+"""
+ =====================
+ Demo: demo_from_stable_baselines_atari
  =====================
 """
 from stable_baselines3 import A2C as A2CStableBaselines

@@ -1,6 +1,6 @@
-""" 
- ===================== 
- Demo: demo_from_stable_baselines 
+"""
+ =====================
+ Demo: demo_from_stable_baselines
  =====================
 """
 from rlberry.envs import gym_make

@@ -1,11 +1,12 @@
-""" 
- ===================== 
- Demo: run_client 
+"""
+ =====================
+ Demo: run_client
  =====================
 """
 from rlberry.network.client import BerryClient
 from rlberry.network import interface
 from rlberry.network.interface import Message, ResourceRequest
+import numpy as np
 
 
 port = int(input("Select server port: "))
@@ -31,7 +32,6 @@ client.send(
     print_response=True,
 )
 
-import numpy as np
 
 client.send(
     Message.create(
