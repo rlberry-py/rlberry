@@ -2,6 +2,7 @@ from rlberry.envs.bandits import NormalBandit
 from rlberry.manager import AgentManager
 import numpy as np
 
+
 def check_bandit_agent(Agent):
     env_ctor = NormalBandit
     env_kwargs = {}

@@ -23,9 +23,9 @@ class UCBAgent(IndexAgent):
     name = "UCB Agent"
 
     def __init__(self, env, B=1, **kwargs):
-        # upper bound mean + B*0.5*sqrt(2*log(t**2)/n)
-        # if bounded by B or B subgaussian
-        index = lambda r, t: np.mean(r) + B * 0.5 * np.sqrt(2 * np.log(t ** 2) / len(r))
+        # upper bound mean + B*sqrt(2*log(t**2)/n)
+        # if B subgaussian
+        index = lambda r, t: np.mean(r) + B * np.sqrt(2 * np.log(t**2) / len(r))
         IndexAgent.__init__(self, env, index, **kwargs)
         # record rewards
         self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
@@ -37,16 +37,18 @@ class RecursiveUCBAgent(RecursiveIndexAgent):
     name = "Recursive UCB Agent"
 
     def __init__(self, env, B=1, **kwargs):
-        # upper bound mean + B*0.5*sqrt(2*log(t**2)/n)
-        # if bounded by B or B subgaussian
+        # upper bound mean + B*sqrt(2*log(t**2)/n)
+        # if B subgaussian
         def stat_function(stat, Na, action, reward):
             if stat is None:
                 stat = np.zeros(len(Na))
             # update the empirical mean
-            stat[action] = (Na[action] - 1) / Na[action] * stat[action] + reward
+            stat[action] = (Na[action] - 1) / Na[action] * stat[action] + reward / Na[
+                action
+            ]
             return stat
 
-        index = lambda stat, Na, t: stat + B * 0.5 * np.sqrt(2 * np.log(t ** 2) / Na)
+        index = lambda stat, Na, t: stat + B * np.sqrt(2 * np.log(t**2) / Na)
         RecursiveIndexAgent.__init__(self, env, stat_function, index, **kwargs)
         # record rewards
         self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")

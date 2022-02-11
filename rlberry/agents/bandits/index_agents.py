@@ -95,7 +95,6 @@ class IndexAgent(AgentWithSimplePolicy):
         with filename.open("wb") as ff:
             pickle.dump(dict, ff)
 
-
         return filename
 
     @classmethod

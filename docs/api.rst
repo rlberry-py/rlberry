@@ -25,6 +25,15 @@ Basic Agents
    agents.OptQLAgent
    agents.linear.LSVIUCBAgent
 
+Bandits
+-------
+
+.. autosummary::
+   :toctree: generated/
+   :template: class.rst
+
+   agents.bandits.IndexAgent
+   agents.bandits.RecursiveIndexAgent
 
 
 Torch agents

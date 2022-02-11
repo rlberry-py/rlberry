@@ -4,24 +4,28 @@ from rlberry.agents.bandits import IndexAgent, RecursiveIndexAgent
 from rlberry.manager import AgentManager
 from rlberry.utils import check_bandit_agent
 
+
 class UCBAgent(IndexAgent):
     name = "UCB Agent"
-    def __init__(self, env, B=1, **kwargs):
-        index = lambda r, t: np.mean(r) + B * np.sqrt(2 * np.log(t ** 2) / len(r))
-        IndexAgent.__init__(self, env, index, **kwargs)
 
+    def __init__(self, env, B=1, **kwargs):
+        index = lambda r, t: np.mean(r) + B * np.sqrt(2 * np.log(t**2) / len(r))
+        IndexAgent.__init__(self, env, index, **kwargs)
 
 
 class RecursiveUCBAgent(RecursiveIndexAgent):
     name = "Recursive UCB Agent"
+
     def __init__(self, env, B=1, **kwargs):
         def stat_function(stat, Na, action, reward):
             if stat is None:
                 stat = np.zeros(len(Na))
-            stat[action] = (Na[action] - 1) / Na[action] * stat[action] + reward / Na[action]
+            stat[action] = (Na[action] - 1) / Na[action] * stat[action] + reward / Na[
+                action
+            ]
             return stat
 
-        index = lambda stat, Na, t: stat + B * np.sqrt(2 * np.log(t ** 2) / Na)
+        index = lambda stat, Na, t: stat + B * np.sqrt(2 * np.log(t**2) / Na)
         RecursiveIndexAgent.__init__(self, env, stat_function, index, **kwargs)
 
 

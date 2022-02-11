@@ -37,7 +37,7 @@ client.send(
     Message.create(
         command=interface.Command.NONE,
         params=dict(),
-        data=dict(big_list=list(1.0 * np.arange(2 ** 8))),
+        data=dict(big_list=list(1.0 * np.arange(2**8))),
     ),
     print_response=True,
 )
