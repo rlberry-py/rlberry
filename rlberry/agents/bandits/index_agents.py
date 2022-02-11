@@ -42,7 +42,7 @@ class IndexAgent(AgentWithSimplePolicy):
                 indexes = self.get_indexes(rewards, actions, ep)
                 action = np.argmax(indexes)
             self.total_time += 1
-            next_state, reward, done, _ = self.env.step(action)
+            _, reward, done, _ = self.env.step(action)
             rewards[ep] = reward
             actions[ep] = action
 
@@ -80,7 +80,7 @@ class IndexAgent(AgentWithSimplePolicy):
         if not dill.pickles(self.writer):
             self.set_writer(None)
 
-        dict = {
+        dico = {
             "_writer": self.writer,
             "seeder": self.seeder,
             "_execution_metadata": self._execution_metadata,
@@ -93,7 +93,7 @@ class IndexAgent(AgentWithSimplePolicy):
         filename = Path(filename).with_suffix(".pickle")
         filename.parent.mkdir(parents=True, exist_ok=True)
         with filename.open("wb") as ff:
-            pickle.dump(dict, ff)
+            pickle.dump(dico, ff)
 
         return filename
 
@@ -159,7 +159,7 @@ class RecursiveIndexAgent(AgentWithSimplePolicy):
                 action = np.argmax(indexes)
             self.total_time += 1
             Na[action] += 1
-            next_state, reward, done, _ = self.env.step(action)
+            _, reward, done, _ = self.env.step(action)
             stats = self.stat_function(stats, Na, action, reward)
             rewards[ep] = reward
             actions[ep] = action
@@ -199,7 +199,7 @@ class RecursiveIndexAgent(AgentWithSimplePolicy):
         if not dill.pickles(self.writer):
             self.set_writer(None)
 
-        dict = {
+        dico = {
             "_writer": self.writer,
             "seeder": self.seeder,
             "_execution_metadata": self._execution_metadata,
@@ -212,7 +212,7 @@ class RecursiveIndexAgent(AgentWithSimplePolicy):
         filename = Path(filename).with_suffix(".pickle")
         filename.parent.mkdir(parents=True, exist_ok=True)
         with filename.open("wb") as ff:
-            pickle.dump(dict, ff)
+            pickle.dump(dico, ff)
 
         return filename
 
