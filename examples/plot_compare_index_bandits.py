@@ -34,7 +34,7 @@ class ETCAgent(IndexAgent):
 
     def __init__(self, env, m=10, **kwargs):
         def index(r, t):
-            A = len(r)
+            A = 4
             indexes = np.zeros(A)
             if t < m * A:
                 indexes[(t % A)] = 1
@@ -91,7 +91,7 @@ class MOSSAgent(IndexAgent):
 # Parameters of the problem
 means = [0.8, 0.8, 0.8, 1]  # means of the arms
 T = 2000  # Horizon
-M = 10  # number of MC simu
+M = 5  # number of MC simu
 
 # Construction of the experiment
 
@@ -149,7 +149,7 @@ def compute_na(actions, a):
     return np.cumsum(actions == a)
 
 
-fig, axes = plt.subplots(1, 4, sharey=True)
+fig, axes = plt.subplots(1, 4, sharey=True, figsize=(12, 3))
 for arm in range(4):
     output = plot_writer_data(
         agents,
