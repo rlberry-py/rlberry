@@ -29,12 +29,12 @@ class IndexAgent(AgentWithSimplePolicy):
         self.total_time = 0
 
     def fit(self, budget=None, **kwargs):
-        n_episodes = budget
-        rewards = np.zeros(n_episodes)
-        actions = np.ones(n_episodes) * np.nan
+        horizon = budget
+        rewards = np.zeros(horizon)
+        actions = np.ones(horizon) * np.nan
 
         indexes = np.inf * np.ones(self.n_arms)
-        for ep in range(n_episodes):
+        for ep in range(horizon):
             if self.total_time < self.n_arms:
                 action = self.total_time
             else:
@@ -142,13 +142,13 @@ class RecursiveIndexAgent(AgentWithSimplePolicy):
         self.total_time = 0
 
     def fit(self, budget=None, **kwargs):
-        n_episodes = budget
-        rewards = np.zeros(n_episodes)
-        actions = np.ones(n_episodes) * np.nan
+        horizon = budget
+        rewards = np.zeros(horizon)
+        actions = np.ones(horizon) * np.nan
         indexes = np.inf * np.ones(self.n_arms)
         stats = None
         Na = np.zeros(self.n_arms)
-        for ep in range(n_episodes):
+        for ep in range(horizon):
             if self.total_time < self.n_arms:
                 action = self.total_time
             else:
