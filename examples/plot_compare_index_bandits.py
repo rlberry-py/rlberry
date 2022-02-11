@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 from rlberry.wrappers import WriterWrapper
 
 # Agents definition
+# sphinx_gallery_thumbnail_number = 2
 
 
 class UCBAgent(IndexAgent):
@@ -149,7 +150,8 @@ def compute_na(actions, a):
     return np.cumsum(actions == a)
 
 
-fig, axes = plt.subplots(1, 4, sharey=True, figsize=(12, 3))
+fig, axes = plt.subplots(2, 2, sharey=True, figsize=(6, 6))
+axes = axes.ravel()
 for arm in range(4):
     output = plot_writer_data(
         agents,
@@ -159,4 +161,5 @@ for arm in range(4):
         ax=axes[arm],
         show=False,
     )
+fig.tight_layout()
 plt.show()
