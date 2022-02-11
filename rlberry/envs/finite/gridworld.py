@@ -5,8 +5,10 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 
 from rlberry.envs.finite import FiniteMDP
+from rlberry.envs.finite import gridworld_utils
 from rlberry.rendering import Scene, GeometricPrimitive, RenderInterface2D
 from rlberry.rendering.common_shapes import circle_shape
+
 
 logger = logging.getLogger(__name__)
 
@@ -113,6 +115,60 @@ class GridWorld(RenderInterface2D, FiniteMDP):
         self.set_clipping_area((0, self.ncols, 0, self.nrows))
         self.set_refresh_interval(100)  # in milliseconds
         self.renderer_type = "pygame"
+
+    @classmethod
+    def from_layout(
+        cls, layout: str = gridworld_utils.DEFAULT_LAYOUT, success_probability=0.95
+    ):
+        """
+        Create GridWorld instance from a layout.
+
+        Layout symbols:
+
+        '#' : wall
+        'r' : reward of 1, terminal state
+        'R' : reward of 1, non-terminal state
+        'T' : terminal state
+        'I' : initial state (if several, start uniformly among I)
+        'O' : empty state
+        any other char : empty state
+
+        Layout example:
+
+        IOOOO # OOOOO  O OOOOR
+        OOOOO # OOOOO  # OOOOO
+        OOOOO O OOOOO  # OOOOO
+        OOOOO # OOOOO  # OOOOO
+        IOOOO # OOOOO  # OOOOr
+        """
+        info = gridworld_utils.get_layout_info(layout)
+        nrows = info["nrows"]
+        ncols = info["ncols"]
+        walls = info["walls"]
+        reward_at = info["reward_at"]
+        terminal_states = info["terminal_states"]
+        initial_states_coord = info["initial_states"]
+
+        # Init base class
+        env = cls(
+            nrows=nrows,
+            ncols=ncols,
+            terminal_states=terminal_states,
+            success_probability=success_probability,
+            reward_at=reward_at,
+            walls=walls,
+            default_reward=0.0,
+        )
+
+        # Set initial distribution
+        distr = np.zeros(env.observation_space.n)
+        for init_coord in initial_states_coord:
+            init_index = env.coord2index[init_coord]
+            distr[init_index] = 1.0
+        distr = distr / distr.sum()
+        env.set_initial_state_distribution(distr)
+
+        return env
 
     def is_terminal(self, state):
         state_coord = self.index2coord[state]
@@ -282,7 +338,7 @@ class GridWorld(RenderInterface2D, FiniteMDP):
                 )
 
     def render_ascii(self):
-        logger.info(self._build_ascii())
+        print(self._build_ascii())
 
     def step(self, action):
         assert self.action_space.contains(action), "Invalid action!"
@@ -428,10 +484,3 @@ class GridWorld(RenderInterface2D, FiniteMDP):
 
         scene.add_shape(agent)
         return scene
-
-
-# if __name__ == '__main__':
-#     env = GridWorld(nrows=5, ncols=5,
-#                     reward_at={(4, 4): 1, (4, 3): -1})
-#     env.step(env.action_space.sample())
-#     env.render_ascii()

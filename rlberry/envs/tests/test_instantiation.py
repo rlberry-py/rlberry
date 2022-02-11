@@ -75,6 +75,17 @@ def test_gridworld_aux_functions():
                 assert layout[rr, cc] == vals[env.coord2index[(rr, cc)]]
 
 
+def test_gridworld_from_layout():
+    layout = """
+    IOOOO # OOOOO  O OOOOR
+    OOOOO # OOOOO  # OOOOO
+    OOOOO O OOOOO  # OOTOO
+    OOOOO # OOOOO  # OOOOO
+    IOOOO # OOOOO  # OOOOr"""
+    env = GridWorld.from_layout(layout)
+    env.reset()
+
+
 def test_ball2d_benchmark_instantiation():
     for level in [1, 2, 3, 4, 5]:
         env = get_benchmark_env(level)
