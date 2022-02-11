@@ -41,7 +41,7 @@ class IndexAgent(AgentWithSimplePolicy):
                 indexes = self.get_indexes(rewards, actions, ep)
                 action = np.argmax(indexes)
             self.total_time += 1
-            _, reward, done, _ = self.env.step(action)
+            _, reward, _, _ = self.env.step(action)
             rewards[ep] = reward
             actions[ep] = action
 
@@ -156,7 +156,7 @@ class RecursiveIndexAgent(AgentWithSimplePolicy):
                 action = np.argmax(indexes)
             self.total_time += 1
             Na[action] += 1
-            _, reward, done, _ = self.env.step(action)
+            _, reward, _, _ = self.env.step(action)
             stats = self.stat_function(stats, Na, action, reward)
             rewards[ep] = reward
             actions[ep] = action
