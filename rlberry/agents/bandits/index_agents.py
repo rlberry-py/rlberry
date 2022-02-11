@@ -139,7 +139,7 @@ class RecursiveIndexAgent(AgentWithSimplePolicy):
     name = "RecursiveIndexAgent"
 
     def __init__(self, env, stat_function, index_function, **kwargs):
-        IndexAgent.__init__(self, env, **kwargs)
+        AgentWithSimplePolicy.__init__(self, env, **kwargs)
         self.n_arms = self.env.action_space.n
         self.stat_function = stat_function
         self.index_function = index_function
