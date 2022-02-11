@@ -143,6 +143,7 @@ class RecursiveIndexAgent(AgentWithSimplePolicy):
         self.n_arms = self.env.action_space.n
         self.stat_function = stat_function
         self.index_function = index_function
+        self.total_time = 0
 
     def fit(self, budget=None, **kwargs):
         n_episodes = budget
