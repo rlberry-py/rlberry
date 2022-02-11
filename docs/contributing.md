@@ -202,7 +202,7 @@ EXAMPLES_PATTERN=your_regex_goes_here make html
 
 Please follow the [numpydoc docstring guide](https://numpydoc.readthedocs.io/en/latest/format.html), the minimal requirements should be to include the short description, parameters and  return section of the docstring.
 
-### Examples
+### Building examples
 
 The examples gallery is constructed using sphinx-gallery, see its [documentation](https://sphinx-gallery.readthedocs.io/en/latest/) for more information.
 
@@ -223,7 +223,7 @@ and for markdown:
 
 some text.
 ```
-If you want to look at some examples, you can look at doc/index.rst file for rst file example and the present file (contributing.md) for example of markdown syntax.
+If you want to look at some examples, you can look at docs/index.rst file for rst file example and the present file (contributing.md) for example of markdown syntax.
 
 
 # Guidelines for new agents
@@ -364,4 +364,3 @@ configure_logging(level="INFO")
 # Acknowledgements
 
 Part of this page was copied from [scikit-learn contributing guideling](https://scikit-learn.org/dev/developers/contributing.html#documentation).
-=======

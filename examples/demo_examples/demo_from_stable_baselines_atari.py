@@ -1,6 +1,6 @@
-""" 
- ===================== 
- Demo: demo_from_stable_baselines_atari 
+"""
+ =====================
+ Demo: demo_from_stable_baselines_atari
  =====================
 """
 from stable_baselines3 import A2C as A2CStableBaselines
@@ -47,7 +47,7 @@ class A2CAgent(AgentWithSimplePolicy):
         env = self.env
 
         # Generate seed for A2CStableBaselines using rlberry seeding
-        seed = self.rng.integers(2 ** 32).item()
+        seed = self.rng.integers(2**32).item()
 
         # init stable baselines class
         self.wrapped = A2CStableBaselines(
