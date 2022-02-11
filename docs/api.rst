@@ -31,6 +31,8 @@ Basic Agents
    agents.RSKernelUCBVIAgent
    agents.OptQLAgent
    agents.linear.LSVIUCBAgent
+   agents.RLSVIAgent
+   agents.PSRLAgent
 
 
 Torch Agents (experimental)
