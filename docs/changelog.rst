@@ -6,6 +6,16 @@ Changelog
 Under development
 -----------------
 
+*Feb 11, 2022 (#83, #95)*
+
+
+* (fix) Fixed bug in :meth:`FiniteMDP.sample()`: terminal state was being checked with `self.state` instead of given `state`
+* (feat) Option to use 'fork' or 'spawn' in :class:`~rlberry.manager.AgentManager`
+* (feat) AgentManager output_dir now has a timestamp and a short ID by default.
+* (feat) Gridworld can be constructed from string layout
+* (feat) `max_workers` argument for :class:`~rlberry.manager.AgentManager` to control the maximum number of processes/threads created by the :meth:`fit` method.
+
+
 *Feb 04, 2022*
 
 * Add :class:`~rlberry.manager.read_writer_data` to load agent's writer data from pickle files and make it simpler to customize in :class:`~rlberry.manager.plot_writer_data`
