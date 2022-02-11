@@ -29,6 +29,9 @@ class Bandit(Model):
         self.laws = laws
 
     def step(self, action):
+        """
+        Sample the reward associated to the action.
+        """
         # test that the action exists
         assert action < len(self.laws)
 

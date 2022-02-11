@@ -37,6 +37,7 @@ class RecursiveUCBAgent(RecursiveIndexAgent):
 
     def __init__(self, env, B=1, **kwargs):
         def stat_function(stat, Na, action, reward):
+            # The statistic is the empirical mean. We compute it recursively.
             if stat is None:
                 stat = np.zeros(len(Na))
             stat[action] = (Na[action] - 1) / Na[action] * stat[action] + reward / Na[
@@ -60,14 +61,12 @@ class NaiveAgent(IndexAgent):
         self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
 
 
-# Parameters
-means = [0, 0.9, 1]
+# Parameters of the problem
+means = [0, 0.9, 1]  # means of the arms
 T = 3000  # Horizon
 M = 20  # number of MC simu
 
-
 # Construction of the experiment
-
 
 env_ctor = NormalBandit
 env_kwargs = {"means": means, "stds": 2 * np.ones(len(means))}
@@ -101,7 +100,7 @@ agent2 = AgentManager(
     parallelization="process",
     mp_context="fork",
 )
-# these parameters whould give parallel computing even in notebooks
+# these parameters should give parallel computing even in notebooks
 
 
 # Agent training
@@ -111,7 +110,7 @@ agent1bis.fit()
 agent2.fit()
 
 
-# Compute and plot
+# Compute and plot regret
 def compute_regret(regret):
     return np.cumsum(np.max(means) - regret)
 
@@ -126,5 +125,3 @@ output = plot_writer_data(
     ax=ax,
 )
 fig.subplots_adjust(bottom=0.2, left=0.2)
-# you can customize the axis ax here to customize the plot
-# or you can use output, which is a pandat DataFrame to do the plot yourself.

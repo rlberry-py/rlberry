@@ -3,6 +3,16 @@ from rlberry.manager import AgentManager
 
 
 def check_bandit_agent(Agent):
+    """
+    Function used to check a bandit agent in rlberry.
+
+    Parameter
+    ---------
+
+    Agent: rlberry agent module
+        Agent class that we want to test.
+
+    """
     env_ctor = NormalBandit
     env_kwargs = {}
 
