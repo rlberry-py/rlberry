@@ -107,6 +107,18 @@ Benchmark Environments
     envs.finite.Chain
     envs.finite.GridWorld
 
+
+Bandits
+-------
+
+.. autosummary::
+   :toctree: generated/
+   :template: class.rst
+
+   envs.bandits.Bandit
+   envs.bandits.NormalBandit
+   envs.bandits.CorruptedNormalBandit
+
 Base class
 ----------
 
