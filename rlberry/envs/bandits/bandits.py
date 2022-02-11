@@ -20,12 +20,15 @@ class Bandit(Model):
         laws of the arms. can either be a frozen scipy law or any class that
         has a method .rvs().
 
+    **kwargs: keywords arguments
+        additional arguments sent to :class:`~rlberry.envs.interface.Model`
+
     """
 
     name = ""
 
-    def __init__(self, laws=[]):
-        Model.__init__(self)
+    def __init__(self, laws=[], **kwargs):
+        Model.__init__(self, **kwargs)
         self.laws = laws
 
     def step(self, action):

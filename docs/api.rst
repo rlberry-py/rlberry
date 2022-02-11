@@ -107,6 +107,16 @@ Benchmark Environments
     envs.finite.Chain
     envs.finite.GridWorld
 
+Base class
+----------
+
+.. autosummary::
+    :toctree: generated/
+    :template: class.rst
+
+    envs.interface.Model
+
+
 Importation tools
 -----------------
 
@@ -130,11 +140,25 @@ Seeding
 
 Utilities & Logging
 ====================
+
+Writer Utilities
+----------------
+
 .. autosummary::
   :toctree: generated/
   :template: class.rst
 
   utils.writers.DefaultWriter
+
+
+Check Utilities
+---------------
+
+.. autosummary::
+    :toctree: generated/
+    :template: function.rst
+    utils.check_bandit_agent
+
 
 
 Wrappers

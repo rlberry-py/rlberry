@@ -1,6 +1,5 @@
 import numpy as np
 from rlberry.agents import AgentWithSimplePolicy
-import dill
 import pickle
 import logging
 from pathlib import Path
@@ -76,9 +75,6 @@ class IndexAgent(AgentWithSimplePolicy):
         the method can append the correct suffix to the name before saving.
 
         """
-        # remove writer if not pickleable
-        if not dill.pickles(self.writer):
-            self.set_writer(None)
 
         dico = {
             "_writer": self.writer,
@@ -197,8 +193,6 @@ class RecursiveIndexAgent(AgentWithSimplePolicy):
 
         """
         # remove writer if not pickleable
-        if not dill.pickles(self.writer):
-            self.set_writer(None)
 
         dico = {
             "_writer": self.writer,
