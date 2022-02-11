@@ -92,16 +92,9 @@ class IndexAgent(AgentWithSimplePolicy):
         # save
         filename = Path(filename).with_suffix(".pickle")
         filename.parent.mkdir(parents=True, exist_ok=True)
-        try:
-            with filename.open("wb") as ff:
-                pickle.dump(dict, ff)
-        except Exception:
-            try:
-                with filename.open("wb") as ff:
-                    dill.dump(self.dict, ff)
-            except Exception as ex:
-                logger.warning("Agent instance cannot be pickled: " + str(ex))
-                return None
+        with filename.open("wb") as ff:
+            pickle.dump(dict, ff)
+
 
         return filename
 
@@ -119,12 +112,8 @@ class IndexAgent(AgentWithSimplePolicy):
         filename = Path(filename).with_suffix(".pickle")
 
         obj = cls(**kwargs)
-        try:
-            with filename.open("rb") as ff:
-                tmp_dict = pickle.load(ff)
-        except Exception:
-            with filename.open("rb") as ff:
-                tmp_dict = dill.load(ff)
+        with filename.open("rb") as ff:
+            tmp_dict = pickle.load(ff)
 
         obj.__dict__.update(tmp_dict)
 
