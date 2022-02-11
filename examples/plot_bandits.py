@@ -14,43 +14,40 @@ import matplotlib.pyplot as plt
 from rlberry.wrappers import WriterWrapper
 
 
-############ Agents ###############################
+# Agents definition
 
 
 class UCBAgent(IndexAgent):
-    """Basic UCB agent for sub-gaussian rv."""
+    """UCB agent for B-subgaussian bandits"""
 
     name = "UCB Agent"
 
     def __init__(self, env, B=1, **kwargs):
-        # upper bound mean + B*sqrt(2*log(t**2)/n)
-        # if B subgaussian
-        index = lambda r, t: np.mean(r) + B * np.sqrt(2 * np.log(t**2) / len(r))
+        def index(r, t):
+            return np.mean(r) + B * np.sqrt(2 * np.log(t**2) / len(r))
+
         IndexAgent.__init__(self, env, index, **kwargs)
-        # record rewards
         self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
 
 
 class RecursiveUCBAgent(RecursiveIndexAgent):
-    """Same as above but defined recursively"""
+    """Same as above but defined recursively. Should give the same results (up to randomness)."""
 
     name = "Recursive UCB Agent"
 
     def __init__(self, env, B=1, **kwargs):
-        # upper bound mean + B*sqrt(2*log(t**2)/n)
-        # if B subgaussian
         def stat_function(stat, Na, action, reward):
             if stat is None:
                 stat = np.zeros(len(Na))
-            # update the empirical mean
             stat[action] = (Na[action] - 1) / Na[action] * stat[action] + reward / Na[
                 action
             ]
             return stat
 
-        index = lambda stat, Na, t: stat + B * np.sqrt(2 * np.log(t**2) / Na)
+        def index(stat, Na, t):
+            return stat + B * np.sqrt(2 * np.log(t**2) / Na)
+
         RecursiveIndexAgent.__init__(self, env, stat_function, index, **kwargs)
-        # record rewards
         self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
 
 
@@ -63,13 +60,13 @@ class NaiveAgent(IndexAgent):
         self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
 
 
-############# Parameters ###########################
+# Parameters
 means = [0, 0.9, 1]
 T = 3000  # Horizon
 M = 20  # number of MC simu
 
 
-############# Construction of the experiment ########
+# Construction of the experiment
 
 
 env_ctor = NormalBandit
@@ -107,13 +104,14 @@ agent2 = AgentManager(
 # these parameters whould give parallel computing even in notebooks
 
 
-################ Agent training ################
+# Agent training
 
 agent1.fit()
 agent1bis.fit()
 agent2.fit()
 
-################# Compute and plot ###################
+
+# Compute and plot
 def compute_regret(regret):
     return np.cumsum(np.max(means) - regret)
 
@@ -127,5 +125,6 @@ output = plot_writer_data(
     title="Cumulative Regret",
     ax=ax,
 )
+fig.subplots_adjust(bottom=0.2, left=0.2)
 # you can customize the axis ax here to customize the plot
 # or you can use output, which is a pandat DataFrame to do the plot yourself.

@@ -18,7 +18,7 @@ def check_bandit_agent(Agent):
     env = env_ctor(**env_kwargs)
     state = env.reset()
     result = True
-    for f in range(5):
+    for _ in range(5):
         # test reproducibility on 5 actions
         action1 = agent1.agent_handlers[0].policy(state)
         action2 = agent2.agent_handlers[0].policy(state)

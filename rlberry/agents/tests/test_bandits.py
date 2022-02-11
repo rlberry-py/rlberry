@@ -9,7 +9,9 @@ class UCBAgent(IndexAgent):
     name = "UCB Agent"
 
     def __init__(self, env, B=1, **kwargs):
-        index = lambda r, t: np.mean(r) + B * np.sqrt(2 * np.log(t**2) / len(r))
+        def index(r, t):
+            return np.mean(r) + B * np.sqrt(2 * np.log(t**2) / len(r))
+
         IndexAgent.__init__(self, env, index, **kwargs)
 
 
@@ -25,7 +27,9 @@ class RecursiveUCBAgent(RecursiveIndexAgent):
             ]
             return stat
 
-        index = lambda stat, Na, t: stat + B * np.sqrt(2 * np.log(t**2) / Na)
+        def index(stat, Na, t):
+            return stat + B * np.sqrt(2 * np.log(t**2) / Na)
+
         RecursiveIndexAgent.__init__(self, env, stat_function, index, **kwargs)
 
 
@@ -49,8 +53,7 @@ def test_recursive_vs_not_recursive():
     agent2.fit()
     env = env_ctor(**env_kwargs)
     state = env.reset()
-    result = True
-    for f in range(5):
+    for _ in range(5):
         # test reproducibility on 5 actions
         action1 = agent1.agent_handlers[0].policy(state)
         action2 = agent2.agent_handlers[0].policy(state)

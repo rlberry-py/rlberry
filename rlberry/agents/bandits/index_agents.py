@@ -119,7 +119,7 @@ class IndexAgent(AgentWithSimplePolicy):
         return obj
 
 
-class RecursiveIndexAgent(IndexAgent):
+class RecursiveIndexAgent(AgentWithSimplePolicy):
     """
     Agent for bandit environment using a recursive Index-based policy.
 
@@ -155,7 +155,7 @@ class RecursiveIndexAgent(IndexAgent):
             if self.total_time < self.n_arms:
                 action = self.total_time
             else:
-                indexes = self.get_indexes(stats, Na, ep)
+                indexes = self.get_recursive_indexes(stats, Na, ep)
                 action = np.argmax(indexes)
             self.total_time += 1
             Na[action] += 1
@@ -169,8 +169,70 @@ class RecursiveIndexAgent(IndexAgent):
         info = {"episode_reward": np.sum(rewards)}
         return info
 
-    def get_indexes(self, stats, Na, ep):
+    def get_recursive_indexes(self, stats, Na, ep):
         indexes = np.zeros(self.n_arms)
         for a in range(self.n_arms):
             indexes[a] = self.index_function(stats[a], Na[a], ep)
         return indexes
+
+    def policy(self, observation):
+        return self.optimal_action
+
+    def save(self, filename):
+        """
+        Save agent object.
+
+        Parameters
+        ----------
+        filename: Path or str
+            File in which to save the Agent.
+
+        Returns
+        -------
+        If save() is successful, a Path object corresponding to the filename is returned.
+        Otherwise, None is returned.
+        Important: the returned filename might differ from the input filename: For instance,
+        the method can append the correct suffix to the name before saving.
+
+        """
+        # remove writer if not pickleable
+        if not dill.pickles(self.writer):
+            self.set_writer(None)
+
+        dict = {
+            "_writer": self.writer,
+            "seeder": self.seeder,
+            "_execution_metadata": self._execution_metadata,
+            "_unique_id": self._unique_id,
+            "_output_dir": self._output_dir,
+            "optimal_action": self.optimal_action,
+        }
+
+        # save
+        filename = Path(filename).with_suffix(".pickle")
+        filename.parent.mkdir(parents=True, exist_ok=True)
+        with filename.open("wb") as ff:
+            pickle.dump(dict, ff)
+
+        return filename
+
+    @classmethod
+    def load(cls, filename, **kwargs):
+        """Load agent object.
+
+        If overridden, save() method must also be overriden.
+
+        Parameters
+        ----------
+        **kwargs: dict
+            Arguments to required by the __init__ method of the Agent subclass.
+        """
+        filename = Path(filename).with_suffix(".pickle")
+
+        obj = cls(**kwargs)
+        with filename.open("rb") as ff:
+            tmp_dict = pickle.load(ff)
+
+        obj.__dict__.update(tmp_dict)
+
+        return obj
