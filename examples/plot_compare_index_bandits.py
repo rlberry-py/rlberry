@@ -17,6 +17,18 @@ from rlberry.wrappers import WriterWrapper
 # sphinx_gallery_thumbnail_number = 2
 
 
+# Parameters of the problem
+means = [0.8, 0.8, 0.9, 1]  # means of the arms
+A = len(means)
+T = 2000  # Horizon
+M = 10  # number of MC simu
+
+# Construction of the experiment
+
+env_ctor = BernoulliBandit
+env_kwargs = {"p": means}
+
+
 class UCBAgent(IndexAgent):
     name = "UCB"
 
@@ -33,14 +45,13 @@ class UCBAgent(IndexAgent):
 class ETCAgent(IndexAgent):
     name = "ETC"
 
-    def __init__(self, env, m=10, **kwargs):
+    def __init__(self, env, m=20, **kwargs):
         def index(r, t):
-            A = 4
-            indexes = np.zeros(A)
             if t < m * A:
-                indexes[(t % A)] = 1
+                index = -len(r)  # select an action pulled the least
             else:
-                indexes = np.mean(r, axis=0)
+                index = np.mean(r, axis=0)
+            return index
 
         IndexAgent.__init__(self, env, index, **kwargs)
         self.env = WriterWrapper(
@@ -52,78 +63,30 @@ class MOSSAgent(IndexAgent):
     name = "MOSS"
 
     def __init__(self, env, **kwargs):
-        def index(r, t, n, A):
+        def index(r, t):
             Na = len(r)
-            return np.mean(r) + np.sqrt(4 / Na * max(0, np.log(n / (A * Na))))
+            return np.mean(r) + np.sqrt(A / Na * max(0, np.log(T / (A * Na))))
 
         IndexAgent.__init__(self, env, index, **kwargs)
         self.env = WriterWrapper(
             self.env, self.writer, write_scalar="action_and_reward"
         )
 
-    def fit(self, budget=None, **kwargs):
-        horizon = budget
-        rewards = np.zeros(horizon)
-        actions = np.ones(horizon) * np.nan
 
-        indexes = np.inf * np.ones(self.n_arms)
-        for ep in range(horizon):
-            if self.total_time < self.n_arms:
-                action = self.total_time
-            else:
-                indexes = self.get_indexes(rewards, actions, ep, horizon)
-                action = np.argmax(indexes)
-            self.total_time += 1
-            _, reward, _, _ = self.env.step(action)
-            rewards[ep] = reward
-            actions[ep] = action
+Agents_class = [UCBAgent, ETCAgent, MOSSAgent]
 
-        self.optimal_action = np.argmax(indexes)
-        info = {"episode_reward": np.sum(rewards)}
-        return info
+agents = [
+    AgentManager(
+        Agent,
+        (env_ctor, env_kwargs),
+        fit_budget=T,
+        n_fit=M,
+        parallelization="process",
+        mp_context="fork",
+    )
+    for Agent in Agents_class
+]
 
-    def get_indexes(self, rewards, actions, ep, n):
-        indexes = np.zeros(self.n_arms)
-        for a in range(self.n_arms):
-            indexes[a] = self.index_function(rewards[actions == a], ep, n, self.n_arms)
-        return indexes
-
-
-# Parameters of the problem
-means = [0.8, 0.8, 0.8, 1]  # means of the arms
-T = 2000  # Horizon
-M = 5  # number of MC simu
-
-# Construction of the experiment
-
-env_ctor = BernoulliBandit
-env_kwargs = {"p": means}
-
-agent1 = AgentManager(
-    UCBAgent,
-    (env_ctor, env_kwargs),
-    fit_budget=T,
-    n_fit=M,
-    parallelization="process",
-    mp_context="fork",
-)
-agent2 = AgentManager(
-    ETCAgent,
-    (env_ctor, env_kwargs),
-    fit_budget=T,
-    n_fit=M,
-    parallelization="process",
-    mp_context="fork",
-)
-agent3 = AgentManager(
-    MOSSAgent,
-    (env_ctor, env_kwargs),
-    fit_budget=T,
-    n_fit=M,
-    parallelization="process",
-    mp_context="fork",
-)
-agents = [agent1, agent2, agent3]
 # these parameters should give parallel computing even in notebooks
 
 
@@ -143,7 +106,6 @@ output = plot_writer_data(
     preprocess_func=compute_regret,
     title="Cumulative Regret",
 )
-
 
 # Compute and plot number of times each arm was selected
 def compute_na(actions, a):
