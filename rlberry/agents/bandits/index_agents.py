@@ -1,13 +1,11 @@
 import numpy as np
-from rlberry.agents import AgentWithSimplePolicy
-import pickle
+from rlberry.agents.bandits import BanditWithSimplePolicy
 import logging
-from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
 
-class IndexAgent(AgentWithSimplePolicy):
+class IndexAgent(BanditWithSimplePolicy):
     """
     Agent for bandit environment using Index-based policy.
 
@@ -18,7 +16,7 @@ class IndexAgent(AgentWithSimplePolicy):
 
     index_function : callable or None, default = None
         Compute the index for an arm using the past rewards on this arm and
-        the current time t. If None, use UCB bound for bernoulli.
+        the current time t. If None, use UCB bound for Bernoulli.
 
 
     Examples
@@ -37,7 +35,7 @@ class IndexAgent(AgentWithSimplePolicy):
     name = "IndexAgent"
 
     def __init__(self, env, index_function=lambda rew, t: np.mean(rew), **kwargs):
-        AgentWithSimplePolicy.__init__(self, env, **kwargs)
+        BanditWithSimplePolicy.__init__(self, env, **kwargs)
         self.n_arms = self.env.action_space.n
         if index_function is None:
 
@@ -92,67 +90,8 @@ class IndexAgent(AgentWithSimplePolicy):
             indexes[a] = self.index_function(rewards[actions == a], ep)
         return indexes
 
-    def policy(self, observation):
-        return self.optimal_action
 
-    def save(self, filename):
-        """
-        Save agent object.
-
-        Parameters
-        ----------
-        filename: Path or str
-            File in which to save the Agent.
-
-        Returns
-        -------
-        If save() is successful, a Path object corresponding to the filename is returned.
-        Otherwise, None is returned.
-        Important: the returned filename might differ from the input filename: For instance,
-        the method can append the correct suffix to the name before saving.
-
-        """
-
-        dico = {
-            "_writer": self.writer,
-            "seeder": self.seeder,
-            "_execution_metadata": self._execution_metadata,
-            "_unique_id": self._unique_id,
-            "_output_dir": self._output_dir,
-            "optimal_action": self.optimal_action,
-        }
-
-        # save
-        filename = Path(filename).with_suffix(".pickle")
-        filename.parent.mkdir(parents=True, exist_ok=True)
-        with filename.open("wb") as ff:
-            pickle.dump(dico, ff)
-
-        return filename
-
-    @classmethod
-    def load(cls, filename, **kwargs):
-        """Load agent object.
-
-        If overridden, save() method must also be overriden.
-
-        Parameters
-        ----------
-        **kwargs: dict
-            Arguments to required by the __init__ method of the Agent subclass.
-        """
-        filename = Path(filename).with_suffix(".pickle")
-
-        obj = cls(**kwargs)
-        with filename.open("rb") as ff:
-            tmp_dict = pickle.load(ff)
-
-        obj.__dict__.update(tmp_dict)
-
-        return obj
-
-
-class RecursiveIndexAgent(AgentWithSimplePolicy):
+class RecursiveIndexAgent(BanditWithSimplePolicy):
     """
     Agent for bandit environment using a recursive Index-based policy.
 
@@ -194,8 +133,8 @@ class RecursiveIndexAgent(AgentWithSimplePolicy):
 
     name = "RecursiveIndexAgent"
 
-    def __init__(self, env, stat_function, index_function, **kwargs):
-        AgentWithSimplePolicy.__init__(self, env, **kwargs)
+    def __init__(self, env, stat_function=None, index_function=None, **kwargs):
+        BanditWithSimplePolicy.__init__(self, env, **kwargs)
         self.n_arms = self.env.action_space.n
         if stat_function is None:
 
@@ -222,11 +161,10 @@ class RecursiveIndexAgent(AgentWithSimplePolicy):
 
     def fit(self, budget=None, **kwargs):
         horizon = budget
-        rewards = np.zeros(horizon)
-        actions = np.ones(horizon) * np.nan
         indexes = np.inf * np.ones(self.n_arms)
         stats = None
         Na = np.zeros(self.n_arms)
+        total_reward = 0
         for ep in range(horizon):
             if self.total_time < self.n_arms:
                 action = self.total_time
@@ -237,12 +175,11 @@ class RecursiveIndexAgent(AgentWithSimplePolicy):
             Na[action] += 1
             _, reward, _, _ = self.env.step(action)
             stats = self.stat_function(stats, Na, action, reward)
-            rewards[ep] = reward
-            actions[ep] = action
+            total_reward += reward
 
         self.optimal_action = np.argmax(indexes)
 
-        info = {"episode_reward": np.sum(rewards)}
+        info = {"episode_reward": total_reward}
         return info
 
     def get_recursive_indexes(self, stats, Na, ep):
@@ -250,63 +187,3 @@ class RecursiveIndexAgent(AgentWithSimplePolicy):
         for a in range(self.n_arms):
             indexes[a] = self.index_function(stats[a], Na[a], ep)
         return indexes
-
-    def policy(self, observation):
-        return self.optimal_action
-
-    def save(self, filename):
-        """
-        Save agent object.
-
-        Parameters
-        ----------
-        filename: Path or str
-            File in which to save the Agent.
-
-        Returns
-        -------
-        If save() is successful, a Path object corresponding to the filename is returned.
-        Otherwise, None is returned.
-        Important: the returned filename might differ from the input filename: For instance,
-        the method can append the correct suffix to the name before saving.
-
-        """
-        # remove writer if not pickleable
-
-        dico = {
-            "_writer": self.writer,
-            "seeder": self.seeder,
-            "_execution_metadata": self._execution_metadata,
-            "_unique_id": self._unique_id,
-            "_output_dir": self._output_dir,
-            "optimal_action": self.optimal_action,
-        }
-
-        # save
-        filename = Path(filename).with_suffix(".pickle")
-        filename.parent.mkdir(parents=True, exist_ok=True)
-        with filename.open("wb") as ff:
-            pickle.dump(dico, ff)
-
-        return filename
-
-    @classmethod
-    def load(cls, filename, **kwargs):
-        """Load agent object.
-
-        If overridden, save() method must also be overriden.
-
-        Parameters
-        ----------
-        **kwargs: dict
-            Arguments to required by the __init__ method of the Agent subclass.
-        """
-        filename = Path(filename).with_suffix(".pickle")
-
-        obj = cls(**kwargs)
-        with filename.open("rb") as ff:
-            tmp_dict = pickle.load(ff)
-
-        obj.__dict__.update(tmp_dict)
-
-        return obj
