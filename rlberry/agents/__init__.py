@@ -10,3 +10,5 @@ from .kernel_based import *
 from .mbqvi import *
 from .optql import *
 from .ucbvi import *
+from .rlsvi import *
+from .psrl import *

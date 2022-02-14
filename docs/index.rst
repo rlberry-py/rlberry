@@ -64,3 +64,4 @@ Documentation Contents
   external
   api
   user_guide
+  changelog
