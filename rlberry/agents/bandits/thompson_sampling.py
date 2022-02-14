@@ -1,15 +1,13 @@
 import numpy as np
 from rlberry.agents.bandits import BanditWithSimplePolicy
-import pickle
 import logging
-from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
 
 class TSAgent(BanditWithSimplePolicy):
     """
-    Agent for bandit environment using Index-based policy.
+    Agent for bandit environment using Thompson sampling.
 
     Parameters
     -----------
@@ -72,7 +70,7 @@ class TSAgent(BanditWithSimplePolicy):
         if self.prior == "gaussian":
             for a in range(self.n_arms):
                 sample[a] = self.rng.normal(
-                    self.prior_params_[0][a], self.prior_std_[1][a]
+                    self.prior_params_[0][a], self.prior_params_[1][a]
                 )
         else:
             for a in range(self.n_arms):
@@ -85,7 +83,7 @@ class TSAgent(BanditWithSimplePolicy):
         if self.prior == "gaussian":
             self.prior_params_[0][action] = Na[action] / (
                 Na[action] + 1
-            ) * self.prior_params[0][action] + reward / (Na[action] + 1)
+            ) * self.prior_params_[0][action] + reward / (Na[action] + 1)
             self.prior_params_[1][action] = self.prior_params_[1][action] * np.sqrt(
                 Na[action] / (Na[action] + 1)
             )

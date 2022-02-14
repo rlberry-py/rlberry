@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 class IndexAgent(BanditWithSimplePolicy):
     """
-    Agent for bandit environment using Index-based policy.
+    Agent for bandit environment using Index-based policy like UCB.
 
     Parameters
     -----------
@@ -93,7 +93,8 @@ class IndexAgent(BanditWithSimplePolicy):
 
 class RecursiveIndexAgent(BanditWithSimplePolicy):
     """
-    Agent for bandit environment using a recursive Index-based policy.
+    Agent for bandit environment using Index-based policy like UCB with
+    recursive indexes.
 
     Parameters
     -----------

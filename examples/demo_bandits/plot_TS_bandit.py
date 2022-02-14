@@ -62,6 +62,7 @@ agents = [
 for agent in agents:
     agent.fit()
 
+
 # Compute and plot regret
 def compute_regret(regret):
     return np.cumsum(np.max(means) - regret)

@@ -4,7 +4,7 @@ from rlberry.manager import AgentManager
 
 def check_bandit_agent(Agent):
     """
-    Function used to check a bandit agent in rlberry.
+    Function used to check a bandit agent in rlberry on a Gaussian bandit problem.
 
     Parameters
     ----------

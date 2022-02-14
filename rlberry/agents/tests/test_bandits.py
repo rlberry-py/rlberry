@@ -1,6 +1,6 @@
 import numpy as np
 from rlberry.envs.bandits import NormalBandit
-from rlberry.agents.bandits import IndexAgent, RecursiveIndexAgent
+from rlberry.agents.bandits import IndexAgent, RecursiveIndexAgent, TSAgent
 from rlberry.manager import AgentManager
 from rlberry.utils import check_bandit_agent
 
@@ -33,9 +33,18 @@ class RecursiveUCBAgent(RecursiveIndexAgent):
         RecursiveIndexAgent.__init__(self, env, stat_function, index, **kwargs)
 
 
+class TSAgent_normal(TSAgent):
+
+    name = "TSAgent"
+
+    def __init__(self, env, **kwargs):
+        TSAgent.__init__(self, env, "gaussian", **kwargs)
+
+
 def test_index_bandits():
     assert check_bandit_agent(UCBAgent)
     assert check_bandit_agent(RecursiveUCBAgent)
+    assert check_bandit_agent(TSAgent_normal)
 
 
 def test_recursive_vs_not_recursive():
