@@ -169,9 +169,10 @@ Check Utilities
 ---------------
 
 .. autosummary::
-    :toctree: generated/
-    :template: function.rst
-    utils.check_bandit_agent
+   :toctree: generated/
+   :template: function.rst
+
+   utils.check_bandit_agent
 
 
 

@@ -14,10 +14,24 @@ class IndexAgent(AgentWithSimplePolicy):
     Parameters
     -----------
     env : rlberry bandit environment
+        See :class:`~rlberry.envs.bandits.Bandit`.
 
-    index_function : callable, default = lambda rew, t : np.mean(rew)
+    index_function : callable or None, default = None
         Compute the index for an arm using the past rewards on this arm and
-        the current time t.
+        the current time t. If None, use UCB bound for bernoulli.
+
+
+    Examples
+    --------
+    >>> from rlberry.agents.bandits import IndexAgent
+    >>> import numpy as np
+    >>> class UCBAgent(IndexAgent):
+    >>>     name = "UCB"
+    >>>     def __init__(self, env, **kwargs):
+    >>>         def index(r, t):
+    >>>             return np.mean(r) + np.sqrt(np.log(t**2) / (2 * len(r)))
+    >>>         IndexAgent.__init__(self, env, index, **kwargs)
+
     """
 
     name = "IndexAgent"
@@ -25,7 +39,14 @@ class IndexAgent(AgentWithSimplePolicy):
     def __init__(self, env, index_function=lambda rew, t: np.mean(rew), **kwargs):
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
         self.n_arms = self.env.action_space.n
-        self.index_function = index_function
+        if index_function is None:
+
+            def index(r, t):
+                return np.mean(r) + np.sqrt(np.log(t**2) / (2 * len(r)))
+
+            self.index_function = index_function
+        else:
+            self.index_function = index_function
         self.total_time = 0
 
     def fit(self, budget=None, **kwargs):
@@ -50,6 +71,22 @@ class IndexAgent(AgentWithSimplePolicy):
         return info
 
     def get_indexes(self, rewards, actions, ep):
+        """
+        Return the indexes of each arms.
+
+        Parameters
+        ----------
+
+        rewards : array, shape (n_iterations,)
+            list of rewards until now
+
+        actions : array, shape (n_iterations,)
+            list of actions until now
+
+        ep: int
+            current iteration/epoch
+
+        """
         indexes = np.zeros(self.n_arms)
         for a in range(self.n_arms):
             indexes[a] = self.index_function(rewards[actions == a], ep)
@@ -123,13 +160,36 @@ class RecursiveIndexAgent(AgentWithSimplePolicy):
     -----------
     env : rlberry bandit environment
 
-    stat_function : tuple of callable or None
-        compute sufficient statistics using previous stats, Na and current action and rewards
+    stat_function : tuple of callable or None, default=None
+        compute sufficient statistics using previous stats, Na and current action and rewards.
+        If None, use the empirical mean statistic.
 
-    index_function : callable
+    index_function : callable or None, default=None
         compute the index using the stats from stat_function, the number of  pull
         of the arm and the current time.
+        If None, use UCB index for bernoulli.
 
+
+    Examples
+    --------
+    >>> from rlberry.agents.bandits import RecursiveIndexAgent
+    >>> import numpy as np
+    >>> class UCBAgent(RecursiveIndexAgent):
+    >>>     name = "UCB Agent"
+    >>>     def __init__(self, env,**kwargs):
+    >>>         def stat_function(stat, Na, action, reward):
+    >>>             # The statistic is the empirical mean. We compute it recursively.
+    >>>             if stat is None:
+    >>>                 stat = np.zeros(len(Na))
+    >>>             stat[action] = (Na[action] - 1) / Na[action] * stat[action] + reward / Na[
+    >>>                 action
+    >>>             ]
+    >>>             return stat
+    >>>
+    >>>         def index(stat, Na, t):
+    >>>             return stat + np.sqrt( np.log(t**2) / (2*Na))
+    >>>
+    >>>         RecursiveIndexAgent.__init__(self, env, stat_function, index, **kwargs)
     """
 
     name = "RecursiveIndexAgent"
@@ -137,8 +197,27 @@ class RecursiveIndexAgent(AgentWithSimplePolicy):
     def __init__(self, env, stat_function, index_function, **kwargs):
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
         self.n_arms = self.env.action_space.n
-        self.stat_function = stat_function
-        self.index_function = index_function
+        if stat_function is None:
+
+            def stat_function_(stat, Na, action, reward):
+                if stat is None:
+                    stat = np.zeros(len(Na))
+                stat[action] = (Na[action] - 1) / Na[action] * stat[
+                    action
+                ] + reward / Na[action]
+                return stat
+
+            self.stat_function = stat_function_
+        else:
+            self.stat_function = stat_function
+        if index_function is None:
+
+            def index(stat, Na, t):
+                return stat + np.sqrt(np.log(t**2) / (2 * Na))
+
+            self.index_function = index
+        else:
+            self.index_function = index_function
         self.total_time = 0
 
     def fit(self, budget=None, **kwargs):
