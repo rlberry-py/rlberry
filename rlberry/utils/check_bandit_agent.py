@@ -2,7 +2,7 @@ from rlberry.envs.bandits import NormalBandit
 from rlberry.manager import AgentManager
 
 
-def check_bandit_agent(Agent):
+def check_bandit_agent(Agent, environment=NormalBandit):
     """
     Function used to check a bandit agent in rlberry on a Gaussian bandit problem.
 
@@ -32,7 +32,7 @@ def check_bandit_agent(Agent):
     True
 
     """
-    env_ctor = NormalBandit
+    env_ctor = environment
     env_kwargs = {}
 
     agent1 = AgentManager(
