@@ -1,2 +1,0 @@
-Illustration of rlberry environments
-====================================
