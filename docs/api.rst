@@ -4,6 +4,7 @@ rlberry API
 
 .. currentmodule:: rlberry
 
+
 Agents
 ====================
 
@@ -34,15 +35,6 @@ Basic Agents
    agents.RLSVIAgent
    agents.PSRLAgent
 
-Bandits
--------
-
-.. autosummary::
-   :toctree: generated/
-   :template: class.rst
-
-   agents.bandits.IndexAgent
-   agents.bandits.RecursiveIndexAgent
 
 Torch Agents (experimental)
 ---------------------------
@@ -91,7 +83,16 @@ Evaluation and plot
 
 
 Environments
-====================
+====================*
+
+Base class
+----------
+
+.. autosummary::
+    :toctree: generated/
+    :template: class.rst
+
+    envs.interface.Model
 
 Benchmark Environments
 ----------------------
@@ -109,26 +110,6 @@ Benchmark Environments
     envs.finite.Chain
     envs.finite.GridWorld
 
-
-Bandits
--------
-
-.. autosummary::
-   :toctree: generated/
-   :template: class.rst
-
-   envs.bandits.Bandit
-   envs.bandits.NormalBandit
-   envs.bandits.CorruptedNormalBandit
-
-Base class
-----------
-
-.. autosummary::
-    :toctree: generated/
-    :template: class.rst
-
-    envs.interface.Model
 
 
 Importation tools
@@ -188,3 +169,29 @@ Wrappers
   wrappers.scalarize.ScalarizeEnvWrapper
   wrappers.vis2d.Vis2dWrapper
   wrappers.WriterWrapper
+
+Bandits
+=======
+
+Environments
+------------
+
+.. autosummary::
+   :toctree: generated/
+   :template: class.rst
+
+   envs.bandits.Bandit
+   envs.bandits.NormalBandit
+   envs.bandits.CorruptedNormalBandit
+
+Bandit algorithms
+-----------------
+
+.. autosummary::
+   :toctree: generated/
+   :template: class.rst
+
+   agents.bandits.BanditWithSimplePolicy
+   agents.bandits.IndexAgent
+   agents.bandits.RecursiveIndexAgent
+   agents.bandits.TSAgent
