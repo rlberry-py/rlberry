@@ -16,6 +16,7 @@ import pandas as pd
 import shutil
 import threading
 import multiprocessing
+from multiprocessing.spawn import _check_not_importing_main
 import numpy as np
 from rlberry.envs.utils import process_env
 from rlberry.utils.logging import configure_logging
@@ -256,6 +257,23 @@ class AgentManager:
 
         self.seeder = Seeder(seed)
         self.eval_seeder = self.seeder.spawn(1)
+        if mp_context == "spawn":
+            try:
+                _check_not_importing_main()
+            except RuntimeError as exc:
+                raise RuntimeError(
+                    """Warning: in AgentManager, if mp_context='spawn'
+                                   then the script must be run outside a notebook
+                                   and protected by a  if __name__ == '__main__':
+                                   For instance :
+
+                                       agent = AgentManager(UCBVIAgent,(Chain, {}),
+                                                            mp_context="spawn",
+                                                            parallelization="process")
+                                       if __name__ == '__main__':
+                                           agent.fit(10)
+                                   """
+                ) from exc
 
         self.agent_name = agent_name
         if agent_name is None:
