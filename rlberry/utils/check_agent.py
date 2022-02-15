@@ -12,6 +12,7 @@ SEED = 42
 def check_agent_manager(Agent, continuous_state=False):
     """
     Check that the agent is compatible with :class:`~rlberry.manager.AgentManager`.
+
     Parameters
     ----------
 
@@ -189,6 +190,11 @@ def check_rl_agent(Agent, continuous_state=False):
     continuous_state: bool, default=False
         whether we test on a discrete state environment or a continuous one.
 
+    Examples
+    --------
+    >>> from rlberry.agents import UCBVIAgent
+    >>> from rlberry.utils import check_rl_agent
+    >>> check_rl_agent(UCBVIAgent) # which does not return an error.
     """
     check_agent_manager(Agent, continuous_state)  # check manager compatible.
     check_seeding_agent(Agent, continuous_state)  # check reproducibility

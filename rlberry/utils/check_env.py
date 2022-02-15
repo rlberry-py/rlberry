@@ -7,6 +7,16 @@ seeder = Seeder(42)
 
 
 def check_env(env):
+    """
+    Check that the environment is (almost) gym-compatible and that it is reproducible
+    in the sense that given two times the same seed, it gives two times the same states.
+
+    Parameters
+    ----------
+
+    env: gym.env or rlberry env
+        Environment that we want to check.
+    """
     # Small reproducibility test
     action = env.action_space.sample()
     safe_reseed(env, Seeder(42))
