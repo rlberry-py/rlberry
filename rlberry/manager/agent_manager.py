@@ -552,9 +552,9 @@ class AgentManager:
                 _check_not_importing_main()
             except RuntimeError as exc:
                 raise RuntimeError(
-                    """Warning: in AgentManager, if mp_context='spawn'
-                                   then the script must be run outside a notebook
-                                   and protected by a  if __name__ == '__main__':
+                    """Warning: in AgentManager, if mp_context='spawn' and
+                        parallelization="process" then the script must be run *
+                        outside a notebook and protected by a  if __name__ == '__main__':
                                    For instance :
 
                                        agent = AgentManager(UCBVIAgent,(Chain, {}),
