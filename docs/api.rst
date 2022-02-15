@@ -14,9 +14,6 @@ Basic Agents
    :toctree: generated/
    :template: class.rst
 
-   agents.Agent
-   agents.AgentWithSimplePolicy
-   agents.features.FeatureMap
    agents.ValueIterationAgent
    agents.MBQVIAgent
    agents.UCBVIAgent
@@ -24,11 +21,21 @@ Basic Agents
    agents.RSKernelUCBVIAgent
    agents.OptQLAgent
    agents.LSVIUCBAgent
+   agents.RLSVIAgent
+   agents.PSRLAgent
 
+Bandits
+-------
 
+.. autosummary::
+   :toctree: generated/
+   :template: class.rst
 
-Torch agents
---------------------
+   agents.bandits.IndexAgent
+   agents.bandits.RecursiveIndexAgent
+
+Torch Agents (experimental)
+---------------------------
 
 .. autosummary::
    :toctree: generated/
@@ -40,11 +47,10 @@ Torch agents
    agents.torch.AVECPPOAgent
    agents.torch.REINFORCEAgent
 
-Jax agents (experimental)
+Jax Agents (experimental)
 --------------------
 
-Still experimental. See source code rlberry.agents.jax for more info.
-
+Still experimental. Look at the source of `rlberry.agents.jax` for more info.
 
 Manager
 ====================
@@ -68,6 +74,7 @@ Evaluation and plot
    :template: function.rst
 
    manager.evaluate_agents
+   manager.read_writer_data
    manager.plot_writer_data
 
 
@@ -92,6 +99,28 @@ Benchmark Environments
     envs.finite.Chain
     envs.finite.GridWorld
 
+
+Bandits
+-------
+
+.. autosummary::
+   :toctree: generated/
+   :template: class.rst
+
+   envs.bandits.Bandit
+   envs.bandits.NormalBandit
+   envs.bandits.CorruptedNormalBandit
+
+Base class
+----------
+
+.. autosummary::
+    :toctree: generated/
+    :template: class.rst
+
+    envs.interface.Model
+
+
 Importation tools
 -----------------
 
@@ -111,6 +140,31 @@ Seeding
    :template: class.rst
 
    seeding.seeder.Seeder
+
+
+Utilities & Logging
+====================
+
+Writer Utilities
+----------------
+
+.. autosummary::
+  :toctree: generated/
+  :template: class.rst
+
+  utils.writers.DefaultWriter
+
+
+Check Utilities
+---------------
+
+.. autosummary::
+   :toctree: generated/
+   :template: function.rst
+
+   utils.check_bandit_agent
+
+
 
 Wrappers
 ====================
