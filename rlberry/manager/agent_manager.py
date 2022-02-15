@@ -257,23 +257,6 @@ class AgentManager:
 
         self.seeder = Seeder(seed)
         self.eval_seeder = self.seeder.spawn(1)
-        if mp_context == "spawn":
-            try:
-                _check_not_importing_main()
-            except RuntimeError as exc:
-                raise RuntimeError(
-                    """Warning: in AgentManager, if mp_context='spawn'
-                                   then the script must be run outside a notebook
-                                   and protected by a  if __name__ == '__main__':
-                                   For instance :
-
-                                       agent = AgentManager(UCBVIAgent,(Chain, {}),
-                                                            mp_context="spawn",
-                                                            parallelization="process")
-                                       if __name__ == '__main__':
-                                           agent.fit(10)
-                                   """
-                ) from exc
 
         self.agent_name = agent_name
         if agent_name is None:
@@ -562,6 +545,25 @@ class AgentManager:
         """
         del kwargs
         budget = budget or self.fit_budget
+
+        # If spawn, test that protected by if __name__ == "__main__"
+        if self.mp_context == "spawn":
+            try:
+                _check_not_importing_main()
+            except RuntimeError as exc:
+                raise RuntimeError(
+                    """Warning: in AgentManager, if mp_context='spawn'
+                                   then the script must be run outside a notebook
+                                   and protected by a  if __name__ == '__main__':
+                                   For instance :
+
+                                       agent = AgentManager(UCBVIAgent,(Chain, {}),
+                                                            mp_context="spawn",
+                                                            parallelization="process")
+                                       if __name__ == '__main__':
+                                           agent.fit(10)
+                                   """
+                ) from exc
 
         logger.info(
             f"Running AgentManager fit() for {self.agent_name}"
