@@ -11,12 +11,14 @@ during the fit of the agent.
 import numpy as np
 
 from rlberry.wrappers import WriterWrapper
-from rlberry.envs import GridWorld
+
+# from rlberry.envs import GridWorld
 from rlberry.manager import plot_writer_data, AgentManager
 
 
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
-from rlberry.agents.torch.a2c.a2c import A2CAgent
+
+# from rlberry.agents.torch.a2c.a2c import A2CAgent
 from rlberry.agents.torch import SACAgent
 
 # We wrape the default writer of the agent in a WriterWrapper
