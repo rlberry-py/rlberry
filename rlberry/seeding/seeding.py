@@ -53,7 +53,7 @@ def safe_reseed(obj, seeder, reseed_spaces=True):
         obj.reseed(seeder)
         reseeded = True
     except AttributeError:
-        seed_val = seeder.rng.integers(2**32).item()
+        seed_val = seeder.rng.integers(2 ** 32).item()
         try:
             obj.seed(seed_val)
             reseeded = True

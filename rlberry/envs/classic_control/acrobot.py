@@ -194,15 +194,15 @@ class Acrobot(RenderInterface2D, Model):
         dtheta1 = s[2]
         dtheta2 = s[3]
         d1 = (
-            m1 * lc1**2
-            + m2 * (l1**2 + lc2**2 + 2 * l1 * lc2 * np.cos(theta2))
+            m1 * lc1 ** 2
+            + m2 * (l1 ** 2 + lc2 ** 2 + 2 * l1 * lc2 * np.cos(theta2))
             + I1
             + I2
         )
-        d2 = m2 * (lc2**2 + l1 * lc2 * np.cos(theta2)) + I2
+        d2 = m2 * (lc2 ** 2 + l1 * lc2 * np.cos(theta2)) + I2
         phi2 = m2 * lc2 * g * np.cos(theta1 + theta2 - np.pi / 2.0)
         phi1 = (
-            -m2 * l1 * lc2 * dtheta2**2 * np.sin(theta2)
+            -m2 * l1 * lc2 * dtheta2 ** 2 * np.sin(theta2)
             - 2 * m2 * l1 * lc2 * dtheta2 * dtheta1 * np.sin(theta2)
             + (m1 * lc1 + m2 * l1) * g * np.cos(theta1 - np.pi / 2)
             + phi2
@@ -210,16 +210,16 @@ class Acrobot(RenderInterface2D, Model):
         if self.book_or_nips == "nips":
             # the following line is consistent with the description in the
             # paper
-            ddtheta2 = (a + d2 / d1 * phi1 - phi2) / (m2 * lc2**2 + I2 - d2**2 / d1)
+            ddtheta2 = (a + d2 / d1 * phi1 - phi2) / (m2 * lc2 ** 2 + I2 - d2 ** 2 / d1)
         else:
             # the following line is consistent with the java implementation
             # and the book
             ddtheta2 = (
                 a
                 + d2 / d1 * phi1
-                - m2 * l1 * lc2 * dtheta1**2 * np.sin(theta2)
+                - m2 * l1 * lc2 * dtheta1 ** 2 * np.sin(theta2)
                 - phi2
-            ) / (m2 * lc2**2 + I2 - d2**2 / d1)
+            ) / (m2 * lc2 ** 2 + I2 - d2 ** 2 / d1)
         ddtheta1 = -(d2 * ddtheta2 + phi1) / d1
         return (dtheta1, dtheta2, ddtheta1, ddtheta2, 0.0)
 

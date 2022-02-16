@@ -362,7 +362,7 @@ class AgentWithSimplePolicy(Agent):
         """Returns an action, given an observation."""
         pass
 
-    def eval(self, eval_horizon=10**5, n_simulations=10, gamma=1.0, **kwargs):
+    def eval(self, eval_horizon=10 ** 5, n_simulations=10, gamma=1.0, **kwargs):
         """
         Monte-Carlo policy evaluation [1]_ of an agent to estimate the value at the initial state.
 

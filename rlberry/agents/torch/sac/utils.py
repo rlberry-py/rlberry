@@ -1,7 +1,4 @@
-import numpy as np
 import torch
-import torch.distributions as distr
-from rlberry.agents.utils.memories import Memory
 from torch.nn.functional import one_hot
 
 import gym.spaces as spaces

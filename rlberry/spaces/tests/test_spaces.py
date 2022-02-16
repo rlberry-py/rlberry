@@ -42,7 +42,7 @@ def test_discrete_space(n):
 def test_box_space_case_1(low, high, dim):
     shape = (dim, 1)
     sp = Box(low, high, shape=shape)
-    for ii in range(2**dim):
+    for ii in range(2 ** dim):
         assert sp.contains(sp.sample())
 
 

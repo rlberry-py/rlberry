@@ -11,7 +11,7 @@ except Exception:
 
 def get_torch_random_number_setting_seed(seeder):
     set_external_seed(seeder)
-    return torch.randint(2**32, (1,))[0].item()
+    return torch.randint(2 ** 32, (1,))[0].item()
 
 
 def test_torch_multithread_seeding():

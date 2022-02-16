@@ -79,7 +79,7 @@ class Pendulum(RenderInterface2D, Model):
         action = np.clip(action, -self.max_torque, self.max_torque)[0]
         self.last_action = action  # for rendering
         costs = (
-            angle_normalize(theta) ** 2 + 0.1 * thetadot**2 + 0.001 * (action**2)
+            angle_normalize(theta) ** 2 + 0.1 * thetadot ** 2 + 0.001 * (action ** 2)
         )
 
         # compute the next state after action
@@ -87,7 +87,7 @@ class Pendulum(RenderInterface2D, Model):
             thetadot
             + (
                 -3 * gravity / (2 * length) * np.sin(theta + np.pi)
-                + 3.0 / (mass * length**2) * action
+                + 3.0 / (mass * length ** 2) * action
             )
             * dt
         )

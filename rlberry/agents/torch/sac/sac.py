@@ -144,20 +144,24 @@ class SACAgent(AgentWithSimplePolicy):
         self.cat_policy = self.policy_net_fn(self.env, **self.policy_net_kwargs).to(
             self.device
         )
+
         self.policy_optimizer = optimizer_factory(
             self.cat_policy.parameters(), **self.optimizer_kwargs
         )
         self.cat_policy_old = self.policy_net_fn(self.env, **self.policy_net_kwargs).to(
             self.device
         )
+
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
         # critic
         self.value_net = self.value_net_fn(self.env, **self.value_net_kwargs).to(
             self.device
         )
+
         self.target_value_net = self.value_net_fn(self.env, **self.value_net_kwargs).to(
             self.device
         )
+
         self.value_optimizer = optimizer_factory(
             self.value_net.parameters(), **self.optimizer_kwargs
         )
@@ -243,11 +247,10 @@ class SACAgent(AgentWithSimplePolicy):
         #
         if self.writer is not None:
             self.writer.add_scalar("episode_rewards", episode_rewards, self.episode)
-
         #
         if self.episode % self.batch_size == 0:
             self._update()
-            # is it really good to forget it completely ?????
+            # is it really good to forget it completely ???
             self.memory.clear_memory()
 
         return episode_rewards
@@ -255,9 +258,7 @@ class SACAgent(AgentWithSimplePolicy):
     def _update(self):
 
         twinq_net = (self.q1, self.q2)
-        states_v, actions_v, logprobs_v, rewards_v, is_terminals_v = utils.unpack_batch(
-            self.memory, self.device
-        )
+        states_v, actions_v, _, _, _ = utils.unpack_batch(self.memory, self.device)
 
         # obtain reference values for V and Q functions
         qref = utils.get_qref(

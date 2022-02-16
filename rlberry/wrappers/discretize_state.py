@@ -20,7 +20,7 @@ class DiscretizeStateWrapper(Wrapper):
         n_states = 1
         tol = 1e-8
         self.dim = len(self.env.observation_space.low)
-        n_states = n_bins**self.dim
+        n_states = n_bins ** self.dim
         self._bins = []
         self._open_bins = []
         for dd in range(self.dim):

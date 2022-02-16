@@ -18,7 +18,7 @@ class Discretizer:
         n_elements = 1
         tol = 1e-8
         self.dim = len(self.space.low)
-        n_elements = n_bins**self.dim
+        n_elements = n_bins ** self.dim
         self._bins = []
         self._open_bins = []
         for dd in range(self.dim):
