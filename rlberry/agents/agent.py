@@ -181,6 +181,7 @@ class Agent(ABC):
         pass
 
     def set_writer(self, writer):
+        """set self._writer. If is not None, add parameters values to writer."""
         self._writer = writer
 
         if self._writer:
