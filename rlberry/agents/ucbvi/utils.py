@@ -2,14 +2,7 @@ from rlberry.utils.jit_setup import numba_jit
 
 
 @numba_jit
-def update_value_and_get_action(state,
-                                hh,
-                                V,
-                                R_hat,
-                                P_hat,
-                                B_sa,
-                                gamma,
-                                v_max):
+def update_value_and_get_action(state, hh, V, R_hat, P_hat, B_sa, gamma, v_max):
     """
     state : int
     hh : int
@@ -50,14 +43,7 @@ def update_value_and_get_action(state,
 
 
 @numba_jit
-def update_value_and_get_action_sd(state,
-                                   hh,
-                                   V,
-                                   R_hat,
-                                   P_hat,
-                                   B_sa,
-                                   gamma,
-                                   v_max):
+def update_value_and_get_action_sd(state, hh, V, R_hat, P_hat, B_sa, gamma, v_max):
     """
     state : int
     hh : int

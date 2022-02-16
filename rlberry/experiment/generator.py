@@ -27,14 +27,17 @@ def experiment_generator():
     """
     args = docopt(__doc__)
     for (_, agent_manager_kwargs) in parse_experiment_config(
-            Path(args["<experiment_path>"]),
-            n_fit=int(args["--n_fit"]),
-            output_base_dir=args["--output_dir"],
-            parallelization=args["--parallelization"]):
+        Path(args["<experiment_path>"]),
+        n_fit=int(args["--n_fit"]),
+        output_base_dir=args["--output_dir"],
+        parallelization=args["--parallelization"],
+    ):
         if args["--enable_tensorboard"]:
             if check_packages.TENSORBOARD_INSTALLED:
                 agent_manager_kwargs.update(dict(enable_tensorboard=True))
             else:
-                logger.warning('Option --enable_tensorboard is not available: tensorboard is not installed.')
+                logger.warning(
+                    "Option --enable_tensorboard is not available: tensorboard is not installed."
+                )
 
         yield AgentManager(**agent_manager_kwargs)

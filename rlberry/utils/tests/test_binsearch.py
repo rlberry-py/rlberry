@@ -23,13 +23,9 @@ def test_binary_search_nd():
     assert binary_search_nd(vec3, bins) == 1 + 3 * 1 + 3 * 3 * 0
 
 
-@pytest.mark.parametrize("i, j, k, N",
-                         [
-                             (0, 0, 0, 5),
-                             (0, 1, 2, 5),
-                             (4, 3, 2, 5),
-                             (4, 4, 4, 5)
-                         ])
+@pytest.mark.parametrize(
+    "i, j, k, N", [(0, 0, 0, 5), (0, 1, 2, 5), (4, 3, 2, 5), (4, 4, 4, 5)]
+)
 def test_unravel_index_uniform_bin(i, j, k, N):
     # index = i + N * j + N * N * k
     dim = 3

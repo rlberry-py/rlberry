@@ -4,13 +4,24 @@ import logging
 import numpy as np
 
 from rlberry.agents import AgentWithSimplePolicy
-from rlberry.agents.utils.memories import Transition, PrioritizedReplayMemory, TransitionReplayMemory
+from rlberry.agents.utils.memories import (
+    Transition,
+    PrioritizedReplayMemory,
+    TransitionReplayMemory,
+)
 from rlberry.exploration_tools.discrete_counter import DiscreteCounter
-from rlberry.exploration_tools.online_discretization_counter import OnlineDiscretizationCounter
+from rlberry.exploration_tools.online_discretization_counter import (
+    OnlineDiscretizationCounter,
+)
 from rlberry.wrappers.uncertainty_estimator_wrapper import UncertaintyEstimatorWrapper
 from rlberry.agents.torch.dqn.exploration import exploration_factory
-from rlberry.agents.torch.utils.training import loss_function_factory, model_factory, size_model_config, \
-    trainable_parameters, optimizer_factory
+from rlberry.agents.torch.utils.training import (
+    loss_function_factory,
+    model_factory,
+    size_model_config,
+    trainable_parameters,
+    optimizer_factory,
+)
 from rlberry.seeding import Seeder
 from rlberry.utils.factory import load
 from rlberry.utils.torch import choose_device
@@ -75,47 +86,47 @@ class DQNAgent(AgentWithSimplePolicy):
     prioritized_replay: bool
         Use prioritized replay.
     """
-    name = 'DQN'
 
-    def __init__(self,
-                 env,
-                 horizon=256,
-                 gamma=0.99,
-                 loss_function="l2",
-                 batch_size=100,
-                 device="cuda:best",
-                 target_update=1,
-                 learning_rate=0.001,
-                 epsilon_init=1.0,
-                 epsilon_final=0.1,
-                 epsilon_decay=5000,
-                 optimizer_type='ADAM',
-                 qvalue_net_fn=None,
-                 qvalue_net_kwargs=None,
-                 double=True,
-                 memory_capacity=10000,
-                 use_bonus=False,
-                 uncertainty_estimator_kwargs=None,
-                 prioritized_replay=True,
-                 update_frequency=1,
-                 **kwargs):
+    name = "DQN"
+
+    def __init__(
+        self,
+        env,
+        horizon=256,
+        gamma=0.99,
+        loss_function="l2",
+        batch_size=100,
+        device="cuda:best",
+        target_update=1,
+        learning_rate=0.001,
+        epsilon_init=1.0,
+        epsilon_final=0.1,
+        epsilon_decay=5000,
+        optimizer_type="ADAM",
+        qvalue_net_fn=None,
+        qvalue_net_kwargs=None,
+        double=True,
+        memory_capacity=10000,
+        use_bonus=False,
+        uncertainty_estimator_kwargs=None,
+        prioritized_replay=True,
+        update_frequency=1,
+        **kwargs,
+    ):
         # Wrap arguments and initialize base class
-        memory_kwargs = {
-            'capacity': memory_capacity,
-            'n_steps': 1,
-            'gamma': gamma
-        }
+        memory_kwargs = {"capacity": memory_capacity, "n_steps": 1, "gamma": gamma}
         exploration_kwargs = {
-            'method': "EpsilonGreedy",
-            'temperature': epsilon_init,
-            'final_temperature': epsilon_final,
-            'tau': epsilon_decay,
+            "method": "EpsilonGreedy",
+            "temperature": epsilon_init,
+            "final_temperature": epsilon_final,
+            "tau": epsilon_decay,
         }
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
         self.use_bonus = use_bonus
         if self.use_bonus:
             self.env = UncertaintyEstimatorWrapper(
-                self.env, **uncertainty_estimator_kwargs)
+                self.env, **uncertainty_estimator_kwargs
+            )
         self.horizon = horizon
         self.exploration_kwargs = exploration_kwargs or {}
         self.memory_kwargs = memory_kwargs or {}
@@ -123,40 +134,49 @@ class DQNAgent(AgentWithSimplePolicy):
         self.target_update = target_update
         self.double = double
 
-        assert isinstance(env.action_space, spaces.Discrete), \
-            "Only compatible with Discrete action spaces."
+        assert isinstance(
+            env.action_space, spaces.Discrete
+        ), "Only compatible with Discrete action spaces."
 
         self.prioritized_replay = prioritized_replay
-        memory_class = PrioritizedReplayMemory if prioritized_replay else TransitionReplayMemory
+        memory_class = (
+            PrioritizedReplayMemory if prioritized_replay else TransitionReplayMemory
+        )
         self.memory = memory_class(**self.memory_kwargs)
-        self.exploration_policy = \
-            exploration_factory(self.env.action_space,
-                                **self.exploration_kwargs)
+        self.exploration_policy = exploration_factory(
+            self.env.action_space, **self.exploration_kwargs
+        )
         self.training = True
         self.steps = 0
         self.episode = 0
 
-        self.optimizer_kwargs = {'optimizer_type': optimizer_type,
-                                 'lr': learning_rate}
+        self.optimizer_kwargs = {"optimizer_type": optimizer_type, "lr": learning_rate}
         self.device = choose_device(device)
         self.loss_function = loss_function
         self.gamma = gamma
 
         qvalue_net_kwargs = qvalue_net_kwargs or {}
-        qvalue_net_fn = load(qvalue_net_fn) if isinstance(qvalue_net_fn, str) else \
-            qvalue_net_fn or default_qvalue_net_fn
+        qvalue_net_fn = (
+            load(qvalue_net_fn)
+            if isinstance(qvalue_net_fn, str)
+            else qvalue_net_fn or default_qvalue_net_fn
+        )
         self.value_net = qvalue_net_fn(self.env, **qvalue_net_kwargs)
         self.target_net = qvalue_net_fn(self.env, **qvalue_net_kwargs)
 
         self.target_net.load_state_dict(self.value_net.state_dict())
         self.target_net.eval()
-        logger.info("Number of trainable parameters: {}"
-                    .format(trainable_parameters(self.value_net)))
+        logger.info(
+            "Number of trainable parameters: {}".format(
+                trainable_parameters(self.value_net)
+            )
+        )
         self.value_net.to(self.device)
         self.target_net.to(self.device)
         self.loss_function = loss_function_factory(self.loss_function)
-        self.optimizer = optimizer_factory(self.value_net.parameters(),
-                                           **self.optimizer_kwargs)
+        self.optimizer = optimizer_factory(
+            self.value_net.parameters(), **self.optimizer_kwargs
+        )
         self.update_frequency = update_frequency
         self.steps = 0
 
@@ -167,21 +187,36 @@ class DQNAgent(AgentWithSimplePolicy):
                 state = self.env.reset()
                 values = self.get_state_action_values(state)
                 for i, value in enumerate(values):
-                    self.writer.add_scalar(f"agent/action_value_{i}", value, self.episode)
+                    self.writer.add_scalar(
+                        f"agent/action_value_{i}", value, self.episode
+                    )
             total_reward, total_bonus, total_success, length = self._run_episode()
             if self.episode % 20 == 0:
-                logger.info(f"Episode {self.episode + 1}/{budget}, total reward {total_reward}")
+                logger.info(
+                    f"Episode {self.episode + 1}/{budget}, total reward {total_reward}"
+                )
             if self.writer:
                 self.writer.add_scalar("episode_rewards", total_reward, self.episode)
-                self.writer.add_scalar("episode/total_reward", total_reward, self.episode)
+                self.writer.add_scalar(
+                    "episode/total_reward", total_reward, self.episode
+                )
                 self.writer.add_scalar("episode/total_bonus", total_bonus, self.episode)
-                self.writer.add_scalar("episode/total_success", total_success, self.episode)
+                self.writer.add_scalar(
+                    "episode/total_success", total_success, self.episode
+                )
                 self.writer.add_scalar("episode/length", length, self.episode)
-                if self.use_bonus and \
-                        (isinstance(self.env.uncertainty_estimator, OnlineDiscretizationCounter) or
-                         isinstance(self.env.uncertainty_estimator, DiscreteCounter)):
-                    n_visited_states = (self.env.uncertainty_estimator.N_sa.sum(axis=1) > 0).sum()
-                    self.writer.add_scalar("debug/n_visited_states", n_visited_states, self.episode)
+                if self.use_bonus and (
+                    isinstance(
+                        self.env.uncertainty_estimator, OnlineDiscretizationCounter
+                    )
+                    or isinstance(self.env.uncertainty_estimator, DiscreteCounter)
+                ):
+                    n_visited_states = (
+                        self.env.uncertainty_estimator.N_sa.sum(axis=1) > 0
+                    ).sum()
+                    self.writer.add_scalar(
+                        "debug/n_visited_states", n_visited_states, self.episode
+                    )
 
     def _run_episode(self):
         total_reward = total_bonus = total_success = time = 0
@@ -194,8 +229,8 @@ class DQNAgent(AgentWithSimplePolicy):
             # bonus used only for logging, here
             bonus = 0.0
             if self.use_bonus:
-                if info is not None and 'exploration_bonus' in info:
-                    bonus = info['exploration_bonus']
+                if info is not None and "exploration_bonus" in info:
+                    bonus = info["exploration_bonus"]
 
             self.record(state, action, reward, next_state, done, info)
             state = next_state
@@ -295,52 +330,60 @@ class DQNAgent(AgentWithSimplePolicy):
         The residuals over the batch, and the computed target.
         """
         # Concatenate the batch elements
-        state = torch.cat(tuple(torch.tensor([batch.state],
-                                             dtype=torch.float))).to(self.device)
-        action = torch.tensor(batch.action,
-                              dtype=torch.long).to(self.device)
-        reward = torch.tensor(batch.reward,
-                              dtype=torch.float).to(self.device)
+        state = torch.cat(tuple(torch.tensor([batch.state], dtype=torch.float))).to(
+            self.device
+        )
+        action = torch.tensor(batch.action, dtype=torch.long).to(self.device)
+        reward = torch.tensor(batch.reward, dtype=torch.float).to(self.device)
         if self.use_bonus:
-            bonus = self.env.bonus_batch(state, action).to(self.device) * self.exploration_policy.epsilon
+            bonus = (
+                self.env.bonus_batch(state, action).to(self.device)
+                * self.exploration_policy.epsilon
+            )
             if self.writer:
-                self.writer.add_scalar("debug/minibatch_mean_bonus", bonus.mean().item(), self.episode)
-                self.writer.add_scalar("debug/minibatch_mean_reward", reward.mean().item(), self.episode)
+                self.writer.add_scalar(
+                    "debug/minibatch_mean_bonus", bonus.mean().item(), self.episode
+                )
+                self.writer.add_scalar(
+                    "debug/minibatch_mean_reward", reward.mean().item(), self.episode
+                )
             reward += bonus
-        next_state = torch.cat(tuple(torch.tensor([batch.next_state],
-                                                  dtype=torch.float))).to(self.device)
-        terminal = torch.tensor(batch.terminal,
-                                dtype=torch.bool).to(self.device)
+        next_state = torch.cat(
+            tuple(torch.tensor([batch.next_state], dtype=torch.float))
+        ).to(self.device)
+        terminal = torch.tensor(batch.terminal, dtype=torch.bool).to(self.device)
         batch = Transition(state, action, reward, next_state, terminal, batch.info)
 
         # Compute Q(s_t, a) - the model computes Q(s_t), then we select the
         # columns of actions taken
         state_action_values = self.value_net(batch.state)
-        state_action_values = \
-            state_action_values.gather(1, batch.action.unsqueeze(1)).squeeze(1)
+        state_action_values = state_action_values.gather(
+            1, batch.action.unsqueeze(1)
+        ).squeeze(1)
 
         with torch.no_grad():
             # Compute V(s_{t+1}) for all next states.
-            next_state_values = \
-                torch.zeros(batch.reward.shape).to(self.device)
+            next_state_values = torch.zeros(batch.reward.shape).to(self.device)
             if self.double:
                 # Double Q-learning: pick best actions from policy network
                 _, best_actions = self.value_net(batch.next_state).max(1)
                 # Double Q-learning: estimate action values
                 # from target network
-                best_values = self.target_net(
-                    batch.next_state
-                ).gather(1, best_actions.unsqueeze(1)) \
+                best_values = (
+                    self.target_net(batch.next_state)
+                    .gather(1, best_actions.unsqueeze(1))
                     .squeeze(1)
+                )
             else:
                 best_values, _ = self.target_net(batch.next_state).max(1)
-            next_state_values[~batch.terminal] \
-                = best_values[~batch.terminal]
+            next_state_values[~batch.terminal] = best_values[~batch.terminal]
             # Compute the expected Q values
             target_state_action_value = batch.reward + self.gamma * next_state_values
 
         # Compute residuals
-        residuals = self.loss_function(state_action_values, target_state_action_value, reduction='none')
+        residuals = self.loss_function(
+            state_action_values, target_state_action_value, reduction="none"
+        )
         return residuals, target_state_action_value
 
     def get_batch_state_values(self, states):
@@ -359,9 +402,9 @@ class DQNAgent(AgentWithSimplePolicy):
             * [a1*; ...; aN*] the array of corresponding optimal action
             indexes for each state
         """
-        values, actions = self.value_net(torch.tensor(states,
-                                                      dtype=torch.float)
-                                         .to(self.device)).max(1)
+        values, actions = self.value_net(
+            torch.tensor(states, dtype=torch.float).to(self.device)
+        ).max(1)
         return values.data.cpu().numpy(), actions.data.cpu().numpy()
 
     def get_batch_state_action_values(self, states):
@@ -378,9 +421,11 @@ class DQNAgent(AgentWithSimplePolicy):
         values:[[Q11, ..., Q1n]; ...] the array of all action values
         for each state
         """
-        return self.value_net(torch.tensor(states,
-                                           dtype=torch.float)
-                              .to(self.device)).data.cpu().numpy()
+        return (
+            self.value_net(torch.tensor(states, dtype=torch.float).to(self.device))
+            .data.cpu()
+            .numpy()
+        )
 
     def get_state_value(self, state):
         """
@@ -442,22 +487,24 @@ class DQNAgent(AgentWithSimplePolicy):
 
     def eval_mode(self):
         self.training = False
-        self.exploration_kwargs['method'] = "Greedy"
-        self.exploration_policy = \
-            exploration_factory(self.env.action_space,
-                                **self.exploration_kwargs)
+        self.exploration_kwargs["method"] = "Greedy"
+        self.exploration_policy = exploration_factory(
+            self.env.action_space, **self.exploration_kwargs
+        )
 
     def save(self, filename, **kwargs):
-        state = {'state_dict': self.value_net.state_dict(),
-                 'optimizer': self.optimizer.state_dict()}
+        state = {
+            "state_dict": self.value_net.state_dict(),
+            "optimizer": self.optimizer.state_dict(),
+        }
         torch.save(state, filename)
         return filename
 
     def load(self, filename, **kwargs):
         checkpoint = torch.load(filename, map_location=self.device)
-        self.value_net.load_state_dict(checkpoint['state_dict'])
-        self.target_net.load_state_dict(checkpoint['state_dict'])
-        self.optimizer.load_state_dict(checkpoint['optimizer'])
+        self.value_net.load_state_dict(checkpoint["state_dict"])
+        self.target_net.load_state_dict(checkpoint["state_dict"])
+        self.optimizer.load_state_dict(checkpoint["optimizer"])
         return filename
 
     def initialize_model(self):
@@ -470,39 +517,39 @@ class DQNAgent(AgentWithSimplePolicy):
         except AttributeError:
             pass
         if self.writer:
-            obs_shape = self.env.observation_space.shape \
-                if isinstance(self.env.observation_space, spaces.Box) else \
-                self.env.observation_space.spaces[0].shape
-            model_input = torch.zeros((1, *obs_shape), dtype=torch.float,
-                                      device=self.device)
+            obs_shape = (
+                self.env.observation_space.shape
+                if isinstance(self.env.observation_space, spaces.Box)
+                else self.env.observation_space.spaces[0].shape
+            )
+            model_input = torch.zeros(
+                (1, *obs_shape), dtype=torch.float, device=self.device
+            )
             self.writer.add_graph(self.value_net, input_to_model=(model_input,))
-            self.writer.add_scalar("agent/trainable_parameters",
-                                   trainable_parameters(self.value_net), 0)
+            self.writer.add_scalar(
+                "agent/trainable_parameters", trainable_parameters(self.value_net), 0
+            )
 
     #
     # For hyperparameter optimization
     #
     @classmethod
     def sample_parameters(cls, trial):
-        batch_size = trial.suggest_categorical('batch_size',
-                                               [32, 64, 128, 256, 512])
-        gamma = trial.suggest_categorical('gamma',
-                                          [0.95, 0.99])
-        learning_rate = trial.suggest_loguniform('learning_rate', 1e-5, 1)
+        batch_size = trial.suggest_categorical("batch_size", [32, 64, 128, 256, 512])
+        gamma = trial.suggest_categorical("gamma", [0.95, 0.99])
+        learning_rate = trial.suggest_loguniform("learning_rate", 1e-5, 1)
 
-        target_update = trial.suggest_categorical('target_update',
-                                                  [1, 250, 500, 1000])
+        target_update = trial.suggest_categorical("target_update", [1, 250, 500, 1000])
 
-        epsilon_final = trial.suggest_loguniform('epsilon_final', 1e-2, 1e-1)
+        epsilon_final = trial.suggest_loguniform("epsilon_final", 1e-2, 1e-1)
 
-        epsilon_decay = trial.suggest_categorical('target_update',
-                                                  [1000, 5000, 10000])
+        epsilon_decay = trial.suggest_categorical("target_update", [1000, 5000, 10000])
 
         return {
-            'batch_size': batch_size,
-            'gamma': gamma,
-            'learning_rate': learning_rate,
-            'target_update': target_update,
-            'epsilon_final': epsilon_final,
-            'epsilon_decay': epsilon_decay,
+            "batch_size": batch_size,
+            "gamma": gamma,
+            "learning_rate": learning_rate,
+            "target_update": target_update,
+            "epsilon_final": epsilon_final,
+            "epsilon_decay": epsilon_decay,
         }

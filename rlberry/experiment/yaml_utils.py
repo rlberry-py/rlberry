@@ -3,7 +3,7 @@ from typing import Generator, Tuple
 import yaml
 from rlberry.utils.factory import load
 
-_AGENT_KEYS = ('init_kwargs', 'eval_kwargs', 'fit_kwargs')
+_AGENT_KEYS = ("init_kwargs", "eval_kwargs", "fit_kwargs")
 
 
 def read_yaml(path):
@@ -97,10 +97,12 @@ def read_env_config(config_path):
         return load(env_config["constructor"]), env_config["params"]
 
 
-def parse_experiment_config(path: Path,
-                            n_fit: int = 4,
-                            output_base_dir: str = 'results',
-                            parallelization: str = 'process') -> Generator[Tuple[int, dict], None, None]:
+def parse_experiment_config(
+    path: Path,
+    n_fit: int = 4,
+    output_base_dir: str = "results",
+    parallelization: str = "process",
+) -> Generator[Tuple[int, dict], None, None]:
     """
     Read .yaml files. set global seed and convert to AgentManager instances.
 
@@ -165,20 +167,20 @@ def parse_experiment_config(path: Path,
                     last = idx
 
             # kwargs
-            init_kwargs = agent_config['init_kwargs']
-            eval_kwargs = agent_config['eval_kwargs']
-            fit_kwargs = agent_config['fit_kwargs']
+            init_kwargs = agent_config["init_kwargs"]
+            eval_kwargs = agent_config["eval_kwargs"]
+            fit_kwargs = agent_config["fit_kwargs"]
 
             # check if there are global kwargs
-            if 'global_init_kwargs' in config:
-                init_kwargs.update(config['global_init_kwargs'])
-            if 'global_eval_kwargs' in config:
-                eval_kwargs.update(config['global_eval_kwargs'])
-            if 'global_fit_kwargs' in config:
-                fit_kwargs.update(config['global_fit_kwargs'])
+            if "global_init_kwargs" in config:
+                init_kwargs.update(config["global_init_kwargs"])
+            if "global_eval_kwargs" in config:
+                eval_kwargs.update(config["global_eval_kwargs"])
+            if "global_fit_kwargs" in config:
+                fit_kwargs.update(config["global_fit_kwargs"])
 
             # pop fit_budget from fit_kwargs
-            fit_budget = fit_kwargs.pop('fit_budget')
+            fit_budget = fit_kwargs.pop("fit_budget")
 
             # append run index to dir
             output_dir = output_dir / str(last + 1)
@@ -196,10 +198,11 @@ def parse_experiment_config(path: Path,
                 output_dir=output_dir,
                 parallelization=parallelization,
                 seed=seed,
-                create_unique_out_dir=False)  # output_dir is already made unique above
+                create_unique_out_dir=False,
+            )  # output_dir is already made unique above
 
 
-if __name__ == '__main__':
-    filename = 'examples/demo_experiment/params_experiment.yaml'
+if __name__ == "__main__":
+    filename = "examples/demo_experiment/params_experiment.yaml"
     for (seed, agent_manager) in parse_experiment_config(Path(filename)):
         print(seed)

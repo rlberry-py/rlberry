@@ -33,11 +33,10 @@ class TwinRooms(RenderInterface2D, Model):
     when array_observation is True. Only the functions env.reset() and
     env.step() are covered.
     """
+
     name = "TwinRooms"
 
-    def __init__(self,
-                 noise_room1=0.01,
-                 noise_room2=0.01):
+    def __init__(self, noise_room1=0.01, noise_room2=0.01):
         Model.__init__(self)
         RenderInterface2D.__init__(self)
 
@@ -60,7 +59,7 @@ class TwinRooms(RenderInterface2D, Model):
         # rendering info
         self.set_clipping_area((0, 2, 0, 1))
         self.set_refresh_interval(100)  # in milliseconds
-        self.renderer_type = 'opengl'
+        self.renderer_type = "opengl"
 
         # reset
         self.reset()
@@ -119,8 +118,11 @@ class TwinRooms(RenderInterface2D, Model):
         else:
             raise ValueError("Invalid action")
 
-        next_state = state + displacement \
-                     + self.room_noises[self.current_room] * self.rng.normal(size=2)
+        next_state = (
+            state
+            + displacement
+            + self.room_noises[self.current_room] * self.rng.normal(size=2)
+        )
 
         # clip to room
         next_state = self._clip_to_room(next_state)
@@ -152,7 +154,10 @@ class TwinRooms(RenderInterface2D, Model):
         bg.add_shape(shape)
 
         # rewards
-        for (x, y) in [self.base_reward_pos, self.base_reward_pos + np.array([1.0, 0.0])]:
+        for (x, y) in [
+            self.base_reward_pos,
+            self.base_reward_pos + np.array([1.0, 0.0]),
+        ]:
             reward = circle_shape((x, y), 0.1, n_points=50)
             reward.type = "POLYGON"
             reward.set_color((0.0, 0.5, 0.0))

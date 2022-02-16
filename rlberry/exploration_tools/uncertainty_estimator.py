@@ -22,10 +22,13 @@ class UncertaintyEstimator(ABC):
 
     def measure_batch(self, states, actions, **kwargs):
         batch = [self.measure(s, a, **kwargs) for s, a in zip(states, actions)]
-        if _get_type(batch[0]) == 'torch':
+        if _get_type(batch[0]) == "torch":
             import torch
+
             return torch.FloatTensor(batch)
         return np.array(batch)
 
     def measure_batch_all_actions(self, states):
-        return np.array([[self.measure(s, a) for a in range(self.action_space.n)] for s in states])
+        return np.array(
+            [[self.measure(s, a) for a in range(self.action_space.n)] for s in states]
+        )

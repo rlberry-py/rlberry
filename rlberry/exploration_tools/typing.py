@@ -9,9 +9,9 @@ except ImportError:
 
 def _get_type(arg):
     if _TORCH_INSTALLED and isinstance(arg, torch.Tensor):
-        return 'torch'
+        return "torch"
     elif isinstance(arg, np.ndarray):
-        return 'numpy'
+        return "numpy"
     else:
         return type(arg)
 
@@ -32,7 +32,7 @@ def process_type(arg, expected_type):
     if arg is None:
         return None
 
-    if expected_type == 'torch':
+    if expected_type == "torch":
         assert _TORCH_INSTALLED, "expected_type is 'torch', but torch is not installed!"
         if isinstance(arg, torch.Tensor):
             return arg
@@ -42,7 +42,7 @@ def process_type(arg, expected_type):
             return torch.tensor(arg)
         else:
             return arg
-    elif expected_type == 'numpy':
+    elif expected_type == "numpy":
         if isinstance(arg, np.ndarray):
             return arg
         elif _TORCH_INSTALLED and isinstance(arg, torch.Tensor):

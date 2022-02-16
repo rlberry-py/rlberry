@@ -62,8 +62,9 @@ class FiniteMDP(Model):
         Reset the environment to a default state.
         """
         if isinstance(self.initial_state_distribution, np.ndarray):
-            self.state = self.rng.choice(self._states,
-                                         p=self.initial_state_distribution)
+            self.state = self.rng.choice(
+                self._states, p=self.initial_state_distribution
+            )
         else:
             self.state = self.initial_state_distribution
         return self.state
@@ -159,16 +160,19 @@ class FiniteMDP(Model):
         """
         Print the structure of the MDP.
         """
-        indent = '    '
+        indent = "    "
         for s in self._states:
             logger.info(f"State {s} {indent}")
             for a in self._actions:
                 logger.info(f"{indent} Action {a}")
                 for ss in self._states:
                     if self.P[s, a, ss] > 0.0:
-                        logger.info(f'{2 * indent} transition to {ss} '
-                                    f'with prob {self.P[s, a, ss]: .2f}')
+                        logger.info(
+                            f"{2 * indent} transition to {ss} "
+                            f"with prob {self.P[s, a, ss]: .2f}"
+                        )
             logger.info("~~~~~~~~~~~~~~~~~~~~")
+
 
 # if __name__ == '__main__':
 #     S = 3

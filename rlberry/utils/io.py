@@ -1,4 +1,3 @@
-
 import os
 import zipfile
 import pathlib
@@ -22,12 +21,13 @@ def zipdir(dir_path, ouput_fname):
     dir_path = pathlib.Path(dir_path)
     if not dir_path.exists():
         return None
-    ouput_fname = pathlib.Path(ouput_fname).with_suffix('.zip')
-    zipf = zipfile.ZipFile(ouput_fname, 'w', zipfile.ZIP_DEFLATED)
+    ouput_fname = pathlib.Path(ouput_fname).with_suffix(".zip")
+    zipf = zipfile.ZipFile(ouput_fname, "w", zipfile.ZIP_DEFLATED)
     for root, _, files in os.walk(dir_path):
         for file in files:
-            zipf.write(os.path.join(root, file),
-                       os.path.relpath(os.path.join(root, file),
-                                       os.path.join(dir_path, '..')))
+            zipf.write(
+                os.path.join(root, file),
+                os.path.relpath(os.path.join(root, file), os.path.join(dir_path, "..")),
+            )
     zipf.close()
     return ouput_fname
