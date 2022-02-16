@@ -9,7 +9,7 @@ import os
 SEED = 42
 
 
-def check_agent_manager(Agent, continuous_state=False):
+def check_agent_manager(Agent, env=None, continuous_state=False):
     """
     Check that the agent is compatible with :class:`~rlberry.manager.AgentManager`.
 
@@ -19,14 +19,24 @@ def check_agent_manager(Agent, continuous_state=False):
     Agent: rlberry agent module
         Agent class to test.
 
+    env: tuple (env_ctor, env_kwargs) or None, default=None
+        constructor and arguments of the env on which to test. If None,
+        the parameter continuous-state is used to provide a known working
+        environment for the test.
+
     continuous_state: bool, default=False
-        whether to test on a discrete state environment or a continuous one
+        whether to test on a discrete state environment or a continuous one.
+        Used only if env is None.
     """
-    if continuous_state:
+    if env is None and continuous_state:
         env_ctor = PBall2D
-    else:
+        env_kwargs = {}
+    elif env is None:
         env_ctor = Chain
-    env_kwargs = {}
+        env_kwargs = {}
+    else:
+        env_ctor = env[0]
+        env_kwargs = env[1]
     try:
         agent = AgentManager(
             Agent, (env_ctor, env_kwargs), fit_budget=5, n_fit=1, seed=SEED
@@ -71,7 +81,7 @@ def check_agent_manager_almost_equal(state, agent1, agent2, n_checks=5):
     return result
 
 
-def check_fit_additive(Agent, continuous_state=False):
+def check_fit_additive(Agent, env=None, continuous_state=False):
     """
     check that fitting two times with 10 fit budget is the same as fitting
     one time with 20 fit budget.
@@ -82,14 +92,24 @@ def check_fit_additive(Agent, continuous_state=False):
     Agent: rlberry agent module
         Agent class to test.
 
+    env: tuple (env_ctor, env_kwargs) or None, default=None
+        constructor and arguments of the env on which to test. If None,
+        the parameter continuous-state is used to provide a known working
+        environment for the test.
+
     continuous_state: bool, default=False
-        whether to test on a discrete state environment or a continuous one
+        whether to test on a discrete state environment or a continuous one.
+        Used only if env is None.
     """
-    if continuous_state:
+    if env is None and continuous_state:
         env_ctor = PBall2D
-    else:
+        env_kwargs = {}
+    elif env is None:
         env_ctor = Chain
-    env_kwargs = {}
+        env_kwargs = {}
+    else:
+        env_ctor = env[0]
+        env_kwargs = env[1]
     agent1 = AgentManager(
         Agent, (env_ctor, env_kwargs), fit_budget=5, n_fit=1, seed=SEED
     )
@@ -110,7 +130,7 @@ def check_fit_additive(Agent, continuous_state=False):
     ), "Error: fitting the agent two times for 10 steps is not equivalent to fitting it one time for 20 steps."
 
 
-def check_save(Agent, continuous_state=False):
+def check_save(Agent, env=None, continuous_state=False):
     """
     Check that the agent save a non-empty file.
 
@@ -121,13 +141,25 @@ def check_save(Agent, continuous_state=False):
     Agent: rlberry agent module
         Agent class to test.
 
+    env: tuple (env_ctor, env_kwargs) or None, default=None
+        constructor and arguments of the env on which to test. If None,
+        the parameter continuous-state is used to provide a known working
+        environment for the test.
+
     continuous_state: bool, default=False
-        whether to test on a discrete state environment or a continuous one
+        whether to test on a discrete state environment or a continuous one.
+        Used only if env is None.
     """
-    if continuous_state:
+    if env is None and continuous_state:
         env_ctor = PBall2D
-    else:
+        env_kwargs = {}
+    elif env is None:
         env_ctor = Chain
+        env_kwargs = {}
+    else:
+        env_ctor = env[0]
+        env_kwargs = env[1]
+    env = env_ctor(**env_kwargs)
     with tempfile.TemporaryDirectory() as tmpdirname:
         if continuous_state:
             env_ctor = PBall2D
@@ -148,11 +180,11 @@ def check_save(Agent, continuous_state=False):
         ), "the saved file is empty"
         try:
             agent.load(str(agent.output_dir_) + "/agent_handlers/idx_0.pickle")
-        except RuntimeError:
+        except:
             raise RuntimeError("failed to load the agent file")
 
 
-def check_seeding_agent(Agent, continuous_state=False):
+def check_seeding_agent(Agent, env=None, continuous_state=False):
     """
     Check that the agent is reproducible.
 
@@ -162,24 +194,35 @@ def check_seeding_agent(Agent, continuous_state=False):
     Agent: rlberry agent module
         Agent class to test.
 
-    continuous_state: bool, default=False
-        whether to test on a discrete state environment or a continuous one
-    """
-    agent1 = check_agent_manager(Agent, continuous_state)
-    agent2 = check_agent_manager(Agent, continuous_state)
+    env: tuple (env_ctor, env_kwargs) or None, default=None
+        constructor and arguments of the env on which to test. If None,
+        the parameter continuous-state is used to provide a known working
+        environment for the test.
 
-    if continuous_state:
+    continuous_state: bool, default=False
+        whether to test on a discrete state environment or a continuous one.
+        Used only if env is None.
+    """
+    agent1 = check_agent_manager(Agent, env, continuous_state)
+    agent2 = check_agent_manager(Agent, env, continuous_state)
+
+    if env is None and continuous_state:
         env_ctor = PBall2D
-    else:
+        env_kwargs = {}
+    elif env is None:
         env_ctor = Chain
-    env = env_ctor()
+        env_kwargs = {}
+    else:
+        env_ctor = env[0]
+        env_kwargs = env[1]
+    env = env_ctor(**env_kwargs)
     state = env.reset()
     result = check_agent_manager_almost_equal(state, agent1, agent2)
 
     assert result, "Agent not reproducible (same seed give different results)"
 
 
-def check_rl_agent(Agent, continuous_state=False):
+def check_rl_agent(Agent, env=None, continuous_state=False):
     """
     Check agent manager compatibility  and check reproducibility/seeding.
     Will raise an exception if there is something wrong with the agent.
@@ -190,8 +233,14 @@ def check_rl_agent(Agent, continuous_state=False):
     Agent: rlberry agent module
         Agent class to test.
 
+    env: tuple (env_ctor, env_kwargs) or None, default=None
+        constructor and arguments of the env on which to test. If None,
+        the parameter continuous-state is used to provide a known working
+        environment for the test.
+
     continuous_state: bool, default=False
-        whether to test on a discrete state environment or a continuous one
+        whether to test on a discrete state environment or a continuous one.
+        Used only if env is None.
 
     Examples
     --------
@@ -199,7 +248,7 @@ def check_rl_agent(Agent, continuous_state=False):
     >>> from rlberry.utils import check_rl_agent
     >>> check_rl_agent(UCBVIAgent) # which does not return an error.
     """
-    check_agent_manager(Agent, continuous_state)  # check manager compatible.
-    check_seeding_agent(Agent, continuous_state)  # check reproducibility
-    check_fit_additive(Agent, continuous_state)
-    check_save(Agent, continuous_state)
+    check_agent_manager(Agent, env, continuous_state)  # check manager compatible.
+    check_seeding_agent(Agent, env, continuous_state)  # check reproducibility
+    check_fit_additive(Agent, env, continuous_state)
+    check_save(Agent, env, continuous_state)
