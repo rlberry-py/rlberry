@@ -30,6 +30,7 @@ class SSACAgent(SACAgent):
         SACAgent.__init__(self, env, horizon=100, batch_size=5, **kwargs)
         self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
 
+
 env_ctor = PBall2D
 env_kwargs = dict()
 env = env_ctor(**env_kwargs)
@@ -41,19 +42,12 @@ agent.fit()
 def compute_reward(rewards):
     return np.cumsum(rewards)
 
+
 # Plot of the cumulative reward.
-output = plot_writer_data(
-    agent, tag="loss_q1", title="Loss q1"
-)
+output = plot_writer_data(agent, tag="loss_q1", title="Loss q1")
 
-output = plot_writer_data(
-    agent, tag="loss_q2", title="Loss q2"
-)
+output = plot_writer_data(agent, tag="loss_q2", title="Loss q2")
 
-output = plot_writer_data(
-    agent, tag="loss_v", title="Loss critic"
-)
+output = plot_writer_data(agent, tag="loss_v", title="Loss critic")
 
-output = plot_writer_data(
-    agent, tag="loss_act", title="Loss actor"
-)
+output = plot_writer_data(agent, tag="loss_act", title="Loss actor")
