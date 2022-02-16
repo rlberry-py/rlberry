@@ -27,8 +27,8 @@ def check_env(env):
     env.reset()
     b = env.step(action)[0]
     if hasattr(a, "__len__"):
-        assert (
-            np.mean(np.array(a) == np.array(b)) == 1
+        assert np.all(
+            np.array(a) == np.array(b)
         ), "The environment does not seem to be reproducible"
     else:
         assert a == b, "The environment does not seem to be reproducible"

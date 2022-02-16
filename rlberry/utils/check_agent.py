@@ -38,10 +38,10 @@ def check_agent_manager(Agent, continuous_state=False):
     return agent
 
 
-def check_agent_almost_equal(state, agent1, agent2, n_checks=5):
+def check_agent_manager_almost_equal(state, agent1, agent2, n_checks=5):
     """
-    Check that two agents are almost equal in the sense that they give the same
-    actions n_checks times on a given state.
+    Check that two agent managers with a fixed seed are almost equal in the
+    sense that they give the same actions n_checks times on a given state.
 
 
     Parameters
@@ -49,10 +49,10 @@ def check_agent_almost_equal(state, agent1, agent2, n_checks=5):
 
     state: state
         environment state
-    agent1: rlberry agent
-        first agent to be compared
-    agent2: rlberry agent
-        second agent to be compared
+    agent1: rlberry AgentManager instance
+        first agent manager to be compared
+    agent2: rlberry AgentManager instance
+        second agent manager to be compared
     n_checks : int, default=5
         number of checks to do.
     """
@@ -66,7 +66,7 @@ def check_agent_almost_equal(state, agent1, agent2, n_checks=5):
     for f in range(5):
         # test on 5 actions
         action2 = agent2.agent_handlers[0].policy(state)
-        if np.mean(actions1[f] == action2) != 1:
+        if not np.all(actions1[f] == action2):
             result = False
     return result
 
@@ -103,7 +103,7 @@ def check_fit_additive(Agent, continuous_state=False):
 
     env = env_ctor()
     state = env.reset()
-    result = check_agent_almost_equal(state, agent1, agent2)
+    result = check_agent_manager_almost_equal(state, agent1, agent2)
 
     assert (
         result
@@ -148,7 +148,7 @@ def check_save(Agent, continuous_state=False):
         ), "the saved file is empty"
         try:
             agent.load(str(agent.output_dir_) + "/agent_handlers/idx_0.pickle")
-        except:
+        except RuntimeError:
             raise RuntimeError("failed to load the agent file")
 
 
@@ -174,7 +174,7 @@ def check_seeding_agent(Agent, continuous_state=False):
         env_ctor = Chain
     env = env_ctor()
     state = env.reset()
-    result = check_agent_almost_equal(state, agent1, agent2)
+    result = check_agent_manager_almost_equal(state, agent1, agent2)
 
     assert result, "Agent not reproducible (same seed give different results)"
 
