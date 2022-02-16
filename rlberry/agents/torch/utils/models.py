@@ -29,7 +29,6 @@ def default_twinq_net_fn(env):
         )
     # Assume CHW observation space
 
-
     if len(obs_shape) == 1:
         model_config = {
             "type": "MultiLayerPerceptron",
@@ -47,6 +46,7 @@ def default_twinq_net_fn(env):
     q2 = model_factory(**model_config)
 
     return (q1, q2)
+
 
 def default_policy_net_fn(env):
     """
@@ -76,7 +76,7 @@ def default_policy_net_fn(env):
             model_config = {
                 "type": "ConvolutionalNetwork",
                 "is_policy": True,
-                "transpose_obs": True,  
+                "transpose_obs": True,
                 "in_channels": int(obs_shape[2]),
                 "in_height": int(obs_shape[1]),
                 "in_width": int(obs_shape[0]),

@@ -1,23 +1,18 @@
-import numpy as np
 import torch
-import torch.distributions as distr
-from rlberry.agents.utils.memories import Memory
 from torch.nn.functional import one_hot
 
 import gym.spaces as spaces
 
-#implement next state function?
-#implement is_terminal function?
+# implement next state function?
+# implement is_terminal function?
 
 
-
-
-def unpack_batch(batch, device = "cpu"):
+def unpack_batch(batch, device="cpu"):
     assert isinstance(batch.rewards, list)
     assert isinstance(batch.states, list)
     assert isinstance(batch.actions, list)
     assert isinstance(batch.logprobs, list)
-    assert isinstance(batch.is_terminals, list) 
+    assert isinstance(batch.is_terminals, list)
     actions = torch.stack(batch.actions).to(device).detach()
     states = torch.stack(batch.states).to(device).detach()
     rewards = torch.tensor(batch.rewards).to(device).detach()
@@ -26,20 +21,20 @@ def unpack_batch(batch, device = "cpu"):
     return states, actions, logprobs, rewards, is_terminals
 
 
-#we assume that batch consists of lists of tensors
+# we assume that batch consists of lists of tensors
+
 
 @torch.no_grad()
-def get_qref(batch, target_val_net, gamma, device = "cpu"):
-    #extract data
+def get_qref(batch, target_val_net, gamma, device="cpu"):
+    # extract data
     old_states, _, _, qref, is_terminal = unpack_batch(batch, device)
 
-    #get next_states
+    # get next_states
     non_terminal = torch.logical_not(is_terminal)
     next_states_idx = (torch.nonzero(non_terminal) + 1).view(-1)
     next_states = old_states[next_states_idx].to(device).detach()
 
-
-    values = target_val_net(next_states)[:,0]
+    values = target_val_net(next_states)[:, 0]
     qref[non_terminal] += gamma * values
 
     qref = qref.type(torch.FloatTensor)
@@ -47,8 +42,7 @@ def get_qref(batch, target_val_net, gamma, device = "cpu"):
 
 
 @torch.no_grad()
-def get_vref(env, batch, twinq_net, policy_net, ent_alpha: float,
-                     device="cpu"):
+def get_vref(env, batch, twinq_net, policy_net, ent_alpha: float, device="cpu"):
 
     assert isinstance(twinq_net, tuple)
     assert isinstance(env.action_space, spaces.Discrete)
@@ -65,8 +59,7 @@ def get_vref(env, batch, twinq_net, policy_net, ent_alpha: float,
 
     q1_v, q2_v = q1(q_input), q2(q_input)
     # element-wise minimum
-    vref = torch.min(q1_v, q2_v).squeeze() - \
-                 ent_alpha * act_dist.log_prob(cur_actions)
+    vref = torch.min(q1_v, q2_v).squeeze() - ent_alpha * act_dist.log_prob(cur_actions)
     return vref
 
 
