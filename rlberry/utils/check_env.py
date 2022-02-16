@@ -9,7 +9,7 @@ seeder = Seeder(42)
 def check_env(env):
     """
     Check that the environment is (almost) gym-compatible and that it is reproducible
-    in the sense that given two times the same seed, it gives two times the same states.
+    in the sense that it returns the same states when given the same seed.
 
     Parameters
     ----------

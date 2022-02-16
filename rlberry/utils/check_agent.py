@@ -17,10 +17,10 @@ def check_agent_manager(Agent, continuous_state=False):
     ----------
 
     Agent: rlberry agent module
-        Agent class that we want to test.
+        Agent class to test.
 
     continuous_state: bool, default=False
-        whether we test on a discrete state environment or a continuous one.
+        whether to test on a discrete state environment or a continuous one
     """
     if continuous_state:
         env_ctor = PBall2D
@@ -80,10 +80,10 @@ def check_fit_additive(Agent, continuous_state=False):
     ----------
 
     Agent: rlberry agent module
-        Agent class that we want to test.
+        Agent class to test.
 
     continuous_state: bool, default=False
-        whether we test on a discrete state environment or a continuous one.
+        whether to test on a discrete state environment or a continuous one
     """
     if continuous_state:
         env_ctor = PBall2D
@@ -119,10 +119,10 @@ def check_save(Agent, continuous_state=False):
     ----------
 
     Agent: rlberry agent module
-        Agent class that we want to test.
+        Agent class to test.
 
     continuous_state: bool, default=False
-        whether we test on a discrete state environment or a continuous one.
+        whether to test on a discrete state environment or a continuous one
     """
     if continuous_state:
         env_ctor = PBall2D
@@ -134,7 +134,7 @@ def check_save(Agent, continuous_state=False):
         else:
             env_ctor = Chain
         env_kwargs = {}
-        agent1 = AgentManager(
+        agent = AgentManager(
             Agent,
             (env_ctor, env_kwargs),
             fit_budget=5,
@@ -142,11 +142,14 @@ def check_save(Agent, continuous_state=False):
             seed=SEED,
             output_dir=tmpdirname,
         )
-        agent1.fit(10)
+        agent.fit(10)
         assert (
-            os.path.getsize(str(agent1.output_dir_) + "/agent_handlers/idx_0.pickle")
-            > 1
-        ), "the file saved appear to be empty"
+            os.path.getsize(str(agent.output_dir_) + "/agent_handlers/idx_0.pickle") > 1
+        ), "the saved file is empty"
+        try:
+            agent.load(str(agent.output_dir_) + "/agent_handlers/idx_0.pickle")
+        except:
+            raise RuntimeError("failed to load the agent file")
 
 
 def check_seeding_agent(Agent, continuous_state=False):
@@ -157,10 +160,10 @@ def check_seeding_agent(Agent, continuous_state=False):
     ----------
 
     Agent: rlberry agent module
-        Agent class that we want to test.
+        Agent class to test.
 
     continuous_state: bool, default=False
-        whether we test on a discrete state environment or a continuous one.
+        whether to test on a discrete state environment or a continuous one
     """
     agent1 = check_agent_manager(Agent, continuous_state)
     agent2 = check_agent_manager(Agent, continuous_state)
@@ -173,7 +176,7 @@ def check_seeding_agent(Agent, continuous_state=False):
     state = env.reset()
     result = check_agent_almost_equal(state, agent1, agent2)
 
-    assert result, "Agent not reproducible (different seed give different results)"
+    assert result, "Agent not reproducible (same seed give different results)"
 
 
 def check_rl_agent(Agent, continuous_state=False):
@@ -185,10 +188,10 @@ def check_rl_agent(Agent, continuous_state=False):
     ----------
 
     Agent: rlberry agent module
-        Agent class that we want to test.
+        Agent class to test.
 
     continuous_state: bool, default=False
-        whether we test on a discrete state environment or a continuous one.
+        whether to test on a discrete state environment or a continuous one
 
     Examples
     --------

@@ -1,5 +1,5 @@
 """
-File copied from https://github.com/openai/gym and then modified for our purpose.
+Based on https://github.com/openai/gym and then modified for our purpose.
 """
 
 from typing import Union, Optional

@@ -18,6 +18,7 @@ class OneHotFeatureMap(FeatureMap):
         return feat.flatten()
 
 
+# LSVIUCBAgent needs a feature map function to work.
 class OneHotLSVI(LSVIUCBAgent):
     def __init__(self, env, **kwargs):
         def feature_map_fn(_env):
