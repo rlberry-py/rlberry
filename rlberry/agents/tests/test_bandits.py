@@ -15,7 +15,7 @@ class UCBAgent(IndexAgent):
 
     def __init__(self, env, B=1, **kwargs):
         def index(r, t):
-            return np.mean(r) + B * np.sqrt(2 * np.log(t**2) / len(r))
+            return np.mean(r) + B * np.sqrt(2 * np.log(t ** 2) / len(r))
 
         IndexAgent.__init__(self, env, index, **kwargs)
 
@@ -33,7 +33,7 @@ class RecursiveUCBAgent(RecursiveIndexAgent):
             return stat
 
         def index(stat, Na, t):
-            return stat + B * np.sqrt(2 * np.log(t**2) / Na)
+            return stat + B * np.sqrt(2 * np.log(t ** 2) / Na)
 
         RecursiveIndexAgent.__init__(self, env, stat_function, index, **kwargs)
 

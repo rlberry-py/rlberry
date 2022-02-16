@@ -34,7 +34,7 @@ class UCBAgent(IndexAgent):
 
     def __init__(self, env, **kwargs):
         def index(r, t):
-            return np.mean(r) + np.sqrt(np.log(t**2) / (2 * len(r)))
+            return np.mean(r) + np.sqrt(np.log(t ** 2) / (2 * len(r)))
 
         IndexAgent.__init__(self, env, index, **kwargs)
         self.env = WriterWrapper(

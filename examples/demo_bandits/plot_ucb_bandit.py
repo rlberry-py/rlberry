@@ -33,7 +33,7 @@ class UCBAgent(RecursiveIndexAgent):
             return stat
 
         def index(stat, Na, t):
-            return stat + B * np.sqrt(2 * np.log(t**2) / Na)
+            return stat + B * np.sqrt(2 * np.log(t ** 2) / Na)
 
         RecursiveIndexAgent.__init__(self, env, stat_function, index, **kwargs)
         self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")

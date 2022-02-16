@@ -40,7 +40,7 @@ class IndexAgent(BanditWithSimplePolicy):
         if index_function is None:
 
             def index(r, t):
-                return np.mean(r) + np.sqrt(np.log(t**2) / (2 * len(r)))
+                return np.mean(r) + np.sqrt(np.log(t ** 2) / (2 * len(r)))
 
             self.index_function = index_function
         else:
@@ -153,7 +153,7 @@ class RecursiveIndexAgent(BanditWithSimplePolicy):
         if index_function is None:
 
             def index(stat, Na, t):
-                return stat + np.sqrt(np.log(t**2) / (2 * Na))
+                return stat + np.sqrt(np.log(t ** 2) / (2 * Na))
 
             self.index_function = index
         else:
