@@ -1,13 +1,13 @@
 import numpy as np
 import pytest
-from rlberry.envs import Chain
+from rlberry.envs import GridWorld, Chain
 from gym.utils.env_checker import check_env
 from rlberry.utils.check_agent import (
     check_rl_agent,
     _fit_agent_manager,
     check_agents_almost_equal,
 )
-from rlberry.agents import ValueIterationAgent
+from rlberry.agents import ValueIterationAgent, UCBVIAgent
 
 
 class TestEnv(Chain):
@@ -58,6 +58,17 @@ def test_check_agent():
 
 
 def test_check_agent_manager_almost_equal():
-    agent1 = _fit_agent_manager(TestAgent, "discrete_state").agent_handlers[0]
-    agent2 = _fit_agent_manager(TestAgent, "discrete_state").agent_handlers[0]
-    check_agents_almost_equal(agent1, agent2, compare_using="eval")
+    env = GridWorld
+    env_kwargs = {}
+    agent1 = _fit_agent_manager(TestAgent, (env, env_kwargs)).agent_handlers[0]
+    agent2 = _fit_agent_manager(TestAgent, (env, env_kwargs)).agent_handlers[0]
+    agent3 = _fit_agent_manager(UCBVIAgent, (env, env_kwargs)).agent_handlers[0]
+    assert check_agents_almost_equal(agent1, agent2, compare_using="eval")
+    assert not check_agents_almost_equal(agent1, agent3)
+
+
+def test_error_message_check_agent():
+    msg = "The env given in parameter is not implemented"
+    with pytest.raises(ValueError, match=msg):
+        check_rl_agent(ValueIterationAgent, "not_implemented")
+    msg = "Agent not compatible with Agent Manager"

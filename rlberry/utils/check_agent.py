@@ -9,19 +9,9 @@ import os
 SEED = 42
 
 
-def _fit_agent_manager(Agent, env="continuous_state"):
+def _make_env(env):
     """
-    Check that the agent is compatible with :class:`~rlberry.manager.AgentManager`.
-
-    Parameters
-    ----------
-
-    Agent: rlberry agent module
-        Agent class to test.
-
-    env: tuple (env_ctor, env_kwargs) or str in {"continuous_state", "discrete_state"}, default="continuous_state"
-        if tuple, env is the constructor and keywords of the env on which to test.
-        if str in {"continuous_state", "discrete_state"}, we use a default Benchmark environment.
+    help function to construct env from parameter env.
     """
     if isinstance(env, str):
         if env == "continuous_state":
@@ -37,10 +27,26 @@ def _fit_agent_manager(Agent, env="continuous_state"):
         env_kwargs = env[1]
     else:
         raise ValueError("The env given in parameter is not implemented")
+    return env_ctor, env_kwargs
+
+
+def _fit_agent_manager(Agent, env="continuous_state"):
+    """
+    Check that the agent is compatible with :class:`~rlberry.manager.AgentManager`.
+
+    Parameters
+    ----------
+
+    Agent: rlberry agent module
+        Agent class to test.
+
+    env: tuple (env_ctor, env_kwargs) or str in {"continuous_state", "discrete_state"}, default="continuous_state"
+        if tuple, env is the constructor and keywords of the env on which to test.
+        if str in {"continuous_state", "discrete_state"}, we use a default Benchmark environment.
+    """
+    train_env = _make_env(env)
     try:
-        agent = AgentManager(
-            Agent, (env_ctor, env_kwargs), fit_budget=5, n_fit=1, seed=SEED
-        )
+        agent = AgentManager(Agent, train_env, fit_budget=5, n_fit=1, seed=SEED)
         agent.fit()
     except Exception as exc:
         raise RuntimeError("Agent not compatible with Agent Manager") from exc
@@ -127,30 +133,13 @@ def check_fit_additive(Agent, env="continuous_state"):
         if tuple, env is the constructor and keywords of the env on which to test.
         if str in {"continuous_state", "discrete_state"}, we use a default Benchmark environment.
     """
-    if isinstance(env, str):
-        if env == "continuous_state":
-            env_ctor = PBall2D
-            env_kwargs = {}
-        elif env == "discrete_state":
-            env_ctor = Chain
-            env_kwargs = {}
-        else:
-            raise ValueError("The env given in parameter is not implemented")
-    elif isinstance(env, tuple):
-        env_ctor = env[0]
-        env_kwargs = env[1]
-    else:
-        raise ValueError("The env given in parameter is not implemented")
-    agent1 = AgentManager(
-        Agent, (env_ctor, env_kwargs), fit_budget=5, n_fit=1, seed=SEED
-    )
-    agent1.fit(10)
-    agent1.fit(10)
+    train_env = _make_env(env)
+    agent1 = AgentManager(Agent, train_env, n_fit=1, seed=SEED)
+    agent1.fit(3)
+    agent1.fit(3)
 
-    agent2 = AgentManager(
-        Agent, (env_ctor, env_kwargs), fit_budget=5, n_fit=1, seed=SEED
-    )
-    agent2.fit(20)
+    agent2 = AgentManager(Agent, train_env, n_fit=1, seed=SEED)
+    agent2.fit(6)
 
     result = check_agents_almost_equal(
         agent1.agent_handlers[0], agent2.agent_handlers[0]
@@ -176,31 +165,18 @@ def check_save_load(Agent, env="continuous_state"):
         if tuple, env is the constructor and keywords of the env on which to test.
         if str in {"continuous_state", "discrete_state"}, we use a default Benchmark environment.
     """
-    if isinstance(env, str):
-        if env == "continuous_state":
-            env_ctor = PBall2D
-            env_kwargs = {}
-        elif env == "discrete_state":
-            env_ctor = Chain
-            env_kwargs = {}
-        else:
-            raise ValueError("The env given in parameter is not implemented")
-    elif isinstance(env, tuple):
-        env_ctor = env[0]
-        env_kwargs = env[1]
-    else:
-        raise ValueError("The env given in parameter is not implemented")
-    env = env_ctor(**env_kwargs)
+    train_env = _make_env(env)
+    env = train_env[0](**train_env[1])
     with tempfile.TemporaryDirectory() as tmpdirname:
         agent = AgentManager(
             Agent,
-            (env_ctor, env_kwargs),
+            train_env,
             fit_budget=5,
             n_fit=1,
             seed=SEED,
             output_dir=tmpdirname,
         )
-        agent.fit(10)
+        agent.fit(3)
         assert (
             os.path.getsize(str(agent.output_dir_) + "/agent_handlers/idx_0.pickle") > 1
         ), "the saved file is empty"
@@ -224,20 +200,6 @@ def check_seeding_agent(Agent, env=None, continuous_state=False):
         if tuple, env is the constructor and keywords of the env on which to test.
         if str in {"continuous_state", "discrete_state"}, we use a default Benchmark environment.
     """
-    if isinstance(env, str):
-        if env == "continuous_state":
-            env_ctor = PBall2D
-            env_kwargs = {}
-        elif env == "discrete_state":
-            env_ctor = Chain
-            env_kwargs = {}
-        else:
-            raise ValueError("The env given in parameter is not implemented")
-    elif isinstance(env, tuple):
-        env_ctor = env[0]
-        env_kwargs = env[1]
-    else:
-        raise ValueError("The env given in parameter is not implemented")
     agent1 = _fit_agent_manager(Agent, env)
     agent2 = _fit_agent_manager(Agent, env)
 
