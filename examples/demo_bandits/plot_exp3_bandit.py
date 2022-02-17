@@ -26,18 +26,13 @@ class EXP3Agent(RandomizedAgent):
             return np.sum(1 - (1 - r) / p)
 
         def prob(indices, t):
-            eta = np.minimum(
-                np.sqrt(self.n_arms * np.log(self.n_arms) / (t + 1)),
-                1.
-            )
+            eta = np.minimum(np.sqrt(self.n_arms * np.log(self.n_arms) / (t + 1)), 1.0)
             w = np.exp(eta * indices)
             w /= w.sum()
             return (1 - eta) * w + eta * np.ones(self.n_arms) / self.n_arms
 
         RandomizedAgent.__init__(self, env, index, prob, **kwargs)
-        self.env = WriterWrapper(
-            self.env, self.writer, write_scalar="reward"
-        )
+        self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
 
 
 # Parameters of the problem

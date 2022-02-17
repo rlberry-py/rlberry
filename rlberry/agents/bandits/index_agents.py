@@ -38,6 +38,7 @@ class IndexAgent(BanditWithSimplePolicy):
         BanditWithSimplePolicy.__init__(self, env, **kwargs)
         self.n_arms = self.env.action_space.n
         if index_function is None:
+
             def index(r, t):
                 return np.mean(r) + np.sqrt(np.log(t**2) / (2 * len(r)))
 

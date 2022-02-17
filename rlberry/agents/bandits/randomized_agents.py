@@ -52,6 +52,7 @@ class RandomizedAgent(BanditWithSimplePolicy):
         BanditWithSimplePolicy.__init__(self, env, **kwargs)
         self.n_arms = self.env.action_space.n
         if index_function is None:
+
             def index_function(r, p, t):
                 return np.sum(1 - (1 - r) / p)
 
@@ -60,10 +61,10 @@ class RandomizedAgent(BanditWithSimplePolicy):
             self.index_function = index_function
 
         if prob_function is None:
+
             def prob_function(indices, t):
                 eta = np.minimum(
-                    np.sqrt(self.n_arms * np.log(self.n_arms) / (t + 1)),
-                    1.
+                    np.sqrt(self.n_arms * np.log(self.n_arms) / (t + 1)), 1.0
                 )
                 w = np.exp(eta * indices)
                 w /= w.sum()
@@ -119,5 +120,5 @@ class RandomizedAgent(BanditWithSimplePolicy):
         for a in self.arms:
             indices[a] = self.index_function(
                 rewards[actions == a], probs[actions == a, a], ep
-                )
+            )
         return indices
