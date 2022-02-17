@@ -179,4 +179,3 @@ def test_discrete2onehot():
         env.unwrapped.set_initial_state_distribution(initial_distr)
         obs = env.reset()
         assert np.array_equal(obs, initial_distr)
-        
