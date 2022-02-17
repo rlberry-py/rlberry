@@ -19,14 +19,36 @@ visualize a single run.
 from dqn_agent import DQNAgent
 from dqn_nets import QNet
 from rlberry.manager import AgentManager
-from rlberry.envs import gym_make
-
+from rlberry.envs import GridWorld
+from rlberry.wrappers import DiscreteToOneHotWrapper
 
 #
-# Define environment
+# Define a GridWorld environment from a layout string
 #
-env_id = "CartPole-v0"
-env = (gym_make, dict(id=env_id))
+# Layout symbols:
+#
+# '#' : wall
+# 'r' : reward of 1, terminal state
+# 'R' : reward of 1, non-terminal state
+# 'T' : terminal state
+# 'I' : initial state (if several, start uniformly among I)
+# 'O' : empty state
+# any other character : empty state
+gridworld_layout = """
+IOOOO # OOOOO  O OOOOO
+OOOOO # OOOOO  # OOOOO
+OOOOO O OOOOO  # OOOOO
+OOOOO # OOOOO  # OOOOO
+IOOOO # OOOOO  # OOOOr
+"""
+
+def gridworld_constructor(layout):
+    env = GridWorld.from_layout(layout)
+    env = DiscreteToOneHotWrapper(env)
+    return env
+
+env = (gridworld_constructor, dict(layout=gridworld_layout))
+
 
 #
 # Define DQN parameters

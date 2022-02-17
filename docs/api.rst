@@ -128,6 +128,7 @@ Utilities & Logging
   :template: class.rst
 
   utils.writers.DefaultWriter
+  agents.utils.replay.ReplayBuffer
 
 
 Wrappers
