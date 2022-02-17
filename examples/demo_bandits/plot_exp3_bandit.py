@@ -32,18 +32,18 @@ class EXP3Agent(RandomizedAgent):
             return (1 - eta) * w + eta * np.ones(self.n_arms) / self.n_arms
 
         RandomizedAgent.__init__(self, env, index, prob, **kwargs)
-        self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
+        self.env = WriterWrapper(self.env, self.writer, write_scalar="action")
 
 
 # Parameters of the problem
-p = [0.4, 0.5, 0.6]  # means of the arms
+means = np.array([0.4, 0.5, 0.6])  # means of the arms
 T = 3000  # Horizon
 M = 20  # number of MC simu
 
 # Construction of the experiment
 
 env_ctor = BernoulliBandit
-env_kwargs = {"p": p}
+env_kwargs = {"p": means}
 
 agent = AgentManager(
     EXP3Agent,
@@ -62,17 +62,17 @@ agent = AgentManager(
 agent.fit()
 
 
-# Compute and plot regret
-def compute_regret(regret):
-    return np.cumsum(np.max(p) - regret)
+# Compute and plot (pseudo-)regret
+def compute_pseudo_regret(action):
+    return np.cumsum(np.max(means) - means[action.astype(int)])
 
 
 fig = plt.figure(1, figsize=(5, 3))
 ax = plt.gca()
 output = plot_writer_data(
     [agent],
-    tag="reward",
-    preprocess_func=compute_regret,
-    title="Cumulative Regret",
+    tag="action",
+    preprocess_func=compute_pseudo_regret,
+    title="Cumulative Pseudo-Regret",
     ax=ax,
 )
