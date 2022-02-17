@@ -50,6 +50,8 @@ class ReplayBuffer:
         self._data = dict()
         self._dtypes = dict()
         self._max_episode_steps = max_episode_steps
+        self._episodes = []
+        self._current_episode = 0
 
     @property
     def data(self):
@@ -86,6 +88,12 @@ class ReplayBuffer:
         dtype : obj
             Data type of the entry (e.g. `np.float32`)
         """
+        if tag == "indices":
+            raise RuntimeError(
+                "tag cannot be equal to 'indices', "
+                "this name is used to inform in the batch "
+                "the indices of the returned samples.")
+
         if tag in self._data:
             raise ValueError(f"Entry {tag} already added to replay buffer.")
         self._tags.append(tag)
@@ -101,11 +109,17 @@ class ReplayBuffer:
             Dictionary containing scalar values, whose keys must be in self.tags.
         """
         assert list(data.keys()) == self.tags
+        self._episodes.append(self._current_episode)
         for tag in self.tags:
             self._data[tag].append(data[tag])
         if len(self) > self._max_replay_size:
+            self._episodes.pop(0)
             for tag in self.tags:
                 self._data[tag].pop(0)
+
+    def end_episode(self):
+        """Call this method to indicate the end of an episode."""
+        self._current_episode += 1
 
     def _sample_one_chunk(self, chunk_size):
         current_size = len(self)
@@ -137,7 +151,8 @@ class ReplayBuffer:
         chunk = dict()
         for tag in self.tags:
             chunk[tag] = np.array(self._data[tag][start_index:end_index])
-        return chunk
+        indices = np.arange(start_index, end_index)
+        return chunk, indices
 
     def __len__(self):
         return len(self._data[self.tags[0]])
@@ -164,12 +179,15 @@ class ReplayBuffer:
         batch = dict()
 
         trajectories = dict()
+        all_indices = []
         for tag in self.tags:
             trajectories[tag] = []
         for _ in range(batch_size):
-            chunk = self._sample_one_chunk(chunk_size)
+            chunk, indices = self._sample_one_chunk(chunk_size)
             for tag in self.tags:
                 trajectories[tag].append(chunk[tag])
+            all_indices.append(indices)
         for tag in self.tags:
             batch[tag] = np.array(trajectories[tag], dtype=self._dtypes[tag])
+        batch["indices"] = np.array(all_indices, dtype=np.int)
         return batch

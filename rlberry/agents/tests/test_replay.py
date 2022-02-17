@@ -33,10 +33,18 @@ def test_replay():
     # Sample a batch of 32 sub-trajectories of length 10
     batch = buffer.sample(batch_size=32, chunk_size=10)
     batch_full_traj = buffer.sample(batch_size=32, chunk_size=-1)
-    for tag in batch:
+    for tag in buffer.tags:
         assert batch[tag].shape[:2] == (32, 10)
         assert batch[tag].dtype == buffer.dtypes[tag]
+        assert np.array_equal(
+            np.array(buffer.data[tag], dtype=buffer.dtypes[tag])[batch["indices"]],
+            batch[tag]
+        )
 
         assert batch_full_traj[tag].shape[:2] == (32, env._max_episode_steps)
 
+
     assert np.all(batch_full_traj["dones"][:, -1])
+
+
+test_replay()
