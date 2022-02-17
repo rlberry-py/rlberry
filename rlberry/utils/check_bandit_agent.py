@@ -1,8 +1,8 @@
-from rlberry.envs.bandits import NormalBandit
+from rlberry.envs.bandits import BernoulliBandit
 from rlberry.manager import AgentManager
 
 
-def check_bandit_agent(Agent, environment=NormalBandit):
+def check_bandit_agent(Agent, environment=BernoulliBandit):
     """
     Function used to check a bandit agent in rlberry on a Gaussian bandit problem.
 
