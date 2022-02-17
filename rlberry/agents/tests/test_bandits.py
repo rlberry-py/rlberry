@@ -2,6 +2,7 @@ import numpy as np
 from rlberry.envs.bandits import NormalBandit, BernoulliBandit
 from rlberry.agents.bandits import (
     IndexAgent,
+    RandomizedAgent,
     RecursiveIndexAgent,
     TSAgent,
     BanditWithSimplePolicy,
@@ -45,6 +46,29 @@ def test_base_bandit():
 def test_index_bandits():
     assert check_bandit_agent(UCBAgent)
     assert check_bandit_agent(RecursiveUCBAgent)
+
+
+class EXP3Agent(RandomizedAgent):
+    name = "EXP3"
+
+    def __init__(self, env, **kwargs):
+        def index(r, p, t):
+            return np.sum(1 - (1 - r) / p)
+
+        def prob(indices, t):
+            eta = np.minimum(
+                np.sqrt(self.n_arms * np.log(self.n_arms) / (t + 1)),
+                1.
+            )
+            w = np.exp(eta * indices)
+            w /= w.sum()
+            return (1 - eta) * w + eta * np.ones(self.n_arms) / self.n_arms
+
+        RandomizedAgent.__init__(self, env, index, prob, **kwargs)
+
+
+def test_randomized_bandits():
+    assert check_bandit_agent(EXP3Agent)
 
 
 def test_TS():
