@@ -25,7 +25,9 @@ class ActionDictTestEnv(gym.Env):
     def reset(self):
         return np.array([1.0, 1.5, 0.5])
 
-    def render(self, mode="human"):
+
+class DummyAgent:
+    def __init__(self, **kwargs):
         pass
 
 
@@ -47,8 +49,7 @@ class TestAgent(ValueIterationAgent):
                 observation, reward, done, _ = self.eval_env.step(action)
                 episode_rewards[sim] += reward * np.power(gamma, tt)
                 tt += 1
-                if done:
-                    break
+
         return episode_rewards.mean()
 
 
@@ -83,3 +84,5 @@ def test_error_message_check_agent():
     with pytest.raises(ValueError, match=msg):
         check_rl_agent(ValueIterationAgent, "not_implemented")
     msg = "Agent not compatible with Agent Manager"
+    with pytest.raises(RuntimeError, match=msg):
+        check_rl_agent(DummyAgent)
