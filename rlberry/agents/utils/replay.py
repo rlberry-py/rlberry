@@ -58,7 +58,13 @@ class ReplayBuffer:
         self._dtypes = dict()
         self._max_episode_steps = max_episode_steps
         self._episodes = []
+        self._priorities = []
         self._current_episode = 0
+
+    @property
+    def priorities(self):
+        """List containing the priority of each entry."""
+        return self._priorities
 
     @property
     def data(self):
@@ -101,20 +107,24 @@ class ReplayBuffer:
         self._dtypes[tag] = dtype
         self._data[tag] = []
 
-    def append(self, data):
+    def append(self, data, priority: float = 1.0):
         """Store data.
 
         Parameters
         ----------
         data : dict
             Dictionary containing scalar values, whose keys must be in self.tags.
+        priority : float, default = 1.0
+            Priority of new data (used for prioritized experience replay).
         """
         assert list(data.keys()) == self.tags
         self._episodes.append(self._current_episode)
+        self._priorities.append(priority)
         for tag in self.tags:
             self._data[tag].append(data[tag])
         if len(self) > self._max_replay_size:
             self._episodes.pop(0)
+            self._priorities.pop(0)
             for tag in self.tags:
                 self._data[tag].pop(0)
 
@@ -122,11 +132,11 @@ class ReplayBuffer:
         """Call this method to indicate the end of an episode."""
         self._current_episode += 1
 
-    def _sample_one_chunk(self, chunk_size):
+    def _sample_batch_indices(self, batch_size, chunk_size):
         current_size = len(self)
         if chunk_size != -1:
-            start_index = self._rng.choice(current_size - chunk_size)
-            end_index = start_index + chunk_size
+            start_indices = self._rng.choice(current_size - chunk_size, size=batch_size)
+            end_indices = start_indices + chunk_size
         else:
             assert self._max_episode_steps is not None
             assert self._max_episode_steps is not np.inf
@@ -145,10 +155,13 @@ class ReplayBuffer:
             trajectory_ends_indices = trajectory_ends_indices[
                 trajectory_ends_indices >= chunk_size
             ]
-            end_index = self._rng.choice(trajectory_ends_indices)
-            start_index = end_index - chunk_size
-            assert start_index >= 0
+            end_indices = self._rng.choice(trajectory_ends_indices, size=batch_size)
+            start_indices = end_indices - chunk_size
+            assert np.all(start_indices >= 0)
+    
+        return start_indices, end_indices
 
+    def _get_chunk(self, start_index, end_index):
         chunk = dict()
         for tag in self.tags:
             chunk[tag] = np.array(self._data[tag][start_index:end_index])
@@ -177,6 +190,9 @@ class ReplayBuffer:
         """
         if len(self) <= chunk_size:
             return None
+        # sample start/end indices for sub-trajectories
+        start_indices, end_indices = self._sample_batch_indices(batch_size, chunk_size)
+
         batch_data = dict()
         batch_info = dict()
 
@@ -184,11 +200,13 @@ class ReplayBuffer:
         all_indices = []
         for tag in self.tags:
             trajectories[tag] = []
-        for _ in range(batch_size):
-            chunk, indices = self._sample_one_chunk(chunk_size)
+
+        for ii in range(batch_size):
+            chunk, indices = self._get_chunk(start_indices[ii], end_indices[ii])
             for tag in self.tags:
                 trajectories[tag].append(chunk[tag])
             all_indices.append(indices)
+
         for tag in self.tags:
             batch_data[tag] = np.array(trajectories[tag], dtype=self._dtypes[tag])
 

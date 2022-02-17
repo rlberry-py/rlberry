@@ -13,7 +13,7 @@ def test_replay():
     buffer.setup_entry("rewards", np.float32)
     buffer.setup_entry("dones", np.bool)
 
-    # Store data in the replay
+    # Store data in the replay for 100 episodes
     for _ in range(100):
         done = False
         obs = env.reset()
@@ -45,5 +45,5 @@ def test_replay():
 
         assert batch_full_traj.data[tag].shape[:2] == (32, env._max_episode_steps)
 
-
     assert np.all(batch_full_traj.data["dones"][:, -1])
+    assert buffer._episodes[-1] == 99
