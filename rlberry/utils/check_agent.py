@@ -251,7 +251,7 @@ def check_seeding_agent(Agent, env=None, continuous_state=False):
 def check_rl_agent(Agent, env="continuous_state"):
     """
     Check agent manager compatibility  and check reproducibility/seeding.
-    Will raise an exception if there is something wrong with the agent.
+    Raises an exception if a check fails.
 
     Parameters
     ----------
