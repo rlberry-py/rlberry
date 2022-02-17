@@ -134,11 +134,11 @@ def check_fit_additive(Agent, env="continuous_state"):
         if str in {"continuous_state", "discrete_state"}, we use a default Benchmark environment.
     """
     train_env = _make_env(env)
-    agent1 = AgentManager(Agent, train_env, n_fit=1, seed=SEED)
+    agent1 = AgentManager(Agent, train_env, fit_budget=5, n_fit=1, seed=SEED)
     agent1.fit(3)
     agent1.fit(3)
 
-    agent2 = AgentManager(Agent, train_env, n_fit=1, seed=SEED)
+    agent2 = AgentManager(Agent, train_env, fit_budget=5, n_fit=1, seed=SEED)
     agent2.fit(6)
 
     result = check_agents_almost_equal(
