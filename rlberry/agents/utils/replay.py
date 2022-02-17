@@ -3,6 +3,12 @@ New module aiming to replace memories.py
 """
 
 import numpy as np
+from typing import NamedTuple
+
+
+class Batch(NamedTuple):
+    data: dict
+    info: dict
 
 
 class ReplayBuffer:
@@ -13,13 +19,13 @@ class ReplayBuffer:
     >>> import numpy as np
     >>> from rlberry.agents.utils import replay
     >>> from rlberry.envs import gym_make
-    >>>
+    >>> 
     >>> rng = np.random.default_rng()
     >>> buffer = replay.ReplayBuffer(100_000, rng)
     >>> buffer.setup_entry("observations", np.float32)
     >>> buffer.setup_entry("actions", np.uint32)
     >>> buffer.setup_entry("rewards", np.uint32)
-    >>>
+    >>> 
     >>> # Store data in the replay
     >>> env = gym_make("CartPole-v0")
     >>> for _ in range(500):
@@ -36,11 +42,12 @@ class ReplayBuffer:
     >>>             }
     >>>         )
     >>>         obs = next_obs
-    >>>
+    >>>         if done:
+    >>>             buffer.end_episode()
     >>> # Sample a batch of 32 sub-trajectories of length 100
     >>> batch = buffer.sample(batch_size=32, chunk_size=100)
-    >>> for tag in batch:
-    >>>     print(tag, batch[tag].shape)
+    >>> for tag in buffer.tags:
+    >>>     print(tag, batch.data[tag].shape)
     """
 
     def __init__(self, max_replay_size, rng, max_episode_steps=None):
@@ -88,12 +95,6 @@ class ReplayBuffer:
         dtype : obj
             Data type of the entry (e.g. `np.float32`)
         """
-        if tag == "indices":
-            raise RuntimeError(
-                "tag cannot be equal to 'indices', "
-                "this name is used to inform in the batch "
-                "the indices of the returned samples.")
-
         if tag in self._data:
             raise ValueError(f"Entry {tag} already added to replay buffer.")
         self._tags.append(tag)
@@ -176,7 +177,8 @@ class ReplayBuffer:
         """
         if len(self) <= chunk_size:
             return None
-        batch = dict()
+        batch_data = dict()
+        batch_info = dict()
 
         trajectories = dict()
         all_indices = []
@@ -188,6 +190,9 @@ class ReplayBuffer:
                 trajectories[tag].append(chunk[tag])
             all_indices.append(indices)
         for tag in self.tags:
-            batch[tag] = np.array(trajectories[tag], dtype=self._dtypes[tag])
-        batch["indices"] = np.array(all_indices, dtype=np.int)
+            batch_data[tag] = np.array(trajectories[tag], dtype=self._dtypes[tag])
+
+        batch_info["indices"] = np.array(all_indices, dtype=np.int)
+
+        batch = Batch(data=batch_data, info=batch_info)
         return batch
