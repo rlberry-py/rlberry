@@ -130,9 +130,9 @@ def check_fit_additive(Agent, env=None, continuous_state=False):
     ), "Error: fitting the agent two times for 10 steps is not equivalent to fitting it one time for 20 steps."
 
 
-def check_save(Agent, env=None, continuous_state=False):
+def check_save_load(Agent, env=None, continuous_state=False):
     """
-    Check that the agent save a non-empty file.
+    Check that the agent save a non-empty file and can load.
 
 
     Parameters
@@ -251,4 +251,4 @@ def check_rl_agent(Agent, env=None, continuous_state=False):
     check_agent_manager(Agent, env, continuous_state)  # check manager compatible.
     check_seeding_agent(Agent, env, continuous_state)  # check reproducibility
     check_fit_additive(Agent, env, continuous_state)
-    check_save(Agent, env, continuous_state)
+    check_save_load(Agent, env, continuous_state)
