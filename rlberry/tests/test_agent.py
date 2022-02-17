@@ -52,9 +52,9 @@ CONTINUOUS_STATE_AGENTS = [
 
 @pytest.mark.parametrize("Agent", FINITE_MDP_AGENTS)
 def test_finite_state_agent(Agent):
-    check_rl_agent(Agent, continuous_state=False)
+    check_rl_agent(Agent, env="discrete_state")
 
 
 @pytest.mark.parametrize("Agent", CONTINUOUS_STATE_AGENTS)
 def test_continuous_state_agent(Agent):
-    check_rl_agent(Agent, continuous_state=True)
+    check_rl_agent(Agent, env="continuous_state")

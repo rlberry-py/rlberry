@@ -9,7 +9,7 @@ import os
 SEED = 42
 
 
-def check_agent_manager(Agent, env=None, continuous_state=False):
+def _fit_agent_manager(Agent, env="continuous_state"):
     """
     Check that the agent is compatible with :class:`~rlberry.manager.AgentManager`.
 
@@ -19,24 +19,24 @@ def check_agent_manager(Agent, env=None, continuous_state=False):
     Agent: rlberry agent module
         Agent class to test.
 
-    env: tuple (env_ctor, env_kwargs) or None, default=None
-        constructor and arguments of the env on which to test. If None,
-        the parameter continuous-state is used to provide a known working
-        environment for the test.
-
-    continuous_state: bool, default=False
-        whether to test on a discrete state environment or a continuous one.
-        Used only if env is None.
+    env: tuple (env_ctor, env_kwargs) or str in {"continuous_state", "discrete_state"}, default="continuous_state"
+        if tuple, env is the constructor and keywords of the env on which to test.
+        if str in {"continuous_state", "discrete_state"}, we use a default Benchmark environment.
     """
-    if env is None and continuous_state:
-        env_ctor = PBall2D
-        env_kwargs = {}
-    elif env is None:
-        env_ctor = Chain
-        env_kwargs = {}
-    else:
+    if isinstance(env, str):
+        if env == "continuous_state":
+            env_ctor = PBall2D
+            env_kwargs = {}
+        elif env == "discrete_state":
+            env_ctor = Chain
+            env_kwargs = {}
+        else:
+            raise ValueError("The env given in parameter is not implemented")
+    elif isinstance(env, tuple):
         env_ctor = env[0]
         env_kwargs = env[1]
+    else:
+        raise ValueError("The env given in parameter is not implemented")
     try:
         agent = AgentManager(
             Agent, (env_ctor, env_kwargs), fit_budget=5, n_fit=1, seed=SEED
@@ -48,40 +48,71 @@ def check_agent_manager(Agent, env=None, continuous_state=False):
     return agent
 
 
-def check_agent_manager_almost_equal(state, agent1, agent2, n_checks=5):
+def check_agent_manager(Agent, env="continuous_state"):
     """
-    Check that two agent managers with a fixed seed are almost equal in the
-    sense that they give the same actions n_checks times on a given state.
-
+    Check that the agent is compatible with :class:`~rlberry.manager.AgentManager`.
 
     Parameters
     ----------
 
-    state: state
-        environment state
-    agent1: rlberry AgentManager instance
-        first agent manager to be compared
-    agent2: rlberry AgentManager instance
-        second agent manager to be compared
+    Agent: rlberry agent module
+        Agent class to test.
+
+    env: tuple (env_ctor, env_kwargs) or str in {"continuous_state", "discrete_state"}, default="continuous_state"
+        if tuple, env is the constructor and keywords of the env on which to test.
+        if str in {"continuous_state", "discrete_state"}, we use a default Benchmark environment.
+    """
+    _ = _fit_agent_manager(Agent, env)
+
+
+def check_agents_almost_equal(agent1, agent2, compare_using="policy", n_checks=5):
+    """
+    Check that two agents with a fixed global seed are almost equal in the
+    sense that their agents give the same actions n_checks times on a given state.
+
+    WARNING: we set a global seed in this check. Ideally an agent should be
+    reproducible when rlberry seed is fixed but this is hard to do, in particular
+    when using torch.
+    Parameters
+    ----------
+
+    agent1: rlberry Agent instance
+        first agent to be compared
+    agent2: rlberry Agent instance
+        second agent to be compared
+    compare_using: str, default = "policy"
+        method that we use to compare the agents. Can be "policy" or "eval" or
+        the name of any method implemented by an agent that we can call
+        and that return a real number.
     n_checks : int, default=5
         number of checks to do.
     """
     result = True
     set_external_seed(SEED)
-    actions1 = []
+    results1 = []
+    if compare_using == "policy":
+        state = agent1.env.reset()
     for f in range(5):
-        # test on 5 actions
-        actions1.append(agent1.agent_handlers[0].policy(state))
+        # do several tests if there is some randomness.
+        if compare_using == "policy":
+            results1.append(agent1.policy(state))
+        else:
+            method_to_call = getattr(agent1, compare_using)
+            results1.append(method_to_call())
     set_external_seed(SEED)
     for f in range(5):
-        # test on 5 actions
-        action2 = agent2.agent_handlers[0].policy(state)
-        if not np.all(actions1[f] == action2):
+        # do several tests if there is some randomness.
+        if compare_using == "policy":
+            result2 = agent2.policy(state)
+        else:
+            method_to_call = getattr(agent2, compare_using)
+            result2 = method_to_call()
+        if not np.all(results1[f] == result2):
             result = False
     return result
 
 
-def check_fit_additive(Agent, env=None, continuous_state=False):
+def check_fit_additive(Agent, env="continuous_state"):
     """
     check that fitting two times with 10 fit budget is the same as fitting
     one time with 20 fit budget.
@@ -92,24 +123,24 @@ def check_fit_additive(Agent, env=None, continuous_state=False):
     Agent: rlberry agent module
         Agent class to test.
 
-    env: tuple (env_ctor, env_kwargs) or None, default=None
-        constructor and arguments of the env on which to test. If None,
-        the parameter continuous-state is used to provide a known working
-        environment for the test.
-
-    continuous_state: bool, default=False
-        whether to test on a discrete state environment or a continuous one.
-        Used only if env is None.
+    env: tuple (env_ctor, env_kwargs) or str in {"continuous_state", "discrete_state"}, default="continuous_state"
+        if tuple, env is the constructor and keywords of the env on which to test.
+        if str in {"continuous_state", "discrete_state"}, we use a default Benchmark environment.
     """
-    if env is None and continuous_state:
-        env_ctor = PBall2D
-        env_kwargs = {}
-    elif env is None:
-        env_ctor = Chain
-        env_kwargs = {}
-    else:
+    if isinstance(env, str):
+        if env == "continuous_state":
+            env_ctor = PBall2D
+            env_kwargs = {}
+        elif env == "discrete_state":
+            env_ctor = Chain
+            env_kwargs = {}
+        else:
+            raise ValueError("The env given in parameter is not implemented")
+    elif isinstance(env, tuple):
         env_ctor = env[0]
         env_kwargs = env[1]
+    else:
+        raise ValueError("The env given in parameter is not implemented")
     agent1 = AgentManager(
         Agent, (env_ctor, env_kwargs), fit_budget=5, n_fit=1, seed=SEED
     )
@@ -121,16 +152,16 @@ def check_fit_additive(Agent, env=None, continuous_state=False):
     )
     agent2.fit(20)
 
-    env = env_ctor()
-    state = env.reset()
-    result = check_agent_manager_almost_equal(state, agent1, agent2)
+    result = check_agents_almost_equal(
+        agent1.agent_handlers[0], agent2.agent_handlers[0]
+    )
 
     assert (
         result
     ), "Error: fitting the agent two times for 10 steps is not equivalent to fitting it one time for 20 steps."
 
 
-def check_save_load(Agent, env=None, continuous_state=False):
+def check_save_load(Agent, env="continuous_state"):
     """
     Check that the agent save a non-empty file and can load.
 
@@ -141,31 +172,26 @@ def check_save_load(Agent, env=None, continuous_state=False):
     Agent: rlberry agent module
         Agent class to test.
 
-    env: tuple (env_ctor, env_kwargs) or None, default=None
-        constructor and arguments of the env on which to test. If None,
-        the parameter continuous-state is used to provide a known working
-        environment for the test.
-
-    continuous_state: bool, default=False
-        whether to test on a discrete state environment or a continuous one.
-        Used only if env is None.
+    env: tuple (env_ctor, env_kwargs) or str in {"continuous_state", "discrete_state"}, default="continuous_state"
+        if tuple, env is the constructor and keywords of the env on which to test.
+        if str in {"continuous_state", "discrete_state"}, we use a default Benchmark environment.
     """
-    if env is None and continuous_state:
-        env_ctor = PBall2D
-        env_kwargs = {}
-    elif env is None:
-        env_ctor = Chain
-        env_kwargs = {}
-    else:
+    if isinstance(env, str):
+        if env == "continuous_state":
+            env_ctor = PBall2D
+            env_kwargs = {}
+        elif env == "discrete_state":
+            env_ctor = Chain
+            env_kwargs = {}
+        else:
+            raise ValueError("The env given in parameter is not implemented")
+    elif isinstance(env, tuple):
         env_ctor = env[0]
         env_kwargs = env[1]
+    else:
+        raise ValueError("The env given in parameter is not implemented")
     env = env_ctor(**env_kwargs)
     with tempfile.TemporaryDirectory() as tmpdirname:
-        if continuous_state:
-            env_ctor = PBall2D
-        else:
-            env_ctor = Chain
-        env_kwargs = {}
         agent = AgentManager(
             Agent,
             (env_ctor, env_kwargs),
@@ -194,35 +220,35 @@ def check_seeding_agent(Agent, env=None, continuous_state=False):
     Agent: rlberry agent module
         Agent class to test.
 
-    env: tuple (env_ctor, env_kwargs) or None, default=None
-        constructor and arguments of the env on which to test. If None,
-        the parameter continuous-state is used to provide a known working
-        environment for the test.
-
-    continuous_state: bool, default=False
-        whether to test on a discrete state environment or a continuous one.
-        Used only if env is None.
+    env: tuple (env_ctor, env_kwargs) or str in {"continuous_state", "discrete_state"}, default="continuous_state"
+        if tuple, env is the constructor and keywords of the env on which to test.
+        if str in {"continuous_state", "discrete_state"}, we use a default Benchmark environment.
     """
-    agent1 = check_agent_manager(Agent, env, continuous_state)
-    agent2 = check_agent_manager(Agent, env, continuous_state)
-
-    if env is None and continuous_state:
-        env_ctor = PBall2D
-        env_kwargs = {}
-    elif env is None:
-        env_ctor = Chain
-        env_kwargs = {}
-    else:
+    if isinstance(env, str):
+        if env == "continuous_state":
+            env_ctor = PBall2D
+            env_kwargs = {}
+        elif env == "discrete_state":
+            env_ctor = Chain
+            env_kwargs = {}
+        else:
+            raise ValueError("The env given in parameter is not implemented")
+    elif isinstance(env, tuple):
         env_ctor = env[0]
         env_kwargs = env[1]
-    env = env_ctor(**env_kwargs)
-    state = env.reset()
-    result = check_agent_manager_almost_equal(state, agent1, agent2)
+    else:
+        raise ValueError("The env given in parameter is not implemented")
+    agent1 = _fit_agent_manager(Agent, env)
+    agent2 = _fit_agent_manager(Agent, env)
+
+    result = check_agents_almost_equal(
+        agent1.agent_handlers[0], agent2.agent_handlers[0]
+    )
 
     assert result, "Agent not reproducible (same seed give different results)"
 
 
-def check_rl_agent(Agent, env=None, continuous_state=False):
+def check_rl_agent(Agent, env="continuous_state"):
     """
     Check agent manager compatibility  and check reproducibility/seeding.
     Will raise an exception if there is something wrong with the agent.
@@ -233,14 +259,9 @@ def check_rl_agent(Agent, env=None, continuous_state=False):
     Agent: rlberry agent module
         Agent class to test.
 
-    env: tuple (env_ctor, env_kwargs) or None, default=None
-        constructor and arguments of the env on which to test. If None,
-        the parameter continuous-state is used to provide a known working
-        environment for the test.
-
-    continuous_state: bool, default=False
-        whether to test on a discrete state environment or a continuous one.
-        Used only if env is None.
+    env: tuple (env_ctor, env_kwargs) or str in {"continuous_state", "discrete_state"}, default="continuous_state"
+        if tuple, env is the constructor and keywords of the env on which to test.
+        if str in {"continuous_state", "discrete_state"}, we use a default Benchmark environment.
 
     Examples
     --------
@@ -248,7 +269,7 @@ def check_rl_agent(Agent, env=None, continuous_state=False):
     >>> from rlberry.utils import check_rl_agent
     >>> check_rl_agent(UCBVIAgent) # which does not return an error.
     """
-    check_agent_manager(Agent, env, continuous_state)  # check manager compatible.
-    check_seeding_agent(Agent, env, continuous_state)  # check reproducibility
-    check_fit_additive(Agent, env, continuous_state)
-    check_save_load(Agent, env, continuous_state)
+    check_agent_manager(Agent, env)  # check manager compatible.
+    check_seeding_agent(Agent, env)  # check reproducibility
+    check_fit_additive(Agent, env)
+    check_save_load(Agent, env)
