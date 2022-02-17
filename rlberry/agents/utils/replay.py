@@ -52,6 +52,11 @@ class ReplayBuffer:
         self._max_episode_steps = max_episode_steps
 
     @property
+    def data(self):
+        """Dict containing all stored data."""
+        return self._data
+
+    @property
     def tags(self):
         """Tags identifying the entries in the replay buffer."""
         return self._tags

@@ -1,15 +1,15 @@
 import numpy as np
 import pytest
-from rlberry.seeding import Seeder
-
-from rlberry.exploration_tools.discrete_counter import DiscreteCounter
-
+from rlberry import spaces
+from rlberry.agents import RSUCBVIAgent
 from rlberry.envs.classic_control import MountainCar
 from rlberry.envs.finite import FiniteMDP, GridWorld
+from rlberry.exploration_tools.discrete_counter import DiscreteCounter
+from rlberry.seeding import Seeder
+from rlberry.wrappers.autoreset import AutoResetWrapper
+from rlberry.wrappers.discrete2onehot import DiscreteToOneHotWrapper
 from rlberry.wrappers.discretize_state import DiscretizeStateWrapper
 from rlberry.wrappers.rescale_reward import RescaleRewardWrapper
-from rlberry.agents import RSUCBVIAgent
-from rlberry.wrappers.autoreset import AutoResetWrapper
 from rlberry.wrappers.uncertainty_estimator_wrapper import UncertaintyEstimatorWrapper
 from rlberry.wrappers.vis2d import Vis2dWrapper
 
@@ -167,3 +167,16 @@ def test_vis2dwrapper():
     agent.fit(budget=15)
     env.plot_trajectories(show=False)
     env.plot_trajectory_actions(show=False)
+
+
+def test_discrete2onehot():
+    env = DiscreteToOneHotWrapper(GridWorld())
+    env.reseed(123)
+    assert isinstance(env.observation_space, spaces.Box)
+    for ii in range(env.unwrapped.observation_space.n):
+        initial_distr = np.zeros(env.unwrapped.observation_space.n)
+        initial_distr[ii] = 1.0
+        env.unwrapped.set_initial_state_distribution(initial_distr)
+        obs = env.reset()
+        assert np.array_equal(obs, initial_distr)
+        

@@ -1,4 +1,4 @@
-from gym.spaces import Box, Discrete
+from rlberry.spaces import Box, Discrete
 from rlberry.envs import Wrapper
 import numpy as np
 
@@ -7,7 +7,7 @@ class DiscreteToOneHotWrapper(Wrapper):
     """Converts observation spaces from Discrete to Box via one-hot encoding."""
 
     def __init__(self, env):
-        Wrapper.__init__(self, env)
+        Wrapper.__init__(self, env, wrap_spaces=True)
         obs_space = self.env.observation_space
         assert isinstance(obs_space, Discrete)
         self.observation_space = Box(
