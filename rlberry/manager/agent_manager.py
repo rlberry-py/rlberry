@@ -553,15 +553,15 @@ class AgentManager:
             except RuntimeError as exc:
                 raise RuntimeError(
                     """Warning: in AgentManager, if mp_context='spawn' and
-                        parallelization="process" then the script must be run *
+                        parallelization="process" then the script must be run
                         outside a notebook and protected by a  if __name__ == '__main__':
-                                   For instance :
+                        For example:
+                            if __name__ == '__main__':
+                                agent = AgentManager(UCBVIAgent,(Chain, {}),
+                                                mp_context="spawn",
+                                                parallelization="process")
 
-                                       agent = AgentManager(UCBVIAgent,(Chain, {}),
-                                                            mp_context="spawn",
-                                                            parallelization="process")
-                                       if __name__ == '__main__':
-                                           agent.fit(10)
+                                agent.fit(10)
                                    """
                 ) from exc
 
