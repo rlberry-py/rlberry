@@ -24,13 +24,6 @@ def _check_image_input(observation_space: spaces.Box, key: str = "") -> None:
     Check that the input adheres to general standards
     when the observation is apparently an image.
     """
-    if observation_space.dtype != np.uint8:
-        logger.warn(
-            f"It seems that your observation {key} is an image but the `dtype` "
-            "of your observation_space is not `np.uint8`. "
-            "If your observation is not an image, we recommend you to flatten the observation "
-            "to have only a 1D vector"
-        )
 
     if np.any(observation_space.low != 0) or np.any(observation_space.high != 255):
         logger.warn(
@@ -97,21 +90,6 @@ def _check_box_obs(observation_space: spaces.Box, key: str = "") -> None:
     if len(observation_space.shape) == 3:
         _check_image_input(observation_space)
 
-    if len(observation_space.shape) not in [1, 3]:
-        logger.warn(
-            f"Your observation {key} has an unconventional shape (neither an image, nor a 1D vector). "
-            "We recommend you to flatten the observation "
-            "to have only a 1D vector or use a custom policy to properly process the data."
-        )
-
-    if np.any(np.equal(observation_space.low, -np.inf)):
-        logger.warn(
-            "Agent's minimum observation space value is -infinity. This is probably too low."
-        )
-    if np.any(np.equal(observation_space.high, np.inf)):
-        logger.warn(
-            "Agent's maxmimum observation space value is infinity. This is probably too high"
-        )
     if np.any(np.equal(observation_space.low, observation_space.high)):
         logger.warn("Agent's maximum and minimum observation space values are equal")
     if np.any(np.greater(observation_space.low, observation_space.high)):
@@ -143,18 +121,6 @@ def _check_box_action(action_space: spaces.Box):
         assert False, "Agent's action_space.low and action_space have different shapes"
     if action_space.high.shape != action_space.shape:
         assert False, "Agent's action_space.high and action_space have different shapes"
-
-
-def _check_normalized_action(action_space: spaces.Box):
-    if (
-        np.any(np.abs(action_space.low) != np.abs(action_space.high))
-        or np.any(np.abs(action_space.low) > 1)
-        or np.any(np.abs(action_space.high) > 1)
-    ):
-        logger.warn(
-            "We recommend you to use a symmetric and normalized Box action space (range=[-1, 1]) "
-            "cf https://stable-baselines3.readthedocs.io/en/master/guide/rl_tips.html"
-        )
 
 
 def _check_returned_values(
