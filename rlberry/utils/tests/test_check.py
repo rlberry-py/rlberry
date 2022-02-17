@@ -1,9 +1,9 @@
-# based on https://github.com/openai/gym/blob/master/tests/utils/test_env_checker.py
-
 import numpy as np
 import pytest
 from rlberry.envs import Chain
 from gym.utils.env_checker import check_env
+from rlberry.utils import check_rl_agent
+from rlberry.agents import UCBVIAgent
 
 
 class TestEnv(Chain):
@@ -24,3 +24,9 @@ def test_check_env_dict_action():
             str(errorinfo.value)
             == "The `step()` method must return four values: obs, reward, done, info"
         )
+
+
+def test_check_agent():
+    check_rl_agent(
+        UCBVIAgent, Chain, continuous_state=True
+    )  # continuous_state should be ignored

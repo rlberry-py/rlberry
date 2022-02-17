@@ -212,29 +212,6 @@ def _check_returned_values(
     ), "The `info` returned by `step()` must be a python dictionary"
 
 
-def _check_spaces(env: gym.Env) -> None:
-    """
-    Check that the observation and action spaces are defined
-    and inherit from gym.spaces.Space.
-    """
-    # Helper to link to the code, because gym has no proper documentation
-    gym_spaces = " cf https://github.com/openai/gym/blob/master/gym/spaces/"
-
-    assert hasattr(env, "observation_space"), (
-        "You must specify an observation space (cf gym.spaces)" + gym_spaces
-    )
-    assert hasattr(env, "action_space"), (
-        "You must specify an action space (cf gym.spaces)" + gym_spaces
-    )
-
-    assert isinstance(env.observation_space, spaces.Space), (
-        "The observation space must inherit from gym.spaces" + gym_spaces
-    )
-    assert isinstance(env.action_space, spaces.Space), (
-        "The action space must inherit from gym.spaces" + gym_spaces
-    )
-
-
 # Check render cannot be covered by CI
 def _check_render(
     env: gym.Env, warn: bool = True, headless: bool = False
@@ -322,7 +299,6 @@ def check_gym_env(
         # Check for the action space, it may lead to hard-to-debug issues
         if isinstance(action_space, spaces.Box):
             _check_box_action(action_space)
-            _check_normalized_action(action_space)
 
     # ============ Check the returned values ===============
     _check_returned_values(env, observation_space, action_space)
