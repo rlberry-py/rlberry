@@ -1,6 +1,6 @@
 import pytest
-from rlberry.agents import *
-from rlberry.agents.torch import *
+import rlberry.agents as agents
+import rlberry.agents.torch as torch_agents
 from rlberry.utils.check_agent import (
     check_rl_agent,
     check_save_load,
@@ -22,34 +22,34 @@ class OneHotFeatureMap(FeatureMap):
 
 
 # LSVIUCBAgent needs a feature map function to work.
-class OneHotLSVI(LSVIUCBAgent):
+class OneHotLSVI(agents.LSVIUCBAgent):
     def __init__(self, env, **kwargs):
         def feature_map_fn(_env):
             return OneHotFeatureMap(5, 2)  # values for Chain
 
-        LSVIUCBAgent.__init__(
+        agents.LSVIUCBAgent.__init__(
             self, env, feature_map_fn=feature_map_fn, horizon=10, **kwargs
         )
 
 
 FINITE_MDP_AGENTS = [
-    ValueIterationAgent,
-    MBQVIAgent,
-    UCBVIAgent,
-    OptQLAgent,
+    agents.ValueIterationAgent,
+    agents.MBQVIAgent,
+    agents.UCBVIAgent,
+    agents.OptQLAgent,
+    agents.PSRLAgent,
+    agents.RLSVIAgent,
     OneHotLSVI,
-    PSRLAgent,
-    RLSVIAgent,
 ]
 
 
 CONTINUOUS_STATE_AGENTS = [
-    RSUCBVIAgent,
-    RSKernelUCBVIAgent,
-    # DQNAgent,  # For now, DQN does not work with the generic check.
-    PPOAgent,
-    AVECPPOAgent,
-    REINFORCEAgent,
+    agents.RSUCBVIAgent,
+    agents.RSKernelUCBVIAgent,
+    # torch_agents.DQNAgent,  # For now, DQN does not work with the generic check.
+    torch_agents.PPOAgent,
+    torch_agents.AVECPPOAgent,
+    torch_agents.REINFORCEAgent,
 ]
 
 
@@ -64,4 +64,4 @@ def test_continuous_state_agent(Agent):
 
 
 def test_dqn():
-    check_save_load(DQNAgent, env="continuous_state")
+    check_save_load(torch_agents.DQNAgent, env="continuous_state")
