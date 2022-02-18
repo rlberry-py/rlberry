@@ -66,4 +66,3 @@ def test_continuous_state_agent(Agent):
 
 def test_dqn():
     check_save_load(DQNAgent, env="continuous_state")
-    check_agent_manager(DQNAgent, env="continuous_state")

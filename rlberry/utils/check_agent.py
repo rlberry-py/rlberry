@@ -79,6 +79,7 @@ def check_agents_almost_equal(agent1, agent2, compare_using="policy", n_checks=5
     WARNING: we set a global seed in this check. Ideally an agent should be
     reproducible when rlberry seed is fixed but this is hard to do, in particular
     when using torch.
+
     Parameters
     ----------
 
@@ -120,7 +121,7 @@ def check_agents_almost_equal(agent1, agent2, compare_using="policy", n_checks=5
 
 def check_fit_additive(Agent, env="continuous_state"):
     """
-    check that fitting two times with 10 fit budget is the same as fitting
+    Check that fitting two times with 10 fit budget is the same as fitting
     one time with 20 fit budget.
 
     Parameters
@@ -129,9 +130,9 @@ def check_fit_additive(Agent, env="continuous_state"):
     Agent: rlberry agent module
         Agent class to test.
 
-    env: tuple (env_ctor, env_kwargs) or str in {"continuous_state", "discrete_state"}, default="continuous_state"
+    env: tuple (env_ctor, env_kwargs) or str in ["continuous_state", "discrete_state"], default="continuous_state"
         if tuple, env is the constructor and keywords of the env on which to test.
-        if str in {"continuous_state", "discrete_state"}, we use a default Benchmark environment.
+        if str in ["continuous_state", "discrete_state"], we use a default Benchmark environment.
     """
     train_env = _make_env(env)
     agent1 = AgentManager(Agent, train_env, fit_budget=5, n_fit=1, seed=SEED)

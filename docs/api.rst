@@ -154,15 +154,19 @@ Writer Utilities
 
   utils.writers.DefaultWriter
 
-
 Check Utilities
 ---------------
 
-.. autosummary::
+ .. autosummary::
    :toctree: generated/
    :template: function.rst
 
-   utils.check_bandit_agent
+   utils.check_rl_agent
+   utils.check_env
+   utils.check_save_load
+   utils.check_fit_additive
+   utils.check_seeding_agent
+   utils.check_agent_manager
 
 
 
