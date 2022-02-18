@@ -4,7 +4,6 @@ from rlberry.agents.torch import *
 from rlberry.utils.check_agent import (
     check_rl_agent,
     check_save_load,
-    check_agent_manager,
 )
 from rlberry.agents.features import FeatureMap
 import numpy as np
