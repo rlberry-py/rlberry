@@ -7,7 +7,7 @@ from rlberry.utils.check_agent import (
     _fit_agent_manager,
     check_agents_almost_equal,
 )
-from gym.spaces import Box, Dict, Discrete
+from rlberry.spaces import Box, Dict, Discrete
 import gym
 from rlberry.agents import ValueIterationAgent, UCBVIAgent
 
