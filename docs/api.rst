@@ -8,16 +8,6 @@ rlberry API
 Agents
 ====================
 
-Interface
-----------
-.. autosummary::
-   :toctree: generated/
-   :template: class.rst
-
-   agents.Agent
-   agents.AgentWithSimplePolicy
-
-
 Basic Agents
 --------------------
 
@@ -31,7 +21,7 @@ Basic Agents
    agents.RSUCBVIAgent
    agents.RSKernelUCBVIAgent
    agents.OptQLAgent
-   agents.linear.LSVIUCBAgent
+   agents.LSVIUCBAgent
    agents.RLSVIAgent
    agents.PSRLAgent
 
@@ -145,15 +135,19 @@ Writer Utilities
 
   utils.writers.DefaultWriter
 
-
 Check Utilities
 ---------------
 
-.. autosummary::
+ .. autosummary::
    :toctree: generated/
    :template: function.rst
 
-   utils.check_bandit_agent
+   utils.check_rl_agent
+   utils.check_env
+   utils.check_save_load
+   utils.check_fit_additive
+   utils.check_seeding_agent
+   utils.check_agent_manager
 
 
 
