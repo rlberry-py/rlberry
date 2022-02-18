@@ -5,8 +5,8 @@ from gym.wrappers import TimeLimit
 
 
 def test_replay():
-    batch_size = 64
-    chunk_size = 128
+    batch_size = 128
+    chunk_size = 256
 
     env = GridWorld(terminal_states=None)
     env = TimeLimit(env, max_episode_steps=200)
@@ -14,7 +14,7 @@ def test_replay():
 
     rng = np.random.default_rng(456)
     buffer = replay.ReplayBuffer(
-        500, rng, max_episode_steps=env._max_episode_steps, enable_prioritized=True
+        1000, rng, max_episode_steps=env._max_episode_steps, enable_prioritized=True
     )
     buffer.setup_entry("observations", np.float32)
     buffer.setup_entry("actions", np.uint32)
@@ -44,7 +44,7 @@ def test_replay():
             if done:
                 buffer.end_episode()
 
-    # Sample batches
+    # Sample batches, check shape and dtype
     for _ in range(10):
         batch = buffer.sample(
             batch_size=batch_size, chunk_size=chunk_size, sampling_mode="uniform"
@@ -78,3 +78,5 @@ def test_replay():
             val1 = buffer._it_sum[idx]
             val2 = buffer._it_min[idx]
             assert val1 == val2 == new_priorities[bb, cc] ** buffer._alpha
+
+test_replay()

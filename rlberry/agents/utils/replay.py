@@ -139,7 +139,9 @@ class ReplayBuffer:
         tag : str
             Tag that identifies the entry (e.g "observation", "reward")
         dtype : obj
-            Data type of the entry (e.g. `np.float32`)
+            Data type of the entry (e.g. `np.float32`). Type is not
+            checked in :meth:`append`, but it is used to construct the numpy
+            arrays returned by the :meth:`sample`method.
         """
         if tag in self._data:
             raise ValueError(f"Entry {tag} already added to replay buffer.")
@@ -184,6 +186,7 @@ class ReplayBuffer:
         self._current_episode += 1
 
     def _sample_proportional_and_compute_weights(self, max_val, batch_size):
+        """Used for prioritized replay."""
         # sample indices
         indices = []
         p_total = self._it_sum.sum(0, max_val - 1)
@@ -212,39 +215,43 @@ class ReplayBuffer:
         if sampling_mode == "uniform":
             start_indices = self._rng.choice(current_size - chunk_size, size=batch_size)
             weights = np.ones_like(np.indices, dtype=np.float32)
-        if sampling_mode == "prioritized":
+        elif sampling_mode == "prioritized":
             start_indices, weights = self._sample_proportional_and_compute_weights(
                 current_size - chunk_size, batch_size=batch_size
             )
             assert np.all(start_indices <= (current_size - chunk_size))
+        else:
+            raise ValueError(f"Invalid sampling_mode: '{sampling_mode}'")
         end_indices = start_indices + chunk_size
 
-        # Remove 'fake' sub-trajectories: those containing a transition
+        # Handle invalid sub-trajectories: those containing a transition
         # corresponding to self._position. That is, we need to handle
         # the fact that we're sampling sub-trajectories from a circular buffer
         # and that we cannot cross the 'boundary' defined by self._position.
         #
-        # Note: this is a very naive workaround and will bias the sampling,
-        # but it should work well as long as the probability of an index
-        # being "bad" is small.
-        # This probability is roughly (chunk_size - 1)/len(self),
-        # hence it should be negligible when the total replay size
-        # is much larger than the chunk size (which should always be the case!).
+        # What we do here is to move the start_index to the most recent
+        # index (with respect to self._position) that allows sampling
+        # a sub-trajectory of length chunk_size.
+        # Note that this can result in a negative start_index,
+        # which is handled in the _get_chunk method.
         bad_indices = np.logical_and(
-            start_indices <= self._position, end_indices > (self._position + 1)
+            start_indices < self._position, end_indices >= (self._position + 1)
         )
-        start_boundary = self._position + 1 - chunk_size
-        if start_boundary < 0:
-            start_boundary = len(self) - chunk_size
+        start_boundary = self._position - chunk_size
         start_indices[bad_indices] = start_boundary
         end_indices[bad_indices] = start_boundary + chunk_size
         is_biased = bad_indices
         return start_indices, end_indices, weights, is_biased
 
     def _get_chunk(self, start_index, end_index):
+        """Note: start_index can be negative!"""
         chunk = dict()
         for tag in self.tags:
-            chunk[tag] = np.array(self._data[tag][start_index:end_index])
+            if start_index >= 0:
+                data = self._data[tag][start_index:end_index]
+            else:
+                data = self._data[tag][start_index:] + self._data[tag][:end_index]
+            chunk[tag] = np.array(data)
         indices = np.arange(start_index, end_index)
         return chunk, indices
 

@@ -42,10 +42,12 @@ OOOOO # OOOOO  # OOOOO
 IOOOO # OOOOO  # OOOOr
 """
 
+
 def gridworld_constructor(layout):
     env = GridWorld.from_layout(layout)
     env = DiscreteToOneHotWrapper(env)
     return env
+
 
 env = (gridworld_constructor, dict(layout=gridworld_layout))
 
