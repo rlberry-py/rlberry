@@ -240,8 +240,7 @@ class ReplayBuffer:
         start_boundary = self._position - chunk_size
         start_indices[bad_indices] = start_boundary
         end_indices[bad_indices] = start_boundary + chunk_size
-        is_biased = bad_indices
-        return start_indices, end_indices, weights, is_biased
+        return start_indices, end_indices, weights
 
     def _get_chunk(self, start_index, end_index):
         """Note: start_index can be negative!"""
@@ -287,7 +286,7 @@ class ReplayBuffer:
         if len(self) <= chunk_size:
             return None
         # sample start/end indices for sub-trajectories
-        start_indices, end_indices, weights, is_biased = self._sample_batch_indices(
+        start_indices, end_indices, weights = self._sample_batch_indices(
             batch_size, chunk_size, sampling_mode
         )
 
@@ -310,7 +309,6 @@ class ReplayBuffer:
 
         batch_info["indices"] = np.array(all_indices, dtype=np.int)
         batch_info["weights"] = weights
-        batch_info["is_biased"] = is_biased
 
         batch = Batch(data=batch_data, info=batch_info)
         return batch

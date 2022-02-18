@@ -4,17 +4,15 @@ from rlberry.envs.finite import GridWorld
 from gym.wrappers import TimeLimit
 
 
-def test_replay():
-    batch_size = 128
-    chunk_size = 256
-
+def _get_filled_replay(max_size):
+    """runs env for ~ 2 * max_size timesteps."""
     env = GridWorld(terminal_states=None)
     env = TimeLimit(env, max_episode_steps=200)
     env.reseed(123)
 
     rng = np.random.default_rng(456)
     buffer = replay.ReplayBuffer(
-        1000, rng, max_episode_steps=env._max_episode_steps, enable_prioritized=True
+        max_size, rng, max_episode_steps=env._max_episode_steps, enable_prioritized=True
     )
     buffer.setup_entry("observations", np.float32)
     buffer.setup_entry("actions", np.uint32)
@@ -43,6 +41,17 @@ def test_replay():
             obs = next_obs
             if done:
                 buffer.end_episode()
+    return buffer, env
+
+
+def test_replay():
+    batch_size = 128
+    chunk_size = 256
+
+    # get replay buffer
+    buffer, _ = _get_filled_replay(max_size=500)
+    rng = buffer._rng
+    assert len(buffer) == 500
 
     # Sample batches, check shape and dtype
     for _ in range(10):
@@ -79,4 +88,55 @@ def test_replay():
             val2 = buffer._it_min[idx]
             assert val1 == val2 == new_priorities[bb, cc] ** buffer._alpha
 
-test_replay()
+
+def test_replay_index_sampling():
+    batch_size = 2
+    chunk_size = 256
+
+    # get replay buffer
+    buffer, env = _get_filled_replay(max_size=500)
+
+    # add more data, sample batches and check that sampled sub-trajetories
+    # are not "crossing" the current position (buffer._position)
+    total_time = 0
+    while True:
+        if total_time > 100:
+            break
+        done = False
+        obs = env.reset()
+        while not done:
+            total_time += 1
+            action = env.action_space.sample()
+            next_obs, reward, done, _ = env.step(action)
+            buffer.append(
+                {
+                    "observations": obs,
+                    "actions": action,
+                    "rewards": reward,
+                    "dones": done,
+                }
+            )
+            obs = next_obs
+            if done:
+                buffer.end_episode()
+
+            # sample and check
+            start_indices, end_indices, weights = buffer._sample_batch_indices(
+                batch_size, chunk_size, "uniform"
+            )
+            positive_mask = start_indices >= 0
+            negative_mask = ~positive_mask
+
+            assert np.all(
+                ~np.logical_and(
+                    start_indices[positive_mask] < buffer._position,
+                    end_indices[positive_mask] >= (buffer._position + 1),
+                )
+            )
+
+            assert np.all(
+                np.logical_and(
+                    (start_indices[negative_mask] + len(buffer)) >= buffer._position,
+                    end_indices[negative_mask] >= buffer._position,
+                )
+            )
