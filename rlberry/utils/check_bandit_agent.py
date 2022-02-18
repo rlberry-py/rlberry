@@ -2,7 +2,7 @@ from rlberry.envs.bandits import BernoulliBandit
 from rlberry.manager import AgentManager
 
 
-def check_bandit_agent(Agent, environment=BernoulliBandit):
+def check_bandit_agent(Agent, environment=BernoulliBandit, seed=None):
     """
     Function used to check a bandit agent in rlberry on a Gaussian bandit problem.
 
@@ -11,6 +11,12 @@ def check_bandit_agent(Agent, environment=BernoulliBandit):
 
     Agent: rlberry agent module
         Agent class that we want to test.
+
+    environment: rlberry env module
+        Environment (i.e bandit instance) on which to test the agent.
+
+    seed : Seed sequence from which to spawn the random number generator.
+
 
     Returns
     -------
@@ -36,10 +42,10 @@ def check_bandit_agent(Agent, environment=BernoulliBandit):
     env_kwargs = {}
 
     agent1 = AgentManager(
-        Agent, (env_ctor, env_kwargs), fit_budget=10, n_fit=1, seed=42
+        Agent, (env_ctor, env_kwargs), fit_budget=10, n_fit=1, seed=seed
     )
     agent2 = AgentManager(
-        Agent, (env_ctor, env_kwargs), fit_budget=10, n_fit=1, seed=42
+        Agent, (env_ctor, env_kwargs), fit_budget=10, n_fit=1, seed=seed
     )
 
     agent1.fit()

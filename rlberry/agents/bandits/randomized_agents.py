@@ -85,7 +85,7 @@ class RandomizedAgent(BanditWithSimplePolicy):
         indices = np.zeros(self.n_arms)
         for ep in range(horizon):
             probs[ep] = self.prob_function(indices, ep)
-            action = np.random.choice(self.arms, p=probs[ep])
+            action = self.seeder.rng.choice(self.arms, p=probs[ep])
             indices = self.get_indices(rewards, actions, probs, ep)
             self.total_time += 1
             _, reward, _, _ = self.env.step(action)
