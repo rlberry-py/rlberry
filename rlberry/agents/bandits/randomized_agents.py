@@ -68,7 +68,6 @@ class RandomizedAgent(BanditWithSimplePolicy):
                 )
                 w = np.exp(eta * indices)
                 w /= w.sum()
-                print(w)
                 return (1 - eta) * w + eta * np.ones(self.n_arms) / self.n_arms
 
             self.prob_function = prob_function
