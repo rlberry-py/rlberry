@@ -30,6 +30,9 @@ class Bandit(Model):
     def __init__(self, laws=[], **kwargs):
         Model.__init__(self, **kwargs)
         self.laws = laws
+        A = len(self.laws)
+        self.action_space = spaces.Discrete(A)
+        self._actions = np.arange(A)
 
     def step(self, action):
         """
@@ -162,11 +165,8 @@ class NormalBandit(Bandit):
         means=np.array([0, 1]),
         stds=None,
     ):
-        Bandit.__init__(self)
-        self.laws = self.make_laws(means, stds)
-        A = len(self.laws)
-        self.action_space = spaces.Discrete(A)
-        self._actions = np.arange(A)
+        laws = self.make_laws(means, stds)
+        Bandit.__init__(self, laws=laws)
 
     def make_laws(self, means, stds):
         if stds is None:
@@ -193,11 +193,8 @@ class BernoulliBandit(Bandit):
         self,
         p=np.array([0.1, 0.9]),
     ):
-        Bandit.__init__(self)
-        self.laws = self.make_laws(p)
-        A = len(self.laws)
-        self.action_space = spaces.Discrete(A)
-        self._actions = np.arange(A)
+        laws = self.make_laws(p)
+        Bandit.__init__(self, laws=laws)
 
     def make_laws(self, p):
         return [stats.binom(n=1, p=p[a]) for a in range(len(p))]
