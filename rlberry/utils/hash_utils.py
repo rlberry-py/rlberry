@@ -1,10 +1,10 @@
 import hashlib
-import pickle
+import dill
 import subprocess
 import os
 
 
-def get_pickle_md5(object):
+def get_object_md5(object):
     """
     Get the md5 hash of an object
 
@@ -20,7 +20,8 @@ def get_pickle_md5(object):
     the md5 hash of the object, a string.
 
     """
-    return hashlib.md5(pickle.dumps(object)).hexdigest()
+
+    return hashlib.md5(dill.dumps(object)).hexdigest()
 
 
 def get_git_hash():

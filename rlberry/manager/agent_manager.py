@@ -5,7 +5,7 @@ from pathlib import Path
 from rlberry.seeding import safe_reseed, set_external_seed
 from rlberry.seeding import Seeder
 from rlberry import metadata_utils
-from rlberry.utils.hash_utils import get_git_hash, get_pickle_md5
+from rlberry.utils.hash_utils import get_git_hash, get_object_md5
 
 import functools
 import json
@@ -705,23 +705,26 @@ class AgentManager:
                 logger.warning("[AgentManager] Instance cannot be pickled: " + str(ex))
 
         # save agent info
-        saved_filename_id = str(filename) + "_id.json"
-        agent_hash = get_pickle_md5(self.agent_class)
-        init_kwargs_copy = deepcopy(self.init_kwargs)[0]
-        del init_kwargs_copy[
-            "seeder"
-        ]  # we don't save the seeder as it is expected to change
-        del init_kwargs_copy[
-            "output_dir"
-        ]  # we don't save the output dir as it changes with the date.
-        kwargs_hash = get_pickle_md5(init_kwargs_copy)
-        rlberry_ver = get_git_hash()
-        data = {
-            "agent_hash": agent_hash,
-            "kwargs_hash": kwargs_hash,
-            "rlberry_commit": rlberry_ver,
-        }
-        _safe_serialize_json(data, Path(saved_filename_id))
+        try:
+            saved_filename_id = str(filename) + "_id.json"
+            agent_hash = get_object_md5(self.agent_class)
+            init_kwargs_copy = deepcopy(self.init_kwargs)[0]
+            del init_kwargs_copy[
+                "seeder"
+            ]  # we don't save the seeder as it is expected to change
+            del init_kwargs_copy[
+                "output_dir"
+            ]  # we don't save the output dir as it changes with the date.
+            kwargs_hash = get_object_md5(init_kwargs_copy)
+            rlberry_ver = get_git_hash()
+            data = {
+                "agent_hash": agent_hash,
+                "kwargs_hash": kwargs_hash,
+                "rlberry_commit": rlberry_ver,
+            }
+            _safe_serialize_json(data, Path(saved_filename_id))
+        except Exception:
+            logger.info("Could not save agent info for later use")
 
         return filename
 
@@ -756,8 +759,10 @@ class AgentManager:
         return obj
 
     def load_instanciated(self, fname):
-
-        self.check_same_agent(fname)
+        try:
+            self.check_same_agent(fname)
+        except Exception:
+            logger.info("Could not compare the agent to the save file")
 
         # load agent
         filename = Path(fname).with_suffix(".pickle")
@@ -779,11 +784,11 @@ class AgentManager:
     def check_same_agent(self, fname):
         filename = Path(fname).with_suffix(".pickle")
         # get agent props
-        agent_hash = get_pickle_md5(self.agent_class)
+        agent_hash = get_object_md5(self.agent_class)
         init_kwargs_copy = deepcopy(self.init_kwargs)[0]
         del init_kwargs_copy["seeder"]
         del init_kwargs_copy["output_dir"]
-        kwargs_hash = get_pickle_md5(init_kwargs_copy)
+        kwargs_hash = get_object_md5(init_kwargs_copy)
         rlberry_ver = get_git_hash()
 
         # check same agent as the one saved

@@ -183,7 +183,7 @@ def check_save_load(Agent, env="continuous_state"):
         ), "The saved file is empty."
         try:
             agent.load(str(agent.output_dir_) + "/agent_handlers/idx_0.pickle")
-        except:
+        except Exception:
             raise RuntimeError("Failed to load the agent file.")
 
 
