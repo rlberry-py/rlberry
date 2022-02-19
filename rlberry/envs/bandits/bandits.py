@@ -118,11 +118,8 @@ class CorruptedNormalBandit(Bandit):
         cor_prop=0.05,
         cor_laws=None,
     ):
-        Bandit.__init__(self)
-        self.laws = self.make_laws(means, stds, cor_prop, cor_laws)
-        A = len(self.laws)
-        self.action_space = spaces.Discrete(A)
-        self._actions = np.arange(A)
+        laws = self.make_laws(means, stds, cor_prop, cor_laws)
+        Bandit.__init__(self, laws=laws)
 
     def make_laws(self, means, stds, cor_prop, cor_laws):
         if cor_laws is not None:
