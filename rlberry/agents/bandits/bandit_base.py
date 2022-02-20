@@ -26,7 +26,7 @@ class BanditWithSimplePolicy(AgentWithSimplePolicy):
     def __init__(self, env, **kwargs):
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
         self.n_arms = self.env.action_space.n
-        self.arms = self.env._actions
+        self.arms = np.arange(self.n_arms)
         self.total_time = 0
 
     def fit(self, budget=None, **kwargs):
