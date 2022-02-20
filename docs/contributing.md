@@ -1,5 +1,3 @@
-(contributing)=
-
 # Contributing
 
 Currently, we are accepting the following forms of contributions:
