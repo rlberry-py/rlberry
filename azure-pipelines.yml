@@ -10,8 +10,8 @@ jobs:
     vmImage: ubuntu-latest
   strategy:
     matrix:
-      Python38:
-        python.version: '3.8'
+      Python39:
+        python.version: '3.9'
   variables:
     NUMBA_DISABLE_JIT: "1"
 
@@ -46,8 +46,8 @@ jobs:
     vmImage: ubuntu-latest
   strategy:
     matrix:
-      Python38:
-        python.version: '3.8'
+      Python39:
+        python.version: '3.9'
 
   steps:
   - script: |
@@ -67,8 +67,8 @@ jobs:
     vmImage: 'macOS-latest'
   strategy:
     matrix:
-      Python38:
-        python.version: '3.8'
+      Python39:
+        python.version: '3.9'
 
   steps:
   - task: UsePythonVersion@0
@@ -89,8 +89,8 @@ jobs:
     vmImage: 'windows-latest'
   strategy:
     matrix:
-      Python38:
-        python.version: '3.8'
+      Python39:
+        python.version: '3.9'
 
   steps:
   - task: UsePythonVersion@0
