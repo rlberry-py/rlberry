@@ -50,7 +50,6 @@ class RandomizedAgent(BanditWithSimplePolicy):
 
     def __init__(self, env, index_function=None, prob_function=None, **kwargs):
         BanditWithSimplePolicy.__init__(self, env, **kwargs)
-        self.n_arms = self.env.action_space.n
         if index_function is None:
 
             def index_function(r, p, t):

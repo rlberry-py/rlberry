@@ -26,7 +26,6 @@ class TSAgent(BanditWithSimplePolicy):
 
     def __init__(self, env, prior, prior_params=None, **kwargs):
         BanditWithSimplePolicy.__init__(self, env, **kwargs)
-        self.n_arms = self.env.action_space.n
         self.prior = prior
         self.prior_params = prior_params
         self.total_time = 0
