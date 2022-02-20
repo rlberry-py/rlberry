@@ -32,6 +32,7 @@ class Bandit(Model):
         self.laws = laws
         A = len(self.laws)
         self.action_space = spaces.Discrete(A)
+        self._actions = np.arange(A)
 
     def step(self, action):
         """
