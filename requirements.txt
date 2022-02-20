@@ -10,7 +10,7 @@ pyyaml
 numba
 optuna
 ffmpeg-python
-PyOpenGL
-PyOpenGL_accelerate
+PyOpenGL==3.1.5
+PyOpenGL_accelerate==3.1.5
 pyvirtualdisplay
 torch>=1.6.0
