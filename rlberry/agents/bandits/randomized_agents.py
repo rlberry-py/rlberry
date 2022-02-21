@@ -21,7 +21,10 @@ class RandomizedAgent(BanditWithSimplePolicy):
 
     prob_function : callable or None, default = None
         Compute the sampling probability for an arm using its index.
-        If None, use exponential softmax probabilities with any learning rate.
+        If None, EXP3 softmax probabilities.
+        References: Seldin, Yevgeny, et al. "Evaluation and analysis of the
+        performance of the EXP3 algorithm in stochastic environments.".
+        European Workshop on Reinforcement Learning. PMLR, 2013.
 
     Examples
     --------
@@ -35,12 +38,11 @@ class RandomizedAgent(BanditWithSimplePolicy):
     >>>
     >>>         def prob(indices, t):
     >>>             eta = np.minimum(
-    >>>                 np.sqrt(self.n_arms * np.log(self.n_arms) / (t + 1)),
-    >>>                 1.
+    >>>                 np.sqrt(np.log(self.n_arms) / (self.n_arms * (t + 1))), 1 / self.n_arms
     >>>             )
     >>>             w = np.exp(eta * indices)
     >>>             w /= w.sum()
-    >>>             return (1 - eta) * w + eta * np.ones(self.n_arms) / self.n_arms
+    >>>             return (1 - self.n_arms * eta) * w + eta * np.ones(self.n_arms)
     >>>
     >>>         RandomizedAgent.__init__(self, env, index, prob, **kwargs)
 
@@ -63,11 +65,12 @@ class RandomizedAgent(BanditWithSimplePolicy):
 
             def prob_function(indices, t):
                 eta = np.minimum(
-                    np.sqrt(self.n_arms * np.log(self.n_arms) / (t + 1)), 1.0
+                    np.sqrt(np.log(self.n_arms) / (self.n_arms * (t + 1))),
+                    1 / self.n_arms,
                 )
                 w = np.exp(eta * indices)
                 w /= w.sum()
-                return (1 - eta) * w + eta * np.ones(self.n_arms) / self.n_arms
+                return (1 - self.n_arms * eta) * w + eta * np.ones(self.n_arms)
 
             self.prob_function = prob_function
         else:
