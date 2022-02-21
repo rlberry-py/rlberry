@@ -12,6 +12,11 @@ BUILDDIR      = _build
 help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
+# clean example gallery files
+clean:
+        rm -rf $(BUILDDIR)/*
+        rm -rf auto_examples/
+
 # Script used to construct the videos for the examples that output videos.
 # Please use a script name that begins with video_plot as with the other examples
 # and in the script, there should be a line to save the video in the right place

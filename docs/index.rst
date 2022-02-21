@@ -14,7 +14,7 @@ lots of boring things to implement*: run our agents in parallel, average and plo
 optimize hyperparameters, compare to baselines, create tricky environments etc etc!
 
 rlberry_ **is here to make your life easier** by doing all these things with a few lines of code,
-so that you can spend most of your time developing agents. **Check our** :ref:`quick-tutorial` **section!**
+so that you can spend most of your time developing agents. **Check our** :ref:`quickstart`
 
 
 
@@ -64,3 +64,4 @@ Documentation Contents
   external
   api
   user_guide
+  changelog

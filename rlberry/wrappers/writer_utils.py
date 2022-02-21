@@ -20,7 +20,7 @@ class WriterWrapper(Wrapper):
 
     """
 
-    def __init__(self, env, writer, write_scalar="regret"):
+    def __init__(self, env, writer, write_scalar="reward"):
         Wrapper.__init__(self, env)
         self.writer = writer
         self.write_scalar = write_scalar
@@ -35,7 +35,7 @@ class WriterWrapper(Wrapper):
         elif self.write_scalar == "action":
             self.writer.add_scalar("action", action, self.iteration_)
         elif self.write_scalar == "action_and_reward":
-            self.writer.add_scalar("reward", action, self.iteration_)
+            self.writer.add_scalar("reward", reward, self.iteration_)
             self.writer.add_scalar("action", action, self.iteration_)
         else:
             raise ValueError("write_scalar %s is not known" % (self.write_scalar))
