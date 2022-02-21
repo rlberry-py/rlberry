@@ -157,6 +157,8 @@ Torch
   :template: function.rst
 
   agents.torch.utils.training.model_factory
+  utils.torch.choose_device
+  
 
 .. autosummary::
   :toctree: generated/
