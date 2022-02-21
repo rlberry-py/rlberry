@@ -124,6 +124,7 @@ def test_replay_index_sampling():
             start_indices, end_indices, weights = buffer._sample_batch_indices(
                 batch_size, chunk_size, "uniform"
             )
+            assert np.all(weights >= 0)
             positive_mask = start_indices >= 0
             negative_mask = ~positive_mask
 

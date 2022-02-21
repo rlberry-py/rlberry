@@ -6,6 +6,13 @@ Changelog
 Under development
 -----------------
 
+*PR #119*
+
+* Improving documentation for agents.torch.utils
+* New replay buffer :class:`rlberry.agents.utils.replay.ReplayBuffer`, aiming
+to replace code in utils/memories.py
+
+
 *Feb 11, 2022 (#83, #95)*
 
 

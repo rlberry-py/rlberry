@@ -143,3 +143,30 @@ Wrappers
   wrappers.scalarize.ScalarizeEnvWrapper
   wrappers.vis2d.Vis2dWrapper
   wrappers.WriterWrapper
+
+
+Neural Networks
+===============
+
+
+Torch
+------
+
+.. autosummary::
+  :toctree: generated/
+  :template: function.rst
+
+  agents.torch.utils.training.model_factory
+
+.. autosummary::
+  :toctree: generated/
+  :template: class.rst
+
+  agents.torch.utils.models.MultiLayerPerceptron
+  agents.torch.utils.models.ConvolutionalNetwork
+  agents.torch.utils.models.DuelingNetwork
+  agents.torch.utils.models.Table
+  agents.torch.utils.attention_models.EgoAttentionNetwork
+
+
+
