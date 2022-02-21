@@ -16,12 +16,12 @@ from rlberry.wrappers import WriterWrapper
 # Agents definition
 
 
-class Thompson_samplingAgent(TSAgent):
-    """Thompson_ sampling for bernoulli rvs"""
+class BernoulliTSAgent(TSAgent):
+    """Thompson sampling for bernoulli rvs"""
 
     name = "Thompson sampling"
 
-    def __init__(self, env, B=1, **kwargs):
+    def __init__(self, env, **kwargs):
         TSAgent.__init__(self, env, "beta", **kwargs)
         self.env = WriterWrapper(self.env, self.writer, write_scalar="action")
 
@@ -54,7 +54,7 @@ agents = [
         fit_budget=T,
         n_fit=M,
     )
-    for Agent in [UCBAgent, Thompson_samplingAgent]
+    for Agent in [UCBAgent, BernoulliTSAgent]
 ]
 
 # Agent training
