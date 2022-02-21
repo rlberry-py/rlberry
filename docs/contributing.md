@@ -1,5 +1,3 @@
-(contributing)=
-
 # Contributing
 
 Currently, we are accepting the following forms of contributions:
@@ -227,7 +225,6 @@ If you want to look at some examples, you can look at docs/index.rst file for rs
 
 
 # Guidelines for new agents
-=======
 
 ## Guidelines for docstring
 
