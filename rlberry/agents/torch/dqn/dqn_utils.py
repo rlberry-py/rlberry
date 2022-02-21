@@ -11,7 +11,7 @@ def polynomial_schedule(
     end_value: float,
     power: float,
     transition_steps: int,
-    transition_begin: int = 0
+    transition_begin: int = 0,
 ):
     """Constructs a schedule with polynomial transition from init to end value.
 
@@ -52,20 +52,23 @@ def polynomial_schedule(
     """
     if transition_steps <= 0:
         logger.info(
-            'A polynomial schedule was set with a non-positive `transition_steps` '
-            'value; this results in a constant schedule with value `init_value`.')
+            "A polynomial schedule was set with a non-positive `transition_steps` "
+            "value; this results in a constant schedule with value `init_value`."
+        )
         return lambda count: init_value
 
     if transition_begin < 0:
         logger.info(
-            'An exponential schedule was set with a negative `transition_begin` '
-            'value; this will result in `transition_begin` falling back to `0`.')
+            "An exponential schedule was set with a negative `transition_begin` "
+            "value; this will result in `transition_begin` falling back to `0`."
+        )
         transition_begin = 0
 
     def schedule(count):
         count = np.clip(count - transition_begin, 0, transition_steps)
         frac = 1 - count / transition_steps
         return (init_value - end_value) * (frac**power) + end_value
+
     return schedule
 
 
@@ -90,6 +93,8 @@ def lambda_returns(r_t, discount_t, v_tp1, lambda_):
     time_dim = v_tp1.shape[1]
     for tt in range(time_dim):
         i = time_dim - tt - 1
-        aux = r_t[:, i] + discount_t[:, i] * ((1 - lambda_) * v_tp1[:, i] + lambda_ * aux)
+        aux = r_t[:, i] + discount_t[:, i] * (
+            (1 - lambda_) * v_tp1[:, i] + lambda_ * aux
+        )
         returns[:, i] = aux
     return returns

@@ -267,17 +267,16 @@ class DQNAgent(Agent):
         self._timesteps_since_last_update = 0
         self._total_updates += 1
 
-
         batch = sampled.data
         assert batch["rewards"].shape == (self._batch_size, self._chunk_size)
 
         # Compute targets
-        batch_observations = torch.FloatTensor(batch["observations"]).to(
-            self._device
-        )
+        batch_observations = torch.FloatTensor(batch["observations"]).to(self._device)
         batch_actions = torch.LongTensor(batch["actions"]).to(self._device)
 
-        batch_target_q_values = self._qnet_target(batch_observations).detach()  # (B, T, A)
+        batch_target_q_values = self._qnet_target(
+            batch_observations
+        ).detach()  # (B, T, A)
         q_tp1 = batch_target_q_values[:, 1:]  # values at t+1,  (B, T-1, A)
         v_tp1 = q_tp1.max(dim=-1)[0]
 
@@ -291,7 +290,11 @@ class DQNAgent(Agent):
 
         # Compute loss
         batch_q_values = self._qnet_online(batch_observations)
-        batch_values =  torch.gather(batch_q_values, dim=-1, index=batch_actions[:, :, None])[:, :, 0]  # shape (batch, chunk)
+        batch_values = torch.gather(
+            batch_q_values, dim=-1, index=batch_actions[:, :, None]
+        )[
+            :, :, 0
+        ]  # shape (batch, chunk)
         batch_values = batch_values[:, :-1]  # remove last timestep
 
         assert batch_values.shape == targets.shape
@@ -302,7 +305,7 @@ class DQNAgent(Agent):
         self._optimizer.step()
 
         if self.writer:
-            self.writer.add_scalar('losses/q_loss', loss.item(), self._total_updates)
+            self.writer.add_scalar("losses/q_loss", loss.item(), self._total_updates)
 
         # target update
         if self._target_update_parameter > 1:
@@ -310,8 +313,12 @@ class DQNAgent(Agent):
                 self._qnet_target.load_state_dict(self._qnet_online.state_dict())
         else:
             tau = self._target_update_parameter
-            for param, target_param in zip(self._qnet_online.parameters(), self._qnet_target.parameters()):
-                target_param.data.copy_(tau * param.data + (1 - tau) * target_param.data)    
+            for param, target_param in zip(
+                self._qnet_online.parameters(), self._qnet_target.parameters()
+            ):
+                target_param.data.copy_(
+                    tau * param.data + (1 - tau) * target_param.data
+                )
 
     def fit(self, budget: int, **kwargs):
         del kwargs
