@@ -5,7 +5,6 @@ from pathlib import Path
 from rlberry.seeding import safe_reseed, set_external_seed
 from rlberry.seeding import Seeder
 from rlberry import metadata_utils
-from rlberry.utils.hash_utils import get_git_hash, get_object_md5
 
 import functools
 import json
@@ -704,28 +703,6 @@ class AgentManager:
             except Exception as ex:
                 logger.warning("[AgentManager] Instance cannot be pickled: " + str(ex))
 
-        # save agent info
-        try:
-            saved_filename_id = str(filename) + "_id.json"
-            agent_hash = get_object_md5(self.agent_class)
-            init_kwargs_copy = deepcopy(self.init_kwargs)[0]
-            del init_kwargs_copy[
-                "seeder"
-            ]  # we don't save the seeder as it is expected to change
-            del init_kwargs_copy[
-                "output_dir"
-            ]  # we don't save the output dir as it changes with the date.
-            kwargs_hash = get_object_md5(init_kwargs_copy)
-            rlberry_ver = get_git_hash()
-            data = {
-                "agent_hash": agent_hash,
-                "kwargs_hash": kwargs_hash,
-                "rlberry_commit": rlberry_ver,
-            }
-            _safe_serialize_json(data, Path(saved_filename_id))
-        except Exception:
-            logger.info("Could not save agent info for later use")
-
         return filename
 
     @classmethod
@@ -758,56 +735,16 @@ class AgentManager:
 
         return obj
 
-    def load_instanciated(self, fname):
-        try:
-            self.check_same_agent(fname)
-        except Exception:
-            logger.info("Could not compare the agent to the save file")
-
-        # load agent
-        filename = Path(fname).with_suffix(".pickle")
-
-        try:
-            with filename.open("rb") as ff:
-                tmp_dict = pickle.load(ff)
-            logger.info("Loaded AgentManager using pickle.")
-        except Exception:
-            with filename.open("rb") as ff:
-                tmp_dict = dill.load(ff)
-            logger.info("Loaded AgentManager using dill.")
-
-        self.__dict__.clear()
-        self.__dict__.update(tmp_dict)
-
-        return self
-
-    def check_same_agent(self, fname):
-        filename = Path(fname).with_suffix(".pickle")
-        # get agent props
-        agent_hash = get_object_md5(self.agent_class)
-        init_kwargs_copy = deepcopy(self.init_kwargs)[0]
-        del init_kwargs_copy["seeder"]
-        del init_kwargs_copy["output_dir"]
-        kwargs_hash = get_object_md5(init_kwargs_copy)
-        rlberry_ver = get_git_hash()
-
-        # check same agent as the one saved
-        saved_filename_id = str(filename) + "_id.json"
-        with open(saved_filename_id, "rb") as file:
-            agent_id = json.load(file)
-
-        if agent_hash != agent_id["agent_hash"]:
-            logger.warn(
-                "Warning: using an agent whose hash does not correspond to the agent saved"
-            )
-        if kwargs_hash != agent_id["kwargs_hash"]:
-            logger.warn(
-                "Warning: using an agent kwargs whose hash does not correspond to the agent kwargs saved"
-            )
-        if rlberry_ver != agent_id["rlberry_commit"]:
-            logger.warn(
-                "Warning: the agent is loaded from a save file using an older version of rlberry."
-            )
+    def __eq__(self, other):
+        self_agent_init_kwargs = deepcopy(self.init_kwargs)[0]
+        del self_agent_init_kwargs["seeder"]
+        del self_agent_init_kwargs["output_dir"]
+        other_agent_init_kwargs = deepcopy(other.init_kwargs)[0]
+        del other_agent_init_kwargs["seeder"]
+        del other_agent_init_kwargs["output_dir"]
+        return (other.agent_class == self.agent_class) and (
+            self_agent_init_kwargs == other_agent_init_kwargs
+        )
 
     def optimize_hyperparams(
         self,
