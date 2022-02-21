@@ -17,7 +17,7 @@ from rlberry.wrappers import WriterWrapper
 
 
 class BernoulliTSAgent(TSAgent):
-    """Thompson sampling for bernoulli rvs"""
+    """Thompson sampling for Bernoulli rvs"""
 
     name = "Thompson sampling"
 
