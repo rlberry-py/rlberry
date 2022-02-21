@@ -67,8 +67,8 @@ agent.fit()
 
 
 # Compute and plot (pseudo-)regret
-def compute_pseudo_regret(action):
-    return np.cumsum(np.max(means) - means[action.astype(int)])
+def compute_pseudo_regret(actions):
+    return np.cumsum(np.max(means) - means[actions.astype(int)])
 
 
 fig = plt.figure(1, figsize=(5, 3))
