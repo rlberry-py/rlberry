@@ -4,7 +4,7 @@ import numpy as np
 import torch
 from gym import spaces
 from rlberry import types
-from rlberry.agents import Agent
+from rlberry.agents import AgentWithSimplePolicy
 from rlberry.agents.torch.utils.training import (
     loss_function_factory,
     model_factory,
@@ -35,7 +35,7 @@ def default_q_net_fn(env, **kwargs):
     return model_factory(**model_config)
 
 
-class DQNAgent(Agent):
+class DQNAgent(AgentWithSimplePolicy):
     """DQN Agent based on PyTorch.
 
     Notes
@@ -131,7 +131,7 @@ class DQNAgent(Agent):
         eval_interval: Optional[int] = None,
         **kwargs,
     ):
-        Agent.__init__(self, env, **kwargs)
+        AgentWithSimplePolicy.__init__(self, env, **kwargs)
         env = self.env
         assert isinstance(env.observation_space, spaces.Box)
         assert isinstance(env.action_space, spaces.Discrete)
@@ -434,21 +434,8 @@ class DQNAgent(Agent):
                 action = qvals_tensor.argmax().item()
                 return action
 
-    def eval(self, eval_horizon=10**5, n_simimulations=5, gamma=1.0, **kwargs):
-        del kwargs  # unused
-        episode_rewards = np.zeros(n_simimulations)
-        for sim in range(n_simimulations):
-            observation = self.eval_env.reset()
-            tt = 0
-            while tt < eval_horizon:
-                action = self._policy(observation, evaluation=True)
-                next_obs, reward, done, _ = self.eval_env.step(action)
-                episode_rewards[sim] += reward * np.power(gamma, tt)
-                observation = next_obs
-                tt += 1
-                if done:
-                    break
-        return episode_rewards.mean()
+    def policy(self, observation):
+        return self._policy(observation, evaluation=True)
 
 
 if __name__ == "__main__":

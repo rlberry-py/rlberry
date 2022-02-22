@@ -46,7 +46,7 @@ FINITE_MDP_AGENTS = [
 CONTINUOUS_STATE_AGENTS = [
     agents.RSUCBVIAgent,
     agents.RSKernelUCBVIAgent,
-    # torch_agents.DQNAgent,  # For now, DQN does not work with the generic check.
+    torch_agents.DQNAgent,
     torch_agents.PPOAgent,
     torch_agents.AVECPPOAgent,
     torch_agents.REINFORCEAgent,
