@@ -1,7 +1,6 @@
 import pytest
 from rlberry.envs import gym_make
 from rlberry.agents.torch.dqn import DQNAgent
-from rlberry.seeding import Seeder
 
 
 @pytest.mark.parametrize(
