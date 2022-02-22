@@ -1,40 +1,32 @@
-import hashlib
-import dill
 import subprocess
 import os
+import rlberry
 
 
-def get_object_md5(object):
-    """
-    Get the md5 hash of an object
-
-    Parameters
-    ----------
-
-    object : a python object
-        object to hash. Typically used with an agent class or AgentManager instance.
-
-    Returns
-    -------
-
-    the md5 hash of the object, a string.
-
-    """
-
-    return hashlib.md5(dill.dumps(object)).hexdigest()
-
-
-def get_git_hash():
+def get_rlberry_version():
     """
     Returns
     -------
 
     the hash of the last rlberry git commit, a string.
     """
-    return (
-        subprocess.check_output(
-            ["git", "rev-parse", "HEAD"], cwd=os.path.dirname(os.path.abspath(__file__))
+    try:
+        # pipe output to /dev/null for silence
+        null = open("/dev/null", "w")
+        subprocess.Popen("git", stdout=null, stderr=null)
+        null.close()
+        git_installed = True
+
+    except OSError:
+        git_installed = False
+    if git_installed:
+        return (
+            subprocess.check_output(
+                ["git", "rev-parse", "HEAD"],
+                cwd=os.path.dirname(os.path.abspath(__file__)),
+            )
+            .strip()
+            .decode()
         )
-        .strip()
-        .decode()
-    )
+    else:
+        return rlberry.__version__
