@@ -4,18 +4,9 @@ rlberry API
 
 .. currentmodule:: rlberry
 
+
 Agents
 ====================
-
-Interface
-----------
-.. autosummary::
-   :toctree: generated/
-   :template: class.rst
-
-   agents.Agent
-   agents.AgentWithSimplePolicy
-
 
 Basic Agents
 --------------------
@@ -30,7 +21,7 @@ Basic Agents
    agents.RSUCBVIAgent
    agents.RSKernelUCBVIAgent
    agents.OptQLAgent
-   agents.linear.LSVIUCBAgent
+   agents.LSVIUCBAgent
    agents.RLSVIAgent
    agents.PSRLAgent
 
@@ -82,7 +73,16 @@ Evaluation and plot
 
 
 Environments
-====================
+====================*
+
+Base class
+----------
+
+.. autosummary::
+    :toctree: generated/
+    :template: class.rst
+
+    envs.interface.Model
 
 Benchmark Environments
 ----------------------
@@ -99,6 +99,8 @@ Benchmark Environments
     envs.classic_control.MountainCar
     envs.finite.Chain
     envs.finite.GridWorld
+
+
 
 Importation tools
 -----------------
@@ -123,12 +125,31 @@ Seeding
 
 Utilities & Logging
 ====================
+
+Writer Utilities
+----------------
+
 .. autosummary::
   :toctree: generated/
   :template: class.rst
 
   utils.writers.DefaultWriter
   agents.utils.replay.ReplayBuffer
+
+Check Utilities
+---------------
+
+ .. autosummary::
+   :toctree: generated/
+   :template: function.rst
+
+   utils.check_rl_agent
+   utils.check_env
+   utils.check_save_load
+   utils.check_fit_additive
+   utils.check_seeding_agent
+   utils.check_agent_manager
+
 
 
 Wrappers
@@ -171,4 +192,28 @@ Torch
   agents.torch.utils.attention_models.EgoAttentionNetwork
 
 
+Bandits
+=======
 
+Environments
+------------
+
+.. autosummary::
+   :toctree: generated/
+   :template: class.rst
+
+   envs.bandits.Bandit
+   envs.bandits.NormalBandit
+   envs.bandits.CorruptedNormalBandit
+
+Bandit algorithms
+-----------------
+
+.. autosummary::
+   :toctree: generated/
+   :template: class.rst
+
+   agents.bandits.BanditWithSimplePolicy
+   agents.bandits.IndexAgent
+   agents.bandits.RecursiveIndexAgent
+   agents.bandits.TSAgent

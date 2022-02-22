@@ -14,6 +14,7 @@ import os
 import sys
 
 import sphinx_gallery  # noqa
+from sphinx_gallery.sorting import ExplicitOrder
 
 sys.path.insert(0, os.path.abspath("."))
 sys.path.insert(0, os.path.abspath("../"))
@@ -104,4 +105,12 @@ sphinx_gallery_conf = {
     "reference_url": {"rlberry": None},
     "matplotlib_animations": True,
     "remove_config_comments": True,
+    "subsection_order": ExplicitOrder(
+        [
+            "../examples/demo_env",
+            "../examples/demo_agents",
+            "../examples/demo_bandits",
+            "../examples/demo_examples",
+        ]
+    ),
 }

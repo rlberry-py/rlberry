@@ -17,7 +17,7 @@ to replace code in utils/memories.py
 
 *Feb 11, 2022 (#83, #95)*
 
-
+* (feat) Add Bandits basic environments and agents. See :class:`~rlberry.agents.bandits.IndexAgent` and :class:`~rlberry.envs.bandits.Bandit`.
 * (fix) Fixed bug in :meth:`FiniteMDP.sample()`: terminal state was being checked with `self.state` instead of given `state`
 * (feat) Option to use 'fork' or 'spawn' in :class:`~rlberry.manager.AgentManager`
 * (feat) AgentManager output_dir now has a timestamp and a short ID by default.

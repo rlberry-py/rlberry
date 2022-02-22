@@ -14,6 +14,40 @@ from gym import spaces
 from rlberry.agents.torch.utils.training import model_factory, activation_factory
 
 
+def default_twinq_net_fn(env):
+    """
+    Returns a default Twinq network
+    """
+    assert isinstance(env.action_space, spaces.Discrete)
+    if isinstance(env.observation_space, spaces.Box):
+        obs_shape = env.observation_space.shape
+    elif isinstance(env.observation_space, spaces.Tuple):
+        obs_shape = env.observation_space.spaces[0].shape
+    else:
+        raise ValueError(
+            "Incompatible observation space: {}".format(env.observation_space)
+        )
+    # Assume CHW observation space
+
+    if len(obs_shape) == 1:
+        model_config = {
+            "type": "MultiLayerPerceptron",
+            "in_size": int(obs_shape[0]) + int(env.action_space.n),
+            "layer_sizes": [64, 64],
+        }
+    else:
+        raise ValueError(
+            "Incompatible observation shape: {}".format(env.observation_space.shape)
+        )
+
+    model_config["out_size"] = 1
+
+    q1 = model_factory(**model_config)
+    q2 = model_factory(**model_config)
+
+    return (q1, q2)
+
+
 def default_policy_net_fn(env):
     """
     Returns a default value network.
