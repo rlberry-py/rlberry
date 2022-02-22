@@ -11,6 +11,8 @@ Under development
 * Improving documentation for agents.torch.utils
 * New replay buffer :class:`rlberry.agents.utils.replay.ReplayBuffer`, aiming
 to replace code in utils/memories.py
+* New DQN implementation, aiming to fix reproducibility and compatibility issues.
+* Implements Q(lambda) in DQN Agent.
 
 
 *Feb 11, 2022 (#83, #95)*
