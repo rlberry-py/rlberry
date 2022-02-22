@@ -160,7 +160,7 @@ class ReplayBuffer:
         #
         # Append data
         #
-        assert list(data.keys()) == self.tags
+        assert set(data.keys()) == set(self.tags)
         if len(self) < self._max_replay_size:
             self._episodes.append(self._current_episode)
             for tag in self.tags:
@@ -185,11 +185,11 @@ class ReplayBuffer:
         """Call this method to indicate the end of an episode."""
         self._current_episode += 1
 
-    def _sample_proportional_and_compute_weights(self, max_val, batch_size):
+    def _sample_proportional_and_compute_weights(self, batch_size):
         """Used for prioritized replay."""
         # sample indices
         indices = []
-        p_total = self._it_sum.sum(0, max_val - 1)
+        p_total = self._it_sum.sum(0, len(self) - 1)
         every_range_len = p_total / batch_size
         for i in range(batch_size):
             mass = self._rng.uniform() * every_range_len + i * every_range_len
@@ -214,10 +214,13 @@ class ReplayBuffer:
         current_size = len(self)
         if sampling_mode == "uniform":
             start_indices = self._rng.choice(current_size - chunk_size, size=batch_size)
-            weights = np.ones_like(np.indices, dtype=np.float32)
+            weights = np.ones_like(start_indices, dtype=np.float32)
         elif sampling_mode == "prioritized":
             start_indices, weights = self._sample_proportional_and_compute_weights(
-                current_size - chunk_size, batch_size=batch_size
+                batch_size=batch_size
+            )
+            start_indices[start_indices > (current_size - chunk_size)] = (
+                current_size - chunk_size
             )
             assert np.all(start_indices <= (current_size - chunk_size))
         else:
@@ -276,6 +279,7 @@ class ReplayBuffer:
             "prioritized": use prioritized experience replay (requires
             enable_prioritized=True in the constructor).
         """
+        assert chunk_size > 0
         assert sampling_mode in ["uniform", "prioritized"]
         if sampling_mode == "prioritized" and not self._enable_prioritized:
             raise RuntimeError(

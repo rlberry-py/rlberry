@@ -117,7 +117,7 @@ class DQNAgent(Agent):
         learning_rate: float = 1e-3,
         epsilon_init: float = 1.0,
         epsilon_final: float = 0.1,
-        epsilon_decay_interval: int = 5000,
+        epsilon_decay_interval: int = 20_000,
         loss_function: str = "l2",
         optimizer_type: str = "ADAM",
         q_net_constructor: Optional[Callable[..., torch.nn.Module]] = None,
@@ -171,7 +171,7 @@ class DQNAgent(Agent):
         self._optimizer = optimizer_factory(
             self._qnet_online.parameters(), **optimizer_kwargs
         )
-        self._loss_function = loss_function_factory(loss_function)
+        self._loss_function = loss_function_factory(loss_function, reduction="none")
 
         #
         # Training params
@@ -198,6 +198,7 @@ class DQNAgent(Agent):
             enable_prioritized=use_prioritized_replay,
         )
         self._replay_buffer.setup_entry("observations", np.float32)
+        self._replay_buffer.setup_entry("next_observations", np.float32)
         self._replay_buffer.setup_entry("actions", np.int32)
         self._replay_buffer.setup_entry("rewards", np.float32)
         self._replay_buffer.setup_entry("dones", np.bool)
@@ -244,7 +245,7 @@ class DQNAgent(Agent):
             run_update = total_timesteps % self._train_interval == 0
         return run_update, n_gradient_steps
 
-    def _update(self):
+    def _update(self, n_gradient_steps):
         """Update networks."""
         #
         # TODO
@@ -252,73 +253,104 @@ class DQNAgent(Agent):
         # * Check for double DQN
         # * Update priorities
 
-        # Sample a batch
         if self._use_prioritized_replay:
             sampling_mode = "prioritized"
         else:
             sampling_mode = "uniform"
-        sampled = self._replay_buffer.sample(
-            self._batch_size, self._chunk_size, sampling_mode=sampling_mode
-        )
-        if not sampled:
-            return
 
-        # Update counters
-        self._timesteps_since_last_update = 0
-        self._total_updates += 1
+        for _ in range(n_gradient_steps):
+            # Sample a batch
+            sampled = self._replay_buffer.sample(
+                self._batch_size, self._chunk_size, sampling_mode=sampling_mode
+            )
+            if not sampled:
+                return
 
-        batch = sampled.data
-        assert batch["rewards"].shape == (self._batch_size, self._chunk_size)
+            # Update counters
+            self._timesteps_since_last_update = 0
+            self._total_updates += 1
 
-        # Compute targets
-        batch_observations = torch.FloatTensor(batch["observations"]).to(self._device)
-        batch_actions = torch.LongTensor(batch["actions"]).to(self._device)
+            batch = sampled.data
+            batch_info = sampled.info
+            assert batch["rewards"].shape == (self._batch_size, self._chunk_size)
 
-        batch_target_q_values = self._qnet_target(
-            batch_observations
-        ).detach()  # (B, T, A)
-        q_tp1 = batch_target_q_values[:, 1:]  # values at t+1,  (B, T-1, A)
-        v_tp1 = q_tp1.max(dim=-1)[0]
+            # Compute targets
+            batch_observations = torch.FloatTensor(batch["observations"]).to(
+                self._device
+            )
+            batch_next_observations = torch.FloatTensor(batch["next_observations"]).to(
+                self._device
+            )
+            batch_actions = torch.LongTensor(batch["actions"]).to(self._device)
 
-        batch_lambda_returns = lambda_returns(
-            batch["rewards"][:, :-1],
-            self._gamma * (1.0 - np.array(batch["dones"][:, :-1], dtype=np.float32)),
-            v_tp1.cpu().numpy(),
-            np.array(self._lambda, dtype=np.float32),
-        )
-        targets = torch.tensor(batch_lambda_returns).to(self._device)
+            target_q_values_tp1 = self._qnet_target(batch_next_observations).detach()
+            # Check if double DQN
+            if self._use_double_dqn:
+                online_q_values_tp1 = self._qnet_online(
+                    batch_next_observations
+                ).detach()
+                a_argmax = online_q_values_tp1.argmax(dim=-1).detach()
+            else:
+                a_argmax = target_q_values_tp1.argmax(dim=-1).detach()
 
-        # Compute loss
-        batch_q_values = self._qnet_online(batch_observations)
-        batch_values = torch.gather(
-            batch_q_values, dim=-1, index=batch_actions[:, :, None]
-        )[
-            :, :, 0
-        ]  # shape (batch, chunk)
-        batch_values = batch_values[:, :-1]  # remove last timestep
+            v_tp1 = (
+                torch.gather(target_q_values_tp1, dim=-1, index=a_argmax[:, :, None])[
+                    :, :, 0
+                ]
+                .cpu()
+                .numpy()
+            )
 
-        assert batch_values.shape == targets.shape
-        loss = self._loss_function(batch_values, targets)
+            batch_lambda_returns = lambda_returns(
+                batch["rewards"],
+                self._gamma * (1.0 - np.array(batch["dones"], dtype=np.float32)),
+                v_tp1,
+                np.array(self._lambda, dtype=np.float32),
+            )
+            targets = torch.tensor(batch_lambda_returns).to(self._device)
 
-        self._optimizer.zero_grad()
-        loss.backward()
-        self._optimizer.step()
+            # Compute loss
+            batch_q_values = self._qnet_online(batch_observations)
+            batch_values = torch.gather(
+                batch_q_values, dim=-1, index=batch_actions[:, :, None]
+            )[
+                :, :, 0
+            ]  # shape (batch, chunk)
 
-        if self.writer:
-            self.writer.add_scalar("losses/q_loss", loss.item(), self._total_updates)
+            assert batch_values.shape == targets.shape
+            per_element_loss = self._loss_function(batch_values, targets)
+            per_batch_element_loss = per_element_loss.mean(dim=1)
+            weights = torch.FloatTensor(batch_info["weights"]).to(self._device)
+            loss = torch.sum(per_batch_element_loss * weights) / torch.sum(weights)
 
-        # target update
-        if self._target_update_parameter > 1:
-            if self._total_updates % self._target_update_parameter == 0:
-                self._qnet_target.load_state_dict(self._qnet_online.state_dict())
-        else:
-            tau = self._target_update_parameter
-            for param, target_param in zip(
-                self._qnet_online.parameters(), self._qnet_target.parameters()
-            ):
-                target_param.data.copy_(
-                    tau * param.data + (1 - tau) * target_param.data
+            self._optimizer.zero_grad()
+            loss.backward()
+            self._optimizer.step()
+
+            if self.writer:
+                self.writer.add_scalar(
+                    "losses/q_loss", loss.item(), self._total_updates
                 )
+
+            # update priorities
+            if self._use_prioritized_replay:
+                new_priorities = per_element_loss.abs().detach().cpu().numpy() + 1e-6
+                self._replay_buffer.update_priorities(
+                    batch_info["indices"], new_priorities
+                )
+
+            # target update
+            if self._target_update_parameter > 1:
+                if self._total_updates % self._target_update_parameter == 0:
+                    self._qnet_target.load_state_dict(self._qnet_online.state_dict())
+            else:
+                tau = self._target_update_parameter
+                for param, target_param in zip(
+                    self._qnet_online.parameters(), self._qnet_target.parameters()
+                ):
+                    target_param.data.copy_(
+                        tau * param.data + (1 - tau) * target_param.data
+                    )
 
     def fit(self, budget: int, **kwargs):
         del kwargs
@@ -342,6 +374,7 @@ class DQNAgent(Agent):
                     "actions": action,
                     "rewards": reward,
                     "dones": done,
+                    "next_observations": next_obs,
                 }
             )
 
@@ -354,8 +387,7 @@ class DQNAgent(Agent):
             # update
             run_update, n_gradient_steps = self._must_update(done)
             if run_update:
-                for _ in range(n_gradient_steps):
-                    self._update()
+                self._update(n_gradient_steps)
 
             # eval
             total_timesteps = self._total_timesteps
@@ -390,6 +422,8 @@ class DQNAgent(Agent):
     def _policy(self, observation, evaluation=False):
         epsilon = self._epsilon_schedule(self.total_timesteps)
         if (not evaluation) and self.rng.uniform() < epsilon:
+            if self.writer:
+                self.writer.add_scalar("epsilon", epsilon, self.total_timesteps)
             return self.env.action_space.sample()
         else:
             with torch.no_grad():
@@ -421,5 +455,8 @@ if __name__ == "__main__":
     from rlberry.envs import gym_make
 
     env = gym_make("CartPole-v0")
-    agent = DQNAgent(env, eval_interval=500)
+    agent = DQNAgent(
+        env, eval_interval=500, use_double_dqn=True, use_prioritized_replay=True
+    )
+    agent.reseed(123)
     agent.fit(100_000)

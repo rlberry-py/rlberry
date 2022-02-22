@@ -5,15 +5,15 @@ from torch import nn as nn
 from torch.nn import functional as F
 
 
-def loss_function_factory(loss_function):
+def loss_function_factory(loss_function, **kwargs):
     if loss_function == "l2":
-        return F.mse_loss
+        return torch.nn.MSELoss(**kwargs)
     elif loss_function == "l1":
-        return F.l1_loss
+        return torch.nn.L1Loss(**kwargs)
     elif loss_function == "smooth_l1":
-        return F.smooth_l1_loss
+        return torch.nn.SmoothL1Loss(**kwargs)
     elif loss_function == "bce":
-        return F.binary_cross_entropy
+        return torch.nn.BCELoss(**kwargs)
     else:
         raise ValueError("Unknown loss function : {}".format(loss_function))
 
