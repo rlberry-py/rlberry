@@ -73,7 +73,7 @@ Evaluation and plot
 
 
 Environments
-====================*
+============
 
 Base class
 ----------
