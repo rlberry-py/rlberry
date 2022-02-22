@@ -61,7 +61,3 @@ def test_finite_state_agent(Agent):
 @pytest.mark.parametrize("Agent", CONTINUOUS_STATE_AGENTS)
 def test_continuous_state_agent(Agent):
     check_rl_agent(Agent, env="continuous_state")
-
-
-def test_dqn():
-    check_save_load(torch_agents.DQNAgent, env="continuous_state")

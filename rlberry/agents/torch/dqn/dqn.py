@@ -45,7 +45,7 @@ class DQNAgent(AgentWithSimplePolicy):
 
     Parameters
     ----------
-    env: :class:`rlberry.types.Env`
+    env: :class:`~rlberry.types.Env`
         Environment, can be a tuple (constructor, kwargs)
     gamma: float, default = 0.99
         Discount factor.
@@ -436,14 +436,3 @@ class DQNAgent(AgentWithSimplePolicy):
 
     def policy(self, observation):
         return self._policy(observation, evaluation=True)
-
-
-if __name__ == "__main__":
-    from rlberry.envs import gym_make
-
-    env = gym_make("CartPole-v0")
-    agent = DQNAgent(
-        env, eval_interval=500, use_double_dqn=True, use_prioritized_replay=True
-    )
-    agent.reseed(123)
-    agent.fit(100_000)
