@@ -15,9 +15,21 @@ to replace code in utils/memories.py
 * Implements Q(lambda) in DQN Agent.
 
 
-*Feb 11, 2022 (#83, #95)*
+*Feb 22, 2022 (PR #126)*
+
+* Setup :code:`rlberry.__version__` (currently 0.3.0dev0)
+* Record rlberry version in a AgentManager attribute equality of AgentManagers
+* Override :code:`__eq__` method of the AgentManager class.
+
+*Feb 14-15, 2022 (PR #97, #118)*
 
 * (feat) Add Bandits basic environments and agents. See :class:`~rlberry.agents.bandits.IndexAgent` and :class:`~rlberry.envs.bandits.Bandit`.
+* Thompson Sampling bandit algorithm with gaussian or beta prior.
+* Base class for bandits algorithms with custom save & load functions (called :class:`~rlberry.agents.bandits.BanditWithSimplePolicy`)
+
+
+*Feb 11, 2022 (#83, #95)*
+
 * (fix) Fixed bug in :meth:`FiniteMDP.sample()`: terminal state was being checked with `self.state` instead of given `state`
 * (feat) Option to use 'fork' or 'spawn' in :class:`~rlberry.manager.AgentManager`
 * (feat) AgentManager output_dir now has a timestamp and a short ID by default.
