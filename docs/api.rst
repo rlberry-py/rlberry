@@ -123,7 +123,7 @@ Seeding
    seeding.seeder.Seeder
 
 
-Utilities & Logging
+Utilities, Logging & Typing
 ====================
 
 Writer Utilities
@@ -150,6 +150,15 @@ Check Utilities
    utils.check_seeding_agent
    utils.check_agent_manager
 
+
+Typing
+------
+
+.. autosummary::
+  :toctree: generated/
+  :template: class.rst
+
+   types.Env
 
 
 Wrappers
@@ -179,7 +188,7 @@ Torch
 
   agents.torch.utils.training.model_factory
   utils.torch.choose_device
-  
+
 
 .. autosummary::
   :toctree: generated/

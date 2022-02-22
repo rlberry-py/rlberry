@@ -1,10 +1,7 @@
 import pytest
 import rlberry.agents as agents
 import rlberry.agents.torch as torch_agents
-from rlberry.utils.check_agent import (
-    check_rl_agent,
-    check_save_load,
-)
+from rlberry.utils.check_agent import check_rl_agent
 from rlberry.agents.features import FeatureMap
 import numpy as np
 

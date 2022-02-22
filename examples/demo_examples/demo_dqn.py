@@ -1,3 +1,9 @@
+"""
+ =====================
+ Demo: demo_dqn_lambda
+ =====================
+"""
+
 from rlberry.agents.torch import DQNAgent
 from rlberry.envs import gym_make
 from rlberry.manager import AgentManager, MultipleManagers
