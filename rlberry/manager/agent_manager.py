@@ -5,6 +5,7 @@ from pathlib import Path
 from rlberry.seeding import safe_reseed, set_external_seed
 from rlberry.seeding import Seeder
 from rlberry import metadata_utils
+from rlberry.utils.hash_utils import get_rlberry_version
 
 import functools
 import json
@@ -118,6 +119,7 @@ class AgentHandler:
         """Saves agent to file and remove it from memory."""
         if self._agent_instance is not None:
             saved_filename = self._agent_instance.save(self._fname)
+
             # saved_filename might have appended the correct extension, for instance,
             # so self._fname must be updated.
             if not saved_filename:
@@ -125,7 +127,9 @@ class AgentHandler:
                     f"Instance of {self._agent_class} cannot be saved and will be kept in memory."
                 )
                 return
+
             self._fname = Path(saved_filename)
+
             del self._agent_instance
             self._agent_instance = None
 
@@ -377,6 +381,9 @@ class AgentManager:
         self.optuna_study = None
         self.db_filename = None
         self.optuna_storage_url = None
+
+        # rlberry version for reproducibility purpose
+        self.rlberry_version = get_rlberry_version()
 
     def _init_optuna_storage_url(self):
         self.output_dir_.mkdir(parents=True, exist_ok=True)
@@ -729,7 +736,32 @@ class AgentManager:
 
         obj.__dict__.clear()
         obj.__dict__.update(tmp_dict)
+
         return obj
+
+    def __eq__(self, other):
+
+        result = True
+        self_init_kwargs = [_strip_seed_dir(kw) for kw in self.init_kwargs]
+        other_init_kwargs = [_strip_seed_dir(kw) for kw in other.init_kwargs]
+        result = result and all(
+            [
+                self_init_kwargs[f] == other_init_kwargs[f]
+                for f in range(len(self_init_kwargs))
+            ]
+        )
+
+        self_eval_kwargs = self.eval_kwargs or {}
+        other_eval_kwargs = other.eval_kwargs or {}
+        result = result and (self_eval_kwargs == other_eval_kwargs)
+
+        result = result and (other.agent_class == self.agent_class)
+
+        result = result and (self.fit_kwargs == other.fit_kwargs)
+
+        result = result and (self.fit_budget == other.fit_budget)
+
+        return result
 
     def optimize_hyperparams(
         self,
@@ -1109,3 +1141,11 @@ def _optuna_objective(
     del params_stats
 
     return eval_value
+
+
+def _strip_seed_dir(dico):
+    """Remove keys that should not be compared in __eq__"""
+    res = deepcopy(dico)
+    del res["seeder"]
+    del res["output_dir"]
+    return res

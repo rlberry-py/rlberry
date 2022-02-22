@@ -180,11 +180,11 @@ def check_save_load(Agent, env="continuous_state"):
         agent.fit(3)
         assert (
             os.path.getsize(str(agent.output_dir_) + "/agent_handlers/idx_0.pickle") > 1
-        ), "the saved file is empty"
+        ), "The saved file is empty."
         try:
             agent.load(str(agent.output_dir_) + "/agent_handlers/idx_0.pickle")
-        except:
-            raise RuntimeError("failed to load the agent file")
+        except Exception:
+            raise RuntimeError("Failed to load the agent file.")
 
 
 def check_seeding_agent(Agent, env=None, continuous_state=False):
