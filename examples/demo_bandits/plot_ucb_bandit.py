@@ -36,11 +36,11 @@ class UCBAgent(RecursiveIndexAgent):
             return stat + B * np.sqrt(2 * np.log(t**2) / Na)
 
         RecursiveIndexAgent.__init__(self, env, stat_function, index, **kwargs)
-        self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
+        self.env = WriterWrapper(self.env, self.writer, write_scalar="action")
 
 
 # Parameters of the problem
-means = [0, 0.9, 1]  # means of the arms
+means = np.array([0, 0.9, 1])  # means of the arms
 T = 3000  # Horizon
 M = 20  # number of MC simu
 
@@ -66,17 +66,17 @@ agent = AgentManager(
 agent.fit()
 
 
-# Compute and plot regret
-def compute_regret(regret):
-    return np.cumsum(np.max(means) - regret)
+# Compute and plot (pseudo-)regret
+def compute_pseudo_regret(actions):
+    return np.cumsum(np.max(means) - means[actions.astype(int)])
 
 
 fig = plt.figure(1, figsize=(5, 3))
 ax = plt.gca()
 output = plot_writer_data(
     [agent],
-    tag="reward",
-    preprocess_func=compute_regret,
-    title="Cumulative Regret",
+    tag="action",
+    preprocess_func=compute_pseudo_regret,
+    title="Cumulative Pseudo-Regret",
     ax=ax,
 )

@@ -2,12 +2,16 @@ import numpy as np
 from rlberry.envs.bandits import NormalBandit, BernoulliBandit
 from rlberry.agents.bandits import (
     IndexAgent,
+    RandomizedAgent,
     RecursiveIndexAgent,
     TSAgent,
     BanditWithSimplePolicy,
 )
 from rlberry.manager import AgentManager
 from rlberry.utils import check_bandit_agent
+
+
+TEST_SEED = 42
 
 
 class UCBAgent(IndexAgent):
@@ -39,12 +43,32 @@ class RecursiveUCBAgent(RecursiveIndexAgent):
 
 
 def test_base_bandit():
-    assert check_bandit_agent(BanditWithSimplePolicy)
+    assert check_bandit_agent(BanditWithSimplePolicy, NormalBandit, seed=TEST_SEED)
 
 
 def test_index_bandits():
-    assert check_bandit_agent(UCBAgent)
-    assert check_bandit_agent(RecursiveUCBAgent)
+    assert check_bandit_agent(UCBAgent, NormalBandit, seed=TEST_SEED)
+    assert check_bandit_agent(RecursiveUCBAgent, NormalBandit, seed=TEST_SEED)
+
+
+class EXP3Agent(RandomizedAgent):
+    name = "EXP3"
+
+    def __init__(self, env, **kwargs):
+        def index(r, p, t):
+            return np.sum(1 - (1 - r) / p)
+
+        def prob(indices, t):
+            eta = np.minimum(np.sqrt(self.n_arms * np.log(self.n_arms) / (t + 1)), 1.0)
+            w = np.exp(eta * indices)
+            w /= w.sum()
+            return (1 - eta) * w + eta * np.ones(self.n_arms) / self.n_arms
+
+        RandomizedAgent.__init__(self, env, index, prob, **kwargs)
+
+
+def test_randomized_bandits():
+    assert check_bandit_agent(EXP3Agent, BernoulliBandit, seed=TEST_SEED)
 
 
 def test_TS():
@@ -54,7 +78,7 @@ def test_TS():
         def __init__(self, env, **kwargs):
             TSAgent.__init__(self, env, "gaussian", **kwargs)
 
-    assert check_bandit_agent(TSAgent_normal)
+    assert check_bandit_agent(TSAgent_normal, NormalBandit, seed=TEST_SEED)
 
     class TSAgent_beta(TSAgent):
         name = "TSAgent"
@@ -62,7 +86,7 @@ def test_TS():
         def __init__(self, env, **kwargs):
             TSAgent.__init__(self, env, "beta", **kwargs)
 
-    assert check_bandit_agent(TSAgent_beta, BernoulliBandit)
+    assert check_bandit_agent(TSAgent_beta, BernoulliBandit, TEST_SEED)
 
 
 def test_recursive_vs_not_recursive():
@@ -70,10 +94,15 @@ def test_recursive_vs_not_recursive():
     env_kwargs = {}
 
     agent1 = AgentManager(
-        UCBAgent, (env_ctor, env_kwargs), fit_budget=10, n_fit=1, seed=42
+        UCBAgent, (env_ctor, env_kwargs), fit_budget=10, n_fit=1, seed=TEST_SEED
     )
+
     agent2 = AgentManager(
-        RecursiveUCBAgent, (env_ctor, env_kwargs), fit_budget=10, n_fit=1, seed=42
+        RecursiveUCBAgent,
+        (env_ctor, env_kwargs),
+        fit_budget=10,
+        n_fit=1,
+        seed=TEST_SEED,
     )
 
     agent1.fit()
