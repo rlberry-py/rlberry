@@ -304,6 +304,9 @@ def plot_writer_data(
     if ax is None:
         figure, ax = plt.subplots(1, 1)
 
+    # PS: in the next release of seaborn, ci should be deprecated and replaced
+    # with errorbar, which allows to specifies other types of confidence bars,
+    # in particular quantiles.
     lineplot_kwargs = dict(
         x=xx, y="value", hue="name", style="name", data=data, ax=ax, ci="sd"
     )

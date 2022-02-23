@@ -16,14 +16,14 @@ from rlberry.wrappers import WriterWrapper
 # Agents definition
 
 
-class Thompson_samplingAgent(TSAgent):
-    """Thompson_ sampling for bernoulli rvs"""
+class BernoulliTSAgent(TSAgent):
+    """Thompson sampling for Bernoulli rvs"""
 
     name = "Thompson sampling"
 
-    def __init__(self, env, B=1, **kwargs):
+    def __init__(self, env, **kwargs):
         TSAgent.__init__(self, env, "beta", **kwargs)
-        self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
+        self.env = WriterWrapper(self.env, self.writer, write_scalar="action")
 
 
 class UCBAgent(RecursiveIndexAgent):
@@ -33,11 +33,11 @@ class UCBAgent(RecursiveIndexAgent):
         RecursiveIndexAgent.__init__(
             self, env, **kwargs
         )  # default is UCB for Bernoulli.
-        self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
+        self.env = WriterWrapper(self.env, self.writer, write_scalar="action")
 
 
 # Parameters of the problem
-means = [0.8, 0.8, 0.9, 1]  # means of the arms
+means = np.array([0.8, 0.8, 0.9, 1])  # means of the arms
 A = len(means)
 T = 2000  # Horizon
 M = 10  # number of MC simu
@@ -54,7 +54,7 @@ agents = [
         fit_budget=T,
         n_fit=M,
     )
-    for Agent in [UCBAgent, Thompson_samplingAgent]
+    for Agent in [UCBAgent, BernoulliTSAgent]
 ]
 
 # Agent training
@@ -63,14 +63,14 @@ for agent in agents:
     agent.fit()
 
 
-# Compute and plot regret
-def compute_regret(regret):
-    return np.cumsum(np.max(means) - regret)
+# Compute and plot (pseudo-)regret
+def compute_pseudo_regret(actions):
+    return np.cumsum(np.max(means) - means[actions.astype(int)])
 
 
 output = plot_writer_data(
     agents,
-    tag="reward",
-    preprocess_func=compute_regret,
-    title="Cumulative Regret",
+    tag="action",
+    preprocess_func=compute_pseudo_regret,
+    title="Cumulative Pseudo-Regret",
 )

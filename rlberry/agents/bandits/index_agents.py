@@ -34,9 +34,8 @@ class IndexAgent(BanditWithSimplePolicy):
 
     name = "IndexAgent"
 
-    def __init__(self, env, index_function=lambda rew, t: np.mean(rew), **kwargs):
+    def __init__(self, env, index_function=None, **kwargs):
         BanditWithSimplePolicy.__init__(self, env, **kwargs)
-        self.n_arms = self.env.action_space.n
         if index_function is None:
 
             def index(r, t):
@@ -52,25 +51,25 @@ class IndexAgent(BanditWithSimplePolicy):
         rewards = np.zeros(horizon)
         actions = np.ones(horizon) * np.nan
 
-        indexes = np.inf * np.ones(self.n_arms)
+        indices = np.inf * np.ones(self.n_arms)
         for ep in range(horizon):
             if self.total_time < self.n_arms:
                 action = self.total_time
             else:
-                indexes = self.get_indexes(rewards, actions, ep)
-                action = np.argmax(indexes)
+                indices = self.get_indices(rewards, actions, ep)
+                action = np.argmax(indices)
             self.total_time += 1
             _, reward, _, _ = self.env.step(action)
             rewards[ep] = reward
             actions[ep] = action
 
-        self.optimal_action = np.argmax(indexes)
+        self.optimal_action = np.argmax(indices)
         info = {"episode_reward": np.sum(rewards)}
         return info
 
-    def get_indexes(self, rewards, actions, ep):
+    def get_indices(self, rewards, actions, ep):
         """
-        Return the indexes of each arms.
+        Return the indices of each arm.
 
         Parameters
         ----------
@@ -85,16 +84,16 @@ class IndexAgent(BanditWithSimplePolicy):
             current iteration/epoch
 
         """
-        indexes = np.zeros(self.n_arms)
-        for a in range(self.n_arms):
-            indexes[a] = self.index_function(rewards[actions == a], ep)
-        return indexes
+        indices = np.zeros(self.n_arms)
+        for a in self.arms:
+            indices[a] = self.index_function(rewards[actions == a], ep)
+        return indices
 
 
 class RecursiveIndexAgent(BanditWithSimplePolicy):
     """
     Agent for bandit environment using Index-based policy like UCB with
-    recursive indexes.
+    recursive indices.
 
     Parameters
     -----------
@@ -162,7 +161,7 @@ class RecursiveIndexAgent(BanditWithSimplePolicy):
 
     def fit(self, budget=None, **kwargs):
         horizon = budget
-        indexes = np.inf * np.ones(self.n_arms)
+        indices = np.inf * np.ones(self.n_arms)
         stats = None
         Na = np.zeros(self.n_arms)
         total_reward = 0
@@ -170,21 +169,21 @@ class RecursiveIndexAgent(BanditWithSimplePolicy):
             if self.total_time < self.n_arms:
                 action = self.total_time
             else:
-                indexes = self.get_recursive_indexes(stats, Na, ep)
-                action = np.argmax(indexes)
+                indices = self.get_recursive_indices(stats, Na, ep)
+                action = np.argmax(indices)
             self.total_time += 1
             Na[action] += 1
             _, reward, _, _ = self.env.step(action)
             stats = self.stat_function(stats, Na, action, reward)
             total_reward += reward
 
-        self.optimal_action = np.argmax(indexes)
+        self.optimal_action = np.argmax(indices)
 
         info = {"episode_reward": total_reward}
         return info
 
-    def get_recursive_indexes(self, stats, Na, ep):
-        indexes = np.zeros(self.n_arms)
-        for a in range(self.n_arms):
-            indexes[a] = self.index_function(stats[a], Na[a], ep)
-        return indexes
+    def get_recursive_indices(self, stats, Na, ep):
+        indices = np.zeros(self.n_arms)
+        for a in self.arms:
+            indices[a] = self.index_function(stats[a], Na[a], ep)
+        return indices
