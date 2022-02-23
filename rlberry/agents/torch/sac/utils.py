@@ -1,10 +1,6 @@
 import torch
 from torch.nn.functional import one_hot
-
 import gym.spaces as spaces
-
-# implement next state function?
-# implement is_terminal function?
 
 
 def unpack_batch(batch, device="cpu"):
@@ -20,39 +16,31 @@ def unpack_batch(batch, device="cpu"):
     is_terminals = torch.tensor(batch.is_terminals).to(device).detach()
     return states, actions, logprobs, rewards, is_terminals
 
-
-# we assume that batch consists of lists of tensors
-
-
 @torch.no_grad()
 def get_qref(batch, target_val_net, gamma, device="cpu"):
-    # extract data
-    old_states, _, _, qref, is_terminal = unpack_batch(batch, device)
-
-    # get next_states
-    non_terminal = torch.logical_not(is_terminal)
-    next_states_idx = (torch.nonzero(non_terminal) + 1).view(-1)
-    next_states = old_states[next_states_idx].to(device).detach()
-
-    values = target_val_net(next_states)[:, 0]
-    qref[non_terminal] += gamma * values
-
-    qref = qref.type(torch.FloatTensor)
-    return qref
-
+    # TODO I am not sure if this is maybe slightly different from original SAC where you take just non terminal states?
+    _, batch_next_state, _, _, batch_reward, batch_done = batch
+    target_next_batch = target_val_net(batch_next_state)
+    
+    batch_target_val = (
+        batch_reward
+        + (1 - batch_done)
+        * gamma
+        * torch.max(target_next_batch, dim=1, keepdim=True)[0]
+    )
+    return batch_target_val
 
 @torch.no_grad()
 def get_vref(env, batch, twinq_net, policy_net, ent_alpha: float, device="cpu"):
-
+    
     assert isinstance(twinq_net, tuple)
     assert isinstance(env.action_space, spaces.Discrete)
     num_actions = env.action_space.n
 
-    states, _, _, _, _ = unpack_batch(batch, device)
+    states, _, _, _, _, _= batch
     q1, q2 = twinq_net
     # references for the critic network
     act_dist = policy_net(states)
-    # act_dist = distr.Normal(mu_v, torch.exp(policy_net.logstd))
     cur_actions = act_dist.sample()
     actions_one_hot = one_hot(cur_actions, num_actions)
     q_input = torch.cat([states, actions_one_hot], dim=1)
