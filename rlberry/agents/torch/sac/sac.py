@@ -175,8 +175,7 @@ class SACAgent(AgentWithSimplePolicy):
         self.value_net_fn = value_net_fn or default_value_net_fn
         self.twinq_net_fn = twinq_net_fn or default_twinq_net_fn
 
-        self.optimizer_kwargs = {
-            "optimizer_type": optimizer_type, "lr": learning_rate}
+        self.optimizer_kwargs = {"optimizer_type": optimizer_type, "lr": learning_rate}
 
         # check environment
         assert isinstance(self.env.observation_space, spaces.Box)
@@ -264,12 +263,22 @@ class SACAgent(AgentWithSimplePolicy):
         batch_state_tensor = torch.FloatTensor(batch_state).to(self.device)
         batch_next_state_tensor = torch.FloatTensor(batch_next_state).to(self.device)
         batch_action_tensor = torch.LongTensor(batch_action).to(self.device)
-        batch_action_log_prob_tensor = torch.FloatTensor(batch_action_log_prob).to(self.device)
-        batch_reward_tensor = torch.FloatTensor(batch_reward).unsqueeze(1).to(self.device)
+        batch_action_log_prob_tensor = torch.FloatTensor(batch_action_log_prob).to(
+            self.device
+        )
+        batch_reward_tensor = (
+            torch.FloatTensor(batch_reward).unsqueeze(1).to(self.device)
+        )
         batch_done_tensor = torch.FloatTensor(batch_done).unsqueeze(1).to(self.device)
 
-        return batch_state_tensor, batch_next_state_tensor, batch_action_tensor, \
-                batch_action_log_prob_tensor, batch_reward_tensor, batch_done_tensor
+        return (
+            batch_state_tensor,
+            batch_next_state_tensor,
+            batch_action_tensor,
+            batch_action_log_prob_tensor,
+            batch_reward_tensor,
+            batch_done_tensor,
+        )
 
     def _select_action(self, state):
         state = torch.from_numpy(state).float().to(self.device)
@@ -308,16 +317,17 @@ class SACAgent(AgentWithSimplePolicy):
 
             # save in batch
             self.replay_buffer.push(
-                (state, next_state, action, action_logprob, reward + bonus, done))
+                (state, next_state, action, action_logprob, reward + bonus, done)
+            )
 
             # update state
             state = next_state
 
             ###### TODO implement wrapper of the environment instead of this
-            i+=1
-            if i+1 == self.horizon: 
+            i += 1
+            if i + 1 == self.horizon:
                 done = True
-            ##################################################### 
+            #####################################################
 
         # update; TODO this condition "self.episode % self.batch_size == 0:" seems to be  completely random to me
         self.episode += 1
@@ -326,17 +336,14 @@ class SACAgent(AgentWithSimplePolicy):
 
         # add rewards to writer
         if self.writer is not None:
-            self.writer.add_scalar(
-                "episode_rewards", episode_rewards, self.episode)
+            self.writer.add_scalar("episode_rewards", episode_rewards, self.episode)
 
         return episode_rewards
 
     def _update(self):
         # obtain reference values for Q and V functions for this update
         batch_ref = self._get_batch(self.device)
-        qref = utils.get_qref(
-            batch_ref, self.target_value_net, self.gamma, self.device
-        )
+        qref = utils.get_qref(batch_ref, self.target_value_net, self.gamma, self.device)
         vref = utils.get_vref(
             self.env,
             batch_ref,
@@ -359,16 +366,15 @@ class SACAgent(AgentWithSimplePolicy):
             v_loss_v.backward()
             self.value_optimizer.step()
             if self.writer is not None:
-                self.writer.add_scalar("loss_v", float(
-                    v_loss_v.detach()), self.episode)
+                self.writer.add_scalar("loss_v", float(v_loss_v.detach()), self.episode)
 
             # TwinQ
             self.q1_optimizer.zero_grad()
             self.q2_optimizer.zero_grad()
             actions_one_hot = one_hot(actions, self.env.action_space.n)
-            q1_v, q2_v = self.q1(
+            q1_v, q2_v = self.q1(torch.cat([states, actions_one_hot], dim=1)), self.q2(
                 torch.cat([states, actions_one_hot], dim=1)
-            ), self.q2(torch.cat([states, actions_one_hot], dim=1))
+            )
             q1_loss_v = self.MseLoss(q1_v.squeeze(), qref.detach())
             q2_loss_v = self.MseLoss(q2_v.squeeze(), qref.detach())
             q1_loss_v.backward()
@@ -389,7 +395,9 @@ class SACAgent(AgentWithSimplePolicy):
             acts_v = action_dist.sample()
             acts_v_one_hot = one_hot(acts_v, self.env.action_space.n)
             q_out_v = self.q1(torch.cat([states, acts_v_one_hot], dim=1))
-            act_loss = -q_out_v.mean() + self.entr_coef * action_dist.log_prob(acts_v).mean()
+            act_loss = (
+                -q_out_v.mean() + self.entr_coef * action_dist.log_prob(acts_v).mean()
+            )
             act_loss.backward()
             self.policy_optimizer.step()
             if self.writer is not None:

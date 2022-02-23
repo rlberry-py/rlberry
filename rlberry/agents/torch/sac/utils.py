@@ -16,12 +16,13 @@ def unpack_batch(batch, device="cpu"):
     is_terminals = torch.tensor(batch.is_terminals).to(device).detach()
     return states, actions, logprobs, rewards, is_terminals
 
+
 @torch.no_grad()
 def get_qref(batch, target_val_net, gamma, device="cpu"):
     # TODO I am not sure if this is maybe slightly different from original SAC where you take just non terminal states?
     _, batch_next_state, _, _, batch_reward, batch_done = batch
     target_next_batch = target_val_net(batch_next_state)
-    
+
     batch_target_val = (
         batch_reward
         + (1 - batch_done)
@@ -30,14 +31,15 @@ def get_qref(batch, target_val_net, gamma, device="cpu"):
     )
     return batch_target_val
 
+
 @torch.no_grad()
 def get_vref(env, batch, twinq_net, policy_net, ent_alpha: float, device="cpu"):
-    
+
     assert isinstance(twinq_net, tuple)
     assert isinstance(env.action_space, spaces.Discrete)
     num_actions = env.action_space.n
 
-    states, _, _, _, _, _= batch
+    states, _, _, _, _, _ = batch
     q1, q2 = twinq_net
     # references for the critic network
     act_dist = policy_net(states)

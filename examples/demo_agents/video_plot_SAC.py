@@ -10,6 +10,7 @@ during the fit of the agent.
 
 import numpy as np
 from rlberry.wrappers import WriterWrapper
+
 # from rlberry.envs import gym_make
 from rlberry.manager import plot_writer_data, AgentManager
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
@@ -20,7 +21,9 @@ class SSACAgent(SACAgent):
     name = "SACAgent"
 
     def __init__(self, env, **kwargs):
-        SACAgent.__init__(self, env, horizon=100, batch_size=5, buffer_capacity=20, **kwargs)
+        SACAgent.__init__(
+            self, env, horizon=100, batch_size=5, buffer_capacity=20, **kwargs
+        )
         self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
 
 
@@ -31,7 +34,9 @@ env = env_ctor(**env_kwargs)
 # env_kwargs = dict(id='CartPole-v0')
 # env = env_ctor(**env_kwargs)
 
-agent = AgentManager(SSACAgent, (env_ctor, env_kwargs), fit_budget=200, n_fit=1, enable_tensorboard=True)
+agent = AgentManager(
+    SSACAgent, (env_ctor, env_kwargs), fit_budget=200, n_fit=1, enable_tensorboard=True
+)
 agent.fit()
 
 # Plot of the cumulative reward.
