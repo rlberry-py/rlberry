@@ -1,3 +1,4 @@
+import pytest
 import numpy as np
 from rlberry.agents.utils import replay
 from rlberry.envs.finite import GridWorld
@@ -12,7 +13,10 @@ def _get_filled_replay(max_replay_size):
 
     rng = np.random.default_rng(456)
     buffer = replay.ReplayBuffer(
-        max_replay_size, rng, max_episode_steps=env._max_episode_steps, enable_prioritized=True
+        max_replay_size,
+        rng,
+        max_episode_steps=env._max_episode_steps,
+        enable_prioritized=True,
     )
     buffer.setup_entry("observations", np.float32)
     buffer.setup_entry("actions", np.uint32)
@@ -44,35 +48,40 @@ def _get_filled_replay(max_replay_size):
     return buffer, env
 
 
-def test_replay():
+def test_replay_size():
+    # get replay buffer
+    buffer, _ = _get_filled_replay(max_replay_size=500)
+    assert len(buffer) == 500
+
+
+@pytest.mark.parametrize("sampling_mode", ["uniform", "prioritized"])
+def test_replay_sampling(sampling_mode):
     batch_size = 128
     chunk_size = 256
 
     # get replay buffer
     buffer, _ = _get_filled_replay(max_replay_size=500)
-    rng = buffer._rng
-    assert len(buffer) == 500
 
     # Sample batches, check shape and dtype
     for _ in range(10):
         batch = buffer.sample(
-            batch_size=batch_size, chunk_size=chunk_size, sampling_mode="uniform"
+            batch_size=batch_size, chunk_size=chunk_size, sampling_mode=sampling_mode
         )
-        batch_prioritized = buffer.sample(
-            batch_size=batch_size, chunk_size=chunk_size, sampling_mode="prioritized"
-        )
+        for tag in buffer.tags:
+            assert batch.data[tag].shape[:2] == (batch_size, chunk_size)
+            assert batch.data[tag].dtype == buffer.dtypes[tag]
+            assert np.array_equal(
+                np.array(buffer.data[tag], dtype=buffer.dtypes[tag])[
+                    batch.info["indices"]
+                ],
+                batch.data[tag],
+            )
 
-        for test_batch in [batch, batch_prioritized]:
-            for tag in buffer.tags:
-                assert test_batch.data[tag].shape[:2] == (batch_size, chunk_size)
-                assert test_batch.data[tag].dtype == buffer.dtypes[tag]
-                assert np.array_equal(
-                    np.array(buffer.data[tag], dtype=buffer.dtypes[tag])[
-                        test_batch.info["indices"]
-                    ],
-                    test_batch.data[tag],
-                )
 
+def test_replay_priority_update():
+    # get replay buffer
+    buffer, _ = _get_filled_replay(max_replay_size=500)
+    rng = buffer._rng
     # Test priority update
     # Note: the test only works if all indices in indices_to_update are unique (otherwise the
     # same priority index can be updated more than once, which will break the test)
@@ -89,7 +98,7 @@ def test_replay():
             assert val1 == val2 == new_priorities[bb, cc] ** buffer._alpha
 
 
-def test_replay_index_sampling():
+def test_replay_samples_valid_indices():
     batch_size = 2
     chunk_size = 256
 

@@ -280,17 +280,17 @@ class ReplayBuffer:
             "uniform": sample batch uniformly at random;
             "prioritized": use prioritized experience replay (requires
             enable_prioritized=True in the constructor).
-        
+
         Returns
         -------
         If the number of stored transitions is smaller than chunk_size, returns None.
-        
+
         Otherwise, returns a NamedTuple :code:`batch` where:
 
         * :code:`batch.data` is a dict such that `batch.data[tag]` is a numpy array
         containing data stored for a given tag.
 
-        * :code:`batch.data` is a dict where 
+        * :code:`batch.data` is a dict where
             :code:`batch.data["indices"]` contains the indices of the sampled transitions in the buffer, and
             :code:`batch.data["weights"]` contains the importance sampling weights associeated
             to the prioritized experience replay.
@@ -309,7 +309,8 @@ class ReplayBuffer:
                 "if the number of stored transitions is smaller than chunk_size."
                 "chunk_size, returning None"
                 f"Current replay size = {len(self)}, "
-                f"requested chunk_size = {chunk_size}")
+                f"requested chunk_size = {chunk_size}"
+            )
             return None
 
         # sample start/end indices for sub-trajectories
