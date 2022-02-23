@@ -136,9 +136,7 @@ class DQNAgent(AgentWithSimplePolicy):
         assert isinstance(env.observation_space, spaces.Box)
         assert isinstance(env.action_space, spaces.Discrete)
 
-        #
         # DQN parameters
-        #
         self._gamma = gamma
         self._batch_size = batch_size
         self._chunk_size = chunk_size
@@ -152,9 +150,7 @@ class DQNAgent(AgentWithSimplePolicy):
         self._use_prioritized_replay = use_prioritized_replay
         self._max_replay_size = max_replay_size
 
-        #
         # Online and target Q networks, torch device
-        #
         self._device = choose_device(device)
         if isinstance(q_net_constructor, str):
             q_net_ctor = load(q_net_constructor)
@@ -164,27 +160,21 @@ class DQNAgent(AgentWithSimplePolicy):
         self._qnet_online = q_net_ctor(env, **q_net_kwargs).to(self._device)
         self._qnet_target = q_net_ctor(env, **q_net_kwargs).to(self._device)
 
-        #
         # Optimizer and loss
-        #
         optimizer_kwargs = {"optimizer_type": optimizer_type, "lr": learning_rate}
         self._optimizer = optimizer_factory(
             self._qnet_online.parameters(), **optimizer_kwargs
         )
         self._loss_function = loss_function_factory(loss_function, reduction="none")
 
-        #
         # Training params
-        #
         self._train_interval = train_interval
         self._gradient_steps = gradient_steps
         self._learning_starts = learning_starts
         self._learning_starts = learning_starts
         self._eval_interval = eval_interval
 
-        #
         # Setup replay buffer
-        #
         if hasattr(self.env, "_max_episode_steps"):
             max_episode_steps = self.env._max_episode_steps
         else:
@@ -203,17 +193,13 @@ class DQNAgent(AgentWithSimplePolicy):
         self._replay_buffer.setup_entry("rewards", np.float32)
         self._replay_buffer.setup_entry("dones", np.bool)
 
-        #
         # Counters
-        #
         self._total_timesteps = 0
         self._total_episodes = 0
         self._total_updates = 0
         self._timesteps_since_last_update = 0
 
-        #
-        # Epsilon scheduling
-        #
+        # epsilon scheduling
         self._epsilon_schedule = polynomial_schedule(
             self._epsilon_init,
             self._epsilon_final,
@@ -247,12 +233,6 @@ class DQNAgent(AgentWithSimplePolicy):
 
     def _update(self, n_gradient_steps):
         """Update networks."""
-        #
-        # TODO
-        #
-        # * Check for double DQN
-        # * Update priorities
-
         if self._use_prioritized_replay:
             sampling_mode = "prioritized"
         else:
@@ -408,6 +388,7 @@ class DQNAgent(AgentWithSimplePolicy):
             # check if episode ended
             if done:
                 self._total_episodes += 1
+                self._replay_buffer.end_episode()
                 if self.writer:
                     self.writer.add_scalar(
                         "episode_rewards", episode_rewards, total_timesteps

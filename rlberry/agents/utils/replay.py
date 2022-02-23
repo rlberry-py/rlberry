@@ -3,8 +3,12 @@ New module aiming to replace memories.py
 """
 
 import numpy as np
+import logging
 from typing import NamedTuple
 from rlberry.agents.utils import replay_utils
+
+
+logger = logging.getLogger(__name__)
 
 
 class Batch(NamedTuple):
@@ -24,7 +28,7 @@ class ReplayBuffer:
     ----------
     max_replay_size: int
         Maximum number of transitions that can be stored
-    rng: Generator
+    rng: numpy.random.Generator
         Numpy random number generator.
         See https://numpy.org/doc/stable/reference/random/generator.html
     max_episode_steps: int, optional
@@ -49,7 +53,7 @@ class ReplayBuffer:
     >>> buffer = replay.ReplayBuffer(100_000, rng)
     >>> buffer.setup_entry("observations", np.float32)
     >>> buffer.setup_entry("actions", np.uint32)
-    >>> buffer.setup_entry("rewards", np.uint32)
+    >>> buffer.setup_entry("rewards", np.float32)
     >>>
     >>> # Store data in the replay
     >>> env = gym_make("CartPole-v0")
@@ -69,7 +73,8 @@ class ReplayBuffer:
     >>>         obs = next_obs
     >>>         if done:
     >>>             buffer.end_episode()
-    >>> # Sample a batch of 32 sub-trajectories of length 100
+    >>> # Sample a batch of 32 sub-trajectories of length 100.
+    >>> # Note: a sub-trajectory may include transitions from more than one episode!
     >>> batch = buffer.sample(batch_size=32, chunk_size=100)
     >>> for tag in buffer.tags:
     >>>     print(tag, batch.data[tag].shape)
@@ -157,9 +162,7 @@ class ReplayBuffer:
         data : dict
             Dictionary containing scalar values, whose keys must be in self.tags.
         """
-        #
         # Append data
-        #
         assert set(data.keys()) == set(self.tags)
         if len(self) < self._max_replay_size:
             self._episodes.append(self._current_episode)
@@ -171,9 +174,7 @@ class ReplayBuffer:
             for tag in self.tags:
                 self._data[tag][position] = data[tag]
 
-        #
         # Priorities
-        #
         if self._enable_prioritized:
             self._it_sum[self._position] = self._max_priority**self._alpha
             self._it_min[self._position] = self._max_priority**self._alpha
@@ -273,11 +274,26 @@ class ReplayBuffer:
         batch_size: int
             Number of sub-trajectories to sample.
         chunk_size: int
-            Length of each sub-trajectory.
+            Length of each sub-trajectory. A sub-trajectory may include
+            transitions from more than one episode.
         sampling_mode: {"uniform", "prioritized"}, default = "uniform"
             "uniform": sample batch uniformly at random;
             "prioritized": use prioritized experience replay (requires
             enable_prioritized=True in the constructor).
+        
+        Returns
+        -------
+        If the number of stored transitions is smaller than chunk_size, returns None.
+        
+        Otherwise, returns a NamedTuple :code:`batch` where:
+
+        * :code:`batch.data` is a dict such that `batch.data[tag]` is a numpy array
+        containing data stored for a given tag.
+
+        * :code:`batch.data` is a dict where 
+            :code:`batch.data["indices"]` contains the indices of the sampled transitions in the buffer, and
+            :code:`batch.data["weights"]` contains the importance sampling weights associeated
+            to the prioritized experience replay.
         """
         assert chunk_size > 0
         assert sampling_mode in ["uniform", "prioritized"]
@@ -288,7 +304,14 @@ class ReplayBuffer:
             )
 
         if len(self) <= chunk_size:
+            logger.error(
+                "Cannot sample from ReplayBuffer "
+                "if the number of stored transitions is smaller than chunk_size."
+                "chunk_size, returning None"
+                f"Current replay size = {len(self)}, "
+                f"requested chunk_size = {chunk_size}")
             return None
+
         # sample start/end indices for sub-trajectories
         start_indices, end_indices, weights = self._sample_batch_indices(
             batch_size, chunk_size, sampling_mode

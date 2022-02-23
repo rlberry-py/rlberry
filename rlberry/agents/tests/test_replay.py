@@ -4,15 +4,15 @@ from rlberry.envs.finite import GridWorld
 from gym.wrappers import TimeLimit
 
 
-def _get_filled_replay(max_size):
-    """runs env for ~ 2 * max_size timesteps."""
+def _get_filled_replay(max_replay_size):
+    """runs env for ~ 2 * max_replay_size timesteps."""
     env = GridWorld(terminal_states=None)
     env = TimeLimit(env, max_episode_steps=200)
     env.reseed(123)
 
     rng = np.random.default_rng(456)
     buffer = replay.ReplayBuffer(
-        max_size, rng, max_episode_steps=env._max_episode_steps, enable_prioritized=True
+        max_replay_size, rng, max_episode_steps=env._max_episode_steps, enable_prioritized=True
     )
     buffer.setup_entry("observations", np.float32)
     buffer.setup_entry("actions", np.uint32)
@@ -49,7 +49,7 @@ def test_replay():
     chunk_size = 256
 
     # get replay buffer
-    buffer, _ = _get_filled_replay(max_size=500)
+    buffer, _ = _get_filled_replay(max_replay_size=500)
     rng = buffer._rng
     assert len(buffer) == 500
 
@@ -94,7 +94,7 @@ def test_replay_index_sampling():
     chunk_size = 256
 
     # get replay buffer
-    buffer, env = _get_filled_replay(max_size=500)
+    buffer, env = _get_filled_replay(max_replay_size=500)
 
     # add more data, sample batches and check that sampled sub-trajetories
     # are not "crossing" the current position (buffer._position)
