@@ -10,9 +10,6 @@
 
 <!-- The badges -->
 <p align="center">
-   <a href="https://github.com/rlberry-py/rlberry/workflows/test/badge.svg">
-      <img alt="pytest" src="https://github.com/rlberry-py/rlberry/workflows/test/badge.svg">
-   </a>
    <a href='https://rlberry.readthedocs.io/en/latest/?badge=latest'>
       <img alt="Documentation Status" src="https://readthedocs.org/projects/rlberry/badge/?version=latest">
    </a>
@@ -22,9 +19,10 @@
    <a href="https://app.codacy.com/gh/rlberry-py/rlberry?utm_source=github.com&utm_medium=referral&utm_content=rlberry-py/rlberry&utm_campaign=Badge_Grade">
       <img alt="Codacy" src="https://api.codacy.com/project/badge/Grade/27e91674d18a4ac49edf91c339af1502">
    </a>
-   <a href="https://codecov.io/gh/rlberry-py/rlberry">
-      <img alt="codecov" src="https://codecov.io/gh/rlberry-py/rlberry/branch/main/graph/badge.svg?token=TIFP7RUD75">
+   <a href="https://dev.azure.com/timotheemathieu/timotheemathieu/_build?definitionId=2">
+      <img alt="azure" src="https://dev.azure.com/timotheemathieu/timotheemathieu/_apis/build/status/rlberry-py.rlberry?branchName=refs%2Fpull%2F119%2Fmerge">
    </a>
+
    <!-- <a href="https://img.shields.io/pypi/pyversions/rlberry">
       <img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/rlberry">
    </a> -->
@@ -70,13 +68,21 @@ environments etc etc!
 that you can spend most of your time developing agents.
 `rlberry` also provides implementations of several RL agents, benchmark environments and many other useful tools.
 
-Check our [getting started section](#getting-started)!
+## Installation
+
+Install the latest version for a stable release.
+
+```bash
+$ pip install -U git+https://github.com/rlberry-py/rlberry.git@v0.2.1#egg=rlberry[default]
+```
+
+rlberry dependencies are listed in [requirements.txt](https://github.com/rlberry-py/rlberry/blob/main/requirements.txt). The documentation includes more [installation instructions](https://rlberry.readthedocs.io/en/latest/installation.html) in particular for users that work with Jax.
+
 
 ## Getting started
 
 In our [documentation](https://rlberry.readthedocs.io/en/latest/), you will find
-a [quick tutorial](https://rlberry.readthedocs.io/en/latest/#quick-tutorial) to the library
-and instructions about [how to install it](https://rlberry.readthedocs.io/en/latest/installation.html).
+a [quick tutorial](https://rlberry.readthedocs.io/en/latest/basics/quick_start.html) to the library.
 
 Also, we provide a handful of notebooks on [Google colab](https://colab.research.google.com/) as examples to show you
 how to use `rlberry`:
@@ -85,6 +91,10 @@ how to use `rlberry`:
 |-|-|-|
 | Introduction to `rlberry` | How to create an agent, optimize its hyperparameters and compare to a baseline.| <a href="https://colab.research.google.com/github/rlberry-py/notebooks/blob/main/introduction_to_rlberry.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg"></a>|
 | Evaluating and optimizing agents | Train a REINFORCE agent and optimize its hyperparameters|  <a href="https://colab.research.google.com/github/rlberry-py/notebooks/blob/main/rlberry_evaluate_and_optimize_agent.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg"></a>
+
+## Changelog
+
+See the [changelog](https://rlberry.readthedocs.io/en/latest/changelog.html) for a history of the chages made to rlberry.
 
 ## Citing rlberry
 
@@ -111,23 +121,10 @@ The modules listed below are experimental at the moment, that is, they are not t
 * `rlberry.agents.torch`, `rlberry.agents.jax`, `rlberry.exploration_tools.torch`: Deep RL agents are currently not stable, and their main purpose now is to illustrate how to implement and run those algorithms with the `rlberry` interface
 (e.g., run several agents in parallel, optimize hyperparameters etc.).
 Other libraries, such as [Stable Baselines](https://stable-baselines3.readthedocs.io/en/master/) provide reliable implementations of deep RL algorithms, and **can be used with `rlberry`**, as shown by
-[this example](https://github.com/rlberry-py/rlberry/blob/main/examples/demo_examples/demo_from_stable_baselines.py).
-
-## Tests
-
-```bash
-$ pip install pytest
-$ pip install pytest-cov
-$ pip install -e .[jax_agents]
-$ pip install -e .[torch_agents]
-$ cd scripts
-$ bash run_testscov.sh
-```
-
-and coverage report in `cov_html/index.html`.
+[this example](https://rlberry.readthedocs.io/en/latest/auto_examples/demo_examples/demo_from_stable_baselines.html#sphx-glr-auto-examples-demo-examples-demo-from-stable-baselines-py).
 
 
 ## Contributing
 
-Want to contribute to `rlberry`? Please check [our contribution guidelines](docs/CONTRIBUTING.md). **If you want to add any new agents or environments, do not hesitate
+Want to contribute to `rlberry`? Please check [our contribution guidelines](https://rlberry.readthedocs.io/en/latest/contributing.html). **If you want to add any new agents or environments, do not hesitate
 to [open an issue](https://github.com/rlberry-py/rlberry/issues/new/choose)!**
