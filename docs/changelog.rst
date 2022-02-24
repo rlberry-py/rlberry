@@ -3,8 +3,16 @@
 Changelog
 =========
 
-Under development
------------------
+Under development (0.3.0dev0)
+-----------------------------
+
+*PR #119*
+
+* Improving documentation for agents.torch.utils
+* New replay buffer :class:`rlberry.agents.utils.replay.ReplayBuffer`, aiming to replace code in utils/memories.py
+* New DQN implementation, aiming to fix reproducibility and compatibility issues.
+* Implements Q(lambda) in DQN Agent.
+
 
 *Feb 22, 2022 (PR #126)*
 
@@ -37,7 +45,7 @@ Under development
 * Add the Posterior Sampling for Reinforcement Learning PSRL agent for tabular MDP :class:`~rlberry.agents.PSRLAgent`
 * Add a page to help contributors in the doc :ref:`contributing`
 
-Version 0.2.1 (last released version)
+Version 0.2.1 (lastest release)
 -------------------------------------
 
 
