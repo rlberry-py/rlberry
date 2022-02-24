@@ -214,36 +214,52 @@ class ReplayBuffer:
     def _sample_batch_indices(self, batch_size, chunk_size, sampling_mode):
         current_size = len(self)
         if sampling_mode == "uniform":
-            start_indices = self._rng.choice(current_size - chunk_size, size=batch_size)
+            end_indices = self._rng.integers(
+                chunk_size, current_size + 1, size=batch_size
+            )
+            end_indices = (end_indices + self._position) % current_size
+            start_indices = end_indices - chunk_size
             weights = np.ones_like(start_indices, dtype=np.float32)
         elif sampling_mode == "prioritized":
-            start_indices, weights = self._sample_proportional_and_compute_weights(
+            end_indices, weights = self._sample_proportional_and_compute_weights(
                 batch_size=batch_size
             )
-            start_indices[start_indices > (current_size - chunk_size)] = (
-                current_size - chunk_size
+            start_indices = end_indices - chunk_size
+
+            # Handle invalid sub-trajectories: those containing a transition
+            # corresponding to self._position. That is, we need to handle
+            # the fact that we're sampling sub-trajectories from a circular buffer
+            # and that we cannot cross the 'boundary' defined by self._position.
+            #
+            # What we do here is to move the start_index to the most recent
+            # index (with respect to self._position) that allows sampling
+            # a sub-trajectory of length chunk_size.
+            # Note that this can result in a negative start_index,
+            # which is handled in the _get_chunk method.
+
+            # Case 1: start indices are >= 0
+            bad_indices_pos = np.logical_and(
+                self._position > start_indices, self._position < end_indices
             )
-            assert np.all(start_indices <= (current_size - chunk_size))
+            bad_indices_pos = np.logical_and(bad_indices_pos, start_indices >= 0)
+
+            # Case 2: start indices are < 0
+            # -> self._position cannot be between start_indices+len(buffer) and len(buffer)-1
+            # -> self._position cannot be between 0 and end_indices-1
+            bad_indices_neg = ~np.logical_and(
+                (start_indices + len(self)) >= self._position,
+                end_indices <= self._position,
+            )
+            bad_indices_neg = np.logical_and(bad_indices_neg, start_indices < 0)
+
+            # Fix bad indices
+            bad_indices = np.logical_or(bad_indices_pos, bad_indices_neg)
+            start_boundary = self._position - chunk_size
+            start_indices[bad_indices] = start_boundary
+            end_indices[bad_indices] = start_boundary + chunk_size
         else:
             raise ValueError(f"Invalid sampling_mode: '{sampling_mode}'")
-        end_indices = start_indices + chunk_size
 
-        # Handle invalid sub-trajectories: those containing a transition
-        # corresponding to self._position. That is, we need to handle
-        # the fact that we're sampling sub-trajectories from a circular buffer
-        # and that we cannot cross the 'boundary' defined by self._position.
-        #
-        # What we do here is to move the start_index to the most recent
-        # index (with respect to self._position) that allows sampling
-        # a sub-trajectory of length chunk_size.
-        # Note that this can result in a negative start_index,
-        # which is handled in the _get_chunk method.
-        bad_indices = np.logical_and(
-            start_indices < self._position, end_indices >= (self._position + 1)
-        )
-        start_boundary = self._position - chunk_size
-        start_indices[bad_indices] = start_boundary
-        end_indices[bad_indices] = start_boundary + chunk_size
         return start_indices, end_indices, weights
 
     def _get_chunk(self, start_index, end_index):
@@ -296,7 +312,8 @@ class ReplayBuffer:
             to the prioritized experience replay.
         """
         assert chunk_size > 0
-        assert sampling_mode in ["uniform", "prioritized"]
+        if sampling_mode not in ["uniform", "prioritized"]:
+            raise ValueError(f"Invalid sampling_mode: {sampling_mode}")
         if sampling_mode == "prioritized" and not self._enable_prioritized:
             raise RuntimeError(
                 "To sample from the replay with the 'prioritized' mode, "

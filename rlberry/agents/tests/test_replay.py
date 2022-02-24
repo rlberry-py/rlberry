@@ -98,7 +98,8 @@ def test_replay_priority_update():
             assert val1 == val2 == new_priorities[bb, cc] ** buffer._alpha
 
 
-def test_replay_samples_valid_indices():
+@pytest.mark.parametrize("sampling_mode", ["uniform", "prioritized"])
+def test_replay_samples_valid_indices(sampling_mode):
     batch_size = 2
     chunk_size = 256
 
@@ -109,7 +110,7 @@ def test_replay_samples_valid_indices():
     # are not "crossing" the current position (buffer._position)
     total_time = 0
     while True:
-        if total_time > 100:
+        if total_time > 500:
             break
         done = False
         obs = env.reset()
@@ -131,22 +132,30 @@ def test_replay_samples_valid_indices():
 
             # sample and check
             start_indices, end_indices, weights = buffer._sample_batch_indices(
-                batch_size, chunk_size, "uniform"
+                batch_size, chunk_size, sampling_mode=sampling_mode
             )
-            assert np.all(weights >= 0)
+            assert np.all(weights >= 0), "weights must be nonnegative"
+
+            # we need end_indices > start_indices and the difference
+            # to be equal to chunk_size
+            assert np.all((end_indices - start_indices) == chunk_size)
+
             positive_mask = start_indices >= 0
             negative_mask = ~positive_mask
 
+            # Case 1: start indices are >= 0
             assert np.all(
                 ~np.logical_and(
-                    start_indices[positive_mask] < buffer._position,
-                    end_indices[positive_mask] >= (buffer._position + 1),
+                    buffer._position > start_indices[positive_mask],
+                    buffer._position < end_indices[positive_mask],
                 )
-            )
-
+            ), "buffer._position cannot be in the middle of start and end indices"
+            # Case 2: start indices are < 0
+            # -> self._position cannot be between start_indices+len(buffer) and len(buffer)-1
+            # -> self._position cannot be between 0 and end_indices-1
             assert np.all(
                 np.logical_and(
                     (start_indices[negative_mask] + len(buffer)) >= buffer._position,
-                    end_indices[negative_mask] >= buffer._position,
+                    end_indices[negative_mask] <= buffer._position,
                 )
-            )
+            ), "buffer._position cannot be in the middle of start and end indices"
