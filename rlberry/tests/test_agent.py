@@ -1,10 +1,7 @@
 import pytest
 import rlberry.agents as agents
 import rlberry.agents.torch as torch_agents
-from rlberry.utils.check_agent import (
-    check_rl_agent,
-    check_save_load,
-)
+from rlberry.utils.check_agent import check_rl_agent
 from rlberry.agents.features import FeatureMap
 import numpy as np
 
@@ -46,7 +43,7 @@ FINITE_MDP_AGENTS = [
 CONTINUOUS_STATE_AGENTS = [
     agents.RSUCBVIAgent,
     agents.RSKernelUCBVIAgent,
-    # torch_agents.DQNAgent,  # For now, DQN does not work with the generic check.
+    torch_agents.DQNAgent,
     torch_agents.PPOAgent,
     torch_agents.AVECPPOAgent,
     torch_agents.REINFORCEAgent,
@@ -61,7 +58,3 @@ def test_finite_state_agent(Agent):
 @pytest.mark.parametrize("Agent", CONTINUOUS_STATE_AGENTS)
 def test_continuous_state_agent(Agent):
     check_rl_agent(Agent, env="continuous_state")
-
-
-def test_dqn():
-    check_save_load(torch_agents.DQNAgent, env="continuous_state")
