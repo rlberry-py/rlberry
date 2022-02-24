@@ -203,7 +203,7 @@ class DQNAgent(AgentWithSimplePolicy):
         self._epsilon_schedule = polynomial_schedule(
             self._epsilon_init,
             self._epsilon_final,
-            power=11.0,
+            power=1.0,
             transition_steps=self._epsilon_decay_interval,
             transition_begin=0,
         )
