@@ -79,7 +79,7 @@ Install the latest version for a stable release.
 $ pip install -U git+https://github.com/rlberry-py/rlberry.git@v0.2.1#egg=rlberry[default]
 ```
 
-rlberry dependencies are listed in [requirements.txt](https://github.com/rlberry-py/rlberry/blob/main/requirements.txt). The documentation includes more [installation instructions](https://rlberry.readthedocs.io/en/latest/installation.html) in particular for users that work with Jax.
+The documentation includes more [installation instructions](https://rlberry.readthedocs.io/en/latest/installation.html) in particular for users that work with Jax.
 
 
 ## Getting started
