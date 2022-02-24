@@ -100,7 +100,7 @@ def test_replay_priority_update():
 
 @pytest.mark.parametrize("sampling_mode", ["uniform", "prioritized"])
 def test_replay_samples_valid_indices(sampling_mode):
-    batch_size = 2
+    batch_size = 16
     chunk_size = 256
 
     # get replay buffer
@@ -110,7 +110,7 @@ def test_replay_samples_valid_indices(sampling_mode):
     # are not "crossing" the current position (buffer._position)
     total_time = 0
     while True:
-        if total_time > 500:
+        if total_time > 1000:
             break
         done = False
         obs = env.reset()
