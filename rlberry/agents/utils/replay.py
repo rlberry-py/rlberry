@@ -352,7 +352,7 @@ class ReplayBuffer:
         for tag in self.tags:
             batch_data[tag] = np.array(trajectories[tag], dtype=self._dtypes[tag])
 
-        batch_info["indices"] = np.array(all_indices, dtype=np.int)
+        batch_info["indices"] = np.array(all_indices, dtype=np.int32)
         batch_info["weights"] = weights
 
         batch = Batch(data=batch_data, info=batch_info)

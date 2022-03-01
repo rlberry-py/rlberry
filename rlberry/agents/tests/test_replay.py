@@ -21,7 +21,7 @@ def _get_filled_replay(max_replay_size):
     buffer.setup_entry("observations", np.float32)
     buffer.setup_entry("actions", np.uint32)
     buffer.setup_entry("rewards", np.float32)
-    buffer.setup_entry("dones", np.bool)
+    buffer.setup_entry("dones", bool)
 
     # Fill the replay buffer
     total_time = 0
