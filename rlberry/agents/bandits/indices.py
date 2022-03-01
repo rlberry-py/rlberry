@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def makeETCIndex(A, m=1):
+def makeETCIndex(A=2, m=1):
     """
     Explore-Then-Commit index, see Chapter 6 in [1].
 
@@ -97,7 +97,7 @@ def makeBoundedUCBIndex(
     return makeSubgaussianUCBIndex((upper_bound - lower_bound) / 2, delta)
 
 
-def makeSubgaussianMOSSIndex(T, A, sigma=1.0):
+def makeSubgaussianMOSSIndex(T=1, A=2, sigma=1.0):
     """
     MOSS index for sub-Gaussian distributions, see Chapters 9 in [1].
 
@@ -134,7 +134,7 @@ def makeSubgaussianMOSSIndex(T, A, sigma=1.0):
     return index
 
 
-def makeBoundedMOSSIndex(T, A, upper_bound=1.0, lower_bound=0.0):
+def makeBoundedMOSSIndex(T=1, A=2, upper_bound=1.0, lower_bound=0.0):
     """
     MOSS index for bounded distributions, see Chapters 9 in [1].
     By Hoeffding's lemma, such distributions are sigma-sub-Gaussian with
