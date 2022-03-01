@@ -26,7 +26,6 @@ class TSAgent(BanditWithSimplePolicy):
 
     def __init__(self, env, prior, prior_params=None, **kwargs):
         BanditWithSimplePolicy.__init__(self, env, **kwargs)
-        self.n_arms = self.env.action_space.n
         self.prior = prior
         self.prior_params = prior_params
         self.total_time = 0
@@ -36,7 +35,6 @@ class TSAgent(BanditWithSimplePolicy):
             raise ValueError(
                 'This prior is not implemented yet. Valid prior are "gaussian" and "beta"'
             )
-        self.n_arms = len(self.env._actions)
         if self.prior == "gaussian":
             # Initialize with all means equal to 0
             if self.prior_params is None:

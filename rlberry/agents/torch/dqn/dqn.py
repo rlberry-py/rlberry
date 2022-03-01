@@ -1,554 +1,419 @@
+import logging
+
+import numpy as np
 import torch
 from gym import spaces
-import logging
-import numpy as np
-
+from rlberry import types
 from rlberry.agents import AgentWithSimplePolicy
-from rlberry.agents.utils.memories import (
-    Transition,
-    PrioritizedReplayMemory,
-    TransitionReplayMemory,
-)
-from rlberry.exploration_tools.discrete_counter import DiscreteCounter
-from rlberry.exploration_tools.online_discretization_counter import (
-    OnlineDiscretizationCounter,
-)
-from rlberry.wrappers.uncertainty_estimator_wrapper import UncertaintyEstimatorWrapper
-from rlberry.agents.torch.dqn.exploration import exploration_factory
 from rlberry.agents.torch.utils.training import (
     loss_function_factory,
     model_factory,
-    size_model_config,
-    trainable_parameters,
     optimizer_factory,
+    size_model_config,
 )
-from rlberry.seeding import Seeder
-from rlberry.utils.factory import load
+from rlberry.agents.torch.dqn.dqn_utils import polynomial_schedule, lambda_returns
+from rlberry.agents.utils import replay
 from rlberry.utils.torch import choose_device
+from rlberry.utils.factory import load
+from typing import Callable, Optional, Union
+
 
 logger = logging.getLogger(__name__)
 
 
-def default_qvalue_net_fn(env):
+def default_q_net_fn(env, **kwargs):
     """
     Returns a default Q value network.
     """
-    model_config = {"type": "DuelingNetwork"}
+    del kwargs
+    model_config = {
+        "type": "MultiLayerPerceptron",
+        "layer_sizes": (64, 64),
+        "reshape": False,
+    }
     model_config = size_model_config(env, **model_config)
     return model_factory(**model_config)
 
 
 class DQNAgent(AgentWithSimplePolicy):
-    """
-    Deep Q Learning Agent.
+    """DQN Agent based on PyTorch.
+
+    Notes
+    -----
+    Uses Q(lambda) for computing targets by default. To recover
+    the standard DQN, set :code:`lambda_ = 0.0` and :code:`chunk_size = 1`.
 
     Parameters
     ----------
-    env: gym.Env
-        Environment
-    horizon : int
-        Maximum lenght of an episode.
-    gamma : double
-        Discount factor
-    qvalue_net_fn : function(env, **kwargs)
-        Function that returns an instance of a network representing
-        the Q function.
-        If none, a default network is used.
-    qvalue_net_kwargs:
-        kwargs for qvalue_net_fn
-    loss_function : str
-        Type of loss function. Possibilities: 'l2', 'l1', 'smooth_l1'
-    batch_size : int
-        Batch size
-    device : str
-        Device used by pytorch.
-    target_update : int
-        Number of steps to wait before updating the target network.
-    double : bool
-        If true, use double Q-learning.
-    learning_rate : double
+    env: :class:`~rlberry.types.Env`
+        Environment, can be a tuple (constructor, kwargs)
+    gamma: float, default = 0.99
+        Discount factor.
+    batch_size: int, default=32
+        Batch size.
+    chunk_size: int, default=8
+        Length of sub-trajectories sampled from the replay buffer.
+    lambda_: float, default=0.5
+        Q(lambda) parameter.
+    target_update_parameter : int or float
+        If int: interval (in number total number of online updates) between updates of the target network.
+        If float: soft update coefficient
+    device: str
+        Torch device, see :func:`~rlberry.utils.torch.choose_device`
+    learning_rate : float, default = 1e-3
         Optimizer learning rate.
-    epsilon_init : double
-        Initial value of epsilon in epsilon-greedy exploration
-    epsilon_final : double
-        Final value of epsilon in epsilon-greedy exploration
-    epsilon_decay : int
-        After `epsilon_decay` steps, epsilon approaches `epsilon_final`.
-    optimizer_type: str
-        Type of optimizer. 'ADAM' by defaut.
-    memory_capacity : int
-        Capacity of the replay buffer (in number of transitions).
-    use_bonus : bool, default = False
-        If true, compute an 'exploration_bonus' and add it to the reward.
-        See also UncertaintyEstimatorWrapper.
-    uncertainty_estimator_kwargs : dict
-        Arguments for the UncertaintyEstimatorWrapper
-    prioritized_replay: bool
-        Use prioritized replay.
+    loss_function: {"l1", "l2", "smooth_l1"}, default: "l2"
+        Loss function used to compute Bellman error.
+    epsilon_init: float, default = 1.0
+        Initial epsilon value for epsilon-greedy exploration.
+    epsilon_final: float, default = 0.1
+        Final epsilon value for epsilon-greedy exploration.
+    epsilon_decay_interval : int
+        After :code:`epsilon_decay` timesteps, epsilon approaches :code:`epsilon_final`.
+    optimizer_type : {"ADAM", "RMS_PROP"}
+        Optimization algorithm.
+    q_net_constructor : Callable
+        Function/constructor that returns a torch module for the Q-network:
+        :code:`qnet = q_net_constructor(env, **kwargs)`.
+
+        Module (Q-network) requirements:
+
+        * Input shape = (batch_dim, chunk_size, obs_dims)
+
+        * Ouput shape = (batch_dim, chunk_size, number_of_actions)
+
+    q_net_kwargs : optional, dict
+        Parameters for q_net_constructor.
+    use_double_dqn : bool, default = False
+        If True, use Double DQN.
+    use_prioritized_replay : bool, default = False
+        If True, use Prioritized Experience Replay.
+    train_interval: int
+        Update the model every :code:`train_interval` steps.
+        If -1, train only at the end of the episodes.
+    gradient_steps: int
+        How many gradient steps to do at each update.
+        If -1, take the number of timesteps since last update.
+    max_replay_size : int
+        Maximum number of transitions in the replay buffer.
+    learning_starts : int
+        How many steps of the model to collect transitions for before learning starts
+    eval_interval : int, default = None
+        Interval (in number of transitions) between agent evaluations in fit().
+        If None, never evaluate.
     """
 
     name = "DQN"
 
     def __init__(
         self,
-        env,
-        horizon=256,
-        gamma=0.99,
-        loss_function="l2",
-        batch_size=100,
-        device="cuda:best",
-        target_update=1,
-        learning_rate=0.001,
-        epsilon_init=1.0,
-        epsilon_final=0.1,
-        epsilon_decay=5000,
-        optimizer_type="ADAM",
-        qvalue_net_fn=None,
-        qvalue_net_kwargs=None,
-        double=True,
-        memory_capacity=10000,
-        use_bonus=False,
-        uncertainty_estimator_kwargs=None,
-        prioritized_replay=True,
-        update_frequency=1,
+        env: types.Env,
+        gamma: float = 0.99,
+        batch_size: int = 32,
+        chunk_size: int = 8,
+        lambda_: float = 0.5,
+        target_update_parameter: Union[int, float] = 0.005,
+        device: str = "cuda:best",
+        learning_rate: float = 1e-3,
+        epsilon_init: float = 1.0,
+        epsilon_final: float = 0.1,
+        epsilon_decay_interval: int = 20_000,
+        loss_function: str = "l2",
+        optimizer_type: str = "ADAM",
+        q_net_constructor: Optional[Callable[..., torch.nn.Module]] = None,
+        q_net_kwargs: Optional[dict] = None,
+        use_double_dqn: bool = False,
+        use_prioritized_replay: bool = False,
+        train_interval: int = 10,
+        gradient_steps: int = -1,
+        max_replay_size: int = 200_000,
+        learning_starts: int = 5_000,
+        eval_interval: Optional[int] = None,
         **kwargs,
     ):
-        # Wrap arguments and initialize base class
-        memory_kwargs = {"capacity": memory_capacity, "n_steps": 1, "gamma": gamma}
-        exploration_kwargs = {
-            "method": "EpsilonGreedy",
-            "temperature": epsilon_init,
-            "final_temperature": epsilon_final,
-            "tau": epsilon_decay,
-        }
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
-        self.use_bonus = use_bonus
-        if self.use_bonus:
-            self.env = UncertaintyEstimatorWrapper(
-                self.env, **uncertainty_estimator_kwargs
+        env = self.env
+        assert isinstance(env.observation_space, spaces.Box)
+        assert isinstance(env.action_space, spaces.Discrete)
+
+        # DQN parameters
+        self._gamma = gamma
+        self._batch_size = batch_size
+        self._chunk_size = chunk_size
+        self._lambda = lambda_
+        self._target_update_parameter = target_update_parameter
+        self._learning_rate = learning_rate
+        self._epsilon_init = epsilon_init
+        self._epsilon_final = epsilon_final
+        self._epsilon_decay_interval = epsilon_decay_interval
+        self._use_double_dqn = use_double_dqn
+        self._use_prioritized_replay = use_prioritized_replay
+        self._max_replay_size = max_replay_size
+
+        # Online and target Q networks, torch device
+        self._device = choose_device(device)
+        if isinstance(q_net_constructor, str):
+            q_net_ctor = load(q_net_constructor)
+        elif q_net_constructor is None:
+            q_net_ctor = default_q_net_fn
+        q_net_kwargs = q_net_kwargs or dict()
+        self._qnet_online = q_net_ctor(env, **q_net_kwargs).to(self._device)
+        self._qnet_target = q_net_ctor(env, **q_net_kwargs).to(self._device)
+
+        # Optimizer and loss
+        optimizer_kwargs = {"optimizer_type": optimizer_type, "lr": learning_rate}
+        self._optimizer = optimizer_factory(
+            self._qnet_online.parameters(), **optimizer_kwargs
+        )
+        self._loss_function = loss_function_factory(loss_function, reduction="none")
+
+        # Training params
+        self._train_interval = train_interval
+        self._gradient_steps = gradient_steps
+        self._learning_starts = learning_starts
+        self._learning_starts = learning_starts
+        self._eval_interval = eval_interval
+
+        # Setup replay buffer
+        if hasattr(self.env, "_max_episode_steps"):
+            max_episode_steps = self.env._max_episode_steps
+        else:
+            max_episode_steps = np.inf
+        self._max_episode_steps = max_episode_steps
+
+        self._replay_buffer = replay.ReplayBuffer(
+            max_replay_size=max_replay_size,
+            rng=self.rng,
+            max_episode_steps=self._max_episode_steps,
+            enable_prioritized=use_prioritized_replay,
+        )
+        self._replay_buffer.setup_entry("observations", np.float32)
+        self._replay_buffer.setup_entry("next_observations", np.float32)
+        self._replay_buffer.setup_entry("actions", np.int32)
+        self._replay_buffer.setup_entry("rewards", np.float32)
+        self._replay_buffer.setup_entry("dones", np.bool)
+
+        # Counters
+        self._total_timesteps = 0
+        self._total_episodes = 0
+        self._total_updates = 0
+        self._timesteps_since_last_update = 0
+
+        # epsilon scheduling
+        self._epsilon_schedule = polynomial_schedule(
+            self._epsilon_init,
+            self._epsilon_final,
+            power=1.0,
+            transition_steps=self._epsilon_decay_interval,
+            transition_begin=0,
+        )
+
+    @property
+    def total_timesteps(self):
+        return self._total_timesteps
+
+    def _must_update(self, is_end_of_episode):
+        """Returns true if the model must be updated in the current timestep,
+        and the number of gradient steps to take"""
+        total_timesteps = self._total_timesteps
+        n_gradient_steps = self._gradient_steps
+
+        if total_timesteps < self._learning_starts:
+            return False, -1
+
+        if n_gradient_steps == -1:
+            n_gradient_steps = self._timesteps_since_last_update
+
+        run_update = False
+        if self._train_interval == -1:
+            run_update = is_end_of_episode
+        else:
+            run_update = total_timesteps % self._train_interval == 0
+        return run_update, n_gradient_steps
+
+    def _update(self, n_gradient_steps):
+        """Update networks."""
+        if self._use_prioritized_replay:
+            sampling_mode = "prioritized"
+        else:
+            sampling_mode = "uniform"
+
+        for _ in range(n_gradient_steps):
+            # Sample a batch
+            sampled = self._replay_buffer.sample(
+                self._batch_size, self._chunk_size, sampling_mode=sampling_mode
             )
-        self.horizon = horizon
-        self.exploration_kwargs = exploration_kwargs or {}
-        self.memory_kwargs = memory_kwargs or {}
-        self.batch_size = batch_size
-        self.target_update = target_update
-        self.double = double
+            if not sampled:
+                return
 
-        assert isinstance(self.env.action_space, spaces.Discrete), \
-            "Only compatible with Discrete action spaces."
+            # Update counters
+            self._timesteps_since_last_update = 0
+            self._total_updates += 1
 
-        self.prioritized_replay = prioritized_replay
-        memory_class = (
-            PrioritizedReplayMemory if prioritized_replay else TransitionReplayMemory
-        )
-        self.memory = memory_class(**self.memory_kwargs)
-        self.exploration_policy = exploration_factory(
-            self.env.action_space, **self.exploration_kwargs
-        )
-        self.training = True
-        self.steps = 0
-        self.episode = 0
+            batch = sampled.data
+            batch_info = sampled.info
+            assert batch["rewards"].shape == (self._batch_size, self._chunk_size)
 
-        self.optimizer_kwargs = {"optimizer_type": optimizer_type, "lr": learning_rate}
-        self.device = choose_device(device)
-        self.loss_function = loss_function
-        self.gamma = gamma
-
-        qvalue_net_kwargs = qvalue_net_kwargs or {}
-        qvalue_net_fn = (
-            load(qvalue_net_fn)
-            if isinstance(qvalue_net_fn, str)
-            else qvalue_net_fn or default_qvalue_net_fn
-        )
-        self.value_net = qvalue_net_fn(self.env, **qvalue_net_kwargs)
-        self.target_net = qvalue_net_fn(self.env, **qvalue_net_kwargs)
-
-        self.target_net.load_state_dict(self.value_net.state_dict())
-        self.target_net.eval()
-        logger.info(
-            "Number of trainable parameters: {}".format(
-                trainable_parameters(self.value_net)
+            # Compute targets
+            batch_observations = torch.FloatTensor(batch["observations"]).to(
+                self._device
             )
-        )
-        self.value_net.to(self.device)
-        self.target_net.to(self.device)
-        self.loss_function = loss_function_factory(self.loss_function)
-        self.optimizer = optimizer_factory(
-            self.value_net.parameters(), **self.optimizer_kwargs
-        )
-        self.update_frequency = update_frequency
-        self.steps = 0
+            batch_next_observations = torch.FloatTensor(batch["next_observations"]).to(
+                self._device
+            )
+            batch_actions = torch.LongTensor(batch["actions"]).to(self._device)
+
+            target_q_values_tp1 = self._qnet_target(batch_next_observations).detach()
+            # Check if double DQN
+            if self._use_double_dqn:
+                online_q_values_tp1 = self._qnet_online(
+                    batch_next_observations
+                ).detach()
+                a_argmax = online_q_values_tp1.argmax(dim=-1).detach()
+            else:
+                a_argmax = target_q_values_tp1.argmax(dim=-1).detach()
+
+            v_tp1 = (
+                torch.gather(target_q_values_tp1, dim=-1, index=a_argmax[:, :, None])[
+                    :, :, 0
+                ]
+                .cpu()
+                .numpy()
+            )
+
+            batch_lambda_returns = lambda_returns(
+                batch["rewards"],
+                self._gamma * (1.0 - np.array(batch["dones"], dtype=np.float32)),
+                v_tp1,
+                np.array(self._lambda, dtype=np.float32),
+            )
+            targets = torch.tensor(batch_lambda_returns).to(self._device)
+
+            # Compute loss
+            batch_q_values = self._qnet_online(batch_observations)
+            batch_values = torch.gather(
+                batch_q_values, dim=-1, index=batch_actions[:, :, None]
+            )[
+                :, :, 0
+            ]  # shape (batch, chunk)
+
+            assert batch_values.shape == targets.shape
+            per_element_loss = self._loss_function(batch_values, targets)
+            per_batch_element_loss = per_element_loss.mean(dim=1)
+            weights = torch.FloatTensor(batch_info["weights"]).to(self._device)
+            loss = torch.sum(per_batch_element_loss * weights) / torch.sum(weights)
+
+            self._optimizer.zero_grad()
+            loss.backward()
+            self._optimizer.step()
+
+            if self.writer:
+                self.writer.add_scalar(
+                    "losses/q_loss", loss.item(), self._total_updates
+                )
+
+            # update priorities
+            if self._use_prioritized_replay:
+                new_priorities = per_element_loss.abs().detach().cpu().numpy() + 1e-6
+                self._replay_buffer.update_priorities(
+                    batch_info["indices"], new_priorities
+                )
+
+            # target update
+            if self._target_update_parameter > 1:
+                if self._total_updates % self._target_update_parameter == 0:
+                    self._qnet_target.load_state_dict(self._qnet_online.state_dict())
+            else:
+                tau = self._target_update_parameter
+                for param, target_param in zip(
+                    self._qnet_online.parameters(), self._qnet_target.parameters()
+                ):
+                    target_param.data.copy_(
+                        tau * param.data + (1 - tau) * target_param.data
+                    )
 
     def fit(self, budget: int, **kwargs):
         del kwargs
-        for self.episode in range(budget):
-            if self.writer:
-                state = self.env.reset()
-                values = self.get_state_action_values(state)
-                for i, value in enumerate(values):
+        timesteps_counter = 0
+        episode_rewards = 0.0
+        episode_timesteps = 0
+        observation = self.env.reset()
+        while timesteps_counter < budget:
+            if self.total_timesteps < self._learning_starts:
+                action = self.env.action_space.sample()
+            else:
+                self._timesteps_since_last_update += 1
+                action = self._policy(observation, evaluation=False)
+            next_obs, reward, done, _ = self.env.step(action)
+
+            # store data
+            episode_rewards += reward
+            self._replay_buffer.append(
+                {
+                    "observations": observation,
+                    "actions": action,
+                    "rewards": reward,
+                    "dones": done,
+                    "next_observations": next_obs,
+                }
+            )
+
+            # counters and next obs
+            self._total_timesteps += 1
+            timesteps_counter += 1
+            episode_timesteps += 1
+            observation = next_obs
+
+            # update
+            run_update, n_gradient_steps = self._must_update(done)
+            if run_update:
+                self._update(n_gradient_steps)
+
+            # eval
+            total_timesteps = self._total_timesteps
+            if (
+                self._eval_interval is not None
+                and total_timesteps % self._eval_interval == 0
+            ):
+                eval_rewards = self.eval(
+                    eval_horizon=self._max_episode_steps, gamma=1.0
+                )
+                if self.writer:
+                    buffer_size = len(self._replay_buffer)
                     self.writer.add_scalar(
-                        f"agent/action_value_{i}", value, self.episode
+                        "eval_rewards", eval_rewards, total_timesteps
                     )
-            total_reward, total_bonus, total_success, length = self._run_episode()
-            if self.episode % 20 == 0:
-                logger.info(
-                    f"Episode {self.episode + 1}/{budget}, total reward {total_reward}"
-                )
-            if self.writer:
-                self.writer.add_scalar("episode_rewards", total_reward, self.episode)
-                self.writer.add_scalar(
-                    "episode/total_reward", total_reward, self.episode
-                )
-                self.writer.add_scalar("episode/total_bonus", total_bonus, self.episode)
-                self.writer.add_scalar(
-                    "episode/total_success", total_success, self.episode
-                )
-                self.writer.add_scalar("episode/length", length, self.episode)
-                if self.use_bonus and (
-                    isinstance(
-                        self.env.uncertainty_estimator, OnlineDiscretizationCounter
-                    )
-                    or isinstance(self.env.uncertainty_estimator, DiscreteCounter)
-                ):
-                    n_visited_states = (
-                        self.env.uncertainty_estimator.N_sa.sum(axis=1) > 0
-                    ).sum()
-                    self.writer.add_scalar(
-                        "debug/n_visited_states", n_visited_states, self.episode
-                    )
+                    self.writer.add_scalar("buffer_size", buffer_size, total_timesteps)
 
-    def _run_episode(self):
-        total_reward = total_bonus = total_success = time = 0
-        state = self.env.reset()
-        for time in range(self.horizon):
-            self.exploration_policy.step_time()
-            action = self.policy(state)
-            next_state, reward, done, info = self.env.step(action)
-
-            # bonus used only for logging, here
-            bonus = 0.0
-            if self.use_bonus:
-                if info is not None and "exploration_bonus" in info:
-                    bonus = info["exploration_bonus"]
-
-            self.record(state, action, reward, next_state, done, info)
-            state = next_state
-            total_reward += reward
-            total_bonus += bonus
-            total_success += info.get("is_success", 0)
+            # check if episode ended
             if done:
-                break
-        return total_reward, total_bonus, total_success, time + 1
+                self._total_episodes += 1
+                self._replay_buffer.end_episode()
+                if self.writer:
+                    self.writer.add_scalar(
+                        "episode_rewards", episode_rewards, total_timesteps
+                    )
+                    self.writer.add_scalar(
+                        "total_episodes", self._total_episodes, total_timesteps
+                    )
+                episode_rewards = 0.0
+                episode_timesteps = 0
+                observation = self.env.reset()
 
-    def record(self, state, action, reward, next_state, done, info):
-        """
-        Record a transition by performing a Deep Q-Network iteration
-
-        - push the transition into memory
-        - sample a minibatch
-        - compute the bellman residual loss over the minibatch
-        - perform one gradient descent step
-        - slowly track the policy network with the target network
-
-        Parameters
-        ----------
-        state : object
-        action : object
-        reward : double
-        next_state : object
-        done : bool
-        """
-        if not self.training:
-            return
-        self.memory.push(state, action, reward, next_state, done, info)
-        if self.memory.position % self.update_frequency == 0:
-            self.update()
-
-    def update(self):
-        batch, weights, indexes = self.sample_minibatch()
-        if batch:
-            losses, target = self.compute_bellman_residual(batch)
-            self.step_optimizer(losses.mean())
-            if self.prioritized_replay:
-                new_priorities = losses.abs().detach().cpu().numpy() + 1e-6
-                self.memory.update_priorities(indexes, new_priorities)
-            self.update_target_network()
+    def _policy(self, observation, evaluation=False):
+        epsilon = self._epsilon_schedule(self.total_timesteps)
+        if (not evaluation) and self.rng.uniform() < epsilon:
+            if self.writer:
+                self.writer.add_scalar("epsilon", epsilon, self.total_timesteps)
+            return self.env.action_space.sample()
+        else:
+            with torch.no_grad():
+                observation = (
+                    torch.FloatTensor(observation).to(self._device).unsqueeze(0)
+                )
+                qvals_tensor = self._qnet_online(observation)[0]
+                action = qvals_tensor.argmax().item()
+                return action
 
     def policy(self, observation):
-        """
-        Act according to the state-action value model and an exploration
-        policy
-
-        Parameters
-
-        :param observation: current obs
-        :return: an action
-        """
-        values = self.get_state_action_values(observation)
-        self.exploration_policy.update(values)
-        return self.exploration_policy.sample()
-
-    def sample_minibatch(self):
-        if len(self.memory) < self.batch_size:
-            return None, None, None
-        if self.prioritized_replay:
-            transitions, weights, indexes = self.memory.sample(self.batch_size)
-        else:
-            transitions, indexes = self.memory.sample(self.batch_size)
-            weights = np.ones((self.batch_size,))
-        return transitions, weights, indexes
-
-    def update_target_network(self):
-        self.steps += 1
-        if self.steps % self.target_update == 0:
-            self.target_net.load_state_dict(self.value_net.state_dict())
-
-    def step_optimizer(self, loss):
-        # Optimize the model
-        self.optimizer.zero_grad()
-        loss.backward()
-        for param in self.value_net.parameters():
-            param.grad.data.clamp_(-1, 1)
-        self.optimizer.step()
-
-    def compute_bellman_residual(self, batch):
-        """
-        Compute the Bellman Residuals over a batch
-
-        Parameters
-        ----------
-        batch
-            batch of transitions
-        target_state_action_value
-            if provided, acts as a target (s,a)-value
-            if not, it will be computed from batch and model
-            (Double DQN target)
-
-        Returns
-        -------
-        The residuals over the batch, and the computed target.
-        """
-        # Concatenate the batch elements
-        state = torch.cat(tuple(torch.tensor([batch.state], dtype=torch.float))).to(
-            self.device
-        )
-        action = torch.tensor(batch.action, dtype=torch.long).to(self.device)
-        reward = torch.tensor(batch.reward, dtype=torch.float).to(self.device)
-        if self.use_bonus:
-            bonus = (
-                self.env.bonus_batch(state, action).to(self.device)
-                * self.exploration_policy.epsilon
-            )
-            if self.writer:
-                self.writer.add_scalar(
-                    "debug/minibatch_mean_bonus", bonus.mean().item(), self.episode
-                )
-                self.writer.add_scalar(
-                    "debug/minibatch_mean_reward", reward.mean().item(), self.episode
-                )
-            reward += bonus
-        next_state = torch.cat(
-            tuple(torch.tensor([batch.next_state], dtype=torch.float))
-        ).to(self.device)
-        terminal = torch.tensor(batch.terminal, dtype=torch.bool).to(self.device)
-        batch = Transition(state, action, reward, next_state, terminal, batch.info)
-
-        # Compute Q(s_t, a) - the model computes Q(s_t), then we select the
-        # columns of actions taken
-        state_action_values = self.value_net(batch.state)
-        state_action_values = state_action_values.gather(
-            1, batch.action.unsqueeze(1)
-        ).squeeze(1)
-
-        with torch.no_grad():
-            # Compute V(s_{t+1}) for all next states.
-            next_state_values = torch.zeros(batch.reward.shape).to(self.device)
-            if self.double:
-                # Double Q-learning: pick best actions from policy network
-                _, best_actions = self.value_net(batch.next_state).max(1)
-                # Double Q-learning: estimate action values
-                # from target network
-                best_values = (
-                    self.target_net(batch.next_state)
-                    .gather(1, best_actions.unsqueeze(1))
-                    .squeeze(1)
-                )
-            else:
-                best_values, _ = self.target_net(batch.next_state).max(1)
-            next_state_values[~batch.terminal] = best_values[~batch.terminal]
-            # Compute the expected Q values
-            target_state_action_value = batch.reward + self.gamma * next_state_values
-
-        # Compute residuals
-        residuals = self.loss_function(
-            state_action_values, target_state_action_value, reduction="none"
-        )
-        return residuals, target_state_action_value
-
-    def get_batch_state_values(self, states):
-        """
-        Get the state values of several states
-
-        Parameters
-        ----------
-        states : array
-            [s1; ...; sN] an array of states
-
-        Returns
-        -------
-        values, actions:
-            * [V1; ...; VN] the array of the state values for each state
-            * [a1*; ...; aN*] the array of corresponding optimal action
-            indexes for each state
-        """
-        values, actions = self.value_net(
-            torch.tensor(states, dtype=torch.float).to(self.device)
-        ).max(1)
-        return values.data.cpu().numpy(), actions.data.cpu().numpy()
-
-    def get_batch_state_action_values(self, states):
-        """
-        Get the state-action values of several states
-
-        Parameters
-        ----------
-        states : array
-            [s1; ...; sN] an array of states
-
-        Returns
-        -------
-        values:[[Q11, ..., Q1n]; ...] the array of all action values
-        for each state
-        """
-        return (
-            self.value_net(torch.tensor(states, dtype=torch.float).to(self.device))
-            .data.cpu()
-            .numpy()
-        )
-
-    def get_state_value(self, state):
-        """
-        Parameters
-        ----------
-        state : object
-            s, an environment state
-        Returns
-        -------
-        V, its state-value
-        """
-        values, actions = self.get_batch_state_values([state])
-        return values[0], actions[0]
-
-    def get_state_action_values(self, state):
-        """
-        Parameters
-        ----------
-        state : object
-            s, an environment state
-
-        Returns
-        -------
-            The array of its action-values for each actions.
-        """
-        return self.get_batch_state_action_values([state])[0]
-
-    def reseed(self, seed_seq=None):
-        """
-        Get new random number generator for the agent.
-
-        Parameters
-        ----------
-        seed_seq : np.random.SeedSequence, rlberry.seeding.Seeder or int, default : None
-            Seed sequence from which to spawn the random number generator.
-            If None, generate random seed.
-            If int, use as entropy for SeedSequence.
-            If seeder, use seeder.seed_seq
-        """
-        # self.seeder
-        if seed_seq is None:
-            self.seeder = self.seeder.spawn()
-        else:
-            self.seeder = Seeder(seed_seq)
-
-        # Seed exploration policy
-        self.exploration_policy.seed(self.seeder)
-
-    def reset(self, **kwargs):
-        self.episode = 0
-
-    def action_distribution(self, state):
-        values = self.get_state_action_values(state)
-        self.exploration_policy.update(values)
-        return self.exploration_policy.get_distribution()
-
-    def set_time(self, time):
-        self.exploration_policy.set_time(time)
-
-    def eval_mode(self):
-        self.training = False
-        self.exploration_kwargs["method"] = "Greedy"
-        self.exploration_policy = exploration_factory(
-            self.env.action_space, **self.exploration_kwargs
-        )
-
-    def save(self, filename, **kwargs):
-        state = {
-            "state_dict": self.value_net.state_dict(),
-            "optimizer": self.optimizer.state_dict(),
-        }
-        torch.save(state, filename)
-        return filename
-
-    def load(self, filename, **kwargs):
-        checkpoint = torch.load(filename, map_location=self.device)
-        self.value_net.load_state_dict(checkpoint["state_dict"])
-        self.target_net.load_state_dict(checkpoint["state_dict"])
-        self.optimizer.load_state_dict(checkpoint["optimizer"])
-        return filename
-
-    def initialize_model(self):
-        self.value_net.reset()
-
-    def set_writer(self, writer):
-        self._writer = writer
-        try:
-            self.exploration_policy.set_writer(writer)
-        except AttributeError:
-            pass
-        if self.writer:
-            obs_shape = (
-                self.env.observation_space.shape
-                if isinstance(self.env.observation_space, spaces.Box)
-                else self.env.observation_space.spaces[0].shape
-            )
-            model_input = torch.zeros(
-                (1, *obs_shape), dtype=torch.float, device=self.device
-            )
-            self.writer.add_graph(self.value_net, input_to_model=(model_input,))
-            self.writer.add_scalar(
-                "agent/trainable_parameters", trainable_parameters(self.value_net), 0
-            )
-
-    #
-    # For hyperparameter optimization
-    #
-    @classmethod
-    def sample_parameters(cls, trial):
-        batch_size = trial.suggest_categorical("batch_size", [32, 64, 128, 256, 512])
-        gamma = trial.suggest_categorical("gamma", [0.95, 0.99])
-        learning_rate = trial.suggest_loguniform("learning_rate", 1e-5, 1)
-
-        target_update = trial.suggest_categorical("target_update", [1, 250, 500, 1000])
-
-        epsilon_final = trial.suggest_loguniform("epsilon_final", 1e-2, 1e-1)
-
-        epsilon_decay = trial.suggest_categorical("target_update", [1000, 5000, 10000])
-
-        return {
-            "batch_size": batch_size,
-            "gamma": gamma,
-            "learning_rate": learning_rate,
-            "target_update": target_update,
-            "epsilon_final": epsilon_final,
-            "epsilon_decay": epsilon_decay,
-        }
+        return self._policy(observation, evaluation=True)

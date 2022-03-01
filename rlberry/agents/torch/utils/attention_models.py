@@ -116,6 +116,8 @@ class SelfAttention(BaseModule):
 
 
 class EgoAttentionNetwork(BaseModule):
+    """Ego-attention network (experimental)."""
+
     def __init__(
         self,
         in_size=None,
