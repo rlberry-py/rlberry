@@ -1,34 +1,46 @@
 import torch
 from torch.nn.functional import one_hot
 import gym.spaces as spaces
+import numpy as np
 
 
-def unpack_batch(batch, device="cpu"):
-    assert isinstance(batch.rewards, list)
-    assert isinstance(batch.states, list)
-    assert isinstance(batch.actions, list)
-    assert isinstance(batch.logprobs, list)
-    assert isinstance(batch.is_terminals, list)
-    actions = torch.stack(batch.actions).to(device).detach()
-    states = torch.stack(batch.states).to(device).detach()
-    rewards = torch.tensor(batch.rewards).to(device).detach()
-    logprobs = torch.stack(batch.logprobs).to(device).detach()
-    is_terminals = torch.tensor(batch.is_terminals).to(device).detach()
-    return states, actions, logprobs, rewards, is_terminals
+class ReplayBuffer:
+    def __init__(self, capacity, rng):
+        """
+        Parameters
+        ----------
+        capacity : int
+        Maximum number of transitions
+        rng :
+        instance of numpy's default_rng
+        """
+        self.capacity = capacity
+        self.rng = rng  # random number generator
+        self.memory = []
+        self.position = 0
+
+    def push(self, sample):
+        """Saves a transition."""
+        if len(self.memory) < self.capacity:
+            self.memory.append(None)
+        self.memory[self.position] = sample
+        self.position = (self.position + 1) % self.capacity
+
+    def sample(self, batch_size):
+        indices = self.rng.choice(len(self.memory), size=batch_size)
+        samples = [self.memory[idx] for idx in indices]
+        return map(np.asarray, zip(*samples))
+
+    def __len__(self):
+        return len(self.memory)
 
 
 @torch.no_grad()
 def get_qref(batch, target_val_net, gamma, device="cpu"):
-    # TODO I am not sure if this is maybe slightly different from original SAC where you take just non terminal states?
-    _, batch_next_state, _, _, batch_reward, batch_done = batch
-    target_next_batch = target_val_net(batch_next_state)
+    _, next_states, _, _, rewards, dones = batch
+    val_next_states = target_val_net(next_states)
 
-    batch_target_val = (
-        batch_reward
-        + (1 - batch_done)
-        * gamma
-        * torch.max(target_next_batch, dim=1, keepdim=True)[0]
-    )
+    batch_target_val = rewards + (1 - dones) * gamma * val_next_states
     return batch_target_val
 
 

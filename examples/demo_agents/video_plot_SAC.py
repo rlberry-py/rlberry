@@ -8,35 +8,53 @@ during the fit of the agent.
 """
 
 
-import numpy as np
-from rlberry.wrappers import WriterWrapper
+# import numpy as np
+# from rlberry.wrappers import WriterWrapper
+from rlberry.envs.basewrapper import Wrapper
 
 # from rlberry.envs import gym_make
 from rlberry.manager import plot_writer_data, AgentManager
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
 from rlberry.agents.torch import SACAgent
+import gym
 
 
-class SSACAgent(SACAgent):
-    name = "SACAgent"
-
-    def __init__(self, env, **kwargs):
-        SACAgent.__init__(
-            self, env, horizon=100, batch_size=5, buffer_capacity=20, **kwargs
-        )
-        self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
+# we dont need wrapper actually just 'return env' works
+def env_ctor(env, wrap_spaces=True):
+    return Wrapper(env, wrap_spaces)
 
 
-env_ctor = PBall2D
-env_kwargs = dict()
-env = env_ctor(**env_kwargs)
-# env_ctor = gym_make
-# env_kwargs = dict(id='CartPole-v0')
-# env = env_ctor(**env_kwargs)
-
+env = PBall2D()
+env = gym.wrappers.TimeLimit(env, max_episode_steps=100)
+env_kwargs = dict(env=env)
 agent = AgentManager(
-    SSACAgent, (env_ctor, env_kwargs), fit_budget=200, n_fit=1, enable_tensorboard=True
+    SACAgent,
+    (env_ctor, env_kwargs),
+    fit_budget=500,
+    n_fit=1,
+    enable_tensorboard=True,
 )
+
+# basic version
+# env_kwargs = dict(id = "CartPole-v0")
+# agent = AgentManager(SACAgent, (gym_make, env_kwargs), fit_budget=200, n_fit=1)
+
+# # timothe's
+# env = gym_make("CartPole-v0")
+# agent = AgentManager(
+#     SACAgent, (env.__class__, dict()), fit_budget=200, n_fit=1, enable_tensorboard=True,
+# )
+
+# Omar's
+# env = gym_make("CartPole-v0")
+# from copy import deepcopy
+# def env_constructor():
+#     return deepcopy(env)
+# agent = AgentManager(
+#     SACAgent, (env_constructor, dict()), fit_budget=200, n_fit=1, enable_tensorboard=True,
+# )
+
+
 agent.fit()
 
 # Plot of the cumulative reward.
