@@ -26,6 +26,7 @@ jobs:
           echo "__version__ = \"$MY_VERSION \"" > rlberry/_version.py
           git config user.name github-actions
           git config user.email github-actions@github.com
+          git checkout HEAD^
           git add rlberry/_version.py
           git commit -m "version"
           git push
