@@ -49,7 +49,8 @@ def _fit_agent_manager(agent, env="continuous_state", init_kwargs=None):
 
     train_env = _make_env(env)
     try:
-        agent = AgentManager(agent, train_env, fit_budget=5, n_fit=1, seed=SEED)
+        agent = AgentManager(agent, train_env, fit_budget=5, n_fit=1, seed=SEED,
+            init_kwargs=init_kwargs)
         agent.fit()
     except Exception as exc:
         raise RuntimeError("Agent not compatible with Agent Manager") from exc
