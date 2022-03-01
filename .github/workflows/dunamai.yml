@@ -1,11 +1,13 @@
 name: Version Control
 on:
-  push:
-    branches: [ main ]
+  pull_request:
+    branches:
+      - main
+    types: [closed]
 
 jobs:
-  main:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
+  versionjob:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/setup-python@v2
