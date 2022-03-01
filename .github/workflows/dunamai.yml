@@ -1,5 +1,12 @@
-name: GitHub Actions Demo
-on: [push]
+name: Version Control
+
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
 jobs:
   example:
     runs-on: ubuntu-latest
