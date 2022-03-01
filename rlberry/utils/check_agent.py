@@ -99,7 +99,7 @@ def check_agents_almost_equal(agent1, agent2, compare_using="policy", n_checks=5
     results1 = []
     if compare_using == "policy":
         state = agent1.env.reset()
-    for f in range(5):
+    for f in range(n_checks):
         # do several tests if there is some randomness.
         if compare_using == "policy":
             results1.append(agent1.policy(state))
@@ -107,7 +107,7 @@ def check_agents_almost_equal(agent1, agent2, compare_using="policy", n_checks=5
             method_to_call = getattr(agent1, compare_using)
             results1.append(method_to_call())
     set_external_seed(SEED)
-    for f in range(5):
+    for f in range(n_checks):
         # do several tests if there is some randomness.
         if compare_using == "policy":
             result2 = agent2.policy(state)
