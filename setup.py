@@ -1,4 +1,5 @@
 from setuptools import setup, find_packages
+from dunamai import Version
 
 packages = find_packages(exclude=["docs", "notebooks", "assets"])
 
@@ -60,7 +61,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="rlberry",
-    version="0.3.0dev0",
+    version=Version.from_any_vcs().serialize(),
     description="An easy-to-use reinforcement learning library for research and education",
     long_description=long_description,
     long_description_content_type="text/markdown",
