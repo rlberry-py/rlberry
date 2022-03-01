@@ -12,4 +12,5 @@ jobs:
       - uses: mtkennerly/dunamai-action@v1
         with:
           env-var: MY_VERSION
+          args: --style semver
       - run: echo $MY_VERSION

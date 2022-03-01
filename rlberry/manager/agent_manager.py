@@ -2,10 +2,10 @@ import concurrent.futures
 from copy import deepcopy
 from pathlib import Path
 
+import rlberry
 from rlberry.seeding import safe_reseed, set_external_seed
 from rlberry.seeding import Seeder
 from rlberry import metadata_utils
-from rlberry.utils.hash_utils import get_rlberry_version
 
 import functools
 import json
@@ -383,7 +383,7 @@ class AgentManager:
         self.optuna_storage_url = None
 
         # rlberry version for reproducibility purpose
-        self.rlberry_version = get_rlberry_version()
+        self.rlberry_version = rlberry.__version__
 
     def _init_optuna_storage_url(self):
         self.output_dir_.mkdir(parents=True, exist_ok=True)

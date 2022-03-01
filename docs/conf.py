@@ -16,6 +16,10 @@ import sys
 import sphinx_gallery  # noqa
 from sphinx_gallery.sorting import ExplicitOrder
 
+ver_file = os.path.join("rlberry", "_version.py")
+with open(ver_file) as f:
+    exec(f.read())
+
 sys.path.insert(0, os.path.abspath("."))
 sys.path.insert(0, os.path.abspath("../"))
 
@@ -25,8 +29,7 @@ project = "rlberry"
 copyright = "2021, rlberry team"
 author = "rlberry team"
 
-# The full version, including alpha/beta/rc tags
-release = "0.3.0dev0"
+release = __version__
 
 # -- General configuration ---------------------------------------------------
 
