@@ -1,3 +1,5 @@
+on: push
+
 jobs:
   example:
     runs-on: ubuntu-latest
