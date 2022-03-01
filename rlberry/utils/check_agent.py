@@ -11,7 +11,7 @@ SEED = 42
 
 def _make_env(env):
     """
-    help function to construct env from parameter env.
+    Help function to construct env from parameter env.
     """
     if isinstance(env, str):
         if env == "continuous_state":
@@ -36,13 +36,13 @@ def _fit_agent_manager(agent, env="continuous_state", init_kwargs=None):
 
     Parameters
     ----------
-
-    Agent: rlberry agent module
+    agent: rlberry agent module
         Agent class to test.
-
     env: tuple (env_ctor, env_kwargs) or str in {"continuous_state", "discrete_state"}, default="continuous_state"
         if tuple, env is the constructor and keywords of the env on which to test.
         if str in {"continuous_state", "discrete_state"}, we use a default Benchmark environment.
+    init_kwargs : dict
+        Arguments required by the agent's constructor.
     """
     if init_kwargs is None:
         init_kwargs = {}
@@ -63,13 +63,13 @@ def check_agent_manager(agent, env="continuous_state", init_kwargs=None):
 
     Parameters
     ----------
-
-    Agent: rlberry agent module
+    agent: rlberry agent module
         Agent class to test.
-
     env: tuple (env_ctor, env_kwargs) or str in {"continuous_state", "discrete_state"}, default="continuous_state"
         if tuple, env is the constructor and keywords of the env on which to test.
         if str in {"continuous_state", "discrete_state"}, we use a default Benchmark environment.
+    init_kwargs : dict
+        Arguments required by the agent's constructor.
     """
     _ = _fit_agent_manager(agent, env, init_kwargs=init_kwargs)
 
@@ -85,7 +85,6 @@ def check_agents_almost_equal(agent1, agent2, compare_using="policy", n_checks=5
 
     Parameters
     ----------
-
     agent1: rlberry Agent instance
         first agent to be compared
     agent2: rlberry Agent instance
@@ -129,13 +128,13 @@ def check_fit_additive(agent, env="continuous_state", init_kwargs=None):
 
     Parameters
     ----------
-
-    Agent: rlberry agent module
+    agent: rlberry agent module
         Agent class to test.
-
     env: tuple (env_ctor, env_kwargs) or str in ["continuous_state", "discrete_state"], default="continuous_state"
         if tuple, env is the constructor and keywords of the env on which to test.
         if str in ["continuous_state", "discrete_state"], we use a default Benchmark environment.
+    init_kwargs : dict
+        Arguments required by the agent's constructor.
     """
     if init_kwargs is None:
         init_kwargs = {}
@@ -163,16 +162,15 @@ def check_save_load(agent, env="continuous_state", init_kwargs=None):
     """
     Check that the agent save a non-empty file and can load.
 
-
     Parameters
     ----------
-
-    Agent: rlberry agent module
+    agent: rlberry agent module
         Agent class to test.
-
     env: tuple (env_ctor, env_kwargs) or str in {"continuous_state", "discrete_state"}, default="continuous_state"
         if tuple, env is the constructor and keywords of the env on which to test.
         if str in {"continuous_state", "discrete_state"}, we use a default Benchmark environment.
+    init_kwargs : dict
+        Arguments required by the agent's constructor.
     """
     if init_kwargs is None:
         init_kwargs = {}
@@ -206,13 +204,13 @@ def check_seeding_agent(agent, env=None, continuous_state=False,
 
     Parameters
     ----------
-
-    Agent: rlberry agent module
+    agent: rlberry agent module
         Agent class to test.
-
     env: tuple (env_ctor, env_kwargs) or str in {"continuous_state", "discrete_state"}, default="continuous_state"
         if tuple, env is the constructor and keywords of the env on which to test.
         if str in {"continuous_state", "discrete_state"}, we use a default Benchmark environment.
+    init_kwargs : dict
+        Arguments required by the agent's constructor.
     """
     agent1 = _fit_agent_manager(agent, env, init_kwargs=init_kwargs)
     agent2 = _fit_agent_manager(agent, env, init_kwargs=init_kwargs)
@@ -231,13 +229,13 @@ def check_rl_agent(agent, env="continuous_state", init_kwargs=None):
 
     Parameters
     ----------
-
-    Agent: rlberry agent module
+    agent: rlberry agent module
         Agent class to test.
-
     env: tuple (env_ctor, env_kwargs) or str in {"continuous_state", "discrete_state"}, default="continuous_state"
         if tuple, env is the constructor and keywords of the env on which to test.
         if str in {"continuous_state", "discrete_state"}, we use a default Benchmark environment.
+    init_kwargs : dict
+        Arguments required by the agent's constructor.
 
     Examples
     --------
