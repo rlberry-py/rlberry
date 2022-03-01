@@ -10,16 +10,8 @@ def get_rlberry_version():
 
     the hash of the last rlberry git commit, a string.
     """
-    try:
-        # pipe output to /dev/null for silence
-        null = open("/dev/null", "w")
-        subprocess.Popen("git", stdout=null, stderr=null)
-        null.close()
-        git_installed = True
 
-    except OSError:
-        git_installed = False
-    if git_installed:
+    try:
         return (
             subprocess.check_output(
                 ["git", "rev-parse", "HEAD"],
@@ -28,5 +20,5 @@ def get_rlberry_version():
             .strip()
             .decode()
         )
-    else:
+    except:
         return rlberry.__version__
