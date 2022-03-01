@@ -8,16 +8,6 @@ rlberry API
 Agents
 ====================
 
-Interface
-----------
-.. autosummary::
-   :toctree: generated/
-   :template: class.rst
-
-   agents.Agent
-   agents.AgentWithSimplePolicy
-
-
 Basic Agents
 --------------------
 
@@ -31,7 +21,7 @@ Basic Agents
    agents.RSUCBVIAgent
    agents.RSKernelUCBVIAgent
    agents.OptQLAgent
-   agents.linear.LSVIUCBAgent
+   agents.LSVIUCBAgent
    agents.RLSVIAgent
    agents.PSRLAgent
 
@@ -83,7 +73,7 @@ Evaluation and plot
 
 
 Environments
-====================*
+============
 
 Base class
 ----------
@@ -133,7 +123,7 @@ Seeding
    seeding.seeder.Seeder
 
 
-Utilities & Logging
+Utilities, Logging & Typing
 ====================
 
 Writer Utilities
@@ -144,17 +134,31 @@ Writer Utilities
   :template: class.rst
 
   utils.writers.DefaultWriter
-
+  agents.utils.replay.ReplayBuffer
 
 Check Utilities
 ---------------
 
-.. autosummary::
+ .. autosummary::
    :toctree: generated/
    :template: function.rst
 
-   utils.check_bandit_agent
+   utils.check_rl_agent
+   utils.check_env
+   utils.check_save_load
+   utils.check_fit_additive
+   utils.check_seeding_agent
+   utils.check_agent_manager
 
+
+Typing
+------
+
+.. autosummary::
+  :toctree: generated/
+  :template: class.rst
+
+   types.Env
 
 
 Wrappers
@@ -169,6 +173,33 @@ Wrappers
   wrappers.scalarize.ScalarizeEnvWrapper
   wrappers.vis2d.Vis2dWrapper
   wrappers.WriterWrapper
+
+
+Neural Networks
+===============
+
+
+Torch
+------
+
+.. autosummary::
+  :toctree: generated/
+  :template: function.rst
+
+  agents.torch.utils.training.model_factory
+  utils.torch.choose_device
+
+
+.. autosummary::
+  :toctree: generated/
+  :template: class.rst
+
+  agents.torch.utils.models.MultiLayerPerceptron
+  agents.torch.utils.models.ConvolutionalNetwork
+  agents.torch.utils.models.DuelingNetwork
+  agents.torch.utils.models.Table
+  agents.torch.utils.attention_models.EgoAttentionNetwork
+
 
 Bandits
 =======

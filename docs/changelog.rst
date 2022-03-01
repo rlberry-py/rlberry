@@ -3,12 +3,32 @@
 Changelog
 =========
 
-Under development
------------------
+Under development (0.3.0dev0)
+-----------------------------
+
+*PR #119*
+
+* Improving documentation for agents.torch.utils
+* New replay buffer :class:`rlberry.agents.utils.replay.ReplayBuffer`, aiming to replace code in utils/memories.py
+* New DQN implementation, aiming to fix reproducibility and compatibility issues.
+* Implements Q(lambda) in DQN Agent.
+
+
+*Feb 22, 2022 (PR #126)*
+
+* Setup :code:`rlberry.__version__` (currently 0.3.0dev0)
+* Record rlberry version in a AgentManager attribute equality of AgentManagers
+* Override :code:`__eq__` method of the AgentManager class.
+
+*Feb 14-15, 2022 (PR #97, #118)*
+
+* (feat) Add Bandits basic environments and agents. See :class:`~rlberry.agents.bandits.IndexAgent` and :class:`~rlberry.envs.bandits.Bandit`.
+* Thompson Sampling bandit algorithm with gaussian or beta prior.
+* Base class for bandits algorithms with custom save & load functions (called :class:`~rlberry.agents.bandits.BanditWithSimplePolicy`)
+
 
 *Feb 11, 2022 (#83, #95)*
 
-* (feat) Add Bandits basic environments and agents. See :class:`~rlberry.agents.bandits.IndexAgent` and :class:`~rlberry.envs.bandits.Bandit`.
 * (fix) Fixed bug in :meth:`FiniteMDP.sample()`: terminal state was being checked with `self.state` instead of given `state`
 * (feat) Option to use 'fork' or 'spawn' in :class:`~rlberry.manager.AgentManager`
 * (feat) AgentManager output_dir now has a timestamp and a short ID by default.
@@ -25,7 +45,7 @@ Under development
 * Add the Posterior Sampling for Reinforcement Learning PSRL agent for tabular MDP :class:`~rlberry.agents.PSRLAgent`
 * Add a page to help contributors in the doc :ref:`contributing`
 
-Version 0.2.1 (last released version)
+Version 0.2.1 (lastest release)
 -------------------------------------
 
 
