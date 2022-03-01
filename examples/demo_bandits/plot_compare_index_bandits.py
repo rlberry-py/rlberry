@@ -16,6 +16,7 @@ from rlberry.agents.bandits import (
     RandomizedAgent,
     makeBoundedUCBIndex,
     makeETCIndex,
+    makeEXP3Index,
     makeBoundedMOSSIndex,
 )
 
@@ -72,16 +73,8 @@ class EXP3Agent(RandomizedAgent):
     name = "EXP3"
 
     def __init__(self, env, **kwargs):
-        def index(r, p, t):
-            return np.sum(1 - (1 - r) / p)
-
-        def prob(indices, t):
-            eta = np.minimum(np.sqrt(self.n_arms * np.log(self.n_arms) / (t + 1)), 1.0)
-            w = np.exp(eta * indices)
-            w /= w.sum()
-            return (1 - eta) * w + eta * np.ones(self.n_arms) / self.n_arms
-
-        RandomizedAgent.__init__(self, env, index, prob, **kwargs)
+        prob = makeEXP3Index()
+        RandomizedAgent.__init__(self, env, prob, **kwargs)
         self.env = WriterWrapper(
             self.env, self.writer, write_scalar="action_and_reward"
         )

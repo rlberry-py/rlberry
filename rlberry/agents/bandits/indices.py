@@ -24,8 +24,8 @@ def makeETCIndex(A=2, m=1):
             Cambridge University Press, 2020.
     """
 
-    def index(r, t):
-        return -len(r) if t < m * A else np.mean(r, axis=0)
+    def index(tr):
+        return -tr.n_pulls if tr.t < m * A else tr.mu_hats
 
     return index
 
@@ -56,8 +56,8 @@ def makeSubgaussianUCBIndex(
             Cambridge University Press, 2020.
     """
 
-    def index(r, t):
-        return np.mean(r) + sigma * np.sqrt(2 * np.log(1 / delta(t)) / len(r))
+    def index(tr):
+        return tr.mu_hats + sigma * np.sqrt(2 * np.log(1 / delta(tr.t)) / tr.n_pulls)
 
     return index
 
@@ -112,10 +112,6 @@ def makeSubgaussianMOSSIndex(T=1, A=2, sigma=1.0):
     sigma : float, default: 1.0
         Sub-Gaussian parameter.
 
-    delta: Callable,
-        Confidence level. Default is tuned to have asymptotically optimal
-        regret, see Chapter 8 in [1].
-
     Return
     ------
     Callable
@@ -127,9 +123,10 @@ def makeSubgaussianMOSSIndex(T=1, A=2, sigma=1.0):
             Cambridge University Press, 2020.
     """
 
-    def index(r, t):
-        Na = len(r)
-        return np.mean(r) + sigma * np.sqrt(4 / Na * max(0, np.log(T / (A * Na))))
+    def index(tr):
+        return tr.mu_hats + sigma * np.sqrt(
+            4 / tr.n_pulls * np.maximum(0, np.log(T / (A * tr.n_pulls)))
+        )
 
     return index
 
@@ -165,3 +162,34 @@ def makeBoundedMOSSIndex(T=1, A=2, upper_bound=1.0, lower_bound=0.0):
             Cambridge University Press, 2020.
     """
     return makeSubgaussianMOSSIndex(T, A, (upper_bound - lower_bound) / 2)
+
+
+def makeEXP3Index():
+    """
+    EXP3 index for distributions in [0, 1], see Chapters 11 in [1] and [2].
+
+    Return
+    ------
+    Callable
+        MOSS Index for sigma-sub-Gaussian distributions.
+
+    References
+    ----------
+    .. [1] Lattimore, Tor, and Csaba Szepesvári. Bandit algorithms.
+            Cambridge University Press, 2020.
+
+    .. [2] Seldin, Yevgeny, et al. Evaluation and analysis of the
+            performance of the EXP3 algorithm in stochastic environments.
+            European Workshop on Reinforcement Learning. PMLR, 2013.
+    """
+
+    def prob(tr):
+        eta = np.minimum(
+            np.sqrt(np.log(tr.n_arms) / (tr.n_arms * (tr.t + 1))),
+            1 / tr.n_arms,
+        )
+        w = np.exp(eta * tr.iw_S_hats)
+        w /= w.sum()
+        return (1 - tr.n_arms * eta) * w + eta * np.ones(tr.n_arms)
+
+    return prob

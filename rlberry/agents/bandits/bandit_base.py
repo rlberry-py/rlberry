@@ -7,6 +7,46 @@ from pathlib import Path
 logger = logging.getLogger(__name__)
 
 
+class BanditTracker:
+    """
+    Container class for rewards and various statistics (means...) collected
+    during the run of a bandit algorithm.
+
+    Parameters
+    ----------
+
+    n_arms: int.
+        Number of arms.
+
+    params: dict
+        Other parameters to condition what to store and compute.
+    """
+
+    name = "BanditTracker"
+
+    def __init__(self, n_arms, params={}):
+        self.n_arms = n_arms
+        self.do_iwr = params.get("do_iwr", False)  # importance weighted rewards
+        self.reset()
+
+    def reset(self):
+        self.S_hats = np.zeros(self.n_arms)
+        self.mu_hats = np.zeros(self.n_arms)
+        self.n_pulls = np.zeros(self.n_arms)
+        self.t = 0
+        if self.do_iwr:
+            self.iw_S_hats = np.zeros(self.n_arms)
+
+    def update(self, arm, reward, params={}):
+        self.t += 1
+        self.n_pulls[arm] += 1
+        self.S_hats[arm] += reward
+        self.mu_hats[arm] = self.S_hats[arm] / self.n_pulls[arm]
+        if self.do_iwr:
+            p = params.get("p", 1.0)
+            self.iw_S_hats[arm] += 1 - (1 - reward) / p
+
+
 class BanditWithSimplePolicy(AgentWithSimplePolicy):
     """
     Base class for bandits algorithms.
@@ -16,18 +56,25 @@ class BanditWithSimplePolicy(AgentWithSimplePolicy):
 
     Parameters
     -----------
-    env : rlberry bandit environment
+    env: rlberry bandit environment
         See :class:`~rlberry.envs.bandits.Bandit`.
+
+    tracker_params: dict
+        Parameters for the tracker object, typically to decide what to store.
 
     """
 
     name = ""
 
-    def __init__(self, env, **kwargs):
+    def __init__(self, env, tracker_params={}, **kwargs):
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
         self.n_arms = self.env.action_space.n
         self.arms = np.arange(self.n_arms)
-        self.total_time = 0
+        self.tracker = BanditTracker(self.n_arms, tracker_params)
+
+    @property
+    def total_time(self):
+        return self.tracker.t
 
     def fit(self, budget=None, **kwargs):
         """
@@ -35,16 +82,14 @@ class BanditWithSimplePolicy(AgentWithSimplePolicy):
         """
         horizon = budget
         rewards = np.zeros(horizon)
-        actions = np.ones(horizon) * np.nan
 
         for ep in range(horizon):
             # choose the optimal action
             # for demo purpose, we will always choose action 0
             action = 0
-            self.total_time += 1
             _, reward, _, _ = self.env.step(action)
+            self.tracker.update(action, reward)
             rewards[ep] = reward
-            actions[ep] = action
 
         self.optimal_action = 0
         info = {"episode_reward": np.sum(rewards)}

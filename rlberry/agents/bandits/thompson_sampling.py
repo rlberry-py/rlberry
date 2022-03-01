@@ -28,7 +28,6 @@ class TSAgent(BanditWithSimplePolicy):
         BanditWithSimplePolicy.__init__(self, env, **kwargs)
         self.prior = prior
         self.prior_params = prior_params
-        self.total_time = 0
 
     def fit(self, budget=None, **kwargs):
         if self.prior not in ["gaussian", "beta"]:
@@ -47,17 +46,20 @@ class TSAgent(BanditWithSimplePolicy):
 
         horizon = budget
 
-        total_reward = 0
-        Na = np.zeros(self.n_arms)  # number of pulls of each arm.
+        total_reward = 0.0
 
         for ep in range(horizon):
             # sample according to prior
             sample_mu = self.sample_prior()
             action = np.argmax(sample_mu)
+
             _, reward, _, _ = self.env.step(action)
-            self.update_prior(action, reward, Na)
+
+            # TODO: integrate update_prior in the tracker
+            self.update_prior(action, reward, self.tracker.n_pulls)
+            self.tracker.update(action, reward)
+
             total_reward += reward
-            Na[action] += 1
 
         self.optimal_action = self.get_optimal_action()
         info = {"episode_reward": total_reward}

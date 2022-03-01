@@ -1,11 +1,12 @@
-from .bandit_base import BanditWithSimplePolicy
-from .index_agents import IndexAgent, RecursiveIndexAgent
+from .bandit_base import BanditTracker, BanditWithSimplePolicy
+from .index_agents import IndexAgent
 from .indices import (
-    makeETCIndex,
-    makeBoundedUCBIndex,
     makeBoundedMOSSIndex,
-    makeSubgaussianUCBIndex,
+    makeBoundedUCBIndex,
+    makeETCIndex,
+    makeEXP3Index,
     makeSubgaussianMOSSIndex,
+    makeSubgaussianUCBIndex,
 )
 from .randomized_agents import RandomizedAgent
 from .thompson_sampling import TSAgent

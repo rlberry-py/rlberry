@@ -8,7 +8,7 @@ This script shows how to use Thompson sampling.
 
 import numpy as np
 from rlberry.envs.bandits import BernoulliBandit
-from rlberry.agents.bandits import TSAgent, RecursiveIndexAgent
+from rlberry.agents.bandits import TSAgent, IndexAgent
 from rlberry.manager import AgentManager, plot_writer_data
 from rlberry.wrappers import WriterWrapper
 
@@ -26,13 +26,14 @@ class BernoulliTSAgent(TSAgent):
         self.env = WriterWrapper(self.env, self.writer, write_scalar="action")
 
 
-class UCBAgent(RecursiveIndexAgent):
+class UCBAgent(IndexAgent):
     name = "UCB"
 
     def __init__(self, env, **kwargs):
-        RecursiveIndexAgent.__init__(
-            self, env, **kwargs
-        )  # default is UCB for Bernoulli.
+        def index(tr):
+            return tr.mu_hats + np.sqrt(np.log(tr.t**2) / (2 * tr.n_pulls))
+
+        IndexAgent.__init__(self, env, index, **kwargs)
         self.env = WriterWrapper(self.env, self.writer, write_scalar="action")
 
 
