@@ -49,8 +49,9 @@ def _fit_agent_manager(agent, env="continuous_state", init_kwargs=None):
 
     train_env = _make_env(env)
     try:
-        agent = AgentManager(agent, train_env, fit_budget=5, n_fit=1, seed=SEED,
-            init_kwargs=init_kwargs)
+        agent = AgentManager(
+            agent, train_env, fit_budget=5, n_fit=1, seed=SEED, init_kwargs=init_kwargs
+        )
         agent.fit()
     except Exception as exc:
         raise RuntimeError("Agent not compatible with Agent Manager") from exc
@@ -141,13 +142,15 @@ def check_fit_additive(agent, env="continuous_state", init_kwargs=None):
         init_kwargs = {}
     train_env = _make_env(env)
 
-    agent1 = AgentManager(agent, train_env, fit_budget=5, n_fit=1, seed=SEED,
-        init_kwargs=init_kwargs)
+    agent1 = AgentManager(
+        agent, train_env, fit_budget=5, n_fit=1, seed=SEED, init_kwargs=init_kwargs
+    )
     agent1.fit(3)
     agent1.fit(3)
 
-    agent2 = AgentManager(agent, train_env, fit_budget=5, n_fit=1, seed=SEED,
-        init_kwargs=init_kwargs)
+    agent2 = AgentManager(
+        agent, train_env, fit_budget=5, n_fit=1, seed=SEED, init_kwargs=init_kwargs
+    )
     agent2.fit(6)
 
     result = check_agents_almost_equal(
@@ -198,8 +201,7 @@ def check_save_load(agent, env="continuous_state", init_kwargs=None):
             raise RuntimeError("Failed to load the agent file.")
 
 
-def check_seeding_agent(agent, env=None, continuous_state=False,
-    init_kwargs=None):
+def check_seeding_agent(agent, env=None, continuous_state=False, init_kwargs=None):
     """
     Check that the agent is reproducible.
 
@@ -244,7 +246,9 @@ def check_rl_agent(agent, env="continuous_state", init_kwargs=None):
     >>> from rlberry.utils import check_rl_agent
     >>> check_rl_agent(UCBVIAgent) # which does not return an error.
     """
-    check_agent_manager(agent, env, init_kwargs=init_kwargs)  # check manager compatible.
+    check_agent_manager(
+        agent, env, init_kwargs=init_kwargs
+    )  # check manager compatible.
     check_seeding_agent(agent, env, init_kwargs=init_kwargs)  # check reproducibility
     check_fit_additive(agent, env, init_kwargs=init_kwargs)
     check_save_load(agent, env, init_kwargs=init_kwargs)
