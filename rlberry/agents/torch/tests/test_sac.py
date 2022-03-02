@@ -7,7 +7,6 @@ from rlberry.exploration_tools.discrete_counter import DiscreteCounter
 def test_sac_agent():
     env = get_benchmark_env(level=1)
     n_episodes = 5
-    horizon = 30
 
     def uncertainty_estimator_fn(observation_space, action_space):
         counter = DiscreteCounter(observation_space, action_space, n_bins_obs=20)
@@ -15,7 +14,6 @@ def test_sac_agent():
 
     agent = SACAgent(
         env,
-        horizon=horizon,
         gamma=0.99,
         learning_rate=0.001,
         k_epochs=4,
@@ -32,11 +30,9 @@ def test_sac_agent():
 def test_sac_agent_partial_fit():
     env = get_benchmark_env(level=1)
     n_episodes = 10
-    horizon = 30
 
     agent = SACAgent(
         env,
-        horizon=horizon,
         gamma=0.99,
         learning_rate=0.001,
         k_epochs=4,
