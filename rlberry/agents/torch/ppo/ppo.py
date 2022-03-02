@@ -104,7 +104,7 @@ class PPOAgent(AgentWithSimplePolicy):
     ):  # TODO: sort arguments
 
         # For all parameters, define self.param = param
-        args, _, _, values = inspect.getargvalues(inspect.currentframe())
+        _, _, _, values = inspect.getargvalues(inspect.currentframe())
         values.pop("self")
         for arg, val in values.items():
             setattr(self, arg, val)
