@@ -2,7 +2,6 @@ import gym
 import numpy as np
 import logging
 import inspect
-from collections import defaultdict
 from rlberry.seeding import Seeder
 
 logger = logging.getLogger(__name__)
@@ -164,47 +163,6 @@ generative calls sample() method."
                 out.update((key + "__" + k, val) for k, val in deep_items)
             out[key] = value
         return out
-
-    def set_params(self, **params):
-        """
-        Set the parameters of this model.
-        The method works on simple estimators as well as on nested objects.
-        The latter have parameters of the form ``<component>__<parameter>``
-        so that it'spossible to update each component of a nested object.
-        Parameters
-        ----------
-        **params : dict
-            parameters.
-        Returns
-        -------
-        self : Model instance
-            Model instance.
-        """
-        if not params:
-            # Simple optimization to gain speed (inspect is slow)
-            return self
-        valid_params = self.get_params(deep=True)
-
-        nested_params = defaultdict(dict)  # grouped by prefix
-        for key, value in params.items():
-            key, delim, sub_key = key.partition("__")
-            if key not in valid_params:
-                raise ValueError(
-                    "Invalid parameter %s for environment %s. "
-                    "Check the list of available parameters "
-                    "with `env.get_params().keys()`." % (key, self)
-                )
-
-            if delim:
-                nested_params[key][sub_key] = value
-            else:
-                setattr(self, key, value)
-                valid_params[key] = value
-
-        for key, sub_params in nested_params.items():
-            valid_params[key].set_params(**sub_params)
-
-        return self
 
     @property
     def unwrapped(self):
