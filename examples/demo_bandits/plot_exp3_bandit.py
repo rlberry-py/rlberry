@@ -21,8 +21,10 @@ class EXP3Agent(RandomizedAgent):
     name = "EXP3"
 
     def __init__(self, env, **kwargs):
-        prob = makeEXP3Index()
-        RandomizedAgent.__init__(self, env, prob, **kwargs)
+        prob, tracker_params = makeEXP3Index()
+        RandomizedAgent.__init__(
+            self, env, prob, tracker_params=tracker_params, **kwargs
+        )
         self.env = WriterWrapper(self.env, self.writer, write_scalar="action")
 
 

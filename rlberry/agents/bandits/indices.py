@@ -16,7 +16,13 @@ def makeETCIndex(A=2, m=1):
     Return
     ------
     Callable
-        ETC Index.
+        ETC index.
+
+    Dict
+        Extra parameters for the BanditTracker object.
+        By default the tracker stores the number of pulls and the
+        empirical average reward for each arm. If you want it to store
+        all rewards for instance, return {'store_rewards': True}.
 
     References
     ----------
@@ -27,7 +33,7 @@ def makeETCIndex(A=2, m=1):
     def index(tr):
         return -tr.n_pulls if tr.t < m * A else tr.mu_hats
 
-    return index
+    return index, {}
 
 
 def makeSubgaussianUCBIndex(
@@ -48,7 +54,13 @@ def makeSubgaussianUCBIndex(
     Return
     ------
     Callable
-        UCB Index for sigma-sub-Gaussian distributions.
+        UCB index for sigma-sub-Gaussian distributions.
+
+    Dict
+        Extra parameters for the BanditTracker object.
+        By default the tracker stores the number of pulls and the
+        empirical average reward for each arm. If you want it to store
+        all rewards for instance, return {'store_rewards': True}.
 
     References
     ----------
@@ -59,7 +71,7 @@ def makeSubgaussianUCBIndex(
     def index(tr):
         return tr.mu_hats + sigma * np.sqrt(2 * np.log(1 / delta(tr.t)) / tr.n_pulls)
 
-    return index
+    return index, {}
 
 
 def makeBoundedUCBIndex(
@@ -87,7 +99,13 @@ def makeBoundedUCBIndex(
     Return
     ------
     Callable
-        UCB Index for bounded distributions.
+        UCB index for bounded distributions.
+
+    Dict
+        Extra parameters for the BanditTracker object.
+        By default the tracker stores the number of pulls and the
+        empirical average reward for each arm. If you want it to store
+        all rewards for instance, return {'store_rewards': True}.
 
     References
     ----------
@@ -115,7 +133,13 @@ def makeSubgaussianMOSSIndex(T=1, A=2, sigma=1.0):
     Return
     ------
     Callable
-        MOSS Index for sigma-sub-Gaussian distributions.
+        MOSS index for sigma-sub-Gaussian distributions.
+
+    Dict
+        Extra parameters for the BanditTracker object.
+        By default the tracker stores the number of pulls and the
+        empirical average reward for each arm. If you want it to store
+        all rewards for instance, return {'store_rewards': True}.
 
     References
     ----------
@@ -128,7 +152,7 @@ def makeSubgaussianMOSSIndex(T=1, A=2, sigma=1.0):
             4 / tr.n_pulls * np.maximum(0, np.log(T / (A * tr.n_pulls)))
         )
 
-    return index
+    return index, {}
 
 
 def makeBoundedMOSSIndex(T=1, A=2, upper_bound=1.0, lower_bound=0.0):
@@ -154,7 +178,13 @@ def makeBoundedMOSSIndex(T=1, A=2, upper_bound=1.0, lower_bound=0.0):
     Return
     ------
     Callable
-        MOSS Index for bounded distributions.
+        MOSS index for bounded distributions.
+
+    Dict
+        Extra parameters for the BanditTracker object.
+        By default the tracker stores the number of pulls and the
+        empirical average reward for each arm. If you want it to store
+        all rewards for instance, return {'store_rewards': True}.
 
     References
     ----------
@@ -171,7 +201,13 @@ def makeEXP3Index():
     Return
     ------
     Callable
-        MOSS Index for sigma-sub-Gaussian distributions.
+        EXP3 index for [0, 1] distributions.
+
+    Dict
+        Extra parameters for the BanditTracker object.
+        By default the tracker stores the number of pulls and the
+        empirical average reward for each arm. If you want it to store
+        all rewards for instance, return {'store_rewards': True}.
 
     References
     ----------
@@ -192,4 +228,99 @@ def makeEXP3Index():
         w /= w.sum()
         return (1 - tr.n_arms * eta) * w + eta * np.ones(tr.n_arms)
 
-    return prob
+    return prob, {"do_iwr": True}
+
+
+def makeBoundedIMEDIndex(upper_bound=1.0):
+    """
+    IMED index for semi-bounded distributions, see [1].
+
+    Parameters
+    ----------
+    upper_bound: float, default: 1.0
+        Upper bound on the rewards.
+
+    Return
+    ------
+    Callable
+        IMED index for sigma-sub-Gaussian distributions.
+
+    Dict
+        Extra parameters for the BanditTracker object.
+        By default the tracker stores the number of pulls and the
+        empirical average reward for each arm. If you want it to store
+        all rewards for instance, return {'store_rewards': True}.
+
+    References
+    ----------
+    .. [1] Honda, Junya, and Akimichi Takemura. Non-asymptotic analysis of
+            a new bandit algorithm for semi-bounded rewards.
+            J. Mach. Learn. Res. 16 (2015): 3721-3756.
+    """
+    from scipy.optimize import minimize_scalar
+
+    def index(tr):
+        mu_hat_star = np.max(tr.mu_hats)
+        indices = np.zeros(tr.n_arms)
+        for k in range(tr.n_arms):
+            X = np.array(tr.rewards[k])
+
+            def dual(u):
+                return -np.mean(np.log(1 - (X - mu_hat_star) * u))
+
+            eps = 1e-12
+            ret = minimize_scalar(
+                dual,
+                method="bounded",
+                bounds=(eps, 1.0 / (upper_bound - mu_hat_star + eps)),
+            )
+            if ret.success:
+                kinf = -ret.fun
+            else:
+                # if not successful, just make this arm ineligible this turn
+                kinf = np.inf
+
+            indices[k] = -kinf * tr.n_pulls[k] - np.log(tr.n_pulls[k])
+        return indices
+
+    return index, {"store_rewards": True}
+
+
+def makeBoundedNPTSIndex(upper_bound=1.0):
+    """
+    NPTS index for bounded distributions, see [1].
+
+    Parameters
+    ----------
+    upper_bound: float, default: 1.0
+        Upper bound on the rewards.
+
+
+    Return
+    ------
+    Callable
+        NPTS index for sigma-sub-Gaussian distributions.
+
+    Dict
+        Extra parameters for the BanditTracker object.
+        By default the tracker stores the number of pulls and the
+        empirical average reward for each arm. If you want it to store
+        all rewards for instance, return {'store_rewards': True}.
+
+    References
+    ----------
+    .. [1] Riou, Charles, and Junya Honda. Bandit algorithms based on
+            thompson sampling for bounded reward distributions.
+            Algorithmic Learning Theory. PMLR, 2020.
+
+    """
+
+    def index(tr):
+        indices = np.zeros(tr.n_arms)
+        for k in range(tr.n_arms):
+            X = np.array(tr.rewards[k])
+            w = tr.seeder.rng.dirichlet(np.ones(len(X) + 1))
+            indices[k] = w[:-1] @ X + upper_bound * w[-1]
+        return indices
+
+    return index, {"store_rewards": True}

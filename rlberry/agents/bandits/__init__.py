@@ -1,7 +1,9 @@
 from .bandit_base import BanditTracker, BanditWithSimplePolicy
 from .index_agents import IndexAgent
 from .indices import (
+    makeBoundedIMEDIndex,
     makeBoundedMOSSIndex,
+    makeBoundedNPTSIndex,
     makeBoundedUCBIndex,
     makeETCIndex,
     makeEXP3Index,

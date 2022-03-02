@@ -4,7 +4,9 @@ from rlberry.agents.bandits import (
     RandomizedAgent,
     TSAgent,
     BanditWithSimplePolicy,
+    makeBoundedIMEDIndex,
     makeBoundedMOSSIndex,
+    makeBoundedNPTSIndex,
     makeBoundedUCBIndex,
     makeETCIndex,
     makeEXP3Index,
@@ -21,40 +23,62 @@ def test_base_bandit():
     assert check_bandit_agent(BanditWithSimplePolicy, NormalBandit, seed=TEST_SEED)
 
 
-bounded_indices = [makeBoundedUCBIndex, makeBoundedMOSSIndex]
-subgaussian_indices = [makeSubgaussianUCBIndex, makeSubgaussianMOSSIndex]
-misc_indices = [makeETCIndex]
+bounded_indices = {
+    "IMED": makeBoundedIMEDIndex,
+    "MOSS": makeBoundedMOSSIndex,
+    "NPTS": makeBoundedNPTSIndex,
+    "UCB": makeBoundedUCBIndex,
+}
+subgaussian_indices = {
+    "UCB": makeSubgaussianUCBIndex,
+    "MOSS": makeSubgaussianMOSSIndex,
+}
+misc_indices = {
+    "ETC": makeETCIndex,
+}
 
 
 def test_bounded_indices():
-    for makeIndex in bounded_indices:
+    for agent_name, makeIndex in bounded_indices.items():
 
         class Agent(IndexAgent):
+            name = agent_name
+
             def __init__(self, env, B=1, **kwargs):
-                index = makeIndex()
-                IndexAgent.__init__(self, env, index, **kwargs)
+                index, tracker_params = makeIndex()
+                IndexAgent.__init__(
+                    self, env, index, tracker_params=tracker_params, **kwargs
+                )
 
         assert check_bandit_agent(Agent, BernoulliBandit, seed=TEST_SEED)
 
 
 def test_subgaussian_indices():
-    for makeIndex in subgaussian_indices:
+    for agent_name, makeIndex in subgaussian_indices.items():
 
         class Agent(IndexAgent):
+            name = agent_name
+
             def __init__(self, env, B=1, **kwargs):
-                index = makeIndex()
-                IndexAgent.__init__(self, env, index, **kwargs)
+                index, tracker_params = makeIndex()
+                IndexAgent.__init__(
+                    self, env, index, tracker_params=tracker_params, **kwargs
+                )
 
         assert check_bandit_agent(Agent, NormalBandit, seed=TEST_SEED)
 
 
 def test_misc_indices():
-    for makeIndex in misc_indices:
+    for agent_name, makeIndex in misc_indices.items():
 
         class Agent(IndexAgent):
+            name = agent_name
+
             def __init__(self, env, B=1, **kwargs):
-                index = makeIndex()
-                IndexAgent.__init__(self, env, index, **kwargs)
+                index, tracker_params = makeIndex()
+                IndexAgent.__init__(
+                    self, env, index, tracker_params=tracker_params, **kwargs
+                )
 
         assert check_bandit_agent(Agent, BernoulliBandit, seed=TEST_SEED)
 
@@ -64,8 +88,10 @@ def test_randomized_bandits():
         name = "EXP3"
 
         def __init__(self, env, **kwargs):
-            prob = makeEXP3Index()
-            RandomizedAgent.__init__(self, env, prob, **kwargs)
+            prob, tracker_params = makeEXP3Index()
+            RandomizedAgent.__init__(
+                self, env, prob, tracker_params=tracker_params, **kwargs
+            )
 
     assert check_bandit_agent(EXP3Agent, BernoulliBandit, seed=TEST_SEED)
 

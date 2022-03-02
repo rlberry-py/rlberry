@@ -24,16 +24,22 @@ class BanditTracker:
 
     name = "BanditTracker"
 
-    def __init__(self, n_arms, params={}):
-        self.n_arms = n_arms
-        self.do_iwr = params.get("do_iwr", False)  # importance weighted rewards
+    def __init__(self, agent, params={}):
+        self.n_arms = agent.n_arms
+        self.seeder = agent.seeder
+        # Store rewards for each arm or not
+        self.store_rewards = params.get("store_rewards", False)
+        # Add importance weighted rewards or not
+        self.do_iwr = params.get("do_iwr", False)
         self.reset()
 
     def reset(self):
         self.S_hats = np.zeros(self.n_arms)
         self.mu_hats = np.zeros(self.n_arms)
-        self.n_pulls = np.zeros(self.n_arms)
+        self.n_pulls = np.zeros(self.n_arms, dtype="int")
         self.t = 0
+        if self.store_rewards:
+            self.rewards = [[] for _ in range(self.n_arms)]
         if self.do_iwr:
             self.iw_S_hats = np.zeros(self.n_arms)
 
@@ -42,6 +48,8 @@ class BanditTracker:
         self.n_pulls[arm] += 1
         self.S_hats[arm] += reward
         self.mu_hats[arm] = self.S_hats[arm] / self.n_pulls[arm]
+        if self.store_rewards:
+            self.rewards[arm].append(reward)
         if self.do_iwr:
             p = params.get("p", 1.0)
             self.iw_S_hats[arm] += 1 - (1 - reward) / p
@@ -70,7 +78,7 @@ class BanditWithSimplePolicy(AgentWithSimplePolicy):
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
         self.n_arms = self.env.action_space.n
         self.arms = np.arange(self.n_arms)
-        self.tracker = BanditTracker(self.n_arms, tracker_params)
+        self.tracker = BanditTracker(self, tracker_params)
 
     @property
     def total_time(self):

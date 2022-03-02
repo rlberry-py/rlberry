@@ -49,7 +49,7 @@ class RandomizedAgent(BanditWithSimplePolicy):
     name = "RandomizedAgent"
 
     def __init__(self, env, prob_function=None, **kwargs):
-        BanditWithSimplePolicy.__init__(self, env, {"do_iwr": True}, **kwargs)
+        BanditWithSimplePolicy.__init__(self, env, **kwargs)
 
         if prob_function is None:
 

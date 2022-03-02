@@ -14,10 +14,12 @@ from rlberry.wrappers import WriterWrapper
 from rlberry.agents.bandits import (
     IndexAgent,
     RandomizedAgent,
+    makeBoundedIMEDIndex,
+    makeBoundedMOSSIndex,
+    makeBoundedNPTSIndex,
     makeBoundedUCBIndex,
     makeETCIndex,
     makeEXP3Index,
-    makeBoundedMOSSIndex,
 )
 
 # Agents definition
@@ -40,7 +42,7 @@ class UCBAgent(IndexAgent):
     name = "UCB"
 
     def __init__(self, env, **kwargs):
-        index = makeBoundedUCBIndex()
+        index, _ = makeBoundedUCBIndex()
         IndexAgent.__init__(self, env, index, **kwargs)
         self.env = WriterWrapper(
             self.env, self.writer, write_scalar="action_and_reward"
@@ -51,7 +53,7 @@ class ETCAgent(IndexAgent):
     name = "ETC"
 
     def __init__(self, env, m=20, **kwargs):
-        index = makeETCIndex(A, m)
+        index, _ = makeETCIndex(A, m)
         IndexAgent.__init__(self, env, index, **kwargs)
         self.env = WriterWrapper(
             self.env, self.writer, write_scalar="action_and_reward"
@@ -62,8 +64,30 @@ class MOSSAgent(IndexAgent):
     name = "MOSS"
 
     def __init__(self, env, **kwargs):
-        index = makeBoundedMOSSIndex(T, A)
+        index, _ = makeBoundedMOSSIndex(T, A)
         IndexAgent.__init__(self, env, index, **kwargs)
+        self.env = WriterWrapper(
+            self.env, self.writer, write_scalar="action_and_reward"
+        )
+
+
+class IMEDAgent(IndexAgent):
+    name = "IMED"
+
+    def __init__(self, env, **kwargs):
+        index, tracker_params = makeBoundedIMEDIndex()
+        IndexAgent.__init__(self, env, index, tracker_params=tracker_params, **kwargs)
+        self.env = WriterWrapper(
+            self.env, self.writer, write_scalar="action_and_reward"
+        )
+
+
+class NPTSAgent(IndexAgent):
+    name = "NPTS"
+
+    def __init__(self, env, **kwargs):
+        index, tracker_params = makeBoundedNPTSIndex()
+        IndexAgent.__init__(self, env, index, tracker_params=tracker_params, **kwargs)
         self.env = WriterWrapper(
             self.env, self.writer, write_scalar="action_and_reward"
         )
@@ -73,14 +97,23 @@ class EXP3Agent(RandomizedAgent):
     name = "EXP3"
 
     def __init__(self, env, **kwargs):
-        prob = makeEXP3Index()
-        RandomizedAgent.__init__(self, env, prob, **kwargs)
+        prob, tracker_params = makeEXP3Index()
+        RandomizedAgent.__init__(
+            self, env, prob, tracker_params=tracker_params, **kwargs
+        )
         self.env = WriterWrapper(
             self.env, self.writer, write_scalar="action_and_reward"
         )
 
 
-Agents_class = [UCBAgent, ETCAgent, MOSSAgent, EXP3Agent]
+Agents_class = [
+    ETCAgent,
+    EXP3Agent,
+    IMEDAgent,
+    MOSSAgent,
+    NPTSAgent,
+    UCBAgent,
+]
 
 agents = [
     AgentManager(

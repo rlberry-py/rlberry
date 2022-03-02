@@ -8,7 +8,7 @@ This script shows how to define a bandit environment and an UCB Index-based algo
 
 import numpy as np
 from rlberry.envs.bandits import NormalBandit
-from rlberry.agents.bandits import IndexAgent
+from rlberry.agents.bandits import IndexAgent, makeSubgaussianUCBIndex
 from rlberry.manager import AgentManager, plot_writer_data
 import matplotlib.pyplot as plt
 from rlberry.wrappers import WriterWrapper
@@ -18,14 +18,12 @@ from rlberry.wrappers import WriterWrapper
 
 
 class UCBAgent(IndexAgent):
-    """UCB agent for B-subgaussian bandits"""
+    """UCB agent for sigma-subgaussian bandits"""
 
     name = "UCB Agent"
 
-    def __init__(self, env, B=1, **kwargs):
-        def index(tr):
-            return tr.mu_hats + np.sqrt(np.log(tr.t**2) / (2 * tr.n_pulls))
-
+    def __init__(self, env, sigma=1, **kwargs):
+        index, _ = makeSubgaussianUCBIndex(sigma)
         IndexAgent.__init__(self, env, index, **kwargs)
         self.env = WriterWrapper(self.env, self.writer, write_scalar="action")
 
@@ -44,7 +42,7 @@ agent = AgentManager(
     UCBAgent,
     (env_ctor, env_kwargs),
     fit_budget=T,
-    init_kwargs={"B": 2},
+    init_kwargs={"sigma": 2},
     n_fit=M,
     parallelization="process",
     mp_context="fork",
