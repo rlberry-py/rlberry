@@ -25,8 +25,11 @@ project = "rlberry"
 copyright = "2021, rlberry team"
 author = "rlberry team"
 
-# The full version, including alpha/beta/rc tags
-release = "0.3.0dev0"
+
+ver_file = os.path.join("../rlberry", "_version.py")
+with open(ver_file) as f:
+    exec(f.read())
+release = __version__
 
 # -- General configuration ---------------------------------------------------
 
