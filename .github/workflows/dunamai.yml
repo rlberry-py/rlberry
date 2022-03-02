@@ -17,6 +17,7 @@ jobs:
         with:
           # This is necessary so that we have the tags.
           fetch-depth: 0
+          ref: main
       - uses: mtkennerly/dunamai-action@v1
         with:
           env-var: MY_VERSION
