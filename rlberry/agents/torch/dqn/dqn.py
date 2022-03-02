@@ -191,7 +191,7 @@ class DQNAgent(AgentWithSimplePolicy):
         self._replay_buffer.setup_entry("next_observations", np.float32)
         self._replay_buffer.setup_entry("actions", np.int32)
         self._replay_buffer.setup_entry("rewards", np.float32)
-        self._replay_buffer.setup_entry("dones", np.bool)
+        self._replay_buffer.setup_entry("dones", bool)
 
         # Counters
         self._total_timesteps = 0
