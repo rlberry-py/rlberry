@@ -35,3 +35,21 @@ def check_env(env):
 
     # Modified check suite from gym
     check_gym_env(env)
+
+
+def check_rlberry_env(env):
+    """
+    Companion to check_env, contains additional tests. It is not mandatory
+    for an environment to satisfy this check but satisfying this check give access to
+    additional features in rlberry.
+
+    Parameters
+    ----------
+
+    env: gym.env or rlberry env
+        Environment that we want to check.
+    """
+    try:
+        params = env.get_params()
+    except Exception:
+        raise RuntimeError("Fail to call get_params on the environment.")

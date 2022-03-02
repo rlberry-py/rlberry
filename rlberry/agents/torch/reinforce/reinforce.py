@@ -1,5 +1,6 @@
 import logging
 import torch
+import inspect
 
 import gym.spaces as spaces
 from rlberry.agents import AgentWithSimplePolicy
@@ -70,15 +71,15 @@ class REINFORCEAgent(AgentWithSimplePolicy):
         device="cuda:best",
         **kwargs
     ):
+
+        # For all parameters, define self.param = param
+        args, _, _, values = inspect.getargvalues(inspect.currentframe())
+        values.pop("self")
+        for arg, val in values.items():
+            setattr(self, arg, val)
+
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
-        self.batch_size = batch_size
-        self.horizon = horizon
-        self.gamma = gamma
-        self.entr_coef = entr_coef
-        self.learning_rate = learning_rate
-        self.normalize = normalize
-        self.use_bonus_if_available = use_bonus_if_available
         self.device = choose_device(device)
 
         self.state_dim = self.env.observation_space.shape[0]

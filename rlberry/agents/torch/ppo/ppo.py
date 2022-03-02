@@ -2,6 +2,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import logging
+import inspect
 
 import gym.spaces as spaces
 from rlberry.agents import AgentWithSimplePolicy
@@ -102,6 +103,11 @@ class PPOAgent(AgentWithSimplePolicy):
         **kwargs
     ):  # TODO: sort arguments
 
+        # For all parameters, define self.param = param
+        args, _, _, values = inspect.getargvalues(inspect.currentframe())
+        values.pop("self")
+        for arg, val in values.items():
+            setattr(self, arg, val)
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
         # bonus
@@ -112,17 +118,6 @@ class PPOAgent(AgentWithSimplePolicy):
             )
 
         # algorithm parameters
-        self.gamma = gamma
-        self.horizon = horizon
-
-        self.learning_rate = learning_rate
-        self.batch_size = batch_size
-        self.k_epochs = k_epochs
-        self.update_frequency = update_frequency
-
-        self.eps_clip = eps_clip
-        self.vf_coef = vf_coef
-        self.entr_coef = entr_coef
 
         # options
         # TODO: add reward normalization option

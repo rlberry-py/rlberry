@@ -1,6 +1,7 @@
 import torch
 import logging
 import torch.nn as nn
+import inspect
 
 import gym.spaces as spaces
 from rlberry.agents import AgentWithSimplePolicy
@@ -115,6 +116,11 @@ class AVECPPOAgent(AgentWithSimplePolicy):
         device="cuda:best",
         **kwargs
     ):
+        # For all parameters, define self.param = param
+        args, _, _, values = inspect.getargvalues(inspect.currentframe())
+        values.pop("self")
+        for arg, val in values.items():
+            setattr(self, arg, val)
 
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
@@ -124,15 +130,6 @@ class AVECPPOAgent(AgentWithSimplePolicy):
                 self.env, **uncertainty_estimator_kwargs
             )
 
-        self.learning_rate = learning_rate
-        self.gamma = gamma
-        self.entr_coef = entr_coef
-        self.vf_coef = vf_coef
-        self.avec_coef = avec_coef
-        self.eps_clip = eps_clip
-        self.k_epochs = k_epochs
-        self.horizon = horizon
-        self.batch_size = batch_size
         self.device = choose_device(device)
 
         self.policy_net_kwargs = policy_net_kwargs or {}

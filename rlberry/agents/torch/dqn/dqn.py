@@ -1,4 +1,5 @@
 import logging
+import inspect
 
 import numpy as np
 import torch
@@ -131,24 +132,18 @@ class DQNAgent(AgentWithSimplePolicy):
         eval_interval: Optional[int] = None,
         **kwargs,
     ):
+        # For all parameters, define self.param = param
+        args, _, _, values = inspect.getargvalues(inspect.currentframe())
+        values.pop("self")
+        for arg, val in values.items():
+            setattr(self, arg, val)
+
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
         env = self.env
         assert isinstance(env.observation_space, spaces.Box)
         assert isinstance(env.action_space, spaces.Discrete)
 
         # DQN parameters
-        self._gamma = gamma
-        self._batch_size = batch_size
-        self._chunk_size = chunk_size
-        self._lambda = lambda_
-        self._target_update_parameter = target_update_parameter
-        self._learning_rate = learning_rate
-        self._epsilon_init = epsilon_init
-        self._epsilon_final = epsilon_final
-        self._epsilon_decay_interval = epsilon_decay_interval
-        self._use_double_dqn = use_double_dqn
-        self._use_prioritized_replay = use_prioritized_replay
-        self._max_replay_size = max_replay_size
 
         # Online and target Q networks, torch device
         self._device = choose_device(device)
@@ -201,10 +196,10 @@ class DQNAgent(AgentWithSimplePolicy):
 
         # epsilon scheduling
         self._epsilon_schedule = polynomial_schedule(
-            self._epsilon_init,
-            self._epsilon_final,
+            self.epsilon_init,
+            self.epsilon_final,
             power=1.0,
-            transition_steps=self._epsilon_decay_interval,
+            transition_steps=self.epsilon_decay_interval,
             transition_begin=0,
         )
 
@@ -233,7 +228,7 @@ class DQNAgent(AgentWithSimplePolicy):
 
     def _update(self, n_gradient_steps):
         """Update networks."""
-        if self._use_prioritized_replay:
+        if self.use_prioritized_replay:
             sampling_mode = "prioritized"
         else:
             sampling_mode = "uniform"
@@ -241,7 +236,7 @@ class DQNAgent(AgentWithSimplePolicy):
         for _ in range(n_gradient_steps):
             # Sample a batch
             sampled = self._replay_buffer.sample(
-                self._batch_size, self._chunk_size, sampling_mode=sampling_mode
+                self.batch_size, self.chunk_size, sampling_mode=sampling_mode
             )
             if not sampled:
                 return
@@ -252,7 +247,7 @@ class DQNAgent(AgentWithSimplePolicy):
 
             batch = sampled.data
             batch_info = sampled.info
-            assert batch["rewards"].shape == (self._batch_size, self._chunk_size)
+            assert batch["rewards"].shape == (self.batch_size, self.chunk_size)
 
             # Compute targets
             batch_observations = torch.FloatTensor(batch["observations"]).to(
@@ -265,7 +260,7 @@ class DQNAgent(AgentWithSimplePolicy):
 
             target_q_values_tp1 = self._qnet_target(batch_next_observations).detach()
             # Check if double DQN
-            if self._use_double_dqn:
+            if self.use_double_dqn:
                 online_q_values_tp1 = self._qnet_online(
                     batch_next_observations
                 ).detach()
@@ -283,9 +278,9 @@ class DQNAgent(AgentWithSimplePolicy):
 
             batch_lambda_returns = lambda_returns(
                 batch["rewards"],
-                self._gamma * (1.0 - np.array(batch["dones"], dtype=np.float32)),
+                self.gamma * (1.0 - np.array(batch["dones"], dtype=np.float32)),
                 v_tp1,
-                np.array(self._lambda, dtype=np.float32),
+                np.array(self.lambda_, dtype=np.float32),
             )
             targets = torch.tensor(batch_lambda_returns).to(self._device)
 
@@ -313,18 +308,18 @@ class DQNAgent(AgentWithSimplePolicy):
                 )
 
             # update priorities
-            if self._use_prioritized_replay:
+            if self.use_prioritized_replay:
                 new_priorities = per_element_loss.abs().detach().cpu().numpy() + 1e-6
                 self._replay_buffer.update_priorities(
                     batch_info["indices"], new_priorities
                 )
 
             # target update
-            if self._target_update_parameter > 1:
-                if self._total_updates % self._target_update_parameter == 0:
+            if self.target_update_parameter > 1:
+                if self._total_updates % self.target_update_parameter == 0:
                     self._qnet_target.load_state_dict(self._qnet_online.state_dict())
             else:
-                tau = self._target_update_parameter
+                tau = self.target_update_parameter
                 for param, target_param in zip(
                     self._qnet_online.parameters(), self._qnet_target.parameters()
                 ):
