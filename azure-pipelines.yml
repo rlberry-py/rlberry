@@ -1,14 +1,12 @@
 trigger:
   paths:
     exclude:
-    - azure-pipelines.yml
     - rlberry/_version.py
     - docs
 
 pr:
   paths:
     exclude:
-    - azure-pipelines.yml
     - rlberry/_version.py
     - docs
 
