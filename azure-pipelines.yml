@@ -1,6 +1,16 @@
+trigger:
+  paths:
+    exclude:
+    - azure-pipelines.yml
+    - rlberry/_version.py
+
+pr:
+  paths:
+    exclude:
+    - azure-pipelines.yml
+    - rlberry/_version.py
 
 jobs:
-
 - job: 'linux'
   pool:
     vmImage: ubuntu-latest
