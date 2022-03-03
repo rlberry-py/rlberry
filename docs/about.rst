@@ -1,3 +1,19 @@
+.. _about:
+
+About us
+========
+
+This project was initiated and is actively maintained by
+`INRIA SCOOL team <https://team.inria.fr/scool/>`_
+
+Contributors
+------------
+
+The following people contributed actively to rlberry.
+
+.. include:: contributors.rst
+
+
 .. _citing-rlberry:
 
 Citing rlberry
@@ -13,3 +29,12 @@ If you use rlberry in scientific publications, we would appreciate citations usi
         url = {https://github.com/rlberry-py/rlberry},
         year = {2021}
     }
+
+
+
+Funding
+-------
+
+The project would like to thank the following funders:
+
+- Inria
