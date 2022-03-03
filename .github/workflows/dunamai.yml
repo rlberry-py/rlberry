@@ -22,7 +22,7 @@ jobs:
         with:
           env-var: MY_VERSION
       - run: echo $MY_VERSION
-      - run: echo "__version__ = \"$MY_VERSION \"" > rlberry/_version.py
+      - run: echo "__version__ = \"v$MY_VERSION \"" > rlberry/_version.py
       - uses: EndBug/add-and-commit@v8
         with:
           add: 'rlberry/_version.py'
