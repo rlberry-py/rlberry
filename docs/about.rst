@@ -35,6 +35,14 @@ If you use rlberry in scientific publications, we would appreciate citations usi
 Funding
 -------
 
-The project would like to thank the following funders:
+The project would like to thank the following for their participation in funding
+PhD's and research project that made this happen.
 
-- Inria
+- Inria and in particular Inria, Scool for the working environment
+- Université de Lille
+- I-SITE ULNE
+- ANR
+- ANRT
+- Renault
+- European CHIST-ERA project DELTA
+- La Région Hauts-de-France and the MEL
