@@ -1,3 +1,14 @@
+trigger:
+  paths:
+    exclude:
+    - rlberry/_version.py
+    - docs
+
+pr:
+  paths:
+    exclude:
+    - rlberry/_version.py
+    - docs
 
 jobs:
 

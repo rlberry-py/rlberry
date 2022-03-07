@@ -136,7 +136,7 @@ be done for you, you will only need to recommit to add the changes made by pre-c
 Once pre-commit is installed, if you want to skip it you can with
 `git commit . -m 'quick fix' --no-verify`.
 
-It can also be usefull to use `autopep8 -a -a -i yourfile` to fix flake8 issues.
+It can also be useful to use `autopep8 -a -a -i yourfile` to fix flake8 issues.
 
 
 ## Pull request checklist

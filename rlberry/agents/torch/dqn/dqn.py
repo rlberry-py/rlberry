@@ -187,11 +187,8 @@ class DQNAgent(AgentWithSimplePolicy):
             max_episode_steps=self._max_episode_steps,
             enable_prioritized=use_prioritized_replay,
         )
-        self._replay_buffer.setup_entry("observations", np.float32)
-        self._replay_buffer.setup_entry("next_observations", np.float32)
-        self._replay_buffer.setup_entry("actions", np.int32)
-        self._replay_buffer.setup_entry("rewards", np.float32)
-        self._replay_buffer.setup_entry("dones", np.bool)
+        self.value_net = qvalue_net_fn(self.env, **qvalue_net_kwargs)
+        self.target_net = qvalue_net_fn(self.env, **qvalue_net_kwargs)
 
         # Counters
         self._total_timesteps = 0
