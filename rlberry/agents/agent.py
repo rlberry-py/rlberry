@@ -380,8 +380,8 @@ class AgentWithSimplePolicy(Agent):
         gamma : double, default: 1.0
             Discount factor.
 
-        Return
-        ------
+        Returns
+        -------
         float
             Mean over the n simulations of the sum of rewards in each simulation.
 
