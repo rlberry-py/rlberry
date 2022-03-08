@@ -23,7 +23,7 @@ Installation
 
 .. toctree::
    :maxdepth: 2
-   
+
    installation.rst
 
 
@@ -32,7 +32,7 @@ Quick start: setup an experiment and evaluate different agents
 
 .. toctree::
    :maxdepth: 2
-   
+
    basics/quick_start.rst
 
 

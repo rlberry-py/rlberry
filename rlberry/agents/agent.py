@@ -128,7 +128,9 @@ class Agent(ABC):
 
     @abstractmethod
     def fit(self, budget: int, **kwargs):
-        """Train the agent using the provided environment.
+        """
+
+        Train the agent using the provided environment.
 
         Parameters
         ----------
@@ -169,7 +171,9 @@ class Agent(ABC):
 
     @abstractmethod
     def eval(self, **kwargs):
-        """Returns a float measuring the quality of the agent (e.g. MC policy evaluation).
+        """
+
+        Returns a float measuring the quality of the agent (e.g. MC policy evaluation).
 
         Parameters
         ----------
