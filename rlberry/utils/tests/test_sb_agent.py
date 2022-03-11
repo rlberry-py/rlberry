@@ -1,6 +1,4 @@
-import pytest
-
-import stable_baselines3 as sb3
+from stable_baselines3 import A2C
 
 from rlberry.envs import gym_make
 from rlberry.utils.sb_agent import StableBaselinesAgent
@@ -9,21 +7,6 @@ from rlberry.utils.check_agent import (
     check_seeding_agent,
     check_save_load,
 )
-
-
-CONTINUOUS_ACTION_AGENTS = [
-    sb3.A2C,
-    sb3.DDPG,
-    sb3.PPO,
-    sb3.SAC,
-    sb3.TD3,
-]
-
-DISCRETE_ACTION_AGENTS = [
-    sb3.A2C,
-    sb3.DQN,
-    sb3.PPO,
-]
 
 
 def _sb3_check_rl_agent(agent_cls, env, init_kwargs=None):
@@ -40,21 +23,15 @@ def _sb3_check_rl_agent(agent_cls, env, init_kwargs=None):
     check_save_load(agent_cls, env, init_kwargs=init_kwargs)
 
 
-@pytest.mark.parametrize("algo_cls", CONTINUOUS_ACTION_AGENTS)
-def test_continuous_action_agent(algo_cls):
-    env = gym_make, {"id": "Pendulum-v0"}
+def test_sb3_agent():
+    # Test only one algorithm per action space type
     _sb3_check_rl_agent(
         StableBaselinesAgent,
-        env=env,
-        init_kwargs={"algo_cls": algo_cls, "policy": "MlpPolicy"},
+        env=(gym_make, {"id": "Pendulum-v0"}),
+        init_kwargs={"algo_cls": A2C, "policy": "MlpPolicy"},
     )
-
-
-@pytest.mark.parametrize("algo_cls", DISCRETE_ACTION_AGENTS)
-def test_discrete_action_agent(algo_cls):
-    env = gym_make, {"id": "CartPole-v1"}
     _sb3_check_rl_agent(
         StableBaselinesAgent,
-        env=env,
-        init_kwargs={"algo_cls": algo_cls, "policy": "MlpPolicy"},
+        env=(gym_make, {"id": "CartPole-v1"}),
+        init_kwargs={"algo_cls": A2C, "policy": "MlpPolicy"},
     )
