@@ -135,13 +135,14 @@ def read_writer_data(input_obj, tag, preprocess_func=None):
         else:
             take_last_date = True
     else:
-        take_last_date = False
-        for dir in input_obj:
-            files = list(Path(dir).iterdir())
-            if len(files) == 0:
-                raise RuntimeError(
-                    "One of the files in input_obj does not contain pickle files"
-                )
+        if not isinstance(input_obj[0], AgentManager):
+            take_last_date = False
+            for dir in input_obj:
+                files = list(Path(dir).iterdir())
+                if len(files) == 0:
+                    raise RuntimeError(
+                        "One of the files in input_obj does not contain pickle files"
+                    )
 
     if isinstance(input_obj[0], AgentManager):
         agent_manager_list = input_obj
