@@ -8,6 +8,16 @@ rlberry API
 Agents
 ====================
 
+Base classes
+------------
+
+.. autosummary::
+    :toctree: generated/
+    :template: class.rst
+
+    agents.Agent
+    agents.AgentWithSimplePolicy
+
 Basic Agents
 --------------------
 
@@ -68,8 +78,6 @@ Evaluation and plot
    manager.evaluate_agents
    manager.read_writer_data
    manager.plot_writer_data
-
-
 
 
 Environments
