@@ -65,6 +65,7 @@ class AgentWriter(sb_logging.KVWriter):
 
 class StableBaselinesAgent(AgentWithSimplePolicy):
     """Wraps an StableBaselines3 Algorithm with a rlberry Agent.
+
     Notes
     -----
     Other keyword arguments are passed to the algorithm's constructor.
@@ -210,5 +211,5 @@ class StableBaselinesAgent(AgentWithSimplePolicy):
         -------
         The chosen action.
         """
-        action, _ = self.wrapped.predict(observation, deterministic=True)
+        action, _ = self.wrapped.predict(observation, deterministic=deterministic)
         return action
