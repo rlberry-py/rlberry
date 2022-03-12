@@ -13,7 +13,6 @@ def check_env(env):
 
     Parameters
     ----------
-
     env: gym.env or rlberry env
         Environment that we want to check.
     """
@@ -50,6 +49,6 @@ def check_rlberry_env(env):
         Environment that we want to check.
     """
     try:
-        params = env.get_params()
+        env.get_params()
     except Exception:
         raise RuntimeError("Fail to call get_params on the environment.")

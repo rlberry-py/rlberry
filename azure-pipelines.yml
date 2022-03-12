@@ -58,12 +58,12 @@ jobs:
   steps:
   - script: |
       python -m pip install --upgrade pip
-      pip install  black flake8
+      pip install  black flake8 flake8-docstrings
       black --check examples rlberry *py
     displayName: "black"
   - script: |
       # ensure there is no unused imports with
-      flake8 --select F401,F405 --exclude=rlberry/check_packages.py --per-file-ignores="__init__.py:F401"
+      flake8 --select F401,F405 --docstring-convention numpy --exclude=rlberry/check_packages.py --per-file-ignores="__init__.py:F401"
     displayName: 'flake8'
 
 
