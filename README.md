@@ -93,7 +93,7 @@ how to use `rlberry`:
 
 ## Changelog
 
-See the [changelog](https://rlberry.readthedocs.io/en/latest/changelog.html) for a history of the chages made to rlberry.
+See the [changelog](https://rlberry.readthedocs.io/en/latest/changelog.html) for a history of the changes made to rlberry.
 
 ## Citing rlberry
 

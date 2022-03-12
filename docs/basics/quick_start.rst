@@ -3,9 +3,11 @@
 Quick Start
 ===========
 
+In this quick start tutorial, we guide you through all the main functionalities of ``rlberry`` by constructing a full RL experiment pipeline step by step.
 
-Importing required libraries
-----------------------------
+
+Import required libraries
+-------------------------
 
 .. code:: python
 
@@ -17,12 +19,12 @@ Importing required libraries
     from rlberry.manager import AgentManager, evaluate_agents, plot_writer_data
     from rlberry.wrappers import WriterWrapper
 
-Choosing an RL environment
---------------------------
 
-In this tutorial, we will use the :class:`~rlberry.envs.finite.chain.Chain`
-environment, which is a very simple environment where the agent has to go from one
-end of a chain to the other end.
+Create an RL environment
+------------------------
+
+In this tutorial, we use the :class:`~rlberry.envs.finite.chain.Chain`
+environment, which is a very simple environment where the agent has to go from one end of a chain to the other end.
 
 .. code:: python
 
@@ -31,7 +33,7 @@ end of a chain to the other end.
     # chain of length 10. With proba 0.2, the agent will not be able to take the action it wants to take/
     env = env_ctor(**env_kwargs)
 
-Let us see a graphical representation
+Let us see a graphical representation of the environment.
 
 .. code:: python
 
@@ -42,22 +44,17 @@ Let us see a graphical representation
         state = next_s
     video = env.save_video("video_chain.mp4", framerate=5)
 
-The agent has two actions, go to the left of to the right, but it might
-move to a random direction according to a failure probability ``fail_prob=0.1``.
+The agent has two actions, *go left* or *go right*, but it may happen to
+move in a random direction according to a failure probability ``fail_prob=0.1``.
 
 .. video:: ../video_chain_quickstart.mp4
    :width: 600
 
 
-
 Defining an agent and a baseline
 --------------------------------
 
-We will compare a RandomAgent (which plays random action) to the
-:class:`~rlberry.agents.ucbvi.ucbvi.UCBVIAgent`, which
-is a algorithm that is designed to perform an efficient exploration.
-Our goal is then to assess the performance of the two algorithms.
-
+We compare a ``RandomAgent`` (that plays random actions) to the :class:`~rlberry.agents.ucbvi.ucbvi.UCBVIAgent`, which is an algorithm designed for efficient exploration. We would like to show you how to assess the performance of the two algorithms.
 
 .. code:: python
 
@@ -81,10 +78,10 @@ Our goal is then to assess the performance of the two algorithms.
     # Define parameters
     ucbvi_params = {"gamma": 0.1, "horizon": 100}
 
-There are a number of agents that are already coded in rlberry. See the
-module :class:`~rlberry.agents.Agent` for more informations.
+There are a number of agents that are already implemented in rlberry. See the :class:`~rlberry.agents.Agent` module for more informations.
 
-Agent Manager
+
+Agent manager
 -------------
 
 One of the main feature of rlberry is its :class:`~rlberry.manager.AgentManager`
@@ -95,13 +92,11 @@ class. Here is a diagram to explain briefly what it does.
     :align: center
 
 
-In a few words, agent manager spawns agents and environments for training and
-then once the agents are trained, it uses these agents and new environments
-to evaluate how well the agent perform. All of these steps can be
+In a few words, agent manager spawns agents and environments for training and then once the agents are trained, it uses these agents and new environments to evaluate how well the agents perform. All of those steps can be
 done several times to assess stochasticity of agents and/or environment.
 
 
-Comparing the expected rewards of the final policies
+Compare the expected rewards of the final policies
 --------------------------------------------------
 
 We want to assess the expected reward of the policy learned by our agents
@@ -152,8 +147,8 @@ then spawn agents as desired during the experiment.
     :align: center
 
 
-Comparing the agents during the learning period
-------------------------------------------------
+Compare the agents during the learning period
+---------------------------------------------
 
 In the previous section, we compared the performance of the **final** policies learned by
 the agents, **after** the learning period.
@@ -250,7 +245,7 @@ Remark that ``fit_budget`` may not mean the same thing among agents. For
 OptimalAgent and RandomAgent ``fit_budget`` is the number of steps in
 the environments that the agent is allowed to take.
 
-The reward that we recover is recorded every time env.step is called.
+The reward that we recover is recorded every time ``env.step`` is called.
 
 For UCBVI this is the number of iterations of the algorithm and in each
 iteration, the environment takes 100 steps (``horizon``) times the

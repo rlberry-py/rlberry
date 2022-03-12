@@ -1,6 +1,8 @@
 .. image:: ../assets/logo_wide.svg
     :width: 50%
     :alt: rlberry logo
+    :align: center
+
 
 .. _rlberry: https://github.com/rlberry-py/rlberry
 
@@ -14,10 +16,7 @@ lots of boring things to implement*: run our agents in parallel, average and plo
 optimize hyperparameters, compare to baselines, create tricky environments etc etc!
 
 rlberry_ **is here to make your life easier** by doing all these things with a few lines of code,
-so that you can spend most of your time developing agents. **Check our** :ref:`the quickstart<quick_start>`
-
-
-
+so that you can spend most of your time developing agents. To start with, **check** the :ref:`Quick Start<quick_start>` section.
 
 In addition, rlberry_:
 
@@ -48,12 +47,12 @@ and allows us to create independent random number generators for different objec
 Contributing to rlberry
 =======================
 
-If you want to contribute to rlberry, check out :ref:`the contribution guidelines<contributing>`.
+If you want to contribute to rlberry, check our :ref:`Contribution Guidelines<contributing>`.
 
 
 
-Documentation Contents
-======================
+Contents of Documentations
+==========================
 
 .. toctree::
   :maxdepth: 2

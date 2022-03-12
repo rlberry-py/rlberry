@@ -1,10 +1,10 @@
 .. _about:
 
-About us
+About Us
 ========
 
-This project was initiated and is actively maintained by
-`INRIA SCOOL team <https://team.inria.fr/scool/>`_
+This project was initiated by `INRIA SequeL team <https://team.inria.fr/sequel/>`_ and is actively maintained by
+`INRIA SCOOL team <https://team.inria.fr/scool/>`_ (SequeL team is succeeded by SCOOL team).
 
 Contributors
 ------------
@@ -35,14 +35,12 @@ If you use rlberry in scientific publications, we would appreciate citations usi
 Funding
 -------
 
-The project would like to thank the following for their participation in funding
-PhD's and research project that made this happen.
+The project would like to thank the following funders for their participation in funding PhD's and research projects that made this happen.
 
 - Inria and in particular Inria, Scool for the working environment
 - Université de Lille
 - I-SITE ULNE
 - ANR
 - ANRT
-- Renault
 - European CHIST-ERA project DELTA
 - La Région Hauts-de-France and the MEL

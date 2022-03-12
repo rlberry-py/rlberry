@@ -3,7 +3,7 @@
 .. _create_agent:
 
 
-Create an agent
+Create an Agent
 ===============
 
 rlberry_ requires you to use a **very simple interface** to write agents, with basically

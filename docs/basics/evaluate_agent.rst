@@ -3,7 +3,7 @@
 .. _evaluate_agent:
 
 
-Evaluate an agent and optimize its hyperparameters
+Evaluate an Agent and Optimize its Hyperparameters
 ==================================================
 
 With rlberry_, once you created your agent, it is very easy to train in parallel
