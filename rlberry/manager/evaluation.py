@@ -95,14 +95,14 @@ def evaluate_agents(
     return output
 
 
-def read_writer_data(input_obj, tag, preprocess_func=None):
+def read_writer_data(data_source, tag, preprocess_func=None):
     """
     Given a list of AgentManager or a folder, read data (corresponding to info) obtained in each episode.
     The dictionary returned by agents' .fit() method must contain a key equal to `info`.
 
     Parameters
     ----------
-    input_obj : AgentManager, or list of AgentManager or directory or list of directories
+    data_source : AgentManager, or list of AgentManager or directory or list of directories
         If AgentManager or list of AgentManager, load data from it (the agents must be fitted).
 
         If directory, load the data from the directory of the latest experiment in date.
@@ -129,25 +129,25 @@ def read_writer_data(input_obj, tag, preprocess_func=None):
     """
     input_dir = None
 
-    if not isinstance(input_obj, list):
-        if isinstance(input_obj, AgentManager):
-            input_obj = [input_obj]
+    if not isinstance(data_source, list):
+        if isinstance(data_source, AgentManager):
+            data_source = [data_source]
         else:
             take_last_date = True
     else:
-        if not isinstance(input_obj[0], AgentManager):
+        if not isinstance(data_source[0], AgentManager):
             take_last_date = False
-            for dir in input_obj:
+            for dir in data_source:
                 files = list(Path(dir).iterdir())
                 if len(files) == 0:
                     raise RuntimeError(
-                        "One of the files in input_obj does not contain pickle files"
+                        "One of the files in data_source does not contain pickle files"
                     )
 
-    if isinstance(input_obj[0], AgentManager):
-        agent_manager_list = input_obj
+    if isinstance(data_source[0], AgentManager):
+        agent_manager_list = data_source
     else:
-        input_dir = input_obj
+        input_dir = data_source
 
     if isinstance(tag, str):
         tags = [tag]
@@ -257,7 +257,7 @@ def _load_data(agent_folder, dir_name):
 
 
 def plot_writer_data(
-    input_obj,
+    data_source,
     tag,
     xtag=None,
     ax=None,
@@ -273,7 +273,7 @@ def plot_writer_data(
 
     Parameters
     ----------
-    input_obj : AgentManager, or list of AgentManager or directory or list of directories
+    data_source : AgentManager, or list of AgentManager or directory or list of directories
         If AgentManager or list of AgentManager, load data from it (the agents must be fitted).
 
         If directory, load the data from the directory of the latest experiment in date.
@@ -312,7 +312,7 @@ def plot_writer_data(
         ylabel = "value"
     else:
         ylabel = tag
-    processed_df = read_writer_data(input_obj, tag, preprocess_func)
+    processed_df = read_writer_data(data_source, tag, preprocess_func)
     # add column with xtag, if given
     if xtag is not None:
         df_xtag = pd.DataFrame(processed_df[processed_df["tag"] == xtag])
