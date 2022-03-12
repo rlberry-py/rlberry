@@ -1,4 +1,4 @@
-# Contributing
+# Contribution Guidelines
 
 Currently, we are accepting the following forms of contributions:
 
@@ -13,17 +13,15 @@ Currently, we are accepting the following forms of contributions:
 - New agents.
 - ...
 
-Please read the rest of this page for more information on how to contribute to
-rlberry and look at our [beginner developer guide](dev_guide) if you have questions
-about how to use git, do PR or for more informations about the documentation.
+Please read the rest of this page for more information on how to contribute to rlberry. You can also take a look at our [beginner developer guide](dev_guide) if you have questions on how to use git, create PR, etc.
 
 
 ## Documentation
 
-We are glad to accept any sort of documentation: function docstrings, reStructuredText or markdown documents (like this one), tutorials, examples, etc. reStructuredText and markdown documents live in the source code repository under the docs/ directory.
+We are glad to accept any sort of documentation: function docstrings, reStructuredText or markdown documents (like this one), tutorials, examples, etc. reStructuredText and markdown documents lie in the **docs/** directory.
 
 ### Building the documentation
-In the following section, we assume that you are in the main rlberry directory.
+In this section, we assume that you are in the main rlberry directory.
 
 Building the documentation requires installing some additional packages:
 ```bash

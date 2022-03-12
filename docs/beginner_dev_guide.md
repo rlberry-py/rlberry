@@ -1,7 +1,7 @@
 (dev_guide)=
 
-## How to contribute
-### git crash-course
+## How to Contribute
+### A **git** crash course
 
 The preferred way to contribute to rlberry is to fork the main repository on GitHub, then submit a “pull request” (PR).
 

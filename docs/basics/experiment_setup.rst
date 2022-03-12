@@ -3,9 +3,8 @@
 .. _experiment_setup:
 
 
-Setup and run experiments using yaml config files
-=================================================
-
+Set up and Run Experiments using ``yaml``
+=========================================
 
 To setup an experiment with rlberry, you can use yaml files. You'll need:
 

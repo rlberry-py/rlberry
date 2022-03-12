@@ -3,9 +3,8 @@
 .. _compare_agents:
 
 
-Compare different agents
+Compare Different Agents
 ========================
-
 
 Two or more agents can be compared using the classes 
 :class:`~rlberry.manager.agent_manager.AgentManager` and
@@ -66,4 +65,3 @@ Two or more agents can be compared using the classes
         tag='episode_rewards',
         preprocess_func=np.cumsum,
         title="Cumulative Rewards")
-

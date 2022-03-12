@@ -1,22 +1,20 @@
-.. title:: User guide : contents
+.. title:: user guide : contents
 
 .. _user_guide:
 
 ==========
-User guide
+User Guide
 ==========
 
-If you are new to rlberry, check the :ref:`Tutorials` below and the :ref:`the quickstart<quick_start>` documentation.
-In the quick start, you will learn how to set up an experiment and evaluate the
-efficiency of different agents.
+If you are new to rlberry, check the :ref:`Tutorials` below and the :ref:`Quick Start<quick_start>` section. In the quick start, you will learn how to set up an experiment and evaluate the efficiency of different agents.
 
-For more information see :ref:`the gallery of examples<examples>`.
+You can also consult the :ref:`Gallery of Examples<examples>` page for more use cases.
 
 
 Tutorials
 =========
 
-The tutorials below will present to you the main functionalities of ``rlberry`` in a few minutes.
+The tutorials below will guide you through the main functionalities of rlberry_ in a few minutes.
 
 Installation
 ------------
@@ -27,8 +25,8 @@ Installation
    installation.rst
 
 
-Quick start: setup an experiment and evaluate different agents
---------------------------------------------------------------
+Quick start: set up an experiment and evaluate different agents
+---------------------------------------------------------------
 
 .. toctree::
    :maxdepth: 2
@@ -52,4 +50,4 @@ Agents, hyperparameter optimization and experiment setup
 How to contribute?
 ==================
 
-If you want to contribute to rlberry, check out :doc:`the contribution guidelines<contributing>`.
+If you want to contribute to ``rlberry``, check our :doc:`Contribution Guidelines<contributing>`.
