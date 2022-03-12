@@ -6,7 +6,7 @@ rlberry API
 
 
 Agents
-====================
+======
 
 Base classes
 ------------
@@ -19,7 +19,7 @@ Base classes
     agents.AgentWithSimplePolicy
 
 Basic Agents
---------------------
+------------
 
 .. autosummary::
    :toctree: generated/
@@ -50,15 +50,16 @@ Torch Agents (experimental)
    agents.torch.REINFORCEAgent
 
 Jax Agents (experimental)
---------------------
+-------------------------
 
 Still experimental. Look at the source of `rlberry.agents.jax` for more info.
 
+
 Manager
-====================
+=======
 
 Main classes
---------------------
+------------
 
 .. autosummary::
   :toctree: generated/
@@ -69,7 +70,7 @@ Main classes
     manager.MultipleManagers
 
 Evaluation and plot
---------------------
+-------------------
 
 .. autosummary::
    :toctree: generated/
@@ -108,8 +109,6 @@ Benchmark Environments
     envs.finite.Chain
     envs.finite.GridWorld
 
-
-
 Importation tools
 -----------------
 
@@ -120,9 +119,8 @@ Importation tools
     envs.gym_make
 
 
-
 Seeding
-====================
+=======
 
 .. autosummary::
    :toctree: generated/
@@ -132,7 +130,7 @@ Seeding
 
 
 Utilities, Logging & Typing
-====================
+===========================
 
 Writer Utilities
 ----------------
@@ -158,7 +156,6 @@ Check Utilities
    utils.check_seeding_agent
    utils.check_agent_manager
 
-
 Typing
 ------
 
@@ -170,7 +167,7 @@ Typing
 
 
 Wrappers
-====================
+========
 
 .. autosummary::
   :toctree: generated/
@@ -186,9 +183,8 @@ Wrappers
 Neural Networks
 ===============
 
-
 Torch
-------
+-----
 
 .. autosummary::
   :toctree: generated/
