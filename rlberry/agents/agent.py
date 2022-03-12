@@ -329,11 +329,13 @@ class Agent(ABC):
     def get_params(self, deep=True):
         """
         Get parameters for this agent.
+
         Parameters
         ----------
         deep : bool, default=True
             If True, will return the parameters for this agent and
             contained subobjects.
+
         Returns
         -------
         params : dict
