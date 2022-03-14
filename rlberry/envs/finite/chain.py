@@ -22,6 +22,7 @@ class Chain(RenderInterface2D, FiniteMDP):
     def __init__(self, L=5, fail_prob=0.1):
         assert L >= 2
         self.L = L
+        self.fail_prob = fail_prob
 
         # transition probabilities
         P = np.zeros((L, 2, L))

@@ -252,3 +252,32 @@ def check_rl_agent(agent, env="continuous_state", init_kwargs=None):
     check_seeding_agent(agent, env, init_kwargs=init_kwargs)  # check reproducibility
     check_fit_additive(agent, env, init_kwargs=init_kwargs)
     check_save_load(agent, env, init_kwargs=init_kwargs)
+
+
+def check_rlberry_agent(agent, env="continuous_state", init_kwargs=None):
+    """
+    Companion to check_rl_agent, contains additional tests. It is not mandatory
+    for an agent to satisfy this check but satisfying this check give access to
+    additional features in rlberry.
+
+    Parameters
+    ----------
+    agent: rlberry agent module
+        Agent class to test.
+    env: tuple (env_ctor, env_kwargs) or str in {"continuous_state", "discrete_state"}, default="continuous_state"
+        if tuple, env is the constructor and keywords of the env on which to test.
+        if str in {"continuous_state", "discrete_state"}, we use a default Benchmark environment.
+    init_kwargs : dict
+        Arguments required by the agent's constructor.
+
+    Examples
+    --------
+    >>> from rlberry.agents import UCBVIAgent
+    >>> from rlberry.utils import check_rl_agent
+    >>> check_rl_agent(UCBVIAgent) #
+    """
+    agent = _fit_agent_manager(agent, env, init_kwargs=init_kwargs).agent_handlers[0]
+    try:
+        params = agent.get_params()
+    except Exception:
+        raise RuntimeError("Fail to call get_params on the agent.")
