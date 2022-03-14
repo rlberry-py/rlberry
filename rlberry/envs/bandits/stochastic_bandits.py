@@ -10,7 +10,6 @@ class NormalBandit(Bandit):
 
     Parameters
     ----------
-
     means: array-like of size n_arms, default=array([0,1])
         means of the law of each of the arms.
 
@@ -43,7 +42,6 @@ class BernoulliBandit(Bandit):
 
     Parameters
     ----------
-
     p: array-like of size n_arms, default=array([0.1,0.9])
         means of the law of inliers of each of the arms.
 

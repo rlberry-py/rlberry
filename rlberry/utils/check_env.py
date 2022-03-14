@@ -44,7 +44,6 @@ def check_rlberry_env(env):
 
     Parameters
     ----------
-
     env: gym.env or rlberry env
         Environment that we want to check.
     """

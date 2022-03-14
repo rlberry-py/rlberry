@@ -17,7 +17,6 @@ def polynomial_schedule(
 
     Notes
     -----
-
     Function taken from: https://github.com/deepmind/optax/blob/master/optax/_src/schedule.py,
     which is licensed under the Apache License, Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
 

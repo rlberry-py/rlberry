@@ -14,7 +14,6 @@ class Bandit(Model):
 
     Parameters
     ----------
-
     laws: list of laws.
         laws of the arms. can either be a frozen scipy law or any class that
         has a method .rvs().
@@ -58,7 +57,6 @@ class AdversarialBandit(Model):
 
     Parameters
     ----------
-
     rewards: list of rewards, shape (T, A).
         Possible rewards up to horizon T for each of the A arms.
 
