@@ -35,7 +35,7 @@ jobs:
 
   - script: |
       set -xe
-      pip install pytest pytest-azurepipelines pytest-cov codecov pytest-xvfb
+      pip install pytest==7.0.1 pytest-azurepipelines pytest-cov codecov pytest-xvfb
       # run doctests in the documentation
       # TODO: use following line for doctest ?
       pytest docs/*rst || echo "Ignoring exit status"
@@ -87,7 +87,7 @@ jobs:
       pip install -r requirements.txt
     displayName: 'Install dependencies'
   - script: |
-      pip install pytest pytest-azurepipelines pytest-xvfb
+      pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
       pytest
     displayName: 'pytest'
 - job: 'windows'
@@ -109,6 +109,6 @@ jobs:
       pip install -r requirements.txt
     displayName: 'Install dependencies'
   - script: |
-      pip install pytest pytest-azurepipelines pytest-xvfb
+      pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
       pytest
     displayName: 'pytest'
