@@ -240,7 +240,6 @@ class PBall2D(RenderInterface2D, PBall):
 
     Parameters
     ----------
-
     p : int, default = 2
         value of p for which p-norm Sphere is considered.
 

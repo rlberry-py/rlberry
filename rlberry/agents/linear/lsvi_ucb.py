@@ -90,7 +90,6 @@ class LSVIUCBAgent(AgentWithSimplePolicy):
 
     Notes
     -----
-
     The computation of exploration bonuses was adapted to match the "simplified Bernstein"
     bonuses that works well empirically for UCBVI in the tabular case.
 

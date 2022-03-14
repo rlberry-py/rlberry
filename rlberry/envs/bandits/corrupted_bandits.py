@@ -10,7 +10,6 @@ class CorruptedLaws:
 
     Parameters
     ----------
-
     law: law
         Can either be a frozen scipy law or any class that
         has a method .rvs() to sample according to the given law.
@@ -46,7 +45,6 @@ class CorruptedNormalBandit(Bandit):
 
     Parameters
     ----------
-
     means: array-like of size n_arms, default=array([0,1])
         means of the law of inliers of each of the arms.
 
