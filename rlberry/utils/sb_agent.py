@@ -184,9 +184,10 @@ class StableBaselinesAgent(AgentWithSimplePolicy):
         """Load agent object."""
         agent = super(StableBaselinesAgent, cls).load(filename, **kwargs)
 
-        # Load the wrapped RL algorithm
-        sb3_file = Path(filename).with_suffix(".zip")
-        agent.wrapped = agent.algo_cls.load(sb3_file)
+        # Load the wrapped RL algorithm if necessary
+        if agent.wrapped is None:
+            sb3_file = Path(filename).with_suffix(".zip")
+            agent.wrapped = agent.algo_cls.load(sb3_file)
         return agent
 
     def fit(
