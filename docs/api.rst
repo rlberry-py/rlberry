@@ -134,6 +134,14 @@ Seeding
 Utilities, Logging & Typing
 ====================
 
+StableBaselines3 Agent
+-----------------------
+.. autosummary::
+   :toctree: generated/
+   :template: class.rst
+
+   utils.sb_agent.StableBaselinesAgent
+
 Writer Utilities
 ----------------
 
@@ -169,7 +177,7 @@ Typing
    types.Env
 
 
-Wrappers
+Environment Wrappers
 ====================
 
 .. autosummary::

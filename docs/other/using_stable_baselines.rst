@@ -10,26 +10,42 @@ Using rlberry_ and `Stable Baselines`_
 `Stable Baselines`_ provides implementations of several Deep RL agents.
 rlberry_ provides a wrapper class for `Stable Baselines`_ algorithms, which
 makes it easy to train several agents in parallel, optimize hyperparameters,
-visualize the results etc.
+visualize the results, etc...
 
-The wrapper receives metrics from the internal `Stable Baselines`_ and writes
-them with the agent's wrapper. As a result, if you're using a custom logger,
-set the logger of the wrapped algorithm by calling set_logger.
-
-The example below shows how to use rlberry_ to train several instances of the A2C
-implementation of `Stable Baselines`_ and evaluate two hyperparameter configurations.
-
+The example below shows a how to quickly train a StableBaselines3 A2C agent
+in just a few lines:
 
 .. code-block:: python
 
     from rlberry.envs import gym_make
-    from stable_baselines3 import A2C as A2C
+    from stable_baselines3 import A2C
     from rlberry.utils.sb_agent import StableBaselinesAgent
 
-    #
-    # For hyperparameter optimization
-    #
+    env_ctor, env_kwargs = gym_make, dict(id="CartPole-v1")
+    env = env_ctor(**env_kwargs)
+
+    agent = StableBaselinesAgent(env, A2C, "MlpPolicy", verbose=1)
+    agent.fit(budget=1000)
+
+
+There are two important implementation details to note:
+
+1. Logging is configured with the same options as `Stable Baselines`_. Under
+    the hood, the rlberry_ Agent's writer is added as an output of the
+    `Stable Baselines`_ Logger. This means that all the metrics collected
+    during training are automatically passed to rlberry_.
+2. Saving and loading saves two files: the agent and the `Stable Baselines`_
+    model.
+
+The `Stable Baselines`_ algorithm class is a **required** parameter of the
+agent. In order to use it with AgentManagers, it must be included in the
+`init_kwargs` parameter. For example, below we use rlberry_ to train several instances of the A2C
+implementation of `Stable Baselines`_ and evaluate two hyperparameter configurations.
+
+.. code-block:: python
     class A2CAgent(StableBaselinesAgent):
+        """A2C with hyperparameter optimization."""
+
         name = "A2C"
 
         def __init__(self, env, **kwargs):
@@ -51,76 +67,53 @@ implementation of `Stable Baselines`_ and evaluate two hyperparameter configurat
             )
 
 
-    if __name__ == "__main__":
-        env_ctor = gym_make
-        env_kwargs = dict(id="CartPole-v1")
+    # Training several agents and comparing different hyperparams
+    from rlberry.manager import AgentManager, MultipleManagers, evaluate_agents
 
-        # Training one agent
-        env = env_ctor(**env_kwargs)
-        agent = StableBaselinesAgent(env, A2C, "MlpPolicy", verbose=1)
-        agent.fit(budget=1000)
+    # Pass the wrapper directly with init_kwargs
+    stats = AgentManager(
+        StableBaselinesAgent,
+        (env_ctor, env_kwargs),
+        agent_name="A2C baseline",
+        init_kwargs=dict(algo_cls=A2C, policy="MlpPolicy", verbose=1),
+        fit_kwargs=dict(log_interval=1000),
+        fit_budget=2500,
+        eval_kwargs=dict(eval_horizon=400),
+        n_fit=4,
+        parallelization="process",
+        output_dir="dev/stable_baselines",
+        seed=123,
+    )
 
-        # Training several agents and comparing different hyperparams
-        from rlberry.manager import AgentManager, MultipleManagers, evaluate_agents
+    # Pass a subclass for hyperparameter optimization
+    stats_alternative = AgentManager(
+        A2CAgent,
+        (env_ctor, env_kwargs),
+        agent_name="A2C optimized",
+        init_kwargs=dict(policy="MlpPolicy", verbose=1),
+        fit_kwargs=dict(log_interval=1000),
+        fit_budget=2500,
+        eval_kwargs=dict(eval_horizon=400),
+        n_fit=4,
+        parallelization="process",
+        output_dir="dev/stable_baselines",
+        seed=456,
+    )
 
-        # Pass the wrapper directly with init_kwargs
-        stats = AgentManager(
-            StableBaselinesAgent,
-            (env_ctor, env_kwargs),
-            agent_name="A2C baseline",
-            init_kwargs=dict(algo_cls=A2C, policy="MlpPolicy", verbose=1),
-            fit_kwargs=dict(log_interval=1000),
-            fit_budget=2500,
-            eval_kwargs=dict(eval_horizon=400),
-            n_fit=4,
-            parallelization="process",
-            output_dir="dev/stable_baselines",
-            seed=123,
-        )
+    # Optimize hyperparams (600 seconds)
+    stats_alternative.optimize_hyperparams(
+        timeout=600,
+        n_optuna_workers=2,
+        n_fit=2,
+        optuna_parallelization="process",
+        fit_fraction=1.0,
+    )
 
-        # Pass a subclass for hyperparameter optimization
-        stats_alternative = AgentManager(
-            A2CAgent,
-            (env_ctor, env_kwargs),
-            agent_name="A2C optimized",
-            init_kwargs=dict(policy="MlpPolicy", verbose=1),
-            fit_kwargs=dict(log_interval=1000),
-            fit_budget=2500,
-            eval_kwargs=dict(eval_horizon=400),
-            n_fit=4,
-            parallelization="process",
-            output_dir="dev/stable_baselines",
-            seed=456,
-        )
+    # Fit everything in parallel
+    multimanagers = MultipleManagers()
+    multimanagers.append(stats)
+    multimanagers.append(stats_alternative)
 
-        # Optimize hyperparams (600 seconds)
-        stats_alternative.optimize_hyperparams(
-            timeout=600,
-            n_optuna_workers=2,
-            n_fit=2,
-            optuna_parallelization="process",
-            fit_fraction=1.0,
-        )
+    multimanagers.run()
 
-        # Fit everything in parallel
-        multimanagers = MultipleManagers()
-        multimanagers.append(stats)
-        multimanagers.append(stats_alternative)
-
-        multimanagers.run()
-
-        # Plot policy evaluation
-        out = evaluate_agents(multimanagers.managers)
-        print(out)
-
-        # Visualize policy
-        env = stats_alternative.build_eval_env()
-        agent = stats_alternative.agent_handlers[0]
-        obs = env.reset()
-        for i in range(2500):
-            action = agent.policy(obs)
-            obs, reward, done, info = env.step(action)
-            env.render()
-            if done:
-                break
-        env.close()
+For a complete example, check out the example at `examples/demo_examples/demo_sb_agent.py` on the rlberry_ repository.
