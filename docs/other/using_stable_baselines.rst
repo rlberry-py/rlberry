@@ -19,7 +19,7 @@ in just a few lines:
 
     from rlberry.envs import gym_make
     from stable_baselines3 import A2C
-    from rlberry.utils.sb_agent import StableBaselinesAgent
+    from rlberry.agents import StableBaselinesAgent
 
     env_ctor, env_kwargs = gym_make, dict(id="CartPole-v1")
     env = env_ctor(**env_kwargs)
@@ -116,4 +116,4 @@ implementation of `Stable Baselines`_ and evaluate two hyperparameter configurat
 
     multimanagers.run()
 
-For a complete example, check out the example at `examples/demo_examples/demo_sb_agent.py` on the rlberry_ repository.
+For a complete example, check out the example at `examples/demo_examples/demo_stable_baselines.py` on the rlberry_ repository.

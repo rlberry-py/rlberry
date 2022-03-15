@@ -1,11 +1,11 @@
 """
  =====================
- Demo: demo_sb_agent
+ Demo: demo_stable_baselines
  =====================
 """
 from rlberry.envs import gym_make
 from stable_baselines3 import A2C as A2C
-from rlberry.utils.sb_agent import StableBaselinesAgent
+from rlberry.agents import StableBaselinesAgent
 
 
 # Class for hyperparameter optimization

@@ -3,7 +3,7 @@ import tempfile
 from stable_baselines3 import A2C
 
 from rlberry.envs import gym_make
-from rlberry.utils.sb_agent import StableBaselinesAgent
+from rlberry.agents import StableBaselinesAgent
 from rlberry.utils.check_agent import (
     check_agent_manager,
     check_seeding_agent,

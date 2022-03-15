@@ -109,7 +109,6 @@ Benchmark Environments
     envs.finite.GridWorld
 
 
-
 Importation tools
 -----------------
 
@@ -118,6 +117,14 @@ Importation tools
    :template: function.rst
 
     envs.gym_make
+
+StableBaselines3 Agent
+-----------------------
+.. autosummary::
+   :toctree: generated/
+   :template: class.rst
+
+   agents.StableBaselinesAgent
 
 
 
@@ -133,14 +140,6 @@ Seeding
 
 Utilities, Logging & Typing
 ====================
-
-StableBaselines3 Agent
------------------------
-.. autosummary::
-   :toctree: generated/
-   :template: class.rst
-
-   utils.sb_agent.StableBaselinesAgent
 
 Writer Utilities
 ----------------
