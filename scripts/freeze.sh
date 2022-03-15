@@ -41,7 +41,7 @@ $new_pip install wheel
 if [[ -f "$rlberry_source/setup.py" ]]; then
     echo "using custom rlberry source"
 
-    $new_pip install -r $rlberry_source/requirements.txt
+    cat $rlberry_source/requirements.txt | xargs -n 1 $new_pip install
     $new_pip install $rlberry_source
 else
     echo "using last pip version rlberry"
