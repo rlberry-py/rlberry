@@ -1,6 +1,8 @@
 import logging
+from pathlib import Path
 from typing import Any, Dict, Optional, Tuple, Type, Union
 
+import dill
 import stable_baselines3.common.logger as sb_logging
 from stable_baselines3.common.base_class import BaseAlgorithm as SB3Algorithm
 from stable_baselines3.common.policies import BasePolicy as SB3Policy
@@ -144,6 +146,7 @@ class StableBaselinesAgent(AgentWithSimplePolicy):
 
         # Initialize the algorithm
         assert algo_cls is not None, "algo_cls must be provided"
+        self.algo_cls = algo_cls
         set_random_seed(seed)
         self.wrapped = algo_cls(policy, self.env, seed=seed, **kwargs)
 
@@ -163,6 +166,28 @@ class StableBaselinesAgent(AgentWithSimplePolicy):
         super().reseed(seed_seq)
         seed = self.rng.integers(2**32).item()
         self.wrapped.set_random_seed(seed)
+
+    def save(self, filename):
+        """Save the agent to a file."""
+        # Save wrappped RL algorithm
+        sb3_file = Path(filename).with_suffix(".zip")
+        sb3_file.parent.mkdir(parents=True, exist_ok=True)
+        self.wrapped.save(sb3_file)
+
+        # Remove the wrapped algorithm if necessary and save the agent
+        if not dill.pickles(self.wrapped):
+            self.wrapped = None
+        return super(StableBaselinesAgent, self).save(filename)
+
+    @classmethod
+    def load(cls, filename, **kwargs):
+        """Load agent object."""
+        agent = super(StableBaselinesAgent, cls).load(filename, **kwargs)
+
+        # Load the wrapped RL algorithm
+        sb3_file = Path(filename).with_suffix(".zip")
+        agent.wrapped = agent.algo_cls.load(sb3_file)
+        return agent
 
     def fit(
         self,

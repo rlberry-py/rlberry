@@ -1,3 +1,5 @@
+import tempfile
+
 from stable_baselines3 import A2C
 
 from rlberry.envs import gym_make
@@ -28,10 +30,25 @@ def test_sb3_agent():
     _sb3_check_rl_agent(
         StableBaselinesAgent,
         env=(gym_make, {"id": "Pendulum-v0"}),
-        init_kwargs={"algo_cls": A2C, "policy": "MlpPolicy"},
+        init_kwargs={"algo_cls": A2C, "policy": "MlpPolicy", "verbose": 1},
     )
     _sb3_check_rl_agent(
         StableBaselinesAgent,
         env=(gym_make, {"id": "CartPole-v1"}),
-        init_kwargs={"algo_cls": A2C, "policy": "MlpPolicy"},
+        init_kwargs={"algo_cls": A2C, "policy": "MlpPolicy", "verbose": 1},
     )
+
+
+def test_sb3_tensorboard_log():
+    # Test tensorboard support
+    with tempfile.TemporaryDirectory() as tmpdir:
+        _sb3_check_rl_agent(
+            StableBaselinesAgent,
+            env=(gym_make, {"id": "Pendulum-v0"}),
+            init_kwargs={
+                "algo_cls": A2C,
+                "policy": "MlpPolicy",
+                "verbose": 1,
+                "tensorboard_log": tmpdir,
+            },
+        )
