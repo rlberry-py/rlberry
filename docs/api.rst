@@ -36,6 +36,15 @@ Basic Agents
    agents.PSRLAgent
 
 
+ Importation tools
+-----------------------
+.. autosummary::
+   :toctree: generated/
+   :template: class.rst
+
+   agents.StableBaselinesAgent
+
+
 Torch Agents (experimental)
 ---------------------------
 
@@ -117,15 +126,6 @@ Importation tools
    :template: function.rst
 
     envs.gym_make
-
-StableBaselines3 Agent
------------------------
-.. autosummary::
-   :toctree: generated/
-   :template: class.rst
-
-   agents.StableBaselinesAgent
-
 
 
 Seeding
