@@ -10,7 +10,7 @@ FREEZE_PATH=freeze_dir
 
 Run(){
 
-script=$(tar -tf test.tar | grep -v freeze_dir)
+script=$(tar -tf $FROZEN_FILE | grep -v freeze_dir)
 
 
 echo "decompressing the frozen env"
@@ -23,6 +23,10 @@ tar -zxvf $FREEZE_PATH.tar.gz -C env_dir >/dev/null 2>&1
 
 echo "the unfrozen scripts are " $script
 echo "the unfrozen virtual env is env_dir"
+echo "the python version used in this virtual env is "
+cat python_version
+/bin/rm python_version
+echo "make sure that this version of python is installed in your system to be able to use this environment"
 
 echo "you can activate the environment with 'source env_dir/bin/activate'"
 

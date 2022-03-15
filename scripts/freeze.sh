@@ -22,7 +22,7 @@ EOF
 
 rlberry_source=$(python get_rlberry_source.py 2>&1)
 
-echo $rlberry_source
+
 
 FREEZE_PATH=freeze_dir
 
@@ -37,14 +37,24 @@ new_pip=$FREEZE_PATH/bin/pip3
 echo "Installing rlberry and necessary deps"
 
 $new_pip install wheel
-$new_pip install -r $rlberry_source/requirements.txt
-$new_pip install $rlberry_source
+
+if [[ -f "$rlberry_source/setup.py" ]]; then
+    echo "using custom rlberry source"
+
+    $new_pip install -r $rlberry_source/requirements.txt
+    $new_pip install $rlberry_source
+else
+    echo "using last pip version rlberry"
+    $new_pip install git+https://github.com/rlberry-py/rlberry.git#egg=rlberry[torch_agents]
+fi
 
 echo "Packing the env and creating archives"
 
 venv-pack -p $FREEZE_PATH -o $FREEZE_PATH.tar.gz
 
-tar -cf $NAME.tar $FREEZE_PATH.tar.gz $SCRIPT_PATH
+python3 --version > python_version
+
+tar -cf $NAME.tar $FREEZE_PATH.tar.gz $SCRIPT_PATH python_version
 
 read -r -p "Do you want to clean the temporary files? (Y/N): " answer
 if [ $answer = "Y" ]
@@ -52,6 +62,7 @@ then
     /bin/rm $FREEZE_PATH.tar.gz
     /bin/rm -r $FREEZE_PATH
     /bin/rm -r get_rlberry_source.py
+    /bin/rm python_version
 fi
 }
 
