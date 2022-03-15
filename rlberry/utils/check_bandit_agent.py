@@ -8,7 +8,6 @@ def check_bandit_agent(Agent, environment=BernoulliBandit, seed=42):
 
     Parameters
     ----------
-
     Agent: rlberry agent module
         Agent class that we want to test.
 

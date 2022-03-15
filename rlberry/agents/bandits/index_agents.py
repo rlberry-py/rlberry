@@ -73,7 +73,6 @@ class IndexAgent(BanditWithSimplePolicy):
 
         Parameters
         ----------
-
         rewards : array, shape (n_iterations,)
             list of rewards until now
 

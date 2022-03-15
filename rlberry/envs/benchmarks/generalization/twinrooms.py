@@ -40,6 +40,9 @@ class TwinRooms(RenderInterface2D, Model):
         Model.__init__(self)
         RenderInterface2D.__init__(self)
 
+        self.noise_room1 = noise_room1
+        self.noise_room2 = noise_room2
+
         self.observation_space = spaces.Box(
             low=np.array([0.0, 0.0]),
             high=np.array([2.0, 1.0]),

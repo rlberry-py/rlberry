@@ -1,7 +1,7 @@
 import pytest
 import rlberry.agents as agents
 import rlberry.agents.torch as torch_agents
-from rlberry.utils.check_agent import check_rl_agent
+from rlberry.utils.check_agent import check_rl_agent, check_rlberry_agent
 from rlberry.agents.features import FeatureMap
 import numpy as np
 
@@ -50,11 +50,13 @@ CONTINUOUS_STATE_AGENTS = [
 ]
 
 
-@pytest.mark.parametrize("Agent", FINITE_MDP_AGENTS)
-def test_finite_state_agent(Agent):
-    check_rl_agent(Agent, env="discrete_state")
+@pytest.mark.parametrize("agent", FINITE_MDP_AGENTS)
+def test_finite_state_agent(agent):
+    check_rl_agent(agent, env="discrete_state")
+    check_rlberry_agent(agent, env="discrete_state")
 
 
-@pytest.mark.parametrize("Agent", CONTINUOUS_STATE_AGENTS)
-def test_continuous_state_agent(Agent):
-    check_rl_agent(Agent, env="continuous_state")
+@pytest.mark.parametrize("agent", CONTINUOUS_STATE_AGENTS)
+def test_continuous_state_agent(agent):
+    check_rl_agent(agent, env="continuous_state")
+    check_rlberry_agent(agent, env="continuous_state")
