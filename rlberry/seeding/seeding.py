@@ -67,5 +67,11 @@ def safe_reseed(obj, seeder, reseed_spaces=True):
             safe_reseed(obj.action_space, seeder)
         except AttributeError:
             pass
+    try:
+        seed_val = seeder.rng.integers(2**32).item()
+        torch.manual_seed(seed_val)
+
+    except:
+        pass
 
     return reseeded
