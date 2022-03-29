@@ -12,6 +12,7 @@ from rlberry.seeding import safe_reseed
 from rlberry.envs.utils import process_env
 from rlberry.utils.writers import DefaultWriter
 from typing import Optional
+import inspect
 
 
 logger = logging.getLogger(__name__)
@@ -128,7 +129,9 @@ class Agent(ABC):
 
     @abstractmethod
     def fit(self, budget: int, **kwargs):
-        """Train the agent using the provided environment.
+        """
+
+        Train the agent using the provided environment.
 
         Parameters
         ----------
@@ -169,7 +172,9 @@ class Agent(ABC):
 
     @abstractmethod
     def eval(self, **kwargs):
-        """Returns a float measuring the quality of the agent (e.g. MC policy evaluation).
+        """
+
+        Returns a float measuring the quality of the agent (e.g. MC policy evaluation).
 
         Parameters
         ----------
@@ -302,6 +307,53 @@ class Agent(ABC):
         obj.__dict__.update(tmp_dict)
         return obj
 
+    @classmethod
+    def _get_param_names(cls):
+        """Get parameter names for the Model"""
+        # fetch the constructor or the original constructor before
+        # deprecation wrapping if any
+        init = getattr(cls.__init__, "deprecated_original", cls.__init__)
+        if init is object.__init__:
+            # No explicit constructor to introspect
+            return []
+
+        # introspect the constructor arguments to find the model parameters
+        # to represent
+        init_signature = inspect.signature(init)
+        # Consider the constructor parameters excluding 'self'
+        parameters = [
+            p
+            for p in init_signature.parameters.values()
+            if p.name != "self" and p.kind != p.VAR_KEYWORD
+        ]
+
+        # Extract and sort argument names excluding 'self'
+        return sorted([p.name for p in parameters])
+
+    def get_params(self, deep=True):
+        """
+        Get parameters for this agent.
+
+        Parameters
+        ----------
+        deep : bool, default=True
+            If True, will return the parameters for this agent and
+            contained subobjects.
+
+        Returns
+        -------
+        params : dict
+            Parameter names mapped to their values.
+        """
+        out = dict()
+        for key in self._get_param_names():
+            value = getattr(self, key)
+            if deep and hasattr(value, "get_params"):
+                deep_items = value.get_params().items()
+                out.update((key + "__" + k, val) for k, val in deep_items)
+            out[key] = value
+        return out
+
 
 class AgentWithSimplePolicy(Agent):
     """Interface for agents whose policy is a function of observations only.
@@ -376,8 +428,8 @@ class AgentWithSimplePolicy(Agent):
         gamma : double, default: 1.0
             Discount factor.
 
-        Return
-        ------
+        Returns
+        -------
         float
             Mean over the n simulations of the sum of rewards in each simulation.
 

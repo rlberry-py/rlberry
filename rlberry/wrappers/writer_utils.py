@@ -7,7 +7,6 @@ class WriterWrapper(Wrapper):
 
     Parameters
     ----------
-
     env : gym.Env or tuple (constructor, kwargs)
         Environment used to fit the agent.
 

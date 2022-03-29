@@ -32,14 +32,12 @@ class AdaptiveQLAgent(AgentWithSimplePolicy):
 
     References
     ----------
-
     .. [1] Sinclair, Sean R., Siddhartha Banerjee, and Christina Lee Yu.
     "Adaptive Discretization for Episodic Reinforcement Learning in Metric Spaces."
      Proceedings of the ACM on Measurement and Analysis of Computing Systems 3.3 (2019): 1-44.
 
     Notes
     ------
-
     Uses the metric induced by the l-infinity norm.
     """
 

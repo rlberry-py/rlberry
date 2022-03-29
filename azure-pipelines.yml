@@ -1,6 +1,16 @@
+trigger:
+  paths:
+    exclude:
+    - rlberry/_version.py
+    - docs
+
+pr:
+  paths:
+    exclude:
+    - rlberry/_version.py
+    - docs
 
 jobs:
-
 - job: 'linux'
   pool:
     vmImage: ubuntu-latest
@@ -25,7 +35,7 @@ jobs:
 
   - script: |
       set -xe
-      pip install pytest pytest-azurepipelines pytest-cov codecov pytest-xvfb
+      pip install pytest==7.0.1 pytest-azurepipelines pytest-cov codecov pytest-xvfb
       # run doctests in the documentation
       # TODO: use following line for doctest ?
       pytest docs/*rst || echo "Ignoring exit status"
@@ -48,12 +58,12 @@ jobs:
   steps:
   - script: |
       python -m pip install --upgrade pip
-      pip install  black flake8
+      pip install  black flake8 flake8-docstrings
       black --check examples rlberry *py
     displayName: "black"
   - script: |
       # ensure there is no unused imports with
-      flake8 --select F401,F405 --exclude=rlberry/check_packages.py --per-file-ignores="__init__.py:F401"
+      flake8 --select F401,F405,D410,D411,D412 --exclude=rlberry/check_packages.py --per-file-ignores="__init__.py:F401"
     displayName: 'flake8'
 
 
@@ -77,7 +87,7 @@ jobs:
       pip install -r requirements.txt
     displayName: 'Install dependencies'
   - script: |
-      pip install pytest pytest-azurepipelines pytest-xvfb
+      pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
       pytest
     displayName: 'pytest'
 - job: 'windows'
@@ -99,6 +109,6 @@ jobs:
       pip install -r requirements.txt
     displayName: 'Install dependencies'
   - script: |
-      pip install pytest pytest-azurepipelines pytest-xvfb
+      pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
       pytest
     displayName: 'pytest'

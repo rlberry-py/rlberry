@@ -1,21 +1,18 @@
-from . import utils
+from .utils import ReplayBuffer, get_qref, get_vref, alpha_sync
 
 import torch
 import torch.nn as nn
+from torch.nn.functional import one_hot
 import logging
-
 import gym.spaces as spaces
+
 from rlberry.agents import AgentWithSimplePolicy
-from rlberry.agents.utils.memories import Memory
 from rlberry.agents.torch.utils.training import optimizer_factory
 from rlberry.agents.torch.utils.models import default_policy_net_fn
 from rlberry.agents.torch.utils.models import default_value_net_fn
 from rlberry.agents.torch.utils.models import default_twinq_net_fn
 from rlberry.utils.torch import choose_device
 from rlberry.wrappers.uncertainty_estimator_wrapper import UncertaintyEstimatorWrapper
-from .utils import alpha_sync
-
-from torch.nn.functional import one_hot
 
 logger = logging.getLogger(__name__)
 
@@ -35,8 +32,6 @@ class SACAgent(AgentWithSimplePolicy):
         Online model with continuous (Box) state space and discrete actions
     batch_size : int
         Number of episodes to wait before updating the policy.
-    horizon : int
-        Horizon.
     gamma : double
         Discount factor in [0, 1].
     entr_coef : double
@@ -82,10 +77,10 @@ class SACAgent(AgentWithSimplePolicy):
         self,
         env,
         batch_size=8,
-        horizon=256,
         gamma=0.99,
         entr_coef=0.01,
         learning_rate=0.01,
+        buffer_capacity: int = 30000,
         optimizer_type="ADAM",
         k_epochs=5,
         policy_net_fn=None,
@@ -109,10 +104,10 @@ class SACAgent(AgentWithSimplePolicy):
             )
 
         self.batch_size = batch_size
-        self.horizon = horizon
         self.gamma = gamma
         self.entr_coef = entr_coef
         self.learning_rate = learning_rate
+        self.buffer_capacity = buffer_capacity
         self.k_epochs = k_epochs
         self.device = choose_device(device)
 
@@ -134,55 +129,56 @@ class SACAgent(AgentWithSimplePolicy):
         assert isinstance(self.env.observation_space, spaces.Box)
         assert isinstance(self.env.action_space, spaces.Discrete)
 
-        self.cat_policy = None  # categorical policy function
+        # categorical policy function
+        self.cat_policy = None
 
         # initialize
         self.reset()
+
+        # initialize replay buffer
+        self.replay_buffer = ReplayBuffer(buffer_capacity, self.rng)
 
     def reset(self, **kwargs):
         # actor
         self.cat_policy = self.policy_net_fn(self.env, **self.policy_net_kwargs).to(
             self.device
         )
-
         self.policy_optimizer = optimizer_factory(
             self.cat_policy.parameters(), **self.optimizer_kwargs
         )
         self.cat_policy_old = self.policy_net_fn(self.env, **self.policy_net_kwargs).to(
             self.device
         )
-
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
+
         # critic
         self.value_net = self.value_net_fn(self.env, **self.value_net_kwargs).to(
             self.device
         )
-
         self.target_value_net = self.value_net_fn(self.env, **self.value_net_kwargs).to(
             self.device
         )
-
         self.value_optimizer = optimizer_factory(
             self.value_net.parameters(), **self.optimizer_kwargs
         )
         self.target_value_net.load_state_dict(self.value_net.state_dict())
+
         # twinq networks
         twinq_net = self.twinq_net_fn(self.env, **self.twinq_net_kwargs)
-
         self.q1, self.q2 = twinq_net
-
         self.q1.to(self.device)
         self.q2.to(self.device)
-
         self.q1_optimizer = optimizer_factory(
             self.q1.parameters(), **self.optimizer_kwargs
         )
         self.q2_optimizer = optimizer_factory(
             self.q2.parameters(), **self.optimizer_kwargs
         )
-        #
+
+        # loss function
         self.MseLoss = nn.MSELoss()
-        self.memory = Memory()
+
+        # initialize episode counter
         self.episode = 0
 
     def policy(self, observation):
@@ -201,26 +197,56 @@ class SACAgent(AgentWithSimplePolicy):
             self._run_episode()
             count += 1
 
+    def _get_batch(self, device="cpu"):
+        (
+            batch_state,
+            batch_next_state,
+            batch_action,
+            batch_action_log_prob,
+            batch_reward,
+            batch_done,
+        ) = self.replay_buffer.sample(self.batch_size)
+
+        # convert to torch tensors
+        batch_state_tensor = torch.FloatTensor(batch_state).to(self.device)
+        batch_next_state_tensor = torch.FloatTensor(batch_next_state).to(self.device)
+        batch_action_tensor = torch.LongTensor(batch_action).to(self.device)
+        batch_action_log_prob_tensor = torch.FloatTensor(batch_action_log_prob).to(
+            self.device
+        )
+        batch_reward_tensor = (
+            torch.FloatTensor(batch_reward).unsqueeze(1).to(self.device)
+        )
+        batch_done_tensor = torch.FloatTensor(batch_done).unsqueeze(1).to(self.device)
+
+        return (
+            batch_state_tensor,
+            batch_next_state_tensor,
+            batch_action_tensor,
+            batch_action_log_prob_tensor,
+            batch_reward_tensor,
+            batch_done_tensor,
+        )
+
     def _select_action(self, state):
         state = torch.from_numpy(state).float().to(self.device)
         action_dist = self.cat_policy_old(state)
         action = action_dist.sample()
         action_logprob = action_dist.log_prob(action)
 
-        self.memory.states.append(state)
-        self.memory.actions.append(action)
-        self.memory.logprobs.append(action_logprob)
-
-        return action.item()
+        return action.item(), action_logprob.item()
 
     def _run_episode(self):
         # interact for H steps
         episode_rewards = 0
         state = self.env.reset()
-        for i in range(self.horizon):
+        done = False
+
+        while not done:
             # running policy_old
-            action = self._select_action(state)
+            action, action_logprob = self._select_action(state)
             next_state, reward, done, info = self.env.step(action)
+            episode_rewards += reward
 
             # check whether to use bonus
             bonus = 0.0
@@ -229,69 +255,59 @@ class SACAgent(AgentWithSimplePolicy):
                     bonus = info["exploration_bonus"]
 
             # save in batch
-            self.memory.rewards.append(reward + bonus)  # add bonus here
-            self.memory.is_terminals.append(done)
-            episode_rewards += reward
-
-            if done:
-                break
+            self.replay_buffer.push(
+                (state, next_state, action, action_logprob, reward + bonus, done)
+            )
 
             # update state
             state = next_state
 
-            if i == self.horizon - 1:
-                self.memory.is_terminals[-1] = True
-
-        # update
+        # update; TODO this condition "self.episode % self.batch_size == 0:" seems to be  completely random to me
+        # implement self.episode -> self.steps
         self.episode += 1
-        #
-        if self.writer is not None:
-            self.writer.add_scalar("episode_rewards", episode_rewards, self.episode)
-        #
         if self.episode % self.batch_size == 0:
             self._update()
-            # is it really good to forget it completely ???
-            self.memory.clear_memory()
+
+        # add rewards to writer
+        if self.writer is not None:
+            self.writer.add_scalar("episode_rewards", episode_rewards, self.episode)
 
         return episode_rewards
 
     def _update(self):
+        # optimize for K epochs
+        for _ in range(self.k_epochs):
+            # sample batch
+            batch = self._get_batch(self.device)
+            states, _, actions, _, _, _ = batch
 
-        twinq_net = (self.q1, self.q2)
-        states_v, actions_v, _, _, _ = utils.unpack_batch(self.memory, self.device)
-
-        # obtain reference values for V and Q functions
-        qref = utils.get_qref(
-            self.memory, self.target_value_net, self.gamma, self.device
-        )
-        vref = utils.get_vref(
-            self.env,
-            self.memory,
-            twinq_net,
-            self.cat_policy,
-            self.entr_coef,
-            self.device,
-        )
-
-        # optimize policy for K epochs
-        for epoch in range(self.k_epochs):
+            # compute target values
+            qref = get_qref(batch, self.target_value_net, self.gamma, self.device)
+            vref = get_vref(
+                self.env,
+                batch,
+                (self.q1, self.q2),
+                self.cat_policy,
+                self.entr_coef,
+                self.device,
+            )
 
             # Critic
             self.value_optimizer.zero_grad()
-            val_v = self.value_net(states_v)
-            v_loss_v = self.MseLoss(val_v.squeeze(), vref.detach())
+            val_v = self.value_net(states)
+            v_loss_v = self.MseLoss(val_v.squeeze(), vref)
             v_loss_v.backward()
             self.value_optimizer.step()
             if self.writer is not None:
                 self.writer.add_scalar("loss_v", float(v_loss_v.detach()), self.episode)
 
-            # train TwinQ
+            # TwinQ
             self.q1_optimizer.zero_grad()
             self.q2_optimizer.zero_grad()
-            actions_v_one_hot = one_hot(actions_v, self.env.action_space.n)
-            q1_v, q2_v = self.q1(
-                torch.cat([states_v, actions_v_one_hot], dim=1)
-            ), self.q2(torch.cat([states_v, actions_v_one_hot], dim=1))
+            actions_one_hot = one_hot(actions, self.env.action_space.n)
+            q1_v, q2_v = self.q1(torch.cat([states, actions_one_hot], dim=1)), self.q2(
+                torch.cat([states, actions_one_hot], dim=1)
+            )
             q1_loss_v = self.MseLoss(q1_v.squeeze(), qref.detach())
             q2_loss_v = self.MseLoss(q2_v.squeeze(), qref.detach())
             q1_loss_v.backward()
@@ -308,11 +324,15 @@ class SACAgent(AgentWithSimplePolicy):
 
             # Actor
             self.policy_optimizer.zero_grad()
-            action_dist = self.cat_policy(states_v)
+            action_dist = self.cat_policy(states)
             acts_v = action_dist.sample()
             acts_v_one_hot = one_hot(acts_v, self.env.action_space.n)
-            q_out_v = self.q1(torch.cat([states_v, acts_v_one_hot], dim=1))
-            act_loss = -q_out_v.mean()
+            q_out_v1 = self.q1(torch.cat([states, acts_v_one_hot], dim=1))
+            q_out_v2 = self.q2(torch.cat([states, acts_v_one_hot], dim=1))
+            q_out_v = torch.min(q_out_v1, q_out_v2)
+            act_loss = (
+                -q_out_v.mean() + self.entr_coef * action_dist.log_prob(acts_v).mean()
+            )
             act_loss.backward()
             self.policy_optimizer.step()
             if self.writer is not None:
@@ -334,9 +354,7 @@ class SACAgent(AgentWithSimplePolicy):
         batch_size = trial.suggest_categorical("batch_size", [1, 4, 8, 16, 32])
         gamma = trial.suggest_categorical("gamma", [0.9, 0.95, 0.99])
         learning_rate = trial.suggest_loguniform("learning_rate", 1e-5, 1)
-
         entr_coef = trial.suggest_loguniform("entr_coef", 1e-8, 0.1)
-
         k_epochs = trial.suggest_categorical("k_epochs", [1, 5, 10, 20])
 
         return {

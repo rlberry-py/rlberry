@@ -14,7 +14,7 @@ lots of boring things to implement*: run our agents in parallel, average and plo
 optimize hyperparameters, compare to baselines, create tricky environments etc etc!
 
 rlberry_ **is here to make your life easier** by doing all these things with a few lines of code,
-so that you can spend most of your time developing agents. **Check our** :ref:`quickstart`
+so that you can spend most of your time developing agents. **Check our** :ref:`the quickstart<quick_start>`
 
 
 
@@ -25,7 +25,6 @@ In addition, rlberry_:
 * Provides a set of **benchmark environments**, very useful to debug and challenge your algorithms;
 * Handles all random seeds for you, ensuring **reproducibility** of your results;
 * Is **fully compatible with** several commonly used RL libraries like `OpenAI gym <https://gym.openai.com/>`_ and `Stable Baselines <https://stable-baselines.readthedocs.io/en/master/>`_.
-
 
 
 Compatibility with External Libraries
