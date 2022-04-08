@@ -7,7 +7,9 @@ from pathlib import Path
 from datetime import datetime
 import pickle
 from rlberry.manager import AgentManager
-
+from scipy import stats
+import warnings
+import itertools
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +21,7 @@ def evaluate_agents(
     show=True,
     plot=True,
     sns_kwargs=None,
+    test_equality=True,
 ):
     """
     Evaluate and compare each of the agents in agent_manager_list.
@@ -31,11 +34,14 @@ def evaluate_agents(
     fignum: string or int
         Identifier of plot figure.
     show: bool
-        If true, calls plt.show().
+        If True, calls plt.show().
     plot: bool
-        If false, do not plot.
+        If False, do not plot.
     sns_kwargs:
         Extra parameters for sns.boxplot
+    test_equality: bool
+        if True, use brunner munzel test with Bonferroni correction to test at 95%
+        the equality of the error distributions for the different agents.
 
     Returns
     -------
@@ -81,6 +87,26 @@ def evaluate_agents(
     for agent_id, out in zip(unique_ids, eval_outputs):
         data[agent_id] = out
     output = pd.DataFrame(data)
+
+    # Test that enough sample were used
+    if test_equality:
+        couple_agents = list(itertools.combinations(list(output.columns), 2))
+        alpha = 0.05 / len(couple_agents)  # level of test with Bonferroni correction.
+        for agent1, agent2 in couple_agents:
+            with warnings.catch_warnings():
+                warnings.simplefilter(
+                    "ignore"
+                )  # supress user warning that sample size is too small
+                t, p_val = stats.wilcoxon(output[agent1], output[agent2])
+            if p_val > alpha:
+                logger.info(
+                    "It is statistically difficult to differentiate between "
+                    + agent1
+                    + " and "
+                    + agent2
+                    + ". Either they have same evaluation"
+                    + " or n_simulations was too small"
+                )
 
     # plot
     if plot:
@@ -208,6 +234,7 @@ def read_writer_data(data_source, tag, preprocess_func=None):
                     # add column
                     data_list.append(processed_df)
     all_writer_data = pd.concat(data_list, ignore_index=True)
+
     return all_writer_data
 
 
