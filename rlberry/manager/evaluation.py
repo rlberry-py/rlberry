@@ -89,7 +89,7 @@ def evaluate_agents(
     output = pd.DataFrame(data)
 
     # Test that enough sample were used
-    if test_equality:
+    if test_equality and (len(output.columns) > 1):
         couple_agents = list(itertools.combinations(list(output.columns), 2))
         alpha = 0.05 / len(couple_agents)  # level of test with Bonferroni correction.
         for agent1, agent2 in couple_agents:
