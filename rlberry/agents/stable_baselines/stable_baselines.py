@@ -177,6 +177,8 @@ class StableBaselinesAgent(AgentWithSimplePolicy):
         # Remove the wrapped algorithm if necessary and save the agent
         if not dill.pickles(self.wrapped):
             self.wrapped = None
+        print("environment is ", self.env)
+
         return super(StableBaselinesAgent, self).save(filename)
 
     @classmethod
@@ -187,7 +189,8 @@ class StableBaselinesAgent(AgentWithSimplePolicy):
         # Load the wrapped RL algorithm if necessary
         if agent.wrapped is None:
             sb3_file = Path(filename).with_suffix(".zip")
-            agent.wrapped = agent.algo_cls.load(sb3_file)
+            agent.wrapped = agent.algo_cls.load(sb3_file, env=agent.env)
+        print("environment is ", agent.env)
         return agent
 
     def fit(

@@ -8,6 +8,7 @@ from rlberry.utils.check_agent import (
     check_agent_manager,
     check_seeding_agent,
     check_save_load,
+    check_fit_additive,
 )
 
 
@@ -23,6 +24,7 @@ def _sb3_check_rl_agent(agent_cls, env, init_kwargs=None):
     check_agent_manager(agent_cls, env, init_kwargs=init_kwargs)
     check_seeding_agent(agent_cls, env, init_kwargs=init_kwargs)
     check_save_load(agent_cls, env, init_kwargs=init_kwargs)
+    check_fit_additive(agent_cls, env, init_kwargs=init_kwargs)
 
 
 def test_sb3_agent():
