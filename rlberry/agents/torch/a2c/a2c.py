@@ -283,5 +283,5 @@ class A2CAgent(AgentWithSimplePolicy):
             "batch_size": batch_size,
             "gamma": gamma,
             "learning_rate": learning_rate,
-            "entr_coef": entr_coef
+            "entr_coef": entr_coef,
         }
