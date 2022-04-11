@@ -17,6 +17,7 @@ def test_a2c():
         (env_ctor, env_kwargs),
         fit_budget=int(2),
         eval_kwargs=dict(eval_horizon=2),
+        init_kwargs=dict(horizon=2),
         n_fit=1,
         agent_name="A2C_rlberry_" + env,
     )
@@ -36,6 +37,7 @@ def test_a2c():
         (env_ctor, env_kwargs),
         fit_budget=int(2),
         eval_kwargs=dict(eval_horizon=2),
+        init_kwargs=dict(horizon=2),
         n_fit=1,
         agent_name="A2C_rlberry_" + env,
     )
@@ -53,6 +55,7 @@ def test_a2c():
         (env_ctor, env_kwargs),
         fit_budget=int(2),
         eval_kwargs=dict(eval_horizon=2),
+        init_kwargs=dict(horizon=2),
         n_fit=1,
         agent_name="A2C_rlberry_" + "PBall2D",
     )
