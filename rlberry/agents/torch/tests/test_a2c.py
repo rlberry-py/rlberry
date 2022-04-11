@@ -16,8 +16,8 @@ def test_a2c():
     a2crlberry_stats = AgentManager(
         A2CAgent,
         (env_ctor, env_kwargs),
-        fit_budget=int(2e3),
-        eval_kwargs=dict(eval_horizon = 200),
+        fit_budget=int(2),
+        eval_kwargs=dict(eval_horizon = 2),
         n_fit=1,
         agent_name = "A2C_rlberry_" + env
         )
@@ -25,7 +25,7 @@ def test_a2c():
     a2crlberry_stats.fit()
 
 
-    output = evaluate_agents([a2crlberry_stats], n_simulations=100)
+    output = evaluate_agents([a2crlberry_stats], n_simulations=2)
     a2crlberry_stats.clear_output_dir()
 
     env = "Acrobot-v1"
@@ -36,8 +36,8 @@ def test_a2c():
     a2crlberry_stats = AgentManager(
         A2CAgent,
         (env_ctor, env_kwargs),
-        fit_budget=int(1e3),
-        eval_kwargs=dict(eval_horizon = 200),
+        fit_budget=int(2),
+        eval_kwargs=dict(eval_horizon = 2),
         n_fit=1,
         agent_name = "A2C_rlberry_" + env
         )
@@ -45,7 +45,7 @@ def test_a2c():
     a2crlberry_stats.fit()
 
 
-    output = evaluate_agents([a2crlberry_stats], n_simulations=100)
+    output = evaluate_agents([a2crlberry_stats], n_simulations=2)
     a2crlberry_stats.clear_output_dir()
 
     env_ctor = PBall2D
@@ -54,8 +54,8 @@ def test_a2c():
     a2crlberry_stats = AgentManager(
         A2CAgent,
         (env_ctor, env_kwargs),
-        fit_budget=int(1e1),
-        eval_kwargs= dict(eval_horizon = 200),
+        fit_budget=int(2),
+        eval_kwargs= dict(eval_horizon = 2),
         n_fit=1,
         agent_name = "A2C_rlberry_" + "PBall2D"
         )
@@ -63,7 +63,7 @@ def test_a2c():
     a2crlberry_stats.fit()
 
 
-    output = evaluate_agents([a2crlberry_stats], n_simulations=100)
+    output = evaluate_agents([a2crlberry_stats], n_simulations=2)
     a2crlberry_stats.clear_output_dir()
 
 
