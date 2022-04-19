@@ -27,14 +27,6 @@ In addition, rlberry_:
 * Is **fully compatible with** several commonly used RL libraries like `OpenAI gym <https://gym.openai.com/>`_ and `Stable Baselines <https://stable-baselines.readthedocs.io/en/master/>`_.
 
 
-Compatibility with External Libraries
-=====================================
-
-We provide examples to show you how to use rlberry_ with:
-
-- :ref:`OpenAI Gym <gym>`;
-- :ref:`Stable Baselines <stable_baselines>`.
-
 
 Seeding & Reproducibility
 ==========================

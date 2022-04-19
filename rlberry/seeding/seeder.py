@@ -1,4 +1,6 @@
 from numpy.random import SeedSequence, default_rng
+import torch
+import numpy as np
 
 
 class Seeder:
@@ -41,6 +43,11 @@ class Seeder:
             seed_seq = seed_seq
         elif isinstance(seed_seq, Seeder):
             seed_seq = seed_seq.seed_seq
+        elif isinstance(seed_seq, str):
+            torch_seed = (
+                torch.get_rng_state()
+            )  # tensor of int of size 5056 describing random state
+            seed_seq = SeedSequence(np.array(torch_seed))
         else:  # integer
             seed_seq = SeedSequence(seed_seq)
 
@@ -71,6 +78,11 @@ class Seeder:
         # if Seeder, get Seeder.seed_seq
         elif isinstance(seed_seq, Seeder):
             seed_seq = seed_seq.seed_seq
+        elif isinstance(seed_seq, str):
+            torch_seed = (
+                torch.get_rng_state()
+            )  # tensor of int of size 5056 describing random state
+            seed_seq = SeedSequence(np.array(torch_seed))
         # if integer, new SeedSequence
         else:
             seed_seq = SeedSequence(seed_seq)

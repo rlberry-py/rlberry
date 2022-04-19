@@ -3,7 +3,7 @@ from copy import deepcopy
 from pathlib import Path
 
 import rlberry
-from rlberry.seeding import safe_reseed, set_external_seed
+from rlberry.seeding import safe_reseed
 from rlberry.seeding import Seeder
 from rlberry import metadata_utils
 
@@ -1005,7 +1005,7 @@ def _fit_worker(args):
     ) = args
 
     # reseed external libraries
-    set_external_seed(seeder)
+    # set_external_seed(seeder)
 
     # logging level in thread
     configure_logging(worker_logging_level)
