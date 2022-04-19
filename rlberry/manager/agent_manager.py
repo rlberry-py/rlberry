@@ -222,6 +222,8 @@ class AgentManager:
         require different parameters. If the same parameter is defined by
         ``init_kwargs`` and ``init_kwargs_per_instance``, the value given by
         ``init_kwargs_per_instance`` will be used.
+        Attention: parameters that are passed individually to each agent instance
+        cannot be optimized in the method optimize_hyperparams().
 
 
     Attributes
@@ -470,14 +472,21 @@ class AgentManager:
             ]
         return []
 
-    def eval_agents(self, n_simulations: Optional[int] = None) -> list:
+    def eval_agents(
+        self,
+        n_simulations: Optional[int] = None,
+        eval_kwargs: Optional[dict] = None,
+    ) -> list:
         """
         Call :meth:`eval` method in the managed agents and returns a list with the results.
 
         Parameters
         ----------
-        n_simulations : int
+        n_simulations : int, optional
             Total number of agent evaluations. If None, set to 2*(number of agents)
+        eval_kwargs : dict, optional
+            Arguments to be sent to the .eval() method of each trained instance.
+            If None, set to self.eval_kwargs.
 
         Returns
         -------
@@ -485,6 +494,7 @@ class AgentManager:
             list of length ``n_simulations`` containing the outputs
             of :meth:`~rlberry.agents.agent.Agent.eval`.
         """
+        eval_kwargs = eval_kwargs or self.eval_kwargs
         if not n_simulations:
             n_simulations = 2 * self.n_fit
         values = []
@@ -498,7 +508,7 @@ class AgentManager:
                     " Returning []."
                 )
                 return []
-            values.append(agent.eval(**self.eval_kwargs))
+            values.append(agent.eval(**eval_kwargs))
             logger.info(f"[eval]... simulation {ii + 1}/{n_simulations}")
         return values
 
@@ -776,6 +786,7 @@ class AgentManager:
         fit_fraction=1.0,
         sampler_kwargs=None,
         disable_evaluation_writers=True,
+        custom_eval_function=None,
     ):
         """Run hyperparameter optimization and updates init_kwargs with the best hyperparameters found.
 
@@ -831,6 +842,10 @@ class AgentManager:
             kwargs for evaluation_function
         disable_evaluation_writers : bool, default: True
             If true, disable writers of agents used in the hyperparameter evaluation.
+        custom_eval_function : Callable
+            Takes as input a list of trained agents and output a scalar.
+            If given, the value of custom_eval_funct(trained_agents) is
+            optimized instead of mean([agent.eval() for agent in trained_agents]).
 
         Returns
         -------
@@ -916,6 +931,8 @@ class AgentManager:
             temp_dir=TEMP_DIR,  # TEMP_DIR
             disable_evaluation_writers=disable_evaluation_writers,
             fit_fraction=fit_fraction,
+            init_kwargs_per_instance=self.init_kwargs_per_instance,
+            custom_eval_function=custom_eval_function,
         )
 
         try:
@@ -1071,6 +1088,8 @@ def _optuna_objective(
     temp_dir,  # TEMP_DIR
     disable_evaluation_writers,
     fit_fraction,
+    init_kwargs_per_instance,
+    custom_eval_function,
 ):
     kwargs = deepcopy(base_init_kwargs)
 
@@ -1096,6 +1115,7 @@ def _optuna_objective(
         output_dir=temp_dir,
         enable_tensorboard=False,
         outdir_id_style="unique",
+        init_kwargs_per_instance=init_kwargs_per_instance,
     )
 
     if disable_evaluation_writers:
@@ -1112,7 +1132,10 @@ def _optuna_objective(
             #
             params_stats.fit(int(fit_budget * fit_fraction))
             # Evaluate params
-            eval_value = np.mean(params_stats.eval_agents())
+            if not custom_eval_function:
+                eval_value = np.mean(params_stats.eval_agents())
+            else:
+                eval_value = custom_eval_function(params_stats.get_agent_instances())
 
             # Report intermediate objective value
             trial.report(eval_value, step)
@@ -1134,7 +1157,10 @@ def _optuna_objective(
         params_stats.fit()
 
         # Evaluate params
-        eval_value = np.mean(params_stats.eval_agents())
+        if not custom_eval_function:
+            eval_value = np.mean(params_stats.eval_agents())
+        else:
+            eval_value = custom_eval_function(params_stats.get_agent_instances())
 
     # clear aux data
     params_stats.clear_output_dir()
