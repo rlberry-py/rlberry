@@ -233,7 +233,7 @@ class AgentManager:
     def __init__(
         self,
         agent_class,
-        train_env,
+        train_env=(None, None),
         fit_budget=None,
         eval_env=None,
         init_kwargs=None,

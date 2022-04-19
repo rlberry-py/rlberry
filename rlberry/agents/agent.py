@@ -74,7 +74,7 @@ class Agent(ABC):
 
     def __init__(
         self,
-        env: types.Env,
+        env: types.Env = None,
         eval_env: Optional[types.Env] = None,
         copy_env: bool = True,
         seeder: Optional[types.Seed] = None,
