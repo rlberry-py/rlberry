@@ -1,7 +1,3 @@
-import logging
-
-logger = logging.getLogger(__name__)
-
 # Interfaces
 from .agent import Agent
 from .agent import AgentWithSimplePolicy
@@ -17,10 +13,3 @@ from .optql import OptQLAgent
 from .psrl import PSRLAgent
 from .rlsvi import RLSVIAgent
 from .ucbvi import UCBVIAgent
-
-# Importing tools
-try:
-    from .stable_baselines import StableBaselinesAgent
-except ModuleNotFoundError:
-    logger.warn("stable_baselines3 not installed. Skipping StableBaselinesAgent.")
-    pass
