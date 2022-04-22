@@ -13,6 +13,3 @@ from .optql import OptQLAgent
 from .psrl import PSRLAgent
 from .rlsvi import RLSVIAgent
 from .ucbvi import UCBVIAgent
-
-# Importing tools
-from .stable_baselines import StableBaselinesAgent

@@ -42,7 +42,7 @@ Basic Agents
    :toctree: generated/
    :template: class.rst
 
-   agents.StableBaselinesAgent
+   agents.stable_baselines.StableBaselinesAgent
 
 
 Torch Agents (experimental)
