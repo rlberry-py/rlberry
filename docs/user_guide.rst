@@ -49,6 +49,15 @@ Agents, hyperparameter optimization and experiment setup
    basics/seeding.rst
 
 
+Compatibility with External Libraries
+=====================================
+
+We provide examples to show you how to use rlberry_ with:
+
+- :ref:`OpenAI Gym <gym>`;
+- :ref:`Stable Baselines <stable_baselines>`.
+
+
 How to contribute?
 ==================
 

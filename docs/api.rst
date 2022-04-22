@@ -36,6 +36,15 @@ Basic Agents
    agents.PSRLAgent
 
 
+ Importation tools
+-----------------------
+.. autosummary::
+   :toctree: generated/
+   :template: class.rst
+
+   agents.StableBaselinesAgent
+
+
 Torch Agents (experimental)
 ---------------------------
 
@@ -109,7 +118,6 @@ Benchmark Environments
     envs.finite.GridWorld
 
 
-
 Importation tools
 -----------------
 
@@ -118,7 +126,6 @@ Importation tools
    :template: function.rst
 
     envs.gym_make
-
 
 
 Seeding
@@ -169,7 +176,7 @@ Typing
    types.Env
 
 
-Wrappers
+Environment Wrappers
 ====================
 
 .. autosummary::
