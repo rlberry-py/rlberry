@@ -143,16 +143,16 @@ def check_fit_additive(agent, env="continuous_state", init_kwargs=None):
     init_kwargs["seeder"] = SEED
     train_env = _make_env(env)
 
+    set_external_seed(SEED)
     agent1 = agent(train_env, **init_kwargs)
-    agent1.fit(3)
-    agent1.fit(3)
+    agent1.fit(10)
+    agent1.fit(10)
 
+    set_external_seed(SEED)
     agent2 = agent(train_env, **init_kwargs)
-    agent2.fit(6)
+    agent2.fit(20)
 
-    result = check_agents_almost_equal(
-        agent1.agent_handlers[0], agent2.agent_handlers[0]
-    )
+    result = check_agents_almost_equal(agent1, agent2)
 
     assert (
         result
