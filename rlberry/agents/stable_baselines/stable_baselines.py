@@ -3,10 +3,10 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Tuple, Type, Union
 
 import dill
+from stable_baselines3.common import utils
 import stable_baselines3.common.logger as sb_logging
 from stable_baselines3.common.base_class import BaseAlgorithm as SB3Algorithm
 from stable_baselines3.common.policies import BasePolicy as SB3Policy
-from stable_baselines3.common.utils import configure_logger, set_random_seed
 
 from rlberry import metadata_utils
 from rlberry import types
@@ -135,6 +135,7 @@ class StableBaselinesAgent(AgentWithSimplePolicy):
         )
         self._verbose = verbose
         self._tb_log = tensorboard_log
+        self._custom_logger = False
 
         # Remove rlberry's kwargs and add logging kwargs
         kwargs = {k: v for k, v in kwargs.items() if k not in self.__rlberry_kwargs}
@@ -147,7 +148,7 @@ class StableBaselinesAgent(AgentWithSimplePolicy):
         # Initialize the algorithm
         assert algo_cls is not None, "algo_cls must be provided"
         self.algo_cls = algo_cls
-        set_random_seed(seed)
+        utils.set_random_seed(seed)
         self.wrapped = algo_cls(policy, self.env, seed=seed, **kwargs)
 
     def set_logger(self, logger):
@@ -158,8 +159,10 @@ class StableBaselinesAgent(AgentWithSimplePolicy):
         logger: stable_baselines3.common.logger.Logger
             The logger to use.
         """
-        logger.output_formats.append(AgentWriter(self.writer))
+        if logger is not None:
+            logger.output_formats.append(AgentWriter(self.writer))
         self.wrapped.set_logger(logger)
+        self._custom_logger = True
 
     def reseed(self, seed_seq=None):
         """Reseed the agent."""
@@ -194,7 +197,7 @@ class StableBaselinesAgent(AgentWithSimplePolicy):
         self,
         budget: int,
         tb_log_name: Optional[str] = None,
-        reset_num_timesteps: bool = True,
+        reset_num_timesteps: bool = False,
         **kwargs,
     ):
         """Fit the agent.
@@ -214,14 +217,23 @@ class StableBaselinesAgent(AgentWithSimplePolicy):
         reset_num_timesteps: bool
             Whether to reset or not the :code: `num_timesteps` attribute
         """
-        if not self.wrapped._custom_logger:
+        # If a logger is not provided, use StableBaselines3's default logger
+        if not self._custom_logger:
             if tb_log_name is None:
                 tb_log_name = self.wrapped.__class__.__name__
-            sb_logger = configure_logger(
+            sb_logger = utils.configure_logger(
                 self._verbose, self._tb_log, tb_log_name, reset_num_timesteps
             )
-            self.set_logger(sb_logger)
-        self.wrapped.learn(total_timesteps=budget, **kwargs)
+            sb_logger.output_formats.append(AgentWriter(self.writer))
+            self.wrapped.set_logger(sb_logger)
+
+        # Fit the algorithm
+        self.wrapped.learn(
+            total_timesteps=budget,
+            tb_log_name=tb_log_name,
+            reset_num_timesteps=reset_num_timesteps,
+            **kwargs,
+        )
 
     def policy(self, observation, deterministic=True):
         """Get the policy for the given observation.
