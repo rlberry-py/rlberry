@@ -11,12 +11,12 @@ def test_sb3_agent():
     # Test only one algorithm per action space type
     check_rl_agent(
         StableBaselinesAgent,
-        env=(gym_make, {"id": "Pendulum-v0"}),
+        env=(gym_make, {"id": "Pendulum"}),
         init_kwargs={"algo_cls": A2C, "policy": "MlpPolicy", "verbose": 1},
     )
     check_rl_agent(
         StableBaselinesAgent,
-        env=(gym_make, {"id": "CartPole-v1"}),
+        env=(gym_make, {"id": "CartPole"}),
         init_kwargs={"algo_cls": A2C, "policy": "MlpPolicy", "verbose": 1},
     )
 
@@ -26,7 +26,7 @@ def test_sb3_tensorboard_log():
     with tempfile.TemporaryDirectory() as tmpdir:
         check_rl_agent(
             StableBaselinesAgent,
-            env=(gym_make, {"id": "Pendulum-v0"}),
+            env=(gym_make, {"id": "Pendulum"}),
             init_kwargs={
                 "algo_cls": A2C,
                 "policy": "MlpPolicy",
