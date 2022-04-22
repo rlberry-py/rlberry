@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger(__name__)
+
 # Interfaces
 from .agent import Agent
 from .agent import AgentWithSimplePolicy
@@ -15,4 +19,8 @@ from .rlsvi import RLSVIAgent
 from .ucbvi import UCBVIAgent
 
 # Importing tools
-from .stable_baselines import StableBaselinesAgent
+try:
+    from .stable_baselines import StableBaselinesAgent
+except ModuleNotFoundError:
+    logger.warn("stable_baselines3 not installed. Skipping StableBaselinesAgent.")
+    pass
