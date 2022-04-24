@@ -931,7 +931,9 @@ class AgentManager:
             temp_dir=TEMP_DIR,  # TEMP_DIR
             disable_evaluation_writers=disable_evaluation_writers,
             fit_fraction=fit_fraction,
-            init_kwargs_per_instance=self.init_kwargs_per_instance,
+            init_kwargs_per_instance=self.init_kwargs_per_instance[
+                :n_fit
+            ],  # init_kwargs_per_instance only for the first n_fit instances
             custom_eval_function=custom_eval_function,
         )
 

@@ -18,11 +18,16 @@ class DummyAgent(AgentWithSimplePolicy):
         self.fraction_fitted = 0.0
 
     def fit(self, budget, **kwargs):
-        del kwargs
+        del budget, kwargs
         self.fitted = True
         return None
 
+    def eval(self, **kwargs):
+        del kwargs
+        return 0
+
     def policy(self, observation):
+        del observation
         return 0
 
     @classmethod
@@ -33,7 +38,7 @@ class DummyAgent(AgentWithSimplePolicy):
 
 
 def _custom_eval_function(agents):
-    vals = [agent.eval() for agent in agents()]
+    vals = [agent.eval() for agent in agents]
     return np.mean(vals) - 0.1 * np.std(vals)
 
 
