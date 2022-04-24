@@ -31,7 +31,7 @@ class SimpleRegressionAgent(Agent):
         learning_rate=1e-3,
         batch_size=32,
         torch_device="cpu",
-        **kwargs
+        **kwargs,
     ):
         Agent.__init__(self, **kwargs)
         self.X_train, self.y_train = X[train_indices], y[train_indices]
@@ -40,9 +40,10 @@ class SimpleRegressionAgent(Agent):
         self.batch_size = batch_size
         self.device = choose_device(torch_device)
 
-        self.net = MultiLayerPerceptron(in_size=1, layer_sizes=(64, 64), out_size=1).to(self.device)
-        self.optimizer = torch.optim.Adam(
-            self.net.parameters(), lr=self.learning_rate)
+        self.net = MultiLayerPerceptron(in_size=1, layer_sizes=(64, 64), out_size=1).to(
+            self.device
+        )
+        self.optimizer = torch.optim.Adam(self.net.parameters(), lr=self.learning_rate)
         self.total_steps = 0
 
     def fit(self, budget: int, **kwargs):
@@ -62,12 +63,16 @@ class SimpleRegressionAgent(Agent):
 
             # log to writer (e.g. tensorboard)
             if self.writer:
-                self.writer.add_scalar("training_loss", loss.detach().cpu().item(), self.total_steps)
+                self.writer.add_scalar(
+                    "training_loss", loss.detach().cpu().item(), self.total_steps
+                )
 
                 # validation loss every few steps
                 if (self.total_steps % 50) == 0:
                     validation_loss = self.eval()
-                    self.writer.add_scalar("validation_loss", validation_loss, self.total_steps)
+                    self.writer.add_scalar(
+                        "validation_loss", validation_loss, self.total_steps
+                    )
 
     def eval(self, **kwargs):
         del kwargs
@@ -114,15 +119,16 @@ if __name__ == "__main__":
     )
     manager.fit()
 
-
     # Plot losses
     fig, axes = plt.subplots(1, 2)
     plot_writer_data(manager, tag="training_loss", show=False, ax=axes[0])
     plot_writer_data(manager, tag="validation_loss", show=False, ax=axes[1])
 
     # Path to tensorboard
-    print(f"To visualize tensorboard, run: \n"
-          f"   tensorboard --logdir {manager.tensorboard_dir}")
+    print(
+        f"To visualize tensorboard, run: \n"
+        f"   tensorboard --logdir {manager.tensorboard_dir}"
+    )
 
     # Visualize function learned by one instance
     plt.figure()
@@ -133,5 +139,3 @@ if __name__ == "__main__":
     plt.plot(X, y, ".", label="data", alpha=0.25)
     plt.legend()
     plt.show()
-
-    
