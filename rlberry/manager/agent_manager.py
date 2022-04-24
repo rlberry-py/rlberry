@@ -23,7 +23,7 @@ from rlberry.envs.utils import process_env
 from rlberry.utils.logging import configure_logging
 from rlberry.utils.writers import DefaultWriter
 from rlberry.manager.utils import create_database
-from typing import Optional, Tuple, Union
+from typing import List, Optional, Tuple, Union
 from rlberry import types
 
 
@@ -476,7 +476,7 @@ class AgentManager:
         self,
         n_simulations: Optional[int] = None,
         eval_kwargs: Optional[dict] = None,
-    ) -> list:
+    ) -> List[float]:
         """
         Call :meth:`eval` method in the managed agents and returns a list with the results.
 
