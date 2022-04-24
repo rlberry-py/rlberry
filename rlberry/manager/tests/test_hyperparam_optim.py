@@ -59,15 +59,15 @@ def test_hyperparam_optim_tpe():
 
 
 @pytest.mark.parametrize(
-    "parallelization, custom_eval_function",
+    "parallelization, custom_eval_function, fit_fraction",
     [
-        ("process", None),
-        ("thread", None),
-        ("process", _custom_eval_function),
-        ("thread", _custom_eval_function),
+        ("process", None, 1.0),
+        ("thread", None, 1.0),
+        ("process", _custom_eval_function, 1.0),
+        ("process", _custom_eval_function, 0.5),
     ],
 )
-def test_hyperparam_optim_random(parallelization, custom_eval_function):
+def test_hyperparam_optim_random(parallelization, custom_eval_function, fit_fraction):
     # Define train env
     train_env = (GridWorld, {})
 
@@ -88,6 +88,7 @@ def test_hyperparam_optim_random(parallelization, custom_eval_function):
         n_trials=5,
         optuna_parallelization=parallelization,
         custom_eval_function=custom_eval_function,
+        fit_fraction=fit_fraction,
     )
     stats_agent.clear_output_dir()
 
