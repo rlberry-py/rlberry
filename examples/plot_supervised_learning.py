@@ -1,11 +1,14 @@
 """ 
  ==============================
- Demo: demo_supervised_learning 
+ Using rlberry for supervised learning
  ==============================
 
- Using rlberry to solve a simple regression problem.
+ Using rlberry to tackle a simple regression problem: 
+ train a multi-layer perceptron (with PyTorch) to fit a function, 
+ run cross-validation splits in parallel using AgentManager.
 
- This example requires scikit-learn to be installed.
+ This example requires scikit-learn to be installed,
+ to define cross-validation splits.
 """
 
 import matplotlib.pyplot as plt
@@ -20,7 +23,7 @@ from sklearn.model_selection import KFold
 
 
 class SimpleRegressionAgent(Agent):
-    name = "simple-regression"
+    name = "mlp-regression"
 
     def __init__(
         self,
@@ -95,7 +98,7 @@ if __name__ == "__main__":
     y = np.cos(2 * np.pi * X) + 0.1 * rng.normal(size=(n_samples,))
 
     # Create indices for train-validation splits
-    n_splits = 4
+    n_splits = 3
     kf = KFold(n_splits=n_splits, random_state=None, shuffle=False)
     all_train_indices = []
     all_val_indices = []
@@ -111,7 +114,7 @@ if __name__ == "__main__":
         agent_class=SimpleRegressionAgent,
         n_fit=n_splits,
         max_workers=1,
-        parallelization="process",
+        parallelization="thread",
         fit_budget=1000,
         enable_tensorboard=True,
         init_kwargs=dict(X=X, y=y),
@@ -120,7 +123,7 @@ if __name__ == "__main__":
     manager.fit()
 
     # Plot losses
-    fig, axes = plt.subplots(1, 2)
+    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
     plot_writer_data(manager, tag="training_loss", show=False, ax=axes[0])
     plot_writer_data(manager, tag="validation_loss", show=False, ax=axes[1])
 
