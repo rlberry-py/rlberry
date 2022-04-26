@@ -58,7 +58,6 @@ class MirrorBandit(Model):
 
     Parameters
     ----------
-
     url_ids : list of int or None,
         list of ids used to select a subset of the url list provided in the source.
         if None, all the urls are selected (i.e. 8 arms bandits).
