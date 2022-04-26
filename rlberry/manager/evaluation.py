@@ -1,13 +1,12 @@
 import logging
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import seaborn as sns
 from pathlib import Path
 from datetime import datetime
 import pickle
-from copy import deepcopy
-
-from rlberry import metadata_utils
+from rlberry.manager import AgentManager
 
 
 logger = logging.getLogger(__name__)
@@ -96,19 +95,25 @@ def evaluate_agents(
     return output
 
 
-def read_writer_data(agent_manager, tag, preprocess_func=None):
+def read_writer_data(data_source, tag, preprocess_func=None):
     """
-    Given a list of AgentManager, read data (corresponding to info) obtained in each episode.
+    Given a list of AgentManager or a folder, read data (corresponding to info) obtained in each episode.
     The dictionary returned by agents' .fit() method must contain a key equal to `info`.
-
-    This function can be called with agents that have been trained beforhand and
-    which have been saved in `agent_manager.output_dir`. The last session for each
-    individual agent will then  be loaded from the pickle files in `agent_manager.output_dir`.
 
     Parameters
     ----------
-    agent_manager : AgentManager, or list of AgentManager or directory
-        If AgentManager or list of AgentManager, load data from `agent_manager.output_dir`.
+    data_source : :class:`~rlberry.manager.AgentManager`, or list of :class:`~rlberry.manager.AgentManager` or str or list of str
+        - If AgentManager or list of AgentManager, load data from it (the agents must be fitted).
+
+        - If str, the string must be the string path of a directory,  each
+        subdirectory of this directory must contain pickle files.
+        Load the data from the directory of the latest experiment in date.
+        This str should be equal to the value of the `output_dir` parameter in
+            :class:`~rlberry.manager.AgentManager`.
+
+        - If list of str, each string must be a directory containing pickle files.
+            Load the data from these pickle files.
+
         Note: the agent's save function must save its writer at the key `_writer`.
         This is the default for rlberry agents.
 
@@ -128,10 +133,28 @@ def read_writer_data(agent_manager, tag, preprocess_func=None):
     -------
     Pandas DataFrame with data from writers.
     """
+    input_dir = None
 
-    agent_manager_list = deepcopy(agent_manager)
-    if not isinstance(agent_manager_list, list):
-        agent_manager_list = [agent_manager_list]
+    if not isinstance(data_source, list):
+        if isinstance(data_source, AgentManager):
+            data_source = [data_source]
+        else:
+            take_last_date = True
+    else:
+        if not isinstance(data_source[0], AgentManager):
+            take_last_date = False
+            for dir in data_source:
+                files = list(Path(dir).iterdir())
+                if len(files) == 0:
+                    raise RuntimeError(
+                        "One of the files in data_source does not contain pickle files"
+                    )
+
+    if isinstance(data_source[0], AgentManager):
+        agent_manager_list = data_source
+    else:
+        input_dir = data_source
+
     if isinstance(tag, str):
         tags = [tag]
         preprocess_funcs = [preprocess_func or (lambda x: x)]
@@ -144,64 +167,32 @@ def read_writer_data(agent_manager, tag, preprocess_func=None):
             preprocess_funcs = preprocess_func
 
     writer_datas = []
-
-    for agent in agent_manager_list:
-        if "output_dir" in agent.__dict__:
-            # test if output_dir has been defined in agent manager
-            input_dir = agent.output_dir
+    if input_dir is not None:
+        if take_last_date:
+            subdirs = list((Path(input_dir) / "manager_data").iterdir())
+            agent_name_list = [str(p.stem).split("_")[0] for p in subdirs]
+            for name in agent_name_list:
+                filename, dir_name = _get_last_xp(input_dir, name)
+                writer_datas.append(_load_data(filename, dir_name))
         else:
-            input_dir = None
-        if input_dir is None:
-            # if input_dir has not been defined, use rlberry default
-            input_dir = metadata_utils.RLBERRY_TEMP_DATA_DIR
-        dir_name = Path(input_dir) / "manager_data"
+            agent_name_list = [str(Path(p).stem).split("_")[0] for p in input_dir]
+            agent_dirs = [str(Path(p).parent).split("_")[0] for p in input_dir]
 
-        writer_datas += [{}]
-        name = agent.agent_name
-        logger.info("[read_writer_data]: loading data for " + name)
-
-        # list all of the experiments for this particular agent
-        agent_xp = list(dir_name.glob(name + "*"))
-
-        # get the times at which the experiment have been made
-        times = [str(p).split("_")[-2] for p in agent_xp]
-        days = [str(p).split("_")[-3] for p in agent_xp]
-        datetimes = [
-            datetime.strptime(days[i] + "_" + times[i], "%Y-%m-%d_%H-%M-%S")
-            for i in range(len(days))
-        ]
-
-        if len(datetimes) == 0:
-            raise ValueError(
-                'input dir not found, verify that the agent are trained and that AgentManager.outdir_id_style="timestamp"'
-            )
-
-        # get the date of last experiment
-        max_date = max(datetimes)
-        agent_folder = name + "_" + datetime.strftime(max_date, "%Y-%m-%d_%H-%M-%S")
-        agent.agent_handlers = []
-
-        # list all the fits of this experiment
-        fname = list(dir_name.glob(agent_folder + "*"))[0]
-        for ii in range(agent.n_fit):
-            # For each fit, load the writer data
-            handler_name = fname / Path(f"agent_handlers/idx_{ii}.pickle")
-            with handler_name.open("rb") as ff:
-                tmp_dict = pickle.load(ff)
-                writer_datas[-1][str(ii)] = tmp_dict.get("_writer").data
-
+            for id_f, filename in enumerate(input_dir):
+                writer_datas.append(_load_data(filename, agent_dirs[id_f]))
+    else:
+        for manager in agent_manager_list:
+            # Important: since manager can be a RemoteAgentManager,
+            # it is important to avoid repeated accesses to its methods and properties.
+            # That is why writer_data is taken from the manager instance only in
+            # the line below.
+            writer_datas.append(manager.get_writer_data())
+        agent_name_list = [manager.agent_name for manager in agent_manager_list]
     # preprocess agent stats
     data_list = []
-    for id_agent, manager in enumerate(agent_manager_list):
-        # Important: since manager can be a RemoteAgentManager,
-        # it is important to avoid repeated accesses to its methods and properties.
-        # That is why writer_data is taken from the manager instance only in
-        # the line below.
-        if input_dir is not None:
-            writer_data = writer_datas[id_agent]
-        else:
-            writer_data = manager.get_writer_data()
-        agent_name = manager.agent_name
+
+    for id_agent, agent_name in enumerate(agent_name_list):
+        writer_data = writer_datas[id_agent]
         if writer_data is not None:
             for idx in writer_data:
                 for id_tag, tag in enumerate(tags):
@@ -216,13 +207,63 @@ def read_writer_data(agent_manager, tag, preprocess_func=None):
                     processed_df["n_simu"] = idx
                     # add column
                     data_list.append(processed_df)
-
     all_writer_data = pd.concat(data_list, ignore_index=True)
     return all_writer_data
 
 
+def _get_last_xp(input_dir, name):
+
+    dir_name = Path(input_dir) / "manager_data"
+
+    # list all of the experiments for this particular agent
+    agent_xp = list(dir_name.glob(name + "*"))
+
+    # get the times at which the experiment have been made
+    times = [str(p).split("_")[-2] for p in agent_xp]
+    days = [str(p).split("_")[-3] for p in agent_xp]
+    hashs = [str(p).split("_")[-1] for p in agent_xp]
+    datetimes = [
+        datetime.strptime(days[i] + "_" + times[i], "%Y-%m-%d_%H-%M-%S")
+        for i in range(len(days))
+    ]
+
+    if len(datetimes) == 0:
+        raise ValueError(
+            "input dir not found, verify that the agent are trained "
+            'and that AgentManager.outdir_id_style="timestamp"'
+        )
+
+    # get the date of last experiment
+    max_date = np.max(datetimes)
+    id_max = np.argmax(datetimes)
+    hash = hashs[id_max]
+    agent_folder = (
+        name + "_" + datetime.strftime(max_date, "%Y-%m-%d_%H-%M-%S") + "_" + hash
+    )
+    return agent_folder, dir_name
+
+
+def _load_data(agent_folder, dir_name):
+    writer_data = {}
+
+    agent_dir = Path(dir_name) / agent_folder
+    # list all the fits of this experiment
+    exp_files = (agent_dir / Path("agent_handlers")).iterdir()
+    nfit = len(list(exp_files))
+    if nfit == 0:
+        raise ValueError("Folders do not contain pickle files")
+
+    for ii in range(nfit):
+        # For each fit, load the writer data
+        handler_name = agent_dir / Path(f"agent_handlers/idx_{ii}.pickle")
+        with handler_name.open("rb") as ff:
+            tmp_dict = pickle.load(ff)
+            writer_data[str(ii)] = tmp_dict.get("_writer").data
+    return writer_data
+
+
 def plot_writer_data(
-    agent_manager,
+    data_source,
     tag,
     xtag=None,
     ax=None,
@@ -233,20 +274,24 @@ def plot_writer_data(
     sns_kwargs=None,
 ):
     """
-    Given a list of AgentManager, plot data (corresponding to info) obtained in each episode.
+    Given a list of AgentManager or a folder, plot data (corresponding to info) obtained in each episode.
     The dictionary returned by agents' .fit() method must contain a key equal to `info`.
-    If n_fit > 1, the mean plus/minus the std are plotted.
-
-    This function can be called with agents that have been trained beforhand and
-    which have been saved in `agent_manager.output_dir`. The last session for each
-    individual agent will then  be loaded from the pickle files in
-    `agent_manager.output_dir` and plotted.
 
     Parameters
     ----------
-    agent_manager : AgentManager, or list of AgentManager
-        If AgentManager or list of AgentManager, load data from `agent_manager.output_dir`.
-        Note: the agent's save function must save its writer at the key "_writer".
+    data_source : :class:`~rlberry.manager.AgentManager`, or list of :class:`~rlberry.manager.AgentManager` or str or list of str
+        - If AgentManager or list of AgentManager, load data from it (the agents must be fitted).
+
+        - If str, the string must be the string path of a directory,  each
+        subdirectory of this directory must contain pickle files.
+        load the data from the directory of the latest experiment in date.
+        This str should be equal to the value of the `output_dir` parameter in
+        :class:`~rlberry.manager.AgentManager`.
+
+        - If list of str, each string must be a directory containing pickle files
+        load the data from these pickle files.
+
+        Note: the agent's save function must save its writer at the key `_writer`.
         This is the default for rlberry agents.
     tag : str
         Tag of data to plot on y-axis.
@@ -279,7 +324,7 @@ def plot_writer_data(
         ylabel = "value"
     else:
         ylabel = tag
-    processed_df = read_writer_data(agent_manager, tag, preprocess_func)
+    processed_df = read_writer_data(data_source, tag, preprocess_func)
     # add column with xtag, if given
     if xtag is not None:
         df_xtag = pd.DataFrame(processed_df[processed_df["tag"] == xtag])

@@ -288,6 +288,17 @@ class UCBVIAgent(AgentWithSimplePolicy):
         return episode_rewards
 
     def fit(self, budget: int, **kwargs):
+        """
+
+        Train the agent using the provided environment.
+
+        Parameters
+        ----------
+        budget: int
+            number of episodes
+        **kwargs
+            Extra arguments. Not used for this agent.
+        """
         del kwargs
         n_episodes_to_run = budget
         count = 0

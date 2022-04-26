@@ -140,22 +140,19 @@ def check_fit_additive(agent, env="continuous_state", init_kwargs=None):
     """
     if init_kwargs is None:
         init_kwargs = {}
+    init_kwargs["seeder"] = SEED
     train_env = _make_env(env)
 
-    agent1 = AgentManager(
-        agent, train_env, fit_budget=5, n_fit=1, seed=SEED, init_kwargs=init_kwargs
-    )
-    agent1.fit(3)
-    agent1.fit(3)
+    set_external_seed(SEED)
+    agent1 = agent(train_env, **init_kwargs)
+    agent1.fit(10)
+    agent1.fit(10)
 
-    agent2 = AgentManager(
-        agent, train_env, fit_budget=5, n_fit=1, seed=SEED, init_kwargs=init_kwargs
-    )
-    agent2.fit(6)
+    set_external_seed(SEED)
+    agent2 = agent(train_env, **init_kwargs)
+    agent2.fit(20)
 
-    result = check_agents_almost_equal(
-        agent1.agent_handlers[0], agent2.agent_handlers[0]
-    )
+    result = check_agents_almost_equal(agent1, agent2)
 
     assert (
         result
@@ -252,3 +249,32 @@ def check_rl_agent(agent, env="continuous_state", init_kwargs=None):
     check_seeding_agent(agent, env, init_kwargs=init_kwargs)  # check reproducibility
     check_fit_additive(agent, env, init_kwargs=init_kwargs)
     check_save_load(agent, env, init_kwargs=init_kwargs)
+
+
+def check_rlberry_agent(agent, env="continuous_state", init_kwargs=None):
+    """
+    Companion to check_rl_agent, contains additional tests. It is not mandatory
+    for an agent to satisfy this check but satisfying this check give access to
+    additional features in rlberry.
+
+    Parameters
+    ----------
+    agent: rlberry agent module
+        Agent class to test.
+    env: tuple (env_ctor, env_kwargs) or str in {"continuous_state", "discrete_state"}, default="continuous_state"
+        if tuple, env is the constructor and keywords of the env on which to test.
+        if str in {"continuous_state", "discrete_state"}, we use a default Benchmark environment.
+    init_kwargs : dict
+        Arguments required by the agent's constructor.
+
+    Examples
+    --------
+    >>> from rlberry.agents import UCBVIAgent
+    >>> from rlberry.utils import check_rl_agent
+    >>> check_rl_agent(UCBVIAgent) #
+    """
+    agent = _fit_agent_manager(agent, env, init_kwargs=init_kwargs).agent_handlers[0]
+    try:
+        params = agent.get_params()
+    except Exception:
+        raise RuntimeError("Fail to call get_params on the agent.")

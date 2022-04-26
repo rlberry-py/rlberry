@@ -76,6 +76,11 @@ class NRoom(GridWorld):
         self.reward_free = reward_free
         self.array_observation = array_observation
         self.nrooms = nrooms
+        self.room_size = room_size
+        self.success_probability = success_probability
+        self.remove_walls = remove_walls
+        self.initial_state_distribution = initial_state_distribution
+        self.include_traps = include_traps
 
         # Max number of rooms/columns per row
         self.max_rooms_per_row = 5

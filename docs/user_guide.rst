@@ -23,7 +23,7 @@ Installation
 
 .. toctree::
    :maxdepth: 2
-   
+
    installation.rst
 
 
@@ -32,7 +32,7 @@ Quick start: setup an experiment and evaluate different agents
 
 .. toctree::
    :maxdepth: 2
-   
+
    basics/quick_start.rst
 
 
@@ -47,6 +47,15 @@ Agents, hyperparameter optimization and experiment setup
    basics/compare_agents.rst
    basics/experiment_setup.rst
    basics/seeding.rst
+
+
+Compatibility with External Libraries
+=====================================
+
+We provide examples to show you how to use rlberry_ with:
+
+- :ref:`OpenAI Gym <gym>`;
+- :ref:`Stable Baselines <stable_baselines>`.
 
 
 How to contribute?

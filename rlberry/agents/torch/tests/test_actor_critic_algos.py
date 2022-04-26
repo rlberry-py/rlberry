@@ -19,7 +19,6 @@ def test_a2c_agent():
         horizon=horizon,
         gamma=0.99,
         learning_rate=0.001,
-        k_epochs=4,
         use_bonus=True,
         uncertainty_estimator_kwargs=dict(
             uncertainty_estimator_fn=uncertainty_estimator_fn, bonus_scale_factor=1.0
@@ -39,7 +38,6 @@ def test_a2c_agent_partial_fit():
         horizon=horizon,
         gamma=0.99,
         learning_rate=0.001,
-        k_epochs=4,
         use_bonus=False,
     )
 

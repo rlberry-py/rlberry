@@ -32,7 +32,7 @@ Install the development version to test new features.
 
 .. code:: bash
 
-    $ pip install git+https://github.com/rlberry-py/rlberry.git@dev#egg=rlberry[default]
+    $ pip install git+https://github.com/rlberry-py/rlberry.git#egg=rlberry[default]
 
 
 Previous versions

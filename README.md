@@ -25,9 +25,6 @@
    <a href="https://codecov.io/gh/rlberry-py/rlberry">
       <img alt="codecov" src="https://codecov.io/gh/rlberry-py/rlberry/branch/main/graph/badge.svg?token=TIFP7RUD75">
      </a>
-   <a href="https://dev.azure.com/timotheemathieu/timotheemathieu/_build?definitionId=2">
-      <img alt="azure" src="https://dev.azure.com/timotheemathieu/timotheemathieu/_apis/build/status/rlberry-py.rlberry?branchName=refs%2Fpull%2F119%2Fmerge">
-   </a>
 </p>
 
 <p align="center">
