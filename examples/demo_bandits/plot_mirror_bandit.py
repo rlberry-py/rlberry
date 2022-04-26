@@ -165,6 +165,8 @@ actions = read_writer_data([agent], tag="action")["value"]
 import matplotlib.pyplot as plt
 
 plt.boxplot([-rewards[actions == a] for a in range(6)])
+plt.xlabel('server')
+plt.ylabel("waiting time (in s)")
 plt.show()
 
 print("optimal action is ", agent.agent_handlers[0].optimal_action + 1)
