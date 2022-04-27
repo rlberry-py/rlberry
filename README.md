@@ -10,6 +10,9 @@
 
 <!-- The badges -->
 <p align="center">
+   <a href="https://github.com/rlberry-py/rlberry/workflows/test/badge.svg">
+      <img alt="pytest" src="https://github.com/rlberry-py/rlberry/workflows/test/badge.svg">
+   </a>
    <a href='https://rlberry.readthedocs.io/en/latest/?badge=latest'>
       <img alt="Documentation Status" src="https://readthedocs.org/projects/rlberry/badge/?version=latest">
    </a>
@@ -28,6 +31,9 @@
    <!-- <a href="https://img.shields.io/pypi/pyversions/rlberry">
       <img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/rlberry">
    </a> -->
+</p>
+
+<p align="center">
    <!-- <a href="https://pypi.org/project/rlberry/">
       <img alt="PyPI" src="https://img.shields.io/pypi/v/rlberry">
    </a> -->
