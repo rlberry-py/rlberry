@@ -47,6 +47,14 @@ class IndexAgent(BanditWithSimplePolicy):
         self.total_time = 0
 
     def fit(self, budget=None, **kwargs):
+        """
+        Train the bandit using the provided environment.
+
+        Parameters
+        ----------
+        budget: int
+            Total number of iterations, also called horizon.
+        """
         horizon = budget
         rewards = np.zeros(horizon)
         actions = np.ones(horizon) * np.nan
@@ -159,6 +167,14 @@ class RecursiveIndexAgent(BanditWithSimplePolicy):
         self.total_time = 0
 
     def fit(self, budget=None, **kwargs):
+        """
+        Train the bandit using the provided environment.
+
+        Parameters
+        ----------
+        budget: int
+            Total number of iterations, also called horizon.
+        """
         horizon = budget
         indices = np.inf * np.ones(self.n_arms)
         stats = None
