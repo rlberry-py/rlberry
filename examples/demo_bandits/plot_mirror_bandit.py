@@ -165,7 +165,7 @@ actions = read_writer_data([agent], tag="action")["value"]
 import matplotlib.pyplot as plt
 
 plt.boxplot([-rewards[actions == a] for a in range(6)])
-plt.xlabel('server')
+plt.xlabel("server")
 plt.ylabel("waiting time (in s)")
 plt.show()
 
