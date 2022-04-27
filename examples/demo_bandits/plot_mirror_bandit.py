@@ -156,7 +156,7 @@ class SeqHalvAgent(BanditWithSimplePolicy):
 agent = AgentManager(
     SeqHalvAgent,
     (env_ctor, env_kwargs),
-    fit_budget=100,  # we use only 100 iterations for fasgter example run in doc.
+    fit_budget=100,  # we use only 100 iterations for faster example run in doc.
     n_fit=1,
     agent_name="SH",
 )
