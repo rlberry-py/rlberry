@@ -3,7 +3,14 @@
 A demo of Bandit BAI on a real dataset to select mirrors
 ========================================================
 In this exemple we use a sequential halving agent to find the best server
-to download ubuntu from amlong a choice of 8 french servers.
+to download ubuntu from among a choice of 8 french servers.
+
+The quirck of this application is that there is a possible timeout when pinging
+a server. We handle this by using the median instead of the mean in sequential
+halving's objective.
+
+The code is in three parts: definition of environment, definition of agent,
+and finally definition of the experiment.
 """
 import numpy as np
 
@@ -12,15 +19,15 @@ from rlberry.envs.interface import Model
 from rlberry.agents.bandits import BanditWithSimplePolicy
 from rlberry.wrappers import WriterWrapper
 import rlberry.spaces as spaces
-
 import logging
+import requests
+import matplotlib.pyplot as plt
+
 
 logger = logging.getLogger(__name__)
 
 # Environment definition
 
-
-import requests
 
 TIMEOUT = 2
 
@@ -43,7 +50,7 @@ def get_time(url):
         resp = requests.get(url, timeout=TIMEOUT)
         return resp.elapsed.total_seconds()
     except:
-        return np.inf
+        return np.inf  # timeout
 
 
 class MirrorBandit(Model):
@@ -106,12 +113,8 @@ class SeqHalvAgent(BanditWithSimplePolicy):
 
     name = "SeqHalvAgent"
 
-    def __init__(self, env, mean_est_function=None, **kwargs):
+    def __init__(self, env, **kwargs):
         BanditWithSimplePolicy.__init__(self, env, **kwargs)
-        if mean_est_function is None:
-            mean_est_function = np.mean
-        else:
-            self.mean_est_function = mean_est_function
         self.env = WriterWrapper(
             self.env, self.writer, write_scalar="action_and_reward"
         )
@@ -134,12 +137,13 @@ class SeqHalvAgent(BanditWithSimplePolicy):
                     _, reward, _, _ = self.env.step(action)
                     rewards += [reward]
                     ep += 1
-            mean_est = [
-                self.mean_est_function(np.array(rewards)[actions == k])
-                for k in active_set
+            reward_est = [
+                np.median(np.array(rewards)[actions == k]) for k in active_set
             ]
+            # We estimate the reward using the median instead of the mean to
+            # handle timeout.
             half_len = int(np.ceil(len(active_set) / 2))
-            active_set = active_set[np.argsort(mean_est)[-half_len:]]
+            active_set = active_set[np.argsort(reward_est)[-half_len:]]
 
         self.optimal_action = active_set[0]
         self.writer.add_scalar("optimal_action", self.optimal_action, ep)
@@ -152,8 +156,7 @@ class SeqHalvAgent(BanditWithSimplePolicy):
 agent = AgentManager(
     SeqHalvAgent,
     (env_ctor, env_kwargs),
-    fit_budget=200,
-    init_kwargs={"mean_est_function": lambda x: np.median(x)},
+    fit_budget=100,  # we use only 100 iterations for fasgter example run in doc.
     n_fit=1,
     agent_name="SH",
 )
@@ -162,11 +165,13 @@ agent.fit()
 rewards = read_writer_data([agent], tag="reward")["value"]
 actions = read_writer_data([agent], tag="action")["value"]
 
-import matplotlib.pyplot as plt
 
 plt.boxplot([-rewards[actions == a] for a in range(6)])
-plt.xlabel("server")
-plt.ylabel("waiting time (in s)")
+plt.xlabel("Server")
+plt.ylabel("Waiting time (in s)")
 plt.show()
 
-print("optimal action is ", agent.agent_handlers[0].optimal_action + 1)
+print(
+    "The optimal action (fastest server) is server number ",
+    agent.agent_handlers[0].optimal_action + 1,
+)
