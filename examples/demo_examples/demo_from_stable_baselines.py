@@ -149,7 +149,7 @@ if __name__ == "__main__":
     )
 
     # Fit everything in parallel
-    multimanagers = MultipleManagers()
+    multimanagers = MultipleManagers(parallelization="thread")
     multimanagers.append(stats)
     multimanagers.append(stats_alternative)
 
