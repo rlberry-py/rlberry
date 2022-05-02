@@ -4,6 +4,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# TODO : fix bug when doing several fit, the fit do not resume. Should define
+#        self.rewards and self.action and resume training.
+
 
 class IndexAgent(BanditWithSimplePolicy):
     """

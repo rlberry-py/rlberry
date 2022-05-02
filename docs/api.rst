@@ -8,6 +8,16 @@ rlberry API
 Agents
 ====================
 
+Base classes
+------------
+
+.. autosummary::
+    :toctree: generated/
+    :template: class.rst
+
+    agents.Agent
+    agents.AgentWithSimplePolicy
+
 Basic Agents
 --------------------
 
@@ -24,6 +34,15 @@ Basic Agents
    agents.LSVIUCBAgent
    agents.RLSVIAgent
    agents.PSRLAgent
+
+
+ Importation tools
+-----------------------
+.. autosummary::
+   :toctree: generated/
+   :template: class.rst
+
+   agents.stable_baselines.StableBaselinesAgent
 
 
 Torch Agents (experimental)
@@ -70,8 +89,6 @@ Evaluation and plot
    manager.plot_writer_data
 
 
-
-
 Environments
 ============
 
@@ -101,7 +118,6 @@ Benchmark Environments
     envs.finite.GridWorld
 
 
-
 Importation tools
 -----------------
 
@@ -110,7 +126,6 @@ Importation tools
    :template: function.rst
 
     envs.gym_make
-
 
 
 Seeding
@@ -161,7 +176,7 @@ Typing
    types.Env
 
 
-Wrappers
+Environment Wrappers
 ====================
 
 .. autosummary::

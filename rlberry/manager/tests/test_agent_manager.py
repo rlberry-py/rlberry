@@ -1,3 +1,4 @@
+import pytest
 import numpy as np
 from rlberry.envs import GridWorld
 from rlberry.agents import AgentWithSimplePolicy
@@ -168,7 +169,8 @@ def test_agent_manager_2():
     stats_agent2.clear_output_dir()
 
 
-def test_agent_manager_partial_fit_and_tuple_env():
+@pytest.mark.parametrize("train_env", [(GridWorld, None), (None, None)])
+def test_agent_manager_partial_fit_and_tuple_env(train_env):
     # Define train and evaluation envs
     train_env = (
         GridWorld,
