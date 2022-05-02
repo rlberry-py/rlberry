@@ -225,7 +225,7 @@ class PPOAgent(AgentWithSimplePolicy):
         episode_rewards = 0
         state = self.env.reset()
 
-        for _ in range(self.horizon):
+        for i in range(self.horizon):
             # running policy_old
             state = torch.from_numpy(state).float().to(self.device)
 
@@ -256,6 +256,9 @@ class PPOAgent(AgentWithSimplePolicy):
 
             # update state
             state = next_state
+
+            if i == self.horizon - 1:
+                is_terminals[-1] = True
 
         # compute returns and advantages
         state_values = self.value_net(torch.stack(states).to(self.device)).detach()
@@ -396,12 +399,11 @@ class PPOAgent(AgentWithSimplePolicy):
 
     def _compute_returns_avantages(self, rewards, is_terminals, state_values):
 
-        returns = torch.zeros(self.horizon).to(self.device)
-        advantages = torch.zeros(self.horizon).to(self.device)
-
+        returns = torch.zeros(len(rewards)).to(self.device)
+        advantages = torch.zeros(len(rewards)).to(self.device)
         if not self.use_gae:
-            for t in reversed(range(self.horizon)):
-                if t == self.horizon - 1:
+            for t in reversed(range(len(rewards))):
+                if t == len(rewards) - 1:
                     returns[t] = (
                         rewards[t]
                         + self.gamma * (1 - is_terminals[t]) * state_values[-1]
@@ -414,8 +416,8 @@ class PPOAgent(AgentWithSimplePolicy):
                 advantages[t] = returns[t] - state_values[t]
         else:
             last_adv = 0
-            for t in reversed(range(self.horizon)):
-                if t == self.horizon - 1:
+            for t in reversed(range(len(rewards))):
+                if t == len(rewards) - 1:
                     returns[t] = (
                         rewards[t]
                         + self.gamma * (1 - is_terminals[t]) * state_values[-1]
