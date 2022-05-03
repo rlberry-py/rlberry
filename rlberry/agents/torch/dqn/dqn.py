@@ -328,6 +328,15 @@ class DQNAgent(AgentWithSimplePolicy):
                     )
 
     def fit(self, budget: int, **kwargs):
+        """
+        Train the agent using the provided environment.
+
+        Parameters
+        ----------
+        budget: int
+            Number of timesteps to train the agent for.
+            One step = one transition in the environment.
+        """
         del kwargs
         timesteps_counter = 0
         episode_rewards = 0.0
