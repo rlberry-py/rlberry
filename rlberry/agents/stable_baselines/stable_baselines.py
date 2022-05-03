@@ -107,6 +107,7 @@ class StableBaselinesAgent(AgentWithSimplePolicy):
         "output_dir",
         "_execution_metadata",
         "_default_writer_kwargs",
+        "_thread_shared_data",
     ]
 
     def __init__(
