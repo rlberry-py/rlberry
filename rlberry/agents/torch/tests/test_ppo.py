@@ -1,23 +1,28 @@
-from rlberry.envs import Wrapper
+from rlberry.envs import Wrapper, gym_make
 from rlberry.agents.torch import PPOAgent
 from rlberry.manager import AgentManager, evaluate_agents
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
 from gym import make
 
 
+def test_regression_ppo():
+    env = gym_make("CartPole-v0")
+    ppo = PPOAgent(**dict(env=env, batch_size=1))
+    ppo.fit(4)
+
+
 def test_ppo():
 
     env = "CartPole-v0"
-    mdp = make(env)
-    env_ctor = Wrapper
-    env_kwargs = dict(env=mdp)
+    env_ctor = gym_make
+    env_kwargs = dict(id=env)
 
     pporlberry_stats = AgentManager(
         PPOAgent,
         (env_ctor, env_kwargs),
-        fit_budget=int(2),
+        fit_budget=int(20),
         eval_kwargs=dict(eval_horizon=2),
-        init_kwargs=dict(horizon=2),
+        init_kwargs=dict(horizon=2, batch_size=1),
         n_fit=1,
         agent_name="PPO_rlberry_" + env,
     )
@@ -37,7 +42,7 @@ def test_ppo():
         (env_ctor, env_kwargs),
         fit_budget=int(2),
         eval_kwargs=dict(eval_horizon=2),
-        init_kwargs=dict(horizon=2),
+        init_kwargs=dict(horizon=2, batch_size=1),
         n_fit=1,
         agent_name="PPO_rlberry_" + env,
     )
@@ -55,7 +60,7 @@ def test_ppo():
         (env_ctor, env_kwargs),
         fit_budget=int(2),
         eval_kwargs=dict(eval_horizon=2),
-        init_kwargs=dict(horizon=2),
+        init_kwargs=dict(horizon=2, batch_size=1),
         n_fit=1,
         agent_name="PPO_rlberry_" + "PBall2D",
     )

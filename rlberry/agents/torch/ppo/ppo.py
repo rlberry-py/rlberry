@@ -309,6 +309,8 @@ class PPOAgent(AgentWithSimplePolicy):
         # optimize policy for K epochs
         n_samples = full_old_actions.size(0)
         n_batches = n_samples // self.batch_size
+        if n_batches == 0:
+            raise ValueError("Batch size, too big resulting in n_batchs == 0")
 
         for _ in range(self.k_epochs):
 
