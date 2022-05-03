@@ -302,9 +302,9 @@ class AgentManager:
 
         # shared data
         self.thread_shared_data = thread_shared_data  # do not deepcopy for sharing!
-        if parallelization == "process" and thread_shared_data is not None:
+        if parallelization != "thread" and thread_shared_data is not None:
             logger.warning(
-                "Using thread_shared_data and parallelization='process'"
+                f"Using thread_shared_data and parallelization = {parallelization}"
                 " in AgentManager does *not* share data among Agent instances!"
                 " Each process will have its copy of thread_shared_data."
             )
