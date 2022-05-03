@@ -43,7 +43,7 @@ class Agent(ABC):
     _default_writer_kwargs : dict, optional
         Parameters to initialize :class:`~rlberry.utils.writers.DefaultWriter` (attribute self.writer).
         Used by :class:`~rlberry.manager.AgentManager`.
-    _thread_shared_data: dict, optional
+    _thread_shared_data : dict, optional
         Used by :class:`~rlberry.manager.AgentManager` to share data across Agent
         instances created in different threads.
     **kwargs : dict
