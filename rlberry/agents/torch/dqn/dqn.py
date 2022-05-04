@@ -151,6 +151,8 @@ class DQNAgent(AgentWithSimplePolicy):
             q_net_ctor = load(q_net_constructor)
         elif q_net_constructor is None:
             q_net_ctor = default_q_net_fn
+        else:
+            q_net_ctor = q_net_constructor
         q_net_kwargs = q_net_kwargs or dict()
         self._qnet_online = q_net_ctor(env, **q_net_kwargs).to(self._device)
         self._qnet_target = q_net_ctor(env, **q_net_kwargs).to(self._device)
