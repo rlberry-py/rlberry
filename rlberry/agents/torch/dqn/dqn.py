@@ -73,7 +73,7 @@ class DQNAgent(AgentWithSimplePolicy):
         After :code:`epsilon_decay` timesteps, epsilon approaches :code:`epsilon_final`.
     optimizer_type : {"ADAM", "RMS_PROP"}
         Optimization algorithm.
-    q_net_constructor : Callable
+    q_net_constructor : Callable or None
         Function/constructor that returns a torch module for the Q-network:
         :code:`qnet = q_net_constructor(env, **kwargs)`.
 
@@ -99,7 +99,7 @@ class DQNAgent(AgentWithSimplePolicy):
 
             agent = DQNAgent(env, q_net_constructor=mlp, q_net_kwargs=model_configs)
 
-        If not specified then it is set to MultiLayerPerceptron with 2 hidden layers
+        If None then it is set to MultiLayerPerceptron with 2 hidden layers
         of size 64
 
     q_net_kwargs : optional, dict
