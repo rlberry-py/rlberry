@@ -2,6 +2,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import logging
+import inspect
 
 import gym.spaces as spaces
 from rlberry.agents import AgentWithSimplePolicy
@@ -18,6 +19,12 @@ logger = logging.getLogger(__name__)
 
 class PPOAgent(AgentWithSimplePolicy):
     """
+    Proximal Policy Optimization Agent.
+
+    Policy gradient methods for reinforcement learning, which alternate between
+    sampling data through interaction with the environment, and optimizing a
+    “surrogate” objective function using stochastic gradient ascent
+
     Parameters
     ----------
     env : Model
@@ -96,6 +103,11 @@ class PPOAgent(AgentWithSimplePolicy):
         **kwargs
     ):  # TODO: sort arguments
 
+        # For all parameters, define self.param = param
+        _, _, _, values = inspect.getargvalues(inspect.currentframe())
+        values.pop("self")
+        for arg, val in values.items():
+            setattr(self, arg, val)
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
         # bonus
@@ -106,17 +118,6 @@ class PPOAgent(AgentWithSimplePolicy):
             )
 
         # algorithm parameters
-        self.gamma = gamma
-        self.horizon = horizon
-
-        self.learning_rate = learning_rate
-        self.batch_size = batch_size
-        self.k_epochs = k_epochs
-        self.update_frequency = update_frequency
-
-        self.eps_clip = eps_clip
-        self.vf_coef = vf_coef
-        self.entr_coef = entr_coef
 
         # options
         # TODO: add reward normalization option
@@ -196,6 +197,15 @@ class PPOAgent(AgentWithSimplePolicy):
         return action
 
     def fit(self, budget: int, **kwargs):
+        """
+        Train the agent using the provided environment.
+
+        Parameters
+        ----------
+        budget: int
+            number of episodes. Each episode runs for self.horizon unless it
+            enconters a terminal state in which case it stops early.
+        """
         del kwargs
         n_episodes_to_run = budget
         count = 0

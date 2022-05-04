@@ -1,10 +1,7 @@
 import gym
 import numpy as np
 
-from rlberry.envs.bullet3.pybullet_envs.robot_bases import (
-    MJCFBasedRobot2,
-    URDFBasedRobot2,
-)
+from rlberry.envs.bullet3.pybullet_envs.robot_bases import URDFBasedRobot2
 
 
 class Pendulum(URDFBasedRobot2):

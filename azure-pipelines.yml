@@ -1,7 +1,14 @@
-# Python package
-# Create and test a Python package on multiple Python versions.
-# Add steps that analyze code, save the dist with the build record, publish to a PyPI-compatible index, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/python
+trigger:
+  paths:
+    exclude:
+    - rlberry/_version.py
+    - docs
+
+pr:
+  paths:
+    exclude:
+    - rlberry/_version.py
+    - docs
 
 jobs:
 
@@ -10,8 +17,10 @@ jobs:
     vmImage: ubuntu-latest
   strategy:
     matrix:
-      Python38:
-        python.version: '3.8'
+      Python39:
+        python.version: '3.9'
+  variables:
+    NUMBA_DISABLE_JIT: "1"
 
   steps:
   - task: UsePythonVersion@0
@@ -27,7 +36,7 @@ jobs:
 
   - script: |
       set -xe
-      pip install pytest pytest-azurepipelines pytest-cov codecov pytest-xvfb
+      pip install pytest==7.0.1 pytest-azurepipelines pytest-cov codecov pytest-xvfb
       # run doctests in the documentation
       # TODO: use following line for doctest ?
       pytest docs/*rst || echo "Ignoring exit status"
@@ -39,15 +48,34 @@ jobs:
       ./codecov
     displayName: 'Upload to codecov.io'
 
+- job: 'Formatting'
+  pool:
+    vmImage: ubuntu-latest
+  strategy:
+    matrix:
+      Python39:
+        python.version: '3.9'
+
+  steps:
+  - script: |
+      python -m pip install --upgrade pip
+      pip install  black flake8 flake8-docstrings
+      black --check examples rlberry *py
+    displayName: "black"
+  - script: |
+      # ensure there is no unused imports with
+      flake8 --select F401,F405,D410,D411,D412 --exclude=rlberry/check_packages.py --per-file-ignores="__init__.py:F401"
+    displayName: 'flake8'
+
 
 
 - job: 'macOS'
   pool:
-    vmImage: 'macOS-11'
+    vmImage: 'macOS-latest'
   strategy:
     matrix:
-      Python38:
-        python.version: '3.8'
+      Python39:
+        python.version: '3.9'
 
   steps:
   - task: UsePythonVersion@0
@@ -60,7 +88,7 @@ jobs:
       pip install -r requirements.txt
     displayName: 'Install dependencies'
   - script: |
-      pip install pytest pytest-azurepipelines pytest-xvfb
+      pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
       pytest
     displayName: 'pytest'
 - job: 'windows'
@@ -68,8 +96,8 @@ jobs:
     vmImage: 'windows-latest'
   strategy:
     matrix:
-      Python38:
-        python.version: '3.8'
+      Python39:
+        python.version: '3.9'
 
   steps:
   - task: UsePythonVersion@0
@@ -82,6 +110,6 @@ jobs:
       pip install -r requirements.txt
     displayName: 'Install dependencies'
   - script: |
-      pip install pytest pytest-azurepipelines pytest-xvfb
+      pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
       pytest
     displayName: 'pytest'

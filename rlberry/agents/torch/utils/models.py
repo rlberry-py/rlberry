@@ -14,6 +14,40 @@ from gym import spaces
 from rlberry.agents.torch.utils.training import model_factory, activation_factory
 
 
+def default_twinq_net_fn(env):
+    """
+    Returns a default Twinq network
+    """
+    assert isinstance(env.action_space, spaces.Discrete)
+    if isinstance(env.observation_space, spaces.Box):
+        obs_shape = env.observation_space.shape
+    elif isinstance(env.observation_space, spaces.Tuple):
+        obs_shape = env.observation_space.spaces[0].shape
+    else:
+        raise ValueError(
+            "Incompatible observation space: {}".format(env.observation_space)
+        )
+    # Assume CHW observation space
+
+    if len(obs_shape) == 1:
+        model_config = {
+            "type": "MultiLayerPerceptron",
+            "in_size": int(obs_shape[0]) + int(env.action_space.n),
+            "layer_sizes": [64, 64],
+        }
+    else:
+        raise ValueError(
+            "Incompatible observation shape: {}".format(env.observation_space.shape)
+        )
+
+    model_config["out_size"] = 1
+
+    q1 = model_factory(**model_config)
+    q2 = model_factory(**model_config)
+
+    return (q1, q2)
+
+
 def default_policy_net_fn(env):
     """
     Returns a default value network.
@@ -160,6 +194,16 @@ class BaseModule(torch.nn.Module):
 
 
 class Table(torch.nn.Module):
+    """Torch module for a policy for discrete state-action spaces.
+
+    Parameters
+    ----------
+    state_size: int
+        Number of states
+    action_size: int
+        Number of actions
+    """
+
     def __init__(self, state_size, action_size):
         super().__init__()
         self.policy = nn.Embedding.from_pretrained(
@@ -176,6 +220,26 @@ class Table(torch.nn.Module):
 
 
 class MultiLayerPerceptron(BaseModule):
+    """Torch module for an MLP.
+
+    Parameters
+    ----------
+    in_size: int
+        Input size
+    layer_sizes: Sequence[int]
+        Dimensions of each hidden layer.
+    reshape: bool, default = True
+        If True, input tensors are reshaped to (batch_size, dim)
+    out_size: int, optional
+        Output size. If None, the output size is given by the last
+        element of layer_sizes.
+    activation: {"RELU", "TANH", "ELU"}
+        Activation function.
+    is_policy: bool, default=False
+        If true, the :meth:`forward` method returns a categorical
+        distribution corresponding to the softmax of the output.
+    """
+
     def __init__(
         self,
         in_size=None,
@@ -189,6 +253,7 @@ class MultiLayerPerceptron(BaseModule):
         super().__init__(**kwargs)
         self.reshape = reshape
         self.layer_sizes = layer_sizes or [64, 64]
+        self.layer_sizes = list(self.layer_sizes)
         self.out_size = out_size
         self.activation = activation_factory(activation)
         self.is_policy = is_policy
@@ -224,6 +289,25 @@ class MultiLayerPerceptron(BaseModule):
 
 
 class DuelingNetwork(BaseModule):
+    """Torch module for a DQN dueling network based on a MultiLayerPerceptron.
+
+    Parameters
+    -----------
+    in_size: int
+        Input size
+    base_module_kwargs: dict
+        Parameters for :func:`~rlberry.agents.torch.utils.training.model_factory`
+        to build shared (MLP) architecture for the advantage and value nets.
+    value_kwargs: dict
+        Parameters for :func:`~rlberry.agents.torch.utils.training.model_factory`
+        to build value network (MLP).
+    advantage_kwargs: dict
+        Parameters for :func:`~rlberry.agents.torch.utils.training.model_factory`
+        to build advantage network (MLP).
+    out_size: int
+        Output size.
+    """
+
     def __init__(
         self,
         in_size=None,
@@ -256,6 +340,32 @@ class DuelingNetwork(BaseModule):
 
 
 class ConvolutionalNetwork(nn.Module):
+    """Torch module for a CNN.
+
+    Expects inputs of shape BCHW, where
+    B = batch size;
+    C = number of channels;
+    H = height;
+    W = width.
+
+    Parameters
+    ----------
+    activation: {"RELU", "TANH", "ELU"}
+        Activation function.
+    in_channels: int
+        Number of input channels C
+    in_height: int
+        Input height H
+    in_width: int
+        Input width W
+    head_mlp_kwargs: dict, optional
+        Parameters to build an MLP
+        (:class:`~rlberry.agents.torch.utils.models.MultiLayerPerceptron`)
+        using the factory
+        :func:`~rlberry.agents.torch.utils.training.model_factory`
+
+    """
+
     def __init__(
         self,
         activation="RELU",
@@ -305,8 +415,12 @@ class ConvolutionalNetwork(nn.Module):
 
     def forward(self, x):
         """
-            Forward convolutional network
-        :param x: tensor of shape BCHW
+        Forward convolutional network
+
+        Parameters
+        ----------
+        x: torch.tensor
+            Tensor of shape BCHW
         """
         return self.head(self.convolutions(x))
 

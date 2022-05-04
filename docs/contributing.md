@@ -1,5 +1,3 @@
-(contributing)=
-
 # Contributing
 
 Currently, we are accepting the following forms of contributions:
@@ -13,49 +11,46 @@ Currently, we are accepting the following forms of contributions:
 - Documentation improvements.
 - New environments.
 - New agents.
+- ...
 
-## Guidelines for docstring
-
-* Follow the [numpydoc docstring guide](https://numpydoc.readthedocs.io/en/latest/format.html).
-
-## Have a video for an example in the documentation
-
-To generate the videos for the examples, cd to the docs folder  and then use `make video`.
-
-Here is a template of the python script of a video example:
-```python
-"""
-===============
-Some good title
-===============
-Some explanation text of what you are doing
-
-.. video:: ../video_plot_my_experiment.mp4
-   :width: 600
-
-.. In the path for the video described before, use an additional ".." if your
-    experiment is in a sub-folder of the examples folder.
-"""
-# sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_my_experiment.jpg'
-
-# Write here the code that generates the video
+Please read the rest of this page for more information on how to contribute to
+rlberry and look at our [beginner developer guide](dev_guide) if you have questions
+about how to use git, do PR or for more informations about the documentation.
 
 
-# Save the video
-video = env.save_video("../docs/_video/video_plot_my_experiment.mp4", framerate=10)
+## Documentation
+
+We are glad to accept any sort of documentation: function docstrings, reStructuredText or markdown documents (like this one), tutorials, examples, etc. reStructuredText and markdown documents live in the source code repository under the docs/ directory.
+
+### Building the documentation
+In the following section, we assume that you are in the main rlberry directory.
+
+Building the documentation requires installing some additional packages:
+```bash
+pip install -r docs/requirements.txt --user
+```
+To build the documentation, you need to be in the docs folder:
+```bash
+cd docs
+```
+You may only need to generate the full website, without the example gallery:
+```bash
+make
+```
+The documentation will be generated in the `_build/html` directory. To also generate the example gallery you can use:
+```bash
+make html
+```
+This will run all the examples, which takes a while. If you only want to generate a few examples, you can use:
+```bash
+EXAMPLES_PATTERN=your_regex_goes_here make html
 ```
 
-For a video to be automatically compiled with `make video`, you must follow this
-template replacing the "my_experiment" with the name of your example. It may be
-useful to change the framerate in the last line of the code to have a faster or
-slower framerate depending on your environment.
 
-After running `make video`, you should have your video available in `docs/_video`
-you should add this video to the git repo with `git add docs/_video/video_plot_my_experiment.mp4`
-and `git add docs/thumbnails/video_plot_my_experiment.jpg` to add the associated thumbnail.
+### Guidelines for docstring
 
-Then just push the new examples, the mp4 and the jpg files, they should be included in the doc.
 
+Please follow the [numpydoc docstring guide](https://numpydoc.readthedocs.io/en/latest/format.html), the minimal requirements should be to include the short description, parameters and  return section of the docstring.
 
 ## Guidelines for new agents
 
@@ -64,22 +59,16 @@ Then just push the new examples, the mp4 and the jpg files, they should be inclu
 * Write a test to check that the agent is running `rlberry/agents/test_agent_name.py`.
 * Write an example `examples/demo_agent_name.py`.
 
-### Agent code template
+## Agent code template
 
 The template below gives the general structure that the Agent code must follow. See more options in the abstract `Agent`
 class (`rlberry/agents/agent.py`).
 
 ```python
-
 class MyAgent(Agent):
     name = "MyAgent"
 
-    def __init__(self,
-                 env,
-                 param_1,
-                 param_2,
-                 param_n,
-                 **kwargs):
+    def __init__(self, env, param_1, param_2, param_n, **kwargs):
         Agent.__init__(self, env, **kwargs)
 
     def fit(self, budget: int):
@@ -115,13 +104,12 @@ class MyAgent(Agent):
         # Note: param_1 and param_2 are in the constructor.
 
         # for example, param_1 could be the batch_size...
-        param_1 = trial.suggest_categorical('param_1',
-                                            [1, 4, 8, 16, 32, 64])
+        param_1 = trial.suggest_categorical("param_1", [1, 4, 8, 16, 32, 64])
         # ... and param_2 could be a learning_rate
-        param_2 = trial.suggest_loguniform('param_2', 1e-5, 1)
+        param_2 = trial.suggest_loguniform("param_2", 1e-5, 1)
         return {
-            'param_1': param_1,
-            'param_2': param_2,
+            "param_1": param_1,
+            "param_2": param_2,
         }
 ```
 
@@ -133,7 +121,7 @@ class MyAgent(Agent):
 Infos, errors and warnings are printed using the `logging` library.
 
 * From `gym` to `rlberry`:
-    * `reseed` (rlberry) should be called instead of `seed` (gym). `seed` keeps compatilibity with gym, whereas `reseed`
+    * `reseed` (rlberry) should be called instead of `seed` (gym). `seed` keeps compatibility with gym, whereas `reseed`
       uses the unified seeding mechanism of `rlberry`.
 
 ## Guidelines for logging

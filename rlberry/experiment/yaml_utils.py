@@ -100,6 +100,7 @@ def read_env_config(config_path):
 def parse_experiment_config(
     path: Path,
     n_fit: int = 4,
+    max_workers: int = None,
     output_base_dir: str = "results",
     parallelization: str = "process",
 ) -> Generator[Tuple[int, dict], None, None]:
@@ -126,8 +127,12 @@ def parse_experiment_config(
         Path to an experiment config
     n_fit : int
         Number of instances of each agent to fit
+    max_workers : int or None
+        Maximum number of workers created in the fit() method of an instance of AgentManager.
     output_base_dir : str
         Directory where to save AgentManager results.
+    parallelization : 'thread' or 'process', default : 'process'
+        Choose whether processes or threads are used in AgentManager parallelization.
 
     Returns
     -------
@@ -197,8 +202,9 @@ def parse_experiment_config(
                 n_fit=n_fit,
                 output_dir=output_dir,
                 parallelization=parallelization,
+                max_workers=max_workers,
                 seed=seed,
-                create_unique_out_dir=False,
+                outdir_id_style=None,
             )  # output_dir is already made unique above
 
 

@@ -2,29 +2,63 @@
 
 .. _user_guide:
 
-
 ==========
 User guide
 ==========
 
-Basic agent management
-======================
+If you are new to rlberry, check the :ref:`Tutorials` below and the :ref:`the quickstart<quick_start>` documentation.
+In the quick start, you will learn how to set up an experiment and evaluate the
+efficiency of different agents.
+
+For more information see :ref:`the gallery of examples<examples>`.
+
+
+Tutorials
+=========
+
+The tutorials below will present to you the main functionalities of ``rlberry`` in a few minutes.
+
+Installation
+------------
 
 .. toctree::
+   :maxdepth: 2
 
-  basics/experiment_setup.rst
-  basics/create_agent.rst
+   installation.rst
 
-Presentation of agents
-======================
 
-todo
-
-Comparing agents
-================
+Quick start: setup an experiment and evaluate different agents
+--------------------------------------------------------------
 
 .. toctree::
+   :maxdepth: 2
 
-  basics/evaluate_agent.rst
-  basics/compare_agents.rst
-  basics/seeding.rst
+   basics/quick_start.rst
+
+
+Agents, hyperparameter optimization and experiment setup
+---------------------------------------------------------
+
+.. toctree::
+   :maxdepth: 2
+
+   basics/create_agent.rst
+   basics/evaluate_agent.rst
+   basics/compare_agents.rst
+   basics/experiment_setup.rst
+   basics/seeding.rst
+
+
+Compatibility with External Libraries
+=====================================
+
+We provide examples to show you how to use rlberry_ with:
+
+- :ref:`OpenAI Gym <gym>`;
+- :ref:`Stable Baselines <stable_baselines>`.
+
+
+How to contribute?
+==================
+
+If you want to contribute to rlberry, check out :doc:`the contribution guidelines<contributing>`.

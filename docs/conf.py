@@ -14,7 +14,7 @@ import os
 import sys
 
 import sphinx_gallery  # noqa
-
+from sphinx_gallery.sorting import ExplicitOrder
 
 sys.path.insert(0, os.path.abspath("."))
 sys.path.insert(0, os.path.abspath("../"))
@@ -22,11 +22,14 @@ sys.path.insert(0, os.path.abspath("../"))
 # -- Project information -----------------------------------------------------
 
 project = "rlberry"
-copyright = "2021, rlberry team"
+copyright = "2022, rlberry team"
 author = "rlberry team"
 
-# The full version, including alpha/beta/rc tags
-release = "0.1"
+
+ver_file = os.path.join("../rlberry", "_version.py")
+with open(ver_file) as f:
+    exec(f.read())
+release = __version__
 
 # -- General configuration ---------------------------------------------------
 
@@ -46,8 +49,11 @@ extensions = [
     "sphinx_gallery.gen_gallery",
     "myst_parser",
 ]
-autodoc_default_flags = ["members", "inherited-members"]
 
+
+autodoc_default_options = {"members": True, "inherited-members": True}
+# generate autosummary even if no references
+autosummary_generate = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["templates"]
@@ -102,4 +108,12 @@ sphinx_gallery_conf = {
     "reference_url": {"rlberry": None},
     "matplotlib_animations": True,
     "remove_config_comments": True,
+    "subsection_order": ExplicitOrder(
+        [
+            "../examples/demo_env",
+            "../examples/demo_agents",
+            "../examples/demo_bandits",
+            "../examples/demo_examples",
+        ]
+    ),
 }

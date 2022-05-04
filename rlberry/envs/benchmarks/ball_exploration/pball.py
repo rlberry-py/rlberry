@@ -234,6 +234,81 @@ does not make true projections onto the lp ball."
 
 
 class PBall2D(RenderInterface2D, PBall):
+    """
+    Parametric family of environments whose state space is a unit sphere
+    according to the p-norm in R^d.
+
+    Parameters
+    ----------
+    p : int, default = 2
+        value of p for which p-norm Sphere is considered.
+
+    action_list : list, default = [array([0.05, 0.]), array([- 0.05, - 0.]),
+                                    array([0., 0.05]), array([- 0., - 0.05])]
+        list of actions described as segment in 2D.
+
+    reward_amplitudes: array, default = array([1.]).
+        See reward function.
+
+    reward_smoothness: array, default = array([0.25])
+        See reward function.
+
+    reward_centers: list of arrays, default = [array([0.75, 0.])]
+        See reward function.
+
+    A: 2D array, default = array([[1., 0.], [0., 1.]])
+        See Transition function.
+
+    B: 2D array, default = array([[1., 0.], [0., 1.]])
+        See Transition function.
+
+    sigma: float, default = 0.01
+        See Transition function.
+
+    sigma_init: float, default = 0.001
+        See Initial state.
+
+    mu_init: array of length 2, default = array([0., 0.])
+        See Initial state.
+
+    Note:
+        The projection function is only a true projection for
+        p in {2, infinity}.
+
+    ----------------------------------------------------------------------
+    State space:
+        x in R^d: norm_p (x) <= 1
+
+        implemented as rlberry.spaces.Box representing [0, 1]^2
+    ----------------------------------------------------------------------
+    Action space:
+        {u_1, ..., u_m} such that u_i in R^2  for i = 1, ..., m
+
+        implemented as rlberry.spaces.Discrete(m)
+    ----------------------------------------------------------------------
+    Reward function (independent of the actions):
+        r(x) = sum_{i=1}^n  b_i  max( 0,  1 - norm_p( x - x_i )/c_i )
+
+        requirements:
+            c_i >= 0
+            b_i in [0, 1]
+    ----------------------------------------------------------------------
+    Transitions:
+        x_{t+1} = A x_t + B u_t + N
+
+        where
+            A: square matrix of size 2
+            B: matrix of size (2, 2)
+            N: d-dimensional Gaussian noise with zero mean and covariance
+            matrix sigma*I
+    ----------------------------------------------------------------------
+    Initial state:
+        2-dimensional Gaussian with mean mu_init and covariance matrix
+        sigma_init*I
+    ----------------------------------------------------------------------
+
+    """
+
     def __init__(
         self,
         p=2,

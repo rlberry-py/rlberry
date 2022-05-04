@@ -13,7 +13,9 @@ logger = logging.getLogger(__name__)
 class RSUCBVIAgent(AgentWithSimplePolicy):
     """
     Value iteration with exploration bonuses for continuous-state environments,
-    using a online discretization strategy:
+    using a online discretization strategy.
+
+    The strategy:
     - Build (online) a set of representative states
     - Estimate transtions an rewards on the finite set of representative states
     and actions.
@@ -209,6 +211,15 @@ class RSUCBVIAgent(AgentWithSimplePolicy):
         return self.Q_policy[0, repr_state, :].argmax()
 
     def fit(self, budget: int, **kwargs):
+        """
+        Train the agent using the provided environment.
+
+        Parameters
+        ----------
+        budget: int
+            number of episodes. Each episode runs for self.horizon unless it
+            enconters a terminal state in which case it stops early.
+        """
         del kwargs
         n_episodes_to_run = budget
         count = 0

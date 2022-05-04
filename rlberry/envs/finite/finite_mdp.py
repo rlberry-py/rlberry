@@ -122,7 +122,7 @@ class FiniteMDP(Model):
         prob = self.P[state, action, :]
         next_state = self.rng.choice(self._states, p=prob)
         reward = self.reward_fn(state, action, next_state)
-        done = self.is_terminal(self.state)
+        done = self.is_terminal(state)
         info = {}
         return next_state, reward, done, info
 

@@ -1,6 +1,6 @@
 """ 
- ===================== 
- Demo: demo_agent_manager 
+ =====================
+ Demo: demo_agent_manager
  =====================
 """
 import numpy as np
@@ -86,6 +86,7 @@ if __name__ == "__main__":
         n_fit=4,
         seed=123,
         parallelization="process",
+        max_workers=2,
     )
 
     agent_manager_list = [rsucbvi_stats, rskernel_stats, a2c_stats]

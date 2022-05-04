@@ -8,97 +8,57 @@ Using rlberry_ and `Stable Baselines`_
 ======================================
 
 `Stable Baselines`_ provides implementations of several Deep RL agents.
-It is very easy to train their agents with rlberry_, which we can use to
-train several agents in parallel, optimize hyperparameters, visualize the results etc.
+rlberry_ provides a wrapper class for `Stable Baselines`_ algorithms, which
+makes it easy to train several agents in parallel, optimize hyperparameters,
+visualize the results, etc...
 
-The example below shows how to use rlberry_ to train several instances of the A2C
-implementation of `Stable Baselines`_ and evaluate two hyperparameter configurations.
-
+The example below shows a how to quickly train a StableBaselines3 A2C agent
+in just a few lines:
 
 .. code-block:: python
 
     from rlberry.envs import gym_make
-    from stable_baselines3 import A2C as A2CStableBaselines
-    from rlberry.agents import AgentWithSimplePolicy
+    from stable_baselines3 import A2C
+    from rlberry.agents import StableBaselinesAgent
+
+    env_ctor, env_kwargs = gym_make, dict(id="CartPole-v1")
+    env = env_ctor(**env_kwargs)
+
+    agent = StableBaselinesAgent(env, A2C, "MlpPolicy", verbose=1)
+    agent.fit(budget=1000)
 
 
-    class A2CAgent(AgentWithSimplePolicy):
+There are two important implementation details to note:
 
-        name = 'A2C'
+1. Logging is configured with the same options as `Stable Baselines`_. Under
+    the hood, the rlberry_ Agent's writer is added as an output of the
+    `Stable Baselines`_ Logger. This means that all the metrics collected
+    during training are automatically passed to rlberry_.
+2. Saving and loading saves two files: the agent and the `Stable Baselines`_
+    model.
 
-        def __init__(self,
-                    env,
-                    policy,
-                    learning_rate=7e-4,
-                    n_steps: int = 5,
-                    gamma: float = 0.99,
-                    gae_lambda: float = 1.0,
-                    ent_coef: float = 0.0,
-                    vf_coef: float = 0.5,
-                    max_grad_norm: float = 0.5,
-                    rms_prop_eps: float = 1e-5,
-                    use_rms_prop: bool = True,
-                    use_sde: bool = False,
-                    sde_sample_freq: int = -1,
-                    normalize_advantage: bool = False,
-                    tensorboard_log=None,
-                    create_eval_env=False,
-                    policy_kwargs=None,
-                    verbose: int = 0,
-                    seed=None,
-                    device="auto",
-                    _init_setup_model: bool = True,
-                    **kwargs):
+The `Stable Baselines`_ algorithm class is a **required** parameter of the
+agent. In order to use it with AgentManagers, it must be included in the
+`init_kwargs` parameter. For example, below we use rlberry_ to train several instances of the A2C
+implementation of `Stable Baselines`_ and evaluate two hyperparameter configurations.
 
-            # init rlberry base class
-            AgentWithSimplePolicy.__init__(self, env, **kwargs)
-            # rlberry accepts tuples (env_constructor, env_kwargs) as env
-            # After a call to __init__, self.env is set as an environment instance
-            env = self.env
+.. code-block:: python
+    class A2CAgent(StableBaselinesAgent):
+        """A2C with hyperparameter optimization."""
 
-            # Generate seed for A2CStableBaselines using rlberry seeding
-            seed = self.rng.integers(2**32).item()
+        name = "A2C"
 
-            # init stable baselines class
-            self.wrapped = A2CStableBaselines(
-                policy,
-                env,
-                learning_rate,
-                n_steps,
-                gamma,
-                gae_lambda,
-                ent_coef,
-                vf_coef,
-                max_grad_norm,
-                rms_prop_eps,
-                use_rms_prop,
-                use_sde,
-                sde_sample_freq,
-                normalize_advantage,
-                tensorboard_log,
-                create_eval_env,
-                policy_kwargs,
-                verbose,
-                seed,
-                device,
-                _init_setup_model)
+        def __init__(self, env, **kwargs):
+            super(A2CAgent, self).__init__(env, algo_cls=A2C, **kwargs)
 
-        def fit(self, budget, **kwargs):
-            self.wrapped.learn(total_timesteps=budget, **kwargs)
-
-        def policy(self, observation):
-            action, _ = self.wrapped.predict(observation, deterministic=True)
-            return action
-
-        #
-        # For hyperparameter optimization
-        #
         @classmethod
         def sample_parameters(cls, trial):
-            learning_rate = trial.suggest_loguniform('learning_rate', 1e-5, 1)
+            learning_rate = trial.suggest_loguniform("learning_rate", 1e-5, 1)
             ent_coef = trial.suggest_loguniform("ent_coef", 0.00000001, 0.1)
             vf_coef = trial.suggest_uniform("vf_coef", 0, 1)
-            normalize_advantage = trial.suggest_categorical("normalize_advantage", [False, True])
+            normalize_advantage = trial.suggest_categorical(
+                "normalize_advantage", [False, True]
+            )
             return dict(
                 learning_rate=learning_rate,
                 ent_coef=ent_coef,
@@ -107,54 +67,47 @@ implementation of `Stable Baselines`_ and evaluate two hyperparameter configurat
             )
 
 
-    #
-    # Training one agent
-    #
-    env_ctor = gym_make
-    env_kwargs = dict(id='CartPole-v1')
-    # env = env_ctor(**env_kwargs)
-    # agent = A2CAgent(env, 'MlpPolicy', verbose=1)
-    # agent.fit(budget=1000)
-
-
-    #
     # Training several agents and comparing different hyperparams
-    #
     from rlberry.manager import AgentManager, MultipleManagers, evaluate_agents
 
+    # Pass the wrapper directly with init_kwargs
     stats = AgentManager(
-        A2CAgent,
+        StableBaselinesAgent,
         (env_ctor, env_kwargs),
-        agent_name='A2C baseline',
-        init_kwargs=dict(policy='MlpPolicy', verbose=1),
+        agent_name="A2C baseline",
+        init_kwargs=dict(algo_cls=A2C, policy="MlpPolicy", verbose=1),
         fit_kwargs=dict(log_interval=1000),
         fit_budget=2500,
         eval_kwargs=dict(eval_horizon=400),
         n_fit=4,
-        parallelization='process',
-        output_dir='dev/stable_baselines',
-        seed=123)
+        parallelization="process",
+        output_dir="dev/stable_baselines",
+        seed=123,
+    )
 
+    # Pass a subclass for hyperparameter optimization
     stats_alternative = AgentManager(
         A2CAgent,
         (env_ctor, env_kwargs),
-        agent_name='A2C optimized',
-        init_kwargs=dict(policy='MlpPolicy', verbose=1),
+        agent_name="A2C optimized",
+        init_kwargs=dict(policy="MlpPolicy", verbose=1),
         fit_kwargs=dict(log_interval=1000),
         fit_budget=2500,
         eval_kwargs=dict(eval_horizon=400),
         n_fit=4,
-        parallelization='process',
-        output_dir='dev/stable_baselines',
-        seed=456)
+        parallelization="process",
+        output_dir="dev/stable_baselines",
+        seed=456,
+    )
 
     # Optimize hyperparams (600 seconds)
     stats_alternative.optimize_hyperparams(
         timeout=600,
         n_optuna_workers=2,
         n_fit=2,
-        optuna_parallelization='process',
-        fit_fraction=1.0)
+        optuna_parallelization="process",
+        fit_fraction=1.0,
+    )
 
     # Fit everything in parallel
     multimanagers = MultipleManagers()
@@ -163,19 +116,4 @@ implementation of `Stable Baselines`_ and evaluate two hyperparameter configurat
 
     multimanagers.run()
 
-    # Plot policy evaluation
-    out = evaluate_agents(multimanagers.managers)
-    print(out)
-
-
-    # Visualize policy
-    env = stats_alternative.build_eval_env()
-    agent = stats_alternative.agent_handlers[0]
-    obs = env.reset()
-    for i in range(2500):
-        action = agent.policy(obs)
-        obs, reward, done, info = env.step(action)
-        env.render()
-        if done:
-            break
-    env.close()
+For a complete example, check out the example at `examples/demo_examples/demo_stable_baselines.py` on the rlberry_ repository.

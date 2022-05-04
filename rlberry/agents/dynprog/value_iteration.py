@@ -47,6 +47,12 @@ class ValueIterationAgent(AgentWithSimplePolicy):
     def fit(self, budget=None, **kwargs):
         """
         Run value iteration.
+
+        Parameters
+        ----------
+        budget: None
+            Not used. Only defined for compatibility purpose with rlberry.
+            Changing `budget` value has no effect.
         """
         del kwargs
         info = {}

@@ -14,7 +14,7 @@ lots of boring things to implement*: run our agents in parallel, average and plo
 optimize hyperparameters, compare to baselines, create tricky environments etc etc!
 
 rlberry_ **is here to make your life easier** by doing all these things with a few lines of code,
-so that you can spend most of your time developing agents. **Check our** :ref:`quick-tutorial` **section!**
+so that you can spend most of your time developing agents. **Check our** :ref:`the quickstart<quick_start>`
 
 
 
@@ -28,21 +28,13 @@ In addition, rlberry_:
 
 
 
-Compatibility with External Libraries
-=====================================
-
-We provide examples to show you how to use rlberry_ with:
-
-- :ref:`OpenAI Gym <gym>`;
-- :ref:`Stable Baselines <stable_baselines>`.
-
-
 Seeding & Reproducibility
 ==========================
 
 rlberry_ has a class :class:`~rlberry.seeding.seeder.Seeder` that conveniently wraps a `NumPy SeedSequence <https://numpy.org/doc/stable/reference/random/parallel.html>`_,
 and allows us to create independent random number generators for different objects and threads, using a single
 :class:`~rlberry.seeding.seeder.Seeder` instance. See :ref:`Seeding <seeding>`.
+
 
 
 Contributing to rlberry
@@ -57,15 +49,10 @@ Documentation Contents
 
 .. toctree::
   :maxdepth: 2
-  :caption: Quick start
 
   installation
   quickstart
   external
-  source/modules
-
-.. toctree::
-   :maxdepth: 2
-   :caption: User Guide
-
-   user_guide
+  api
+  user_guide
+  changelog

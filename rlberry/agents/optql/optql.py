@@ -185,6 +185,15 @@ class OptQLAgent(AgentWithSimplePolicy):
         return episode_rewards
 
     def fit(self, budget: int, **kwargs):
+        """
+        Train the agent using the provided environment.
+
+        Parameters
+        ----------
+        budget: int
+            number of episodes. Each episode runs for self.horizon unless it
+            enconters a terminal state in which case it stops early.
+        """
         del kwargs
         n_episodes_to_run = budget
         count = 0

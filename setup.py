@@ -1,4 +1,10 @@
 from setuptools import setup, find_packages
+import os
+
+
+ver_file = os.path.join("rlberry", "_version.py")
+with open(ver_file) as f:
+    exec(f.read())
 
 packages = find_packages(exclude=["docs", "notebooks", "assets"])
 
@@ -43,7 +49,7 @@ jax_agents_requires = default_requires + [
     "chex",
     "dm-haiku",
     "optax",
-    "dm-reverb[tensorflow]==0.5.0",
+    "dm-reverb[tensorflow]==0.6.1",
     "dm-tree",
     "rlax",
 ]
@@ -60,7 +66,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="rlberry",
-    version="0.2.1",
+    version=__version__,
     description="An easy-to-use reinforcement learning library for research and education",
     long_description=long_description,
     long_description_content_type="text/markdown",

@@ -8,7 +8,10 @@ from rlberry.agents.ucbvi.utils import (
     update_value_and_get_action_sd,
 )
 from rlberry.exploration_tools.discrete_counter import DiscreteCounter
-from rlberry.agents.dynprog.utils import backward_induction_sd
+from rlberry.agents.dynprog.utils import (
+    backward_induction_sd,
+    backward_induction_reward_sd,
+)
 from rlberry.agents.dynprog.utils import backward_induction_in_place
 
 logger = logging.getLogger(__name__)
@@ -124,10 +127,10 @@ class UCBVIAgent(AgentWithSimplePolicy):
             shape_hsa = (S, A)
             shape_hsas = (S, A, S)
 
-        # (s, a) visit counter
+        # visit counter
         self.N_sa = np.zeros(shape_hsa)
-        # (s, a) bonus
-        self.B_sa = np.ones(shape_hsa)
+        # bonus
+        self.B_sa = np.zeros((H, S, A))
 
         # MDP estimator
         self.R_hat = np.zeros(shape_hsa)
@@ -141,13 +144,9 @@ class UCBVIAgent(AgentWithSimplePolicy):
         self.Q_policy = np.zeros((H, S, A))
 
         # Init V and bonus
-        if not self.stage_dependent:
-            self.B_sa *= self.v_max[0]
-            self.V *= self.v_max[0]
-        else:
-            for hh in range(self.horizon):
-                self.B_sa[hh, :, :] = self.v_max[hh]
-                self.V[hh, :] = self.v_max[hh]
+        for hh in range(self.horizon):
+            self.B_sa[hh, :, :] = self.v_max[hh]
+            self.V[hh, :] = self.v_max[hh]
 
         # ep counter
         self.episode = 0
@@ -232,7 +231,7 @@ class UCBVIAgent(AgentWithSimplePolicy):
             self.P_hat[state, action, :] = (1.0 - 1.0 / nn) * prev_p
             self.P_hat[state, action, next_state] += 1.0 / nn
 
-            self.B_sa[state, action] = self._compute_bonus(nn, 0)
+            self.B_sa[hh, state, action] = self._compute_bonus(nn, hh)
 
     def _run_episode(self):
         # interact for H steps
@@ -266,12 +265,11 @@ class UCBVIAgent(AgentWithSimplePolicy):
                     self.v_max[0],
                 )
             else:
-                backward_induction_in_place(
+                backward_induction_reward_sd(
                     self.Q,
                     self.V,
                     self.R_hat + self.B_sa,
                     self.P_hat,
-                    self.horizon,
                     self.gamma,
                     self.v_max[0],
                 )
@@ -290,6 +288,17 @@ class UCBVIAgent(AgentWithSimplePolicy):
         return episode_rewards
 
     def fit(self, budget: int, **kwargs):
+        """
+
+        Train the agent using the provided environment.
+
+        Parameters
+        ----------
+        budget: int
+            number of episodes
+        **kwargs
+            Extra arguments. Not used for this agent.
+        """
         del kwargs
         n_episodes_to_run = budget
         count = 0

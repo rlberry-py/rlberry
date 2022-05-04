@@ -6,6 +6,7 @@ from rlberry.agents.dynprog import ValueIterationAgent
 from rlberry.agents.dynprog.utils import backward_induction
 from rlberry.agents.dynprog.utils import backward_induction_in_place
 from rlberry.agents.dynprog.utils import backward_induction_sd
+from rlberry.agents.dynprog.utils import backward_induction_reward_sd
 from rlberry.agents.dynprog.utils import bellman_operator
 from rlberry.agents.dynprog.utils import value_iteration
 from rlberry.envs.finite import FiniteMDP
@@ -127,13 +128,20 @@ def test_backward_induction_sd(horizon, S, A):
         # run backward induction in stationary MDP
         Qstat, Vstat = backward_induction(Rstat, Pstat, horizon)
 
-        # run backward induction in statage-dependent MDP
+        # run backward induction in stage-dependent MDP
         Q = np.zeros((horizon, S, A))
         V = np.zeros((horizon, S))
         backward_induction_sd(Q, V, R, P)
 
+        # run backward induction with stage-dependent rewards
+        Q2 = np.zeros((horizon, S, A))
+        V2 = np.zeros((horizon, S))
+        backward_induction_reward_sd(Q2, V2, R, Pstat)
+
         assert np.array_equal(Q, Qstat)
         assert np.array_equal(V, Vstat)
+        assert np.array_equal(Q2, Qstat)
+        assert np.array_equal(V2, Vstat)
 
 
 @pytest.mark.parametrize("horizon, gamma, S, A", [(None, 0.5, 10, 4), (10, 1.0, 10, 4)])

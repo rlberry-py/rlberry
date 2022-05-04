@@ -1,3 +1,4 @@
+import pytest
 import numpy as np
 from rlberry.envs import GridWorld
 from rlberry.agents import AgentWithSimplePolicy
@@ -168,7 +169,8 @@ def test_agent_manager_2():
     stats_agent2.clear_output_dir()
 
 
-def test_agent_manager_partial_fit_and_tuple_env():
+@pytest.mark.parametrize("train_env", [(GridWorld, None), (None, None)])
+def test_agent_manager_partial_fit_and_tuple_env(train_env):
     # Define train and evaluation envs
     train_env = (
         GridWorld,
@@ -222,3 +224,74 @@ def test_agent_manager_partial_fit_and_tuple_env():
 
     stats.clear_output_dir()
     stats2.clear_output_dir()
+
+
+def test_equality():
+    # Define train and evaluation envs
+    train_env = (GridWorld, {})
+
+    # Parameters
+    params = dict(hyperparameter1=-1, hyperparameter2=100)
+    eval_kwargs = dict(eval_horizon=10)
+
+    # Run AgentManager
+    params_per_instance = [dict(hyperparameter2=ii) for ii in range(4)]
+    stats_agent1 = AgentManager(
+        DummyAgent,
+        train_env,
+        fit_budget=5,
+        eval_kwargs=eval_kwargs,
+        init_kwargs=params,
+        n_fit=4,
+        seed=123,
+        init_kwargs_per_instance=params_per_instance,
+    )
+
+    stats_agent2 = AgentManager(
+        DummyAgent,
+        train_env,
+        fit_budget=5,
+        eval_kwargs=eval_kwargs,
+        init_kwargs=params,
+        n_fit=4,
+        seed=123,
+        init_kwargs_per_instance=params_per_instance,
+    )
+
+    stats_agent3 = AgentManager(
+        DummyAgent,
+        train_env,
+        fit_budget=42,
+        eval_kwargs=eval_kwargs,
+        init_kwargs=params,
+        n_fit=4,
+        seed=123,
+        init_kwargs_per_instance=params_per_instance,
+    )
+
+    assert stats_agent1 == stats_agent2
+    assert stats_agent1 != stats_agent3
+
+
+def test_version():
+    # Define train and evaluation envs
+    train_env = (GridWorld, {})
+
+    # Parameters
+    params = dict(hyperparameter1=-1, hyperparameter2=100)
+    eval_kwargs = dict(eval_horizon=10)
+
+    # Run AgentManager
+    params_per_instance = [dict(hyperparameter2=ii) for ii in range(4)]
+    stats_agent1 = AgentManager(
+        DummyAgent,
+        train_env,
+        fit_budget=5,
+        eval_kwargs=eval_kwargs,
+        init_kwargs=params,
+        n_fit=4,
+        seed=123,
+        init_kwargs_per_instance=params_per_instance,
+    )
+    version = stats_agent1.rlberry_version
+    assert (version is not None) and (len(version) > 0)

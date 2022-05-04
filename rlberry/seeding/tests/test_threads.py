@@ -1,10 +1,9 @@
 from rlberry.seeding.seeder import Seeder
 import concurrent.futures
-import pytest
 
 
 def get_random_number_setting_seed(seeder):
-    return seeder.rng.integers(2 ** 32)
+    return seeder.rng.integers(2**32)
 
 
 def test_multithread_seeding():

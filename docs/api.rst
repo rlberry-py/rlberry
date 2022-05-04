@@ -4,30 +4,64 @@ rlberry API
 
 .. currentmodule:: rlberry
 
+
 Agents
 ====================
+
+Base classes
+------------
+
+.. autosummary::
+    :toctree: generated/
+    :template: class.rst
+
+    agents.Agent
+    agents.AgentWithSimplePolicy
+
+Basic Agents
+--------------------
 
 .. autosummary::
    :toctree: generated/
    :template: class.rst
 
-   agents.AgentWithSimplePolicy
-   agents.features.FeatureMap
    agents.ValueIterationAgent
    agents.MBQVIAgent
    agents.UCBVIAgent
    agents.RSUCBVIAgent
    agents.RSKernelUCBVIAgent
-   agents.optql.OptQLAgent
-   agents.MBQVIAgent
-   agents.MBQVIAgent
-   agents.torch.dqn.DQNAgent
-   agents.linear.LSVIUCBAgent
-   agents.torch.a2c.A2CAgent
-   agents.torch.ppo.PPOAgent
+   agents.OptQLAgent
+   agents.LSVIUCBAgent
+   agents.RLSVIAgent
+   agents.PSRLAgent
+
+
+ Importation tools
+-----------------------
+.. autosummary::
+   :toctree: generated/
+   :template: class.rst
+
+   agents.stable_baselines.StableBaselinesAgent
+
+
+Torch Agents (experimental)
+---------------------------
+
+.. autosummary::
+   :toctree: generated/
+   :template: class.rst
+
+   agents.torch.DQNAgent
+   agents.torch.A2CAgent
+   agents.torch.PPOAgent
    agents.torch.AVECPPOAgent
    agents.torch.REINFORCEAgent
 
+Jax Agents (experimental)
+--------------------
+
+Still experimental. Look at the source of `rlberry.agents.jax` for more info.
 
 Manager
 ====================
@@ -51,13 +85,21 @@ Evaluation and plot
    :template: function.rst
 
    manager.evaluate_agents
+   manager.read_writer_data
    manager.plot_writer_data
 
 
-
-
 Environments
-====================
+============
+
+Base class
+----------
+
+.. autosummary::
+    :toctree: generated/
+    :template: class.rst
+
+    envs.interface.Model
 
 Benchmark Environments
 ----------------------
@@ -75,6 +117,7 @@ Benchmark Environments
     envs.finite.Chain
     envs.finite.GridWorld
 
+
 Importation tools
 -----------------
 
@@ -82,9 +125,7 @@ Importation tools
    :toctree: generated/
    :template: function.rst
 
-    envs.gym_make.gym_make
-    envs.gym_make.atari_make
-
+    envs.gym_make
 
 
 Seeding
@@ -96,7 +137,46 @@ Seeding
 
    seeding.seeder.Seeder
 
-Wrappers
+
+Utilities, Logging & Typing
+====================
+
+Writer Utilities
+----------------
+
+.. autosummary::
+  :toctree: generated/
+  :template: class.rst
+
+  utils.writers.DefaultWriter
+  agents.utils.replay.ReplayBuffer
+
+Check Utilities
+---------------
+
+ .. autosummary::
+   :toctree: generated/
+   :template: function.rst
+
+   utils.check_rl_agent
+   utils.check_env
+   utils.check_save_load
+   utils.check_fit_additive
+   utils.check_seeding_agent
+   utils.check_agent_manager
+
+
+Typing
+------
+
+.. autosummary::
+  :toctree: generated/
+  :template: class.rst
+
+   types.Env
+
+
+Environment Wrappers
 ====================
 
 .. autosummary::
@@ -107,3 +187,57 @@ Wrappers
   wrappers.RescaleRewardWrapper
   wrappers.scalarize.ScalarizeEnvWrapper
   wrappers.vis2d.Vis2dWrapper
+  wrappers.WriterWrapper
+
+
+Neural Networks
+===============
+
+
+Torch
+------
+
+.. autosummary::
+  :toctree: generated/
+  :template: function.rst
+
+  agents.torch.utils.training.model_factory
+  utils.torch.choose_device
+
+
+.. autosummary::
+  :toctree: generated/
+  :template: class.rst
+
+  agents.torch.utils.models.MultiLayerPerceptron
+  agents.torch.utils.models.ConvolutionalNetwork
+  agents.torch.utils.models.DuelingNetwork
+  agents.torch.utils.models.Table
+  agents.torch.utils.attention_models.EgoAttentionNetwork
+
+
+Bandits
+=======
+
+Environments
+------------
+
+.. autosummary::
+   :toctree: generated/
+   :template: class.rst
+
+   envs.bandits.Bandit
+   envs.bandits.NormalBandit
+   envs.bandits.CorruptedNormalBandit
+
+Bandit algorithms
+-----------------
+
+.. autosummary::
+   :toctree: generated/
+   :template: class.rst
+
+   agents.bandits.BanditWithSimplePolicy
+   agents.bandits.IndexAgent
+   agents.bandits.RecursiveIndexAgent
+   agents.bandits.TSAgent

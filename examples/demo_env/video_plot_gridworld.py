@@ -1,4 +1,6 @@
 """
+.. _gridworld_example:
+
 ========================================================
 A demo of Gridworld environment with ValueIterationAgent
 ========================================================
