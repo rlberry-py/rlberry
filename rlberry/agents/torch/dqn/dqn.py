@@ -84,7 +84,7 @@ class DQNAgent(AgentWithSimplePolicy):
         * Ouput shape = (batch_dim, chunk_size, number_of_actions)
 
         Example: use `rlberry.agents.torch.utils.training.model_factory`,
-        `rlberry.agents.torch.utils.training.size_model_config` and `q_net_kwargs` 
+        `rlberry.agents.torch.utils.training.size_model_config` and `q_net_kwargs`
         parameter to modify the neural network::
 
             model_configs = {
@@ -98,7 +98,7 @@ class DQNAgent(AgentWithSimplePolicy):
                 return model_factory(**kwargs)
 
             agent = DQNAgent(env, q_net_constructor=mlp, q_net_kwargs=model_configs)
-        
+
         If not specified then it is set to MultiLayerPerceptron with 2 hidden layers
         of size 64
 
