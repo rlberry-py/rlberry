@@ -14,7 +14,7 @@ lots of boring things to implement*: run our agents in parallel, average and plo
 optimize hyperparameters, compare to baselines, create tricky environments etc etc!
 
 rlberry_ **is here to make your life easier** by doing all these things with a few lines of code,
-so that you can spend most of your time developing agents. **Check our** :ref:`quick-tutorial` **section!**
+so that you can spend most of your time developing agents. **Check our** :ref:`the quickstart<quick_start>`
 
 
 
@@ -26,15 +26,6 @@ In addition, rlberry_:
 * Handles all random seeds for you, ensuring **reproducibility** of your results;
 * Is **fully compatible with** several commonly used RL libraries like `OpenAI gym <https://gym.openai.com/>`_ and `Stable Baselines <https://stable-baselines.readthedocs.io/en/master/>`_.
 
-
-
-Compatibility with External Libraries
-=====================================
-
-We provide examples to show you how to use rlberry_ with:
-
-- :ref:`OpenAI Gym <gym>`;
-- :ref:`Stable Baselines <stable_baselines>`.
 
 
 Seeding & Reproducibility
@@ -64,3 +55,4 @@ Documentation Contents
   external
   api
   user_guide
+  changelog

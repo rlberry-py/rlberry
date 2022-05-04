@@ -82,7 +82,7 @@ class DefaultWriter:
     def data(self):
         df = pd.DataFrame(columns=("name", "tag", "value", "global_step"))
         for tag in self._data:
-            df = df.append(pd.DataFrame(self._data[tag]), ignore_index=True)
+            df = pd.concat([df, pd.DataFrame(self._data[tag])], ignore_index=True)
         return df
 
     def add_scalar(

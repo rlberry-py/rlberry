@@ -40,8 +40,6 @@ class A2CAgent(AgentWithSimplePolicy):
         Learning rate.
     optimizer_type: str
         Type of optimizer. 'ADAM' by defaut.
-    k_epochs : int
-        Number of epochs per update.
     policy_net_fn : function(env, **kwargs)
         Function that returns an instance of a policy network (pytorch).
         If None, a default net is used.
@@ -79,7 +77,6 @@ class A2CAgent(AgentWithSimplePolicy):
         entr_coef=0.01,
         learning_rate=0.01,
         optimizer_type="ADAM",
-        k_epochs=5,
         policy_net_fn=None,
         value_net_fn=None,
         policy_net_kwargs=None,
@@ -103,7 +100,6 @@ class A2CAgent(AgentWithSimplePolicy):
         self.gamma = gamma
         self.entr_coef = entr_coef
         self.learning_rate = learning_rate
-        self.k_epochs = k_epochs
         self.device = choose_device(device)
 
         self.policy_net_kwargs = policy_net_kwargs or {}
@@ -163,6 +159,15 @@ class A2CAgent(AgentWithSimplePolicy):
         return action
 
     def fit(self, budget: int, **kwargs):
+        """
+        Train the agent using the provided environment.
+
+        Parameters
+        ----------
+        budget: int
+            number of episodes. Each episode runs for self.horizon unless it
+            enconters a terminal state in which case it stops early.
+        """
         del kwargs
         n_episodes_to_run = budget
         count = 0
@@ -186,7 +191,7 @@ class A2CAgent(AgentWithSimplePolicy):
         # interact for H steps
         episode_rewards = 0
         state = self.env.reset()
-        for _ in range(self.horizon):
+        for i in range(self.horizon):
             # running policy_old
             action = self._select_action(state)
             next_state, reward, done, info = self.env.step(action)
@@ -204,9 +209,11 @@ class A2CAgent(AgentWithSimplePolicy):
 
             if done:
                 break
-
             # update state
             state = next_state
+
+            if i == self.horizon - 1:
+                self.memory.is_terminals[-1] = True
 
         # update
         self.episode += 1
@@ -241,33 +248,31 @@ class A2CAgent(AgentWithSimplePolicy):
         old_states = torch.stack(self.memory.states).to(self.device).detach()
         old_actions = torch.stack(self.memory.actions).to(self.device).detach()
 
-        # optimize policy for K epochs
-        for _ in range(self.k_epochs):
-            # evaluate old actions and values
-            action_dist = self.cat_policy(old_states)
-            logprobs = action_dist.log_prob(old_actions)
-            state_values = torch.squeeze(self.value_net(old_states))
-            dist_entropy = action_dist.entropy()
+        # evaluate old actions and values
+        action_dist = self.cat_policy(old_states)
+        logprobs = action_dist.log_prob(old_actions)
+        state_values = torch.squeeze(self.value_net(old_states))
+        dist_entropy = action_dist.entropy()
 
-            # normalize the advantages
-            advantages = rewards - state_values.detach()
-            advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
-            # find pg loss
-            pg_loss = -logprobs * advantages
-            loss = (
-                pg_loss
-                + 0.5 * self.MseLoss(state_values, rewards)
-                - self.entr_coef * dist_entropy
-            )
+        # normalize the advantages
+        advantages = rewards - state_values.detach()
+        advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
+        # find pg loss
+        pg_loss = -logprobs * advantages
+        loss = (
+            pg_loss
+            + 0.5 * self.MseLoss(state_values, rewards)
+            - self.entr_coef * dist_entropy
+        )
 
-            # take gradient step
-            self.policy_optimizer.zero_grad()
-            self.value_optimizer.zero_grad()
+        # take gradient step
+        self.policy_optimizer.zero_grad()
+        self.value_optimizer.zero_grad()
 
-            loss.mean().backward()
+        loss.mean().backward()
 
-            self.policy_optimizer.step()
-            self.value_optimizer.step()
+        self.policy_optimizer.step()
+        self.value_optimizer.step()
 
         # copy new weights into old policy
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
@@ -283,12 +288,9 @@ class A2CAgent(AgentWithSimplePolicy):
 
         entr_coef = trial.suggest_loguniform("entr_coef", 1e-8, 0.1)
 
-        k_epochs = trial.suggest_categorical("k_epochs", [1, 5, 10, 20])
-
         return {
             "batch_size": batch_size,
             "gamma": gamma,
             "learning_rate": learning_rate,
             "entr_coef": entr_coef,
-            "k_epochs": k_epochs,
         }

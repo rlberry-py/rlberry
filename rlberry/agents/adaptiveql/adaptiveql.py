@@ -32,14 +32,12 @@ class AdaptiveQLAgent(AgentWithSimplePolicy):
 
     References
     ----------
-
     .. [1] Sinclair, Sean R., Siddhartha Banerjee, and Christina Lee Yu.
     "Adaptive Discretization for Episodic Reinforcement Learning in Metric Spaces."
      Proceedings of the ACM on Measurement and Analysis of Computing Systems 3.3 (2019): 1-44.
 
     Notes
     ------
-
     Uses the metric induced by the l-infinity norm.
     """
 
@@ -158,6 +156,15 @@ class AdaptiveQLAgent(AgentWithSimplePolicy):
         return episode_rewards
 
     def fit(self, budget: int, **kwargs):
+        """
+        Train the agent using the provided environment.
+
+        Parameters
+        ----------
+        budget: int
+            number of episodes. Each episode runs for self.horizon unless it
+            enconters a terminal state in which case it stops early.
+        """
         del kwargs
         n_episodes_to_run = budget
         count = 0

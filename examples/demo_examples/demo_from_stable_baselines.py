@@ -1,6 +1,6 @@
-""" 
- ===================== 
- Demo: demo_from_stable_baselines 
+"""
+ =====================
+ Demo: demo_from_stable_baselines
  =====================
 """
 from rlberry.envs import gym_make
@@ -43,7 +43,7 @@ class A2CAgent(AgentWithSimplePolicy):
         env = self.env
 
         # Generate seed for A2CStableBaselines using rlberry seeding
-        seed = self.rng.integers(2 ** 32).item()
+        seed = self.rng.integers(2**32).item()
 
         # init stable baselines class
         self.wrapped = A2CStableBaselines(
@@ -149,7 +149,7 @@ if __name__ == "__main__":
     )
 
     # Fit everything in parallel
-    multimanagers = MultipleManagers()
+    multimanagers = MultipleManagers(parallelization="thread")
     multimanagers.append(stats)
     multimanagers.append(stats_alternative)
 

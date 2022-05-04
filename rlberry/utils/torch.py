@@ -36,6 +36,16 @@ cannot select device with most least memory used."
 
 
 def choose_device(preferred_device, default_device="cpu"):
+    """Choose torch device, use default if choice is not available.
+
+    Parameters
+    ----------
+    preferred_device: str
+        Torch device to be used (if available), e.g. "cpu", "cuda:0", "cuda:best".
+        If "cuda:best", returns the least used device in the machine.
+    default_device: str, default = "cpu"
+        Default device if preferred_device is not available.
+    """
     if preferred_device == "cuda:best":
         try:
             preferred_device = least_used_device()

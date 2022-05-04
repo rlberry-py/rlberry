@@ -6,21 +6,6 @@
   {%- set top_container_cls = "sk-landing-container" %}
 {%- endif %}
 
-{%- set drop_down_navigation = [
-  ('Getting Started', pathto('getting_started')),
-  ('Tutorial', pathto('tutorial/index')),
-  ("What's new", pathto('whats_new/v' + version)),
-  ('Glossary', pathto('glossary')),
-  ('Development', pathto('developers/index')),
-  ('FAQ', pathto('faq')),
-  ('Support', pathto('support')),
-  ('Related packages', pathto('related_projects')),
-  ('Roadmap', pathto('roadmap')),
-  ('About us', pathto('about')),
-  ('GitHub', 'https://github.com/scikit-learn/scikit-learn'),
-  ('Other Versions and Download', 'https://scikit-learn.org/dev/versions.html')]
--%}
-
 <nav id="navbar" class="{{ nav_bar_class }} navbar navbar-expand-md navbar-light bg-light py-0">
   <div class="container-fluid {{ top_container_cls }} px-0">
     {%- if logo %}
@@ -53,13 +38,16 @@
           <a class="sk-nav-link nav-link" href="{{ pathto('user_guide') }}">User Guide</a>
         </li>
         <li class="nav-item">
-          <a class="sk-nav-link nav-link" href="{{ pathto('tutorials') }}">Tutorials</a>
-        </li>
-        <li class="nav-item">
           <a class="sk-nav-link nav-link" href="{{ pathto('auto_examples/index') }}">Examples</a>
         </li>
         <li class="nav-item">
           <a class="sk-nav-link nav-link" href="{{ pathto('api') }}">API</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="{{ pathto('changelog') }}">Changelog</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="{{ pathto('about') }}">about</a>
         </li>
         <!--
         {%- for title, link in drop_down_navigation %}

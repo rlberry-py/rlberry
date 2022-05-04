@@ -35,7 +35,7 @@ if __name__ == "__main__":
 
     eval_kwargs = dict(eval_horizon=HORIZON, n_simulations=20)
 
-    multimanagers = MultipleManagers()
+    multimanagers = MultipleManagers(parallelization="thread")
     multimanagers.append(
         AgentManager(
             AdaptiveQLAgent,

@@ -38,7 +38,7 @@ def safe_reseed(obj, seeder, reseed_spaces=True):
     ----------
     obj : object
         Object to be reseeded.
-    seeder: seeding.Seeder
+    seeder: :class:`~rlberry.seeding.seeder.Seeder`
         Seeder object from which to generate random seeds.
     reseed_spaces: bool, default = True.
         If False, do not try to reseed observation_space and action_space (if
@@ -53,7 +53,7 @@ def safe_reseed(obj, seeder, reseed_spaces=True):
         obj.reseed(seeder)
         reseeded = True
     except AttributeError:
-        seed_val = seeder.rng.integers(2 ** 32).item()
+        seed_val = seeder.rng.integers(2**32).item()
         try:
             obj.seed(seed_val)
             reseeded = True

@@ -1,0 +1,8 @@
+1) Usage of class memory for SAC is not the best. I believe replay buffer should be more efficient.
+2) Implement continuous action space, by learning gaussian distribution for actions
+3) Implement convolutional backbone
+4) policy loss: should it be like in the original paper? For now it is like in Maxim Lapan
+
+
+Stuff to check:
+1) maybe performing k_epochs on the same batch is not the optimal way of doing things

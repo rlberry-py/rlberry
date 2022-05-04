@@ -65,7 +65,7 @@ if __name__ == "__main__":
     remote_manager = RemoteAgentManager.load(fname1)
 
     # Fit everything in parallel
-    mmanagers = MultipleManagers()
+    mmanagers = MultipleManagers(parallelization="thread")
     mmanagers.append(local_manager)
     mmanagers.append(remote_manager)
     mmanagers.run()

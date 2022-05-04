@@ -5,15 +5,15 @@ from torch import nn as nn
 from torch.nn import functional as F
 
 
-def loss_function_factory(loss_function):
+def loss_function_factory(loss_function, **kwargs):
     if loss_function == "l2":
-        return F.mse_loss
+        return torch.nn.MSELoss(**kwargs)
     elif loss_function == "l1":
-        return F.l1_loss
+        return torch.nn.L1Loss(**kwargs)
     elif loss_function == "smooth_l1":
-        return F.smooth_l1_loss
+        return torch.nn.SmoothL1Loss(**kwargs)
     elif loss_function == "bce":
-        return F.binary_cross_entropy
+        return torch.nn.BCELoss(**kwargs)
     else:
         raise ValueError("Unknown loss function : {}".format(loss_function))
 
@@ -27,7 +27,44 @@ def optimizer_factory(params, optimizer_type="ADAM", **kwargs):
         raise ValueError("Unknown optimizer type: {}".format(optimizer_type))
 
 
+def model_factory_from_env(env, **kwargs):
+    """Returns a torch module after setting up input/output dimensions according to an env.
+
+    Parameters
+    ----------
+    env: gym.Env
+        Environment
+    **kwargs: Dict
+        Parameters to be updated, used to call :func:`~rlberry.agents.torch.utils.training.model_factory`.
+    """
+    kwargs = size_model_config(env, **kwargs)
+    return model_factory(**kwargs)
+
+
 def model_factory(type="MultiLayerPerceptron", **kwargs) -> nn.Module:
+    """Build a neural net of a given type.
+
+    Parameters
+    ----------
+    type: {"MultiLayerPerceptron",
+           "ConvolutionalNetwork",
+           "DuelingNetwork",
+           "EgoAttentionNetwork",
+           "Table"}, default = "MultiLayerPerceptron"
+        Type of neural network.
+    **kwargs: dict
+        Parameters that vary according to each neural net type, see
+
+        * :class:`~rlberry.agents.torch.utils.models.MultiLayerPerceptron`
+
+        * :class:`~rlberry.agents.torch.utils.models.ConvolutionalNetwork`
+
+        * :class:`~rlberry.agents.torch.utils.models.DuelingNetwork`
+
+        * :class:`~rlberry.agents.torch.utils.attention_models.EgoAttentionNetwork`
+
+        * :class:`~rlberry.agents.torch.utils.models.Table`
+    """
     from rlberry.agents.torch.utils.attention_models import EgoAttentionNetwork
     from rlberry.agents.torch.utils.models import (
         MultiLayerPerceptron,
@@ -50,24 +87,20 @@ def model_factory(type="MultiLayerPerceptron", **kwargs) -> nn.Module:
         raise ValueError("Unknown model type")
 
 
-def model_factory_from_env(env, **kwargs):
-    kwargs = size_model_config(env, **kwargs)
-    return model_factory(**kwargs)
-
-
 def size_model_config(env, **model_config):
     """
-    Update the configuration of a model depending on the environment
-    observation/action spaces.
-
-    Typically, the input/output sizes.
+    Setup input/output dimensions for the configuration of
+    a model depending on the environment observation/action spaces.
 
     Parameters
     ----------
     env : gym.Env
         An environment.
     model_config : dict
-        A model configuration.
+        Parameters to be updated, used to call :func:`~rlberry.agents.torch.utils.training.model_factory`.
+        If "out_size" is not given in model_config, assumes
+        that the output dimension of the neural net is equal to the number
+        of actions in the environment.
     """
 
     if isinstance(env.observation_space, spaces.Box):
@@ -85,10 +118,11 @@ def size_model_config(env, **model_config):
     else:
         model_config["in_size"] = int(np.prod(obs_shape))
 
-    if isinstance(env.action_space, spaces.Discrete):
-        model_config["out_size"] = env.action_space.n
-    elif isinstance(env.action_space, spaces.Tuple):
-        model_config["out_size"] = env.action_space.spaces[0].n
+    if "out_size" not in model_config:
+        if isinstance(env.action_space, spaces.Discrete):
+            model_config["out_size"] = env.action_space.n
+        elif isinstance(env.action_space, spaces.Tuple):
+            model_config["out_size"] = env.action_space.spaces[0].n
     return model_config
 
 

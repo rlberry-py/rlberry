@@ -10,7 +10,7 @@ repos:
     -   id: check-docstring-first
 
 -   repo: https://github.com/psf/black
-    rev: 21.12b0
+    rev: 22.1.0
     hooks:
     -   id: black
 
@@ -24,5 +24,6 @@ repos:
     rev: 4.0.1
     hooks:
     -   id: flake8
+        additional_dependencies: [flake8-docstrings]
         types: [file, python]
-        args: ['--max-line-length=88']
+        args: ['--select=F401,F405,D410,D411,D412']

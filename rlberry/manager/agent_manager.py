@@ -2,6 +2,7 @@ import concurrent.futures
 from copy import deepcopy
 from pathlib import Path
 
+import rlberry
 from rlberry.seeding import safe_reseed, set_external_seed
 from rlberry.seeding import Seeder
 from rlberry import metadata_utils
@@ -16,12 +17,15 @@ import pandas as pd
 import shutil
 import threading
 import multiprocessing
+from multiprocessing.spawn import _check_not_importing_main
 import numpy as np
 from rlberry.envs.utils import process_env
 from rlberry.utils.logging import configure_logging
 from rlberry.utils.writers import DefaultWriter
 from rlberry.manager.utils import create_database
-from typing import Optional, Tuple
+from typing import List, Optional, Tuple, Union
+from rlberry import types
+
 
 _OPTUNA_INSTALLED = True
 try:
@@ -41,7 +45,9 @@ class AgentHandler:
     """
     Wraps an Agent so that it can be either loaded in memory
     or represented by a file storing the Agent data.
-    It is necessary because not all agents can be pickled.
+    It is used by `class`:~rlberry.manager.AgentManager` to handle the fact that
+    not all agents can be pickled, when returning from the processes that
+    train the agents.
 
     Parameters
     ----------
@@ -49,18 +55,24 @@ class AgentHandler:
         Integer identifying the handler.
     filename: str or Path
         File where to save/load the agent instance
-    seeder: Seeder
+    seeder: :class:`~rlberry.seeding.seeder.Seeder`
         Required for reseeding.
     agent_class:
         Class of the agent to be wrapped
     agent_instance:
         An instance of agent_class, or None (if not loaded).
-    agent_kwargs:
+    agent_kwargs: dict
         Arguments required by __init__ method of agent_class.
     """
 
     def __init__(
-        self, id, filename, seeder, agent_class, agent_instance=None, agent_kwargs=None
+        self,
+        id: int,
+        filename: Union[str, Path],
+        seeder: Seeder,
+        agent_class,
+        agent_instance=None,
+        agent_kwargs=None,
     ) -> None:
         self._id = id
         self._fname = Path(filename)
@@ -71,6 +83,7 @@ class AgentHandler:
 
     @property
     def id(self):
+        """AgentHandler identifier (int)."""
         return self._id
 
     def set_instance(self, agent_instance):
@@ -88,6 +101,7 @@ class AgentHandler:
         return self._agent_instance is not None
 
     def load(self) -> bool:
+        """Load agent from file."""
         try:
             self._agent_instance = self._agent_class.load(
                 self._fname, **self._agent_kwargs
@@ -105,6 +119,7 @@ class AgentHandler:
         """Saves agent to file and remove it from memory."""
         if self._agent_instance is not None:
             saved_filename = self._agent_instance.save(self._fname)
+
             # saved_filename might have appended the correct extension, for instance,
             # so self._fname must be updated.
             if not saved_filename:
@@ -112,14 +127,14 @@ class AgentHandler:
                     f"Instance of {self._agent_class} cannot be saved and will be kept in memory."
                 )
                 return
+
             self._fname = Path(saved_filename)
+
             del self._agent_instance
             self._agent_instance = None
 
     def __getattr__(self, attr):
-        """
-        Allows AgentHandler to behave like the handled Agent.
-        """
+        """Allows AgentHandler to behave like the handled Agent."""
         if attr[:2] == "__":
             raise AttributeError(attr)
         if attr in self.__dict__:
@@ -147,34 +162,32 @@ class AgentManager:
 
     Notes
     -----
-    If parallelization='process', make sure your main code
-    has a guard `if __name__ == '__main__'`
-
-    This is because we're using 'spawn' for creating child processes.
-    See https://github.com/google/jax/issues/1805
-    and https://stackoverflow.com/a/66290106
+    If parallelization="process" and mp_context="spawn", make sure your main code
+    has a guard `if __name__ == '__main__'`. See https://github.com/google/jax/issues/1805
+    and https://stackoverflow.com/a/66290106.
 
     Parameters
     ----------
     agent_class
         Class of the agent.
-    train_env : Tuple (constructor, kwargs)
+    train_env : tuple (constructor, kwargs)
         Enviroment used to initialize/train the agent.
     fit_budget : int
-        Argument required to call agent.fit(). If None, must be given in fit_kwargs['fit_budget'].
+        Budget used to call :meth:`rlberry.agents.agent.Agent.fit`.
+        If None, must be given in ``fit_kwargs['fit_budget']``.
     eval_env : Tuple (constructor, kwargs)
-        Environment used to evaluate the agent. If None, set train_env.
+        Environment used to evaluate the agent. If None, set to ``train_env``.
     init_kwargs : dict
         Arguments required by the agent's constructor. Shared across all n_fit instances.
     fit_kwargs : dict
-        Extra required to call agent.fit(bugdet, **fit_kwargs).
+        Extra arguments to call :meth:`rlberry.agents.agent.Agent.fit`.
     eval_kwargs : dict
-        Arguments required to call agent.eval().
+        Arguments required to call :meth:`rlberry.agents.agent.Agent.eval`.
     agent_name : str
         Name of the agent. If None, set to agent_class.name
     n_fit : int
         Number of agent instances to fit.
-    output_dir : str
+    output_dir : str or :class:`pathlib.Path`
         Directory where to store data.
     parallelization: {'thread', 'process'}, default: 'thread'
         Whether to parallelize  agent training using threads or processes.
@@ -186,35 +199,43 @@ class AgentManager:
         number of processors on the machine, multiplied by 5.
     mp_context: {'spawn', 'fork'}, default: 'spawn'.
         Context for python multiprocessing module.
-        Warning: If you're using JAX, it only works with 'spawn'.
+        Warning: If you're using JAX or PyTorch, it only works with 'spawn'.
                  If running code on a notebook or interpreter, use 'fork'.
     worker_logging_level : str, default: 'INFO'
         Logging level in each of the threads/processes used to fit agents.
-    seed : np.random.SeedSequence, rlberry.seeding.Seeder or int, default : None
+    seed : :class:`numpy.random.SeedSequence`, :class:`~rlberry.seeding.seeder.Seeder` or int, default : None
         Seed sequence from which to spawn the random number generator.
         If None, generate random seed.
         If int, use as entropy for SeedSequence.
         If seeder, use seeder.seed_seq
-    enable_tensorboard : bool, default = False
-        If True, enable tensorboard logging in Agent's DefaultWriter.
+    enable_tensorboard : bool, default : False
+        If True, enable tensorboard logging in Agent's :class:`~rlberry.utils.writers.DefaultWriter`.
     outdir_id_style: {None, 'unique', 'timestamp'}, default = 'timestamp'
         If None, data is saved to output_dir/manager_data
-        If 'unique', data is saved to output_dir/manager_data/<AGENT_NAME_UNIQUE_ID>
-        If 'timestamp', data is saved to output_dir/manager_data/<AGENT_NAME_TIMESTAMP_SHORT_ID>
+        If 'unique', data is saved to ``output_dir/manager_data/<AGENT_NAME_UNIQUE_ID>``
+        If 'timestamp', data is saved to ``output_dir/manager_data/<AGENT_NAME_TIMESTAMP_SHORT_ID>``
     default_writer_kwargs : dict
-        Optional arguments for DefaultWriter.
+        Optional arguments for :class:`~rlberry.utils.writers.DefaultWriter`.
     init_kwargs_per_instance : List[dict] (optional)
-        List of length n_fit containing the params to be passed to each of
-        the n_fit agent instances. It can be useful if different instances
+        List of length ``n_fit`` containing the params to initialize each of
+        the ``n_fit`` agent instances. It can be useful if different instances
         require different parameters. If the same parameter is defined by
-        init_kwargs and init_kwargs_per_instance, the value given by
-        init_kwargs_per_instance will be used.
+        ``init_kwargs`` and ``init_kwargs_per_instance``, the value given by
+        ``init_kwargs_per_instance`` will be used.
+        Attention: parameters that are passed individually to each agent instance
+        cannot be optimized in the method optimize_hyperparams().
+
+
+    Attributes
+    ----------
+    output_dir : :class:`pathlib.Path`
+        Directory where the manager saves data.
     """
 
     def __init__(
         self,
         agent_class,
-        train_env,
+        train_env=(None, None),
         fit_budget=None,
         eval_env=None,
         init_kwargs=None,
@@ -289,6 +310,7 @@ class AgentManager:
         self.max_workers = max_workers
         self.mp_context = mp_context
         self.worker_logging_level = worker_logging_level
+        self.output_dir = output_dir
         if fit_budget is not None:
             self.fit_budget = fit_budget
         else:
@@ -306,12 +328,16 @@ class AgentManager:
 
         # output dir
         if output_dir is None:
-            output_dir = metadata_utils.RLBERRY_TEMP_DATA_DIR
-        self.output_dir = Path(output_dir) / "manager_data"
+            output_dir_ = metadata_utils.RLBERRY_TEMP_DATA_DIR
+        else:
+            output_dir_ = output_dir
+        self.output_dir_ = Path(output_dir_) / "manager_data"
         if outdir_id_style == "unique":
-            self.output_dir = self.output_dir / (self.agent_name + "_" + self.unique_id)
+            self.output_dir_ = self.output_dir_ / (
+                self.agent_name + "_" + self.unique_id
+            )
         elif outdir_id_style == "timestamp":
-            self.output_dir = self.output_dir / (
+            self.output_dir_ = self.output_dir_ / (
                 self.agent_name + "_" + self.timestamp_id
             )
 
@@ -331,7 +357,7 @@ class AgentManager:
         ]
         self.tensorboard_dir = None
         if enable_tensorboard:
-            self.tensorboard_dir = self.output_dir / "tensorboard"
+            self.tensorboard_dir = self.output_dir_ / "tensorboard"
             for idx, params in enumerate(self.agent_default_writer_kwargs):
                 params["tensorboard_kwargs"] = dict(
                     log_dir=self.tensorboard_dir / str(idx)
@@ -358,9 +384,13 @@ class AgentManager:
         self.db_filename = None
         self.optuna_storage_url = None
 
+        # rlberry version for reproducibility purpose
+        self.rlberry_version = rlberry.__version__
+
     def _init_optuna_storage_url(self):
-        self.output_dir.mkdir(parents=True, exist_ok=True)
-        self.db_filename = self.output_dir / "optuna_data.db"
+        self.output_dir_.mkdir(parents=True, exist_ok=True)
+        self.db_filename = self.output_dir_ / "optuna_data.db"
+
         if create_database(self.db_filename):
             self.optuna_storage_url = f"sqlite:///{self.db_filename}"
         else:
@@ -381,7 +411,7 @@ class AgentManager:
                     eval_env=self._eval_env,
                     copy_env=False,
                     seeder=init_seeders[ii],
-                    output_dir=Path(self.output_dir) / f"output_{ii}",
+                    output_dir=Path(self.output_dir_) / f"output_{ii}",
                     _execution_metadata=self.agent_default_writer_kwargs[ii][
                         "execution_metadata"
                     ],
@@ -397,7 +427,7 @@ class AgentManager:
         self.agent_handlers = [
             AgentHandler(
                 id=ii,
-                filename=self.output_dir / Path(f"agent_handlers/idx_{ii}"),
+                filename=self.output_dir_ / Path(f"agent_handlers/idx_{ii}"),
                 seeder=handlers_seeders[ii],
                 agent_class=self.agent_class,
                 agent_instance=None,
@@ -408,38 +438,63 @@ class AgentManager:
         ]
         self.clear_handlers()
 
-    def build_eval_env(self):
-        """
-        Return an instantiated and reseeded evaluation environment.
+    def build_eval_env(self) -> types.Env:
+        """Return an instantiated and reseeded evaluation environment.
+
+        Returns
+        -------
+        :class:`types.Env`
+            Instance of evaluation environment.
         """
         return process_env(self._eval_env, self.seeder)
 
     def get_writer_data(self):
-        """
-        Return a dataframe containing data from the writer of the agent.
+        """Return a dataframe containing data from the writer of the agents.
+
+        Returns
+        -------
+        :class:`pandas.DataFrame`
+            Data from the agents' writers.
         """
         return self.default_writer_data
 
     def get_agent_instances(self):
+        """Returns a list containing ``n_fit`` agent instances.
+
+        Returns
+        -------
+        list of :class:`~rlberry.agents.agent.Agent`
+            ``n_fit`` instances of the managed agents.
+        """
         if self.agent_handlers:
             return [
                 agent_handler.get_instance() for agent_handler in self.agent_handlers
             ]
         return []
 
-    def eval_agents(self, n_simulations: Optional[int] = None) -> list:
+    def eval_agents(
+        self,
+        n_simulations: Optional[int] = None,
+        eval_kwargs: Optional[dict] = None,
+    ) -> List[float]:
         """
-        Call .eval() method in fitted agents and returns a list with the results.
+        Call :meth:`eval` method in the managed agents and returns a list with the results.
 
         Parameters
         ----------
-        n_simulations : int
+        n_simulations : int, optional
             Total number of agent evaluations. If None, set to 2*(number of agents)
+        eval_kwargs : dict, optional
+            Arguments to be sent to the .eval() method of each trained instance.
+            If None, set to self.eval_kwargs.
 
         Returns
         -------
-        array of length `n_simulations` containing the .eval() outputs.
+        list
+            list of length ``n_simulations`` containing the outputs
+            of :meth:`~rlberry.agents.agent.Agent.eval`.
         """
+        eval_kwargs = eval_kwargs or self.eval_kwargs
         if not n_simulations:
             n_simulations = 2 * self.n_fit
         values = []
@@ -453,16 +508,16 @@ class AgentManager:
                     " Returning []."
                 )
                 return []
-            values.append(agent.eval(**self.eval_kwargs))
+            values.append(agent.eval(**eval_kwargs))
             logger.info(f"[eval]... simulation {ii + 1}/{n_simulations}")
         return values
 
     def clear_output_dir(self):
         """Delete output_dir and all its data."""
         try:
-            shutil.rmtree(self.output_dir)
+            shutil.rmtree(self.output_dir_)
         except FileNotFoundError:
-            logger.warning(f"No directory {self.output_dir} found to be deleted.")
+            logger.warning(f"No directory {self.output_dir_} found to be deleted.")
 
     def clear_handlers(self):
         """Delete files from output_dir/agent_handlers that are managed by this class."""
@@ -471,7 +526,8 @@ class AgentManager:
                 handler._fname.unlink()
 
     def set_writer(self, idx, writer_fn, writer_kwargs=None):
-        """
+        """Defines the writer for one of the managed agents.
+
         Note
         -----
         Must be called right after creating an instance of AgentManager.
@@ -497,11 +553,34 @@ class AgentManager:
         self.writers[idx] = (writer_fn, writer_kwargs)
 
     def fit(self, budget=None, **kwargs):
-        """
-        Fit the agent instances in parallel.
+        """Fit the agent instances in parallel.
+
+        Parameters
+        ----------
+        budget: int or None
+            Computational or sample complexity budget.
         """
         del kwargs
         budget = budget or self.fit_budget
+
+        # If spawn, test that protected by if __name__ == "__main__"
+        if self.mp_context == "spawn":
+            try:
+                _check_not_importing_main()
+            except RuntimeError as exc:
+                raise RuntimeError(
+                    """Warning: in AgentManager, if mp_context='spawn' and
+                        parallelization="process" then the script must be run
+                        outside a notebook and protected by a  if __name__ == '__main__':
+                        For example:
+                            if __name__ == '__main__':
+                                agent = AgentManager(UCBVIAgent,(Chain, {}),
+                                                mp_context="spawn",
+                                                parallelization="process")
+
+                                agent.fit(10)
+                                   """
+                ) from exc
 
         logger.info(
             f"Running AgentManager fit() for {self.agent_name}"
@@ -511,7 +590,8 @@ class AgentManager:
         if not isinstance(seeders, list):
             seeders = [seeders]
 
-        # remove agent instances from memory so that the agent handlers can be sent to different workers
+        # remove agent instances from memory so that the agent handlers can be
+        # sent to different workers
         for handler in self.agent_handlers:
             handler.dump()
 
@@ -576,16 +656,17 @@ class AgentManager:
                 self.default_writer_data[ii] = agent.writer.data
 
     def save(self):
-        """
-        Save AgentManager data to self.output_dir. The data can be
-        later loaded to recreate an AgentManager instance.
+        """Save AgentManager data to :attr:`~rlberry.manager.agent_manager.AgentManager.output_dir`.
+
+        Saves object so that the data can be later loaded to recreate an AgentManager instance.
 
         Returns
         -------
-        filename where the AgentManager object was saved.
+        :class:`pathlib.Path`
+            Filename where the AgentManager object was saved.
         """
         # use self.output_dir
-        output_dir = self.output_dir
+        output_dir = self.output_dir_
         output_dir = Path(output_dir)
 
         # create dir if it does not exist
@@ -640,6 +721,17 @@ class AgentManager:
 
     @classmethod
     def load(cls, filename):
+        """Loads an AgentManager instance from a file.
+
+        Parameters
+        ----------
+        filename: str or :class:`pathlib.Path`
+
+        Returns
+        -------
+        :class:`rlberry.manager.AgentManager`
+            Loaded instance of AgentManager.
+        """
         filename = Path(filename).with_suffix(".pickle")
 
         obj = cls(None, None, None)
@@ -654,7 +746,32 @@ class AgentManager:
 
         obj.__dict__.clear()
         obj.__dict__.update(tmp_dict)
+
         return obj
+
+    def __eq__(self, other):
+
+        result = True
+        self_init_kwargs = [_strip_seed_dir(kw) for kw in self.init_kwargs]
+        other_init_kwargs = [_strip_seed_dir(kw) for kw in other.init_kwargs]
+        result = result and all(
+            [
+                self_init_kwargs[f] == other_init_kwargs[f]
+                for f in range(len(self_init_kwargs))
+            ]
+        )
+
+        self_eval_kwargs = self.eval_kwargs or {}
+        other_eval_kwargs = other.eval_kwargs or {}
+        result = result and (self_eval_kwargs == other_eval_kwargs)
+
+        result = result and (other.agent_class == self.agent_class)
+
+        result = result and (self.fit_kwargs == other.fit_kwargs)
+
+        result = result and (self.fit_budget == other.fit_budget)
+
+        return result
 
     def optimize_hyperparams(
         self,
@@ -669,10 +786,9 @@ class AgentManager:
         fit_fraction=1.0,
         sampler_kwargs=None,
         disable_evaluation_writers=True,
+        custom_eval_function=None,
     ):
-        """
-        Run hyperparameter optimization and updates init_kwargs with the
-        best hyperparameters found.
+        """Run hyperparameter optimization and updates init_kwargs with the best hyperparameters found.
 
         Currently supported sampler_method:
             'random' -> Random Search
@@ -726,11 +842,21 @@ class AgentManager:
             kwargs for evaluation_function
         disable_evaluation_writers : bool, default: True
             If true, disable writers of agents used in the hyperparameter evaluation.
+        custom_eval_function : Callable
+            Takes as input a list of trained agents and output a scalar.
+            If given, the value of custom_eval_funct(trained_agents) is
+            optimized instead of mean([agent.eval() for agent in trained_agents]).
+
+        Returns
+        -------
+        dict
+            Optimized hyperparameters.
         """
         #
         # setup
         #
-        TEMP_DIR = self.output_dir / "optim"
+        TEMP_DIR = self.output_dir_ / "optim"
+
         global _OPTUNA_INSTALLED
         if not _OPTUNA_INSTALLED:
             logging.error("Optuna not installed.")
@@ -752,10 +878,9 @@ class AgentManager:
             if sampler_method == "random":
                 sampler = optuna.samplers.RandomSampler()
             elif sampler_method == "grid":
-                assert sampler_kwargs is not None, (
-                    "To use GridSampler, "
-                    + "a search_space dictionary must be provided."
-                )
+                assert (
+                    sampler_kwargs is not None
+                ), "To use GridSampler, a search_space dictionary must be provided."
                 sampler = optuna.samplers.GridSampler(**sampler_kwargs)
             elif sampler_method == "cmaes":
                 sampler = optuna.samplers.CmaEsSampler(**sampler_kwargs)
@@ -806,6 +931,10 @@ class AgentManager:
             temp_dir=TEMP_DIR,  # TEMP_DIR
             disable_evaluation_writers=disable_evaluation_writers,
             fit_fraction=fit_fraction,
+            init_kwargs_per_instance=self.init_kwargs_per_instance[
+                :n_fit
+            ],  # init_kwargs_per_instance only for the first n_fit instances
+            custom_eval_function=custom_eval_function,
         )
 
         try:
@@ -867,7 +996,8 @@ class AgentManager:
         # update using best parameters
         self._base_init_kwargs.update(best_trial.params)
 
-        # reset init_kwargs and agent handlers, so that they take the new parameters
+        # reset init_kwargs and agent handlers, so that they take the new
+        # parameters
         self._set_init_kwargs()
         self._reset_agent_handlers()
 
@@ -880,9 +1010,7 @@ class AgentManager:
 
 
 def _fit_worker(args):
-    """
-    Create and fit an agent instance
-    """
+    """Create and fit an agent instance"""
     (
         lock,
         agent_handler,
@@ -908,7 +1036,8 @@ def _fit_worker(args):
             # create agent
             agent = agent_class(**init_kwargs)
             # seed agent
-            agent.reseed(seeder)  # TODO: check if extra reseeding here is necessary
+            # TODO: check if extra reseeding here is necessary
+            agent.reseed(seeder)
             agent_handler.set_instance(agent)
 
     # set writer
@@ -961,6 +1090,8 @@ def _optuna_objective(
     temp_dir,  # TEMP_DIR
     disable_evaluation_writers,
     fit_fraction,
+    init_kwargs_per_instance,
+    custom_eval_function,
 ):
     kwargs = deepcopy(base_init_kwargs)
 
@@ -986,6 +1117,7 @@ def _optuna_objective(
         output_dir=temp_dir,
         enable_tensorboard=False,
         outdir_id_style="unique",
+        init_kwargs_per_instance=init_kwargs_per_instance,
     )
 
     if disable_evaluation_writers:
@@ -1002,7 +1134,10 @@ def _optuna_objective(
             #
             params_stats.fit(int(fit_budget * fit_fraction))
             # Evaluate params
-            eval_value = np.mean(params_stats.eval_agents())
+            if not custom_eval_function:
+                eval_value = np.mean(params_stats.eval_agents())
+            else:
+                eval_value = custom_eval_function(params_stats.get_agent_instances())
 
             # Report intermediate objective value
             trial.report(eval_value, step)
@@ -1024,10 +1159,21 @@ def _optuna_objective(
         params_stats.fit()
 
         # Evaluate params
-        eval_value = np.mean(params_stats.eval_agents())
+        if not custom_eval_function:
+            eval_value = np.mean(params_stats.eval_agents())
+        else:
+            eval_value = custom_eval_function(params_stats.get_agent_instances())
 
     # clear aux data
     params_stats.clear_output_dir()
     del params_stats
 
     return eval_value
+
+
+def _strip_seed_dir(dico):
+    """Remove keys that should not be compared in __eq__"""
+    res = deepcopy(dico)
+    del res["seeder"]
+    del res["output_dir"]
+    return res

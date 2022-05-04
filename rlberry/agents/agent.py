@@ -12,6 +12,7 @@ from rlberry.seeding import safe_reseed
 from rlberry.envs.utils import process_env
 from rlberry.utils.writers import DefaultWriter
 from typing import Optional
+import inspect
 
 
 logger = logging.getLogger(__name__)
@@ -19,6 +20,10 @@ logger = logging.getLogger(__name__)
 
 class Agent(ABC):
     """Basic interface for agents.
+
+    .. note::
+
+        Classes that implement this interface must send ``**kwargs`` to :code:`Agent.__init__()`
 
     Parameters
     ----------
@@ -28,28 +33,36 @@ class Agent(ABC):
         Environment on which to evaluate the agent. If None, copied from env.
     copy_env : bool
         If true, makes a deep copy of the environment.
-    seeder : rlberry.seeding.Seeder, int, or None
-        Object for random number generation.
-    _execution_metadata : ExecutionMetadata (optional)
+    seeder : :class:`~rlberry.seeding.seeder.Seeder`, int, or None
+        Seeder/seed for random number generation.
+    output_dir : str or Path
+        Directory that the agent can use to store data.
+    _execution_metadata : ExecutionMetadata, optional
         Extra information about agent execution (e.g. about which is the process id where the agent is running).
-    _default_writer_kwargs : dict (optional)
-        Parameters to initialize DefaultWriter (attribute self.writer).
-    .. note::
-        Classes that implement this interface should send ``**kwargs`` to :code:`Agent.__init__()`
-
+        Used by :class:`~rlberry.manager.AgentManager`.
+    _default_writer_kwargs : dict, optional
+        Parameters to initialize :class:`~rlberry.utils.writers.DefaultWriter` (attribute self.writer).
+        Used by :class:`~rlberry.manager.AgentManager`.
+    **kwargs : dict
+        Classes that implement this interface must send ``**kwargs``
+        to :code:`Agent.__init__()`.
 
     Attributes
     ----------
     name : string
-        Agent identifier
-    env : Model or tuple (constructor, kwargs)
+        Agent identifier (not necessarily unique).
+    env : :class:`gym.Env` or tuple (constructor, kwargs)
         Environment on which to train the agent.
-    eval_env : Model or tuple (constructor, kwargs)
+    eval_env : :class:`gym.Env` or tuple (constructor, kwargs)
         Environment on which to evaluate the agent. If None, copied from env.
     writer : object, default: None
         Writer object (e.g. tensorboard SummaryWriter).
-    seeder : rlberry.seeding.Seeder, int, or None
-        Object for random number generation.
+    seeder : :class:`~rlberry.seeding.seeder.Seeder`, int, or None
+        Seeder/seed for random number generation.
+    rng : :class:`numpy.random._generator.Generator`
+        Random number generator. If you use random numbers in your agent, this
+        attribute must be used in order to ensure reproducibility. See `numpy's
+        documentation <https://numpy.org/doc/stable/reference/random/generator.html>`_.
     output_dir : str or Path
         Directory that the agent can use to store data.
     unique_id : str
@@ -61,7 +74,7 @@ class Agent(ABC):
 
     def __init__(
         self,
-        env: types.Env,
+        env: types.Env = None,
         eval_env: Optional[types.Env] = None,
         copy_env: bool = True,
         seeder: Optional[types.Seed] = None,
@@ -110,28 +123,48 @@ class Agent(ABC):
     def output_dir(self):
         return self._output_dir
 
+    @property
+    def rng(self):
+        return self.seeder.rng
+
     @abstractmethod
     def fit(self, budget: int, **kwargs):
-        """Train the agent using the provided environment.
+        """
 
-        Ideally, calling
-
-        .. code-block:: python
-
-            fit(budget1)
-            fit(budget2)
-
-        should be equivalent to one call fit(budget1+budget2).
-        This property is required to reduce the time required for hyperparam
-        optimization (by allowing early stopping), but it is not strictly required
-        elsewhere in the library.
-
-        If the agent does not require a budget, set it to -1.
+        Train the agent using the provided environment.
 
         Parameters
         ----------
         budget: int
             Computational (or sample complexity) budget.
+            It can be, for instance:
+
+            * The number of timesteps taken by the environment (env.step) or the number of episodes;
+
+            * The number of iterations for algorithms such as value/policy iteration;
+
+            * The number of searches in MCTS (Monte-Carlo Tree Search) algorithms;
+
+            among others.
+
+            Ideally, calling
+
+            .. code-block:: python
+
+                fit(budget1)
+                fit(budget2)
+
+            should be equivalent to one call
+
+            .. code-block:: python
+
+                fit(budget1 + budget2)
+
+            This property is required to reduce the time required for hyperparameter
+            optimization (by allowing early stopping), but it is not strictly required
+            elsewhere in the library.
+
+            If the agent does not require a budget, set it to -1.
         **kwargs
             Extra arguments.
         """
@@ -139,7 +172,9 @@ class Agent(ABC):
 
     @abstractmethod
     def eval(self, **kwargs):
-        """Returns a float measuring the quality of the agent (e.g. MC policy evaluation).
+        """
+
+        Returns a float measuring the quality of the agent (e.g. MC policy evaluation).
 
         Parameters
         ----------
@@ -151,6 +186,7 @@ class Agent(ABC):
         pass
 
     def set_writer(self, writer):
+        """set self._writer. If is not None, add parameters values to writer."""
         self._writer = writer
 
         if self._writer:
@@ -176,18 +212,13 @@ class Agent(ABC):
         """
         raise NotImplementedError("agent.sample_parameters() not implemented.")
 
-    @property
-    def rng(self):
-        """Random number generator."""
-        return self.seeder.rng
-
     def reseed(self, seed_seq=None):
         """
         Get new random number generator for the agent.
 
         Parameters
         ----------
-        seed_seq : np.random.SeedSequence, rlberry.seeding.Seeder or int, default : None
+        seed_seq : :class:`numpy.random.SeedSequence`, :class:`rlberry.seeding.seeder.Seeder` or int, default : None
             Seed sequence from which to spawn the random number generator.
             If None, generate random seed.
             If int, use as entropy for SeedSequence.
@@ -205,7 +236,7 @@ class Agent(ABC):
         """
         Save agent object. By default, the agent is pickled.
 
-        If overridden, load() method must also be overriden.
+        If overridden, the load() method must also be overriden.
 
         Before saving, consider setting writer to None if it can't be pickled (tensorboard writers
         keep references to files and cannot be pickled).
@@ -221,9 +252,11 @@ class Agent(ABC):
 
         Returns
         -------
-        If save() is successful, a Path object corresponding to the filename is returned.
-        Otherwise, None is returned.
-        Important: the returned filename might differ from the input filename: For instance,
+        pathlib.Path
+            If save() is successful, a Path object corresponding to the filename is returned.
+            Otherwise, None is returned.
+
+        .. warning:: The returned filename might differ from the input filename: For instance,
         the method can append the correct suffix to the name before saving.
 
         References
@@ -274,15 +307,63 @@ class Agent(ABC):
         obj.__dict__.update(tmp_dict)
         return obj
 
+    @classmethod
+    def _get_param_names(cls):
+        """Get parameter names for the Model"""
+        # fetch the constructor or the original constructor before
+        # deprecation wrapping if any
+        init = getattr(cls.__init__, "deprecated_original", cls.__init__)
+        if init is object.__init__:
+            # No explicit constructor to introspect
+            return []
+
+        # introspect the constructor arguments to find the model parameters
+        # to represent
+        init_signature = inspect.signature(init)
+        # Consider the constructor parameters excluding 'self'
+        parameters = [
+            p
+            for p in init_signature.parameters.values()
+            if p.name != "self" and p.kind != p.VAR_KEYWORD
+        ]
+
+        # Extract and sort argument names excluding 'self'
+        return sorted([p.name for p in parameters])
+
+    def get_params(self, deep=True):
+        """
+        Get parameters for this agent.
+
+        Parameters
+        ----------
+        deep : bool, default=True
+            If True, will return the parameters for this agent and
+            contained subobjects.
+
+        Returns
+        -------
+        params : dict
+            Parameter names mapped to their values.
+        """
+        out = dict()
+        for key in self._get_param_names():
+            value = getattr(self, key)
+            if deep and hasattr(value, "get_params"):
+                deep_items = value.get_params().items()
+                out.update((key + "__" + k, val) for k, val in deep_items)
+            out[key] = value
+        return out
+
 
 class AgentWithSimplePolicy(Agent):
-    """A subclass of Agent meant to help design simple agents
+    """Interface for agents whose policy is a function of observations only.
 
-    Implement a policy() method, and a simple evaluation
-    method (Monte-Carlo policy evaluation).
+    Requires a :meth:`policy` method, and a simple evaluation method (Monte-Carlo policy evaluation).
 
-    The policy() method takes an observation as input and returns an action.
+    The :meth:`policy` method takes an observation as input and returns an action.
 
+    Classes that implement this interface must send ``**kwargs``
+    to :code:`AgentWithSimplePolicy.__init__()`
 
     Parameters
     ----------
@@ -292,28 +373,36 @@ class AgentWithSimplePolicy(Agent):
         Environment on which to evaluate the agent. If None, copied from env.
     copy_env : bool
         If true, makes a deep copy of the environment.
-    seeder : rlberry.seeding.Seeder, int, or None
-        Object for random number generation.
-    _execution_metadata : ExecutionMetadata (optional)
+    seeder : :class:`~rlberry.seeding.seeder.Seeder`, int, or None
+        Seeder/seed for random number generation.
+    output_dir : str or Path
+        Directory that the agent can use to store data.
+    _execution_metadata : ExecutionMetadata, optional
         Extra information about agent execution (e.g. about which is the process id where the agent is running).
-    _default_writer_kwargs : dict (optional)
-        Parameters to initialize DefaultWriter (attribute self.writer).
-    .. note::
-        Classes that implement this interface should send ``**kwargs`` to :code:`Agent.__init__()`
-
+        Used by :class:`~rlberry.manager.AgentManager`.
+    _default_writer_kwargs : dict, optional
+        Parameters to initialize :class:`~rlberry.utils.writers.DefaultWriter` (attribute self.writer).
+        Used by :class:`~rlberry.manager.AgentManager`.
+    **kwargs : dict
+        Classes that implement this interface must send ``**kwargs``
+        to :code:`AgentWithSimplePolicy.__init__()`.
 
     Attributes
     ----------
     name : string
-        Agent identifier
-    env : Model or tuple (constructor, kwargs)
+        Agent identifier (not necessarily unique).
+    env : :class:`gym.Env` or tuple (constructor, kwargs)
         Environment on which to train the agent.
-    eval_env : Model or tuple (constructor, kwargs)
+    eval_env : :class:`gym.Env` or tuple (constructor, kwargs)
         Environment on which to evaluate the agent. If None, copied from env.
     writer : object, default: None
         Writer object (e.g. tensorboard SummaryWriter).
-    seeder : rlberry.seeding.Seeder, int, or None
-        Object for random number generation.
+    seeder : :class:`~rlberry.seeding.seeder.Seeder`, int, or None
+        Seeder/seed for random number generation.
+    rng : :class:`numpy.random._generator.Generator`
+        Random number generator. If you use random numbers in your agent, this
+        attribute must be used in order to ensure reproducibility. See `numpy's
+        documentation <https://numpy.org/doc/stable/reference/random/generator.html>`_.
     output_dir : str or Path
         Directory that the agent can use to store data.
     unique_id : str
@@ -326,7 +415,7 @@ class AgentWithSimplePolicy(Agent):
         """Returns an action, given an observation."""
         pass
 
-    def eval(self, eval_horizon=10 ** 5, n_simulations=10, gamma=1.0, **kwargs):
+    def eval(self, eval_horizon=10**5, n_simulations=10, gamma=1.0, **kwargs):
         """
         Monte-Carlo policy evaluation [1]_ of an agent to estimate the value at the initial state.
 
@@ -339,9 +428,10 @@ class AgentWithSimplePolicy(Agent):
         gamma : double, default: 1.0
             Discount factor.
 
-        Return
-        ------
-        Mean over the n simulations of the sum of rewards in each simulation.
+        Returns
+        -------
+        float
+            Mean over the n simulations of the sum of rewards in each simulation.
 
         References
         ----------

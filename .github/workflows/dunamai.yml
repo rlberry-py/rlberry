@@ -1,0 +1,30 @@
+name: Version Control
+on:
+  pull_request_target:
+    branches:
+      - main
+    types: [closed]
+
+jobs:
+  versionjob:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.7'
+      - uses: actions/checkout@v2
+        with:
+          # This is necessary so that we have the tags.
+          fetch-depth: 0
+          ref: main
+      - uses: mtkennerly/dunamai-action@v1
+        with:
+          env-var: MY_VERSION
+      - run: echo $MY_VERSION
+      - run: echo "__version__ = \"v$MY_VERSION \"" > rlberry/_version.py
+      - uses: EndBug/add-and-commit@v8
+        with:
+          add: 'rlberry/_version.py'
+          default_author: github_actor
+          message: 'Writing version with github action [skip ci]'
