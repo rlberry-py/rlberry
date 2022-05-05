@@ -86,6 +86,12 @@ def model_factory(type="MultiLayerPerceptron", **kwargs) -> nn.Module:
     else:
         raise ValueError("Unknown model type")
 
+def model_factory_from_size_model_config(env, **kwargs):
+        """
+        Compose the two functions model_factory and size_model_config in order to automatically detect 
+        input and output dimensions from environment and use specified kwargs for inner layers
+        """
+        return model_factory(size_model_config(env, **kwargs))
 
 def size_model_config(env, **model_config):
     """
