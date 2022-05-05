@@ -9,9 +9,13 @@ logger = logging.getLogger(__name__)
 def process_env(env, seeder, copy_env=True):
     if isinstance(env, Tuple):
         constructor = env[0]
+        if constructor is None:
+            return None
         kwargs = env[1] or {}
         processed_env = constructor(**kwargs)
     else:
+        if env is None:
+            return None
         if copy_env:
             try:
                 processed_env = deepcopy(env)

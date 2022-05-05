@@ -140,22 +140,19 @@ def check_fit_additive(agent, env="continuous_state", init_kwargs=None):
     """
     if init_kwargs is None:
         init_kwargs = {}
+    init_kwargs["seeder"] = SEED
     train_env = _make_env(env)
 
-    agent1 = AgentManager(
-        agent, train_env, fit_budget=5, n_fit=1, seed=SEED, init_kwargs=init_kwargs
-    )
-    agent1.fit(3)
-    agent1.fit(3)
+    set_external_seed(SEED)
+    agent1 = agent(train_env, **init_kwargs)
+    agent1.fit(10)
+    agent1.fit(10)
 
-    agent2 = AgentManager(
-        agent, train_env, fit_budget=5, n_fit=1, seed=SEED, init_kwargs=init_kwargs
-    )
-    agent2.fit(6)
+    set_external_seed(SEED)
+    agent2 = agent(train_env, **init_kwargs)
+    agent2.fit(20)
 
-    result = check_agents_almost_equal(
-        agent1.agent_handlers[0], agent2.agent_handlers[0]
-    )
+    result = check_agents_almost_equal(agent1, agent2)
 
     assert (
         result

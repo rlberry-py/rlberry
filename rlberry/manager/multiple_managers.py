@@ -1,4 +1,7 @@
 import concurrent.futures
+import functools
+import multiprocessing
+from typing import Optional
 
 
 def fit_stats(stats, save):
@@ -15,13 +18,26 @@ class MultipleManagers:
     Parameters
     ----------
     max_workers: int, default=None
-        max number of workers (agent_manager) called at the same time.
+        max number of workers (AgentManager instances) fitted at the same time.
+    parallelization: {'thread', 'process'}, default: 'process'
+        Whether to parallelize  agent training using threads or processes.
+    mp_context: {'spawn', 'fork'}, default: 'spawn'.
+        Context for python multiprocessing module.
+        Warning: If you're using JAX or PyTorch, it only works with 'spawn'.
+                 If running code on a notebook or interpreter, use 'fork'.
     """
 
-    def __init__(self, max_workers=None) -> None:
+    def __init__(
+        self,
+        max_workers: Optional[int] = None,
+        parallelization: str = "process",
+        mp_context="spawn",
+    ) -> None:
         super().__init__()
         self.instances = []
         self.max_workers = max_workers
+        self.parallelization = parallelization
+        self.mp_context = mp_context
 
     def append(self, agent_manager):
         """
@@ -33,19 +49,29 @@ class MultipleManagers:
         """
         self.instances.append(agent_manager)
 
-    def run(self, save=False):
+    def run(self, save=True):
         """
         Fit AgentManager instances in parallel.
 
         Parameters
         ----------
-        save: bool, default: False
+        save: bool, default: True
             If true, save AgentManager intances immediately after fitting.
             AgentManager.save() is called.
         """
-        with concurrent.futures.ThreadPoolExecutor(
-            max_workers=self.max_workers
-        ) as executor:
+        if self.parallelization == "thread":
+            executor_class = concurrent.futures.ThreadPoolExecutor
+        elif self.parallelization == "process":
+            executor_class = functools.partial(
+                concurrent.futures.ProcessPoolExecutor,
+                mp_context=multiprocessing.get_context(self.mp_context),
+            )
+        else:
+            raise ValueError(
+                f"Invalid backend for parallelization: {self.parallelization}"
+            )
+
+        with executor_class(max_workers=self.max_workers) as executor:
             futures = []
             for inst in self.instances:
                 futures.append(executor.submit(fit_stats, inst, save=save))

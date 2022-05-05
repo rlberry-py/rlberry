@@ -286,6 +286,15 @@ class RSKernelUCBVIAgent(AgentWithSimplePolicy):
         return self.Q_policy[0, repr_state, :].argmax()
 
     def fit(self, budget: int, **kwargs):
+        """
+        Train the agent using the provided environment.
+
+        Parameters
+        ----------
+        budget: int
+            number of episodes. Each episode runs for self.horizon unless it
+            enconters a terminal state in which case it stops early.
+        """
         del kwargs
         for _ in range(budget):
             self._run_episode()

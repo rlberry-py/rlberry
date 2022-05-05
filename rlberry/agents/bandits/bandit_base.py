@@ -32,6 +32,11 @@ class BanditWithSimplePolicy(AgentWithSimplePolicy):
     def fit(self, budget=None, **kwargs):
         """
         Example fit function. Should be overwritten by your own implementation.
+
+        Parameters
+        ----------
+        budget: int
+            Total number of iterations, also called horizon.
         """
         horizon = budget
         rewards = np.zeros(horizon)
