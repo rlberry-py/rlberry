@@ -73,7 +73,7 @@ class DQNAgent(AgentWithSimplePolicy):
         After :code:`epsilon_decay` timesteps, epsilon approaches :code:`epsilon_final`.
     optimizer_type : {"ADAM", "RMS_PROP"}
         Optimization algorithm.
-    q_net_constructor : Callable or None
+    q_net_constructor : Callable, str or None
         Function/constructor that returns a torch module for the Q-network:
         :code:`qnet = q_net_constructor(env, **kwargs)`.
 
@@ -83,8 +83,8 @@ class DQNAgent(AgentWithSimplePolicy):
 
         * Ouput shape = (batch_dim, chunk_size, number_of_actions)
 
-        Example: use `rlberry.agents.torch.utils.training.model_factory`,
-        `rlberry.agents.torch.utils.training.size_model_config` and `q_net_kwargs`
+        Example: use `rlberry.agents.torch.utils.training.model_factory_from_env`,
+         and `q_net_kwargs`
         parameter to modify the neural network::
 
             model_configs = {
@@ -93,11 +93,16 @@ class DQNAgent(AgentWithSimplePolicy):
                 "reshape": False,
             }
 
-            def mlp(env, **kwargs):
-                model_config = size_model_config(env, **model_config)
-                return model_factory(**kwargs)
-
-            agent = DQNAgent(env, q_net_constructor=mlp, q_net_kwargs=model_configs)
+            agent = DQNAgent(env, 
+                q_net_constructor=model_factory_from_env, 
+                q_net_kwargs=model_configs
+                )
+        If str then it should correspond to the full path to the constructor function,
+        e.g.::
+            agent = DQNAgent(env, 
+                q_net_constructor='rlberry.agents.torch.utils.training.model_factory_from_env', 
+                q_net_kwargs=model_configs
+                )
 
         If None then it is set to MultiLayerPerceptron with 2 hidden layers
         of size 64
