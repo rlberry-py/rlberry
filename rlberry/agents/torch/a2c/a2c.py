@@ -11,7 +11,6 @@ from rlberry.agents.torch.utils.models import default_value_net_fn
 from rlberry.utils.torch import choose_device
 from rlberry.wrappers.uncertainty_estimator_wrapper import UncertaintyEstimatorWrapper
 from rlberry.utils.factory import load
-import pdb
 
 logger = logging.getLogger(__name__)
 
@@ -109,7 +108,6 @@ class A2CAgent(AgentWithSimplePolicy):
 
         self.state_dim = self.env.observation_space.shape[0]
         self.action_dim = self.env.action_space.n
-        
 
         if isinstance(policy_net_fn, str):
             self.policy_net_fn = load(policy_net_fn)
