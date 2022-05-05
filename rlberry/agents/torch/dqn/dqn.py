@@ -93,14 +93,14 @@ class DQNAgent(AgentWithSimplePolicy):
                 "reshape": False,
             }
 
-            agent = DQNAgent(env, 
-                q_net_constructor=model_factory_from_env, 
+            agent = DQNAgent(env,
+                q_net_constructor=model_factory_from_env,
                 q_net_kwargs=model_configs
                 )
         If str then it should correspond to the full path to the constructor function,
         e.g.::
-            agent = DQNAgent(env, 
-                q_net_constructor='rlberry.agents.torch.utils.training.model_factory_from_env', 
+            agent = DQNAgent(env,
+                q_net_constructor='rlberry.agents.torch.utils.training.model_factory_from_env',
                 q_net_kwargs=model_configs
                 )
 
