@@ -1,4 +1,3 @@
-from rlberry.agents.torch import A2CAgent
 from rlberry.agents.torch import PPOAgent
 from rlberry.agents.torch import AVECPPOAgent
 from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
