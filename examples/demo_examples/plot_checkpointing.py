@@ -9,7 +9,6 @@ your agents, and how to restore from a previous checkpoint.
 from rlberry.agents import Agent
 from rlberry.manager import AgentManager
 from rlberry.manager import plot_writer_data
-import matplotlib.pyplot as plt
 
 
 class MyAgent(Agent):
