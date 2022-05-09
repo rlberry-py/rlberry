@@ -211,17 +211,17 @@ class A2CAgent(AgentWithSimplePolicy):
             total_timesteps = self.total_timesteps
             if (
                 self.eval_interval is not None
-                and total_timesteps % self._eval_interval == 0
+                and total_timesteps % self.eval_interval == 0
             ):
                 eval_rewards = self.eval(
                     eval_horizon=self._max_episode_steps, gamma=1.0
                 )
                 if self.writer:
-                    buffer_size = len(self._replay_buffer)
+                    memory_size = len(self.memory)
                     self.writer.add_scalar(
                         "eval_rewards", eval_rewards, total_timesteps
                     )
-                    self.writer.add_scalar("buffer_size", buffer_size, total_timesteps)
+                    self.writer.add_scalar("memory_size", memory_size, total_timesteps)
 
             # check if episode ended
             if done:
