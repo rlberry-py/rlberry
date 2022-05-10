@@ -2,7 +2,6 @@ from rlberry.agents.agent import AgentWithSimplePolicy
 from rlberry.agents.dynprog.utils import backward_induction, value_iteration
 from rlberry.envs.finite.finite_mdp import FiniteMDP
 
-
 class ValueIterationAgent(AgentWithSimplePolicy):
     """
     Value iteration for enviroments of type FiniteMDP
@@ -23,6 +22,7 @@ class ValueIterationAgent(AgentWithSimplePolicy):
     epsilon : double
         precision of value iteration, only used in discounted problems
         (when horizon is None).
+
     """
 
     name = "ValueIteration"

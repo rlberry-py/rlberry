@@ -109,10 +109,10 @@ def read_writer_data(data_source, tag, preprocess_func=None):
         subdirectory of this directory must contain pickle files.
         Load the data from the directory of the latest experiment in date.
         This str should be equal to the value of the `output_dir` parameter in
-            :class:`~rlberry.manager.AgentManager`.
+        :class:`~rlberry.manager.AgentManager`.
 
         - If list of str, each string must be a directory containing pickle files.
-            Load the data from these pickle files.
+        Load the data from these pickle files.
 
         Note: the agent's save function must save its writer at the key `_writer`.
         This is the default for rlberry agents.

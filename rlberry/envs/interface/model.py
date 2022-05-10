@@ -24,20 +24,6 @@ class Model(gym.Env):
     seeder : rlberry.seeding.Seeder
         Seeder, containing random number generator.
 
-    Methods
-    -------
-    reseed(seed_seq)
-        get new Seeder
-    reset()
-        puts the environment in a default state and returns this state
-    step(action)
-        returns the outcome of an action
-    sample(state, action)
-        returns a transition sampled from taking an action in a given state
-    is_online()
-        returns true if reset() and step() methods are implemented
-    is_generative()
-        returns true if sample() method is implemented
     """
 
     name = ""
@@ -91,6 +77,9 @@ class Model(gym.Env):
         raise NotImplementedError("sample() method not implemented.")
 
     def is_online(self):
+        """
+        Returns true if reset() and step() methods are implemented
+        """
         logger.warning(
             "Checking if Model is\
 online calls reset() and step() methods."
@@ -106,6 +95,9 @@ online calls reset() and step() methods."
                 raise
 
     def is_generative(self):
+        """
+        Returns true if sample() method is implemented
+        """
         logger.warning(
             "Checking if Model is \
 generative calls sample() method."
@@ -121,7 +113,9 @@ generative calls sample() method."
 
     @classmethod
     def _get_param_names(cls):
-        """Get parameter names for the Model"""
+        """
+        Get parameter names for the Model
+        """
         # fetch the constructor or the original constructor before
         # deprecation wrapping if any
         init = getattr(cls.__init__, "deprecated_original", cls.__init__)
@@ -145,11 +139,13 @@ generative calls sample() method."
     def get_params(self, deep=True):
         """
         Get parameters for this model.
+        
         Parameters
         ----------
         deep : bool, default=True
             If True, will return the parameters for this model and
             contained subobjects.
+        
         Returns
         -------
         params : dict

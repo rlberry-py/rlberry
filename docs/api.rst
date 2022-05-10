@@ -36,8 +36,9 @@ Basic Agents
    agents.PSRLAgent
 
 
- Importation tools
+Agent importation tools
 -----------------------
+
 .. autosummary::
    :toctree: generated/
    :template: class.rst
@@ -59,7 +60,7 @@ Torch Agents (experimental)
    agents.torch.REINFORCEAgent
 
 Jax Agents (experimental)
---------------------
+-------------------------
 
 Still experimental. Look at the source of `rlberry.agents.jax` for more info.
 
@@ -118,8 +119,8 @@ Benchmark Environments
     envs.finite.GridWorld
 
 
-Importation tools
------------------
+Environment importation tools
+-----------------------------
 
 .. autosummary::
    :toctree: generated/
@@ -139,7 +140,7 @@ Seeding
 
 
 Utilities, Logging & Typing
-====================
+===========================
 
 Writer Utilities
 ----------------
