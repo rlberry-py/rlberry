@@ -35,6 +35,8 @@ class DefaultWriter:
     maxlen : Optional[int], default: None
         If given, data stored by self._data (accessed through the property self.data) is limited
         to `maxlen` entries.
+    maxlen_by_tag: Optional[dict], default: {}
+        If given, applies the maxlen logic tag by tag, using the above maxlen as default.
     """
 
     def __init__(
@@ -44,6 +46,7 @@ class DefaultWriter:
         tensorboard_kwargs: Optional[dict] = None,
         execution_metadata: Optional[metadata_utils.ExecutionMetadata] = None,
         maxlen: Optional[int] = None,
+        maxlen_by_tag: Optional[dict] = {},
     ):
         self._name = name
         self._log_interval = log_interval
@@ -52,6 +55,7 @@ class DefaultWriter:
         self._time_last_log = None
         self._log_time = True
         self._maxlen = maxlen
+        self._maxlen_by_tag = maxlen_by_tag
         self.reset()
 
         # initialize tensorboard
@@ -140,10 +144,18 @@ class DefaultWriter:
         # Update data structures
         if tag not in self._data:
             self._data[tag] = dict()
-            self._data[tag]["name"] = deque(maxlen=self._maxlen)
-            self._data[tag]["tag"] = deque(maxlen=self._maxlen)
-            self._data[tag]["value"] = deque(maxlen=self._maxlen)
-            self._data[tag]["global_step"] = deque(maxlen=self._maxlen)
+            self._data[tag]["name"] = deque(
+                maxlen=self._maxlen_by_tag.get(tag, self._maxlen)
+            )
+            self._data[tag]["tag"] = deque(
+                maxlen=self._maxlen_by_tag.get(tag, self._maxlen)
+            )
+            self._data[tag]["value"] = deque(
+                maxlen=self._maxlen_by_tag.get(tag, self._maxlen)
+            )
+            self._data[tag]["global_step"] = deque(
+                maxlen=self._maxlen_by_tag.get(tag, self._maxlen)
+            )
 
         self._data[tag]["name"].append(
             self._name
