@@ -30,6 +30,14 @@ class TSAgent(BanditWithSimplePolicy):
         self.prior_params = prior_params
 
     def fit(self, budget=None, **kwargs):
+        """
+        Train the bandit using the provided environment.
+
+        Parameters
+        ----------
+        budget: int
+            Total number of iterations, also called horizon.
+        """
         if self.prior not in ["gaussian", "beta"]:
             raise ValueError(
                 'This prior is not implemented yet. Valid prior are "gaussian" and "beta"'

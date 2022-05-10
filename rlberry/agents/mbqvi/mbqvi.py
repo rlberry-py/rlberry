@@ -76,7 +76,15 @@ class MBQVIAgent(AgentWithSimplePolicy):
         self.S_sa[state, action] += reward
 
     def fit(self, budget=None, **kwargs):
-        """Build empirical MDP and run value iteration."""
+        """
+        Build empirical MDP and run value iteration.
+
+        Parameters
+        ----------
+        budget: None
+            Not used. Only defined for compatibility purpose with rlberry.
+            Changing `budget` value has no effect.
+        """
         del kwargs
         S = self.env.observation_space.n
         A = self.env.action_space.n

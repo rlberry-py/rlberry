@@ -65,6 +65,14 @@ class RandomizedAgent(BanditWithSimplePolicy):
         self.prob_function = prob_function
 
     def fit(self, budget=None, **kwargs):
+        """
+        Train the bandit using the provided environment.
+
+        Parameters
+        ----------
+        budget: int
+            Total number of iterations, also called horizon.
+        """
         horizon = budget
         total_reward = 0.0
 

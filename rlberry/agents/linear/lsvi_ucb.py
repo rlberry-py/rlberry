@@ -212,6 +212,17 @@ class LSVIUCBAgent(AgentWithSimplePolicy):
         self.w_policy = None
 
     def fit(self, budget, **kwargs):
+        """
+        Train the agent using the provided environment.
+
+        Parameters
+        ----------
+        budget: int
+            number of episodes. Each episode runs for self.horizon unless it
+            enconters a terminal state in which case it stops early.
+            Warning: Calling fit() more than once will reset the algorithm
+            (to realocate memory according to the number of episodes)
+        """
         del kwargs
 
         # Allocate memory according to budget.

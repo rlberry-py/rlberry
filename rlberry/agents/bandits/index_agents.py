@@ -47,6 +47,14 @@ class IndexAgent(BanditWithSimplePolicy):
         self.index_function = index_function
 
     def fit(self, budget=None, **kwargs):
+        """
+        Train the bandit using the provided environment.
+
+        Parameters
+        ----------
+        budget: int
+            Total number of iterations, also called horizon.
+        """
         horizon = budget
         total_reward = 0.0
         indices = np.inf * np.ones(self.n_arms)

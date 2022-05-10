@@ -224,6 +224,9 @@ class AgentManager:
         ``init_kwargs_per_instance`` will be used.
         Attention: parameters that are passed individually to each agent instance
         cannot be optimized in the method optimize_hyperparams().
+    thread_shared_data : dict, optional
+        Data to be shared among agent instances in different threads.
+        If parallelization='process', data will be copied instead of shared.
 
 
     Attributes
@@ -253,6 +256,7 @@ class AgentManager:
         outdir_id_style="timestamp",
         default_writer_kwargs=None,
         init_kwargs_per_instance=None,
+        thread_shared_data=None,
     ):
         # agent_class should only be None when the constructor is called
         # by the class method AgentManager.load(), since the agent class
@@ -295,6 +299,15 @@ class AgentManager:
             eval_env = deepcopy(train_env)
 
         self._eval_env = eval_env
+
+        # shared data
+        self.thread_shared_data = thread_shared_data  # do not deepcopy for sharing!
+        if parallelization != "thread" and thread_shared_data is not None:
+            logger.warning(
+                f"Using thread_shared_data and parallelization = {parallelization}"
+                " in AgentManager does *not* share data among Agent instances!"
+                " Each process will have its copy of thread_shared_data."
+            )
 
         # check kwargs
         fit_kwargs = fit_kwargs or {}
@@ -404,7 +417,10 @@ class AgentManager:
         init_seeders = self.seeder.spawn(self.n_fit, squeeze=False)
         self.init_kwargs = []
         for ii in range(self.n_fit):
+            # deepcopy base_init_kwargs
             kwargs_ii = deepcopy(self._base_init_kwargs)
+            # include shared data, without deep copy!
+            kwargs_ii["_thread_shared_data"] = self.thread_shared_data
             kwargs_ii.update(
                 dict(
                     env=self.train_env,
@@ -935,6 +951,7 @@ class AgentManager:
                 :n_fit
             ],  # init_kwargs_per_instance only for the first n_fit instances
             custom_eval_function=custom_eval_function,
+            thread_shared_data=self.thread_shared_data,
         )
 
         try:
@@ -1092,6 +1109,7 @@ def _optuna_objective(
     fit_fraction,
     init_kwargs_per_instance,
     custom_eval_function,
+    thread_shared_data,
 ):
     kwargs = deepcopy(base_init_kwargs)
 
@@ -1118,6 +1136,7 @@ def _optuna_objective(
         enable_tensorboard=False,
         outdir_id_style="unique",
         init_kwargs_per_instance=init_kwargs_per_instance,
+        thread_shared_data=thread_shared_data,
     )
 
     if disable_evaluation_writers:
