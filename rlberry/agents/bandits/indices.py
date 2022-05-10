@@ -78,8 +78,10 @@ def makeSubgaussianUCBIndex(
 
         return [
             tr.read_last_tag_value("mu_hat", arm)
-            + sigma * np.sqrt(
-                2 * np.log(1 / delta(tr.read_last_tag_value("t")))
+            + sigma
+            * np.sqrt(
+                2
+                * np.log(1 / delta(tr.read_last_tag_value("t")))
                 / tr.read_last_tag_value("n_pulls", arm)
             )
             for arm in tr.arms
@@ -164,8 +166,10 @@ def makeSubgaussianMOSSIndex(T=1, A=2, sigma=1.0):
     def index(tr):
         return [
             tr.read_last_tag_value("mu_hat", arm)
-            + sigma * np.sqrt(
-                4 / tr.read_last_tag_value("n_pulls", arm)
+            + sigma
+            * np.sqrt(
+                4
+                / tr.read_last_tag_value("n_pulls", arm)
                 * np.maximum(
                     0, np.log(T / (A * tr.read_last_tag_value("n_pulls", arm)))
                 )
