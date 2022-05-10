@@ -34,11 +34,15 @@ class RandomizedAgent(BanditWithSimplePolicy):
     >>>     name = "EXP3"
     >>>     def __init__(self, env, **kwargs):
     >>>         def prob_function(tr):
-    >>>             eta = np.minimum(
-    >>>                 np.sqrt(np.log(tr.n_arms) / (tr.n_arms * (tr.t + 1))),
-    >>>                 1 / tr.n_arms,
-    >>>             )
-    >>>             w = np.exp(eta * tr.iw_S_hats)
+    >>>             w = np.zeros(tr.n_arms)
+    >>>             for arm in tr.arms:
+    >>>                 eta = np.minimum(
+    >>>                     np.sqrt(
+    >>>                         np.log(tr.n_arms) / (tr.n_arms * (tr.read_last_tag_value("t") + 1))
+    >>>                     ),
+    >>>                     1 / tr.n_arms,
+    >>>                 )
+    >>>                 w[arm] = np.exp(eta * tr.read_last_tag_value("iw_total_reward", arm))
     >>>             w /= w.sum()
     >>>             return (1 - tr.n_arms * eta) * w + eta * np.ones(tr.n_arms)
     >>>
@@ -54,11 +58,18 @@ class RandomizedAgent(BanditWithSimplePolicy):
         if prob_function is None:
 
             def prob_function(tr):
-                eta = np.minimum(
-                    np.sqrt(np.log(tr.n_arms) / (tr.n_arms * (tr.t + 1))),
-                    1 / tr.n_arms,
-                )
-                w = np.exp(eta * tr.iw_S_hats)
+                w = np.zeros(tr.n_arms)
+                for arm in tr.arms:
+                    eta = np.minimum(
+                        np.sqrt(
+                            np.log(tr.n_arms)
+                            / (tr.n_arms * (tr.read_last_tag_value("t") + 1))
+                        ),
+                        1 / tr.n_arms,
+                    )
+                    w[arm] = np.exp(
+                        eta * tr.read_last_tag_value("iw_total_reward", arm)
+                    )
                 w /= w.sum()
                 return (1 - tr.n_arms * eta) * w + eta * np.ones(tr.n_arms)
 
@@ -80,6 +91,9 @@ class RandomizedAgent(BanditWithSimplePolicy):
             probs = self.prob_function(self.tracker)
             action = self.seeder.rng.choice(self.arms, p=probs)
             _, reward, _, _ = self.env.step(action)
+
+            # Feed the played action and the resulting reward and sampling
+            # probability to the tracker.
             self.tracker.update(action, reward, {"p": probs[action]})
             total_reward += reward
 

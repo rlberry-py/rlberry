@@ -57,14 +57,17 @@ class TSAgent(BanditWithSimplePolicy):
         total_reward = 0.0
 
         for ep in range(horizon):
-            # sample according to prior
             sample_mu = self.sample_prior()
             action = np.argmax(sample_mu)
 
             _, reward, _, _ = self.env.step(action)
 
             # TODO: integrate update_prior in the tracker
-            self.update_prior(action, reward, self.tracker.n_pulls)
+            self.update_prior(
+                action, reward, self.tracker.read_last_tag_value("n_pulls", action)
+            )
+
+            # Feed the played action and the resulting reward to the tracker.
             self.tracker.update(action, reward)
 
             total_reward += reward
@@ -89,11 +92,11 @@ class TSAgent(BanditWithSimplePolicy):
 
     def update_prior(self, action, reward, Na):
         if self.prior == "gaussian":
-            self.prior_params_[0][action] = Na[action] / (
-                Na[action] + 1
-            ) * self.prior_params_[0][action] + reward / (Na[action] + 1)
+            self.prior_params_[0][action] = Na / (Na + 1) * self.prior_params_[0][
+                action
+            ] + reward / (Na + 1)
             self.prior_params_[1][action] = self.prior_params_[1][action] * np.sqrt(
-                Na[action] / (Na[action] + 1)
+                Na / (Na + 1)
             )
         else:
             self.prior_params_[0][action] = self.prior_params_[0][action] + reward

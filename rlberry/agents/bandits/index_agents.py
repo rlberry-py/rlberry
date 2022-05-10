@@ -29,8 +29,15 @@ class IndexAgent(BanditWithSimplePolicy):
     >>> class UCBAgent(IndexAgent):
     >>>     name = "UCB"
     >>>     def __init__(self, env, **kwargs):
-    >>>         def index_function(tr):
-    >>>             return tr.mu_hats + np.sqrt(np.log(tr.t ** 2) / (2 * tr.n_pulls))
+    >>>     def index_function(tr):
+    >>>         return [
+    >>>             tr.read_last_tag_value("mu_hat", arm)
+    >>>             + np.sqrt(
+    >>>                 np.log(tr.read_last_tag_value("t") ** 2)
+    >>>                 / (2 * tr.read_last_tag_value("n_pulls", arm))
+    >>>             )
+    >>>             for arm in tr.arms
+    >>>         ]
     >>>         IndexAgent.__init__(self, env, index, **kwargs)
 
     """
@@ -42,7 +49,14 @@ class IndexAgent(BanditWithSimplePolicy):
         if index_function is None:
 
             def index_function(tr):
-                return tr.mu_hats + np.sqrt(np.log(tr.t**2) / (2 * tr.n_pulls))
+                return [
+                    tr.read_last_tag_value("mu_hat", arm)
+                    + np.sqrt(
+                        np.log(tr.read_last_tag_value("t") ** 2)
+                        / (2 * tr.read_last_tag_value("n_pulls", arm))
+                    )
+                    for arm in tr.arms
+                ]
 
         self.index_function = index_function
 
@@ -60,13 +74,18 @@ class IndexAgent(BanditWithSimplePolicy):
         indices = np.inf * np.ones(self.n_arms)
 
         for ep in range(horizon):
-            if self.total_time < self.n_arms:
-                action = self.total_time % self.n_arms
+            # Warmup: play every arm one before starting computing indices
+            if ep < self.n_arms:
+                action = ep
             else:
                 indices = self.index_function(self.tracker)
                 action = np.argmax(indices)
+
             _, reward, _, _ = self.env.step(action)
+
+            # Feed the played action and the resulting reward to the tracker.
             self.tracker.update(action, reward)
+
             total_reward += reward
 
         self.optimal_action = np.argmax(indices)

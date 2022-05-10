@@ -1,58 +1,11 @@
 import numpy as np
 from rlberry.agents import AgentWithSimplePolicy
+from .tools import BanditTracker
 import pickle
 import logging
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
-
-
-class BanditTracker:
-    """
-    Container class for rewards and various statistics (means...) collected
-    during the run of a bandit algorithm.
-
-    Parameters
-    ----------
-
-    n_arms: int.
-        Number of arms.
-
-    params: dict
-        Other parameters to condition what to store and compute.
-    """
-
-    name = "BanditTracker"
-
-    def __init__(self, agent, params={}):
-        self.n_arms = agent.n_arms
-        self.seeder = agent.seeder
-        # Store rewards for each arm or not
-        self.store_rewards = params.get("store_rewards", False)
-        # Add importance weighted rewards or not
-        self.do_iwr = params.get("do_iwr", False)
-        self.reset()
-
-    def reset(self):
-        self.S_hats = np.zeros(self.n_arms)
-        self.mu_hats = np.zeros(self.n_arms)
-        self.n_pulls = np.zeros(self.n_arms, dtype="int")
-        self.t = 0
-        if self.store_rewards:
-            self.rewards = [[] for _ in range(self.n_arms)]
-        if self.do_iwr:
-            self.iw_S_hats = np.zeros(self.n_arms)
-
-    def update(self, arm, reward, params={}):
-        self.t += 1
-        self.n_pulls[arm] += 1
-        self.S_hats[arm] += reward
-        self.mu_hats[arm] = self.S_hats[arm] / self.n_pulls[arm]
-        if self.store_rewards:
-            self.rewards[arm].append(reward)
-        if self.do_iwr:
-            p = params.get("p", 1.0)
-            self.iw_S_hats[arm] += 1 - (1 - reward) / p
 
 
 class BanditWithSimplePolicy(AgentWithSimplePolicy):

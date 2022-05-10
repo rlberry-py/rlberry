@@ -31,7 +31,13 @@ def makeETCIndex(A=2, m=1):
     """
 
     def index(tr):
-        return -tr.n_pulls if tr.t < m * A else tr.mu_hats
+        # return -tr.n_pulls if tr.t < m * A else tr.mu_hats
+        return [
+            -tr.read_last_tag_value("n_pulls", arm)
+            if tr.read_last_tag_value("t") < m * A
+            else tr.read_last_tag_value("mu_hat", arm)
+            for arm in tr.arms
+        ]
 
     return index, {}
 
@@ -69,7 +75,15 @@ def makeSubgaussianUCBIndex(
     """
 
     def index(tr):
-        return tr.mu_hats + sigma * np.sqrt(2 * np.log(1 / delta(tr.t)) / tr.n_pulls)
+
+        return [
+            tr.read_last_tag_value("mu_hat", arm)
+            + sigma * np.sqrt(
+                2 * np.log(1 / delta(tr.read_last_tag_value("t")))
+                / tr.read_last_tag_value("n_pulls", arm)
+            )
+            for arm in tr.arms
+        ]
 
     return index, {}
 
@@ -148,9 +162,16 @@ def makeSubgaussianMOSSIndex(T=1, A=2, sigma=1.0):
     """
 
     def index(tr):
-        return tr.mu_hats + sigma * np.sqrt(
-            4 / tr.n_pulls * np.maximum(0, np.log(T / (A * tr.n_pulls)))
-        )
+        return [
+            tr.read_last_tag_value("mu_hat", arm)
+            + sigma * np.sqrt(
+                4 / tr.read_last_tag_value("n_pulls", arm)
+                * np.maximum(
+                    0, np.log(T / (A * tr.read_last_tag_value("n_pulls", arm)))
+                )
+            )
+            for arm in tr.arms
+        ]
 
     return index, {}
 
@@ -220,11 +241,15 @@ def makeEXP3Index():
     """
 
     def prob(tr):
-        eta = np.minimum(
-            np.sqrt(np.log(tr.n_arms) / (tr.n_arms * (tr.t + 1))),
-            1 / tr.n_arms,
-        )
-        w = np.exp(eta * tr.iw_S_hats)
+        w = np.zeros(tr.n_arms)
+        for arm in tr.arms:
+            eta = np.minimum(
+                np.sqrt(
+                    np.log(tr.n_arms) / (tr.n_arms * (tr.read_last_tag_value("t") + 1))
+                ),
+                1 / tr.n_arms,
+            )
+            w[arm] = np.exp(eta * tr.read_last_tag_value("iw_total_reward", arm))
         w /= w.sum()
         return (1 - tr.n_arms * eta) * w + eta * np.ones(tr.n_arms)
 
@@ -260,10 +285,10 @@ def makeBoundedIMEDIndex(upper_bound=1.0):
     from scipy.optimize import minimize_scalar
 
     def index(tr):
-        mu_hat_star = np.max(tr.mu_hats)
+        mu_hat_star = np.max([tr.read_last_tag_value("mu_hat", arm) for arm in tr.arms])
         indices = np.zeros(tr.n_arms)
-        for k in range(tr.n_arms):
-            X = np.array(tr.rewards[k])
+        for arm in tr.arms:
+            X = np.array(tr.read_tag_value("reward", arm))
 
             def dual(u):
                 return -np.mean(np.log(1 - (X - mu_hat_star) * u))
@@ -280,7 +305,7 @@ def makeBoundedIMEDIndex(upper_bound=1.0):
                 # if not successful, just make this arm ineligible this turn
                 kinf = np.inf
 
-            indices[k] = -kinf * tr.n_pulls[k] - np.log(tr.n_pulls[k])
+            indices[arm] = -kinf * len(X) - np.log(len(X))
         return indices
 
     return index, {"store_rewards": True}
@@ -317,10 +342,10 @@ def makeBoundedNPTSIndex(upper_bound=1.0):
 
     def index(tr):
         indices = np.zeros(tr.n_arms)
-        for k in range(tr.n_arms):
-            X = np.array(tr.rewards[k])
+        for arm in tr.arms:
+            X = np.array(tr.read_tag_value("reward", arm))
             w = tr.seeder.rng.dirichlet(np.ones(len(X) + 1))
-            indices[k] = w[:-1] @ X + upper_bound * w[-1]
+            indices[arm] = w[:-1] @ X + upper_bound * w[-1]
         return indices
 
     return index, {"store_rewards": True}

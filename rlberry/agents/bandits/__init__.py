@@ -1,4 +1,4 @@
-from .bandit_base import BanditTracker, BanditWithSimplePolicy
+from .bandit_base import BanditWithSimplePolicy
 from .index_agents import IndexAgent
 from .indices import (
     makeBoundedIMEDIndex,
