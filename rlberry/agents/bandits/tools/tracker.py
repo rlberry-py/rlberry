@@ -31,11 +31,19 @@ class BanditTracker(DefaultWriter):
         # Add importance weighted rewards or not
         self.do_iwr = params.get("do_iwr", False)
 
-        maxlen = None if self.store_rewards else 1
+        # By default, store a single attribute (the most recent)
+        maxlen = 1
+        # To store all rewards, override the maxlen for the corresponding tags
+        maxlen_by_tag = dict()
+        if self.store_rewards:
+            for arm in self.arms:
+                maxlen_by_tag[str(arm) + "_reward"] = None
+
         _tracker_kwargs = dict(
             name="BanditTracker",
             execution_metadata=metadata_utils.ExecutionMetadata(),
             maxlen=maxlen,
+            maxlen_by_tag=maxlen_by_tag,
         )
         DefaultWriter.__init__(self, **_tracker_kwargs)
 
