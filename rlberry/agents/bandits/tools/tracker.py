@@ -12,13 +12,11 @@ class BanditTracker(DefaultWriter):
 
     Parameters
     ----------
+    agent: rlberry bandit agent
+        See :class:`~rlberry.agents.bandits`.
 
     params: dict
         Other parameters to condition what to store and compute.
-
-    maxlen: Optional[int], default: 1
-        If given, data stored by self._data (accessed through the property self.data) is limited
-        to `maxlen` entries.
     """
 
     name = "BanditTracker"
