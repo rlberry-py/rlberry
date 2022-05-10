@@ -31,7 +31,14 @@ class UCBAgent(IndexAgent):
 
     def __init__(self, env, **kwargs):
         def index(tr):
-            return tr.mu_hats + np.sqrt(np.log(tr.t**2) / (2 * tr.n_pulls))
+            return [
+                tr.read_last_tag_value("mu_hat", arm)
+                + np.sqrt(
+                    np.log(tr.read_last_tag_value("t") ** 2)
+                    / (2 * tr.read_last_tag_value("n_pulls", arm))
+                )
+                for arm in tr.arms
+            ]
 
         IndexAgent.__init__(self, env, index, **kwargs)
         self.env = WriterWrapper(self.env, self.writer, write_scalar="action")
