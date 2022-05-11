@@ -112,8 +112,9 @@ class DefaultWriter:
         """
         Behaves as SummaryWriter.add_scalar().
 
-        Note: the tag 'dw_time_elapsed' is reserved and updated internally.
-        It logs automatically the number of seconds elapsed
+        WARNING: 'global_step' can be confusing when a scalar is written at each episode
+        and another is written at each iteration. The global step 1 may be associated to
+        first episode and first step in environment.
 
         Parameters
         ----------
@@ -122,7 +123,8 @@ class DefaultWriter:
         scalar_value : float
             Value of the scalar.
         global_step : int
-            Step where scalar was added. If None, global steps will no longer be stored for the current tag.
+            Step where scalar was added. If None, global steps will no longer be stored
+            for the current tag.
         walltime : float
             Optional override default walltime (time.time()) with seconds after epoch of event
         new_style : bool
@@ -164,21 +166,11 @@ class DefaultWriter:
             tag
         )  # useful to convert all data to a single DataFrame
         self._data[tag]["value"].append(scalar_value)
+        self._data[tag]["dw_time_elapsed"].append(timer() - self._initial_time)
         if global_step is None:
             self._data[tag]["global_step"].append(np.nan)
         else:
             self._data[tag]["global_step"].append(global_step)
-
-        # Append time interval corresponding to global_step
-        if global_step is not None and self._log_time:
-            assert tag != "dw_time_elapsed", "The tag dw_time_elapsed is reserved."
-            self._log_time = False
-            self._add_scalar(
-                tag="dw_time_elapsed",
-                scalar_value=timer() - self._initial_time,
-                global_step=global_step,
-            )
-            self._log_time = True
 
         # Log
         if not self._log_time:
