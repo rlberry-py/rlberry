@@ -123,7 +123,7 @@ class Agent(ABC):
     @property
     def writer(self):
         """
-        Writer object (e.g. tensorboard SummaryWriter).
+        Writer object.
         """
         return self._writer
 
@@ -144,9 +144,7 @@ class Agent(ABC):
     @property
     def rng(self):
         """
-        Random number generator. If you use random numbers in your agent, this
-        attribute must be used in order to ensure reproducibility. See `numpy's
-        documentation <https://numpy.org/doc/stable/reference/random/generator.html>`_.
+        Random number generator.
         """
         return self.seeder.rng
 
