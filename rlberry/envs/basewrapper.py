@@ -101,7 +101,7 @@ class Wrapper(Model):
         return self.env.close()
 
     def seed(self, seed=None):
-        return self.env.seed(seed)
+        return self.env.reset(seed=seed)
 
     def compute_reward(self, achieved_goal, desired_goal, info):
         return self.env.compute_reward(achieved_goal, desired_goal, info)
