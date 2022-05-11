@@ -120,4 +120,3 @@ sphinx_gallery_conf = {
         ]
     ),
 }
-
