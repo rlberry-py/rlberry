@@ -103,7 +103,7 @@ html_logo = "../assets/logo_wide.svg"
 html_static_path = []
 html_extra_path = ["_video"]
 
-numpydoc_validation_checks = {"all"}
+# numpydoc_validation_checks = {"all"} # can be uncommented to get the warnings from numpy.
 
 sphinx_gallery_conf = {
     "doc_module": "rlberry",
