@@ -38,8 +38,8 @@ class ValueIterationAgent(AgentWithSimplePolicy):
         ), "Value iteration requires a FiniteMDP model."
         #
 
-        self.gamma = gamma # attribute gamma
-        
+        self.gamma = gamma  # attribute gamma
+
         self.horizon = horizon
         self.epsilon = epsilon
 
