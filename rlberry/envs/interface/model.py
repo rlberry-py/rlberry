@@ -139,13 +139,13 @@ generative calls sample() method."
     def get_params(self, deep=True):
         """
         Get parameters for this model.
-        
+
         Parameters
         ----------
         deep : bool, default=True
             If True, will return the parameters for this model and
             contained subobjects.
-        
+
         Returns
         -------
         params : dict

@@ -2,6 +2,7 @@ from rlberry.agents.agent import AgentWithSimplePolicy
 from rlberry.agents.dynprog.utils import backward_induction, value_iteration
 from rlberry.envs.finite.finite_mdp import FiniteMDP
 
+
 class ValueIterationAgent(AgentWithSimplePolicy):
     """
     Value iteration for enviroments of type FiniteMDP
@@ -13,14 +14,15 @@ class ValueIterationAgent(AgentWithSimplePolicy):
     Parameters
     -----------
     env : rlberry.envs.finite.finite_mdp.FiniteMDP
+        Environment used to fit the agent.
     gamma : double
-        discount factor in [0, 1]
+        Discount factor in [0, 1]
     horizon : int
-        horizon, if the problem is finite-horizon. if None, the discounted
+        Horizon, if the problem is finite-horizon. if None, the discounted
         problem is solved
         default = None
     epsilon : double
-        precision of value iteration, only used in discounted problems
+        Precision of value iteration, only used in discounted problems
         (when horizon is None).
 
     """
@@ -36,7 +38,8 @@ class ValueIterationAgent(AgentWithSimplePolicy):
         ), "Value iteration requires a FiniteMDP model."
         #
 
-        self.gamma = gamma
+        self.gamma = gamma # attribute gamma
+        
         self.horizon = horizon
         self.epsilon = epsilon
 
