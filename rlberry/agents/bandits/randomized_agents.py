@@ -88,15 +88,24 @@ class RandomizedAgent(BanditWithSimplePolicy):
         total_reward = 0.0
 
         for ep in range(horizon):
-            probs = self.prob_function(self.tracker)
-            action = self.seeder.rng.choice(self.arms, p=probs)
+            # Warmup: play every arm one before starting computing indices
+            if ep < self.n_arms:
+                action = ep
+            else:
+                # Compute sampling probability for each arm
+                # and play one at random
+                probs = self.prob_function(self.tracker)
+                action = self.rng.choice(self.arms, p=probs)
+
             _, reward, _, _ = self.env.step(action)
 
             # Feed the played action and the resulting reward and sampling
             # probability to the tracker.
             self.tracker.update(action, reward, {"p": probs[action]})
+
             total_reward += reward
 
+        # Best action in hinsight is the one with highest sampling probability
         self.optimal_action = np.argmax(probs[:])
         info = {"episode_reward": total_reward}
         return info

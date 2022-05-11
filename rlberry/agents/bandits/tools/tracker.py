@@ -24,7 +24,7 @@ class BanditTracker(DefaultWriter):
     def __init__(self, agent, params={}):
         self.n_arms = agent.n_arms
         self.arms = agent.arms
-        self.seeder = agent.seeder
+        self.rng = agent.rng
 
         # Store rewards for each arm or not
         self.store_rewards = params.get("store_rewards", False)
@@ -58,7 +58,6 @@ class BanditTracker(DefaultWriter):
             tag_scalar_dict["total_reward"] = 0.0
             if self.do_iwr:
                 tag_scalar_dict["iw_total_reward"] = 0.0
-
             self.add_scalars(arm, tag_scalar_dict)
 
     def update(self, arm, reward, params={}):
@@ -75,6 +74,7 @@ class BanditTracker(DefaultWriter):
             "total_reward": total_reward_arm,
             "mu_hat": total_reward_arm / n_pulls_arm,
         }
+
         if self.do_iwr:
             p = params.get("p", 1.0)
             iw_total_reward_arm = self.read_last_tag_value("iw_total_reward", arm)

@@ -1,7 +1,8 @@
 import numpy as np
+from typing import Callable
 
 
-def makeETCIndex(A=2, m=1):
+def makeETCIndex(A: int = 2, m: int = 1):
     """
     Explore-Then-Commit index, see Chapter 6 in [1].
 
@@ -42,7 +43,8 @@ def makeETCIndex(A=2, m=1):
 
 
 def makeSubgaussianUCBIndex(
-    sigma=1.0, delta=lambda t: 1 / (1 + (t + 1) * np.log(t + 1) ** 2)
+    sigma: float = 1.0,
+    delta: Callable = lambda t: 1 / (1 + (t + 1) * np.log(t + 1) ** 2),
 ):
     """
     UCB index for sub-Gaussian distributions, see Chapters 7 & 8 in [1].
@@ -74,7 +76,6 @@ def makeSubgaussianUCBIndex(
     """
 
     def index(tr):
-
         return [
             tr.read_last_tag_value("mu_hat", arm)
             + sigma
@@ -90,9 +91,9 @@ def makeSubgaussianUCBIndex(
 
 
 def makeBoundedUCBIndex(
-    upper_bound=1.0,
-    lower_bound=0.0,
-    delta=lambda t: 1 / (1 + (t + 1) * np.log(t + 1) ** 2),
+    upper_bound: float = 1.0,
+    lower_bound: float = 0.0,
+    delta: Callable = lambda t: 1 / (1 + (t + 1) * np.log(t + 1) ** 2),
 ):
     """
     UCB index for bounded distributions, see Chapters 7 & 8 in [1].
@@ -130,7 +131,7 @@ def makeBoundedUCBIndex(
     return makeSubgaussianUCBIndex((upper_bound - lower_bound) / 2, delta)
 
 
-def makeSubgaussianMOSSIndex(T=1, A=2, sigma=1.0):
+def makeSubgaussianMOSSIndex(T: int = 1, A: int = 2, sigma: float = 1.0):
     """
     MOSS index for sub-Gaussian distributions, see Chapters 9 in [1].
 
@@ -179,7 +180,9 @@ def makeSubgaussianMOSSIndex(T=1, A=2, sigma=1.0):
     return index, {}
 
 
-def makeBoundedMOSSIndex(T=1, A=2, upper_bound=1.0, lower_bound=0.0):
+def makeBoundedMOSSIndex(
+    T: float = 1, A: float = 2, upper_bound: float = 1.0, lower_bound: float = 0.0
+):
     """
     MOSS index for bounded distributions, see Chapters 9 in [1].
     By Hoeffding's lemma, such distributions are sigma-sub-Gaussian with
@@ -259,7 +262,7 @@ def makeEXP3Index():
     return prob, {"do_iwr": True}
 
 
-def makeBoundedIMEDIndex(upper_bound=1.0):
+def makeBoundedIMEDIndex(upper_bound: float = 1.0):
     """
     IMED index for semi-bounded distributions, see [1].
 
@@ -314,7 +317,7 @@ def makeBoundedIMEDIndex(upper_bound=1.0):
     return index, {"store_rewards": True}
 
 
-def makeBoundedNPTSIndex(upper_bound=1.0):
+def makeBoundedNPTSIndex(upper_bound: float = 1.0):
     """
     NPTS index for bounded distributions, see [1].
 

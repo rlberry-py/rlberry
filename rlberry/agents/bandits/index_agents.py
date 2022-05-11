@@ -78,16 +78,19 @@ class IndexAgent(BanditWithSimplePolicy):
             if ep < self.n_arms:
                 action = ep
             else:
+                # Compute index for each arm and play the highest one
                 indices = self.index_function(self.tracker)
                 action = np.argmax(indices)
 
             _, reward, _, _ = self.env.step(action)
 
-            # Feed the played action and the resulting reward to the tracker.
+            # Feed the played action and the resulting reward to the tracker
             self.tracker.update(action, reward)
 
             total_reward += reward
 
+        # Best action in hinsight is the one with highest index
         self.optimal_action = np.argmax(indices)
+
         info = {"episode_reward": total_reward}
         return info
