@@ -31,7 +31,6 @@ def makeETCIndex(A=2, m=1):
     """
 
     def index(tr):
-        # return -tr.n_pulls if tr.t < m * A else tr.mu_hats
         return [
             -tr.read_last_tag_value("n_pulls", arm)
             if tr.read_last_tag_value("t") < m * A
