@@ -29,7 +29,7 @@ class IndexAgent(BanditWithSimplePolicy):
     >>> class UCBAgent(IndexAgent):
     >>>     name = "UCB"
     >>>     def __init__(self, env, **kwargs):
-    >>>     def index_function(tr):
+    >>>     def index(tr):
     >>>         return [
     >>>             tr.read_last_tag_value("mu_hat", arm)
     >>>             + np.sqrt(

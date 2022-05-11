@@ -20,6 +20,45 @@ class TSAgent(BanditWithSimplePolicy):
     prior_params : arary of size (2,n_actions) or None, default = None
         Only used if prior = "gaussian", means and std of the gaussian prior distributions.
         If None, use an array of all 0 and an array of all 1.
+
+
+    Examples
+    --------
+    >>> from rlberry.agents.bandits import TSAgent
+    >>> import numpy as np
+    >>> class BernoulliTSAgent(TSAgent):
+    >>>     name = "TS"
+    >>>     def __init__(self, env, **kwargs):
+    >>>     def prior_params(tr):
+    >>>            return [
+    >>>                [
+    >>>                    tr.read_last_tag_value("total_reward", arm) + 1,
+    >>>                    tr.read_last_tag_value("n_pulls", arm) - tr.read_last_tag_value("total_reward", arm) + 1,
+    >>>                ]
+    >>>                for arm in tr.arms
+    >>>            ]
+    >>>
+    >>>        def prior_sampler(tr):
+    >>>            params = prior_params(tr)
+    >>>            return [tr.rng.beta(params[arm][0], params[arm][1]) for arm in tr.arms]
+    >>>
+    >>>        def optimal_action(tr):
+    >>>            params = prior_params(tr)
+    >>>            return np.argmax(
+    >>>                [
+    >>>                    params[arm][0] / (params[arm][0] + params[arm][1])
+    >>>                    for arm in tr.arms
+    >>>                ]
+    >>>            )
+    >>>
+    >>>        prior = {
+    >>>            "params": prior_params,
+    >>>            "sampler": prior_sampler,
+    >>>            "optimal_action": optimal_action,
+    >>>        }
+    >>>
+    >>>        TSAgent.__init__(self, env, prior, **kwargs)
+
     """
 
     name = "TSAgent"
