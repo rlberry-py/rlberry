@@ -7,7 +7,7 @@ def makeBetaPrior():
 
     Parameters
     ----------
-        Bla
+        None
 
     Return
     ------
