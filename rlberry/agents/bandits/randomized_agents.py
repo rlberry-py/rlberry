@@ -91,6 +91,7 @@ class RandomizedAgent(BanditWithSimplePolicy):
             # Warmup: play every arm one before starting computing indices
             if ep < self.n_arms:
                 action = ep
+                probs = [float(k == action) for k in self.arms]
             else:
                 # Compute sampling probability for each arm
                 # and play one at random

@@ -9,7 +9,12 @@ randomized algorithm.
 
 import numpy as np
 from rlberry.envs.bandits import AdversarialBandit
-from rlberry.agents.bandits import RandomizedAgent, TSAgent, makeEXP3Index
+from rlberry.agents.bandits import (
+    RandomizedAgent,
+    TSAgent,
+    makeEXP3Index,
+    makeBetaPrior,
+)
 from rlberry.manager import AgentManager, plot_writer_data
 from rlberry.wrappers import WriterWrapper
 
@@ -29,12 +34,13 @@ class EXP3Agent(RandomizedAgent):
 
 
 class BernoulliTSAgent(TSAgent):
-    """Thompson sampling for Bernoulli rvs"""
+    """Thompson sampling for Bernoulli bandit"""
 
-    name = "Thompson sampling"
+    name = "TS"
 
     def __init__(self, env, **kwargs):
-        TSAgent.__init__(self, env, "beta", **kwargs)
+        prior, _ = makeBetaPrior()
+        TSAgent.__init__(self, env, prior, **kwargs)
         self.env = WriterWrapper(self.env, self.writer, write_scalar="action")
 
 
