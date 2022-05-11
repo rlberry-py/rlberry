@@ -1,7 +1,7 @@
 """
-=============================================================
-Comparison of Thompson sampling and UCB on Bernoulli bandits.
-=============================================================
+=========================================================================
+Comparison of Thompson sampling and UCB on Bernoulli and Gaussian bandits
+=========================================================================
 
 This script shows how to use Thompson sampling on two examples: Bernoulli and Gaussian bandits.
 """
