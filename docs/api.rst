@@ -58,6 +58,7 @@ Torch Agents (experimental)
    agents.torch.PPOAgent
    agents.torch.AVECPPOAgent
    agents.torch.REINFORCEAgent
+   agents.torch.SACAgent
 
 Jax Agents (experimental)
 -------------------------
