@@ -155,6 +155,9 @@ class DefaultWriter:
             self._data[tag]["value"] = deque(
                 maxlen=self._maxlen_by_tag.get(tag, self._maxlen)
             )
+            self._data[tag]["dw_time_elapsed"] = deque(
+                maxlen=self._maxlen_by_tag.get(tag, self._maxlen)
+            )
             self._data[tag]["global_step"] = deque(
                 maxlen=self._maxlen_by_tag.get(tag, self._maxlen)
             )
@@ -186,8 +189,9 @@ class DefaultWriter:
         """
         Behaves as add_scalar, but for a list instead of a single scalar value.
 
-        Note: the tag 'dw_time_elapsed' is reserved and updated internally.
-        It logs automatically the number of seconds elapsed
+        WARNING: 'global_step' can be confusing when a scalar is written at each episode
+        and another is written at each iteration. The global step 1 may be associated to
+        first episode and first step in environment.
 
         Parameters
         ----------
