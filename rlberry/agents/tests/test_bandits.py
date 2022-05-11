@@ -4,11 +4,13 @@ from rlberry.agents.bandits import (
     RandomizedAgent,
     TSAgent,
     BanditWithSimplePolicy,
+    makeBetaPrior,
     makeBoundedIMEDIndex,
     makeBoundedMOSSIndex,
     makeBoundedNPTSIndex,
     makeBoundedUCBIndex,
     makeETCIndex,
+    makeGaussianPrior,
     makeEXP3Index,
     makeSubgaussianMOSSIndex,
     makeSubgaussianUCBIndex,
@@ -44,7 +46,7 @@ def test_bounded_indices():
         class Agent(IndexAgent):
             name = agent_name
 
-            def __init__(self, env, B=1, **kwargs):
+            def __init__(self, env, **kwargs):
                 index, tracker_params = makeIndex()
                 IndexAgent.__init__(
                     self, env, index, tracker_params=tracker_params, **kwargs
@@ -59,7 +61,7 @@ def test_subgaussian_indices():
         class Agent(IndexAgent):
             name = agent_name
 
-            def __init__(self, env, B=1, **kwargs):
+            def __init__(self, env, **kwargs):
                 index, tracker_params = makeIndex()
                 IndexAgent.__init__(
                     self, env, index, tracker_params=tracker_params, **kwargs
@@ -74,7 +76,7 @@ def test_misc_indices():
         class Agent(IndexAgent):
             name = agent_name
 
-            def __init__(self, env, B=1, **kwargs):
+            def __init__(self, env, **kwargs):
                 index, tracker_params = makeIndex()
                 IndexAgent.__init__(
                     self, env, index, tracker_params=tracker_params, **kwargs
@@ -96,19 +98,22 @@ def test_randomized_bandits():
     assert check_bandit_agent(EXP3Agent, BernoulliBandit, seed=TEST_SEED)
 
 
+priors = {
+    "Beta": (makeBetaPrior, BernoulliBandit),
+    "Gaussian": (makeGaussianPrior, NormalBandit),
+}
+
+
 def test_TS():
-    class TSAgent_normal(TSAgent):
-        name = "TSAgent"
+    for agent_name, (makePrior, Bandit) in priors.items():
 
-        def __init__(self, env, **kwargs):
-            TSAgent.__init__(self, env, "gaussian", **kwargs)
+        class Agent(TSAgent):
+            name = agent_name
 
-    assert check_bandit_agent(TSAgent_normal, NormalBandit, seed=TEST_SEED)
+            def __init__(self, env, **kwargs):
+                prior_info, tracker_params = makePrior()
+                TSAgent.__init__(
+                    self, env, prior_info, tracker_params=tracker_params, **kwargs
+                )
 
-    class TSAgent_beta(TSAgent):
-        name = "TSAgent"
-
-        def __init__(self, env, **kwargs):
-            TSAgent.__init__(self, env, "beta", **kwargs)
-
-    assert check_bandit_agent(TSAgent_beta, BernoulliBandit, TEST_SEED)
+        assert check_bandit_agent(Agent, Bandit, seed=TEST_SEED)

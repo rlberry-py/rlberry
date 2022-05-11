@@ -350,7 +350,7 @@ def makeBoundedNPTSIndex(upper_bound: float = 1.0):
         indices = np.zeros(tr.n_arms)
         for arm in tr.arms:
             X = np.array(tr.read_tag_value("reward", arm))
-            w = tr.seeder.rng.dirichlet(np.ones(len(X) + 1))
+            w = tr.rng.dirichlet(np.ones(len(X) + 1))
             indices[arm] = w[:-1] @ X + upper_bound * w[-1]
         return indices
 
