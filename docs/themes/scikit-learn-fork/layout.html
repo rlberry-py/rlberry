@@ -56,36 +56,15 @@
           </a>
           {%- endif %}
         </div>
-        <div class="btn-group w-100 mb-2" role="group" aria-label="rellinks">
-          {%- if prev %}
-            <a href="{{ prev.link|e }}" role="button" class="btn sk-btn-rellink py-1" sk-rellink-tooltip="{{ prev.title|striptags }}">Prev</a>
-          {%- else %}
-            <a href="#" role="button" class="btn sk-btn-rellink py-1 disabled"">Prev</a>
-          {%- endif %}
-          {%- if parents -%}
-            <a href="{{ parents[-1].link|e }}" role="button" class="btn sk-btn-rellink py-1" sk-rellink-tooltip="{{ parents[-1].title|striptags }}">Up</a>
-          {%- else %}
-            <a href="#" role="button" class="btn sk-btn-rellink disabled py-1">Up</a>
-          {%- endif %}
-          {%- if next %}
-            <a href="{{ next.link|e }}" role="button" class="btn sk-btn-rellink py-1" sk-rellink-tooltip="{{ next.title|striptags }}">Next</a>
-          {%- else %}
-            <a href="#" role="button" class="btn sk-btn-rellink py-1 disabled"">Next</a>
-          {%- endif %}
-        </div>
         {%- if pagename != "install" %}
-        <div class="alert alert-danger p-1 mb-2" role="alert">
+	<br>
+        <div class="alert alert-warning p-1 mb-2" role="alert">
           <p class="text-center mb-0">
-          <strong>rlberry {{ release }}</strong><br/>
+          rlberry {{ release }}<br/>
           <a href="https://rlberry.readthedocs.io/en/stable/">Old version of doc</a>
           </p>
         </div>
         {%- endif %}
-        <div class="alert alert-warning p-1 mb-2" role="alert">
-          <p class="text-center mb-0">
-            Please <a class="font-weight-bold" href="citation.html"><string>cite us</string></a> if you use the software.
-          </p>
-        </div>
             {%- if meta and meta['parenttoc']|tobool %}
             <div class="sk-sidebar-toc">
             {% set nav = get_nav_object(maxdepth=3, collapse=True, numbered=True) %}
