@@ -228,7 +228,9 @@ Environments
    :toctree: generated/
    :template: class.rst
 
+   envs.bandits.AdversarialBandit
    envs.bandits.Bandit
+   envs.bandits.BernoulliBandit
    envs.bandits.NormalBandit
    envs.bandits.CorruptedNormalBandit
 
@@ -241,5 +243,5 @@ Bandit algorithms
 
    agents.bandits.BanditWithSimplePolicy
    agents.bandits.IndexAgent
-   agents.bandits.RecursiveIndexAgent
+   agents.bandits.RandomizedAgent
    agents.bandits.TSAgent

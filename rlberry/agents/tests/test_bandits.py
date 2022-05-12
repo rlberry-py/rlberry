@@ -1,116 +1,119 @@
-import numpy as np
 from rlberry.envs.bandits import NormalBandit, BernoulliBandit
 from rlberry.agents.bandits import (
     IndexAgent,
     RandomizedAgent,
-    RecursiveIndexAgent,
     TSAgent,
     BanditWithSimplePolicy,
+    makeBetaPrior,
+    makeBoundedIMEDIndex,
+    makeBoundedMOSSIndex,
+    makeBoundedNPTSIndex,
+    makeBoundedUCBIndex,
+    makeETCIndex,
+    makeGaussianPrior,
+    makeEXP3Index,
+    makeSubgaussianMOSSIndex,
+    makeSubgaussianUCBIndex,
 )
-from rlberry.manager import AgentManager
 from rlberry.utils import check_bandit_agent
 
 
 TEST_SEED = 42
 
 
-class UCBAgent(IndexAgent):
-    name = "UCB Agent"
-
-    def __init__(self, env, B=1, **kwargs):
-        def index(r, t):
-            return np.mean(r) + B * np.sqrt(2 * np.log(t**2) / len(r))
-
-        IndexAgent.__init__(self, env, index, **kwargs)
-
-
-class RecursiveUCBAgent(RecursiveIndexAgent):
-    name = "Recursive UCB Agent"
-
-    def __init__(self, env, B=1, **kwargs):
-        def stat_function(stat, Na, action, reward):
-            if stat is None:
-                stat = np.zeros(len(Na))
-            stat[action] = (Na[action] - 1) / Na[action] * stat[action] + reward / Na[
-                action
-            ]
-            return stat
-
-        def index(stat, Na, t):
-            return stat + B * np.sqrt(2 * np.log(t**2) / Na)
-
-        RecursiveIndexAgent.__init__(self, env, stat_function, index, **kwargs)
-
-
 def test_base_bandit():
     assert check_bandit_agent(BanditWithSimplePolicy, NormalBandit, seed=TEST_SEED)
 
 
-def test_index_bandits():
-    assert check_bandit_agent(UCBAgent, NormalBandit, seed=TEST_SEED)
-    assert check_bandit_agent(RecursiveUCBAgent, NormalBandit, seed=TEST_SEED)
+bounded_indices = {
+    "IMED": makeBoundedIMEDIndex,
+    "MOSS": makeBoundedMOSSIndex,
+    "NPTS": makeBoundedNPTSIndex,
+    "UCB": makeBoundedUCBIndex,
+}
+subgaussian_indices = {
+    "UCB": makeSubgaussianUCBIndex,
+    "MOSS": makeSubgaussianMOSSIndex,
+}
+misc_indices = {
+    "ETC": makeETCIndex,
+}
 
 
-class EXP3Agent(RandomizedAgent):
-    name = "EXP3"
+def test_bounded_indices():
+    for agent_name, makeIndex in bounded_indices.items():
 
-    def __init__(self, env, **kwargs):
-        def index(r, p, t):
-            return np.sum(1 - (1 - r) / p)
+        class Agent(IndexAgent):
+            name = agent_name
 
-        def prob(indices, t):
-            eta = np.minimum(np.sqrt(self.n_arms * np.log(self.n_arms) / (t + 1)), 1.0)
-            w = np.exp(eta * indices)
-            w /= w.sum()
-            return (1 - eta) * w + eta * np.ones(self.n_arms) / self.n_arms
+            def __init__(self, env, **kwargs):
+                index, tracker_params = makeIndex()
+                IndexAgent.__init__(
+                    self, env, index, tracker_params=tracker_params, **kwargs
+                )
 
-        RandomizedAgent.__init__(self, env, index, prob, **kwargs)
+        assert check_bandit_agent(Agent, BernoulliBandit, seed=TEST_SEED)
+
+
+def test_subgaussian_indices():
+    for agent_name, makeIndex in subgaussian_indices.items():
+
+        class Agent(IndexAgent):
+            name = agent_name
+
+            def __init__(self, env, **kwargs):
+                index, tracker_params = makeIndex()
+                IndexAgent.__init__(
+                    self, env, index, tracker_params=tracker_params, **kwargs
+                )
+
+        assert check_bandit_agent(Agent, NormalBandit, seed=TEST_SEED)
+
+
+def test_misc_indices():
+    for agent_name, makeIndex in misc_indices.items():
+
+        class Agent(IndexAgent):
+            name = agent_name
+
+            def __init__(self, env, **kwargs):
+                index, tracker_params = makeIndex()
+                IndexAgent.__init__(
+                    self, env, index, tracker_params=tracker_params, **kwargs
+                )
+
+        assert check_bandit_agent(Agent, BernoulliBandit, seed=TEST_SEED)
 
 
 def test_randomized_bandits():
+    class EXP3Agent(RandomizedAgent):
+        name = "EXP3"
+
+        def __init__(self, env, **kwargs):
+            prob, tracker_params = makeEXP3Index()
+            RandomizedAgent.__init__(
+                self, env, prob, tracker_params=tracker_params, **kwargs
+            )
+
     assert check_bandit_agent(EXP3Agent, BernoulliBandit, seed=TEST_SEED)
 
 
+priors = {
+    "Beta": (makeBetaPrior, BernoulliBandit),
+    "Gaussian": (makeGaussianPrior, NormalBandit),
+}
+
+
 def test_TS():
-    class TSAgent_normal(TSAgent):
-        name = "TSAgent"
+    for agent_name, (makePrior, Bandit) in priors.items():
 
-        def __init__(self, env, **kwargs):
-            TSAgent.__init__(self, env, "gaussian", **kwargs)
+        class Agent(TSAgent):
+            name = agent_name
 
-    assert check_bandit_agent(TSAgent_normal, NormalBandit, seed=TEST_SEED)
+            def __init__(self, env, **kwargs):
+                prior_info, tracker_params = makePrior()
+                TSAgent.__init__(
+                    self, env, prior_info, tracker_params=tracker_params, **kwargs
+                )
 
-    class TSAgent_beta(TSAgent):
-        name = "TSAgent"
-
-        def __init__(self, env, **kwargs):
-            TSAgent.__init__(self, env, "beta", **kwargs)
-
-    assert check_bandit_agent(TSAgent_beta, BernoulliBandit, TEST_SEED)
-
-
-def test_recursive_vs_not_recursive():
-    env_ctor = NormalBandit
-    env_kwargs = {}
-
-    agent1 = AgentManager(
-        UCBAgent, (env_ctor, env_kwargs), fit_budget=10, n_fit=1, seed=TEST_SEED
-    )
-
-    agent2 = AgentManager(
-        RecursiveUCBAgent,
-        (env_ctor, env_kwargs),
-        fit_budget=10,
-        n_fit=1,
-        seed=TEST_SEED,
-    )
-
-    agent1.fit()
-    agent2.fit()
-    env = env_ctor(**env_kwargs)
-    state = env.reset()
-    for _ in range(5):
-        # test reproducibility on 5 actions
-        action1 = agent1.agent_handlers[0].policy(state)
-        action2 = agent2.agent_handlers[0].policy(state)
-        assert action1 == action2
+        assert check_bandit_agent(Agent, Bandit, seed=TEST_SEED)
