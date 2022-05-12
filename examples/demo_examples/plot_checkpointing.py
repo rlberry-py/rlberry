@@ -1,4 +1,6 @@
 """
+.. _checkpointing_example:
+
 =============
 Checkpointing
 =============

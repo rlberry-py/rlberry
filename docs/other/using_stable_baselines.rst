@@ -43,6 +43,7 @@ agent. In order to use it with AgentManagers, it must be included in the
 implementation of `Stable Baselines`_ and evaluate two hyperparameter configurations.
 
 .. code-block:: python
+		
     class A2CAgent(StableBaselinesAgent):
         """A2C with hyperparameter optimization."""
 

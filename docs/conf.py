@@ -30,7 +30,6 @@ ver_file = os.path.join("../rlberry", "_version.py")
 with open(ver_file) as f:
     exec(f.read())
 release = __version__
-
 # -- General configuration ---------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be
@@ -51,9 +50,11 @@ extensions = [
 ]
 
 
-autodoc_default_options = {"members": True, "inherited-members": True}
+autodoc_default_options = {"members": True, "inherited-members": True, "show-inheritance":True}
 # generate autosummary even if no references
 autosummary_generate = True
+autodoc_inherit_docstrings = True
+
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["templates"]
@@ -101,6 +102,8 @@ html_logo = "../assets/logo_wide.svg"
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = []
 html_extra_path = ["_video"]
+
+# numpydoc_validation_checks = {"all"} # can be uncommented to get the warnings from numpy.
 
 sphinx_gallery_conf = {
     "doc_module": "rlberry",

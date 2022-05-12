@@ -22,6 +22,10 @@
     <p>Yannis Flet-Berliac</p>
     </div>
     <div>
+    <a href='https://github.com/KohlerHECTOR'><img src='https://avatars.githubusercontent.com/u/77987579?v=4' class='avatar' /></a> <br />
+    <p>Hector Kohler</p>
+    </div>
+    <div>
     <a href='https://github.com/eleurent'><img src='https://avatars.githubusercontent.com/u/1706935?v=4' class='avatar' /></a> <br />
     <p>Edouard Leurent</p>
     </div>
