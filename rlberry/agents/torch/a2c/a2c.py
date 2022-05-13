@@ -10,7 +10,6 @@ from rlberry.agents.torch.utils.models import default_policy_net_fn
 from rlberry.agents.torch.utils.models import default_value_net_fn
 from rlberry.utils.torch import choose_device
 from rlberry.wrappers.uncertainty_estimator_wrapper import UncertaintyEstimatorWrapper
-from rlberry.utils.factory import load
 
 logger = logging.getLogger(__name__)
 
@@ -109,19 +108,9 @@ class A2CAgent(AgentWithSimplePolicy):
         self.state_dim = self.env.observation_space.shape[0]
         self.action_dim = self.env.action_space.n
 
-        if isinstance(policy_net_fn, str):
-            self.policy_net_fn = load(policy_net_fn)
-        elif policy_net_fn is None:
-            self.policy_net_fn = default_policy_net_fn
-        else:
-            self.policy_net_fn = policy_net_fn
-
-        if isinstance(value_net_fn, str):
-            self.value_net_fn = load(value_net_fn)
-        elif policy_net_fn is None:
-            self.value_net_fn = default_value_net_fn
-        else:
-            self.value_net_fn = value_net_fn
+        #
+        self.policy_net_fn = policy_net_fn or default_policy_net_fn
+        self.value_net_fn = value_net_fn or default_value_net_fn
 
         self.optimizer_kwargs = {"optimizer_type": optimizer_type, "lr": learning_rate}
 
@@ -170,15 +159,6 @@ class A2CAgent(AgentWithSimplePolicy):
         return action
 
     def fit(self, budget: int, **kwargs):
-        """
-        Train the agent using the provided environment.
-
-        Parameters
-        ----------
-        budget: int
-            number of episodes. Each episode runs for self.horizon unless it
-            enconters a terminal state in which case it stops early.
-        """
         del kwargs
         n_episodes_to_run = budget
         count = 0
@@ -303,5 +283,5 @@ class A2CAgent(AgentWithSimplePolicy):
             "batch_size": batch_size,
             "gamma": gamma,
             "learning_rate": learning_rate,
-            "entr_coef": entr_coef,
+            "entr_coef": entr_coef
         }
