@@ -35,6 +35,8 @@ class DefaultWriter:
     maxlen : Optional[int], default: None
         If given, data stored by self._data (accessed through the property self.data) is limited
         to `maxlen` entries.
+    maxlen_by_tag: Optional[dict], default: {}
+        If given, applies the maxlen logic tag by tag, using the above maxlen as default.
     """
 
     def __init__(
@@ -44,6 +46,7 @@ class DefaultWriter:
         tensorboard_kwargs: Optional[dict] = None,
         execution_metadata: Optional[metadata_utils.ExecutionMetadata] = None,
         maxlen: Optional[int] = None,
+        maxlen_by_tag: Optional[dict] = {},
     ):
         self._name = name
         self._log_interval = log_interval
@@ -52,6 +55,7 @@ class DefaultWriter:
         self._time_last_log = None
         self._log_time = True
         self._maxlen = maxlen
+        self._maxlen_by_tag = maxlen_by_tag
         self.reset()
 
         # initialize tensorboard
@@ -84,6 +88,18 @@ class DefaultWriter:
         for tag in self._data:
             df = pd.concat([df, pd.DataFrame(self._data[tag])], ignore_index=True)
         return df
+
+    def read_tag_value(self, tag, main_tag: str = ""):
+        full_tag = str(main_tag) + "_" + str(tag) if str(main_tag) else str(tag)
+        return self._data[full_tag]["value"]
+
+    def read_first_tag_value(self, tag, main_tag: str = ""):
+        full_tag = str(main_tag) + "_" + str(tag) if str(main_tag) else str(tag)
+        return self._data[full_tag]["value"][0]
+
+    def read_last_tag_value(self, tag, main_tag: str = ""):
+        full_tag = str(main_tag) + "_" + str(tag) if str(main_tag) else str(tag)
+        return self._data[full_tag]["value"][-1]
 
     def add_scalar(
         self,
@@ -130,11 +146,21 @@ class DefaultWriter:
         # Update data structures
         if tag not in self._data:
             self._data[tag] = dict()
-            self._data[tag]["name"] = deque(maxlen=self._maxlen)
-            self._data[tag]["tag"] = deque(maxlen=self._maxlen)
-            self._data[tag]["value"] = deque(maxlen=self._maxlen)
-            self._data[tag]["global_step"] = deque(maxlen=self._maxlen)
-            self._data[tag]["dw_time_elapsed"] = deque(maxlen=self._maxlen)
+            self._data[tag]["name"] = deque(
+                maxlen=self._maxlen_by_tag.get(tag, self._maxlen)
+            )
+            self._data[tag]["tag"] = deque(
+                maxlen=self._maxlen_by_tag.get(tag, self._maxlen)
+            )
+            self._data[tag]["value"] = deque(
+                maxlen=self._maxlen_by_tag.get(tag, self._maxlen)
+            )
+            self._data[tag]["dw_time_elapsed"] = deque(
+                maxlen=self._maxlen_by_tag.get(tag, self._maxlen)
+            )
+            self._data[tag]["global_step"] = deque(
+                maxlen=self._maxlen_by_tag.get(tag, self._maxlen)
+            )
 
         self._data[tag]["name"].append(
             self._name
@@ -152,6 +178,48 @@ class DefaultWriter:
         # Log
         if not self._log_time:
             self._log()
+
+    def add_scalars(
+        self,
+        main_tag: str = "",
+        tag_scalar_dict: dict = dict(),
+        global_step: Optional[int] = None,
+        walltime=None,
+    ):
+        """
+        Behaves as add_scalar, but for a list instead of a single scalar value.
+
+        WARNING: 'global_step' can be confusing when a scalar is written at each episode
+        and another is written at each iteration. The global step 1 may be associated to
+        first episode and first step in environment.
+
+        Parameters
+        ----------
+        main_tag : string
+            The parent name for the tags.
+        tag_scalar_dict : dict
+            Key-value pair storing the tag and corresponding values.
+        global_step : int
+            Step where scalar was added. If None, global steps will no longer be stored for the current tag.
+        walltime : float
+            Optional override default walltime (time.time()) with seconds after epoch of event
+        """
+        if self._summary_writer:
+            self._summary_writer.add_scalars(
+                main_tag, tag_scalar_dict, global_step, walltime
+            )
+        self._add_scalars(main_tag, tag_scalar_dict, global_step)
+
+    def _add_scalars(
+        self, main_tag: str, tag_scalar_dict: dict, global_step: Optional[int] = None
+    ):
+        """
+        Store scalar values in self._data.
+        """
+
+        for tag, scalar_value in tag_scalar_dict.items():
+            full_tag = str(main_tag) + "_" + str(tag) if str(main_tag) else str(tag)
+            self._add_scalar(full_tag, scalar_value, global_step)
 
     def _log(self):
         # time since last log

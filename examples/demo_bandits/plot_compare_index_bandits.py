@@ -7,11 +7,20 @@ This script Compare several bandits agents and as a sub-product also shows
 how to use subplots in with `plot_writer_data`
 """
 import numpy as np
-from rlberry.envs.bandits import BernoulliBandit
-from rlberry.agents.bandits import IndexAgent, RandomizedAgent
-from rlberry.manager import AgentManager, plot_writer_data
 import matplotlib.pyplot as plt
+from rlberry.envs.bandits import BernoulliBandit
+from rlberry.manager import AgentManager, plot_writer_data
 from rlberry.wrappers import WriterWrapper
+from rlberry.agents.bandits import (
+    IndexAgent,
+    RandomizedAgent,
+    makeBoundedIMEDIndex,
+    makeBoundedMOSSIndex,
+    makeBoundedNPTSIndex,
+    makeBoundedUCBIndex,
+    makeETCIndex,
+    makeEXP3Index,
+)
 
 # Agents definition
 # sphinx_gallery_thumbnail_number = 2
@@ -33,9 +42,7 @@ class UCBAgent(IndexAgent):
     name = "UCB"
 
     def __init__(self, env, **kwargs):
-        def index(r, t):
-            return np.mean(r) + np.sqrt(np.log(t**2) / (2 * len(r)))
-
+        index, _ = makeBoundedUCBIndex()
         IndexAgent.__init__(self, env, index, **kwargs)
         self.env = WriterWrapper(
             self.env, self.writer, write_scalar="action_and_reward"
@@ -46,13 +53,7 @@ class ETCAgent(IndexAgent):
     name = "ETC"
 
     def __init__(self, env, m=20, **kwargs):
-        def index(r, t):
-            if t < m * A:
-                index = -len(r)  # select an action pulled the least
-            else:
-                index = np.mean(r, axis=0)
-            return index
-
+        index, _ = makeETCIndex(A, m)
         IndexAgent.__init__(self, env, index, **kwargs)
         self.env = WriterWrapper(
             self.env, self.writer, write_scalar="action_and_reward"
@@ -63,11 +64,30 @@ class MOSSAgent(IndexAgent):
     name = "MOSS"
 
     def __init__(self, env, **kwargs):
-        def index(r, t):
-            Na = len(r)
-            return np.mean(r) + np.sqrt(A / Na * max(0, np.log(T / (A * Na))))
-
+        index, _ = makeBoundedMOSSIndex(T, A)
         IndexAgent.__init__(self, env, index, **kwargs)
+        self.env = WriterWrapper(
+            self.env, self.writer, write_scalar="action_and_reward"
+        )
+
+
+class IMEDAgent(IndexAgent):
+    name = "IMED"
+
+    def __init__(self, env, **kwargs):
+        index, tracker_params = makeBoundedIMEDIndex()
+        IndexAgent.__init__(self, env, index, tracker_params=tracker_params, **kwargs)
+        self.env = WriterWrapper(
+            self.env, self.writer, write_scalar="action_and_reward"
+        )
+
+
+class NPTSAgent(IndexAgent):
+    name = "NPTS"
+
+    def __init__(self, env, **kwargs):
+        index, tracker_params = makeBoundedNPTSIndex()
+        IndexAgent.__init__(self, env, index, tracker_params=tracker_params, **kwargs)
         self.env = WriterWrapper(
             self.env, self.writer, write_scalar="action_and_reward"
         )
@@ -77,22 +97,23 @@ class EXP3Agent(RandomizedAgent):
     name = "EXP3"
 
     def __init__(self, env, **kwargs):
-        def index(r, p, t):
-            return np.sum(1 - (1 - r) / p)
-
-        def prob(indices, t):
-            eta = np.minimum(np.sqrt(self.n_arms * np.log(self.n_arms) / (t + 1)), 1.0)
-            w = np.exp(eta * indices)
-            w /= w.sum()
-            return (1 - eta) * w + eta * np.ones(self.n_arms) / self.n_arms
-
-        RandomizedAgent.__init__(self, env, index, prob, **kwargs)
+        prob, tracker_params = makeEXP3Index()
+        RandomizedAgent.__init__(
+            self, env, prob, tracker_params=tracker_params, **kwargs
+        )
         self.env = WriterWrapper(
             self.env, self.writer, write_scalar="action_and_reward"
         )
 
 
-Agents_class = [UCBAgent, ETCAgent, MOSSAgent, EXP3Agent]
+Agents_class = [
+    ETCAgent,
+    EXP3Agent,
+    IMEDAgent,
+    MOSSAgent,
+    NPTSAgent,
+    UCBAgent,
+]
 
 agents = [
     AgentManager(
