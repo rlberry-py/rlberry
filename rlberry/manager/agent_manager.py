@@ -82,7 +82,6 @@ class AgentHandler:
         self._agent_class = agent_class
         self._agent_instance = agent_instance
         self._agent_kwargs = agent_kwargs or {}
-        
 
     @property
     def id(self):
@@ -263,7 +262,7 @@ class AgentManager:
         default_writer_kwargs=None,
         init_kwargs_per_instance=None,
         thread_shared_data=None,
-        generate_profile=False
+        generate_profile=False,
     ):
         # agent_class should only be None when the constructor is called
         # by the class method AgentManager.load(), since the agent class
@@ -273,7 +272,7 @@ class AgentManager:
             return None  # Must only happen when load() method is called.
 
         self.generate_profile = generate_profile
-        
+
         self.seeder = Seeder(seed)
         self.eval_seeder = self.seeder.spawn(1)
 
@@ -589,16 +588,18 @@ class AgentManager:
         budget = budget or self.fit_budget
 
         if self.generate_profile:
-            logger.info('Doing a profile run.')
+            logger.info("Doing a profile run.")
             with cProfile.Profile() as pr:
                 agent = self.agent_class(**(self.init_kwargs[0]))
                 agent.fit(budget, **deepcopy(self.fit_kwargs))
-            pr.dump_stats('profile.prof')
+            pr.dump_stats("profile.prof")
             sortby = SortKey.CUMULATIVE
             ps = pstats.Stats(pr).sort_stats(sortby)
-            logger.info('Printing the 20 first lines of the profile')
+            logger.info("Printing the 20 first lines of the profile")
             ps.print_stats(20)
-            logger.info('For more detailed info see the file profile.prof that has been created.')
+            logger.info(
+                "For more detailed info see the file profile.prof that has been created."
+            )
 
         # If spawn, test that protected by if __name__ == "__main__"
         if self.mp_context == "spawn":
