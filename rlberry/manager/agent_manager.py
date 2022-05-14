@@ -18,7 +18,7 @@ import shutil
 import threading
 import multiprocessing
 from multiprocessing.spawn import _check_not_importing_main
-import cProfile, pstats, io
+import cProfile, pstats
 from pstats import SortKey
 import numpy as np
 from rlberry.envs.utils import process_env
