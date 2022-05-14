@@ -18,6 +18,8 @@ import shutil
 import threading
 import multiprocessing
 from multiprocessing.spawn import _check_not_importing_main
+import cProfile, pstats, io
+from pstats import SortKey
 import numpy as np
 from rlberry.envs.utils import process_env
 from rlberry.utils.logging import configure_logging
@@ -80,6 +82,7 @@ class AgentHandler:
         self._agent_class = agent_class
         self._agent_instance = agent_instance
         self._agent_kwargs = agent_kwargs or {}
+        
 
     @property
     def id(self):
@@ -227,7 +230,10 @@ class AgentManager:
     thread_shared_data : dict, optional
         Data to be shared among agent instances in different threads.
         If parallelization='process', data will be copied instead of shared.
-
+    generate_profile : bool, default=False
+        If true, do a an additional fit to produce a profile in a file "profile.prof" (i.e. print
+        the cumulative time spent on each operation done during a fit).
+        See `https://docs.python.org/3/library/profile.html`_ for more information on python profiler.
 
     Attributes
     ----------
@@ -257,6 +263,7 @@ class AgentManager:
         default_writer_kwargs=None,
         init_kwargs_per_instance=None,
         thread_shared_data=None,
+        generate_profile=False
     ):
         # agent_class should only be None when the constructor is called
         # by the class method AgentManager.load(), since the agent class
@@ -265,6 +272,8 @@ class AgentManager:
         if agent_class is None:
             return None  # Must only happen when load() method is called.
 
+        self.generate_profile = generate_profile
+        
         self.seeder = Seeder(seed)
         self.eval_seeder = self.seeder.spawn(1)
 
@@ -578,6 +587,18 @@ class AgentManager:
         """
         del kwargs
         budget = budget or self.fit_budget
+
+        if self.generate_profile:
+            logger.info('Doing a profile run.')
+            with cProfile.Profile() as pr:
+                agent = self.agent_class(**(self.init_kwargs[0]))
+                agent.fit(budget, **deepcopy(self.fit_kwargs))
+            pr.dump_stats('profile.prof')
+            sortby = SortKey.CUMULATIVE
+            ps = pstats.Stats(pr).sort_stats(sortby)
+            logger.info('Printing the 20 first lines of the profile')
+            ps.print_stats(20)
+            logger.info('For more detailed info see the file profile.prof that has been created.')
 
         # If spawn, test that protected by if __name__ == "__main__"
         if self.mp_context == "spawn":
