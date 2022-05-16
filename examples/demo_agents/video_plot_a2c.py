@@ -13,13 +13,14 @@ A demo of A2C algorithm in PBall2D environment
 
 from rlberry.agents.torch import A2CAgent
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
+from gym.wrappers import TimeLimit
 
 
 env = PBall2D()
-n_episodes = 400
-horizon = 256
-agent = A2CAgent(env, horizon=horizon, gamma=0.99, learning_rate=0.001, k_epochs=4)
-agent.fit(budget=n_episodes)
+env = TimeLimit(env, max_episode_steps=256)
+n_timesteps = 50_000
+agent = A2CAgent(env, gamma=0.99, learning_rate=0.001)
+agent.fit(budget=n_timesteps)
 
 env.enable_rendering()
 
