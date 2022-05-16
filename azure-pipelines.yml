@@ -33,6 +33,11 @@ jobs:
       pip install -r requirements.txt
       sudo apt install libglu1-mesa
     displayName: 'Install dependencies'
+  - script: |
+      set -xe
+      pip install -e .
+    displayName: 'Install rlberry'
+
 
   - script: |
       set -xe
@@ -87,10 +92,17 @@ jobs:
       python -m pip install --upgrade pip
       pip install -r requirements.txt
     displayName: 'Install dependencies'
+
+  - script: |
+      set -xe
+      pip install -e .
+    displayName: 'Install rlberry'
+
   - script: |
       pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
       pytest
     displayName: 'pytest'
+
 - job: 'windows'
   pool:
     vmImage: 'windows-latest'
@@ -109,6 +121,12 @@ jobs:
       python -m pip install --upgrade pip
       pip install -r requirements.txt
     displayName: 'Install dependencies'
+
+  - script: |
+      pip wheel . -w dist\
+      pip install --pre --no-index --find-links dist\ rlberry
+    displayName: 'Install rlberry'
+
   - script: |
       pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
       pytest
