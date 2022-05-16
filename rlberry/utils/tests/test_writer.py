@@ -8,7 +8,13 @@ def test_myoutput(capsys):  # or use "capfd" for fd-level
     env_kwargs = dict()
 
     env = env_ctor(**env_kwargs)
-    agent = AgentManager(UCBVIAgent, (env_ctor, env_kwargs), fit_budget=100, n_fit=1)
+    agent = AgentManager(
+        UCBVIAgent,
+        (env_ctor, env_kwargs),
+        fit_budget=100,
+        n_fit=1,
+        default_writer_kwargs={"log_interval": 1},
+    )
     agent.fit(budget=100)
 
     captured = capsys.readouterr()
