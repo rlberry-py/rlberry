@@ -317,9 +317,11 @@ class A2CAgent(AgentWithSimplePolicy):
             kl = stable_kl_div(action_dist, new_action_dist).mean().item()
             entropy = new_action_dist.entropy().mean().item()
             if self.writer is not None:
-                self.writer.add_scalar("loss", loss.detach().item(), self.episode)
-                self.writer.add_scalar("kl", kl, self.episode)
-                self.writer.add_scalar("ent", entropy, self.episode)
+                self.writer.add_scalar(
+                    "loss", loss.detach().item(), self.total_episodes
+                )
+                self.writer.add_scalar("kl", kl, self.total_episodes)
+                self.writer.add_scalar("ent", entropy, self.total_episodes)
 
         # copy new weights into old policy
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
