@@ -1,5 +1,6 @@
 import pytest
 import numpy as np
+import os
 from rlberry.envs import GridWorld
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.manager import AgentManager, plot_writer_data, evaluate_agents
@@ -49,14 +50,14 @@ def test_agent_manager_1():
     agent.policy(None)
 
     # Run AgentManager
-    params_per_instance = [dict(hyperparameter2=ii) for ii in range(4)]
+    params_per_instance = [dict(hyperparameter2=ii) for ii in range(2)]
     stats_agent1 = AgentManager(
         DummyAgent,
         train_env,
         fit_budget=5,
         eval_kwargs=eval_kwargs,
         init_kwargs=params,
-        n_fit=4,
+        n_fit=2,
         seed=123,
         init_kwargs_per_instance=params_per_instance,
     )
@@ -66,7 +67,7 @@ def test_agent_manager_1():
         fit_budget=5,
         eval_kwargs=eval_kwargs,
         init_kwargs=params,
-        n_fit=4,
+        n_fit=2,
         seed=123,
     )
     agent_manager_list = [stats_agent1, stats_agent2]
@@ -89,7 +90,7 @@ def test_agent_manager_1():
 
     # check if fitted
     for agent_manager in agent_manager_list:
-        assert len(agent_manager.agent_handlers) == 4
+        assert len(agent_manager.agent_handlers) == 2
         for agent in agent_manager.agent_handlers:
             assert agent.fitted
 
@@ -99,8 +100,8 @@ def test_agent_manager_1():
     assert stats_agent1.unique_id == loaded_stats.unique_id
 
     # test hyperparameter optimization call
-    loaded_stats.optimize_hyperparams(n_trials=5)
-    loaded_stats.optimize_hyperparams(n_trials=5, continue_previous=True)
+    loaded_stats.optimize_hyperparams(n_trials=3)
+    loaded_stats.optimize_hyperparams(n_trials=3, continue_previous=True)
 
     for st in agent_manager_list:
         st.clear_output_dir()
@@ -295,3 +296,27 @@ def test_version():
     )
     version = stats_agent1.rlberry_version
     assert (version is not None) and (len(version) > 0)
+
+
+def test_profile():
+    # Define train and evaluation envs
+    train_env = (GridWorld, {})
+
+    # Parameters
+    params = dict(hyperparameter1=-1, hyperparameter2=100)
+    eval_kwargs = dict(eval_horizon=10)
+
+    # Run AgentManager
+    params_per_instance = [dict(hyperparameter2=ii) for ii in range(4)]
+    stats_agent1 = AgentManager(
+        DummyAgent,
+        train_env,
+        fit_budget=5,
+        eval_kwargs=eval_kwargs,
+        init_kwargs=params,
+        n_fit=4,
+        seed=123,
+        init_kwargs_per_instance=params_per_instance,
+    )
+    stats_agent1.generate_profile()
+    assert os.path.getsize("profile.prof") > 100, "agent manager saved an empty profile"
