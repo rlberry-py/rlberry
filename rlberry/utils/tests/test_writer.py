@@ -13,4 +13,6 @@ def test_myoutput(capsys):  # or use "capfd" for fd-level
 
     captured = capsys.readouterr()
     # test that what is written to stderr is longer than 100 char,
-    assert len(captured.err) > 100, "the logging did not print the info to stderr"
+    assert (
+        len(captured.err) + len(captured.out) > 100
+    ), "the logging did not print the info to stderr"
