@@ -5,7 +5,7 @@
 """
 import numpy as np
 from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
-from rlberry.agents.torch.ppo import PPOAgent
+from rlberry.agents.experimental.torch.ppo import PPOAgent
 from rlberry.manager import AgentManager, plot_writer_data, evaluate_agents
 from rlberry.exploration_tools.discrete_counter import DiscreteCounter
 

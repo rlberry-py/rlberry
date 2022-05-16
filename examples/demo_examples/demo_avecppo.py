@@ -3,7 +3,7 @@
  Demo: demo_avecppo 
  =====================
 """
-from rlberry.agents.torch import AVECPPOAgent
+from rlberry.agents.experimental.torch import AVECPPOAgent
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
 
 
