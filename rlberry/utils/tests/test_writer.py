@@ -1,8 +1,6 @@
-import numpy as np
 from rlberry.envs import GridWorld
 from rlberry.agents import UCBVIAgent
-from rlberry.manager import AgentManager, read_writer_data
-from rlberry.wrappers import WriterWrapper
+from rlberry.manager import AgentManager
 
 
 def test_myoutput(capsys):  # or use "capfd" for fd-level
