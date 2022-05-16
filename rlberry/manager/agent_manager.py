@@ -577,7 +577,6 @@ class AgentManager:
 
         Parameters
         ----------
-
         budget: int or None, default=None
             budget of the fit done to generate the profile
 
