@@ -33,7 +33,8 @@ jobs:
       pip install -r requirements.txt
       pip install .
       sudo apt install libglu1-mesa
-    displayName: 'Install'
+    displayName: 'Install dependencies'
+
 
   - script: |
       set -xe
@@ -88,7 +89,7 @@ jobs:
       python -m pip install --upgrade pip
       pip install -r requirements.txt
       pip install .
-    displayName: 'Install'
+    displayName: 'Install dependencies'
   - script: |
       pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
       pytest
@@ -110,8 +111,7 @@ jobs:
   - script: |
       python -m pip install --upgrade pip
       pip install -r requirements.txt
-      pip install .
-    displayName: 'Install'
+    displayName: 'Install dependencie'
   - script: |
       pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
       pytest
