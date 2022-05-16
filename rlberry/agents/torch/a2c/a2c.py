@@ -107,7 +107,7 @@ class A2CAgent(AgentWithSimplePolicy):
         self.state_dim = self.env.observation_space.shape[0]
         self.action_dim = self.env.action_space.n
 
-        # 
+        #
         if isinstance(policy_net_fn, str):
             self.policy_net_fn = load(policy_net_fn)
         elif policy_net_fn is None:
@@ -122,15 +122,14 @@ class A2CAgent(AgentWithSimplePolicy):
         else:
             self.value_net_fn = value_net_fn
 
-        # 
+        #
         self.use_bonus = use_bonus
         if self.use_bonus:
             self.env = UncertaintyEstimatorWrapper(
                 self.env, **uncertainty_estimator_kwargs
             )
 
-        self.optimizer_kwargs = {
-            "optimizer_type": optimizer_type, "lr": learning_rate}
+        self.optimizer_kwargs = {"optimizer_type": optimizer_type, "lr": learning_rate}
 
         # check environment
         assert isinstance(self.env.observation_space, spaces.Box)
@@ -172,7 +171,7 @@ class A2CAgent(AgentWithSimplePolicy):
         action_dist = self.cat_policy_old(state)
         action = action_dist.sample()
         action_logprob = action_dist.log_prob(action)
-        
+
         # save in batch
         self.memory.states.append(state)
         self.memory.actions.append(action)
@@ -244,7 +243,6 @@ class A2CAgent(AgentWithSimplePolicy):
                 discounted_reward = 0
             discounted_reward = reward + (self.gamma * discounted_reward)
             rewards.insert(0, discounted_reward)
-            
 
         # normalize the rewards
         rewards = torch.tensor(rewards).to(self.device).float()
@@ -271,7 +269,7 @@ class A2CAgent(AgentWithSimplePolicy):
             pg_loss
             + 0.5 * self.MseLoss(state_values, rewards)
             - self.entr_coef * dist_entropy
-        ).mean()    
+        ).mean()
 
         # take gradient step
         self.policy_optimizer.zero_grad()
@@ -280,15 +278,14 @@ class A2CAgent(AgentWithSimplePolicy):
         self.policy_optimizer.step()
         self.value_optimizer.step()
 
-        
-        # log loss, kl divergence, and entropy 
+        # log loss, kl divergence, and entropy
         with torch.no_grad():
             new_action_dist = self.cat_policy(old_states)
             kl = stable_kl_div(action_dist, new_action_dist).mean().item()
             entropy = new_action_dist.entropy().mean().item()
             if self.writer is not None:
                 self.writer.add_scalar("loss", loss.detach().item(), self.episode)
-                self.writer.add_scalar("kl",  kl, self.episode)
+                self.writer.add_scalar("kl", kl, self.episode)
                 self.writer.add_scalar("ent", entropy, self.episode)
 
         # copy new weights into old policy
