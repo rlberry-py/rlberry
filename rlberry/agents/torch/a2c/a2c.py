@@ -8,6 +8,7 @@ from rlberry.agents.utils.memories import Memory
 from rlberry.agents.torch.utils.training import optimizer_factory
 from rlberry.agents.torch.utils.models import default_policy_net_fn
 from rlberry.agents.torch.utils.models import default_value_net_fn
+from rlberry.agents.torch.utils.utils import _normalize, stable_kl_div
 from rlberry.utils.torch import choose_device
 from rlberry.wrappers.uncertainty_estimator_wrapper import UncertaintyEstimatorWrapper
 from rlberry.utils.factory import load
@@ -16,8 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 class A2CAgent(AgentWithSimplePolicy):
-    """
-    Advantage Actor Critic Agent.
+    """Advantage Actor Critic Agent.
 
     A2C, or Advantage Actor Critic, is a synchronous version of the A3C policy
     gradient method. As an alternative to the asynchronous implementation of
@@ -39,6 +39,8 @@ class A2CAgent(AgentWithSimplePolicy):
         Entropy coefficient.
     learning_rate : double
         Learning rate.
+    normalize: bool
+        If True normalize rewards
     optimizer_type: str
         Type of optimizer. 'ADAM' by defaut.
     policy_net_fn : function(env, **kwargs)
@@ -77,6 +79,7 @@ class A2CAgent(AgentWithSimplePolicy):
         gamma=0.99,
         entr_coef=0.01,
         learning_rate=0.01,
+        normalize=True,
         optimizer_type="ADAM",
         policy_net_fn=None,
         value_net_fn=None,
@@ -90,17 +93,12 @@ class A2CAgent(AgentWithSimplePolicy):
 
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
-        self.use_bonus = use_bonus
-        if self.use_bonus:
-            self.env = UncertaintyEstimatorWrapper(
-                self.env, **uncertainty_estimator_kwargs
-            )
-
         self.batch_size = batch_size
         self.horizon = horizon
         self.gamma = gamma
         self.entr_coef = entr_coef
         self.learning_rate = learning_rate
+        self.normalize = normalize
         self.device = choose_device(device)
 
         self.policy_net_kwargs = policy_net_kwargs or {}
@@ -109,6 +107,7 @@ class A2CAgent(AgentWithSimplePolicy):
         self.state_dim = self.env.observation_space.shape[0]
         self.action_dim = self.env.action_space.n
 
+        # 
         if isinstance(policy_net_fn, str):
             self.policy_net_fn = load(policy_net_fn)
         elif policy_net_fn is None:
@@ -123,7 +122,15 @@ class A2CAgent(AgentWithSimplePolicy):
         else:
             self.value_net_fn = value_net_fn
 
-        self.optimizer_kwargs = {"optimizer_type": optimizer_type, "lr": learning_rate}
+        # 
+        self.use_bonus = use_bonus
+        if self.use_bonus:
+            self.env = UncertaintyEstimatorWrapper(
+                self.env, **uncertainty_estimator_kwargs
+            )
+
+        self.optimizer_kwargs = {
+            "optimizer_type": optimizer_type, "lr": learning_rate}
 
         # check environment
         assert isinstance(self.env.observation_space, spaces.Box)
@@ -156,18 +163,22 @@ class A2CAgent(AgentWithSimplePolicy):
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
 
         self.MseLoss = nn.MSELoss()
-
         self.memory = Memory()
-
         self.episode = 0
 
-    def policy(self, observation):
-        state = observation
+    def policy(self, state):
         assert self.cat_policy is not None
         state = torch.from_numpy(state).float().to(self.device)
         action_dist = self.cat_policy_old(state)
-        action = action_dist.sample().item()
-        return action
+        action = action_dist.sample()
+        action_logprob = action_dist.log_prob(action)
+        
+        # save in batch
+        self.memory.states.append(state)
+        self.memory.actions.append(action)
+        self.memory.logprobs.append(action_logprob)
+
+        return action.item()
 
     def fit(self, budget: int, **kwargs):
         """
@@ -186,56 +197,39 @@ class A2CAgent(AgentWithSimplePolicy):
             self._run_episode()
             count += 1
 
-    def _select_action(self, state):
-        state = torch.from_numpy(state).float().to(self.device)
-        action_dist = self.cat_policy_old(state)
-        action = action_dist.sample()
-        action_logprob = action_dist.log_prob(action)
-
-        self.memory.states.append(state)
-        self.memory.actions.append(action)
-        self.memory.logprobs.append(action_logprob)
-
-        return action.item()
-
     def _run_episode(self):
         # interact for H steps
         episode_rewards = 0
         state = self.env.reset()
         for i in range(self.horizon):
-            # running policy_old
-            action = self._select_action(state)
-            next_state, reward, done, info = self.env.step(action)
-
-            # check whether to use bonus
-            bonus = 0.0
-            if self.use_bonus:
-                if info is not None and "exploration_bonus" in info:
-                    bonus = info["exploration_bonus"]
+            # run old policy and collect experience
+            action = self.policy(state)
+            next_state, reward, done, _ = self.env.step(action)
 
             # save in batch
-            self.memory.rewards.append(reward + bonus)  # add bonus here
+            self.memory.rewards.append(reward)
             self.memory.is_terminals.append(done)
             episode_rewards += reward
 
+            # deal with terminal states, or update state and loop again
             if done:
                 break
-            # update state
-            state = next_state
-
-            if i == self.horizon - 1:
+            elif i == self.horizon - 1:
                 self.memory.is_terminals[-1] = True
+            else:
+                state = next_state
 
         # update
         self.episode += 1
-        #
-        if self.writer is not None:
-            self.writer.add_scalar("episode_rewards", episode_rewards, self.episode)
 
-        #
+        # update policy
         if self.episode % self.batch_size == 0:
             self._update()
             self.memory.clear_memory()
+
+        # log rewards and losses
+        if self.writer is not None:
+            self.writer.add_scalar("episode_rewards", episode_rewards, self.episode)
 
         return episode_rewards
 
@@ -250,10 +244,12 @@ class A2CAgent(AgentWithSimplePolicy):
                 discounted_reward = 0
             discounted_reward = reward + (self.gamma * discounted_reward)
             rewards.insert(0, discounted_reward)
+            
 
         # normalize the rewards
         rewards = torch.tensor(rewards).to(self.device).float()
-        rewards = (rewards - rewards.mean()) / (rewards.std() + 1e-5)
+        if self.normalize:
+            rewards = _normalize(rewards)
 
         # convert list to tensor
         old_states = torch.stack(self.memory.states).to(self.device).detach()
@@ -267,23 +263,33 @@ class A2CAgent(AgentWithSimplePolicy):
 
         # normalize the advantages
         advantages = rewards - state_values.detach()
-        advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
-        # find pg loss
+        advantages = _normalize(advantages, 1e-8)
+
+        # compute policy gradient loss
         pg_loss = -logprobs * advantages
         loss = (
             pg_loss
             + 0.5 * self.MseLoss(state_values, rewards)
             - self.entr_coef * dist_entropy
-        )
+        ).mean()    
 
         # take gradient step
         self.policy_optimizer.zero_grad()
         self.value_optimizer.zero_grad()
-
-        loss.mean().backward()
-
+        loss.backward()
         self.policy_optimizer.step()
         self.value_optimizer.step()
+
+        
+        # log loss, kl divergence, and entropy 
+        with torch.no_grad():
+            new_action_dist = self.cat_policy(old_states)
+            kl = stable_kl_div(action_dist, new_action_dist).mean().item()
+            entropy = new_action_dist.entropy().mean().item()
+            if self.writer is not None:
+                self.writer.add_scalar("loss", loss.detach().item(), self.episode)
+                self.writer.add_scalar("kl",  kl, self.episode)
+                self.writer.add_scalar("ent", entropy, self.episode)
 
         # copy new weights into old policy
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
