@@ -1,6 +1,6 @@
-""" 
- ===================== 
- Demo: demo_ppo_partial_fit 
+"""
+ =====================
+ Demo: demo_ppo_partial_fit
  =====================
 """
 import numpy as np

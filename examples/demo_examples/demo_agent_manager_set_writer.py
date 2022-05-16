@@ -1,6 +1,6 @@
-""" 
- ===================== 
- Demo: demo_agent_manager_set_writer 
+"""
+ =====================
+ Demo: demo_agent_manager_set_writer
  =====================
 """
 from rlberry.envs.benchmarks.ball_exploration import PBall2D

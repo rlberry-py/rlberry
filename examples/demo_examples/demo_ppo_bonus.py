@@ -1,6 +1,6 @@
-""" 
- ===================== 
- Demo: demo_ppo_bonus 
+"""
+ =====================
+ Demo: demo_ppo_bonus
  =====================
 """
 import numpy as np

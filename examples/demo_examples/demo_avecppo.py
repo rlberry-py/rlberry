@@ -1,6 +1,6 @@
-""" 
- ===================== 
- Demo: demo_avecppo 
+"""
+ =====================
+ Demo: demo_avecppo
  =====================
 """
 from rlberry.agents.experimental.torch import AVECPPOAgent

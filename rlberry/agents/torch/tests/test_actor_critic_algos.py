@@ -45,4 +45,3 @@ def test_a2c_agent_partial_fit():
     agent.fit(budget=n_episodes // 2)
     assert agent.episode == 10
     agent.policy(env.observation_space.sample())
-
