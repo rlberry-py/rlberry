@@ -229,10 +229,6 @@ class AgentManager:
     thread_shared_data : dict, optional
         Data to be shared among agent instances in different threads.
         If parallelization='process', data will be copied instead of shared.
-    generate_profile : bool, default=False
-        If true, do a an additional fit to produce a profile in a file "profile.prof" (i.e. print
-        the cumulative time spent on each operation done during a fit).
-        See `https://docs.python.org/3/library/profile.html`_ for more information on python profiler.
 
     Attributes
     ----------
@@ -262,7 +258,6 @@ class AgentManager:
         default_writer_kwargs=None,
         init_kwargs_per_instance=None,
         thread_shared_data=None,
-        generate_profile=False,
     ):
         # agent_class should only be None when the constructor is called
         # by the class method AgentManager.load(), since the agent class
@@ -270,8 +265,6 @@ class AgentManager:
 
         if agent_class is None:
             return None  # Must only happen when load() method is called.
-
-        self.generate_profile = generate_profile
 
         self.seeder = Seeder(seed)
         self.eval_seeder = self.seeder.spawn(1)
@@ -576,6 +569,32 @@ class AgentManager:
         writer_kwargs = writer_kwargs or {}
         self.writers[idx] = (writer_fn, writer_kwargs)
 
+    def generate_profile(self, budget=None, fname="profile.prof"):
+        """
+        Do a fit to produce a profile (i.e. the cumulative time spent on each operation done during a fit).
+        The 20 first lines are printed out and the whole profile is saved in a file.
+        See `https://docs.python.org/3/library/profile.html`_ for more information on python profiler.
+
+        Parameters
+        ----------
+
+        budget: int or None, default=None
+            budget of the fit done to generate the profile
+
+        fname: string, default="profile.prof"
+            name of the file where we save the profile.
+        """
+        budget = budget or self.fit_budget
+        logger.info("Doing a profile run.")
+        with cProfile.Profile() as pr:
+            agent = self.agent_class(**(self.init_kwargs[0]))
+            agent.fit(budget, **deepcopy(self.fit_kwargs))
+        pr.dump_stats("profile.prof")
+        sortby = SortKey.CUMULATIVE
+        ps = pstats.Stats(pr).sort_stats(sortby)
+        logger.info("Printing the 20 first lines of the profile")
+        ps.print_stats(20)
+
     def fit(self, budget=None, **kwargs):
         """Fit the agent instances in parallel.
 
@@ -586,20 +605,6 @@ class AgentManager:
         """
         del kwargs
         budget = budget or self.fit_budget
-
-        if self.generate_profile:
-            logger.info("Doing a profile run.")
-            with cProfile.Profile() as pr:
-                agent = self.agent_class(**(self.init_kwargs[0]))
-                agent.fit(budget, **deepcopy(self.fit_kwargs))
-            pr.dump_stats("profile.prof")
-            sortby = SortKey.CUMULATIVE
-            ps = pstats.Stats(pr).sort_stats(sortby)
-            logger.info("Printing the 20 first lines of the profile")
-            ps.print_stats(20)
-            logger.info(
-                "For more detailed info see the file profile.prof that has been created."
-            )
 
         # If spawn, test that protected by if __name__ == "__main__"
         if self.mp_context == "spawn":
