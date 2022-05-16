@@ -104,7 +104,7 @@ class A2CAgent(AgentWithSimplePolicy):
 
         if isinstance(value_net_fn, str):
             self.value_net_fn = load(value_net_fn)
-        elif policy_net_fn is None:
+        elif value_net_fn is None:
             self.value_net_fn = default_value_net_fn
         else:
             self.value_net_fn = value_net_fn
