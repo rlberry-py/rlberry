@@ -129,5 +129,5 @@ jobs:
 
   - script: |
       pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
-      pytest
+      pytest --import-mode=importlib
     displayName: 'pytest'
