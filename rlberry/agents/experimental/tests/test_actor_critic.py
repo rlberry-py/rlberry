@@ -4,7 +4,6 @@ from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
 from rlberry.exploration_tools.discrete_counter import DiscreteCounter
 
 
-
 def test_ppo_agent():
     env = get_benchmark_env(level=1)
     n_episodes = 5
