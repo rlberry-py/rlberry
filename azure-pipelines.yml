@@ -45,7 +45,7 @@ jobs:
       # run doctests in the documentation
       # TODO: use following line for doctest ?
       pytest docs/*rst || echo "Ignoring exit status"
-      pytest --cov=rlberry --cov-report xml rlberry
+      pytest --import-mode=importlib --cov=rlberry --cov-report xml rlberry
     displayName: 'Test and coverage'
   - script: |
       curl -Os https://uploader.codecov.io/latest/linux/codecov
@@ -100,7 +100,7 @@ jobs:
 
   - script: |
       pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
-      pytest
+      pytest --import-mode=importlib
     displayName: 'pytest'
 
 - job: 'windows'
