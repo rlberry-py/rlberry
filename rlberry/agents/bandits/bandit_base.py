@@ -1,5 +1,6 @@
 import numpy as np
 from rlberry.agents import AgentWithSimplePolicy
+from .tools import BanditTracker
 import pickle
 import logging
 from pathlib import Path
@@ -16,18 +17,25 @@ class BanditWithSimplePolicy(AgentWithSimplePolicy):
 
     Parameters
     -----------
-    env : rlberry bandit environment
+    env: rlberry bandit environment
         See :class:`~rlberry.envs.bandits.Bandit`.
+
+    tracker_params: dict
+        Parameters for the tracker object, typically to decide what to store.
 
     """
 
     name = ""
 
-    def __init__(self, env, **kwargs):
+    def __init__(self, env, tracker_params={}, **kwargs):
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
         self.n_arms = self.env.action_space.n
         self.arms = np.arange(self.n_arms)
-        self.total_time = 0
+        self.tracker = BanditTracker(self, tracker_params)
+
+    @property
+    def total_time(self):
+        return self.tracker.t
 
     def fit(self, budget=None, **kwargs):
         """
@@ -40,16 +48,14 @@ class BanditWithSimplePolicy(AgentWithSimplePolicy):
         """
         horizon = budget
         rewards = np.zeros(horizon)
-        actions = np.ones(horizon) * np.nan
 
         for ep in range(horizon):
             # choose the optimal action
             # for demo purpose, we will always choose action 0
             action = 0
-            self.total_time += 1
             _, reward, _, _ = self.env.step(action)
+            self.tracker.update(action, reward)
             rewards[ep] = reward
-            actions[ep] = action
 
         self.optimal_action = 0
         info = {"episode_reward": np.sum(rewards)}

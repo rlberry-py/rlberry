@@ -9,4 +9,4 @@
 
 .. raw:: html
 
-    <div style='clear:both'></div>
+    <div class="clearer"></div>

@@ -9,7 +9,12 @@ randomized algorithm.
 
 import numpy as np
 from rlberry.envs.bandits import AdversarialBandit
-from rlberry.agents.bandits import RandomizedAgent, TSAgent
+from rlberry.agents.bandits import (
+    RandomizedAgent,
+    TSAgent,
+    makeEXP3Index,
+    makeBetaPrior,
+)
 from rlberry.manager import AgentManager, plot_writer_data
 from rlberry.wrappers import WriterWrapper
 
@@ -21,29 +26,21 @@ class EXP3Agent(RandomizedAgent):
     name = "EXP3"
 
     def __init__(self, env, **kwargs):
-        def index(r, p, t):
-            return np.sum(1 - (1 - r) / p)
-
-        def prob(indices, t):
-            eta = np.minimum(
-                np.sqrt(np.log(self.n_arms) / (self.n_arms * (t + 1))),
-                1 / self.n_arms,
-            )
-            w = np.exp(eta * indices)
-            w /= w.sum()
-            return (1 - self.n_arms * eta) * w + eta * np.ones(self.n_arms)
-
-        RandomizedAgent.__init__(self, env, index, prob, **kwargs)
+        prob, tracker_params = makeEXP3Index()
+        RandomizedAgent.__init__(
+            self, env, prob, tracker_params=tracker_params, **kwargs
+        )
         self.env = WriterWrapper(self.env, self.writer, write_scalar="action")
 
 
 class BernoulliTSAgent(TSAgent):
-    """Thompson sampling for Bernoulli rvs"""
+    """Thompson sampling for Bernoulli bandit"""
 
-    name = "Thompson sampling"
+    name = "TS"
 
     def __init__(self, env, **kwargs):
-        TSAgent.__init__(self, env, "beta", **kwargs)
+        prior, _ = makeBetaPrior()
+        TSAgent.__init__(self, env, prior, **kwargs)
         self.env = WriterWrapper(self.env, self.writer, write_scalar="action")
 
 

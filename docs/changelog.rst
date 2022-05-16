@@ -6,6 +6,11 @@ Changelog
 Under development (0.3.0dev0)
 -----------------------------
 
+*PR #148, #161, #180*
+
+* Misc improvements on A2C.
+* New StableBaselines3 wrapper :class:`agents.stable_baselines.StableBaselinesAgent` to import StableBaselines3 Agents.
+
 *PR #119*
 
 * Improving documentation for agents.torch.utils

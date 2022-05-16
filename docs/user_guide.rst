@@ -47,7 +47,9 @@ Agents, hyperparameter optimization and experiment setup
    basics/compare_agents.rst
    basics/experiment_setup.rst
    basics/seeding.rst
-
+   
+We also provide examples to show how to use :ref:`torch checkpointing<checkpointing_example>`
+in rlberry and :ref:`tensorboard<dqn_example>`
 
 Compatibility with External Libraries
 =====================================

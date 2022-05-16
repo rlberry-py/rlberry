@@ -36,8 +36,9 @@ Basic Agents
    agents.PSRLAgent
 
 
- Importation tools
+Agent importation tools
 -----------------------
+
 .. autosummary::
    :toctree: generated/
    :template: class.rst
@@ -57,9 +58,10 @@ Torch Agents (experimental)
    agents.torch.PPOAgent
    agents.torch.AVECPPOAgent
    agents.torch.REINFORCEAgent
+   agents.torch.SACAgent
 
 Jax Agents (experimental)
---------------------
+-------------------------
 
 Still experimental. Look at the source of `rlberry.agents.jax` for more info.
 
@@ -118,8 +120,8 @@ Benchmark Environments
     envs.finite.GridWorld
 
 
-Importation tools
------------------
+Environment importation tools
+-----------------------------
 
 .. autosummary::
    :toctree: generated/
@@ -139,7 +141,7 @@ Seeding
 
 
 Utilities, Logging & Typing
-====================
+===========================
 
 Writer Utilities
 ----------------
@@ -226,7 +228,9 @@ Environments
    :toctree: generated/
    :template: class.rst
 
+   envs.bandits.AdversarialBandit
    envs.bandits.Bandit
+   envs.bandits.BernoulliBandit
    envs.bandits.NormalBandit
    envs.bandits.CorruptedNormalBandit
 
@@ -239,5 +243,5 @@ Bandit algorithms
 
    agents.bandits.BanditWithSimplePolicy
    agents.bandits.IndexAgent
-   agents.bandits.RecursiveIndexAgent
+   agents.bandits.RandomizedAgent
    agents.bandits.TSAgent

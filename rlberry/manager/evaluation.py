@@ -95,7 +95,7 @@ def evaluate_agents(
     return output
 
 
-def read_writer_data(data_source, tag, preprocess_func=None):
+def read_writer_data(data_source, tag, preprocess_func=None, id_agent=None):
     """
     Given a list of AgentManager or a folder, read data (corresponding to info) obtained in each episode.
     The dictionary returned by agents' .fit() method must contain a key equal to `info`.
@@ -109,10 +109,10 @@ def read_writer_data(data_source, tag, preprocess_func=None):
         subdirectory of this directory must contain pickle files.
         Load the data from the directory of the latest experiment in date.
         This str should be equal to the value of the `output_dir` parameter in
-            :class:`~rlberry.manager.AgentManager`.
+        :class:`~rlberry.manager.AgentManager`.
 
         - If list of str, each string must be a directory containing pickle files.
-            Load the data from these pickle files.
+        Load the data from these pickle files.
 
         Note: the agent's save function must save its writer at the key `_writer`.
         This is the default for rlberry agents.
@@ -128,6 +128,8 @@ def read_writer_data(data_source, tag, preprocess_func=None):
         If tag is a list, preprocess_func must be None or a list of Callable or
         None that matches the length of tag.
 
+    id_agent: int or None, default=None
+        If not None, returns the data only for agent 'id_agent'.
 
     Returns
     -------
@@ -173,13 +175,13 @@ def read_writer_data(data_source, tag, preprocess_func=None):
             agent_name_list = [str(p.stem).split("_")[0] for p in subdirs]
             for name in agent_name_list:
                 filename, dir_name = _get_last_xp(input_dir, name)
-                writer_datas.append(_load_data(filename, dir_name))
+                writer_datas.append(_load_data(filename, dir_name, id_agent))
         else:
             agent_name_list = [str(Path(p).stem).split("_")[0] for p in input_dir]
             agent_dirs = [str(Path(p).parent).split("_")[0] for p in input_dir]
 
             for id_f, filename in enumerate(input_dir):
-                writer_datas.append(_load_data(filename, agent_dirs[id_f]))
+                writer_datas.append(_load_data(filename, agent_dirs[id_f], id_agent))
     else:
         for manager in agent_manager_list:
             # Important: since manager can be a RemoteAgentManager,
@@ -205,6 +207,10 @@ def read_writer_data(data_source, tag, preprocess_func=None):
                     # n_simulation
                     processed_df["name"] = agent_name
                     processed_df["n_simu"] = idx
+
+                    processed_df = pd.concat(
+                        [processed_df, df[df["tag"] != tag]], ignore_index=True
+                    )
                     # add column
                     data_list.append(processed_df)
     all_writer_data = pd.concat(data_list, ignore_index=True)
@@ -243,7 +249,7 @@ def _get_last_xp(input_dir, name):
     return agent_folder, dir_name
 
 
-def _load_data(agent_folder, dir_name):
+def _load_data(agent_folder, dir_name, id_agent):
     writer_data = {}
 
     agent_dir = Path(dir_name) / agent_folder
@@ -253,7 +259,12 @@ def _load_data(agent_folder, dir_name):
     if nfit == 0:
         raise ValueError("Folders do not contain pickle files")
 
-    for ii in range(nfit):
+    if id_agent is not None:
+        id_fits = [id_agent]
+    else:
+        id_fits = range(nfit)
+
+    for ii in id_fits:
         # For each fit, load the writer data
         handler_name = agent_dir / Path(f"agent_handlers/idx_{ii}.pickle")
         with handler_name.open("rb") as ff:
@@ -266,6 +277,7 @@ def plot_writer_data(
     data_source,
     tag,
     xtag=None,
+    id_agent=None,
     ax=None,
     show=True,
     preprocess_func=None,
@@ -295,16 +307,20 @@ def plot_writer_data(
         This is the default for rlberry agents.
     tag : str
         Tag of data to plot on y-axis.
-    xtag : str
-        Tag of data to plot on x-axis. If None, use 'global_step'.
-    ax: matplotlib axis
+    xtag : str or None, default=None
+        Tag of data to plot on x-axis. If None, use 'global_step' and aggregate data.
+        If not None, only the data for one agents are used (i.e. from one fit,
+        not from all n_fit fits). See id_agent in this case.
+    id_agent : int or None, default=None
+        id of the agent to plot, used only if xtag is not None.
+    ax: matplotlib axis or None, default=None
         Matplotlib axis on which we plot. If None, create one. Can be used to
         customize the plot.
-    show: bool
+    show: bool, default=True
         If true, calls plt.show().
-    preprocess_func: Callable
+    preprocess_func: Callable, default=None
         Function to apply to 'tag' column before plot. For instance, if tag=episode_rewards,
-        setting preprocess_func=np.cumsum will plot cumulative rewards
+        setting preprocess_func=np.cumsum will plot cumulative rewards. If None, do nothing.
     title: str (Optional)
         Optional title to plot. If None, set to tag.
     savefig_fname: str (Optional)
@@ -324,14 +340,16 @@ def plot_writer_data(
         ylabel = "value"
     else:
         ylabel = tag
-    processed_df = read_writer_data(data_source, tag, preprocess_func)
-    # add column with xtag, if given
-    if xtag is not None:
-        df_xtag = pd.DataFrame(processed_df[processed_df["tag"] == xtag])
-        processed_df[xtag] = df_xtag["value"].values
+    if (xtag is not None) and (id_agent is None):
+        id_agent = 0
+    processed_df = read_writer_data(
+        data_source, tag, preprocess_func, id_agent=id_agent
+    )
+
     if len(processed_df) == 0:
         logger.error("[plot_writer_data]: No data to be plotted.")
         return
+
     data = processed_df[processed_df["tag"] == tag]
 
     if xtag is None:
@@ -352,9 +370,7 @@ def plot_writer_data(
     # PS: in the next release of seaborn, ci should be deprecated and replaced
     # with errorbar, which allows to specifies other types of confidence bars,
     # in particular quantiles.
-    lineplot_kwargs = dict(
-        x=xx, y="value", hue="name", style="name", data=data, ax=ax, ci="sd"
-    )
+    lineplot_kwargs = dict(x=xx, y="value", hue="name", data=data, ax=ax, ci="sd")
     lineplot_kwargs.update(sns_kwargs)
     sns.lineplot(**lineplot_kwargs)
     ax.set_title(title)

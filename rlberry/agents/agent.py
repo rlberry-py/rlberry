@@ -122,22 +122,37 @@ class Agent(ABC):
 
     @property
     def writer(self):
+        """
+        Writer object.
+        """
         return self._writer
 
     @property
     def unique_id(self):
+        """
+        Unique identifier for the agent instance. Can be used, for example, to create files/directories for the agent to log data safely.
+        """
         return self._unique_id
 
     @property
     def output_dir(self):
+        """
+        Directory that the agent can use to store data.
+        """
         return self._output_dir
 
     @property
     def rng(self):
+        """
+        Random number generator.
+        """
         return self.seeder.rng
 
     @property
     def thread_shared_data(self):
+        """
+        Data shared by agent instances among different threads.
+        """
         if self._thread_shared_data is None:
             return dict()
         return self._thread_shared_data
