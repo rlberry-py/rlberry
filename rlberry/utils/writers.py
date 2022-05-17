@@ -175,6 +175,10 @@ class DefaultWriter:
         else:
             self._data[tag]["global_step"].append(global_step)
 
+        # change _log_time
+        if global_step is not None and self._log_time:
+            self._log_time = False
+
         # Log
         if not self._log_time:
             self._log()
