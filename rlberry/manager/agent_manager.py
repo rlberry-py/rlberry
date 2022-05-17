@@ -569,7 +569,7 @@ class AgentManager:
         writer_kwargs = writer_kwargs or {}
         self.writers[idx] = (writer_fn, writer_kwargs)
 
-    def generate_profile(self, budget=None, fname="profile.prof"):
+    def generate_profile(self, budget=None, fname=None):
         """
         Do a fit to produce a profile (i.e. the cumulative time spent on each operation done during a fit).
         The 20 first lines are printed out and the whole profile is saved in a file.
@@ -580,15 +580,22 @@ class AgentManager:
         budget: int or None, default=None
             budget of the fit done to generate the profile
 
-        fname: string, default="profile.prof"
-            name of the file where we save the profile.
+        fname: string or None, default=None
+            name of the file where we save the profile. If None, the file is saved in self.output_dir/self.agent_name_profile.prof.
         """
         budget = budget or self.fit_budget
+
+        if self.output_dir is None:
+            output_dir_ = metadata_utils.RLBERRY_TEMP_DATA_DIR
+        else:
+            output_dir_ = self.output_dir
+
+        filename = fname or (str(output_dir_) + self.agent_name + "_profile.prof")
         logger.info("Doing a profile run.")
         with cProfile.Profile() as pr:
             agent = self.agent_class(**(self.init_kwargs[0]))
             agent.fit(budget, **deepcopy(self.fit_kwargs))
-        pr.dump_stats("profile.prof")
+        pr.dump_stats(filename)
         sortby = SortKey.CUMULATIVE
         ps = pstats.Stats(pr).sort_stats(sortby)
         logger.info("Printing the 20 first lines of the profile")
