@@ -46,24 +46,33 @@ Agent importation tools
    agents.stable_baselines.StableBaselinesAgent
 
 
-Torch Agents (experimental)
+Torch Agents
 ---------------------------
+
 
 .. autosummary::
    :toctree: generated/
    :template: class.rst
 
-   agents.torch.DQNAgent
    agents.torch.A2CAgent
-   agents.torch.PPOAgent
-   agents.torch.AVECPPOAgent
+   agents.torch.DQNAgent
    agents.torch.REINFORCEAgent
-   agents.torch.SACAgent
 
-Jax Agents (experimental)
+Experimental torch agents
 -------------------------
 
-Still experimental. Look at the source of `rlberry.agents.jax` for more info.
+.. autosummary::
+   :toctree: generated/
+   :template: class.rst
+
+   agents.experimental.torch.AVECPPOAgent
+   agents.experimental.torch.PPOAgent
+   agents.experimental.torch.SACAgent
+
+Experimental Jax Agents
+-------------------------
+
+Still experimental. Look at the source of `rlberry.agents.experimental.jax` for more info.
 
 Manager
 ====================
