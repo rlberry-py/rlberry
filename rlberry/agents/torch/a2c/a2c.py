@@ -9,7 +9,7 @@ from rlberry.agents.utils.replay import ReplayBuffer
 from rlberry.agents.torch.utils.training import optimizer_factory
 from rlberry.agents.torch.utils.models import default_policy_net_fn
 from rlberry.agents.torch.utils.models import default_value_net_fn
-from rlberry.agents.torch.utils.utils import _normalize, stable_kl_div
+from rlberry.agents.torch.utils.utils import stable_kl_div
 from rlberry.utils.torch import choose_device
 from rlberry.utils.factory import load
 from typing import Optional
@@ -18,7 +18,8 @@ logger = logging.getLogger(__name__)
 
 
 class A2CAgent(AgentWithSimplePolicy):
-    """Advantage Actor Critic Agent.
+    """
+    Advantage Actor Critic Agent.
 
     A2C, or Advantage Actor Critic, is a synchronous version of the A3C policy
     gradient method. As an alternative to the asynchronous implementation of
@@ -38,8 +39,6 @@ class A2CAgent(AgentWithSimplePolicy):
         Entropy coefficient.
     learning_rate : double
         Learning rate.
-    normalize: bool
-        If True normalize rewards
     optimizer_type: str
         Type of optimizer. 'ADAM' by defaut.
     policy_net_fn : function(env, **kwargs)
@@ -75,7 +74,6 @@ class A2CAgent(AgentWithSimplePolicy):
         gamma=0.99,
         entr_coef=0.01,
         learning_rate=0.01,
-        normalize=True,
         optimizer_type="ADAM",
         policy_net_fn=None,
         value_net_fn=None,
@@ -92,7 +90,6 @@ class A2CAgent(AgentWithSimplePolicy):
         self.gamma = gamma
         self.entr_coef = entr_coef
         self.learning_rate = learning_rate
-        self.normalize = normalize
         self.device = choose_device(device)
         self.eval_interval = eval_interval
 
@@ -163,19 +160,13 @@ class A2CAgent(AgentWithSimplePolicy):
         self.total_timesteps = 0
         self.total_episodes = 0
 
-    def policy(self, state):
+    def policy(self, observation):
+        state = observation
         assert self.cat_policy is not None
         state = torch.from_numpy(state).float().to(self.device)
         action_dist = self.cat_policy_old(state)
-        action = action_dist.sample()
-        action_logprob = action_dist.log_prob(action)
-
-        # save in batch
-        self.memory.states.append(state)
-        self.memory.actions.append(action)
-        self.memory.logprobs.append(action_logprob)
-
-        return action.item()
+        action = action_dist.sample().item()
+        return action
 
     def fit(self, budget: int, **kwargs):
         """
@@ -294,20 +285,21 @@ class A2CAgent(AgentWithSimplePolicy):
 
         # normalize the advantages
         advantages = rewards - state_values.detach()
-        advantages = _normalize(advantages, 1e-8)
-
-        # compute policy gradient loss
+        advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
+        # find pg loss
         pg_loss = -logprobs * advantages
         loss = (
             pg_loss
             + 0.5 * self.MseLoss(state_values, rewards)
             - self.entr_coef * dist_entropy
-        ).mean()
+        )
 
         # take gradient step
         self.policy_optimizer.zero_grad()
         self.value_optimizer.zero_grad()
-        loss.backward()
+
+        loss.mean().backward()
+
         self.policy_optimizer.step()
         self.value_optimizer.step()
 
@@ -318,7 +310,7 @@ class A2CAgent(AgentWithSimplePolicy):
             entropy = new_action_dist.entropy().mean().item()
             if self.writer is not None:
                 self.writer.add_scalar(
-                    "loss", loss.detach().item(), self.total_episodes
+                    "loss", loss.mean().detach().item(), self.total_episodes
                 )
                 self.writer.add_scalar("kl", kl, self.total_episodes)
                 self.writer.add_scalar("ent", entropy, self.total_episodes)
