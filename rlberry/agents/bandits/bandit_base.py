@@ -23,6 +23,13 @@ class BanditWithSimplePolicy(AgentWithSimplePolicy):
     tracker_params: dict
         Parameters for the tracker object, typically to decide what to store.
 
+    **kwargs: arguments
+        Arguments to be passed to BanditWithSimplePolicy. In particular,
+        one may want to pass the following parameter:
+
+        tracker_params: dict
+            Parameters for the tracker object, typically to decide what to store.
+
     """
 
     name = ""

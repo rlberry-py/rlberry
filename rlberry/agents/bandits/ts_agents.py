@@ -21,7 +21,6 @@ class TSAgent(BanditWithSimplePolicy):
         Only used if prior = "gaussian", means and std of the gaussian prior distributions.
         If None, use an array of all 0 and an array of all 1.
 
-
     Examples
     --------
     >>> from rlberry.agents.bandits import TSAgent

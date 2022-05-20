@@ -26,6 +26,13 @@ class RandomizedAgent(BanditWithSimplePolicy):
         performance of the EXP3 algorithm in stochastic environments.".
         European Workshop on Reinforcement Learning. PMLR, 2013.
 
+    **kwargs: arguments
+        Arguments to be passed to BanditWithSimplePolicy. In particular,
+        one may want to pass the following parameter:
+
+        tracker_params: dict
+            Parameters for the tracker object, typically to decide what to store.
+
     Examples
     --------
     >>> from rlberry.agents.bandits import IndexAgent
