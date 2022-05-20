@@ -25,6 +25,7 @@ MEMBERS = [
     "menardprr",
     "riccardodv",
     "AleShi94",
+    "KohlerHECTOR",
 ]
 
 

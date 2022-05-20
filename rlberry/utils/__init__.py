@@ -6,3 +6,4 @@ from .check_agent import (
     check_seeding_agent,
     check_agent_manager,
 )
+from .check_env import check_env

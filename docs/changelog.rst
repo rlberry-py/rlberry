@@ -5,6 +5,14 @@ Changelog
 
 Under development (0.3.0dev0)
 -----------------------------
+*PR #191*
+
+* Possibility to generate a profile with :class:`rlberry.agents.manager.AgentManager`.
+
+*PR #148, #161, #180*
+
+* Misc improvements on A2C.
+* New StableBaselines3 wrapper :class:`rlberry.agents.stable_baselines.StableBaselinesAgent` to import StableBaselines3 Agents.
 
 *PR #119*
 
