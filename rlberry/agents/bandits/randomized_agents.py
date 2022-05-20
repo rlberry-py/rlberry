@@ -38,11 +38,11 @@ class RandomizedAgent(BanditWithSimplePolicy):
     >>>             for arm in tr.arms:
     >>>                 eta = np.minimum(
     >>>                     np.sqrt(
-    >>>                         np.log(tr.n_arms) / (tr.n_arms * (tr.read_last_tag_value("t") + 1))
+    >>>                         np.log(tr.n_arms) / (tr.n_arms * (tr.t + 1))
     >>>                     ),
     >>>                     1 / tr.n_arms,
     >>>                 )
-    >>>                 w[arm] = np.exp(eta * tr.read_last_tag_value("iw_total_reward", arm))
+    >>>                 w[arm] = np.exp(eta * tr.iw_total_reward(arm))
     >>>             w /= w.sum()
     >>>             return (1 - tr.n_arms * eta) * w + eta * np.ones(tr.n_arms)
     >>>
@@ -61,15 +61,10 @@ class RandomizedAgent(BanditWithSimplePolicy):
                 w = np.zeros(tr.n_arms)
                 for arm in tr.arms:
                     eta = np.minimum(
-                        np.sqrt(
-                            np.log(tr.n_arms)
-                            / (tr.n_arms * (tr.read_last_tag_value("t") + 1))
-                        ),
+                        np.sqrt(np.log(tr.n_arms) / (tr.n_arms * (tr.t + 1))),
                         1 / tr.n_arms,
                     )
-                    w[arm] = np.exp(
-                        eta * tr.read_last_tag_value("iw_total_reward", arm)
-                    )
+                    w[arm] = np.exp(eta * tr.iw_total_reward(arm))
                 w /= w.sum()
                 return (1 - tr.n_arms * eta) * w + eta * np.ones(tr.n_arms)
 

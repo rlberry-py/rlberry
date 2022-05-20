@@ -36,8 +36,9 @@ Basic Agents
    agents.PSRLAgent
 
 
- Importation tools
+Agent importation tools
 -----------------------
+
 .. autosummary::
    :toctree: generated/
    :template: class.rst
@@ -45,23 +46,33 @@ Basic Agents
    agents.stable_baselines.StableBaselinesAgent
 
 
-Torch Agents (experimental)
+Torch Agents
 ---------------------------
+
 
 .. autosummary::
    :toctree: generated/
    :template: class.rst
 
-   agents.torch.DQNAgent
    agents.torch.A2CAgent
-   agents.torch.PPOAgent
-   agents.torch.AVECPPOAgent
+   agents.torch.DQNAgent
    agents.torch.REINFORCEAgent
 
-Jax Agents (experimental)
---------------------
+Experimental torch agents
+-------------------------
 
-Still experimental. Look at the source of `rlberry.agents.jax` for more info.
+.. autosummary::
+   :toctree: generated/
+   :template: class.rst
+
+   agents.experimental.torch.AVECPPOAgent
+   agents.experimental.torch.PPOAgent
+   agents.experimental.torch.SACAgent
+
+Experimental Jax Agents
+-------------------------
+
+Still experimental. Look at the source of `rlberry.agents.experimental.jax` for more info.
 
 Manager
 ====================
@@ -118,8 +129,8 @@ Benchmark Environments
     envs.finite.GridWorld
 
 
-Importation tools
------------------
+Environment importation tools
+-----------------------------
 
 .. autosummary::
    :toctree: generated/
@@ -139,7 +150,7 @@ Seeding
 
 
 Utilities, Logging & Typing
-====================
+===========================
 
 Writer Utilities
 ----------------
@@ -234,6 +245,15 @@ Environments
 
 Bandit algorithms
 -----------------
+The bandits algorithms use mainly the following tracker tool:
+
+.. autosummary::
+   :toctree: generated/
+   :template: class.rst
+
+   agents.bandits.tools.BanditTracker
+
+Some general class of bandit algorithms are provided.
 
 .. autosummary::
    :toctree: generated/
@@ -243,3 +263,18 @@ Bandit algorithms
    agents.bandits.IndexAgent
    agents.bandits.RandomizedAgent
    agents.bandits.TSAgent
+
+A number of indices are provided to use in bandits algorithms:
+
+.. autosummary::
+   :toctree: generated/
+   :template: function.rst
+
+   agents.bandits.makeBoundedIMEDIndex
+   agents.bandits.makeBoundedMOSSIndex
+   agents.bandits.makeBoundedNPTSIndex
+   agents.bandits.makeBoundedUCBIndex
+   agents.bandits.makeETCIndex
+   agents.bandits.makeEXP3Index
+   agents.bandits.makeSubgaussianMOSSIndex
+   agents.bandits.makeSubgaussianUCBIndex

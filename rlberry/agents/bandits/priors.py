@@ -40,12 +40,7 @@ def makeBetaPrior():
         where a is the number of success + 1, b the number of failures + 1.
         """
         return [
-            [
-                tr.read_last_tag_value("total_reward", arm) + 1,
-                tr.read_last_tag_value("n_pulls", arm)
-                - tr.read_last_tag_value("total_reward", arm)
-                + 1,
-            ]
+            [tr.total_reward(arm) + 1, tr.n_pulls(arm) - tr.total_reward(arm) + 1,]
             for arm in tr.arms
         ]
 
@@ -118,13 +113,7 @@ def makeGaussianPrior(sigma: float = 1.0):
         N(mu_hat, s^2), where mu_hat is the empirical average reward and
         s^2 = sigma^2 / n, n being the number of pulls for this arm.
         """
-        return [
-            [
-                tr.read_last_tag_value("mu_hat", arm),
-                sigma / np.sqrt(tr.read_last_tag_value("n_pulls", arm)),
-            ]
-            for arm in tr.arms
-        ]
+        return [[tr.mu_hat(arm), sigma / np.sqrt(tr.n_pulls(arm)),] for arm in tr.arms]
 
     def prior_sampler(tr):
         """
