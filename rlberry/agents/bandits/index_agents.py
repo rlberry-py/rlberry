@@ -27,7 +27,7 @@ class IndexAgent(BanditWithSimplePolicy):
 
     tracker_params: dict
         Parameters for the tracker object, typically to decide what to store.
-    
+
     Examples
     --------
     >>> from rlberry.agents.bandits import IndexAgent
