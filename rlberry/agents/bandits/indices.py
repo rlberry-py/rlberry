@@ -278,7 +278,7 @@ def makeBoundedIMEDIndex(upper_bound: float = 1.0):
         mu_hat_star = np.max([tr.mu_hat(arm) for arm in tr.arms])
         indices = np.zeros(tr.n_arms)
         for arm in tr.arms:
-            X = np.array(tr.reward(arm))
+            X = np.array(tr.rewards(arm))
 
             def dual(u):
                 return -np.mean(np.log(1 - (X - mu_hat_star) * u))
@@ -333,7 +333,7 @@ def makeBoundedNPTSIndex(upper_bound: float = 1.0):
     def index(tr):
         indices = np.zeros(tr.n_arms)
         for arm in tr.arms:
-            X = np.array(tr.reward(arm))
+            X = np.array(tr.rewards(arm))
             w = tr.rng.dirichlet(np.ones(len(X) + 1))
             indices[arm] = w[:-1] @ X + upper_bound * w[-1]
         return indices
