@@ -26,7 +26,7 @@ if __name__ == "__main__":
     N_EPISODES = 250
     GAMMA = 0.99
     HORIZON = 50
-    BATCH_SIZE=50
+    BATCH_SIZE = 50
     BONUS_SCALE_FACTOR = 0.1
     MIN_DIST = 0.1
 
