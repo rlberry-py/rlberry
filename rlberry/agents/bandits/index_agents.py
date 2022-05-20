@@ -21,7 +21,13 @@ class IndexAgent(BanditWithSimplePolicy):
         Compute the index for an arm using the past rewards on this arm and
         the current time t. If None, use UCB bound for Bernoulli.
 
+    **kwargs: arguments
+        arguments to be passed to BanditWithSimplePolicy. In particular,
+        one may want to pass the following parameter:
 
+    tracker_params: dict
+        Parameters for the tracker object, typically to decide what to store.
+    
     Examples
     --------
     >>> from rlberry.agents.bandits import IndexAgent

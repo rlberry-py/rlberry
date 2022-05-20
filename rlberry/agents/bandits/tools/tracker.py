@@ -10,6 +10,10 @@ class BanditTracker(DefaultWriter):
     Container class for rewards and various statistics (means...) collected
     during the run of a bandit algorithm.
 
+    Used mainly to compute indices for bandits algorithms. A default tracker
+    is automatically constructed in :class:`~rlberry.agents.bandits.BanditWithSimplePolicy`
+    and can then be used as entry for an index function. See the example.
+
     Parameters
     ----------
     agent: rlberry bandit agent
@@ -17,6 +21,21 @@ class BanditTracker(DefaultWriter):
 
     params: dict
         Other parameters to condition what to store and compute.
+        In particuler if params contains store_rewards=True, the
+        rewards will be saved for each arm at each step.
+
+    Examples
+    --------
+    >>>  def index(tr):
+         ''' Compute UCB index for rewards in [0,1]'''
+         return [
+            tr.read_last_tag_value("mu_hat", arm)
+            +  np.sqrt( 0.5 * np.log(1 / delta(tr.read_last_tag_value("t")))
+                / tr.read_last_tag_value("n_pulls", arm)
+            )
+            for arm in tr.arms
+          ]
+
     """
 
     name = "BanditTracker"

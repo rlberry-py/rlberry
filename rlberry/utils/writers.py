@@ -90,14 +90,62 @@ class DefaultWriter:
         return df
 
     def read_tag_value(self, tag, main_tag: str = ""):
+        """
+        Reads the values for the tag `tag`.
+        If a `main_tag` is given, the tag will be a concatenation of `main_tag`, underscore and `tag`.
+
+        Parameters
+        ----------
+        tag: string
+            tag to be searched
+
+        main_tag: string, default=""
+            main tag. If `main_tag == ""`  then use only `tag`.
+
+        Returns
+        -------
+        the writer values for the tag, a pandas Series.
+        """
         full_tag = str(main_tag) + "_" + str(tag) if str(main_tag) else str(tag)
         return self._data[full_tag]["value"]
 
     def read_first_tag_value(self, tag, main_tag: str = ""):
+        """
+        Reads the first value for the tag `tag`.
+        If a `main_tag` is given, the tag will be a concatenation of `main_tag`, underscore and `tag`.
+
+        Parameters
+        ----------
+        tag: string
+            tag to be searched
+
+        main_tag: string, default=""
+            main tag. If `main_tag == ""`  then use only `tag`.
+
+        Returns
+        -------
+        the first value encountered with tag `tag`.
+        """
         full_tag = str(main_tag) + "_" + str(tag) if str(main_tag) else str(tag)
         return self._data[full_tag]["value"][0]
 
     def read_last_tag_value(self, tag, main_tag: str = ""):
+        """
+        Reads the last value for the tag `tag`.
+        If a `main_tag` is given, the tag will be a concatenation of `main_tag`, underscore and `tag`.
+
+        Parameters
+        ----------
+        tag: string
+            tag to be searched
+
+        main_tag: string, default=""
+            main tag. If `main_tag == ""`  then use only `tag`.
+
+        Returns
+        -------
+        the last value with tag `tag` encountered by the writer.
+        """
         full_tag = str(main_tag) + "_" + str(tag) if str(main_tag) else str(tag)
         return self._data[full_tag]["value"][-1]
 
