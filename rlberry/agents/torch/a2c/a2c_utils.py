@@ -1,7 +1,7 @@
 import torch
 
 
-def _normalize(x, epsilon=1e-5):
+def normalization(x, epsilon=1e-5):
     return (x - x.mean()) / (x.std() + epsilon)
 
 

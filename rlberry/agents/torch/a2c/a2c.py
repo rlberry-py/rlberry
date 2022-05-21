@@ -9,7 +9,7 @@ from rlberry.agents.utils.replay import ReplayBuffer
 from rlberry.agents.torch.utils.training import optimizer_factory
 from rlberry.agents.torch.utils.models import default_policy_net_fn
 from rlberry.agents.torch.utils.models import default_value_net_fn
-from rlberry.agents.torch.utils.utils import stable_kl_div
+from a2c_utils import stable_kl_div
 from rlberry.utils.torch import choose_device
 from rlberry.utils.factory import load
 from typing import Optional
@@ -182,6 +182,11 @@ class A2CAgent(AgentWithSimplePolicy):
         timesteps_counter = 0
         episode_rewards = 0.0
         episode_timesteps = 0
+
+        self.loss = None
+        self.kl = None
+        self.entropy = None
+
         observation = self.env.reset()
         while timesteps_counter < budget:
             action = self._select_action(observation)
@@ -223,6 +228,9 @@ class A2CAgent(AgentWithSimplePolicy):
                         "eval_rewards", eval_rewards, total_timesteps
                     )
                     self.writer.add_scalar("memory_size", memory_size, total_timesteps)
+                    self.writer.add_scalar("loss", self.loss, total_timesteps)
+                    self.writer.add_scalar("kl", self.kl, total_timesteps)
+                    self.writer.add_scalar("ent", self.entropy, total_timesteps)
 
             # check if episode ended
             if done:
@@ -286,13 +294,11 @@ class A2CAgent(AgentWithSimplePolicy):
         # normalize the advantages
         advantages = rewards - state_values.detach()
         advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
-        # find pg loss
+
+        # add together policy gradient loss, value loss, entropy loss
         pg_loss = -logprobs * advantages
-        loss = (
-            pg_loss
-            + 0.5 * self.MseLoss(state_values, rewards)
-            - self.entr_coef * dist_entropy
-        )
+        br_loss = self.MseLoss(state_values, rewards)
+        loss = pg_loss + 0.5 * br_loss - self.entr_coef * dist_entropy
 
         # take gradient step
         self.policy_optimizer.zero_grad()
@@ -303,20 +309,15 @@ class A2CAgent(AgentWithSimplePolicy):
         self.policy_optimizer.step()
         self.value_optimizer.step()
 
-        # log loss, kl divergence, and entropy
-        with torch.no_grad():
-            new_action_dist = self.cat_policy(old_states)
-            kl = stable_kl_div(action_dist, new_action_dist).mean().item()
-            entropy = new_action_dist.entropy().mean().item()
-            if self.writer is not None:
-                self.writer.add_scalar(
-                    "loss", loss.mean().detach().item(), self.total_episodes
-                )
-                self.writer.add_scalar("kl", kl, self.total_episodes)
-                self.writer.add_scalar("ent", entropy, self.total_episodes)
-
         # copy new weights into old policy
         self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
+
+        # log some other things
+        with torch.no_grad():
+            new_action_dist = self.cat_policy(old_states)
+            self.kl = stable_kl_div(action_dist, new_action_dist).mean().item()
+            self.entropy = new_action_dist.entropy().mean().item()
+            self.loss = br_loss.mean().detach().item()
 
     #
     # For hyperparameter optimization
