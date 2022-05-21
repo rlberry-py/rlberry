@@ -108,24 +108,66 @@ class BanditTracker(DefaultWriter):
 
     @property
     def t(self):
+        """
+        Current running time of the bandit algorithm played by the associated
+        bandit agent.
+        """
         return self.read_last_tag_value("t")
 
     def n_pulls(self, arm):
+        """
+        Current number of pulls by the associated bandit agent to a given arm.
+        """
         return self.read_last_tag_value("n_pulls", arm)
 
     def rewards(self, arm):
+        """
+        All rewards collected so far by the associated bandit agent for a given
+        arm and currently stored. If maxlen_by_tag[str(arm) + "reward"] is None
+        or maxlen is None, all the reward history is stored at anytime.
+        """
         return self.read_tag_value("reward", arm)
 
     def total_reward(self, arm):
+        """
+        Current total reward collected so far by the associated bandit agent
+        for a given arm.
+        """
         return self.read_last_tag_value("total_reward", arm)
 
     def mu_hat(self, arm):
+        """
+        Current empirical mean reward for a given arm estimated by the
+        associated bandit agent.
+        """
         return self.read_last_tag_value("mu_hat", arm)
 
     def iw_total_reward(self, arm):
+        """
+        Empirical Importance weighted total reward collected so far by the
+        associated bandit agent for a given arm. Used by randomized algorithms.
+        The IW total reward is the sum of rewards for a given arm inversely
+        weighted by the arm sampling probabilities at each pull.
+        In this implementation, we update the loss-based estimator, i.e for
+        a reward r in [0, 1], we weight 1 - r instead of r
+        (see Note 9, Chapter 11 of [1]).
+
+        .. [1] Lattimore, Tor, and Csaba Szepesvári. Bandit algorithms.
+                Cambridge University Press, 2020.
+        """
         return self.read_last_tag_value("iw_total_reward", arm)
 
     def update(self, arm, reward, params={}):
+        """
+        After the associated bandit agent played a given arm and collected a
+        given reward, update the stored data.
+        By default, only standard statistics are calculated and stored (number
+        of pulls, current reward, total reward and current empirical mean
+        reward). Special parameters can be passed in params, e.g the sampling
+        probability for randomized algorithms (to update the importance
+        weighted total reward).
+        """
+        # Update current running time
         self.add_scalar("t", self.t + 1)
 
         # Total number of pulls for current arm
@@ -140,6 +182,7 @@ class BanditTracker(DefaultWriter):
             "mu_hat": total_reward_arm / n_pulls_arm,
         }
 
+        # Importance weighted total rewards for randomized algorithns
         if self.do_iwr:
             p = params.get("p", 1.0)
             iw_total_reward_arm = self.iw_total_reward(arm)
@@ -147,4 +190,5 @@ class BanditTracker(DefaultWriter):
                 iw_total_reward_arm + 1 - (1 - reward) / p
             )
 
+        # Write all tracked statistics
         self.add_scalars(arm, tag_scalar_dict)
