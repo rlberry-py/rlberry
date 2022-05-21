@@ -41,10 +41,8 @@ def makeBetaPrior():
         """
         return [
             [
-                tr.read_last_tag_value("total_reward", arm) + 1,
-                tr.read_last_tag_value("n_pulls", arm)
-                - tr.read_last_tag_value("total_reward", arm)
-                + 1,
+                tr.total_reward(arm) + 1,
+                tr.n_pulls(arm) - tr.total_reward(arm) + 1,
             ]
             for arm in tr.arms
         ]
@@ -120,8 +118,8 @@ def makeGaussianPrior(sigma: float = 1.0):
         """
         return [
             [
-                tr.read_last_tag_value("mu_hat", arm),
-                sigma / np.sqrt(tr.read_last_tag_value("n_pulls", arm)),
+                tr.mu_hat(arm),
+                sigma / np.sqrt(tr.n_pulls(arm)),
             ]
             for arm in tr.arms
         ]
