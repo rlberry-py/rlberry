@@ -1,12 +1,12 @@
-""" 
- ===================== 
- Demo: demo_ppo_benchmark 
+"""
+ =====================
+ Demo: demo_ppo_benchmark
  =====================
 """
 import numpy as np
 from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
 from rlberry.agents import MBQVIAgent
-from rlberry.agents.torch.ppo import PPOAgent
+from rlberry.agents.experimental.torch.ppo import PPOAgent
 from rlberry.wrappers import DiscretizeStateWrapper
 from rlberry.manager import AgentManager, plot_writer_data, evaluate_agents
 

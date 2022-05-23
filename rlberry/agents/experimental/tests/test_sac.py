@@ -1,4 +1,4 @@
-from rlberry.agents.torch import SACAgent
+from rlberry.agents.experimental.torch import SACAgent
 
 from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
 from rlberry.exploration_tools.discrete_counter import DiscreteCounter

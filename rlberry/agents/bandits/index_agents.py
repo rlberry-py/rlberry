@@ -21,6 +21,11 @@ class IndexAgent(BanditWithSimplePolicy):
         Compute the index for an arm using the past rewards on this arm and
         the current time t. If None, use UCB bound for Bernoulli.
 
+    **kwargs: arguments
+        Arguments to be passed to BanditWithSimplePolicy. In particular,
+        one may want to pass the following parameter:
+        tracker_params: dict
+            Parameters for the tracker object, typically to decide what to store.
 
     Examples
     --------
@@ -31,10 +36,10 @@ class IndexAgent(BanditWithSimplePolicy):
     >>>     def __init__(self, env, **kwargs):
     >>>     def index(tr):
     >>>         return [
-    >>>             tr.read_last_tag_value("mu_hat", arm)
+    >>>             tr.mu_hat(arm)
     >>>             + np.sqrt(
-    >>>                 np.log(tr.read_last_tag_value("t") ** 2)
-    >>>                 / (2 * tr.read_last_tag_value("n_pulls", arm))
+    >>>                 np.log(tr.t ** 2)
+    >>>                 / (2 * tr.n_pulls(arm))
     >>>             )
     >>>             for arm in tr.arms
     >>>         ]
@@ -50,11 +55,7 @@ class IndexAgent(BanditWithSimplePolicy):
 
             def index_function(tr):
                 return [
-                    tr.read_last_tag_value("mu_hat", arm)
-                    + np.sqrt(
-                        np.log(tr.read_last_tag_value("t") ** 2)
-                        / (2 * tr.read_last_tag_value("n_pulls", arm))
-                    )
+                    tr.mu_hat(arm) + np.sqrt(np.log(tr.t**2) / (2 * tr.n_pulls(arm)))
                     for arm in tr.arms
                 ]
 
