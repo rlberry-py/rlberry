@@ -475,7 +475,6 @@ class AgentManager:
         """
         return self.default_writer_data
 
-
     def get_agent_instances(self):
         """Returns a list containing ``n_fit`` agent instances.
 
