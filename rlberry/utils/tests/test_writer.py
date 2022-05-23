@@ -43,7 +43,7 @@ def test_myoutput(capsys):  # or use "capfd" for fd-level
     agent.fit(budget=3)
 
     captured = capsys.readouterr()
-    # test that what is written to stderr is longer than 100 char,
+    # test that what is written to stderr is longer than 50 char,
     assert (
-        len(captured.err) + len(captured.out) > 100
+        len(captured.err) + len(captured.out) > 50
     ), "the logging did not print the info to stderr"
