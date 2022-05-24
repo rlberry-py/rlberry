@@ -24,6 +24,8 @@ class DefaultWriter:
     ----------
     name : str
         Name of the writer.
+    print_log : bool, default=True
+        If True, print logs to stderr.
     log_interval : int
         Minimum number of seconds between consecutive logs (with logging module).
     tensorboard_kwargs : Optional[dict]
@@ -42,6 +44,7 @@ class DefaultWriter:
     def __init__(
         self,
         name: str,
+        print_log: bool = True,
         log_interval: int = 3,
         tensorboard_kwargs: Optional[dict] = None,
         execution_metadata: Optional[metadata_utils.ExecutionMetadata] = None,
@@ -49,6 +52,7 @@ class DefaultWriter:
         maxlen_by_tag: Optional[dict] = {},
     ):
         self._name = name
+        self._print_log = print_log
         self._log_interval = log_interval
         self._execution_metadata = execution_metadata
         self._data = None
@@ -226,7 +230,7 @@ class DefaultWriter:
             self._log_time = False
 
         # Log
-        if not self._log_time:
+        if (not self._log_time) and (self._print_log):
             self._log()
 
     def add_scalars(

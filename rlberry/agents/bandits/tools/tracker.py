@@ -91,7 +91,7 @@ class BanditTracker(DefaultWriter):
             maxlen=maxlen,
             maxlen_by_tag=maxlen_by_tag,
         )
-        DefaultWriter.__init__(self, **_tracker_kwargs)
+        DefaultWriter.__init__(self, print_log=False, **_tracker_kwargs)
 
         self.reset_tracker()
 
