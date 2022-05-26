@@ -9,7 +9,7 @@ from rlberry.agents.utils.replay import ReplayBuffer
 from rlberry.agents.torch.utils.training import optimizer_factory
 from rlberry.agents.torch.utils.models import default_policy_net_fn
 from rlberry.agents.torch.utils.models import default_value_net_fn
-from a2c_utils import stable_kl_div
+from rlberry.agents.torch.a2c.a2c_utils import stable_kl_div
 from rlberry.utils.torch import choose_device
 from rlberry.utils.factory import load
 from typing import Optional
