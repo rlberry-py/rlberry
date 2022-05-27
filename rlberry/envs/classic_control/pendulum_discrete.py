@@ -1,6 +1,7 @@
 import gym
 import numpy as np
 import warnings
+from gym import spaces
 
 
 class PendulumDiscrete:
@@ -10,6 +11,8 @@ class PendulumDiscrete:
         self.env._max_episode_steps = np.inf
         self.done_steps = 0
         self.act_mapping = np.asarray([[-2], [0], [2]])
+        self.observation_space = self.env.observation_space
+        self.action_space = spaces.Discrete(3)
 
     def reset(self):
         self.done_steps = 0
