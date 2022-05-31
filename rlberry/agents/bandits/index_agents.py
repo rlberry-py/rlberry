@@ -22,10 +22,13 @@ class IndexAgent(BanditWithSimplePolicy):
         the current time t. If None, use UCB bound for Bernoulli.
 
     **kwargs: arguments
-        Arguments to be passed to BanditWithSimplePolicy. In particular,
-        one may want to pass the following parameter:
+        Arguments to be passed to :class:`~rlberry.agents.bandit.BanditWithSimplePolicy`.
+        In particular, one may want to pass the following parameters:
         tracker_params: dict
             Parameters for the tracker object, typically to decide what to store.
+        tracker_update: function
+            Update function for the tracker, used to define additional statistics
+            that have to be saved in the tracker.
 
     Examples
     --------

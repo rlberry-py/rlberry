@@ -23,15 +23,22 @@ class BanditWithSimplePolicy(AgentWithSimplePolicy):
     tracker_params: dict
         Parameters for the tracker object, typically to decide what to store.
 
+    tracker_update: function or None, default=None
+        Function used to update the tracker's statistics.
+        Takes as argument (tr, arm) where tr is tracker and arm is the
+        current action being played.
+
     """
 
     name = ""
 
-    def __init__(self, env, tracker_params={}, **kwargs):
+    def __init__(self, env, tracker_params={}, tracker_update=None, **kwargs):
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
         self.n_arms = self.env.action_space.n
         self.arms = np.arange(self.n_arms)
-        self.tracker = BanditTracker(self, tracker_params)
+        self.tracker = BanditTracker(
+            self, tracker_params, additional_update=tracker_update
+        )
 
     @property
     def total_time(self):
