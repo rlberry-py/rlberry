@@ -71,7 +71,7 @@ class BanditTracker(DefaultWriter):
 
     name = "BanditTracker"
 
-    def __init__(self, agent, params={}, additional_update=None):
+    def __init__(self, agent, params={}):
         self.n_arms = agent.n_arms
         self.arms = agent.arms
         self.rng = agent.rng
