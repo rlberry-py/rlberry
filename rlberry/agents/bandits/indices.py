@@ -341,7 +341,11 @@ def makeBoundedNPTSIndex(upper_bound: float = 1.0):
     return index, {"store_rewards": True}
 
 
-def makeBoundedUCBVIndex(upper_bound: float = 1.0):
+def makeBoundedUCBVIndex(
+    upper_bound: float = 1.0,
+    c: float = 1.0,
+    delta: Callable = lambda t: 1 / (1 + (t + 1) * np.log(t + 1) ** 2),
+):
     """
     UCBV index for bounded distributions, see [1].
 
@@ -350,6 +354,11 @@ def makeBoundedUCBVIndex(upper_bound: float = 1.0):
     upper_bound: float, default: 1.0
         Upper bound on the rewards.
 
+    c: float, default: 1.0
+        Parameter in UCBV algorithm. See [1]
+
+    delta: Callable,
+        Confidence level. See [1].
 
     Return
     ------
@@ -390,7 +399,6 @@ def makeBoundedUCBVIndex(upper_bound: float = 1.0):
             tr.add_scalars(arm, {"v_hat": new_vhat})
 
     def index(tr):
-        delta = lambda t: 1 / (1 + (t + 1) * np.log(t + 1) ** 2)
         return [
             tr.mu_hat(arm)
             + np.sqrt(
