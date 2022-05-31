@@ -32,6 +32,8 @@ jobs:
       python -m pip install --upgrade pip
       pip install -r requirements.txt
       sudo apt install libglu1-mesa
+      pip uninstall protobuf
+      pip install --no-binary protobuf protobuf
     displayName: 'Install dependencies'
   - script: |
       set -xe
@@ -91,6 +93,8 @@ jobs:
   - script: |
       python -m pip install --upgrade pip
       pip install -r requirements.txt
+      pip uninstall protobuf
+      pip install --no-binary protobuf protobuf
     displayName: 'Install dependencies'
 
   - script: |
@@ -120,6 +124,8 @@ jobs:
   - script: |
       python -m pip install --upgrade pip
       pip install -r requirements.txt
+      pip uninstall protobuf
+      pip install --no-binary protobuf protobuf
     displayName: 'Install dependencies'
 
   - script: |
