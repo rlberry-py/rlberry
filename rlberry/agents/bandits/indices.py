@@ -348,7 +348,7 @@ def makeBoundedUCBVIndex(
 ):
     """
     UCBV index for bounded distributions, see [1].
-
+    The empirical variance is computed sequentially using Welford's algorithm.
     Parameters
     ----------
     upper_bound: float, default: 1.0
@@ -386,7 +386,8 @@ def makeBoundedUCBVIndex(
         if tr.n_pulls(arm) == 1:
             tr.add_scalars(arm, {"v_hat": 0})
         else:
-            reward = tr.read_last_tag_value("reward", arm)
+            # compute variance sequentially using Welford's algorithm.
+            reward = tr.reward(arm)
             old_muhat = (tr.total_reward(arm) - reward) / (
                 tr.n_pulls(arm) - 1
             )  # compute mu at time n-1
