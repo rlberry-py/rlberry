@@ -26,9 +26,8 @@ class IndexAgent(BanditWithSimplePolicy):
         In particular, one may want to pass the following parameters:
         tracker_params: dict
             Parameters for the tracker object, typically to decide what to store.
-        tracker_update: function
-            Update function for the tracker, used to define additional statistics
-            that have to be saved in the tracker.
+            in particular may contain a function "update", used to define additional statistics
+            that have to be saved in the tracker. See :class:~rlberry.agents.bandit.BanditTracker`.
 
     Examples
     --------

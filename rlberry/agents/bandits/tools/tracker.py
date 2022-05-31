@@ -52,9 +52,9 @@ class BanditTracker(DefaultWriter):
         In particuler if params contains store_rewards=True, the
         rewards will be saved for each arm at each step and if
         store_actions=True, the actions are saved.
+        It can also contain a function named "update" that will
+        be called at the end of the update phase. def update(tr, arm): ...
 
-    additional_update: function, default=None
-        Additional update function to be executed at the end of update.
 
     Examples
     --------
@@ -75,12 +75,14 @@ class BanditTracker(DefaultWriter):
         self.n_arms = agent.n_arms
         self.arms = agent.arms
         self.rng = agent.rng
-        self.additional_update = additional_update
 
         # Store rewards for each arm or not
         self.store_rewards = params.get("store_rewards", False)
         # Store the actions for each arm or not
         self.store_actions = params.get("store_actions", False)
+        # Additional update function
+        self.additional_update = params.get("update", None)
+
         # Add importance weighted rewards or not
         self.do_iwr = params.get("do_iwr", False)
 

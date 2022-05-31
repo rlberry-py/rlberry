@@ -314,7 +314,7 @@ def makeBoundedNPTSIndex(upper_bound: float = 1.0):
     Return
     ------
     Callable
-        NPTS index for sigma-sub-Gaussian distributions.
+        NPTS index for bounded distributions.
 
     Dict
         Extra parameters for the BanditTracker object.
@@ -339,3 +339,68 @@ def makeBoundedNPTSIndex(upper_bound: float = 1.0):
         return indices
 
     return index, {"store_rewards": True}
+
+
+def makeBoundedUCBVIndex(upper_bound: float = 1.0):
+    """
+    UCBV index for bounded distributions, see [1].
+
+    Parameters
+    ----------
+    upper_bound: float, default: 1.0
+        Upper bound on the rewards.
+
+
+    Return
+    ------
+    Callable
+        UCBV index for bounded distributions.
+
+    Dict
+        Extra parameters for the BanditTracker object.
+        By default the tracker stores the number of pulls and the
+        empirical average reward for each arm. If you want it to store
+        all rewards for instance, return {'store_rewards': True}.
+
+    References
+    ----------
+    .. [1] Audibert, J. Y., Munos, R., & Szepesvári, C. (2009).
+        Exploration–exploitation tradeoff using variance estimates
+        in multi-armed bandits. Theoretical Computer Science, 410(19), 1876-1902.
+
+    """
+
+    def update_fun(tr, arm):
+        """
+        Sequentially add variance estimate to tracker
+        """
+        if tr.n_pulls(arm) == 1:
+            tr.add_scalars(arm, {"v_hat": 0})
+        else:
+            reward = tr.read_last_tag_value("reward", arm)
+            old_muhat = (tr.total_reward(arm) - reward) / (
+                tr.n_pulls(arm) - 1
+            )  # compute mu at time n-1
+            new_muhat = tr.mu_hat(arm)
+            old_vhat = tr.read_last_tag_value("v_hat", arm)
+            new_vhat = (
+                old_vhat
+                + ((reward - old_muhat) * (reward - new_muhat) - old_vhat) / tr.t
+            )
+            tr.add_scalars(arm, {"v_hat": new_vhat})
+
+    def index(tr):
+        delta = lambda t: 1 / (1 + (t + 1) * np.log(t + 1) ** 2)
+        return [
+            tr.mu_hat(arm)
+            + np.sqrt(
+                2
+                * tr.read_last_tag_value("v_hat", arm)
+                * np.log(1 / delta(tr.t))
+                / tr.n_pulls(arm)
+            )
+            + 3 * np.log(1 / delta(tr.t)) / tr.n_pulls(arm)
+            for arm in tr.arms
+        ]
+
+    return index, {"update": update_fun}
