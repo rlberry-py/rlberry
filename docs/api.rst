@@ -274,6 +274,7 @@ Some general class of bandit algorithms are provided.
       agents.bandits.makeBoundedMOSSIndex
       agents.bandits.makeBoundedNPTSIndex
       agents.bandits.makeBoundedUCBIndex
+      agents.bandits.makeBoundedUCBVIndex
       agents.bandits.makeETCIndex
       agents.bandits.makeEXP3Index
       agents.bandits.makeSubgaussianMOSSIndex
