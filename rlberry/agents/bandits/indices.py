@@ -387,7 +387,7 @@ def makeBoundedUCBVIndex(
             tr.add_scalars(arm, {"v_hat": 0})
         else:
             # compute variance sequentially using Welford's algorithm.
-            reward = tr.rewards(arm)[-1]
+            reward = tr.reward(arm)
             old_muhat = (tr.total_reward(arm) - reward) / (
                 tr.n_pulls(arm) - 1
             )  # compute mu at time n-1

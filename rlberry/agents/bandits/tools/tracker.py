@@ -139,6 +139,12 @@ class BanditTracker(DefaultWriter):
         """
         return self.read_tag_value("reward", arm)
 
+    def reward(self, arm):
+        """
+        Last collected reward for a given arm.
+        """
+        return self.read_last_tag_value("reward", arm)
+
     def actions(self, arm):
         """
         All actions collected so far by the associated bandit agent for a given
@@ -146,6 +152,12 @@ class BanditTracker(DefaultWriter):
         or maxlen is None, all the action history is stored at anytime.
         """
         return self.read_tag_value("action")
+
+    def actions(self, arm):
+        """
+        Last collected action for a given arm.
+        """
+        return self.read_last_tag_value("action")
 
     def total_reward(self, arm):
         """
