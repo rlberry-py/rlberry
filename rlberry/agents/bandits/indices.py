@@ -407,7 +407,7 @@ def makeBoundedUCBVIndex(
                 * np.log(1 / delta(tr.t))
                 / tr.n_pulls(arm)
             )
-            + 3 * np.log(1 / delta(tr.t)) / tr.n_pulls(arm)
+            + 3 * c * np.log(1 / delta(tr.t)) / tr.n_pulls(arm)
             for arm in tr.arms
         ]
 
