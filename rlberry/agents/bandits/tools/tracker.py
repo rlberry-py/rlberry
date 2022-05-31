@@ -153,7 +153,7 @@ class BanditTracker(DefaultWriter):
         """
         return self.read_tag_value("action")
 
-    def actions(self, arm):
+    def action(self, arm):
         """
         Last collected action for a given arm.
         """
