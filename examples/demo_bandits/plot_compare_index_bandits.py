@@ -18,6 +18,7 @@ from rlberry.agents.bandits import (
     makeBoundedMOSSIndex,
     makeBoundedNPTSIndex,
     makeBoundedUCBIndex,
+    makeBoundedUCBVIndex,
     makeETCIndex,
     makeEXP3Index,
 )
@@ -44,6 +45,17 @@ class UCBAgent(IndexAgent):
     def __init__(self, env, **kwargs):
         index, _ = makeBoundedUCBIndex()
         IndexAgent.__init__(self, env, index, **kwargs)
+        self.env = WriterWrapper(
+            self.env, self.writer, write_scalar="action_and_reward"
+        )
+
+
+class UCBVAgent(IndexAgent):
+    name = "UCBV"
+
+    def __init__(self, env, **kwargs):
+        index, params = makeBoundedUCBVIndex(c=0.1)
+        IndexAgent.__init__(self, env, index, tracker_params=params, **kwargs)
         self.env = WriterWrapper(
             self.env, self.writer, write_scalar="action_and_reward"
         )
@@ -113,6 +125,7 @@ Agents_class = [
     MOSSAgent,
     NPTSAgent,
     UCBAgent,
+    UCBVAgent,
 ]
 
 agents = [

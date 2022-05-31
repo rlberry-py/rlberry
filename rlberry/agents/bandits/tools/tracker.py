@@ -50,7 +50,11 @@ class BanditTracker(DefaultWriter):
     params: dict
         Other parameters to condition what to store and compute.
         In particuler if params contains store_rewards=True, the
-        rewards will be saved for each arm at each step.
+        rewards will be saved for each arm at each step and if
+        store_actions=True, the actions are saved.
+        It can also contain a function named "update" that will
+        be called at the end of the update phase. def update(tr, arm): ...
+
 
     Examples
     --------
@@ -74,6 +78,11 @@ class BanditTracker(DefaultWriter):
 
         # Store rewards for each arm or not
         self.store_rewards = params.get("store_rewards", False)
+        # Store the actions for each arm or not
+        self.store_actions = params.get("store_actions", False)
+        # Additional update function
+        self.additional_update = params.get("update", None)
+
         # Add importance weighted rewards or not
         self.do_iwr = params.get("do_iwr", False)
 
@@ -84,6 +93,8 @@ class BanditTracker(DefaultWriter):
         if self.store_rewards:
             for arm in self.arms:
                 maxlen_by_tag[str(arm) + "_reward"] = None
+        if self.store_actions:
+            maxlen_by_tag["action"] = None
 
         _tracker_kwargs = dict(
             name="BanditTracker",
@@ -123,10 +134,30 @@ class BanditTracker(DefaultWriter):
     def rewards(self, arm):
         """
         All rewards collected so far by the associated bandit agent for a given
-        arm and currently stored. If maxlen_by_tag[str(arm) + "reward"] is None
+        arm and currently stored. If maxlen_by_tag[str(arm) + "_reward"] is None
         or maxlen is None, all the reward history is stored at anytime.
         """
         return self.read_tag_value("reward", arm)
+
+    def reward(self, arm):
+        """
+        Last collected reward for a given arm.
+        """
+        return self.read_last_tag_value("reward", arm)
+
+    def actions(self, arm):
+        """
+        All actions collected so far by the associated bandit agent for a given
+        arm and currently stored. If maxlen_by_tag["action"] is None
+        or maxlen is None, all the action history is stored at anytime.
+        """
+        return self.read_tag_value("action")
+
+    def action(self, arm):
+        """
+        Last collected action for a given arm.
+        """
+        return self.read_last_tag_value("action")
 
     def total_reward(self, arm):
         """
@@ -192,3 +223,8 @@ class BanditTracker(DefaultWriter):
 
         # Write all tracked statistics
         self.add_scalars(arm, tag_scalar_dict)
+        self.add_scalar("action", arm)
+
+        # Do the additional update
+        if self.additional_update is not None:
+            self.additional_update(self, arm)

@@ -14,6 +14,7 @@ from rlberry.agents.bandits import (
     makeEXP3Index,
     makeSubgaussianMOSSIndex,
     makeSubgaussianUCBIndex,
+    makeBoundedUCBVIndex,
 )
 from rlberry.utils import check_bandit_agent
 
@@ -30,6 +31,7 @@ bounded_indices = {
     "MOSS": makeBoundedMOSSIndex,
     "NPTS": makeBoundedNPTSIndex,
     "UCB": makeBoundedUCBIndex,
+    "UCBV": makeBoundedUCBVIndex,
 }
 subgaussian_indices = {
     "UCB": makeSubgaussianUCBIndex,
