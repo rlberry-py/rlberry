@@ -27,7 +27,7 @@ class BanditWithSimplePolicy(AgentWithSimplePolicy):
 
     name = ""
 
-    def __init__(self, env, tracker_params={}, tracker_update=None, **kwargs):
+    def __init__(self, env, tracker_params={}, **kwargs):
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
         self.n_arms = self.env.action_space.n
         self.arms = np.arange(self.n_arms)
