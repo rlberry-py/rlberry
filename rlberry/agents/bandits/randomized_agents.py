@@ -26,6 +26,12 @@ class RandomizedAgent(BanditWithSimplePolicy):
         performance of the EXP3 algorithm in stochastic environments.".
         European Workshop on Reinforcement Learning. PMLR, 2013.
 
+    **kwargs: arguments
+        Arguments to be passed to BanditWithSimplePolicy. In particular,
+        one may want to pass the following parameter:
+        tracker_params: dict
+            Parameters for the tracker object, typically to decide what to store.
+
     Examples
     --------
     >>> from rlberry.agents.bandits import IndexAgent
@@ -38,11 +44,11 @@ class RandomizedAgent(BanditWithSimplePolicy):
     >>>             for arm in tr.arms:
     >>>                 eta = np.minimum(
     >>>                     np.sqrt(
-    >>>                         np.log(tr.n_arms) / (tr.n_arms * (tr.read_last_tag_value("t") + 1))
+    >>>                         np.log(tr.n_arms) / (tr.n_arms * (tr.t + 1))
     >>>                     ),
     >>>                     1 / tr.n_arms,
     >>>                 )
-    >>>                 w[arm] = np.exp(eta * tr.read_last_tag_value("iw_total_reward", arm))
+    >>>                 w[arm] = np.exp(eta * tr.iw_total_reward(arm))
     >>>             w /= w.sum()
     >>>             return (1 - tr.n_arms * eta) * w + eta * np.ones(tr.n_arms)
     >>>
@@ -61,15 +67,10 @@ class RandomizedAgent(BanditWithSimplePolicy):
                 w = np.zeros(tr.n_arms)
                 for arm in tr.arms:
                     eta = np.minimum(
-                        np.sqrt(
-                            np.log(tr.n_arms)
-                            / (tr.n_arms * (tr.read_last_tag_value("t") + 1))
-                        ),
+                        np.sqrt(np.log(tr.n_arms) / (tr.n_arms * (tr.t + 1))),
                         1 / tr.n_arms,
                     )
-                    w[arm] = np.exp(
-                        eta * tr.read_last_tag_value("iw_total_reward", arm)
-                    )
+                    w[arm] = np.exp(eta * tr.iw_total_reward(arm))
                 w /= w.sum()
                 return (1 - tr.n_arms * eta) * w + eta * np.ones(tr.n_arms)
 

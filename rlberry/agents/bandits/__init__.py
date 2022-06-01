@@ -5,6 +5,7 @@ from .indices import (
     makeBoundedMOSSIndex,
     makeBoundedNPTSIndex,
     makeBoundedUCBIndex,
+    makeBoundedUCBVIndex,
     makeETCIndex,
     makeEXP3Index,
     makeSubgaussianMOSSIndex,

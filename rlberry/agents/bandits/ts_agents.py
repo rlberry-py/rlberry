@@ -32,8 +32,8 @@ class TSAgent(BanditWithSimplePolicy):
     >>>     def prior_params(tr):
     >>>            return [
     >>>                [
-    >>>                    tr.read_last_tag_value("total_reward", arm) + 1,
-    >>>                    tr.read_last_tag_value("n_pulls", arm) - tr.read_last_tag_value("total_reward", arm) + 1,
+    >>>                    tr.total_reward(arm) + 1,
+    >>>                    tr.n_pulls(arm) - tr.total_reward(arm) + 1,
     >>>                ]
     >>>                for arm in tr.arms
     >>>            ]
@@ -75,10 +75,8 @@ class TSAgent(BanditWithSimplePolicy):
                 """
                 return [
                     [
-                        tr.read_last_tag_value("total_reward", arm) + 1,
-                        tr.read_last_tag_value("n_pulls", arm)
-                        - tr.read_last_tag_value("total_reward", arm)
-                        + 1,
+                        tr.total_reward(arm) + 1,
+                        tr.n_pulls(arm) - tr.total_reward(arm) + 1,
                     ]
                     for arm in tr.arms
                 ]

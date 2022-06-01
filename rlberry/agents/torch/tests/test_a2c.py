@@ -15,9 +15,9 @@ def test_a2c():
     a2crlberry_stats = AgentManager(
         A2CAgent,
         (env_ctor, env_kwargs),
-        fit_budget=int(2),
+        fit_budget=int(100),
         eval_kwargs=dict(eval_horizon=2),
-        init_kwargs=dict(horizon=2),
+        init_kwargs=dict(batch_size=100),
         n_fit=1,
         agent_name="A2C_rlberry_" + env,
     )
@@ -35,9 +35,9 @@ def test_a2c():
     a2crlberry_stats = AgentManager(
         A2CAgent,
         (env_ctor, env_kwargs),
-        fit_budget=int(2),
+        fit_budget=int(100),
         eval_kwargs=dict(eval_horizon=2),
-        init_kwargs=dict(horizon=2),
+        init_kwargs=dict(batch_size=100),
         n_fit=1,
         agent_name="A2C_rlberry_" + env,
     )
@@ -53,9 +53,9 @@ def test_a2c():
     a2crlberry_stats = AgentManager(
         A2CAgent,
         (env_ctor, env_kwargs),
-        fit_budget=int(2),
+        fit_budget=int(100),
         eval_kwargs=dict(eval_horizon=2),
-        init_kwargs=dict(horizon=2),
+        init_kwargs=dict(batch_size=100),
         n_fit=1,
         agent_name="A2C_rlberry_" + "PBall2D",
     )
@@ -74,10 +74,10 @@ def test_a2c():
     a2crlberry_stats = AgentManager(
         A2CAgent,
         (env_ctor, env_kwargs),
-        fit_budget=int(2),
+        fit_budget=int(100),
         eval_kwargs=dict(eval_horizon=2),
         init_kwargs=dict(
-            horizon=2,
+            batch_size=100,
             policy_net_fn="rlberry.agents.torch.utils.training.model_factory_from_env",
             policy_net_kwargs=dict(
                 type="MultiLayerPerceptron",
