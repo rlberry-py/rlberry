@@ -343,19 +343,24 @@ def makeBoundedNPTSIndex(upper_bound: float = 1.0):
 
 def makeBoundedUCBVIndex(
     upper_bound: float = 1.0,
-    c: float = 1.0,
-    delta: Callable = lambda t: 1 / (1 + (t + 1) * np.log(t + 1) ** 2),
+    c: float = 0.34,
+    zeta: float = 1.0,
+    delta: Callable = lambda t: 1 / t,
 ):
     """
-    UCBV index for bounded distributions, see [1].
+    UCBV index for bounded distributions, see [1]. In particular, the index
+    recommended on p10 is implemented.
     The empirical variance is computed sequentially using Welford's algorithm.
     Parameters
     ----------
     upper_bound: float, default: 1.0
         Upper bound on the rewards.
 
-    c: float, default: 1.0
-        Parameter in UCBV algorithm. See [1]
+    c: float, default: 0.34
+        Parameter in UCBV algorithm. See Equation (18) in [1]
+
+    zeta: float, default: 1.0
+        Parameter in UCBV algorithm. See Equation (18) in [1]
 
     delta: Callable,
         Confidence level. See [1].
@@ -404,11 +409,12 @@ def makeBoundedUCBVIndex(
             tr.mu_hat(arm)
             + np.sqrt(
                 2
+                * zeta
                 * tr.read_last_tag_value("v_hat", arm)
                 * np.log(1 / delta(tr.t))
                 / tr.n_pulls(arm)
             )
-            + 3 * c * np.log(1 / delta(tr.t)) / tr.n_pulls(arm)
+            + 3 * c * zeta * upper_bound * np.log(1 / delta(tr.t)) / tr.n_pulls(arm)
             for arm in tr.arms
         ]
 

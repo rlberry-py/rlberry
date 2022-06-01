@@ -54,7 +54,7 @@ class UCBVAgent(IndexAgent):
     name = "UCBV"
 
     def __init__(self, env, **kwargs):
-        index, params = makeBoundedUCBVIndex(c=0.1)
+        index, params = makeBoundedUCBVIndex()
         IndexAgent.__init__(self, env, index, tracker_params=params, **kwargs)
         self.env = WriterWrapper(
             self.env, self.writer, write_scalar="action_and_reward"
@@ -163,6 +163,7 @@ output = plot_writer_data(
     tag="action",
     preprocess_func=compute_pseudo_regret,
     title="Cumulative Pseudo-Regret",
+    sns_kwargs={"style": "name"},  # to have varying linestyles
 )
 
 output = plot_writer_data(
@@ -170,6 +171,7 @@ output = plot_writer_data(
     tag="reward",
     preprocess_func=compute_regret,
     title="Cumulative Regret",
+    sns_kwargs={"style": "name"},  # to have varying linestyles
 )
 
 
@@ -188,6 +190,7 @@ for arm in range(A):
         title="Na for arm " + str(arm) + ", mean=" + str(means[arm]),
         ax=axes[arm],
         show=False,
+        sns_kwargs={"style": "name"},  # to have varying linestyles
     )
 fig.tight_layout()
 plt.show()
