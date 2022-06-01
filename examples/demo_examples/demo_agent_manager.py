@@ -1,4 +1,4 @@
-""" 
+"""
  =====================
  Demo: demo_agent_manager
  =====================
@@ -26,6 +26,7 @@ if __name__ == "__main__":
     N_EPISODES = 250
     GAMMA = 0.99
     HORIZON = 50
+    BATCH_SIZE = 50
     BONUS_SCALE_FACTOR = 0.1
     MIN_DIST = 0.1
 
@@ -46,7 +47,7 @@ if __name__ == "__main__":
         "kernel_type": "gaussian",
     }
 
-    params_a2c = {"gamma": GAMMA, "horizon": HORIZON, "learning_rate": 0.0003}
+    params_a2c = {"gamma": GAMMA, "batch_size": BATCH_SIZE, "learning_rate": 0.0003}
 
     eval_kwargs = dict(eval_horizon=HORIZON, n_simulations=20)
 

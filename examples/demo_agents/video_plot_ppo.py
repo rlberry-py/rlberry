@@ -11,7 +11,7 @@ A demo of PPO algorithm in PBall2D environment
 """
 # sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_a2c.jpg'
 
-from rlberry.agents.torch import PPOAgent
+from rlberry.agents.experimental.torch import PPOAgent
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
 
 

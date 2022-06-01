@@ -24,6 +24,8 @@ class DefaultWriter:
     ----------
     name : str
         Name of the writer.
+    print_log : bool, default=True
+        If True, print logs to stderr.
     log_interval : int
         Minimum number of seconds between consecutive logs (with logging module).
     tensorboard_kwargs : Optional[dict]
@@ -42,6 +44,7 @@ class DefaultWriter:
     def __init__(
         self,
         name: str,
+        print_log: bool = True,
         log_interval: int = 3,
         tensorboard_kwargs: Optional[dict] = None,
         execution_metadata: Optional[metadata_utils.ExecutionMetadata] = None,
@@ -49,6 +52,7 @@ class DefaultWriter:
         maxlen_by_tag: Optional[dict] = {},
     ):
         self._name = name
+        self._print_log = print_log
         self._log_interval = log_interval
         self._execution_metadata = execution_metadata
         self._data = None
@@ -90,14 +94,60 @@ class DefaultWriter:
         return df
 
     def read_tag_value(self, tag, main_tag: str = ""):
+        """
+        Reads the values for the tag `tag`.
+        If a `main_tag` is given, the tag will be a concatenation of
+        `main_tag`, underscore and `tag`.
+
+        Parameters
+        ----------
+        tag: string
+            Tag to be searched
+        main_tag: string, default=""
+            Main tag. If `main_tag == ""`  then use only `tag`.
+
+        Returns
+        -------
+        The writer values for the tag, a pandas Series.
+        """
         full_tag = str(main_tag) + "_" + str(tag) if str(main_tag) else str(tag)
         return self._data[full_tag]["value"]
 
     def read_first_tag_value(self, tag, main_tag: str = ""):
+        """
+        Reads the first value for the tag `tag`.
+        If a `main_tag` is given, the tag will be a concatenation of `main_tag`, underscore and `tag`.
+
+        Parameters
+        ----------
+        tag: string
+            Tag to be searched
+        main_tag: string, default=""
+            Main tag. If `main_tag == ""`  then use only `tag`.
+
+        Returns
+        -------
+        The first value encountered with tag `tag`.
+        """
         full_tag = str(main_tag) + "_" + str(tag) if str(main_tag) else str(tag)
         return self._data[full_tag]["value"][0]
 
     def read_last_tag_value(self, tag, main_tag: str = ""):
+        """
+        Reads the last value for the tag `tag`.
+        If a `main_tag` is given, the tag will be a concatenation of `main_tag`, underscore and `tag`.
+
+        Parameters
+        ----------
+        tag: string
+            Tag to be searched
+        main_tag: string, default=""
+            Main tag. If `main_tag == ""`  then use only `tag`.
+
+        Returns
+        -------
+        The last value with tag `tag` encountered by the writer.
+        """
         full_tag = str(main_tag) + "_" + str(tag) if str(main_tag) else str(tag)
         return self._data[full_tag]["value"][-1]
 
@@ -180,7 +230,7 @@ class DefaultWriter:
             self._log_time = False
 
         # Log
-        if not self._log_time:
+        if (not self._log_time) and (self._print_log):
             self._log()
 
     def add_scalars(
