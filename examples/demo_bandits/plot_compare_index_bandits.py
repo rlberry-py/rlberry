@@ -54,7 +54,7 @@ class UCBVAgent(IndexAgent):
     name = "UCBV"
 
     def __init__(self, env, **kwargs):
-        index, params = makeBoundedUCBVIndex(c=0.1)
+        index, params = makeBoundedUCBVIndex()
         IndexAgent.__init__(self, env, index, tracker_params=params, **kwargs)
         self.env = WriterWrapper(
             self.env, self.writer, write_scalar="action_and_reward"
