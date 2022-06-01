@@ -6,6 +6,7 @@ import seaborn as sns
 from pathlib import Path
 from datetime import datetime
 import pickle
+from itertools import cycle
 from rlberry.manager import AgentManager
 
 
@@ -366,6 +367,16 @@ def plot_writer_data(
 
     if ax is None:
         figure, ax = plt.subplots(1, 1)
+
+    # Customizing linestyle in sns.lineplot
+    if "style" in sns_kwargs:
+        # Number of unique dash styles. Default: 4 styles max.
+        n_uniq_dash = sns_kwargs.get("n_uniq_dash", 4)
+        # Cycle through default sns linestyles.
+        dash_cycler = cycle(sns._core.unique_dashes(n_uniq_dash))
+        sns_kwargs["dashes"] = [
+            next(dash_cycler) for _ in range(data["name"].unique().size)
+        ]
 
     # PS: in the next release of seaborn, ci should be deprecated and replaced
     # with errorbar, which allows to specifies other types of confidence bars,
