@@ -56,6 +56,7 @@ def test_plot_writer_data_with_manager_input(outdir_id_style):
             title="Cumulative Reward",
             show=False,
             savefig_fname=tmpdirname + "/test.png",
+            sns_kwargs={"style": "name"},
         )
         assert (
             os.path.getsize(tmpdirname + "/test.png") > 1000
