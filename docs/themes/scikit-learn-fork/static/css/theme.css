@@ -82,16 +82,23 @@ img {
 span.highlighted {
     background-color: #fbe54e;
 }
-
+	
 div.highlight {
   border: 1px solid #ddd;
   margin-bottom: 1rem;
 }
+div.highlight-none{
+    max-height: 300px;
+    overflow-y: auto;
+}
+
 
 div.highlight pre {
   padding: 0.2rem 0.5rem;
-  margin-bottom: 0;
+  margin-bottom: 5px;
   line-height: 1.2rem;
+  margin-left: 5px;
+  margin-top: 5px;
 }
 
 div.highlight a {
