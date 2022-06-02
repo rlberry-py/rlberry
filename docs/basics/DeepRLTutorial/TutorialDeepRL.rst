@@ -1,10 +1,13 @@
-Deep Reinforecement Learning in rlberry
+Deep Reinforcement Learning in rlberry
 =======================================
 
-In this tutorial we will focus on Deep Reinforcement Learning with an
-**Actor-Advantage Critic** algorithm.
+..
+  Authors: Riccardo Della Vecchia, Hector Kohler, Alena Schilova.
 
-Install, import and utilities
+In this tutorial, we will focus on Deep Reinforcement Learning with the **Actor-Advantage Critic** algorithm.
+
+
+Imports
 -----------------------------
 
 .. code:: ipython3
@@ -18,8 +21,7 @@ Install, import and utilities
 Reminder of the RL setting
 --------------------------
 
-As always we will consider a MDP
-:math:`M = (\mathcal{S}, \mathcal{A}, p, r, \gamma)` with:
+We will consider a MDP :math:`M = (\mathcal{S}, \mathcal{A}, p, r, \gamma)` with:
 
 * :math:`\mathcal{S}` the state space,
 * :math:`\mathcal{A}` the action space,
@@ -36,7 +38,7 @@ where :math:`\tau` is an episode
 actions drawn from :math:`\pi(s)`; :math:`R(\tau)` is the random
 variable defined as the cumulative sum of the discounted reward.
 
-The goal is to maximize the agent’s reward.
+The goal is to maximize the cumulative sum of discount rewards:
 
 .. math::  J(\pi) = \mathbb{E}_{\tau \sim \pi}\big[R(\tau) \big]
 
@@ -47,11 +49,11 @@ In this tutorial we are going to use the `OpenAI’s Gym
 library <https://gym.openai.com/envs/>`__. This library provides a large
 number of environments to test RL algorithm.
 
-We will focus on the **CartPole-v1** environment, anyway, it might be
-interesting for the reader to experiment with other as well, such as
-**Acrobot-v1** or **MountainCar-v0**. The following table presents some
-basic components of the three environements, such as the dimensions of
-their observation and action spaces and the rewards occuring at each
+We will focus only on the **CartPole-v1** environment, although we recommend experimenting with other environments such as **Acrobot-v1**
+and **MountainCar-v0**.
+The following table presents some
+basic components of the three environments, such as the dimensions of
+their observation and action spaces and the rewards occurring at each
 step.
 
 ===================== =========== =========================
@@ -66,16 +68,17 @@ Actor-Critic algorithms and A2C
 -------------------------------
 
 **Actor-Critic algorithms** methods consist of two models, which may
-optionally share parameters: - Critic updates the value function
-parameters w and depending on the algorithm it could be action-value
-:math:`Q_{\varphi}(s,a )` or state-value :math:`V_{\varphi}(s)`. - Actor
-updates the policy parameters :math:`\theta` for
+optionally share parameters:
+
+- Critic updates the value function parameters w and depending on the algorithm it could be action-value
+:math:`Q_{\varphi}(s,a )` or state-value :math:`V_{\varphi}(s)`.
+- Actor updates the policy parameters :math:`\theta` for
 :math:`\pi_{\theta}(a \mid s)`, in the direction suggested by the
 critic.
 
 **A2C** is an Actor-Critic algorithm and it is part of the on-policy
 family, which means that we are learning the value function for one
-policy while following it. The original paper in which it was proposedi
+policy while following it. The original paper in which it was proposed
 can be found `here <https://arxiv.org/pdf/1602.01783.pdf>`__ and the
 pseudocode of the algorithm is the following:
 
@@ -131,54 +134,48 @@ In the next example we use default parameters for both the Actor and the
 Critic and we use rlberry to train and evaluate our A2C agent. The
 default networks are:
 
--  a multilayer perceptron with two hidden layers of 64 units for the
+-  a dense neural network with two hidden layers of 64 units for the
    **Actor**, the input layer has the dimension of the state space while
    the output layer has the dimension of the action space. The
    activations are RELU functions and we have a softmax in the last
    layer.
--  a multilayer perceptron with two hidden layers of 64 units for the
+-  a dense neural network with two hidden layers of 64 units for the
    **Critic**, the input layer has the dimension of the state space
    while the output has dimension 1. The activations are RELU functions
    apart from the last layer that has a linear activation.
 
-.. code:: ipython3
+.. code:: python
 
     """
     The AgentManager class is compact way of experimenting with a deepRL agent.
     """
     default_agent = AgentManager(
-            A2CAgent,                                # The Agent class.
-
-            (gym_make, dict(id = "CartPole-v1")),     # The Environment to solve.
-
-            fit_budget=3e5,                          # The number of interactions
-                                                     # between the agent and the
-                                                     # environment during training.
-
-            eval_kwargs=dict(eval_horizon=500),      # The number of interactions
-                                                     # between the agent and the
-                                                     # environment during evaluations.
-
-            n_fit=1,                                 # The number of agents to train.
-                                                     # Usually, it is good to do more
-                                                     # than 1 because the training is
-                                                     # stochastic.
-
-            agent_name = "A2C default",              # The agent's name.
-
-        )
+        A2CAgent,  # The Agent class.
+        (gym_make, dict(id="CartPole-v1")),  # The Environment to solve.
+        fit_budget=3e5,  # The number of interactions
+        # between the agent and the
+        # environment during training.
+        eval_kwargs=dict(eval_horizon=500),  # The number of interactions
+        # between the agent and the
+        # environment during evaluations.
+        n_fit=1,  # The number of agents to train.
+        # Usually, it is good to do more
+        # than 1 because the training is
+        # stochastic.
+        agent_name="A2C default",  # The agent's name.
+    )
 
     print("Training ...")
-    default_agent.fit()                              # Trains the agent on fit_budget steps!
+    default_agent.fit()  # Trains the agent on fit_budget steps!
 
 
     # Plot the training data:
     _ = plot_writer_data(
-            [default_agent],
-            tag="episode_rewards",
-            title="Training Episode Cumulative Rewards",
-            show=True,
-        )
+        [default_agent],
+        tag="episode_rewards",
+        title="Training Episode Cumulative Rewards",
+        show=True,
+    )
 
 
 .. parsed-literal::
@@ -329,7 +326,7 @@ default networks are:
 
 
 Let’s try to change the neural networks’ architectures and see if we can
-beat our previous result. This time we we use a smaller learning rate
+beat our previous result. This time we use a smaller learning rate
 and bigger batch size to have more stable training.
 
 .. code:: ipython3
