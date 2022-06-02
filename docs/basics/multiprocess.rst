@@ -3,7 +3,7 @@
 Parallelization in rlberry
 ==========================
 
-rlberry use python's standard multiprocessing library to execute the fit of agents in parallel. The parallelization is done via
+rlberry use python's standard multiprocessing library to execute the fit of agents in parallel on cpus. The parallelization is done via
 :class:`~rlberry.manager.AgentManager` and via :class:`~rlberry.manager.MultipleManagers`.
 
 If a user wants to use a third-party parallelization library like joblib, the user must be aware of where the seeding is done so as not to bias the results. rlberry automatically handles seeding when the native parallelization scheme are used.
