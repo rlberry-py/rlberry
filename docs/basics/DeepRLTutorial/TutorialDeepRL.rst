@@ -10,7 +10,7 @@ In this tutorial, we will focus on Deep Reinforcement Learning with the **Actor-
 Imports
 -----------------------------
 
-.. code:: ipython3
+.. code:: python
 
     from rlberry.envs import gym_make
     from rlberry.manager import plot_writer_data, AgentManager, evaluate_agents
@@ -250,11 +250,13 @@ default networks are:
 .. image:: output_5_3.png
 
 
-.. code:: ipython3
+.. code:: python
 
     print("Evaluating ...")
-    _ = evaluate_agents([default_agent], n_simulations=50, show = True)   # Evaluate the trained agent on
-                                                                          # 10 simulations of 500 steps each.
+    _ = evaluate_agents(
+        [default_agent], n_simulations=50, show=True
+    )  # Evaluate the trained agent on
+    # 10 simulations of 500 steps each.
 
 
 .. parsed-literal::
@@ -329,83 +331,68 @@ Let’s try to change the neural networks’ architectures and see if we can
 beat our previous result. This time we use a smaller learning rate
 and bigger batch size to have more stable training.
 
-.. code:: ipython3
+.. code:: python
 
     policy_configs = {
-        "type": "MultiLayerPerceptron",   # A network architecture
-        "layer_sizes": (64,64),           # Network dimensions
+        "type": "MultiLayerPerceptron",  # A network architecture
+        "layer_sizes": (64, 64),  # Network dimensions
         "reshape": False,
-        "is_policy": True,                # The network should output a distribution
-                                          # over actions
+        "is_policy": True,  # The network should output a distribution
+        # over actions
     }
 
     critic_configs = {
         "type": "MultiLayerPerceptron",
-        "layer_sizes": (64,64),
+        "layer_sizes": (64, 64),
         "reshape": False,
-        "out_size": 1,                    # The critic network is an approximator of
-                                          # a value function V: States -> |R
+        "out_size": 1,  # The critic network is an approximator of
+        # a value function V: States -> |R
     }
 
-.. code:: ipython3
+.. code:: python
 
     tuned_agent = AgentManager(
-            A2CAgent,                                # The Agent class.
-
-            (gym_make, dict(id = "CartPole-v1")),     # The Environment to solve.
-
-            init_kwargs=dict(                        # Where to put the agent's hyperparameters
-
-                policy_net_fn=model_factory_from_env,  # A policy network constructor
-
-                policy_net_kwargs=policy_configs,      # Policy network's architecure
-
-                value_net_fn = model_factory_from_env, # A Critic network constructor
-
-                value_net_kwargs=critic_configs,      # Critic network's architecure.
-
-                optimizer_type = "ADAM",          # What optimizer to use for policy
-                                                      # gradient descent steps.
-
-                learning_rate=1e-3,                   # Size of the policy gradient
-                                                      # descent steps.
-
-                entr_coef = 0.0,                       # How much to force exploration.
-
-                batch_size = 1024                       # Number of interactions used to
-                                                     # estimate the policy gradient
-                                                     # for each policy update.
-            ),
-
-            fit_budget=3e5,                          # The number of interactions
-                                                     # between the agent and the
-                                                     # environment during training.
-
-            eval_kwargs=dict(eval_horizon=500),      # The number of interactions
-                                                     # between the agent and the
-                                                     # environment during evaluations.
-
-            n_fit=1,                                 # The number of agents to train.
-                                                     # Usually, it is good to do more
-                                                     # than 1 because the training is
-                                                     # stochastic.
-
-            agent_name = "A2C tuned",              # The agent's name.
-
-        )
+        A2CAgent,  # The Agent class.
+        (gym_make, dict(id="CartPole-v1")),  # The Environment to solve.
+        init_kwargs=dict(  # Where to put the agent's hyperparameters
+            policy_net_fn=model_factory_from_env,  # A policy network constructor
+            policy_net_kwargs=policy_configs,  # Policy network's architecure
+            value_net_fn=model_factory_from_env,  # A Critic network constructor
+            value_net_kwargs=critic_configs,  # Critic network's architecure.
+            optimizer_type="ADAM",  # What optimizer to use for policy
+            # gradient descent steps.
+            learning_rate=1e-3,  # Size of the policy gradient
+            # descent steps.
+            entr_coef=0.0,  # How much to force exploration.
+            batch_size=1024  # Number of interactions used to
+            # estimate the policy gradient
+            # for each policy update.
+        ),
+        fit_budget=3e5,  # The number of interactions
+        # between the agent and the
+        # environment during training.
+        eval_kwargs=dict(eval_horizon=500),  # The number of interactions
+        # between the agent and the
+        # environment during evaluations.
+        n_fit=1,  # The number of agents to train.
+        # Usually, it is good to do more
+        # than 1 because the training is
+        # stochastic.
+        agent_name="A2C tuned",  # The agent's name.
+    )
 
 
     print("Training ...")
-    tuned_agent.fit()                              # Trains the agent on fit_budget steps!
+    tuned_agent.fit()  # Trains the agent on fit_budget steps!
 
 
     # Plot the training data:
     _ = plot_writer_data(
-            [default_agent, tuned_agent],
-            tag="episode_rewards",
-            title="Training Episode Cumulative Rewards",
-            show=True,
-          )
+        [default_agent, tuned_agent],
+        tag="episode_rewards",
+        title="Training Episode Cumulative Rewards",
+        show=True,
+    )
 
 
 .. parsed-literal::
@@ -475,12 +462,12 @@ and bigger batch size to have more stable training.
 .. image:: output_9_3.png
 
 
-.. code:: ipython3
+.. code:: python
 
     print("Evaluating ...")
 
     # Evaluate each trained agent on 10 simulations of 500 steps each.
-    _ = evaluate_agents([default_agent, tuned_agent], n_simulations=50, show = True)
+    _ = evaluate_agents([default_agent, tuned_agent], n_simulations=50, show=True)
 
 
 .. parsed-literal::
