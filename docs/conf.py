@@ -55,6 +55,7 @@ autodoc_default_options = {"members": True, "inherited-members": True, "show-inh
 autosummary_generate = True
 autodoc_inherit_docstrings = True
 
+highlight_language = 'none'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["templates"]
