@@ -50,12 +50,12 @@ The advised method of parallelization is spawn (parameter :code:`mp_context="spa
 
 - As a consequence, :code:`spawn` parallelization only works if called from the main script.
 - :code:`spawn` does not work when called from a notebook. To work in a notebook, use :code:`fork` instead.
-- :code:`forkserver` is an alternative to :code:`spawn` that performs sometimes faster than :code:`spawn`. :code:`forkserver` parallelization must also be encapsulated into a  :code:`if __name__ == '__main__'` directive and for now it is available only on Unix systems.
+- :code:`forkserver` is an alternative to :code:`spawn` that performs sometimes faster than :code:`spawn`. :code:`forkserver` parallelization must also be encapsulated into a  :code:`if __name__ == '__main__'` directive and for now it is available only on Unix systems (MacOS, Linux, ...).
 
 
-Process, fork
+Process: fork
 -------------
 
-Forking multiprocessing is only possible on Unix systems (MacOS, Linux, ...).
+Fork multiprocessing is only possible on Unix systems.
 It is available through the parameter :code:`mp_context="fork"` when :code:`parallelization="process"`.
 Remark that there could be some logging error and hanging when using :code:`fork`. The usage of fork in rlberry is still experimental and may be unstable.
