@@ -33,8 +33,9 @@ Quick start: setup an experiment and evaluate different agents
 .. toctree::
    :maxdepth: 2
 
-   basics/quick_start.rst
+   basics/quick_start_rl/quickstart.rst
    basics/DeepRLTutorial/TutorialDeepRL.rst
+
 
 Agents, hyperparameter optimization and experiment setup
 ---------------------------------------------------------
