@@ -4,7 +4,7 @@ Deep Reinforcement Learning in rlberry
 ..
   Authors: Riccardo Della Vecchia, Hector Kohler, Alena Shilova.
 
-In this tutorial, we will focus on Deep Reinforcement Learning with the **Actor-Advantage Critic** algorithm.
+In this tutorial, we will focus on Deep Reinforcement Learning with the **Advantage Actor-Critic** algorithm.
 
 
 Imports
