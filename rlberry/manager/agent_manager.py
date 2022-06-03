@@ -164,9 +164,8 @@ class AgentManager:
 
     Notes
     -----
-    If parallelization="process" and mp_context="spawn", make sure your main code
-    has a guard `if __name__ == '__main__'`. See https://github.com/google/jax/issues/1805
-    and https://stackoverflow.com/a/66290106.
+    If parallelization="process" and mp_context="spawn" or mp_context="forkserver", make sure your main code
+    has a guard `if __name__ == '__main__'`. See https://docs.python.org/3/library/multiprocessing.html#multiprocessing-programming.
 
     Parameters
     ----------
@@ -199,11 +198,12 @@ class AgentManager:
         number of processors on the machine.
         If None and parallelization='thread', it will default to the
         number of processors on the machine, multiplied by 5.
-    mp_context: {'spawn', 'fork'}, default: 'spawn'.
+    mp_context: {'spawn', 'fork', 'forkserver}, default: 'spawn'.
         Context for python multiprocessing module.
         Warning: If you're using JAX or PyTorch, it only works with 'spawn'.
                  If running code on a notebook or interpreter, use 'fork'.
-    worker_logging_level : str, default: 'INFO'
+                 forkserver and fork are available on Unix OS only.
+        worker_logging_level : str, default: 'INFO'
         Logging level in each of the threads/processes used to fit agents.
     seed : :class:`numpy.random.SeedSequence`, :class:`~rlberry.seeding.seeder.Seeder` or int, default : None
         Seed sequence from which to spawn the random number generator.
