@@ -18,12 +18,14 @@ import shutil
 import threading
 import multiprocessing
 from multiprocessing.spawn import _check_not_importing_main
+import cProfile, pstats
+from pstats import SortKey
 import numpy as np
 from rlberry.envs.utils import process_env
 from rlberry.utils.logging import configure_logging
 from rlberry.utils.writers import DefaultWriter
 from rlberry.manager.utils import create_database
-from typing import Optional, Tuple, Union
+from typing import List, Optional, Tuple, Union
 from rlberry import types
 
 
@@ -162,9 +164,8 @@ class AgentManager:
 
     Notes
     -----
-    If parallelization="process" and mp_context="spawn", make sure your main code
-    has a guard `if __name__ == '__main__'`. See https://github.com/google/jax/issues/1805
-    and https://stackoverflow.com/a/66290106.
+    If parallelization="process" and mp_context="spawn" or mp_context="forkserver", make sure your main code
+    has a guard `if __name__ == '__main__'`. See https://docs.python.org/3/library/multiprocessing.html#multiprocessing-programming.
 
     Parameters
     ----------
@@ -197,11 +198,12 @@ class AgentManager:
         number of processors on the machine.
         If None and parallelization='thread', it will default to the
         number of processors on the machine, multiplied by 5.
-    mp_context: {'spawn', 'fork'}, default: 'spawn'.
+    mp_context: {'spawn', 'fork', 'forkserver}, default: 'spawn'.
         Context for python multiprocessing module.
         Warning: If you're using JAX or PyTorch, it only works with 'spawn'.
                  If running code on a notebook or interpreter, use 'fork'.
-    worker_logging_level : str, default: 'INFO'
+                 forkserver and fork are available on Unix OS only.
+        worker_logging_level : str, default: 'INFO'
         Logging level in each of the threads/processes used to fit agents.
     seed : :class:`numpy.random.SeedSequence`, :class:`~rlberry.seeding.seeder.Seeder` or int, default : None
         Seed sequence from which to spawn the random number generator.
@@ -222,7 +224,11 @@ class AgentManager:
         require different parameters. If the same parameter is defined by
         ``init_kwargs`` and ``init_kwargs_per_instance``, the value given by
         ``init_kwargs_per_instance`` will be used.
-
+        Attention: parameters that are passed individually to each agent instance
+        cannot be optimized in the method optimize_hyperparams().
+    thread_shared_data : dict, optional
+        Data to be shared among agent instances in different threads.
+        If parallelization='process', data will be copied instead of shared.
 
     Attributes
     ----------
@@ -233,7 +239,7 @@ class AgentManager:
     def __init__(
         self,
         agent_class,
-        train_env,
+        train_env=(None, None),
         fit_budget=None,
         eval_env=None,
         init_kwargs=None,
@@ -251,6 +257,7 @@ class AgentManager:
         outdir_id_style="timestamp",
         default_writer_kwargs=None,
         init_kwargs_per_instance=None,
+        thread_shared_data=None,
     ):
         # agent_class should only be None when the constructor is called
         # by the class method AgentManager.load(), since the agent class
@@ -293,6 +300,15 @@ class AgentManager:
             eval_env = deepcopy(train_env)
 
         self._eval_env = eval_env
+
+        # shared data
+        self.thread_shared_data = thread_shared_data  # do not deepcopy for sharing!
+        if parallelization != "thread" and thread_shared_data is not None:
+            logger.warning(
+                f"Using thread_shared_data and parallelization = {parallelization}"
+                " in AgentManager does *not* share data among Agent instances!"
+                " Each process will have its copy of thread_shared_data."
+            )
 
         # check kwargs
         fit_kwargs = fit_kwargs or {}
@@ -402,7 +418,10 @@ class AgentManager:
         init_seeders = self.seeder.spawn(self.n_fit, squeeze=False)
         self.init_kwargs = []
         for ii in range(self.n_fit):
+            # deepcopy base_init_kwargs
             kwargs_ii = deepcopy(self._base_init_kwargs)
+            # include shared data, without deep copy!
+            kwargs_ii["_thread_shared_data"] = self.thread_shared_data
             kwargs_ii.update(
                 dict(
                     env=self.train_env,
@@ -470,14 +489,21 @@ class AgentManager:
             ]
         return []
 
-    def eval_agents(self, n_simulations: Optional[int] = None) -> list:
+    def eval_agents(
+        self,
+        n_simulations: Optional[int] = None,
+        eval_kwargs: Optional[dict] = None,
+    ) -> List[float]:
         """
         Call :meth:`eval` method in the managed agents and returns a list with the results.
 
         Parameters
         ----------
-        n_simulations : int
+        n_simulations : int, optional
             Total number of agent evaluations. If None, set to 2*(number of agents)
+        eval_kwargs : dict, optional
+            Arguments to be sent to the .eval() method of each trained instance.
+            If None, set to self.eval_kwargs.
 
         Returns
         -------
@@ -485,6 +511,7 @@ class AgentManager:
             list of length ``n_simulations`` containing the outputs
             of :meth:`~rlberry.agents.agent.Agent.eval`.
         """
+        eval_kwargs = eval_kwargs or self.eval_kwargs
         if not n_simulations:
             n_simulations = 2 * self.n_fit
         values = []
@@ -498,7 +525,7 @@ class AgentManager:
                     " Returning []."
                 )
                 return []
-            values.append(agent.eval(**self.eval_kwargs))
+            values.append(agent.eval(**eval_kwargs))
             logger.info(f"[eval]... simulation {ii + 1}/{n_simulations}")
         return values
 
@@ -541,6 +568,38 @@ class AgentManager:
         ), "Invalid index sent to AgentManager.set_writer()"
         writer_kwargs = writer_kwargs or {}
         self.writers[idx] = (writer_fn, writer_kwargs)
+
+    def generate_profile(self, budget=None, fname=None):
+        """
+        Do a fit to produce a profile (i.e. the cumulative time spent on each operation done during a fit).
+        The 20 first lines are printed out and the whole profile is saved in a file.
+        See `https://docs.python.org/3/library/profile.html`_ for more information on python profiler.
+
+        Parameters
+        ----------
+        budget: int or None, default=None
+            budget of the fit done to generate the profile
+
+        fname: string or None, default=None
+            name of the file where we save the profile. If None, the file is saved in self.output_dir/self.agent_name_profile.prof.
+        """
+        budget = budget or self.fit_budget
+
+        if self.output_dir is None:
+            output_dir_ = metadata_utils.RLBERRY_TEMP_DATA_DIR
+        else:
+            output_dir_ = self.output_dir
+
+        filename = fname or (str(output_dir_) + self.agent_name + "_profile.prof")
+        logger.info("Doing a profile run.")
+        with cProfile.Profile() as pr:
+            agent = self.agent_class(**(self.init_kwargs[0]))
+            agent.fit(budget, **deepcopy(self.fit_kwargs))
+        pr.dump_stats(filename)
+        sortby = SortKey.CUMULATIVE
+        ps = pstats.Stats(pr).sort_stats(sortby)
+        logger.info("Printing the 20 first lines of the profile")
+        ps.print_stats(20)
 
     def fit(self, budget=None, **kwargs):
         """Fit the agent instances in parallel.
@@ -776,6 +835,7 @@ class AgentManager:
         fit_fraction=1.0,
         sampler_kwargs=None,
         disable_evaluation_writers=True,
+        custom_eval_function=None,
     ):
         """Run hyperparameter optimization and updates init_kwargs with the best hyperparameters found.
 
@@ -831,6 +891,10 @@ class AgentManager:
             kwargs for evaluation_function
         disable_evaluation_writers : bool, default: True
             If true, disable writers of agents used in the hyperparameter evaluation.
+        custom_eval_function : Callable
+            Takes as input a list of trained agents and output a scalar.
+            If given, the value of custom_eval_funct(trained_agents) is
+            optimized instead of mean([agent.eval() for agent in trained_agents]).
 
         Returns
         -------
@@ -916,6 +980,11 @@ class AgentManager:
             temp_dir=TEMP_DIR,  # TEMP_DIR
             disable_evaluation_writers=disable_evaluation_writers,
             fit_fraction=fit_fraction,
+            init_kwargs_per_instance=self.init_kwargs_per_instance[
+                :n_fit
+            ],  # init_kwargs_per_instance only for the first n_fit instances
+            custom_eval_function=custom_eval_function,
+            thread_shared_data=self.thread_shared_data,
         )
 
         try:
@@ -1071,6 +1140,9 @@ def _optuna_objective(
     temp_dir,  # TEMP_DIR
     disable_evaluation_writers,
     fit_fraction,
+    init_kwargs_per_instance,
+    custom_eval_function,
+    thread_shared_data,
 ):
     kwargs = deepcopy(base_init_kwargs)
 
@@ -1096,6 +1168,8 @@ def _optuna_objective(
         output_dir=temp_dir,
         enable_tensorboard=False,
         outdir_id_style="unique",
+        init_kwargs_per_instance=init_kwargs_per_instance,
+        thread_shared_data=thread_shared_data,
     )
 
     if disable_evaluation_writers:
@@ -1112,7 +1186,10 @@ def _optuna_objective(
             #
             params_stats.fit(int(fit_budget * fit_fraction))
             # Evaluate params
-            eval_value = np.mean(params_stats.eval_agents())
+            if not custom_eval_function:
+                eval_value = np.mean(params_stats.eval_agents())
+            else:
+                eval_value = custom_eval_function(params_stats.get_agent_instances())
 
             # Report intermediate objective value
             trial.report(eval_value, step)
@@ -1134,7 +1211,10 @@ def _optuna_objective(
         params_stats.fit()
 
         # Evaluate params
-        eval_value = np.mean(params_stats.eval_agents())
+        if not custom_eval_function:
+            eval_value = np.mean(params_stats.eval_agents())
+        else:
+            eval_value = custom_eval_function(params_stats.get_agent_instances())
 
     # clear aux data
     params_stats.clear_output_dir()

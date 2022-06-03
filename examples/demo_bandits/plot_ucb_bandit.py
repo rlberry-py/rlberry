@@ -8,7 +8,7 @@ This script shows how to define a bandit environment and an UCB Index-based algo
 
 import numpy as np
 from rlberry.envs.bandits import NormalBandit
-from rlberry.agents.bandits import RecursiveIndexAgent
+from rlberry.agents.bandits import IndexAgent, makeSubgaussianUCBIndex
 from rlberry.manager import AgentManager, plot_writer_data
 import matplotlib.pyplot as plt
 from rlberry.wrappers import WriterWrapper
@@ -17,25 +17,14 @@ from rlberry.wrappers import WriterWrapper
 # Agents definition
 
 
-class UCBAgent(RecursiveIndexAgent):
-    """UCB agent for B-subgaussian bandits"""
+class UCBAgent(IndexAgent):
+    """UCB agent for sigma-subgaussian bandits"""
 
     name = "UCB Agent"
 
-    def __init__(self, env, B=1, **kwargs):
-        def stat_function(stat, Na, action, reward):
-            # The statistic is the empirical mean. We compute it recursively.
-            if stat is None:
-                stat = np.zeros(len(Na))
-            stat[action] = (Na[action] - 1) / Na[action] * stat[action] + reward / Na[
-                action
-            ]
-            return stat
-
-        def index(stat, Na, t):
-            return stat + B * np.sqrt(2 * np.log(t**2) / Na)
-
-        RecursiveIndexAgent.__init__(self, env, stat_function, index, **kwargs)
+    def __init__(self, env, sigma=1, **kwargs):
+        index, _ = makeSubgaussianUCBIndex(sigma)
+        IndexAgent.__init__(self, env, index, **kwargs)
         self.env = WriterWrapper(self.env, self.writer, write_scalar="action")
 
 
@@ -53,7 +42,7 @@ agent = AgentManager(
     UCBAgent,
     (env_ctor, env_kwargs),
     fit_budget=T,
-    init_kwargs={"B": 2},
+    init_kwargs={"sigma": 2},
     n_fit=M,
     parallelization="process",
     mp_context="fork",

@@ -1,4 +1,5 @@
 numpy>=1.17
+scipy>=1.6
 pygame
 matplotlib
 seaborn
@@ -14,3 +15,6 @@ PyOpenGL==3.1.5
 PyOpenGL_accelerate==3.1.5
 pyvirtualdisplay
 torch>=1.6.0
+stable-baselines3
+protobuf==3.20.1
+tensorboard

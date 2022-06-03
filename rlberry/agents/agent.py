@@ -43,6 +43,9 @@ class Agent(ABC):
     _default_writer_kwargs : dict, optional
         Parameters to initialize :class:`~rlberry.utils.writers.DefaultWriter` (attribute self.writer).
         Used by :class:`~rlberry.manager.AgentManager`.
+    _thread_shared_data : dict, optional
+        Used by :class:`~rlberry.manager.AgentManager` to share data across Agent
+        instances created in different threads.
     **kwargs : dict
         Classes that implement this interface must send ``**kwargs``
         to :code:`Agent.__init__()`.
@@ -68,19 +71,22 @@ class Agent(ABC):
     unique_id : str
         Unique identifier for the agent instance. Can be used, for example,
         to create files/directories for the agent to log data safely.
+    thread_shared_data : dict
+        Data shared by agent instances among different threads.
     """
 
     name = ""
 
     def __init__(
         self,
-        env: types.Env,
+        env: types.Env = None,
         eval_env: Optional[types.Env] = None,
         copy_env: bool = True,
         seeder: Optional[types.Seed] = None,
         output_dir: Optional[str] = None,
         _execution_metadata: Optional[metadata_utils.ExecutionMetadata] = None,
         _default_writer_kwargs: Optional[dict] = None,
+        _thread_shared_data: Optional[dict] = None,
         **kwargs,
     ):
         # Check if wrong parameters have been sent to an agent.
@@ -111,21 +117,45 @@ class Agent(ABC):
         self._output_dir = output_dir or f"output_{self._unique_id}"
         self._output_dir = Path(self._output_dir)
 
+        # shared data among threads
+        self._thread_shared_data = _thread_shared_data
+
     @property
     def writer(self):
+        """
+        Writer object.
+        """
         return self._writer
 
     @property
     def unique_id(self):
+        """
+        Unique identifier for the agent instance. Can be used, for example, to create files/directories for the agent to log data safely.
+        """
         return self._unique_id
 
     @property
     def output_dir(self):
+        """
+        Directory that the agent can use to store data.
+        """
         return self._output_dir
 
     @property
     def rng(self):
+        """
+        Random number generator.
+        """
         return self.seeder.rng
+
+    @property
+    def thread_shared_data(self):
+        """
+        Data shared by agent instances among different threads.
+        """
+        if self._thread_shared_data is None:
+            return dict()
+        return self._thread_shared_data
 
     @abstractmethod
     def fit(self, budget: int, **kwargs):

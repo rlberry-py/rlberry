@@ -3,8 +3,25 @@
 Changelog
 =========
 
-Under development (0.3.0dev0)
------------------------------
+Version 0.3.0 (latest stable version)
+-------------------------------------
+
+*PR #206*
+
+* Creation of a Deep RL tutorial, in the user guide.
+
+*PR #132*
+
+* New tracker class :class:`rlberry.agents.bandit.tools.BanditTracker` to track statistics to be used in Bandit algorithms.
+
+*PR #191*
+
+* Possibility to generate a profile with :class:`rlberry.agents.manager.AgentManager`.
+
+*PR #148, #161, #180*
+
+* Misc improvements on A2C.
+* New StableBaselines3 wrapper :class:`rlberry.agents.stable_baselines.StableBaselinesAgent` to import StableBaselines3 Agents.
 
 *PR #119*
 
@@ -45,8 +62,8 @@ Under development (0.3.0dev0)
 * Add the Posterior Sampling for Reinforcement Learning PSRL agent for tabular MDP :class:`~rlberry.agents.PSRLAgent`
 * Add a page to help contributors in the doc :ref:`contributing`
 
-Version 0.2.1 (lastest release)
--------------------------------------
+Version 0.2.1
+-------------
 
 
 * :class:`~rlberry.agents.Agent` and :class:`~rlberry.manager.AgentManager` both have a unique_id attribute (useful for creating unique output files/directories).

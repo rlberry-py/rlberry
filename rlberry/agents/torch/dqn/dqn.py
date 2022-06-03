@@ -73,7 +73,7 @@ class DQNAgent(AgentWithSimplePolicy):
         After :code:`epsilon_decay` timesteps, epsilon approaches :code:`epsilon_final`.
     optimizer_type : {"ADAM", "RMS_PROP"}
         Optimization algorithm.
-    q_net_constructor : Callable
+    q_net_constructor : Callable, str or None
         Function/constructor that returns a torch module for the Q-network:
         :code:`qnet = q_net_constructor(env, **kwargs)`.
 
@@ -82,6 +82,30 @@ class DQNAgent(AgentWithSimplePolicy):
         * Input shape = (batch_dim, chunk_size, obs_dims)
 
         * Ouput shape = (batch_dim, chunk_size, number_of_actions)
+
+        Example: use `rlberry.agents.torch.utils.training.model_factory_from_env`,
+         and `q_net_kwargs`
+        parameter to modify the neural network::
+
+            model_configs = {
+                "type": "MultiLayerPerceptron",
+                "layer_sizes": (5, 5),
+                "reshape": False,
+            }
+
+            agent = DQNAgent(env,
+                q_net_constructor=model_factory_from_env,
+                q_net_kwargs=model_configs
+                )
+        If str then it should correspond to the full path to the constructor function,
+        e.g.::
+            agent = DQNAgent(env,
+                q_net_constructor='rlberry.agents.torch.utils.training.model_factory_from_env',
+                q_net_kwargs=model_configs
+                )
+
+        If None then it is set to MultiLayerPerceptron with 2 hidden layers
+        of size 64
 
     q_net_kwargs : optional, dict
         Parameters for q_net_constructor.
@@ -151,6 +175,8 @@ class DQNAgent(AgentWithSimplePolicy):
             q_net_ctor = load(q_net_constructor)
         elif q_net_constructor is None:
             q_net_ctor = default_q_net_fn
+        else:
+            q_net_ctor = q_net_constructor
         q_net_kwargs = q_net_kwargs or dict()
         self._qnet_online = q_net_ctor(env, **q_net_kwargs).to(self._device)
         self._qnet_target = q_net_ctor(env, **q_net_kwargs).to(self._device)
@@ -328,6 +354,15 @@ class DQNAgent(AgentWithSimplePolicy):
                     )
 
     def fit(self, budget: int, **kwargs):
+        """
+        Train the agent using the provided environment.
+
+        Parameters
+        ----------
+        budget: int
+            Number of timesteps to train the agent for.
+            One step = one transition in the environment.
+        """
         del kwargs
         timesteps_counter = 0
         episode_rewards = 0.0

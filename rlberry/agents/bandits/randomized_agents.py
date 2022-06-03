@@ -26,6 +26,12 @@ class RandomizedAgent(BanditWithSimplePolicy):
         performance of the EXP3 algorithm in stochastic environments.".
         European Workshop on Reinforcement Learning. PMLR, 2013.
 
+    **kwargs: arguments
+        Arguments to be passed to BanditWithSimplePolicy. In particular,
+        one may want to pass the following parameter:
+        tracker_params: dict
+            Parameters for the tracker object, typically to decide what to store.
+
     Examples
     --------
     >>> from rlberry.agents.bandits import IndexAgent
@@ -33,16 +39,18 @@ class RandomizedAgent(BanditWithSimplePolicy):
     >>> class EXP3Agent(RandomizedAgent):
     >>>     name = "EXP3"
     >>>     def __init__(self, env, **kwargs):
-    >>>         def index(r, p, t):
-    >>>             return np.sum(1 - (1 - r) / p)
-    >>>
-    >>>         def prob(indices, t):
-    >>>             eta = np.minimum(
-    >>>                 np.sqrt(np.log(self.n_arms) / (self.n_arms * (t + 1))), 1 / self.n_arms
-    >>>             )
-    >>>             w = np.exp(eta * indices)
+    >>>         def prob_function(tr):
+    >>>             w = np.zeros(tr.n_arms)
+    >>>             for arm in tr.arms:
+    >>>                 eta = np.minimum(
+    >>>                     np.sqrt(
+    >>>                         np.log(tr.n_arms) / (tr.n_arms * (tr.t + 1))
+    >>>                     ),
+    >>>                     1 / tr.n_arms,
+    >>>                 )
+    >>>                 w[arm] = np.exp(eta * tr.iw_total_reward(arm))
     >>>             w /= w.sum()
-    >>>             return (1 - self.n_arms * eta) * w + eta * np.ones(self.n_arms)
+    >>>             return (1 - tr.n_arms * eta) * w + eta * np.ones(tr.n_arms)
     >>>
     >>>         RandomizedAgent.__init__(self, env, index, prob, **kwargs)
 
@@ -50,75 +58,56 @@ class RandomizedAgent(BanditWithSimplePolicy):
 
     name = "RandomizedAgent"
 
-    def __init__(self, env, index_function=None, prob_function=None, **kwargs):
+    def __init__(self, env, prob_function=None, **kwargs):
         BanditWithSimplePolicy.__init__(self, env, **kwargs)
-        if index_function is None:
-
-            def index_function(r, p, t):
-                return np.sum(1 - (1 - r) / p)
-
-            self.index_function = index_function
-        else:
-            self.index_function = index_function
 
         if prob_function is None:
 
-            def prob_function(indices, t):
-                eta = np.minimum(
-                    np.sqrt(np.log(self.n_arms) / (self.n_arms * (t + 1))),
-                    1 / self.n_arms,
-                )
-                w = np.exp(eta * indices)
+            def prob_function(tr):
+                w = np.zeros(tr.n_arms)
+                for arm in tr.arms:
+                    eta = np.minimum(
+                        np.sqrt(np.log(tr.n_arms) / (tr.n_arms * (tr.t + 1))),
+                        1 / tr.n_arms,
+                    )
+                    w[arm] = np.exp(eta * tr.iw_total_reward(arm))
                 w /= w.sum()
-                return (1 - self.n_arms * eta) * w + eta * np.ones(self.n_arms)
+                return (1 - tr.n_arms * eta) * w + eta * np.ones(tr.n_arms)
 
-            self.prob_function = prob_function
-        else:
-            self.prob_function = prob_function
-        self.total_time = 0
+        self.prob_function = prob_function
 
     def fit(self, budget=None, **kwargs):
-        horizon = budget
-        rewards = np.zeros(horizon)
-        actions = np.ones(horizon) * np.nan
-        probs = np.ones((horizon, self.n_arms)) * np.nan
-
-        indices = np.zeros(self.n_arms)
-        for ep in range(horizon):
-            probs[ep] = self.prob_function(indices, ep)
-            action = self.seeder.rng.choice(self.arms, p=probs[ep])
-            indices = self.get_indices(rewards, actions, probs, ep)
-            self.total_time += 1
-            _, reward, _, _ = self.env.step(action)
-            rewards[ep] = reward
-            actions[ep] = action
-
-        self.optimal_action = np.argmax(probs)
-        info = {"episode_reward": np.sum(rewards)}
-        return info
-
-    def get_indices(self, rewards, actions, probs, ep):
         """
-        Return the indices of each arm.
+        Train the bandit using the provided environment.
 
         Parameters
         ----------
-        rewards : array, shape (n_iterations,)
-            list of rewards until now
-
-        actions : array, shape (n_iterations,)
-            list of actions until now
-
-        probs : array, shape (self.n_arms,)
-            list of sampling probabilities for each arm
-
-        ep: int
-            current iteration/epoch
-
+        budget: int
+            Total number of iterations, also called horizon.
         """
-        indices = np.zeros(self.n_arms)
-        for a in self.arms:
-            indices[a] = self.index_function(
-                rewards[actions == a], probs[actions == a, a], ep
-            )
-        return indices
+        horizon = budget
+        total_reward = 0.0
+
+        for ep in range(horizon):
+            # Warmup: play every arm one before starting computing indices
+            if ep < self.n_arms:
+                action = ep
+                probs = [float(k == action) for k in self.arms]
+            else:
+                # Compute sampling probability for each arm
+                # and play one at random
+                probs = self.prob_function(self.tracker)
+                action = self.rng.choice(self.arms, p=probs)
+
+            _, reward, _, _ = self.env.step(action)
+
+            # Feed the played action and the resulting reward and sampling
+            # probability to the tracker.
+            self.tracker.update(action, reward, {"p": probs[action]})
+
+            total_reward += reward
+
+        # Best action in hinsight is the one with highest sampling probability
+        self.optimal_action = np.argmax(probs[:])
+        info = {"episode_reward": total_reward}
+        return info

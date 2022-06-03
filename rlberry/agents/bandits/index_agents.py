@@ -4,6 +4,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# TODO : fix bug when doing several fit, the fit do not resume. Should define
+#        self.rewards and self.action and resume training.
+
 
 class IndexAgent(BanditWithSimplePolicy):
     """
@@ -18,6 +21,13 @@ class IndexAgent(BanditWithSimplePolicy):
         Compute the index for an arm using the past rewards on this arm and
         the current time t. If None, use UCB bound for Bernoulli.
 
+    **kwargs: arguments
+        Arguments to be passed to :class:`~rlberry.agents.bandit.BanditWithSimplePolicy`.
+        In particular, one may want to pass the following parameters:
+        tracker_params: dict
+            Parameters for the tracker object, typically to decide what to store.
+            in particular may contain a function "update", used to define additional statistics
+            that have to be saved in the tracker. See :class:~rlberry.agents.bandit.BanditTracker`.
 
     Examples
     --------
@@ -26,8 +36,15 @@ class IndexAgent(BanditWithSimplePolicy):
     >>> class UCBAgent(IndexAgent):
     >>>     name = "UCB"
     >>>     def __init__(self, env, **kwargs):
-    >>>         def index(r, t):
-    >>>             return np.mean(r) + np.sqrt(np.log(t**2) / (2 * len(r)))
+    >>>     def index(tr):
+    >>>         return [
+    >>>             tr.mu_hat(arm)
+    >>>             + np.sqrt(
+    >>>                 np.log(tr.t ** 2)
+    >>>                 / (2 * tr.n_pulls(arm))
+    >>>             )
+    >>>             for arm in tr.arms
+    >>>         ]
     >>>         IndexAgent.__init__(self, env, index, **kwargs)
 
     """
@@ -38,151 +55,45 @@ class IndexAgent(BanditWithSimplePolicy):
         BanditWithSimplePolicy.__init__(self, env, **kwargs)
         if index_function is None:
 
-            def index(r, t):
-                return np.mean(r) + np.sqrt(np.log(t**2) / (2 * len(r)))
+            def index_function(tr):
+                return [
+                    tr.mu_hat(arm) + np.sqrt(np.log(tr.t**2) / (2 * tr.n_pulls(arm)))
+                    for arm in tr.arms
+                ]
 
-            self.index_function = index_function
-        else:
-            self.index_function = index_function
-        self.total_time = 0
+        self.index_function = index_function
 
     def fit(self, budget=None, **kwargs):
-        horizon = budget
-        rewards = np.zeros(horizon)
-        actions = np.ones(horizon) * np.nan
-
-        indices = np.inf * np.ones(self.n_arms)
-        for ep in range(horizon):
-            if self.total_time < self.n_arms:
-                action = self.total_time
-            else:
-                indices = self.get_indices(rewards, actions, ep)
-                action = np.argmax(indices)
-            self.total_time += 1
-            _, reward, _, _ = self.env.step(action)
-            rewards[ep] = reward
-            actions[ep] = action
-
-        self.optimal_action = np.argmax(indices)
-        info = {"episode_reward": np.sum(rewards)}
-        return info
-
-    def get_indices(self, rewards, actions, ep):
         """
-        Return the indices of each arm.
+        Train the bandit using the provided environment.
 
         Parameters
         ----------
-        rewards : array, shape (n_iterations,)
-            list of rewards until now
-
-        actions : array, shape (n_iterations,)
-            list of actions until now
-
-        ep: int
-            current iteration/epoch
-
+        budget: int
+            Total number of iterations, also called horizon.
         """
-        indices = np.zeros(self.n_arms)
-        for a in self.arms:
-            indices[a] = self.index_function(rewards[actions == a], ep)
-        return indices
-
-
-class RecursiveIndexAgent(BanditWithSimplePolicy):
-    """
-    Agent for bandit environment using Index-based policy like UCB with
-    recursive indices.
-
-    Parameters
-    -----------
-    env : rlberry bandit environment
-
-    stat_function : tuple of callable or None, default=None
-        compute sufficient statistics using previous stats, Na and current action and rewards.
-        If None, use the empirical mean statistic.
-
-    index_function : callable or None, default=None
-        compute the index using the stats from stat_function, the number of  pull
-        of the arm and the current time.
-        If None, use UCB index for bernoulli.
-
-
-    Examples
-    --------
-    >>> from rlberry.agents.bandits import RecursiveIndexAgent
-    >>> import numpy as np
-    >>> class UCBAgent(RecursiveIndexAgent):
-    >>>     name = "UCB Agent"
-    >>>     def __init__(self, env,**kwargs):
-    >>>         def stat_function(stat, Na, action, reward):
-    >>>             # The statistic is the empirical mean. We compute it recursively.
-    >>>             if stat is None:
-    >>>                 stat = np.zeros(len(Na))
-    >>>             stat[action] = (Na[action] - 1) / Na[action] * stat[action] + reward / Na[
-    >>>                 action
-    >>>             ]
-    >>>             return stat
-    >>>
-    >>>         def index(stat, Na, t):
-    >>>             return stat + np.sqrt( np.log(t**2) / (2*Na))
-    >>>
-    >>>         RecursiveIndexAgent.__init__(self, env, stat_function, index, **kwargs)
-    """
-
-    name = "RecursiveIndexAgent"
-
-    def __init__(self, env, stat_function=None, index_function=None, **kwargs):
-        BanditWithSimplePolicy.__init__(self, env, **kwargs)
-        self.n_arms = self.env.action_space.n
-        if stat_function is None:
-
-            def stat_function_(stat, Na, action, reward):
-                if stat is None:
-                    stat = np.zeros(len(Na))
-                stat[action] = (Na[action] - 1) / Na[action] * stat[
-                    action
-                ] + reward / Na[action]
-                return stat
-
-            self.stat_function = stat_function_
-        else:
-            self.stat_function = stat_function
-        if index_function is None:
-
-            def index(stat, Na, t):
-                return stat + np.sqrt(np.log(t**2) / (2 * Na))
-
-            self.index_function = index
-        else:
-            self.index_function = index_function
-        self.total_time = 0
-
-    def fit(self, budget=None, **kwargs):
         horizon = budget
+        total_reward = 0.0
         indices = np.inf * np.ones(self.n_arms)
-        stats = None
-        Na = np.zeros(self.n_arms)
-        total_reward = 0
+
         for ep in range(horizon):
-            if self.total_time < self.n_arms:
-                action = self.total_time
+            # Warmup: play every arm one before starting computing indices
+            if ep < self.n_arms:
+                action = ep
             else:
-                indices = self.get_recursive_indices(stats, Na, ep)
+                # Compute index for each arm and play the highest one
+                indices = self.index_function(self.tracker)
                 action = np.argmax(indices)
-            self.total_time += 1
-            Na[action] += 1
+
             _, reward, _, _ = self.env.step(action)
-            stats = self.stat_function(stats, Na, action, reward)
+
+            # Feed the played action and the resulting reward to the tracker
+            self.tracker.update(action, reward)
+
             total_reward += reward
 
+        # Best action in hinsight is the one with highest index
         self.optimal_action = np.argmax(indices)
 
         info = {"episode_reward": total_reward}
         return info
-
-    def get_recursive_indices(self, stats, Na, ep):
-        indices = np.zeros(self.n_arms)
-        for a in self.arms:
-            indices[a] = self.index_function(stats[a], Na[a], ep)
-        return indices

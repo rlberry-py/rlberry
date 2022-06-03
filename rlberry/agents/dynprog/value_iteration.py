@@ -14,15 +14,17 @@ class ValueIterationAgent(AgentWithSimplePolicy):
     Parameters
     -----------
     env : rlberry.envs.finite.finite_mdp.FiniteMDP
+        Environment used to fit the agent.
     gamma : double
-        discount factor in [0, 1]
+        Discount factor in [0, 1]
     horizon : int
-        horizon, if the problem is finite-horizon. if None, the discounted
+        Horizon, if the problem is finite-horizon. if None, the discounted
         problem is solved
         default = None
     epsilon : double
-        precision of value iteration, only used in discounted problems
+        Precision of value iteration, only used in discounted problems
         (when horizon is None).
+
     """
 
     name = "ValueIteration"
@@ -36,7 +38,8 @@ class ValueIterationAgent(AgentWithSimplePolicy):
         ), "Value iteration requires a FiniteMDP model."
         #
 
-        self.gamma = gamma
+        self.gamma = gamma  # attribute gamma
+
         self.horizon = horizon
         self.epsilon = epsilon
 
@@ -47,6 +50,12 @@ class ValueIterationAgent(AgentWithSimplePolicy):
     def fit(self, budget=None, **kwargs):
         """
         Run value iteration.
+
+        Parameters
+        ----------
+        budget: None
+            Not used. Only defined for compatibility purpose with rlberry.
+            Changing `budget` value has no effect.
         """
         del kwargs
         info = {}

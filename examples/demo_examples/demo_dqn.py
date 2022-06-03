@@ -1,4 +1,6 @@
 """
+.. _dqn_example:
+
  =====================
  Demo: demo_dqn_lambda
  =====================
@@ -40,7 +42,7 @@ DQN_LAMBDA_PARAMS.update(
 # Create managers
 #
 if __name__ == "__main__":
-    managers = MultipleManagers()
+    managers = MultipleManagers(parallelization="thread")
 
     # Standard DQN
     managers.append(

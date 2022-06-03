@@ -3,6 +3,7 @@ from rlberry.agents import AgentWithSimplePolicy
 from rlberry.agents.dynprog.value_iteration import ValueIterationAgent
 from rlberry.manager import AgentManager
 from optuna.samplers import TPESampler
+import numpy as np
 import pytest
 
 
@@ -17,11 +18,16 @@ class DummyAgent(AgentWithSimplePolicy):
         self.fraction_fitted = 0.0
 
     def fit(self, budget, **kwargs):
-        del kwargs
+        del budget, kwargs
         self.fitted = True
         return None
 
+    def eval(self, **kwargs):
+        del kwargs
+        return 0
+
     def policy(self, observation):
+        del observation
         return 0
 
     @classmethod
@@ -29,6 +35,11 @@ class DummyAgent(AgentWithSimplePolicy):
         hyperparameter1 = trial.suggest_categorical("hyperparameter1", [1, 2, 3])
         hyperparameter2 = trial.suggest_uniform("hyperparameter2", -10, 10)
         return {"hyperparameter1": hyperparameter1, "hyperparameter2": hyperparameter2}
+
+
+def _custom_eval_function(agents):
+    vals = [agent.eval() for agent in agents]
+    return np.mean(vals) - 0.1 * np.std(vals)
 
 
 def test_hyperparam_optim_tpe():
@@ -52,8 +63,16 @@ def test_hyperparam_optim_tpe():
     stats_agent.clear_output_dir()
 
 
-@pytest.mark.parametrize("parallelization", ["process", "thread"])
-def test_hyperparam_optim_random(parallelization):
+@pytest.mark.parametrize(
+    "parallelization, custom_eval_function, fit_fraction",
+    [
+        ("process", None, 1.0),
+        ("thread", None, 1.0),
+        ("process", _custom_eval_function, 1.0),
+        ("process", _custom_eval_function, 0.5),
+    ],
+)
+def test_hyperparam_optim_random(parallelization, custom_eval_function, fit_fraction):
     # Define train env
     train_env = (GridWorld, {})
 
@@ -70,7 +89,11 @@ def test_hyperparam_optim_random(parallelization):
 
     # test hyperparameter optimization with random sampler
     stats_agent.optimize_hyperparams(
-        sampler_method="random", n_trials=5, optuna_parallelization=parallelization
+        sampler_method="random",
+        n_trials=5,
+        optuna_parallelization=parallelization,
+        custom_eval_function=custom_eval_function,
+        fit_fraction=fit_fraction,
     )
     stats_agent.clear_output_dir()
 

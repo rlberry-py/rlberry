@@ -1,10 +1,10 @@
-""" 
- ===================== 
- Demo: demo_agent_manager_set_writer 
+"""
+ =====================
+ Demo: demo_agent_manager_set_writer
  =====================
 """
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
-from rlberry.agents.torch.ppo import PPOAgent
+from rlberry.agents.experimental.torch.ppo import PPOAgent
 from rlberry.manager import AgentManager, evaluate_agents
 from torch.utils.tensorboard import SummaryWriter
 

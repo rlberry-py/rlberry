@@ -1,10 +1,10 @@
-""" 
- ===================== 
- Demo: demo_ppo_partial_fit 
+"""
+ =====================
+ Demo: demo_ppo_partial_fit
  =====================
 """
 import numpy as np
-from rlberry.agents.torch.ppo import PPOAgent
+from rlberry.agents.experimental.torch.ppo import PPOAgent
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
 from rlberry.manager import AgentManager, plot_writer_data, evaluate_agents
 

@@ -11,6 +11,7 @@ pr:
     - docs
 
 jobs:
+
 - job: 'linux'
   pool:
     vmImage: ubuntu-latest
@@ -32,6 +33,11 @@ jobs:
       pip install -r requirements.txt
       sudo apt install libglu1-mesa
     displayName: 'Install dependencies'
+  - script: |
+      set -xe
+      pip install -e .
+    displayName: 'Install rlberry'
+
 
   - script: |
       set -xe
@@ -39,7 +45,7 @@ jobs:
       # run doctests in the documentation
       # TODO: use following line for doctest ?
       pytest docs/*rst || echo "Ignoring exit status"
-      pytest --cov=rlberry --cov-report xml rlberry
+      pytest --import-mode=importlib --cov=rlberry --cov-report xml rlberry
     displayName: 'Test and coverage'
   - script: |
       curl -Os https://uploader.codecov.io/latest/linux/codecov
@@ -86,10 +92,17 @@ jobs:
       python -m pip install --upgrade pip
       pip install -r requirements.txt
     displayName: 'Install dependencies'
+
+  - script: |
+      set -xe
+      pip install -e .
+    displayName: 'Install rlberry'
+
   - script: |
       pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
-      pytest
+      pytest --import-mode=importlib
     displayName: 'pytest'
+
 - job: 'windows'
   pool:
     vmImage: 'windows-latest'
@@ -108,6 +121,12 @@ jobs:
       python -m pip install --upgrade pip
       pip install -r requirements.txt
     displayName: 'Install dependencies'
+
+  - script: |
+      pip wheel . -w dist\
+      pip install --pre --no-index --find-links dist\ rlberry
+    displayName: 'Install rlberry'
+
   - script: |
       pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
       pytest
