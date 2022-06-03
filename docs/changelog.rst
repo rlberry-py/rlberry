@@ -3,8 +3,8 @@
 Changelog
 =========
 
-Version 0.3.0
--------------
+Version 0.3.0 (latest stable version)
+-------------------------------------
 
 *PR #206*
 
