@@ -33,7 +33,8 @@ Quick start: setup an experiment and evaluate different agents
 .. toctree::
    :maxdepth: 2
 
-   basics/quick_start.rst
+   basics/quick_start_rl/quickstart.rst
+   basics/DeepRLTutorial/TutorialDeepRL.rst
 
 
 Agents, hyperparameter optimization and experiment setup
@@ -55,7 +56,7 @@ in rlberry and :ref:`tensorboard<dqn_example>`
 Compatibility with External Libraries
 =====================================
 
-We provide examples to show you how to use rlberry_ with:
+We provide examples to show you how to use rlberry with:
 
 - :ref:`OpenAI Gym <gym>`;
 - :ref:`Stable Baselines <stable_baselines>`.
