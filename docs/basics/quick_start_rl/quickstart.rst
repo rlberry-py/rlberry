@@ -1,7 +1,7 @@
 .. _quick_start:
 
-Quick Start
-===========
+Quick Start for Reinforcement Learning in rlberry
+=================================================
 
 .. math::
 
@@ -23,7 +23,12 @@ Importing required libraries
     import time
     from rlberry.agents import UCBVIAgent, AgentWithSimplePolicy
     from rlberry.envs import Chain
-    from rlberry.manager import AgentManager, evaluate_agents, plot_writer_data, read_writer_data
+    from rlberry.manager import (
+        AgentManager,
+        evaluate_agents,
+        plot_writer_data,
+        read_writer_data,
+    )
     from rlberry.wrappers import WriterWrapper
 
 Choosing an RL environment
@@ -81,7 +86,7 @@ Let us see a graphical representation
           encoder         : Lavc59.18.100 libx264
         Side data:
           cpb: bitrate max/min/avg: 0/0/0 buffer size: 0 vbv_delay: N/A
-    frame=    6 fps=0.0 q=-1.0 Lsize=       4kB time=00:00:00.60 bitrate=  48.8kbits/s speed=56.2x    
+    frame=    6 fps=0.0 q=-1.0 Lsize=       4kB time=00:00:00.60 bitrate=  48.8kbits/s speed=56.2x
     video:3kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 32.212582%
     [libx264 @ 0x564b9e570340] frame I:1     Avg QP: 6.94  size:   742
     [libx264 @ 0x564b9e570340] frame P:5     Avg QP:22.68  size:   267
@@ -119,20 +124,20 @@ Our goal is then to assess the performance of the two algorithms.
     # Create random agent as a baseline
     class RandomAgent(AgentWithSimplePolicy):
         name = "RandomAgent"
-    
+
         def __init__(self, env, **kwargs):
             AgentWithSimplePolicy.__init__(self, env, **kwargs)
-    
+
         def fit(self, budget=100, **kwargs):
             observation = self.env.reset()
             for ep in range(budget):
                 action = self.policy(observation)
                 observation, reward, done, _ = self.env.step(action)
-    
+
         def policy(self, observation):
             return self.env.action_space.sample()  # choose an action at random
-    
-    
+
+
     # Define parameters
     ucbvi_params = {"gamma": 0.9, "horizon": 100}
 
@@ -186,7 +191,7 @@ then spawn agents as desired during the experiment.
         n_fit=1,
     )
     ucbvi_stats.fit()
-    
+
     # Create AgentManager for baseline
     baseline_stats = AgentManager(
         RandomAgent,
@@ -200,10 +205,10 @@ then spawn agents as desired during the experiment.
 
 .. parsed-literal::
 
-    [INFO] Running AgentManager fit() for UCBVI with n_fit = 1 and max_workers = None. 
-    [INFO] ... trained! 
-    [INFO] Running AgentManager fit() for RandomAgent with n_fit = 1 and max_workers = None. 
-    [INFO] ... trained! 
+    [INFO] Running AgentManager fit() for UCBVI with n_fit = 1 and max_workers = None.
+    [INFO] ... trained!
+    [INFO] Running AgentManager fit() for RandomAgent with n_fit = 1 and max_workers = None.
+    [INFO] ... trained!
 
 
 .. code:: python
@@ -213,28 +218,28 @@ then spawn agents as desired during the experiment.
 
 .. parsed-literal::
 
-    [INFO] Evaluating UCBVI... 
-    [INFO] [eval]... simulation 1/10 
-    [INFO] [eval]... simulation 2/10 
-    [INFO] [eval]... simulation 3/10 
-    [INFO] [eval]... simulation 4/10 
-    [INFO] [eval]... simulation 5/10 
-    [INFO] [eval]... simulation 6/10 
-    [INFO] [eval]... simulation 7/10 
-    [INFO] [eval]... simulation 8/10 
-    [INFO] [eval]... simulation 9/10 
-    [INFO] [eval]... simulation 10/10 
-    [INFO] Evaluating RandomAgent... 
-    [INFO] [eval]... simulation 1/10 
-    [INFO] [eval]... simulation 2/10 
-    [INFO] [eval]... simulation 3/10 
-    [INFO] [eval]... simulation 4/10 
-    [INFO] [eval]... simulation 5/10 
-    [INFO] [eval]... simulation 6/10 
-    [INFO] [eval]... simulation 7/10 
-    [INFO] [eval]... simulation 8/10 
-    [INFO] [eval]... simulation 9/10 
-    [INFO] [eval]... simulation 10/10 
+    [INFO] Evaluating UCBVI...
+    [INFO] [eval]... simulation 1/10
+    [INFO] [eval]... simulation 2/10
+    [INFO] [eval]... simulation 3/10
+    [INFO] [eval]... simulation 4/10
+    [INFO] [eval]... simulation 5/10
+    [INFO] [eval]... simulation 6/10
+    [INFO] [eval]... simulation 7/10
+    [INFO] [eval]... simulation 8/10
+    [INFO] [eval]... simulation 9/10
+    [INFO] [eval]... simulation 10/10
+    [INFO] Evaluating RandomAgent...
+    [INFO] [eval]... simulation 1/10
+    [INFO] [eval]... simulation 2/10
+    [INFO] [eval]... simulation 3/10
+    [INFO] [eval]... simulation 4/10
+    [INFO] [eval]... simulation 5/10
+    [INFO] [eval]... simulation 6/10
+    [INFO] [eval]... simulation 7/10
+    [INFO] [eval]... simulation 8/10
+    [INFO] [eval]... simulation 9/10
+    [INFO] [eval]... simulation 10/10
 
 
 
@@ -261,15 +266,15 @@ module, or simply the `Agent.writer` attribute.
 
     class RandomAgent2(RandomAgent):
         name = "RandomAgent2"
-    
+
         def __init__(self, env, **kwargs):
             RandomAgent.__init__(self, env, **kwargs)
             self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
-    
-    
+
+
     class UCBVIAgent2(UCBVIAgent):
         name = "UCBVIAgent2"
-    
+
         def __init__(self, env, **kwargs):
             UCBVIAgent.__init__(self, env, **kwargs)
             self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
@@ -281,17 +286,17 @@ it’s an agent that always chooses the action that moves to the right.
 
     class OptimalAgent(AgentWithSimplePolicy):
         name = "OptimalAgent"
-    
+
         def __init__(self, env, **kwargs):
             AgentWithSimplePolicy.__init__(self, env, **kwargs)
             self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
-    
+
         def fit(self, budget=100, **kwargs):
             observation = self.env.reset()
             for ep in range(budget):
                 action = 1
                 observation, reward, done, _ = self.env.step(action)
-    
+
         def policy(self, observation):
             return 1
 
@@ -310,7 +315,7 @@ Then, we fit the two agents and plot the data in the writer.
         mp_context="fork",
     )  # mp_context is needed to have parallel computing in notebooks.
     ucbvi_stats.fit()
-    
+
     # Create AgentManager for baseline
     baseline_stats = AgentManager(
         RandomAgent2,
@@ -321,7 +326,7 @@ Then, we fit the two agents and plot the data in the writer.
         mp_context="fork",
     )
     baseline_stats.fit()
-    
+
     # Create AgentManager for baseline
     opti_stats = AgentManager(
         OptimalAgent,
@@ -336,12 +341,12 @@ Then, we fit the two agents and plot the data in the writer.
 
 .. parsed-literal::
 
-    [INFO] Running AgentManager fit() for UCBVIAgent2 with n_fit = 10 and max_workers = None. 
-    [INFO] ... trained! 
-    [INFO] Running AgentManager fit() for RandomAgent2 with n_fit = 10 and max_workers = None. 
-    [INFO] ... trained! 
-    [INFO] Running AgentManager fit() for OptimalAgent with n_fit = 10 and max_workers = None. 
-    [INFO] ... trained! 
+    [INFO] Running AgentManager fit() for UCBVIAgent2 with n_fit = 10 and max_workers = None.
+    [INFO] ... trained!
+    [INFO] Running AgentManager fit() for RandomAgent2 with n_fit = 10 and max_workers = None.
+    [INFO] ... trained!
+    [INFO] Running AgentManager fit() for OptimalAgent with n_fit = 10 and max_workers = None.
+    [INFO] ... trained!
 
 Remark that ``fit_budget`` may not mean the same thing among agents. For
 OptimalAgent and RandomAgent ``fit_budget`` is the number of steps in
@@ -371,8 +376,8 @@ Finally, we plot the cumulative regret using the 5000 reward values.
 
     def compute_regret(rewards):
         return np.cumsum(opti_reward - rewards[: len(opti_reward)])
-    
-    
+
+
     # Plot of the cumulative reward.
     output = plot_writer_data(
         [ucbvi_stats, baseline_stats],
@@ -385,5 +390,3 @@ Finally, we plot the cumulative regret using the 5000 reward values.
 
 .. image:: output_19_0.png
     :align: center
-
-
