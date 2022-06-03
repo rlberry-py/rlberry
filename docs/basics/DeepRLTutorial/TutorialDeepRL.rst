@@ -1,5 +1,5 @@
-Deep Reinforcement Learning in rlberry
-=======================================
+Quickstart for Deep Reinforcement Learning in rlberry
+=====================================================
 
 ..
   Authors: Riccardo Della Vecchia, Hector Kohler, Alena Shilova.

@@ -78,7 +78,7 @@ that you can spend most of your time developing agents.
 Install the latest version for a stable release.
 
 ```bash
-$ pip install -U git+https://github.com/rlberry-py/rlberry.git@v0.2.1#egg=rlberry[default]
+pip install -U git+https://github.com/rlberry-py/rlberry.git@v0.2.1#egg=rlberry[default]
 ```
 
 The documentation includes more [installation instructions](https://rlberry.readthedocs.io/en/latest/installation.html) in particular for users that work with Jax.
@@ -86,8 +86,7 @@ The documentation includes more [installation instructions](https://rlberry.read
 
 ## Getting started
 
-In our [documentation](https://rlberry.readthedocs.io/en/latest/), you will find
-a [quick tutorial](https://rlberry.readthedocs.io/en/latest/basics/quick_start.html) to the library.
+In our [documentation](https://rlberry.readthedocs.io/en/latest/), you will find [quick starts](https://rlberry.readthedocs.io/en/latest/user_guide.html#quick-start-setup-an-experiment-and-evaluate-different-agents) to the library and a [user guide](https://rlberry.readthedocs.io/en/latest/user_guide.html) with a few tutorials on using rlberry.
 
 Also, we provide a handful of notebooks on [Google colab](https://colab.research.google.com/) as examples to show you
 how to use `rlberry`:
