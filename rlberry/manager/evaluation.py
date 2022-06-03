@@ -9,8 +9,8 @@ import pickle
 from itertools import cycle
 from rlberry.manager import AgentManager
 from scipy import stats
-import warnings
-import itertools
+from copy import deepcopy
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +22,6 @@ def evaluate_agents(
     show=True,
     plot=True,
     sns_kwargs=None,
-    test_equality=True,
 ):
     """
     Evaluate and compare each of the agents in agent_manager_list.
@@ -40,9 +39,6 @@ def evaluate_agents(
         If False, do not plot.
     sns_kwargs:
         Extra parameters for sns.boxplot
-    test_equality: bool
-        if True, use brunner munzel test with Bonferroni correction to test at 95%
-        the equality of the error distributions for the different agents.
 
     Returns
     -------
@@ -88,29 +84,6 @@ def evaluate_agents(
     for agent_id, out in zip(unique_ids, eval_outputs):
         data[agent_id] = out
     output = pd.DataFrame(data)
-
-    # Test that enough sample were used
-    if test_equality and (len(output.columns) > 1):
-        couple_agents = list(itertools.combinations(list(output.columns), 2))
-        alpha = 0.05 / len(couple_agents)  # level of test with Bonferroni correction.
-        for agent1, agent2 in couple_agents:
-            if not np.all(output[agent1] == output[agent1]):
-                with warnings.catch_warnings():
-                    warnings.simplefilter(
-                        "ignore"
-                    )  # supress user warning that sample size is too small
-                    t, p_val = stats.wilcoxon(output[agent1], output[agent2])
-            else:
-                p_val = 1
-            if p_val > alpha:
-                logger.info(
-                    "It is statistically difficult to differentiate between "
-                    + agent1
-                    + " and "
-                    + agent2
-                    + ". Either they have same evaluation"
-                    + " or n_simulations was too small"
-                )
 
     # plot
     if plot:
@@ -424,3 +397,110 @@ def plot_writer_data(
         plt.gcf().savefig(savefig_fname)
 
     return data
+
+
+class AgentComparer:
+    """
+    TODO: make a documentation
+    """
+
+    def __init__(
+        self,
+        n=10,
+        K=5,
+        alpha=0.05,
+        name="PK",
+        eval_tag="episode_rewards",
+        student_approx=True,
+        sigma=1,
+    ):
+        self.n = n
+        self.K = K
+        self.alpha = alpha
+        self.eval_tag = eval_tag
+        self.student_approx = student_approx
+        self.sigma = sigma
+        self.decision = "accept"
+        current_folder = os.path.dirname(os.path.realpath(__file__))
+
+        df = pd.read_csv(
+            str(current_folder) + "/boundaries_agent_comparison.CSV", sep=";"
+        )
+        df = df.loc[df["name"] == name]
+        df = df.loc[df["K"] == K]
+        df = df.loc[
+            np.abs(df["alpha"] - alpha) < 1e-5, "up"
+        ]  # allow for small approximation
+        if len(df) == 0:
+            raise ValueError(
+                "The boundary for the given alpha and K does not exist in the tables"
+            )
+        else:
+            self.boundary = df.values
+
+    def partial_fit(self, X, Y, k):
+        if not self.student_approx:
+            Zk = np.sum(X - Y) / np.sqrt(2 * len(X) * self.sigma**2)
+        else:
+            sigma2 = np.std(X, ddof=1) ** 2 + np.std(Y, ddof=1) ** 2
+            Zk = np.sum(X - Y) / np.sqrt(len(X) * sigma2)
+            if sigma2 == 0:
+                logger.info("Warning: the rewards are exactly the same.")
+
+        dof = 2 * len(X) - 2
+        ck = self.boundary[k]
+
+        if not self.student_approx:
+            threshold = ck
+        else:
+            threshold = -stats.t.ppf(q=1 - stats.norm.cdf(ck), df=dof)
+
+        self.n_iter = (k + 1) * self.n
+        if np.abs(Zk) > threshold:
+            self.decision = "reject"
+
+    def compare(self, manager1, manager2):
+        """
+        agent1 : tuple of agent_class and init_kwargs for the agent.
+        agent2 : tuple of agent_class and init_kwargs for the agent.
+        """
+        X = np.array([])
+        Y = np.array([])
+
+        for k in range(self.K):
+            m1 = deepcopy(manager1)
+            m2 = deepcopy(manager2)
+
+            m1.n_fit = self.n
+            m2.n_fit = self.n
+            m1.fit()
+            m2.fit()
+
+            X_g = self._get_rewards(m1)
+            Y_g = self._get_rewards(m2)
+            X = np.hstack([X, self._get_rewards(m1)])
+            Y = np.hstack([Y, self._get_rewards(m2)])
+            self.partial_fit(X, Y, k)
+
+            if self.decision == "reject":
+                logger.info("Reject the null after " + str(k + 1) + " groups")
+                if np.sum(X - Y) > 0:
+                    logger.info(m1.agent_name + " is better than " + m2.agent_name)
+                else:
+                    logger.info(m2.agent_name + " is better than " + m1.agent_name)
+                break
+            else:
+                logger.info("Did not reject on interim " + str(k + 1))
+        if k == self.K - 1:
+            logger.info(
+                "Did not reject the null hypothesis: either K, n are too small or the agents perform similarly"
+            )
+
+    def _get_rewards(self, manager):
+        writer_data = manager.get_writer_data()
+        return [
+            np.sum(
+                writer_data[idx].loc[writer_data[idx]["tag"] == self.eval_tag, "value"]
+            )
+            for idx in writer_data
+        ]
