@@ -1,6 +1,7 @@
 import pytest
 import rlberry.agents as agents
 import rlberry.agents.torch as torch_agents
+from rlberry.agents.experimental import torch as torch_exp_agents
 from rlberry.utils.check_agent import check_rl_agent, check_rlberry_agent
 from rlberry.agents.features import FeatureMap
 import numpy as np
@@ -44,9 +45,9 @@ CONTINUOUS_STATE_AGENTS = [
     agents.RSUCBVIAgent,
     agents.RSKernelUCBVIAgent,
     torch_agents.DQNAgent,
-    torch_agents.PPOAgent,
-    torch_agents.AVECPPOAgent,
     torch_agents.REINFORCEAgent,
+    torch_exp_agents.PPOAgent,
+    torch_exp_agents.AVECPPOAgent,
 ]
 
 

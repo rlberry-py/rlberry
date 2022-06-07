@@ -33,28 +33,30 @@ Quick start: setup an experiment and evaluate different agents
 .. toctree::
    :maxdepth: 2
 
-   basics/quick_start.rst
+   basics/quick_start_rl/quickstart.rst
+   basics/DeepRLTutorial/TutorialDeepRL.rst
 
 
 Agents, hyperparameter optimization and experiment setup
 ---------------------------------------------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    basics/create_agent.rst
    basics/evaluate_agent.rst
    basics/compare_agents.rst
    basics/experiment_setup.rst
    basics/seeding.rst
-   
+   basics/multiprocess.rst
+
 We also provide examples to show how to use :ref:`torch checkpointing<checkpointing_example>`
 in rlberry and :ref:`tensorboard<dqn_example>`
 
 Compatibility with External Libraries
 =====================================
 
-We provide examples to show you how to use rlberry_ with:
+We provide examples to show you how to use rlberry with:
 
 - :ref:`OpenAI Gym <gym>`;
 - :ref:`Stable Baselines <stable_baselines>`.

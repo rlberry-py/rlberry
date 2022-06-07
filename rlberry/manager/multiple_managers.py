@@ -21,7 +21,7 @@ class MultipleManagers:
         max number of workers (AgentManager instances) fitted at the same time.
     parallelization: {'thread', 'process'}, default: 'process'
         Whether to parallelize  agent training using threads or processes.
-    mp_context: {'spawn', 'fork'}, default: 'spawn'.
+    mp_context: {'spawn', 'fork', 'forkserver'}, default: 'spawn'.
         Context for python multiprocessing module.
         Warning: If you're using JAX or PyTorch, it only works with 'spawn'.
                  If running code on a notebook or interpreter, use 'fork'.
