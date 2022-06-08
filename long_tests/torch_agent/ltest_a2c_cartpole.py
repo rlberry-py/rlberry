@@ -1,0 +1,59 @@
+from rlberry.envs import gym_make
+from rlberry.agents.torch import A2CAgent
+from rlberry.manager import AgentManager
+from rlberry.agents.torch.utils.training import model_factory_from_env
+import numpy as np
+
+# Using parameters from https://github.com/araffin/rl-baselines-zoo/tree/master/hyperparams
+policy_configs = {
+    "type": "MultiLayerPerceptron",  # A network architecture
+    "layer_sizes": (64, 64),  # Network dimensions
+    "reshape": False,
+    "is_policy": True,  # The network should output a distribution
+    # over actions
+}
+
+critic_configs = {
+    "type": "MultiLayerPerceptron",
+    "layer_sizes": (64, 64),
+    "reshape": False,
+    "out_size": 1,  # The critic network is an approximator of
+    # a value function V: States -> |R
+}
+
+
+def test_a2c_cartpole():
+    env_ctor = gym_make
+    env_kwargs = dict(id="CartPole-v1")
+
+    rbagent = AgentManager(
+        A2CAgent,
+        (env_ctor, env_kwargs),
+        agent_name="A2CAgent",
+        init_kwargs=dict(
+            policy_net_fn=model_factory_from_env,
+            policy_net_kwargs=policy_configs,
+            value_net_fn=model_factory_from_env,
+            value_net_kwargs=critic_configs,
+            entr_coef=0.0,
+            batch_size=1024,
+            optimizer_type="ADAM",
+            learning_rate=1e-3,
+        ),
+        fit_budget=3e5,
+        eval_kwargs=dict(eval_horizon=500),
+        n_fit=8,
+        parallelization="process",
+        mp_context="fork",
+        seed=42,
+    )
+
+    rbagent.fit()
+    writer_data = rbagent.get_writer_data()
+    rewards = [
+        np.sum(
+            writer_data[idx].loc[writer_data[idx]["tag"] == "episode_rewards", "value"]
+        )
+        for idx in writer_data
+    ]  # total reward on each fit
+    assert 3e5 - np.median(rewards) < 300
