@@ -50,10 +50,20 @@ def test_a2c_cartpole():
 
     rbagent.fit()
     writer_data = rbagent.get_writer_data()
-    rewards = [
-        np.sum(
-            writer_data[idx].loc[writer_data[idx]["tag"] == "episode_rewards", "value"]
-        )
+    id500 = [
+        writer_data[idx].loc[writer_data[idx]["tag"] == "episode_rewards", "value"]
+        == 500
         for idx in writer_data
-    ]  # total reward on each fit
-    assert 3e5 - np.median(rewards) < 300
+    ]  # ids of the episodes at which reward 500 is attained
+    gstep500 = [
+        writer_data[idx]
+        .loc[writer_data[idx]["tag"] == "episode_rewards"]
+        .loc[id500[idx], "global_step"]
+        for idx in writer_data
+    ]  # global steps of the episodes at which reward 500 is attained
+    quantiles500 = [
+        np.quantile(gsteps, 0.1) for gsteps in gstep500
+    ]  # 10% quantile of these global steps
+    assert (
+        np.mean(quantiles500) < 155_000
+    )  # this value correspond to performance in v0.3.0
