@@ -1,9 +1,8 @@
 from rlberry.envs import gym_make
-from stable_baselines3 import A2C as A2C
-from rlberry.agents.stable_baselines import StableBaselinesAgent
 from rlberry.agents.torch import A2CAgent
-from rlberry.manager import AgentManager, MultipleManagers, evaluate_agents
+from rlberry.manager import AgentManager
 from rlberry.agents.torch.utils.training import model_factory_from_env
+import numpy as np
 
 # Using parameters from https://github.com/araffin/rl-baselines-zoo/tree/master/hyperparams
 policy_configs = {
@@ -23,39 +22,25 @@ critic_configs = {
 }
 
 
-def test_a2c_cartpole_vs_stablebaseline():
+def test_a2c_cartpole():
     env_ctor = gym_make
     env_kwargs = dict(id="CartPole-v1")
 
-    # Pass the wrapper directly with init_kwargs
-    sbagent = AgentManager(
-        StableBaselinesAgent,
-        (env_ctor, env_kwargs),
-        agent_name="A2C stablebaseline",
-        init_kwargs=dict(algo_cls=A2C, policy="MlpPolicy", ent_coef=0.0),
-        fit_budget=5e5,
-        eval_kwargs=dict(eval_horizon=500),
-        n_fit=8,
-        parallelization="process",
-        mp_context="fork",
-        seed=42,
-    )
-
-    # Pass a subclass for hyperparameter optimization
     rbagent = AgentManager(
         A2CAgent,
         (env_ctor, env_kwargs),
-        agent_name="A2C rlberry",
+        agent_name="A2CAgent",
         init_kwargs=dict(
-            policy_net_fn=model_factory_from_env,  # A policy network constructor
-            policy_net_kwargs=policy_configs,  # Policy network's architecure
-            value_net_fn=model_factory_from_env,  # A Critic network constructor
-            value_net_kwargs=critic_configs,  # Critic network's architecure.
-            entr_coef=0.0,  # How much to force exploration.
-            batch_size=1024,  # Number of interactions used to
-            learning_rate=0.0007,
+            policy_net_fn=model_factory_from_env,
+            policy_net_kwargs=policy_configs,
+            value_net_fn=model_factory_from_env,
+            value_net_kwargs=critic_configs,
+            entr_coef=0.0,
+            batch_size=1024,
+            optimizer_type="ADAM",
+            learning_rate=1e-3,
         ),
-        fit_budget=5e5,
+        fit_budget=3e5,
         eval_kwargs=dict(eval_horizon=500),
         n_fit=8,
         parallelization="process",
@@ -63,13 +48,12 @@ def test_a2c_cartpole_vs_stablebaseline():
         seed=42,
     )
 
-    # Fit everything in parallel
-    multimanagers = MultipleManagers(parallelization="thread")
-    multimanagers.append(sbagent)
-    multimanagers.append(rbagent)
-
-    multimanagers.run()
-
-    # Plot policy evaluation
-    out = evaluate_agents(multimanagers.managers)
-    assert np.mean(out["A2C rlberry"]) > np.mean(out["A2C stablebaseline"]) - 10
+    rbagent.fit()
+    writer_data = rbagent.get_writer_data()
+    rewards = [
+        np.sum(
+            writer_data[idx].loc[writer_data[idx]["tag"] == "episode_rewards", "value"]
+        )
+        for idx in writer_data
+    ]  # total reward on each fit
+    assert 3e5 - np.median(rewards) < 300
