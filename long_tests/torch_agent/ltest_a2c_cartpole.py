@@ -4,21 +4,19 @@ from rlberry.manager import AgentManager
 from rlberry.agents.torch.utils.training import model_factory_from_env
 import numpy as np
 
-# Using parameters from https://github.com/araffin/rl-baselines-zoo/tree/master/hyperparams
+# Using parameters from deeprl quick start
 policy_configs = {
     "type": "MultiLayerPerceptron",  # A network architecture
     "layer_sizes": (64, 64),  # Network dimensions
     "reshape": False,
-    "is_policy": True,  # The network should output a distribution
-    # over actions
+    "is_policy": True,
 }
 
 critic_configs = {
     "type": "MultiLayerPerceptron",
     "layer_sizes": (64, 64),
     "reshape": False,
-    "out_size": 1,  # The critic network is an approximator of
-    # a value function V: States -> |R
+    "out_size": 1,
 }
 
 
@@ -66,4 +64,4 @@ def test_a2c_cartpole():
     ]  # 10% quantile of these global steps
     assert (
         np.mean(quantiles500) < 155_000
-    )  # this value correspond to performance in v0.3.0
+    )  # this value corresponds to performances in v0.3.0
