@@ -50,12 +50,19 @@ extensions = [
 ]
 
 
-autodoc_default_options = {"members": True, "inherited-members": True, "show-inheritance":True}
+autodoc_default_options = {
+    "members": True,
+    "inherited-members": True,
+    "show-inheritance": True,
+}
 # generate autosummary even if no references
 autosummary_generate = True
 autodoc_inherit_docstrings = True
 
-highlight_language = 'none'
+# highlight_language = 'none'
+rst_prolog = """
+.. highlight: none
+"""
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["templates"]
