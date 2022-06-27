@@ -1126,13 +1126,12 @@ class AgentManager:
         print("Mean number of steps per second is %.2F" % (np.mean(spss)))
 
         print("Statistics of the evaluation of fitted agents")
-        eval_values = np.mean(
-            [
-                self.eval_agents(n_evaluations, agent_id=idx, verbose=False)
-                for idx in range(len(df))
-            ],
-            axis=1,
-        )
+        eval_values = []
+        for idx in range(len(df)):
+            eval_values.append(
+                np.mean(self.eval_agents(n_evaluations, agent_id=idx, verbose=False))
+            )
+            logger.info("Evaluating agent " + str(idx))
         print(
             "Means of mean evaluations over %d fits (%d evaluations):"
             % (len(df), n_evaluations)
