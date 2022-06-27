@@ -1149,8 +1149,8 @@ class AgentManager:
         ]
 
         print(
-            "Confidence interval of level %.2F for the mean of %s over %d fits: "
-            % (1 - alpha, tag, len(df))
+            "Confidence interval of level %.2F for the mean of evaluation over %d fits: "
+            % (1 - alpha, len(df))
         )
         print(
             "[%.2F, %.2F]"
