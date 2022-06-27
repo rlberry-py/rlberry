@@ -1063,7 +1063,7 @@ class AgentManager:
 
         return deepcopy(best_trial.params)
 
-    def print_stats(self, B=10_000, alpha=0.05, return_stats=False, n_evaluations=100):
+    def print_stats(self, B=10_000, alpha=0.05, return_stats=False, n_evaluations=50):
         """
         Print some statistics of the data from the last iteration of each fit.
 
