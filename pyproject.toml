@@ -23,7 +23,7 @@ PyVirtualDisplay = "^3.0"
 torch = "^1.11.0"
 tensorboard = "^2.9.0"
 stable-baselines3 = "^1.5.0"
-protobuf = "3.20.1"
+protobuf = "4.21.2"
 
 [tool.poetry.dev-dependencies]
 
