@@ -57,7 +57,7 @@ def test_agent_manager_1():
         fit_budget=5,
         eval_kwargs=eval_kwargs,
         init_kwargs=params,
-        n_fit=2,
+        n_fit=4,
         seed=123,
         init_kwargs_per_instance=params_per_instance,
     )
@@ -67,7 +67,7 @@ def test_agent_manager_1():
         fit_budget=5,
         eval_kwargs=eval_kwargs,
         init_kwargs=params,
-        n_fit=2,
+        n_fit=4,
         seed=123,
     )
     agent_manager_list = [stats_agent1, stats_agent2]
