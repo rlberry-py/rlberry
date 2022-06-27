@@ -493,6 +493,8 @@ class AgentManager:
         self,
         n_simulations: Optional[int] = None,
         eval_kwargs: Optional[dict] = None,
+        agent_id: Optional[int] = None,
+        verbose: Optional[bool] = True,
     ) -> List[float]:
         """
         Call :meth:`eval` method in the managed agents and returns a list with the results.
@@ -504,6 +506,10 @@ class AgentManager:
         eval_kwargs : dict, optional
             Arguments to be sent to the .eval() method of each trained instance.
             If None, set to self.eval_kwargs.
+        agent_id: int, optional
+            Index of the agent to be evaluated. If None, choose randomly.
+        verbose: bool, optional
+            Whether to print a progress report.
 
         Returns
         -------
@@ -516,8 +522,11 @@ class AgentManager:
             n_simulations = 2 * self.n_fit
         values = []
         for ii in range(n_simulations):
-            # randomly choose one of the fitted agents
-            agent_idx = self.eval_seeder.rng.choice(len(self.agent_handlers))
+            if agent_id is None:
+                # randomly choose one of the fitted agents
+                agent_idx = self.eval_seeder.rng.choice(len(self.agent_handlers))
+            else:
+                agent_idx = agent_id
             agent = self.agent_handlers[agent_idx]
             if agent.is_empty():
                 logger.error(
@@ -526,7 +535,8 @@ class AgentManager:
                 )
                 return []
             values.append(agent.eval(**eval_kwargs))
-            logger.info(f"[eval]... simulation {ii + 1}/{n_simulations}")
+            if verbose:
+                logger.info(f"[eval]... simulation {ii + 1}/{n_simulations}")
         return values
 
     def clear_output_dir(self):
@@ -1053,7 +1063,7 @@ class AgentManager:
 
         return deepcopy(best_trial.params)
 
-    def print_stats(self, B=10_000, alpha=0.05):
+    def print_stats(self, B=10_000, alpha=0.05, return_stats=False, n_evaluations=100):
         """
         Print some statistics of the data from the last iteration of each fit.
 
@@ -1064,6 +1074,12 @@ class AgentManager:
 
         alpha: float, default=0.05
             The confidence intervals are of level 1-alpha.
+
+        return_stats: bool, default=False
+            If True, returns a dictionary with the statistics.
+
+        n_evaluations: int, default=50
+            Number of evaluations used.
         """
         datas = self.get_writer_data()
         if len(datas) < 3:
@@ -1079,7 +1095,7 @@ class AgentManager:
                 [df, pd.DataFrame({tags[i]: [values[i]] for i in range(len(tags))})],
                 ignore_index=True,
             )
-        print("Statistics of writer data collected on last iteration of each fit")
+        print("Statistics of writer data collected on last iteration of each fit.")
         print("Means of values over %d fits:" % (len(df)))
         print(df.mean())
         print("Medians of values over %d fits:" % (len(df)))
@@ -1108,12 +1124,53 @@ class AgentManager:
             for j in datas
         ]
         print("Mean number of steps per second is %.2F" % (np.mean(spss)))
-        return {
-            "means": df.mean(),
-            "medians": df.median(),
-            "confidence_intervals": confints,
-            "mean steps per seconds": np.mean(spss),
-        }
+
+        print("Statistics of the evaluation of fitted agents")
+        eval_values = np.mean(
+            [
+                self.eval_agents(n_evaluations, agent_id=idx, verbose=False)
+                for idx in range(len(df))
+            ],
+            axis=1,
+        )
+        print(
+            "Means of mean evaluations over %d fits (%d evaluations):"
+            % (len(df), n_evaluations)
+        )
+        print(df.mean())
+        print(
+            "Medians of mean evaluations over %d fits (%d evaluations):"
+            % (len(df), n_evaluations)
+        )
+
+        eval_b_values = [
+            np.mean(np.random.choice(eval_values, len(eval_values), replace=True))
+            for b in range(B)
+        ]
+
+        print(
+            "Confidence interval of level %.2F for the mean of %s over %d fits: "
+            % (1 - alpha, tag, len(df))
+        )
+        print(
+            "[%.2F, %.2F]"
+            % (
+                np.quantile(eval_b_values, alpha / 2),
+                np.quantile(eval_b_values, 1 - alpha / 2),
+            )
+        )
+
+        confints["eval_ci"] = (
+            np.quantile(eval_b_values, alpha / 2),
+            np.quantile(eval_b_values, 1 - alpha / 2),
+        )
+        if return_stats:
+            return {
+                "means": df.mean(),
+                "medians": df.median(),
+                "confidence_intervals": confints,
+                "mean steps per seconds": np.mean(spss),
+            }
 
 
 #

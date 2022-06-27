@@ -73,6 +73,7 @@ def test_agent_manager_1():
     agent_manager_list = [stats_agent1, stats_agent2]
     for st in agent_manager_list:
         st.fit()
+        st.print_stats()
 
     for ii, instance in enumerate(stats_agent1.agent_handlers):
         assert instance.hyperparameter1 == -1
