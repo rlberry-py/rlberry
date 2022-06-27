@@ -50,7 +50,7 @@ def test_agent_manager_1():
     agent.policy(None)
 
     # Run AgentManager
-    params_per_instance = [dict(hyperparameter2=ii) for ii in range(2)]
+    params_per_instance = [dict(hyperparameter2=ii) for ii in range(4)]
     stats_agent1 = AgentManager(
         DummyAgent,
         train_env,
@@ -73,7 +73,7 @@ def test_agent_manager_1():
     agent_manager_list = [stats_agent1, stats_agent2]
     for st in agent_manager_list:
         st.fit()
-        st.print_stats()
+        st.print_stats(n_evaluations=5, B=10)
 
     for ii, instance in enumerate(stats_agent1.agent_handlers):
         assert instance.hyperparameter1 == -1
@@ -91,7 +91,7 @@ def test_agent_manager_1():
 
     # check if fitted
     for agent_manager in agent_manager_list:
-        assert len(agent_manager.agent_handlers) == 2
+        assert len(agent_manager.agent_handlers) == 4
         for agent in agent_manager.agent_handlers:
             assert agent.fitted
 
