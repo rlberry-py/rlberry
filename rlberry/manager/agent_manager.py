@@ -1095,6 +1095,7 @@ class AgentManager:
                 [df, pd.DataFrame({tags[i]: [values[i]] for i in range(len(tags))})],
                 ignore_index=True,
             )
+
         print("Statistics of writer data collected on last iteration of each fit.")
         print("Means of values over %d fits:" % (len(df)))
         print(df.mean())
@@ -1128,10 +1129,10 @@ class AgentManager:
         print("Statistics of the evaluation of fitted agents")
         eval_values = []
         for idx in range(len(df)):
+            logger.info("Evaluating agent " + str(idx))
             eval_values.append(
                 np.mean(self.eval_agents(n_evaluations, agent_id=idx, verbose=False))
             )
-            logger.info("Evaluating agent " + str(idx))
         print(
             "Means of mean evaluations over %d fits (%d evaluations):"
             % (len(df), n_evaluations)
