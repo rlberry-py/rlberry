@@ -1053,6 +1053,68 @@ class AgentManager:
 
         return deepcopy(best_trial.params)
 
+    def print_stats(self, B=10_000, alpha=0.05):
+        """
+        Print some statistics of the data from the last iteration of each fit.
+
+        Parameters
+        ----------
+        B: int, default=10_000
+            Number of bootstrap used for the confidence intervals
+
+        alpha: float, default=0.05
+            The confidence intervals are of level 1-alpha.
+        """
+        datas = self.get_writer_data()
+        if len(datas) < 3:
+            raise RuntimeError("Agent not fitted or number of fits too small")
+        df = pd.DataFrame()
+        for j in datas:
+            end_data = datas[j].loc[
+                datas[j]["global_step"] == np.max(datas[j]["global_step"])
+            ]
+            tags = end_data["tag"].values
+            values = end_data["value"].values
+            df = pd.concat(
+                [df, pd.DataFrame({tags[i]: [values[i]] for i in range(len(tags))})],
+                ignore_index=True,
+            )
+        print("Statistics of writer data collected on last iteration of each fit")
+        print("Means of values over %d fits:" % (len(df)))
+        print(df.mean())
+        print("Medians of values over %d fits:" % (len(df)))
+        print(df.median())
+        confints = {}
+        for tag in df.columns:
+            x = df[tag].values
+            values = [
+                np.mean(np.random.choice(x, len(x), replace=True)) for b in range(B)
+            ]
+            print(
+                "Confidence interval of level %.2F for the mean of %s over %d fits: "
+                % (1 - alpha, tag, len(df))
+            )
+            print(
+                "[%.2F, %.2F]"
+                % (np.quantile(values, alpha / 2), np.quantile(values, 1 - alpha / 2))
+            )
+            confints[tag] = (
+                np.quantile(values, alpha / 2),
+                np.quantile(values, 1 - alpha / 2),
+            )
+        print(" ")
+        spss = [
+            np.max(datas[j]["global_step"]) / datas[j]["dw_time_elapsed"].iloc[-1]
+            for j in datas
+        ]
+        print("Mean number of steps per second is %.2F" % (np.mean(spss)))
+        return {
+            "means": df.mean(),
+            "medians": df.median(),
+            "confidence_intervals": confints,
+            "mean steps per seconds": np.mean(spss),
+        }
+
 
 #
 # Aux functions
