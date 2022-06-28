@@ -116,7 +116,7 @@ class PPOAgent(AgentWithSimplePolicy):
         self.k_epochs = k_epochs
         self.use_gae = use_gae
         self.gae_lambda = gae_lambda
-        self.env = env
+        # self.env = env
         self.optimizer_type = optimizer_type
         self.kwargs = kwargs
 
@@ -125,6 +125,7 @@ class PPOAgent(AgentWithSimplePolicy):
         # function approximators
         self.policy_net_kwargs = policy_net_kwargs or {}
         self.value_net_kwargs = value_net_kwargs or {}
+        # self.env = env[0](**env[1])
 
         self.state_dim = self.env.observation_space.shape[0]
         self.action_dim = self.env.action_space.n
