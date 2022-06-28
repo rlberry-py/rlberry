@@ -49,11 +49,14 @@ Documentation Contents
 ======================
 
 .. toctree::
-  :maxdepth: 2
+  :maxdepth: 3
 
   installation
-  quickstart
-  external
-  api
   user_guide
+  external
+
+.. toctree::
+  :maxdepth: 2
+
+  api
   changelog

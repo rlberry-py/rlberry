@@ -15,14 +15,14 @@ First, we suggest you to create a virtual environment using
     $ conda activate rlberry
 
 
-Latest version (0.2.1)
+Latest version (0.3.0)
 -------------------------------------
 
 Install the latest version for a stable release.
 
 .. code:: bash
 
-    $ pip install git+https://github.com/rlberry-py/rlberry.git@v0.2.1#egg=rlberry[default]
+    $ pip install git+https://github.com/rlberry-py/rlberry.git@v0.3.0#egg=rlberry[default]
 
 
 Development version

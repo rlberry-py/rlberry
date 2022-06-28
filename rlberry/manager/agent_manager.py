@@ -18,6 +18,8 @@ import shutil
 import threading
 import multiprocessing
 from multiprocessing.spawn import _check_not_importing_main
+import cProfile, pstats
+from pstats import SortKey
 import numpy as np
 from rlberry.envs.utils import process_env
 from rlberry.utils.logging import configure_logging
@@ -162,9 +164,8 @@ class AgentManager:
 
     Notes
     -----
-    If parallelization="process" and mp_context="spawn", make sure your main code
-    has a guard `if __name__ == '__main__'`. See https://github.com/google/jax/issues/1805
-    and https://stackoverflow.com/a/66290106.
+    If parallelization="process" and mp_context="spawn" or mp_context="forkserver", make sure your main code
+    has a guard `if __name__ == '__main__'`. See https://docs.python.org/3/library/multiprocessing.html#multiprocessing-programming.
 
     Parameters
     ----------
@@ -197,11 +198,12 @@ class AgentManager:
         number of processors on the machine.
         If None and parallelization='thread', it will default to the
         number of processors on the machine, multiplied by 5.
-    mp_context: {'spawn', 'fork'}, default: 'spawn'.
+    mp_context: {'spawn', 'fork', 'forkserver}, default: 'spawn'.
         Context for python multiprocessing module.
         Warning: If you're using JAX or PyTorch, it only works with 'spawn'.
                  If running code on a notebook or interpreter, use 'fork'.
-    worker_logging_level : str, default: 'INFO'
+                 forkserver and fork are available on Unix OS only.
+        worker_logging_level : str, default: 'INFO'
         Logging level in each of the threads/processes used to fit agents.
     seed : :class:`numpy.random.SeedSequence`, :class:`~rlberry.seeding.seeder.Seeder` or int, default : None
         Seed sequence from which to spawn the random number generator.
@@ -227,7 +229,6 @@ class AgentManager:
     thread_shared_data : dict, optional
         Data to be shared among agent instances in different threads.
         If parallelization='process', data will be copied instead of shared.
-
 
     Attributes
     ----------
@@ -567,6 +568,38 @@ class AgentManager:
         ), "Invalid index sent to AgentManager.set_writer()"
         writer_kwargs = writer_kwargs or {}
         self.writers[idx] = (writer_fn, writer_kwargs)
+
+    def generate_profile(self, budget=None, fname=None):
+        """
+        Do a fit to produce a profile (i.e. the cumulative time spent on each operation done during a fit).
+        The 20 first lines are printed out and the whole profile is saved in a file.
+        See `https://docs.python.org/3/library/profile.html`_ for more information on python profiler.
+
+        Parameters
+        ----------
+        budget: int or None, default=None
+            budget of the fit done to generate the profile
+
+        fname: string or None, default=None
+            name of the file where we save the profile. If None, the file is saved in self.output_dir/self.agent_name_profile.prof.
+        """
+        budget = budget or self.fit_budget
+
+        if self.output_dir is None:
+            output_dir_ = metadata_utils.RLBERRY_TEMP_DATA_DIR
+        else:
+            output_dir_ = self.output_dir
+
+        filename = fname or (str(output_dir_) + self.agent_name + "_profile.prof")
+        logger.info("Doing a profile run.")
+        with cProfile.Profile() as pr:
+            agent = self.agent_class(**(self.init_kwargs[0]))
+            agent.fit(budget, **deepcopy(self.fit_kwargs))
+        pr.dump_stats(filename)
+        sortby = SortKey.CUMULATIVE
+        ps = pstats.Stats(pr).sort_stats(sortby)
+        logger.info("Printing the 20 first lines of the profile")
+        ps.print_stats(20)
 
     def fit(self, budget=None, **kwargs):
         """Fit the agent instances in parallel.
