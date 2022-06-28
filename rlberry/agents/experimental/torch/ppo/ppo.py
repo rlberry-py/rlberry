@@ -6,6 +6,7 @@ import inspect
 
 import gym.spaces as spaces
 from rlberry.agents import AgentWithSimplePolicy
+
 # from rlberry.agents.utils.memories import Memory
 
 from rlberry.agents.utils.replay import ReplayBuffer
@@ -18,7 +19,6 @@ from rlberry.envs import gym_make
 
 
 logger = logging.getLogger(__name__)
-
 
 
 class PPOAgent(AgentWithSimplePolicy):
@@ -86,7 +86,7 @@ class PPOAgent(AgentWithSimplePolicy):
         self,
         env,
         batch_size=64,
-        n_steps = 2048,
+        n_steps=2048,
         gamma=0.99,
         entr_coef=0.01,
         vf_coef=0.5,
@@ -102,7 +102,7 @@ class PPOAgent(AgentWithSimplePolicy):
         value_net_kwargs=None,
         device="cuda:best",
         **kwargs
-    ): 
+    ):
 
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
@@ -120,12 +120,7 @@ class PPOAgent(AgentWithSimplePolicy):
         self.optimizer_type = optimizer_type
         self.kwargs = kwargs
 
-
-
-
         self.normalize_advantages = True  # TODO: turn into argument
-
-
 
         # function approximators
         self.policy_net_kwargs = policy_net_kwargs or {}
@@ -228,11 +223,11 @@ class PPOAgent(AgentWithSimplePolicy):
 
             # running policy_old
             state = torch.from_numpy(state).float().to(self.device)
-            action , action_logprob = self._select_action(state)
+            action, action_logprob = self._select_action(state)
             next_state, reward, done, _ = self.env.step(action.item())
-            
+
             episode_rewards += reward
-            
+
             self.memory.append(
                 {
                     "states": state,
@@ -250,12 +245,10 @@ class PPOAgent(AgentWithSimplePolicy):
             state = next_state
 
             if self.total_timesteps % self.n_steps == 0:
-                self._update() 
-
+                self._update()
 
             # update state
 
-            
             if done:
                 self.total_episodes += 1
                 self.memory.end_episode()
@@ -269,15 +262,12 @@ class PPOAgent(AgentWithSimplePolicy):
                 episode_rewards = 0.0
                 episode_timesteps = 0
                 state = self.env.reset()
-                
-    
+
     def _select_action(self, state):
         action_dist = self.cat_policy_old(state)
         action = action_dist.sample()
         action_logprob = action_dist.log_prob(action)
         return action, action_logprob
-
-
 
     def _update(self):
 
@@ -286,7 +276,9 @@ class PPOAgent(AgentWithSimplePolicy):
         # convert list to tensor
         full_old_states = torch.stack(memory_data["states"]).to(self.device).detach()
         full_old_actions = torch.stack(memory_data["actions"]).to(self.device).detach()
-        full_old_logprobs = torch.stack(memory_data["action_logprobs"]).to(self.device).detach()
+        full_old_logprobs = (
+            torch.stack(memory_data["action_logprobs"]).to(self.device).detach()
+        )
 
         state_values = self.value_net(full_old_states).detach()
         state_values = torch.squeeze(state_values).tolist()
@@ -295,15 +287,15 @@ class PPOAgent(AgentWithSimplePolicy):
             memory_data["rewards"], memory_data["dones"], state_values
         )
 
-
-
         full_old_returns = returns.to(self.device).detach()
         full_old_advantages = advantages.to(self.device).detach()
 
         # optimize policy for K epochs
 
         # n_samples = full_old_actions.size(0)
-        assert self.n_steps >= self.batch_size, "n_samples must be greater than batch_size"
+        assert (
+            self.n_steps >= self.batch_size
+        ), "n_samples must be greater than batch_size"
         n_batches = self.n_steps // self.batch_size
 
         for _ in range(self.k_epochs):
@@ -465,7 +457,7 @@ class PPOAgent(AgentWithSimplePolicy):
 
 
 if __name__ == "__main__":
-    env = (gym_make, dict(id = "Acrobot-v1"))
-    env = gym_make(id = "Acrobot-v1")
+    env = (gym_make, dict(id="Acrobot-v1"))
+    env = gym_make(id="Acrobot-v1")
     ppo = PPOAgent(env)
     ppo.fit(100000)
