@@ -18,6 +18,7 @@ from rlberry.envs import gym_make
 logger = logging.getLogger(__name__)
 
 
+
 class PPOAgent(AgentWithSimplePolicy):
     """
     Proximal Policy Optimization Agent.
@@ -83,7 +84,7 @@ class PPOAgent(AgentWithSimplePolicy):
         self,
         env,
         batch_size=64,
-        update_frequency=8,
+        update_frequency=None,
         horizon=500,
         gamma=0.99,
         entr_coef=0.01,
@@ -110,6 +111,9 @@ class PPOAgent(AgentWithSimplePolicy):
         for arg, val in values.items():
             setattr(self, arg, val)
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
+
+        if self.update_frequency is None:
+            self.update_frequency = self.batch_size * self.k_epochs
 
         # bonus
         self.use_bonus = use_bonus
@@ -208,92 +212,98 @@ class PPOAgent(AgentWithSimplePolicy):
             enconters a terminal state in which case it stops early.
         """
         del kwargs
-        n_episodes_to_run = budget
-        count = 0
-        while count < n_episodes_to_run:
-            self._run_episode()
-            count += 1
+        timesteps_counter = 0
+        episode_rewards = 0.0
+        episode_timesteps = 0
+        state = self.env.reset()
 
-    def _run_episode(self):
-        # to store transitions
         states = []
         actions = []
         action_logprobs = []
         rewards = []
         is_terminals = []
 
-        # interact for H steps
-        episode_rewards = 0
-        state = self.env.reset()
+        while timesteps_counter < budget:
 
-        for _ in range(self.horizon):
             # running policy_old
             state = torch.from_numpy(state).float().to(self.device)
-
-            action_dist = self.cat_policy_old(state)
-            action = action_dist.sample()
-            action_logprob = action_dist.log_prob(action)
-            action = action
-
+            action , action_logprob = self._select_action(state)
             next_state, reward, done, info = self.env.step(action.item())
+            
+            timesteps_counter += 1
 
-            # check whether to use bonus
-            bonus = 0.0
-            if self.use_bonus:
-                if info is not None and "exploration_bonus" in info:
-                    bonus = info["exploration_bonus"]
 
             # save transition
+            
             states.append(state)
             actions.append(action)
             action_logprobs.append(action_logprob)
-            rewards.append(reward + bonus)  # bonus added here
+            rewards.append(reward)
             is_terminals.append(done)
 
             episode_rewards += reward
 
-            if done:
-                break
-
             # update state
-            state = next_state
+            if done:
+                state = self.env.reset()
+                self.episode += 1
+                
+                if self.writer is not None:
+                    self.writer.add_scalar("episode_rewards", episode_rewards, self.episode)
+                episode_rewards = 0.0
+            else:
+                state = next_state
 
         # compute returns and advantages
-        state_values = self.value_net(torch.stack(states).to(self.device)).detach()
-        state_values = torch.squeeze(state_values).tolist()
+            # states = torch.tensor(states)
 
-        # TODO: add the option to normalize before computing returns/advantages?
-        returns, advantages = self._compute_returns_avantages(
-            rewards, is_terminals, state_values
-        )
+            # increment ep counter
 
-        # save in batch
-        self.memory.states.extend(states)
-        self.memory.actions.extend(actions)
-        self.memory.logprobs.extend(action_logprobs)
-        self.memory.rewards.extend(rewards)
-        self.memory.is_terminals.extend(is_terminals)
+            # log
 
-        self.returns.extend(returns)  # TODO: add to memory (cf reset)
-        self.advantages.extend(advantages)  # TODO: add to memory (cf reset)
+            # update
+            if (
+                timesteps_counter % self.update_frequency == 0
+            ):  # TODO: maybe change to update in function of n_steps instead
+                state_values = self.value_net(torch.stack(states).to(self.device)).detach()
+                state_values = torch.squeeze(state_values).tolist()
 
-        # increment ep counter
-        self.episode += 1
+                # TODO: add the option to normalize before computing returns/advantages?
+                returns, advantages = self._compute_returns_avantages(
+                    rewards, is_terminals, state_values
+                )
 
-        # log
-        if self.writer is not None:
-            self.writer.add_scalar("episode_rewards", episode_rewards, self.episode)
+                # save in batch
+                self.memory.states.extend(states)
+                self.memory.actions.extend(actions)
+                self.memory.logprobs.extend(action_logprobs)
+                self.memory.rewards.extend(rewards)
+                self.memory.is_terminals.extend(is_terminals)
 
-        # update
-        if (
-            self.episode % self.update_frequency == 0
-        ):  # TODO: maybe change to update in function of n_steps instead
-            self._update()
-            self.memory.clear_memory()
-            del self.returns[:]  # TODO: add to memory (cf reset)
-            del self.advantages[:]  # TODO: add to memory (cf reset)
+                self.returns.extend(returns)  # TODO: add to memory (cf reset)
+                self.advantages.extend(advantages)  # TODO: add to memory (cf reset)
+                
+                self._update()
+                self.memory.clear_memory()
+                del self.returns[:]  # TODO: add to memory (cf reset)
+                del self.advantages[:]  # TODO: add to memory (cf reset)
 
-        return episode_rewards
+                states = []
+                actions = []
+                action_logprobs = []
+                rewards = []
+                is_terminals = []
+            
+                # count += 1
+    
+    def _select_action(self, state):
+        # state = torch.from_numpy(state).float().to(self.device)
+        action_dist = self.cat_policy_old(state)
+        action = action_dist.sample()
+        action_logprob = action_dist.log_prob(action)
+        return action, action_logprob
+
+
 
     def _update(self):
 
@@ -305,9 +315,9 @@ class PPOAgent(AgentWithSimplePolicy):
         full_old_advantages = torch.stack(self.advantages).to(self.device).detach()
 
         # optimize policy for K epochs
-        assert n_samples > self.batch_size, "n_samples must be greater than batch_size"
 
         n_samples = full_old_actions.size(0)
+        assert n_samples > self.batch_size, "n_samples must be greater than batch_size"
         n_batches = n_samples // self.batch_size
 
         for _ in range(self.k_epochs):
@@ -472,6 +482,6 @@ class PPOAgent(AgentWithSimplePolicy):
 
 
 if __name__ == "__main__":
-    env = (gym_make, dict(id = "MountainCar-v0"))
+    env = (gym_make, dict(id = "Acrobot-v1"))
     ppo = PPOAgent(env)
-    ppo.fit(10000)
+    ppo.fit(100000)
