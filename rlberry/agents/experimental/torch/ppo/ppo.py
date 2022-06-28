@@ -12,6 +12,7 @@ from rlberry.agents.torch.utils.models import default_policy_net_fn
 from rlberry.agents.torch.utils.models import default_value_net_fn
 from rlberry.utils.torch import choose_device
 from rlberry.wrappers.uncertainty_estimator_wrapper import UncertaintyEstimatorWrapper
+from rlberry.envs import gym_make
 
 
 logger = logging.getLogger(__name__)
@@ -83,7 +84,7 @@ class PPOAgent(AgentWithSimplePolicy):
         env,
         batch_size=64,
         update_frequency=8,
-        horizon=256,
+        horizon=500,
         gamma=0.99,
         entr_coef=0.01,
         vf_coef=0.5,
@@ -304,6 +305,8 @@ class PPOAgent(AgentWithSimplePolicy):
         full_old_advantages = torch.stack(self.advantages).to(self.device).detach()
 
         # optimize policy for K epochs
+        assert n_samples > self.batch_size, "n_samples must be greater than batch_size"
+
         n_samples = full_old_actions.size(0)
         n_batches = n_samples // self.batch_size
 
@@ -396,12 +399,15 @@ class PPOAgent(AgentWithSimplePolicy):
 
     def _compute_returns_avantages(self, rewards, is_terminals, state_values):
 
-        returns = torch.zeros(self.horizon).to(self.device)
-        advantages = torch.zeros(self.horizon).to(self.device)
+        length_rollout = len(rewards)
+        # length_rollout = self.horizon
+        returns = torch.zeros(length_rollout).to(self.device)
+        advantages = torch.zeros(length_rollout).to(self.device)
 
         if not self.use_gae:
-            for t in reversed(range(self.horizon)):
-                if t == self.horizon - 1:
+            # for t in reversed(range(self.horizon)):
+            for t in reversed(range(length_rollout)):
+                if t == length_rollout - 1:
                     returns[t] = (
                         rewards[t]
                         + self.gamma * (1 - is_terminals[t]) * state_values[-1]
@@ -414,8 +420,9 @@ class PPOAgent(AgentWithSimplePolicy):
                 advantages[t] = returns[t] - state_values[t]
         else:
             last_adv = 0
-            for t in reversed(range(self.horizon)):
-                if t == self.horizon - 1:
+            # for t in reversed(range(self.horizon)):
+            for t in reversed(range(length_rollout)):
+                if t == length_rollout - 1:
                     returns[t] = (
                         rewards[t]
                         + self.gamma * (1 - is_terminals[t]) * state_values[-1]
@@ -462,3 +469,9 @@ class PPOAgent(AgentWithSimplePolicy):
             "eps_clip": eps_clip,
             "k_epochs": k_epochs,
         }
+
+
+if __name__ == "__main__":
+    env = (gym_make, dict(id = "MountainCar-v0"))
+    ppo = PPOAgent(env)
+    ppo.fit(10000)
