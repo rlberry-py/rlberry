@@ -1,11 +1,13 @@
 from rlberry.envs import gym_make
 from rlberry.manager import plot_writer_data, AgentManager, evaluate_agents
 from rlberry.agents.experimental.torch import PPOAgent
-import gym
+
+# import gym
 from stable_baselines3 import PPO
 from rlberry.agents.stable_baselines import StableBaselinesAgent
-from gym.wrappers import TimeLimit
-import torch
+
+# from gym.wrappers import TimeLimit
+# import torch
 
 env_name = "Acrobot-v1"
 

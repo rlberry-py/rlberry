@@ -2,7 +2,6 @@ import numpy as np
 import torch
 import torch.nn as nn
 import logging
-import inspect
 
 import gym.spaces as spaces
 from rlberry.agents import AgentWithSimplePolicy
@@ -459,6 +458,6 @@ class PPOAgent(AgentWithSimplePolicy):
 
 if __name__ == "__main__":
     env = (gym_make, dict(id="Acrobot-v1"))
-    env = gym_make(id="Acrobot-v1")
+    # env = gym_make(id="Acrobot-v1")
     ppo = PPOAgent(env)
     ppo.fit(100000)
