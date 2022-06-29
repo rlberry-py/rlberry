@@ -61,6 +61,10 @@ class PPOAgent(AgentWithSimplePolicy):
         kwargs for policy_net_fn
     value_net_kwargs : dict
         kwargs for value_net_fn
+    normalize_rewards : bool
+        whether or not to normalize rewards
+    normalize_avantages : bool
+        whether or not to normalize advantages
     device: str
         Device to put the tensors on
     use_bonus : bool, default = False
