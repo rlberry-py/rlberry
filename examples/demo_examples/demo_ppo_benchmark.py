@@ -6,7 +6,7 @@
 import numpy as np
 from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
 from rlberry.agents import MBQVIAgent
-from rlberry.agents.experimental.torch.ppo import PPOAgent
+from rlberry.agents.torch.ppo import PPOAgent
 from rlberry.wrappers import DiscretizeStateWrapper
 from rlberry.manager import AgentManager, plot_writer_data, evaluate_agents
 
@@ -25,7 +25,7 @@ d_train_env = (discrete_env_ctor, env_kwargs)
 # -----------------------------
 N_EPISODES = 1000
 GAMMA = 0.99
-HORIZON = 30
+HORIZON = 256
 
 params_oracle = {
     "n_samples": 20,  # samples per state-action
@@ -33,7 +33,7 @@ params_oracle = {
     "horizon": HORIZON,
 }
 
-params_ppo = {"gamma": GAMMA, "horizon": HORIZON, "learning_rate": 0.0003}
+params_ppo = {"gamma": GAMMA, "n_steps": HORIZON, "learning_rate": 0.0003}
 
 eval_kwargs = dict(eval_horizon=HORIZON, n_simulations=20)
 

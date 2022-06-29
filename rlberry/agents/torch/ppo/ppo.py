@@ -67,11 +67,7 @@ class PPOAgent(AgentWithSimplePolicy):
         whether or not to normalize advantages
     device: str
         Device to put the tensors on
-    use_bonus : bool, default = False
-        If true, compute the environment 'exploration_bonus'
-        and add it to the reward. See also UncertaintyEstimatorWrapper.
-    uncertainty_estimator_kwargs : dict
-        kwargs for UncertaintyEstimatorWrapper
+
 
     References
     ----------
