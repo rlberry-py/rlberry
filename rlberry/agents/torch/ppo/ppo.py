@@ -456,8 +456,8 @@ class PPOAgent(AgentWithSimplePolicy):
         }
 
 
-if __name__ == "__main__":
-    env = (gym_make, dict(id="Acrobot-v1"))
-    # env = gym_make(id="Acrobot-v1")
-    ppo = PPOAgent(env)
-    ppo.fit(100000)
+# if __name__ == "__main__":
+#     env = (gym_make, dict(id="Acrobot-v1"))
+#     # env = gym_make(id="Acrobot-v1")
+#     ppo = PPOAgent(env)
+#     ppo.fit(100000)
