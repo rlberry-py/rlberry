@@ -145,3 +145,36 @@ def test_ppo():
 
     output = evaluate_agents([pporlberry_stats], n_simulations=2, plot=False)
     pporlberry_stats.clear_output_dir()
+
+    env_ctor = PBall2D
+    env_kwargs = dict()
+
+    pporlberry_stats = AgentManager(
+        PPOAgent,
+        (env_ctor, env_kwargs),
+        fit_budget=int(100),
+        eval_kwargs=dict(eval_horizon=2),
+        init_kwargs=dict(batch_size=24, n_steps=96, normalize_rewards=True),
+        n_fit=1,
+        agent_name="PPO_rlberry_" + "PBall2D",
+    )
+
+    pporlberry_stats.fit()
+
+    output = evaluate_agents([pporlberry_stats], n_simulations=2, plot=False)
+    pporlberry_stats.clear_output_dir()
+
+    pporlberry_stats = AgentManager(
+        PPOAgent,
+        (env_ctor, env_kwargs),
+        fit_budget=int(100),
+        eval_kwargs=dict(eval_horizon=2),
+        init_kwargs=dict(batch_size=24, n_steps=96, normalize_advantages=True),
+        n_fit=1,
+        agent_name="PPO_rlberry_" + "PBall2D",
+    )
+
+    pporlberry_stats.fit()
+
+    output = evaluate_agents([pporlberry_stats], n_simulations=2, plot=False)
+    pporlberry_stats.clear_output_dir()

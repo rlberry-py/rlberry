@@ -34,9 +34,9 @@ class PPOAgent(AgentWithSimplePolicy):
     env : Model
         Online model with continuous (Box) state space and discrete actions
     batch_size : int
-        Number of *episodes* to wait before updating the policy.
-    horizon : int
-        Horizon.
+        Size of mini batches during the k_epochs gradient descent steps.
+    n_steps : int
+        Number of transitions to use for parameters updates.
     gamma : double
         Discount factor in [0, 1].
     entr_coef : double
@@ -100,6 +100,8 @@ class PPOAgent(AgentWithSimplePolicy):
         value_net_fn=None,
         policy_net_kwargs=None,
         value_net_kwargs=None,
+        normalize_rewards=False,
+        normalize_advantages=False,
         device="cuda:best",
         **kwargs
     ):
@@ -120,7 +122,8 @@ class PPOAgent(AgentWithSimplePolicy):
         self.optimizer_type = optimizer_type
         self.kwargs = kwargs
 
-        self.normalize_advantages = True  # TODO: turn into argument
+        self.normalize_rewards = normalize_rewards
+        self.normalize_advantages = normalize_advantages
 
         # function approximators
         self.policy_net_kwargs = policy_net_kwargs or {}
@@ -211,8 +214,8 @@ class PPOAgent(AgentWithSimplePolicy):
         Parameters
         ----------
         budget: int
-            number of episodes. Each episode runs for self.horizon unless it
-            enconters a terminal state in which case it stops early.
+            Total number of steps to be performed in the environment. Parameters
+            are updated every n_steps steps using n_steps//batch_size mini batches.
         """
         del kwargs
         timesteps_counter = 0
@@ -292,8 +295,6 @@ class PPOAgent(AgentWithSimplePolicy):
         full_old_advantages = advantages.to(self.device).detach()
 
         # optimize policy for K epochs
-
-        # n_samples = full_old_actions.size(0)
         assert (
             self.n_steps >= self.batch_size
         ), "n_samples must be greater than batch_size"
@@ -330,19 +331,9 @@ class PPOAgent(AgentWithSimplePolicy):
                 # find ratio (pi_theta / pi_theta__old)
                 ratios = torch.exp(logprobs - old_logprobs)
 
-                # TODO: add this option
-                # normalizing the rewards
-                # rewards = (rewards - rewards.mean()) / (rewards.std() + 1e-5)
-
-                # normalize the advantages
                 old_advantages = old_advantages.view(
                     -1,
                 )
-
-                if self.normalize_advantages:
-                    old_advantages = (old_advantages - old_advantages.mean()) / (
-                        old_advantages.std() + 1e-10
-                    )
 
                 # compute surrogate loss
                 surr1 = ratios * old_advantages
@@ -392,6 +383,12 @@ class PPOAgent(AgentWithSimplePolicy):
         returns = torch.zeros(length_rollout).to(self.device)
         advantages = torch.zeros(length_rollout).to(self.device)
 
+        # normalizing the rewards (rewards is a list)
+        if self.normalize_rewards:
+            mean_rew = np.mean(rewards)
+            std_rew = np.std(rewards)
+            rewards = [(i - mean_rew) / (std_rew + 1e-8) for i in rewards]
+
         if not self.use_gae:
             for t in reversed(range(length_rollout)):
                 if t == length_rollout - 1:
@@ -429,6 +426,10 @@ class PPOAgent(AgentWithSimplePolicy):
                     + td_error
                 )
                 advantages[t] = last_adv
+
+        # normalize the advantages (here advantages is a tensor)
+        if self.normalize_advantages:
+            advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
 
         return returns, advantages
 
