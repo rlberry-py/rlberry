@@ -19,7 +19,7 @@ env = PBall2D()
 n_episodes = 200
 
 agent = PPOAgent(
-    env, n_steps = 256, gamma=0.99, learning_rate=0.001, eps_clip=0.2, k_epochs=4
+    env, n_steps=256, gamma=0.99, learning_rate=0.001, eps_clip=0.2, k_epochs=4
 )
 agent.fit(budget=n_episodes)
 
