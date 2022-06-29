@@ -12,6 +12,7 @@ from rlberry.agents.torch import PPOAgent
 from rlberry.manager import AgentManager, evaluate_agents
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
 from gym import make
+from rlberry.agents.torch.utils.training import model_factory_from_env
 
 
 def test_ppo():
@@ -26,7 +27,7 @@ def test_ppo():
         (env_ctor, env_kwargs),
         fit_budget=int(100),
         eval_kwargs=dict(eval_horizon=2),
-        init_kwargs=dict(batch_size=100),
+        init_kwargs=dict(batch_size=24, n_steps=96),
         n_fit=1,
         agent_name="PPO_rlberry_" + env,
     )
@@ -46,7 +47,7 @@ def test_ppo():
         (env_ctor, env_kwargs),
         fit_budget=int(100),
         eval_kwargs=dict(eval_horizon=2),
-        init_kwargs=dict(batch_size=100),
+        init_kwargs=dict(batch_size=24, n_steps=96),
         n_fit=1,
         agent_name="PPO_rlberry_" + env,
     )
@@ -64,7 +65,7 @@ def test_ppo():
         (env_ctor, env_kwargs),
         fit_budget=int(100),
         eval_kwargs=dict(eval_horizon=2),
-        init_kwargs=dict(batch_size=100),
+        init_kwargs=dict(batch_size=24, n_steps=96),
         n_fit=1,
         agent_name="PPO_rlberry_" + "PBall2D",
     )
@@ -86,7 +87,8 @@ def test_ppo():
         fit_budget=int(100),
         eval_kwargs=dict(eval_horizon=2),
         init_kwargs=dict(
-            batch_size=100,
+            batch_size=24,
+            n_steps=96,
             use_gae=False,
             policy_net_fn="rlberry.agents.torch.utils.training.model_factory_from_env",
             policy_net_kwargs=dict(
@@ -96,6 +98,37 @@ def test_ppo():
                 is_policy=True,
             ),
             value_net_fn="rlberry.agents.torch.utils.training.model_factory_from_env",
+            value_net_kwargs=dict(
+                type="MultiLayerPerceptron",
+                layer_sizes=[
+                    512,
+                ],
+                reshape=False,
+                out_size=1,
+            ),
+        ),
+        n_fit=1,
+        agent_name="PPO_rlberry_" + env,
+    )
+    pporlberry_stats.fit()
+
+    pporlberry_stats = AgentManager(
+        PPOAgent,
+        (env_ctor, env_kwargs),
+        fit_budget=int(100),
+        eval_kwargs=dict(eval_horizon=2),
+        init_kwargs=dict(
+            batch_size=24,
+            n_steps=96,
+            use_gae=False,
+            policy_net_fn=model_factory_from_env,
+            policy_net_kwargs=dict(
+                type="MultiLayerPerceptron",
+                layer_sizes=(256,),
+                reshape=False,
+                is_policy=True,
+            ),
+            value_net_fn=model_factory_from_env,
             value_net_kwargs=dict(
                 type="MultiLayerPerceptron",
                 layer_sizes=[
