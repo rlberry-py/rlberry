@@ -14,7 +14,8 @@ from rlberry.agents.torch.utils.models import default_policy_net_fn
 from rlberry.agents.torch.utils.models import default_value_net_fn
 from rlberry.utils.torch import choose_device
 from rlberry.utils.factory import load
-from rlberry.envs import gym_make
+
+# from rlberry.envs import gym_make
 
 
 logger = logging.getLogger(__name__)
