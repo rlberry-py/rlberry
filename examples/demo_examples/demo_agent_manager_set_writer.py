@@ -4,7 +4,7 @@
  =====================
 """
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
-from rlberry.agents.experimental.torch.ppo import PPOAgent
+from rlberry.agents.torch.ppo import PPOAgent
 from rlberry.manager import AgentManager, evaluate_agents
 from torch.utils.tensorboard import SummaryWriter
 
@@ -21,7 +21,7 @@ if __name__ == "__main__":
     GAMMA = 0.99
     HORIZON = 50
 
-    params_ppo = {"gamma": GAMMA, "horizon": HORIZON, "learning_rate": 0.0003}
+    params_ppo = {"gamma": GAMMA, "n_steps": 256, "learning_rate": 0.0003}
 
     eval_kwargs = dict(eval_horizon=HORIZON, n_simulations=20)
 

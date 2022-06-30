@@ -4,16 +4,16 @@
  =====================
 """
 import numpy as np
-from rlberry.agents.experimental.torch.ppo import PPOAgent
+from rlberry.agents.torch import PPOAgent
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
 from rlberry.manager import AgentManager, plot_writer_data, evaluate_agents
 
 env = (PBall2D, dict())
 n_episodes = 400
-horizon = 100
+horizon = 256
 
 ppo_params = {}
-ppo_params["horizon"] = 100
+ppo_params["n_steps"] = 256
 ppo_params["gamma"] = 0.99
 ppo_params["learning_rate"] = 0.001
 ppo_params["eps_clip"] = 0.2

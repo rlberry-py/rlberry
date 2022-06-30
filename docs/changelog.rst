@@ -3,8 +3,17 @@
 Changelog
 =========
 
+Dev version
+-----------
+
+*PR #223*
+
+* Moved PPO from experimental to torch agents. Tested and benchmarked.
+
+
 Version 0.3.0 (latest stable version)
 -------------------------------------
+
 
 *PR #206*
 

@@ -55,6 +55,7 @@ Torch Agents
    :template: class.rst
 
    agents.torch.A2CAgent
+   agents.torch.PPOAgent
    agents.torch.DQNAgent
    agents.torch.REINFORCEAgent
 
@@ -66,7 +67,6 @@ Experimental torch agents
    :template: class.rst
 
    agents.experimental.torch.AVECPPOAgent
-   agents.experimental.torch.PPOAgent
    agents.experimental.torch.SACAgent
 
 Experimental Jax Agents
