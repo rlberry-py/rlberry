@@ -1,31 +1,31 @@
 import concurrent.futures
 from copy import deepcopy
 from pathlib import Path
-
-import rlberry
-from rlberry.seeding import safe_reseed, set_external_seed
-from rlberry.seeding import Seeder
-from rlberry import metadata_utils
-
+import cProfile, pstats
+from pstats import SortKey
 import functools
 import json
 import logging
 import dill
 import gc
 import pickle
-import pandas as pd
 import shutil
 import threading
 import multiprocessing
 from multiprocessing.spawn import _check_not_importing_main
-import cProfile, pstats
-from pstats import SortKey
+from typing import List, Optional, Tuple, Union
+
 import numpy as np
+import pandas as pd
+
+import rlberry
+from rlberry.seeding import safe_reseed, set_external_seed
+from rlberry.seeding import Seeder
+from rlberry import metadata_utils
 from rlberry.envs.utils import process_env
 from rlberry.utils.logging import configure_logging
 from rlberry.utils.writers import DefaultWriter
 from rlberry.manager.utils import create_database
-from typing import List, Optional, Tuple, Union
 from rlberry import types
 
 
@@ -316,6 +316,7 @@ class AgentManager:
 
         # params
         base_init_kwargs = init_kwargs or {}
+
         self._base_init_kwargs = deepcopy(base_init_kwargs)
         self.fit_kwargs = deepcopy(fit_kwargs)
         self.eval_kwargs = deepcopy(eval_kwargs)
@@ -493,6 +494,8 @@ class AgentManager:
         self,
         n_simulations: Optional[int] = None,
         eval_kwargs: Optional[dict] = None,
+        agent_id: Optional[int] = None,
+        verbose: Optional[bool] = True,
     ) -> List[float]:
         """
         Call :meth:`eval` method in the managed agents and returns a list with the results.
@@ -504,6 +507,10 @@ class AgentManager:
         eval_kwargs : dict, optional
             Arguments to be sent to the .eval() method of each trained instance.
             If None, set to self.eval_kwargs.
+        agent_id: int, optional
+            Index of the agent to be evaluated. If None, choose randomly.
+        verbose: bool, optional
+            Whether to print a progress report.
 
         Returns
         -------
@@ -516,8 +523,11 @@ class AgentManager:
             n_simulations = 2 * self.n_fit
         values = []
         for ii in range(n_simulations):
-            # randomly choose one of the fitted agents
-            agent_idx = self.eval_seeder.rng.choice(len(self.agent_handlers))
+            if agent_id is None:
+                # randomly choose one of the fitted agents
+                agent_idx = self.eval_seeder.rng.choice(len(self.agent_handlers))
+            else:
+                agent_idx = agent_id
             agent = self.agent_handlers[agent_idx]
             if agent.is_empty():
                 logger.error(
@@ -526,7 +536,8 @@ class AgentManager:
                 )
                 return []
             values.append(agent.eval(**eval_kwargs))
-            logger.info(f"[eval]... simulation {ii + 1}/{n_simulations}")
+            if verbose:
+                logger.info(f"[eval]... simulation {ii + 1}/{n_simulations}")
         return values
 
     def clear_output_dir(self):
