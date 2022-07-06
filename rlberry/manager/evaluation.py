@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 def evaluate_agents(
     agent_manager_list,
     n_simulations=5,
+    choose_random_agents=True,
     fignum=None,
     show=True,
     plot=True,
@@ -29,6 +30,9 @@ def evaluate_agents(
     agent_manager_list : list of AgentManager objects.
     n_simulations: int
         Number of calls to the eval() method of each AgentManager instance.
+    choose_random_agents: bool
+        If true and n_fit>1, use a random fitted agent from each AgentManager at each evaluation.
+        Otherwise, each fitted agent of each AgentManager is evaluated n_simulations times.
     fignum: string or int
         Identifier of plot figure.
     show: bool
@@ -51,7 +55,13 @@ def evaluate_agents(
     eval_outputs = []
     for agent_manager in agent_manager_list:
         logger.info(f"Evaluating {agent_manager.agent_name}...")
-        outputs = agent_manager.eval_agents(n_simulations)
+        if choose_random_agents:
+            outputs = agent_manager.eval_agents(n_simulations)
+        else:
+            outputs = []
+            for idx in range(len(agent_manager.agent_handlers)):
+                outputs += list(agent_manager.eval_agents(n_simulations, agent_id=idx))
+
         if len(outputs) > 0:
             eval_outputs.append(outputs)
 

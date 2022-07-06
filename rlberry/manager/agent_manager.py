@@ -11,7 +11,6 @@ import gc
 import pickle
 import shutil
 import threading
-import inspect
 import multiprocessing
 from multiprocessing.spawn import _check_not_importing_main
 from typing import List, Optional, Tuple, Union
@@ -22,15 +21,13 @@ import pandas as pd
 import rlberry
 from rlberry.seeding import safe_reseed, set_external_seed
 from rlberry.seeding import Seeder
-from rlberry import metadata_utils, check_packages
+from rlberry import metadata_utils
 from rlberry.envs.utils import process_env
 from rlberry.utils.logging import configure_logging
 from rlberry.utils.writers import DefaultWriter
 from rlberry.manager.utils import create_database
 from rlberry import types
 
-if check_packages.TORCH_INSTALLED:
-    from rlberry.utils.torch import choose_device
 
 _OPTUNA_INSTALLED = True
 try:
@@ -319,23 +316,6 @@ class AgentManager:
 
         # params
         base_init_kwargs = init_kwargs or {}
-
-        if check_packages.TORCH_INSTALLED:
-            # Pre-choose device
-            # Test if 'device' is  one of the parameters of the agent
-            if "device" in inspect.signature(agent_class.__init__).parameters:
-                if "device" in base_init_kwargs.keys():
-                    # If device is in init_kwargs, choose this one
-                    device = base_init_kwargs["device"]
-                else:
-                    # Else, choose the default of the function
-                    device = (
-                        inspect.signature(agent_class.__init__)
-                        .parameters["device"]
-                        .default
-                    )
-                _device = choose_device(device)
-                base_init_kwargs["device"] = _device
 
         self._base_init_kwargs = deepcopy(base_init_kwargs)
         self.fit_kwargs = deepcopy(fit_kwargs)
