@@ -14,8 +14,9 @@ from rlberry.utils.writers import DefaultWriter
 from typing import Optional
 import inspect
 
+import rlberry
 
-logger = logging.getLogger(__name__)
+logger = rlberry.logger
 
 
 class Agent(ABC):

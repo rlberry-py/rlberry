@@ -6,7 +6,9 @@ import numpy as np
 import torch
 import logging
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 def get_gpu_memory_map():

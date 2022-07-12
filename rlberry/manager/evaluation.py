@@ -10,7 +10,9 @@ from itertools import cycle
 from rlberry.manager import AgentManager
 
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 def evaluate_agents(

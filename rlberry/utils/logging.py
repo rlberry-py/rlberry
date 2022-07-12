@@ -1,6 +1,13 @@
+import logging
 import logging.config
 from pathlib import Path
 import gym
+import rlberry
+
+
+def set_level(level="INFO"):
+    rlberry.logger.setLevel(level)
+    gym.logger.set_level(logging.getLevelName(level))
 
 
 def configure_logging(
@@ -42,7 +49,13 @@ def configure_logging(
                 "class": "logging.StreamHandler",
             }
         },
-        "loggers": {"": {"handlers": ["default"], "level": "DEBUG", "propagate": True}},
+        "loggers": {
+            "rlberry_logger": {
+                "handlers": ["default"],
+                "level": level,
+                "propagate": True,
+            }
+        },
     }
     if file_path:
         config["handlers"][file_path.name] = {

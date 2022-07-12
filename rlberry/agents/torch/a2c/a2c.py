@@ -13,7 +13,9 @@ from rlberry.utils.torch import choose_device
 from rlberry.utils.factory import load
 from typing import Optional
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 class A2CAgent(AgentWithSimplePolicy):

@@ -10,7 +10,9 @@ from rlberry import metadata_utils
 if check_packages.TENSORBOARD_INSTALLED:
     from torch.utils.tensorboard import SummaryWriter
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 class DefaultWriter:
