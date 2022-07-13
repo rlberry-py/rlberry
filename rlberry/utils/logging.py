@@ -15,7 +15,7 @@ def set_level(level="INFO"):
         Level of the logger.
     """
     rlberry.logger.setLevel(level)
-    gym.logger.set_level(logging.getLevelName(level))
+    gym.logger.set_level(logging.getLevelName(level) + 10)
     for ch in rlberry.logger.handlers:
         ch.setLevel(level)
 
