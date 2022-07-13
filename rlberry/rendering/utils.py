@@ -1,5 +1,5 @@
 import numpy as np
-import logging
+
 
 _FFMPEG_INSTALLED = True
 try:

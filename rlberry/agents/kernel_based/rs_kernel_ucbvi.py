@@ -1,5 +1,3 @@
-import logging
-
 import numpy as np
 from rlberry.utils.jit_setup import numba_jit
 

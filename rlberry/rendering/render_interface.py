@@ -2,7 +2,7 @@
 Interface that allows 2D rendering.
 """
 
-import logging
+
 from abc import ABC, abstractmethod
 
 from rlberry.rendering.opengl_render2d import OpenGLRender2D

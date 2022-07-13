@@ -19,7 +19,7 @@ from rlberry.envs.interface import Model
 from rlberry.agents.bandits import BanditWithSimplePolicy
 from rlberry.wrappers import WriterWrapper
 import rlberry.spaces as spaces
-import logging
+
 import requests
 import matplotlib.pyplot as plt
 

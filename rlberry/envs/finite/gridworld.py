@@ -1,6 +1,6 @@
 import matplotlib
 import numpy as np
-import logging
+
 import matplotlib.pyplot as plt
 from matplotlib import cm
 

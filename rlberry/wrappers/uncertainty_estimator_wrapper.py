@@ -1,7 +1,7 @@
 import torch
 
 from rlberry.envs import Wrapper
-import logging
+
 import numpy as np
 from rlberry.utils.factory import load
 

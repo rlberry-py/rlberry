@@ -29,7 +29,7 @@ import functools
 import haiku as hk
 import jax
 import jax.numpy as jnp
-import logging
+
 import numpy as np
 import optax
 import dill

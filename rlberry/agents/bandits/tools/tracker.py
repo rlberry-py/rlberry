@@ -1,4 +1,3 @@
-import logging
 from rlberry import metadata_utils
 from rlberry.utils.writers import DefaultWriter
 

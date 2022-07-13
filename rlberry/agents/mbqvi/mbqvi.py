@@ -1,5 +1,5 @@
 import numpy as np
-import logging
+
 
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.agents.dynprog.utils import backward_induction, value_iteration

@@ -1,6 +1,6 @@
 import gym
 import numpy as np
-import logging
+
 import inspect
 from rlberry.seeding import Seeder
 

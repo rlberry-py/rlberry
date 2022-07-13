@@ -1,4 +1,3 @@
-import logging
 from rlberry.agents.agent import AgentWithSimplePolicy
 import numpy as np
 

@@ -1,5 +1,5 @@
 import numpy as np
-import logging
+
 
 import rlberry.spaces as spaces
 from rlberry.envs.interface import Model

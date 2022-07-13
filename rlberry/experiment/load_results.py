@@ -1,7 +1,7 @@
 from pathlib import Path
 from rlberry.manager import AgentManager
 import pandas as pd
-import logging
+
 
 import rlberry
 

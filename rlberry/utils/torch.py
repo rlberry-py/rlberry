@@ -4,7 +4,7 @@ import shutil
 from subprocess import check_output, run, PIPE
 import numpy as np
 import torch
-import logging
+
 
 import rlberry
 

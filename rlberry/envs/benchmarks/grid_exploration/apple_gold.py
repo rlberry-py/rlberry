@@ -1,4 +1,3 @@
-import logging
 import numpy as np
 import rlberry.spaces as spaces
 from rlberry.envs.finite import GridWorld

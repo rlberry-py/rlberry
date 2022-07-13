@@ -1,5 +1,5 @@
 from collections import deque
-import logging
+
 
 from rlberry.envs.interface import Model
 import rlberry.spaces as spaces

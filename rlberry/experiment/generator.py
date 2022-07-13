@@ -12,7 +12,7 @@ Options:
     --parallelization=<par>  Either 'thread' or 'process' [default: process].
     --max_workers=<workers>  Number of workers used by AgentManager.fit. Set to -1 for the maximum value. [default: -1]
 """
-import logging
+
 from docopt import docopt
 from pathlib import Path
 from rlberry.experiment.yaml_utils import parse_experiment_config

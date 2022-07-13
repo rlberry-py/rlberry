@@ -4,7 +4,7 @@ Code for 2D rendering, using pygame (without OpenGL)
 
 import numpy as np
 from os import environ
-import logging
+
 from rlberry.rendering import Scene
 
 import rlberry

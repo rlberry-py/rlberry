@@ -2,7 +2,7 @@ import numpy as np
 from rlberry.agents import AgentWithSimplePolicy
 from .tools import BanditTracker
 import pickle
-import logging
+
 from pathlib import Path
 
 import rlberry

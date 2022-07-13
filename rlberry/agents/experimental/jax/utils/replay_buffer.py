@@ -5,7 +5,7 @@ Notes
 * For priority updates, see https://github.com/deepmind/reverb/issues/28
 """
 
-import logging
+
 import tensorflow as tf
 
 import rlberry

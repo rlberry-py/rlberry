@@ -1,4 +1,3 @@
-import logging
 import numpy as np
 from rlberry.agents import AgentWithSimplePolicy
 from gym.spaces import Discrete

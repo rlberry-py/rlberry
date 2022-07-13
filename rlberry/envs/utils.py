@@ -1,7 +1,7 @@
 from typing import Tuple
 from copy import deepcopy
 from rlberry.seeding import safe_reseed
-import logging
+
 
 import rlberry
 

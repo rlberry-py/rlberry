@@ -1,6 +1,6 @@
 import numpy as np
 from rlberry.agents.bandits import BanditWithSimplePolicy
-import logging
+
 
 import rlberry
 

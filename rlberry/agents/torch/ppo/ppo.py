@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 import torch.nn as nn
-import logging
+
 
 import gym.spaces as spaces
 from rlberry.agents import AgentWithSimplePolicy
