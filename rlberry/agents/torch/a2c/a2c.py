@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-import logging
 
 import gym.spaces as spaces
 import numpy as np

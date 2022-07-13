@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 import dill
 import pickle
-import logging
 import numpy as np
 from inspect import signature
 from pathlib import Path
