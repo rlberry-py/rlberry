@@ -496,6 +496,7 @@ class AgentManager:
         n_simulations: Optional[int] = None,
         eval_kwargs: Optional[dict] = None,
         agent_id: Optional[int] = None,
+        verbose: Optional[bool] = True,
     ) -> List[float]:
         """
         Call :meth:`eval` method in the managed agents and returns a list with the results.
@@ -509,6 +510,8 @@ class AgentManager:
             If None, set to self.eval_kwargs.
         agent_id: int, optional
             Index of the agent to be evaluated. If None, choose randomly.
+        verbose: bool, optional
+            Whether to print a progress report.
 
         Returns
         -------
@@ -521,14 +524,15 @@ class AgentManager:
             n_simulations = 2 * self.n_fit
         values = []
 
-        if logger.getEffectiveLevel() > 10:
-            previous_handlers = logger.handlers
-            ch = logging.StreamHandler()
-            ch.terminator = ""
-            formatter = logging.Formatter("%(message)s")
-            ch.setFormatter(formatter)
-            logger.handlers = [ch]
-            logger.info("[INFO] Evaluation:")
+        if verbose:
+            if logger.getEffectiveLevel() > 10:
+                previous_handlers = logger.handlers
+                ch = logging.StreamHandler()
+                ch.terminator = ""
+                formatter = logging.Formatter("%(message)s")
+                ch.setFormatter(formatter)
+                logger.handlers = [ch]
+                logger.info("[INFO] Evaluation:")
 
         for ii in range(n_simulations):
             if agent_id is None:
@@ -544,13 +548,15 @@ class AgentManager:
                 )
                 return []
             values.append(agent.eval(**eval_kwargs))
-            if logger.getEffectiveLevel() <= 10:  # If debug
-                logger.debug(f"[eval]... simulation {ii + 1}/{n_simulations}")
-            else:
-                logger.info(".")
-        if logger.getEffectiveLevel() > 10:
-            logger.info("  Evaluation finished \n")
-            logger.handlers = previous_handlers
+            if verbose:
+                if logger.getEffectiveLevel() <= 10:  # If debug
+                    logger.debug(f"[eval]... simulation {ii + 1}/{n_simulations}")
+                else:
+                    logger.info(".")
+        if verbose:
+            if logger.getEffectiveLevel() > 10:
+                logger.info("  Evaluation finished \n")
+                logger.handlers = previous_handlers
 
         return values
 
