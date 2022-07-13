@@ -532,6 +532,7 @@ class AgentManager:
             ch.setFormatter(formatter)
             logger.handlers = [ch]
             logger.info("[INFO] Evaluation:")
+
         for ii in range(n_simulations):
             if agent_id is None:
                 # randomly choose one of the fitted agents

@@ -8,6 +8,8 @@ import rlberry
 def set_level(level="INFO"):
     rlberry.logger.setLevel(level)
     gym.logger.set_level(logging.getLevelName(level))
+    for ch in rlberry.logger.handlers:
+        ch.setLevel(level)
 
 
 def configure_logging(
