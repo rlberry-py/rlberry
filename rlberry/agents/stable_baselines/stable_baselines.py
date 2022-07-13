@@ -13,7 +13,9 @@ from rlberry import types
 from rlberry.agents import AgentWithSimplePolicy
 
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 def is_recordable(value: Any) -> bool:

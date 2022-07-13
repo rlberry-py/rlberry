@@ -11,7 +11,9 @@ from rlberry.network import interface
 from rlberry.network.client import BerryClient
 
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 class RemoteAgentManager:

@@ -3,7 +3,9 @@ from copy import deepcopy
 from rlberry.seeding import safe_reseed
 import logging
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 def process_env(env, seeder, copy_env=True):

@@ -7,7 +7,9 @@ try:
 except Exception:
     _FFMPEG_INSTALLED = False
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 def video_write(fn, images, framerate=60, vcodec="libx264"):

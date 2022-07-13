@@ -4,7 +4,9 @@ from rlberry.agents import AgentWithSimplePolicy
 from gym.spaces import Discrete
 from rlberry.utils.jit_setup import numba_jit
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 @numba_jit

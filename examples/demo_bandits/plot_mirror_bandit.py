@@ -24,7 +24,9 @@ import requests
 import matplotlib.pyplot as plt
 
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 # Environment definition
 

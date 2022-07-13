@@ -14,7 +14,9 @@ from rlberry.envs import gym_make
 from typing import Optional
 
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 class ClientHandler:

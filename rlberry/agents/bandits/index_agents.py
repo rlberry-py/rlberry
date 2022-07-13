@@ -2,7 +2,9 @@ import numpy as np
 from rlberry.agents.bandits import BanditWithSimplePolicy
 import logging
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 # TODO : fix bug when doing several fit, the fit do not resume. Should define
 #        self.rewards and self.action and resume training.

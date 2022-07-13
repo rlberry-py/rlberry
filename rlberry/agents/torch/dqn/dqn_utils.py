@@ -3,7 +3,9 @@ import logging
 from rlberry.utils.jit_setup import numba_jit
 
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 def polynomial_schedule(
@@ -15,39 +17,39 @@ def polynomial_schedule(
 ):
     """Constructs a schedule with polynomial transition from init to end value.
 
-    Notes
-    -----
-    Function taken from: https://github.com/deepmind/optax/blob/master/optax/_src/schedule.py,
-    which is licensed under the Apache License, Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+        Notes
+        -----
+        Function taken from: https://github.com/deepmind/optax/blob/master/optax/_src/schedule.py,
+        which is licensed under the Apache License, Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
 
-    Modifications with respect to source:
+        Modifications with respect to source:
 
-    * Remove chex typing from the arguments.
-    * Log using a logger :code:`logging.getLogger(__name__)` instead of :code:`logging.info()`.
-    * Changed documentation style.
+        * Remove chex typing from the arguments.
+    import rlberry; logger=rlberry.logger` instead of :code:`logging.info()`.
+        * Changed documentation style.
 
-    Parameters
-    ----------
-    init_value: float
-        Initial value for the scalar to be annealed.
-    end_value: float
-        End value of the scalar to be annealed.
-    power: float
-        The power of the polynomial used to transition from init to end.
-    transition_steps: float
-        Number of steps over which annealing takes place,
-        the scalar starts changing at `transition_begin` steps and completes
-        the transition by `transition_begin + transition_steps` steps.
-        If `transition_steps <= 0`, then the entire annealing process is disabled
-        and the value is held fixed at `init_value`.
-    transition_begin: float
-        Must be positive. After how many steps to start annealing
-        (before this many steps the scalar value is held fixed at `init_value`).
+        Parameters
+        ----------
+        init_value: float
+            Initial value for the scalar to be annealed.
+        end_value: float
+            End value of the scalar to be annealed.
+        power: float
+            The power of the polynomial used to transition from init to end.
+        transition_steps: float
+            Number of steps over which annealing takes place,
+            the scalar starts changing at `transition_begin` steps and completes
+            the transition by `transition_begin + transition_steps` steps.
+            If `transition_steps <= 0`, then the entire annealing process is disabled
+            and the value is held fixed at `init_value`.
+        transition_begin: float
+            Must be positive. After how many steps to start annealing
+            (before this many steps the scalar value is held fixed at `init_value`).
 
-    Returns
-    -------
-    schedule: Callable[[int], float]
-        A function that maps step counts to values.
+        Returns
+        -------
+        schedule: Callable[[int], float]
+            A function that maps step counts to values.
     """
     if transition_steps <= 0:
         logger.info(

@@ -2,7 +2,9 @@ import logging
 from rlberry import metadata_utils
 from rlberry.utils.writers import DefaultWriter
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 class BanditTracker(DefaultWriter):

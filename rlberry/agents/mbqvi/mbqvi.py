@@ -5,7 +5,9 @@ from rlberry.agents import AgentWithSimplePolicy
 from rlberry.agents.dynprog.utils import backward_induction, value_iteration
 from gym.spaces import Discrete
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 class MBQVIAgent(AgentWithSimplePolicy):

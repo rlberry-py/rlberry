@@ -18,7 +18,9 @@ from rlberry.utils.factory import load
 # from rlberry.envs import gym_make
 
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 class PPOAgent(AgentWithSimplePolicy):

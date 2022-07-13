@@ -8,7 +8,9 @@ Notes
 import logging
 import tensorflow as tf
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 try:
     import reverb

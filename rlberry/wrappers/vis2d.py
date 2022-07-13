@@ -7,7 +7,9 @@ import logging
 import matplotlib.pyplot as plt
 import numpy as np
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 class Transition:

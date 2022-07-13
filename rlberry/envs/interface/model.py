@@ -4,7 +4,9 @@ import logging
 import inspect
 from rlberry.seeding import Seeder
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 class Model(gym.Env):

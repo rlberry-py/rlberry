@@ -10,7 +10,9 @@ from rlberry.agents.dynprog.utils import (
     backward_induction_sd,
 )
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 class RLSVIAgent(AgentWithSimplePolicy):

@@ -4,7 +4,9 @@ import numpy as np
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.agents.adaptiveql.tree import MDPTreePartition
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 class AdaptiveQLAgent(AgentWithSimplePolicy):

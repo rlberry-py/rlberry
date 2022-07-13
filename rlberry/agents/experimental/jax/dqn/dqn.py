@@ -43,7 +43,9 @@ from rlberry.agents import AgentWithSimplePolicy
 from rlberry.agents.jax.utils.replay_buffer import ReplayBuffer
 from typing import Any, Callable, Mapping, Optional
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 @chex.dataclass

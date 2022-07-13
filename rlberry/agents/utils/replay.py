@@ -8,7 +8,9 @@ from typing import NamedTuple
 from rlberry.agents.utils import replay_utils
 
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 class Batch(NamedTuple):

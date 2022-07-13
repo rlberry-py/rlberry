@@ -4,7 +4,9 @@ import rlberry.spaces as spaces
 from rlberry.envs.finite import GridWorld
 from rlberry.rendering import Scene, GeometricPrimitive
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 class SixRoom(GridWorld):

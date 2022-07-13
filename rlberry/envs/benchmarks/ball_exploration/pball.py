@@ -5,7 +5,9 @@ import rlberry.spaces as spaces
 from rlberry.envs.interface import Model
 from rlberry.rendering import Scene, GeometricPrimitive, RenderInterface2D
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 def projection_to_pball(x, p):

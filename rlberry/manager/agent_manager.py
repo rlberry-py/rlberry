@@ -523,6 +523,15 @@ class AgentManager:
         if not n_simulations:
             n_simulations = 2 * self.n_fit
         values = []
+
+        if logger.getEffectiveLevel() > 10:
+            previous_handlers = logger.handlers
+            ch = logging.StreamHandler()
+            ch.terminator = ""
+            formatter = logging.Formatter("%(message)s")
+            ch.setFormatter(formatter)
+            logger.handlers = [ch]
+            logger.info("[INFO] Evaluation:")
         for ii in range(n_simulations):
             if agent_id is None:
                 # randomly choose one of the fitted agents
@@ -537,8 +546,14 @@ class AgentManager:
                 )
                 return []
             values.append(agent.eval(**eval_kwargs))
-            if verbose:
-                logger.info(f"[eval]... simulation {ii + 1}/{n_simulations}")
+            if logger.getEffectiveLevel() <= 10:  # If debug
+                logger.debug(f"[eval]... simulation {ii + 1}/{n_simulations}")
+            else:
+                logger.info(".")
+        if logger.getEffectiveLevel() > 10:
+            logger.info("  Evaluation finished \n")
+            logger.handlers = previous_handlers
+
         return values
 
     def clear_output_dir(self):

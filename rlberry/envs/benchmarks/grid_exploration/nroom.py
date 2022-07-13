@@ -5,7 +5,9 @@ import rlberry.spaces as spaces
 from rlberry.envs.finite import GridWorld
 from rlberry.rendering import Scene, GeometricPrimitive
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 def get_nroom_state_coord(state_index, nroom_env):

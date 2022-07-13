@@ -5,7 +5,9 @@ import gym.spaces as spaces
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.exploration_tools.discrete_counter import DiscreteCounter
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 class OptQLAgent(AgentWithSimplePolicy):

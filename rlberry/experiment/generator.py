@@ -19,7 +19,9 @@ from rlberry.experiment.yaml_utils import parse_experiment_config
 from rlberry.manager import AgentManager
 from rlberry import check_packages
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 def experiment_generator():
