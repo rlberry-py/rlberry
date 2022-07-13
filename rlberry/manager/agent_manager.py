@@ -496,7 +496,6 @@ class AgentManager:
         n_simulations: Optional[int] = None,
         eval_kwargs: Optional[dict] = None,
         agent_id: Optional[int] = None,
-        verbose: Optional[bool] = True,
     ) -> List[float]:
         """
         Call :meth:`eval` method in the managed agents and returns a list with the results.
@@ -510,8 +509,6 @@ class AgentManager:
             If None, set to self.eval_kwargs.
         agent_id: int, optional
             Index of the agent to be evaluated. If None, choose randomly.
-        verbose: bool, optional
-            Whether to print a progress report.
 
         Returns
         -------

@@ -6,6 +6,14 @@ import rlberry
 
 
 def set_level(level="INFO"):
+    """
+    Set rlberry's logger level.
+
+    Parameters
+    ----------
+    level: str in {'NOTSET', 'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'}
+        Level of the logger.
+    """
     rlberry.logger.setLevel(level)
     gym.logger.set_level(logging.getLevelName(level))
     for ch in rlberry.logger.handlers:
