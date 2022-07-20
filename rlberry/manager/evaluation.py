@@ -295,10 +295,14 @@ def plot_writer_data(
     title=None,
     savefig_fname=None,
     sns_kwargs=None,
+    smooth_weight=0.9,
 ):
     """
     Given a list of AgentManager or a folder, plot data (corresponding to info) obtained in each episode.
     The dictionary returned by agents' .fit() method must contain a key equal to `info`.
+
+    If there are several simulations, a confidence interval is plotted.
+    If there is only one simulation, a tensorboard-style smoothing is performed.
 
     Parameters
     ----------
@@ -339,6 +343,10 @@ def plot_writer_data(
         the figure is not saved.
     sns_kwargs: dict
         Optional extra params for seaborn lineplot.
+
+    smooth_weight: float in [0,1], default=0.9
+        Apply smoothing tensorboard-style to the plots with parameter smooth_weight.
+        Only applied if there is one simulation only.
 
     Returns
     -------
@@ -391,9 +399,23 @@ def plot_writer_data(
     # PS: in the next release of seaborn, ci should be deprecated and replaced
     # with errorbar, which allows to specifies other types of confidence bars,
     # in particular quantiles.
-    lineplot_kwargs = dict(x=xx, y="value", hue="name", data=data, ax=ax, ci="sd")
-    lineplot_kwargs.update(sns_kwargs)
-    sns.lineplot(**lineplot_kwargs)
+
+    def _smooth(df):
+        df["value"] = smooth(list(df["value"]), smooth_weight)
+        return df
+
+    if len(data["n_simu"].unique()) == 1:
+        sns.lineplot(
+            x=xx, y="value", hue="name", data=data, ax=ax, alpha=0.3, legend=False
+        )
+        data = data.groupby(["name"]).apply(_smooth)
+        lineplot_kwargs = dict(x=xx, y="value", hue="name", data=data, ax=ax)
+        lineplot_kwargs.update(sns_kwargs)
+        sns.lineplot(**lineplot_kwargs)
+    else:
+        lineplot_kwargs = dict(x=xx, y="value", hue="name", data=data, ax=ax, ci="sd")
+        lineplot_kwargs.update(sns_kwargs)
+        sns.lineplot(**lineplot_kwargs)
     ax.set_title(title)
     ax.set_ylabel(ylabel)
 
@@ -404,3 +426,15 @@ def plot_writer_data(
         plt.gcf().savefig(savefig_fname)
 
     return data
+
+
+# https://stackoverflow.com/questions/42281844/what-is-the-mathematics-behind-the-smoothing-parameter-in-tensorboards-scalar#_=_
+def smooth(scalars, weight):  # Weight between 0 and 1
+    last = scalars[0]  # First value in the plot (first timestep)
+    smoothed = list()
+    for point in scalars:
+        smoothed_val = last * weight + (1 - weight) * point  # Calculate smoothed value
+        smoothed.append(smoothed_val)  # Save it
+        last = smoothed_val  # Anchor the last smoothed value
+
+    return smoothed
