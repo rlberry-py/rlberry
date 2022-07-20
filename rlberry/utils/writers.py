@@ -307,7 +307,9 @@ class DefaultWriter:
 
                 data_message = df.to_string(index=False, justify="center").split("\n")
 
-                if len(data_message[0]) < size_term - 14:
+                if (len(data_message[0]) < size_term - 14) and (
+                    len(data_message[1]) < size_term - 14
+                ):
                     message = data_message[0].center(size_term - 14).rstrip() + "\n"
                     message += (
                         " " * 14 + data_message[1].center(size_term - 14).rstrip()
