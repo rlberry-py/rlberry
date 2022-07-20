@@ -1,5 +1,3 @@
-import logging
-
 import numpy as np
 from rlberry.utils.jit_setup import numba_jit
 
@@ -11,7 +9,9 @@ from rlberry.utils.metrics import metric_lp
 from rlberry.agents.kernel_based.kernels import kernel_func
 from rlberry.agents.kernel_based.common import map_to_representative
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 @numba_jit

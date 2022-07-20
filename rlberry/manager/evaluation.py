@@ -1,4 +1,3 @@
-import logging
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -10,7 +9,9 @@ from itertools import cycle
 from rlberry.manager import AgentManager
 
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 def evaluate_agents(

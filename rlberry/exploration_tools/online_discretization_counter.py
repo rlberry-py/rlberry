@@ -1,4 +1,3 @@
-import logging
 import numpy as np
 from rlberry.utils.jit_setup import numba_jit
 from rlberry.exploration_tools.uncertainty_estimator import UncertaintyEstimator
@@ -6,7 +5,9 @@ from rlberry.exploration_tools.typing import preprocess_args
 from gym.spaces import Box, Discrete
 from rlberry.utils.metrics import metric_lp
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 @numba_jit

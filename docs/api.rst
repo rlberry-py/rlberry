@@ -176,6 +176,15 @@ Check Utilities
    utils.check_seeding_agent
    utils.check_agent_manager
 
+Logging Utilities
+-----------------
+
+.. autosummary::
+   :toctree: generated/
+   :template: function.rst
+
+   utils.logging.set_level
+
 
 Typing
 ------

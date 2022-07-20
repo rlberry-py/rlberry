@@ -29,7 +29,7 @@ import functools
 import haiku as hk
 import jax
 import jax.numpy as jnp
-import logging
+
 import numpy as np
 import optax
 import dill
@@ -43,7 +43,9 @@ from rlberry.agents import AgentWithSimplePolicy
 from rlberry.agents.jax.utils.replay_buffer import ReplayBuffer
 from typing import Any, Callable, Mapping, Optional
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 @chex.dataclass

@@ -1,6 +1,6 @@
 import matplotlib
 import numpy as np
-import logging
+
 import matplotlib.pyplot as plt
 from matplotlib import cm
 
@@ -10,7 +10,9 @@ from rlberry.rendering import Scene, GeometricPrimitive, RenderInterface2D
 from rlberry.rendering.common_shapes import circle_shape
 
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 class GridWorld(RenderInterface2D, FiniteMDP):

@@ -1,7 +1,7 @@
 import base64
 import dill
 import io
-import logging
+
 import pandas as pd
 import pathlib
 import pickle
@@ -11,7 +11,9 @@ from rlberry.network import interface
 from rlberry.network.client import BerryClient
 
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 class RemoteAgentManager:

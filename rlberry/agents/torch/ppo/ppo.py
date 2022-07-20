@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 import torch.nn as nn
-import logging
+
 
 import gym.spaces as spaces
 from rlberry.agents import AgentWithSimplePolicy
@@ -18,7 +18,9 @@ from rlberry.utils.factory import load
 # from rlberry.envs import gym_make
 
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 class PPOAgent(AgentWithSimplePolicy):

@@ -1,4 +1,3 @@
-import logging
 import numpy as np
 
 import gym.spaces as spaces
@@ -14,7 +13,9 @@ from rlberry.agents.dynprog.utils import (
 )
 from rlberry.agents.dynprog.utils import backward_induction_in_place
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 class UCBVIAgent(AgentWithSimplePolicy):

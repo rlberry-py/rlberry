@@ -1,4 +1,3 @@
-import logging
 import numpy as np
 
 import gym.spaces as spaces
@@ -9,7 +8,9 @@ from rlberry.agents.dynprog.utils import (
     backward_induction_sd,
 )
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 class PSRLAgent(AgentWithSimplePolicy):

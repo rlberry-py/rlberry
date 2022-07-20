@@ -1,11 +1,12 @@
-import logging
 import numpy as np
 import rlberry.spaces as spaces
 from rlberry.envs import Model
 from rlberry.rendering import Scene, GeometricPrimitive, RenderInterface2D
 from rlberry.rendering.common_shapes import circle_shape
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 class TwinRooms(RenderInterface2D, Model):

@@ -1,11 +1,13 @@
 from collections import deque
-import logging
+
 
 from rlberry.envs.interface import Model
 import rlberry.spaces as spaces
 
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 class Bandit(Model):

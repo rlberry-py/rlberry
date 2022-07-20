@@ -4,10 +4,12 @@ Code for 2D rendering, using pygame (without OpenGL)
 
 import numpy as np
 from os import environ
-import logging
+
 from rlberry.rendering import Scene
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "1"
 

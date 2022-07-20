@@ -35,10 +35,8 @@ try:
 except Exception:
     _OPTUNA_INSTALLED = False
 
-logger = logging.getLogger(__name__)
+logger = rlberry.logger
 
-
-#
 # Aux
 #
 
@@ -203,8 +201,9 @@ class AgentManager:
         Warning: If you're using JAX or PyTorch, it only works with 'spawn'.
                  If running code on a notebook or interpreter, use 'fork'.
                  forkserver and fork are available on Unix OS only.
-        worker_logging_level : str, default: 'INFO'
-        Logging level in each of the threads/processes used to fit agents.
+        worker_logging_level : str, default: None
+            Logging level in each of the threads/processes used to fit agents.
+            If None, use default logger level.
     seed : :class:`numpy.random.SeedSequence`, :class:`~rlberry.seeding.seeder.Seeder` or int, default : None
         Seed sequence from which to spawn the random number generator.
         If None, generate random seed.
@@ -251,7 +250,7 @@ class AgentManager:
         parallelization="thread",
         max_workers=None,
         mp_context="spawn",
-        worker_logging_level="INFO",
+        worker_logging_level=None,
         seed=None,
         enable_tensorboard=False,
         outdir_id_style="timestamp",
@@ -324,7 +323,9 @@ class AgentManager:
         self.parallelization = parallelization
         self.max_workers = max_workers
         self.mp_context = mp_context
-        self.worker_logging_level = worker_logging_level
+        self.worker_logging_level = worker_logging_level or logging.getLevelName(
+            logger.getEffectiveLevel()
+        )
         self.output_dir = output_dir
         if fit_budget is not None:
             self.fit_budget = fit_budget
@@ -522,6 +523,17 @@ class AgentManager:
         if not n_simulations:
             n_simulations = 2 * self.n_fit
         values = []
+
+        if verbose:
+            if logger.getEffectiveLevel() > 10:
+                previous_handlers = logger.handlers
+                ch = logging.StreamHandler()
+                ch.terminator = ""
+                formatter = logging.Formatter("%(message)s")
+                ch.setFormatter(formatter)
+                logger.handlers = [ch]
+                logger.info("[INFO] Evaluation:")
+
         for ii in range(n_simulations):
             if agent_id is None:
                 # randomly choose one of the fitted agents
@@ -537,7 +549,15 @@ class AgentManager:
                 return []
             values.append(agent.eval(**eval_kwargs))
             if verbose:
-                logger.info(f"[eval]... simulation {ii + 1}/{n_simulations}")
+                if logger.getEffectiveLevel() <= 10:  # If debug
+                    logger.debug(f"[eval]... simulation {ii + 1}/{n_simulations}")
+                else:
+                    logger.info(".")
+        if verbose:
+            if logger.getEffectiveLevel() > 10:
+                logger.info("  Evaluation finished \n")
+                logger.handlers = previous_handlers
+
         return values
 
     def clear_output_dir(self):
