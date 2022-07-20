@@ -295,7 +295,8 @@ def plot_writer_data(
     title=None,
     savefig_fname=None,
     sns_kwargs=None,
-    smooth_weight=0.0,
+    smooth_weight=0.09,
+    plot_raw_curves=True,
 ):
     """
     Given a list of AgentManager or a folder, plot data (corresponding to info) obtained in each episode.
@@ -343,10 +344,11 @@ def plot_writer_data(
         the figure is not saved.
     sns_kwargs: dict
         Optional extra params for seaborn lineplot.
-
     smooth_weight: float in [0,1], default=0.9
         Apply smoothing tensorboard-style to the plots with parameter smooth_weight.
         Only applied if there is one simulation only.
+    plot_raw_curves: bool, default=True
+        If True and if the curves are smoothed, plot also the unsmoothed curves.
 
     Returns
     -------
@@ -405,15 +407,15 @@ def plot_writer_data(
         return df
 
     if len(data["n_simu"].unique()) == 1:
-        sns.lineplot(x=xx, y="value", hue="name", data=data, ax=ax, alpha=0.3)
+        legends = []
+        if plot_raw_curves:
+            sns.lineplot(x=xx, y="value", hue="name", data=data, ax=ax, alpha=0.3)
+            legends += ["raw " + str(n) for n in data["name"].unique()]
         data = data.groupby(["name"]).apply(_smooth)
         lineplot_kwargs = dict(x=xx, y="value", hue="name", data=data, ax=ax)
         lineplot_kwargs.update(sns_kwargs)
         sns.lineplot(**lineplot_kwargs)
-        ax.legend(
-            ["raw " + str(n) for n in data["name"].unique()]
-            + ["smoothed " + str(n) for n in data["name"].unique()]
-        )
+        ax.legend(legends + ["smoothed " + str(n) for n in data["name"].unique()])
     else:
         lineplot_kwargs = dict(x=xx, y="value", hue="name", data=data, ax=ax, ci="sd")
         lineplot_kwargs.update(sns_kwargs)
