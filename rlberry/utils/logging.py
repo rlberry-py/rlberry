@@ -44,7 +44,7 @@ class ColoredFormatter(logging.Formatter):
 
     def format(self, record):
         log_fmt = self.FORMATS.get(record.levelno)
-        formatter = logging.Formatter(log_fmt, datefmt="%H:%M:%S")
+        formatter = logging.Formatter(log_fmt, datefmt="%H:%M")
         return formatter.format(record)
 
 
@@ -68,7 +68,7 @@ def configure_logging(
     default_msg
         Message to append to the beginning all logs (e.g. thread id).
     """
-    standard_msg_fmt = default_msg + "[%(levelname)s] %(asctime)s : %(message)s "
+    standard_msg_fmt = default_msg + "[%(levelname)s] %(asctime)s: %(message)s "
     config = {
         "version": 1,
         "disable_existing_loggers": False,

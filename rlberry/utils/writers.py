@@ -306,13 +306,13 @@ class DefaultWriter:
                 df["max_global_step"] = [max_global_step]
 
                 data_message = df.to_string(index=False, justify="center").split("\n")
-                if len(data_message[0]) < size_term:
-                    message = data_message[0].center(shutil.get_terminal_size().columns)
+
+                if len(data_message[0]) < size_term - 14:
+                    message = data_message[0].center(size_term - 14).rstrip() + "\n"
                     message += (
-                        data_message[1]
-                        .center(shutil.get_terminal_size().columns)
-                        .rstrip()
+                        " " * 14 + data_message[1].center(size_term - 14).rstrip()
                     )
+                    # The -14 comes from the info  message
                 else:
                     self._style_log = "one_line"
             if self._style_log == "one_line":
