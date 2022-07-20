@@ -295,7 +295,7 @@ def plot_writer_data(
     title=None,
     savefig_fname=None,
     sns_kwargs=None,
-    smooth_weight=0.9,
+    smooth_weight=0.0,
 ):
     """
     Given a list of AgentManager or a folder, plot data (corresponding to info) obtained in each episode.
@@ -405,13 +405,15 @@ def plot_writer_data(
         return df
 
     if len(data["n_simu"].unique()) == 1:
-        sns.lineplot(
-            x=xx, y="value", hue="name", data=data, ax=ax, alpha=0.3, legend=False
-        )
+        sns.lineplot(x=xx, y="value", hue="name", data=data, ax=ax, alpha=0.3)
         data = data.groupby(["name"]).apply(_smooth)
         lineplot_kwargs = dict(x=xx, y="value", hue="name", data=data, ax=ax)
         lineplot_kwargs.update(sns_kwargs)
         sns.lineplot(**lineplot_kwargs)
+        ax.legend(
+            ["raw " + str(n) for n in data["name"].unique()]
+            + ["smoothed " + str(n) for n in data["name"].unique()]
+        )
     else:
         lineplot_kwargs = dict(x=xx, y="value", hue="name", data=data, ax=ax, ci="sd")
         lineplot_kwargs.update(sns_kwargs)
