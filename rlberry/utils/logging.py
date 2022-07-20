@@ -69,6 +69,7 @@ def configure_logging(
         Message to append to the beginning all logs (e.g. thread id).
     """
     standard_msg_fmt = default_msg + "[%(levelname)s] %(asctime)s: %(message)s "
+    # WARNING : if this standard message is changed, then the multi_line writer log style will bugg.
     config = {
         "version": 1,
         "disable_existing_loggers": False,
