@@ -107,3 +107,13 @@ def test_plot_writer_data_with_directory_input(outdir_id_style):
         )
 
         assert np.all(output.shape == output_with_list_dirs.shape)
+
+        output = plot_writer_data(
+            data_source,
+            tag="reward",
+            xtag="dw_time_elapsed",
+            preprocess_func=_compute_reward,
+            title="Cumulative Reward",
+            show=False,
+            savefig_fname=tmpdirname + "/test.png",
+        )
