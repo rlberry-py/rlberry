@@ -420,6 +420,7 @@ def plot_writer_data(
     >>>          ) for agent_class in [A2CAgent, DQNAgent]]
     >>>     for manager in managers:
     >>>         manager.fit()
+    >>>     # We have only one seed (n_fit=1) hence the curves are automatically smoothed
     >>>     data = plot_writer_data(managers, "episode_rewards", smooth_weight=0.95)
     """
     sns_kwargs = sns_kwargs or {}
