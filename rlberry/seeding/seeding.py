@@ -18,6 +18,11 @@ def set_external_seed(seeder):
     ---------
     seeder: seeding.Seeder or int
         Integer or Seeder object from which to generate random seeds.
+
+    Examples
+    --------
+    >>> from rlberry.seeding import set_external_seed
+    >>> set_external_seed(seeder)
     """
     if np.issubdtype(type(seeder), np.integer):
         seeder = Seeder(seeder)
@@ -47,6 +52,7 @@ def safe_reseed(obj, seeder, reseed_spaces=True):
     Returns
     -------
     True if reseeding was done, False otherwise.
+
     """
     reseeded = False
     try:

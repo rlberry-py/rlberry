@@ -8,32 +8,41 @@ class Seeder:
     See also:
     https://numpy.org/doc/stable/reference/random/bit_generators/generated/numpy.random.SeedSequence.html
 
+    Parameters
+    ----------
+    seed_seq : np.random.SeedSequence, rlberry.seeding.Seeder or int, default : None
+        Seed sequence from which to spawn the random number generator.
+        If None, generate random seed.
+        If int, use as entropy for SeedSequence.
+        If seeder, use seeder.seed_seq
+    spawn_seed_seq : bool, default : True
+        If True, uses seed_seq to spawn a new seed sequence (strongly recommended) for the Seeder.
+        If False, uses the input seed_seq to define the Seeder.
+        Warning: Setting to false can lead to unexpected behavior. This argument is only used internally
+        in rlberry, in Seeder.spawn(), to avoid unnecessary spawning.
+
     Attributes
     ----------
     rng : numpy.random._generator.Generator
         random number generator provided by rlberry.seeding
 
-    Methods
-    -------
-    reseed()
-        get new random number generator
+    Examples
+    --------
+    >>> from rlberry.seeding import Seeder
+    >>> from rlberry.envs import gym_make
+    >>> from rlberry.agents import RSUCBVIAgent
+    >>>
+    >>> seeder = Seeder(123)
+    >>> seeder.rng.integers(5)
+    >>>
+    >>> env = gym_make('MountainCar-v0')
+    >>> env.reseed(seeder)
+    >>> agent = RSUCBVIAgent(env)
+    >>> agent.reseed(seeder)
+
     """
 
     def __init__(self, seed_seq=None, spawn_seed_seq=True):
-        """
-        Parameters
-        ----------
-        seed_seq : np.random.SeedSequence, rlberry.seeding.Seeder or int, default : None
-            Seed sequence from which to spawn the random number generator.
-            If None, generate random seed.
-            If int, use as entropy for SeedSequence.
-            If seeder, use seeder.seed_seq
-        spawn_seed_seq : bool, default : True
-            If True, uses seed_seq to spawn a new seed sequence (strongly recommended) for the Seeder.
-            If False, uses the input seed_seq to define the Seeder.
-            Warning: Setting to false can lead to unexpected behavior. This argument is only used internally
-            in rlberry, in Seeder.spawn(), to avoid unnecessary spawning.
-        """
         super().__init__()
         if seed_seq is None:
             seed_seq = SeedSequence()

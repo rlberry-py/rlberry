@@ -33,14 +33,14 @@ import jax.numpy as jnp
 import numpy as np
 import optax
 import dill
-import rlberry.agents.jax.nets.common as nets
+import rlberry.agents.experimental.jax.nets.common as nets
 import rlax
 
 from gym import spaces
 from pathlib import Path
 from rlberry import types
 from rlberry.agents import AgentWithSimplePolicy
-from rlberry.agents.jax.utils.replay_buffer import ReplayBuffer
+from rlberry.agents.experimental.jax.utils.replay_buffer import ReplayBuffer
 from typing import Any, Callable, Mapping, Optional
 
 import rlberry

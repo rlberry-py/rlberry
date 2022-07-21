@@ -438,6 +438,23 @@ class AgentWithSimplePolicy(Agent):
     unique_id : str
         Unique identifier for the agent instance. Can be used, for example,
         to create files/directories for the agent to log data safely.
+
+    Examples
+    --------
+    >>> class RandomAgent(AgentWithSimplePolicy):
+    >>>     name = "RandomAgent"
+    >>>
+    >>>     def __init__(self, env, **kwargs):
+    >>>         AgentWithSimplePolicy.__init__(self, env, **kwargs)
+    >>>
+    >>>         def fit(self, budget=100, **kwargs):
+    >>>             observation = self.env.reset()
+    >>>             for ep in range(budget):
+    >>>                 action = self.policy(observation)
+    >>>                 observation, reward, done, _ = self.env.step(action)
+    >>>
+    >>>         def policy(self, observation):
+    >>>             return self.env.action_space.sample()  # choose an action at random
     """
 
     @abstractmethod

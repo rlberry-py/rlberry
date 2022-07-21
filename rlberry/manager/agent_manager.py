@@ -233,6 +233,22 @@ class AgentManager:
     ----------
     output_dir : :class:`pathlib.Path`
         Directory where the manager saves data.
+
+    Examples
+    --------
+    >>> from rlberry.agents.torch import A2CAgent
+    >>> from rlberry.envs import gym_make
+    >>> from rlberry.manager import AgentManager
+    >>> manager = AgentManager(
+    >>>      A2CAgent,
+    >>>      (env_ctor, env_kwargs),
+    >>>      fit_budget=100,
+    >>>      eval_kwargs=dict(eval_horizon=500)
+    >>>      n_fit=1,
+    >>>      parallelization="spawn"
+    >>>    )
+    >>>    if __name__ == '__main__':
+    >>>        manager.fit(1e4)
     """
 
     def __init__(

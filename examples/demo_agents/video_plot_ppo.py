@@ -16,12 +16,10 @@ from rlberry.envs.benchmarks.ball_exploration import PBall2D
 
 
 env = PBall2D()
-n_episodes = 200
+n_steps = 3e3
 
-agent = PPOAgent(
-    env, n_steps=256, gamma=0.99, learning_rate=0.001, eps_clip=0.2, k_epochs=4
-)
-agent.fit(budget=n_episodes)
+agent = PPOAgent(env)
+agent.fit(budget=n_steps)
 
 env.enable_rendering()
 state = env.reset()
