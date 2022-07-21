@@ -7,7 +7,7 @@ from pathlib import Path
 
 from rlberry.wrappers import WriterWrapper
 from rlberry.envs import GridWorld
-from rlberry.manager import plot_writer_data, AgentManager
+from rlberry.manager import plot_writer_data, AgentManager, read_writer_data
 from rlberry.agents import UCBVIAgent
 
 
@@ -117,3 +117,4 @@ def test_plot_writer_data_with_directory_input(outdir_id_style):
             show=False,
             savefig_fname=tmpdirname + "/test.png",
         )
+        output = read_writer_data(data_source)
