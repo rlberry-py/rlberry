@@ -46,6 +46,28 @@ def evaluate_agents(
     Returns
     -------
     dataframe with the evaluation results.
+
+    Examples
+    --------
+    >>> from rlberry.agents.torch import A2CAgent, DQNAgent
+    >>> from rlberry.manager import AgentManager, evaluate_agents
+    >>> from rlberry.envs import gym_make
+    >>>
+    >>> if __name__=="__main__":
+    >>>     managers = [ AgentManager(
+    >>>         agent_class,
+    >>>         (gym_make, dict(id="CartPole-v1")),
+    >>>         fit_budget=1e4,
+    >>>         eval_kwargs=dict(eval_horizon=500),
+    >>>         n_fit=1,
+    >>>         parallelization="process",
+    >>>         mp_context="spawn",
+    >>>         seed=42,
+    >>>          ) for agent_class in [A2CAgent, DQNAgent]]
+    >>>     for manager in managers:
+    >>>         manager.fit()
+    >>>     data = evaluate_agents(managers, n_simulations=50, plot=False)
+
     """
     sns_kwargs = sns_kwargs or {}
 
@@ -107,7 +129,7 @@ def evaluate_agents(
     return output
 
 
-def read_writer_data(data_source, tag, preprocess_func=None, id_agent=None):
+def read_writer_data(data_source, tag=None, preprocess_func=None, id_agent=None):
     """
     Given a list of AgentManager or a folder, read data (corresponding to info) obtained in each episode.
     The dictionary returned by agents' .fit() method must contain a key equal to `info`.
@@ -129,7 +151,7 @@ def read_writer_data(data_source, tag, preprocess_func=None, id_agent=None):
         Note: the agent's save function must save its writer at the key `_writer`.
         This is the default for rlberry agents.
 
-    tag :  str or list of str
+    tag :  str or list of str or None
         Tag of data that we want to preprocess.
 
     preprocess_func: Callable or None or list of Callable or None
@@ -146,6 +168,27 @@ def read_writer_data(data_source, tag, preprocess_func=None, id_agent=None):
     Returns
     -------
     Pandas DataFrame with data from writers.
+
+    Examples
+    --------
+    >>> from rlberry.agents.torch import A2CAgent, DQNAgent
+    >>> from rlberry.manager import AgentManager, read_writer_data
+    >>> from rlberry.envs import gym_make
+    >>>
+    >>> if __name__=="__main__":
+    >>>     managers = [ AgentManager(
+    >>>         agent_class,
+    >>>         (gym_make, dict(id="CartPole-v1")),
+    >>>         fit_budget=1e4,
+    >>>         eval_kwargs=dict(eval_horizon=500),
+    >>>         n_fit=1,
+    >>>         parallelization="process",
+    >>>         mp_context="spawn",
+    >>>         seed=42,
+    >>>          ) for agent_class in [A2CAgent, DQNAgent]]
+    >>>     for manager in managers:
+    >>>         manager.fit()
+    >>>     data = read_writer_data(managers)
     """
     input_dir = None
 
@@ -172,7 +215,7 @@ def read_writer_data(data_source, tag, preprocess_func=None, id_agent=None):
     if isinstance(tag, str):
         tags = [tag]
         preprocess_funcs = [preprocess_func or (lambda x: x)]
-    else:
+    elif tag is not None:
         tags = tag
         if preprocess_func is None:
             preprocess_funcs = [lambda x: x for _ in range(len(tags))]
@@ -209,6 +252,9 @@ def read_writer_data(data_source, tag, preprocess_func=None, id_agent=None):
         writer_data = writer_datas[id_agent]
         if writer_data is not None:
             for idx in writer_data:
+                if tag is None:
+                    tags = list(writer_data[idx]["tag"].unique())
+                    preprocess_funcs = [lambda x: x for _ in range(len(tags))]
                 for id_tag, tag in enumerate(tags):
                     df = writer_data[idx]
                     processed_df = pd.DataFrame(df[df["tag"] == tag])
@@ -354,6 +400,28 @@ def plot_writer_data(
     Returns
     -------
     Pandas DataFrame with processed data used by seaborn's lineplot.
+
+    Examples
+    --------
+    >>> from rlberry.agents.torch import A2CAgent, DQNAgent
+    >>> from rlberry.manager import AgentManager, plot_writer_data
+    >>> from rlberry.envs import gym_make
+    >>>
+    >>> if __name__=="__main__":
+    >>>     managers = [ AgentManager(
+    >>>         agent_class,
+    >>>         (gym_make, dict(id="CartPole-v1")),
+    >>>         fit_budget=4e4,
+    >>>         eval_kwargs=dict(eval_horizon=500),
+    >>>         n_fit=1,
+    >>>         parallelization="process",
+    >>>         mp_context="spawn",
+    >>>         seed=42,
+    >>>          ) for agent_class in [A2CAgent, DQNAgent]]
+    >>>     for manager in managers:
+    >>>         manager.fit()
+    >>>     # We have only one seed (n_fit=1) hence the curves are automatically smoothed
+    >>>     data = plot_writer_data(managers, "episode_rewards", smooth_weight=0.95)
     """
     sns_kwargs = sns_kwargs or {}
 

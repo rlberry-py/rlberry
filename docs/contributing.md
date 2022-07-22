@@ -143,13 +143,13 @@ Infos, errors and warnings are printed using the `logging` library.
 
 * `logger.info()`, `logger.warning()` and `logger.error()` should be used inside the `rlberry` package, rather
   than `print()`.
-* The desired level of verbosity can be chosen by calling `configure_logging`, e.g.:
+* The desired level of verbosity can be chosen by calling `set_level`, e.g.:
 
 ```python
-from rlberry.utils.logging import configure_logging
+from rlberry.utils.logging import set_level
 
-configure_logging(level="DEBUG")
-configure_logging(level="INFO")
+set_level(level="DEBUG")
+set_level(level="INFO")
 # etc
 ```
 

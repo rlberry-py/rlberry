@@ -4,6 +4,31 @@ rlberry API
 
 .. currentmodule:: rlberry
 
+Manager
+====================
+
+Main classes
+--------------------
+
+.. autosummary::
+  :toctree: generated/
+  :template: class.rst
+
+
+    manager.AgentManager
+    manager.MultipleManagers
+
+Evaluation and plot
+--------------------
+
+.. autosummary::
+   :toctree: generated/
+   :template: function.rst
+
+   manager.evaluate_agents
+   manager.read_writer_data
+   manager.plot_writer_data
+
 
 Agents
 ====================
@@ -74,31 +99,6 @@ Experimental Jax Agents
 
 Still experimental. Look at the source of `rlberry.agents.experimental.jax` for more info.
 
-Manager
-====================
-
-Main classes
---------------------
-
-.. autosummary::
-  :toctree: generated/
-  :template: class.rst
-
-
-    manager.AgentManager
-    manager.MultipleManagers
-
-Evaluation and plot
---------------------
-
-.. autosummary::
-   :toctree: generated/
-   :template: function.rst
-
-   manager.evaluate_agents
-   manager.read_writer_data
-   manager.plot_writer_data
-
 
 Environments
 ============
@@ -111,6 +111,20 @@ Base class
     :template: class.rst
 
     envs.interface.Model
+
+Spaces
+------
+
+.. autosummary::
+    :toctree: generated/
+    :template: class.rst
+
+    spaces.Discrete
+    spaces.Box
+    spaces.Tuple
+    spaces.MultiDiscrete
+    spaces.MultiBinary
+    spaces.Dict
 
 Benchmark Environments
 ----------------------
@@ -148,6 +162,12 @@ Seeding
 
    seeding.seeder.Seeder
 
+.. autosummary::
+   :toctree: generated/
+   :template: function.rst
+
+   seeding.safe_reseed
+   seeding.set_external_seed
 
 Utilities, Logging & Typing
 ===========================
@@ -239,8 +259,8 @@ Torch
 Bandits
 =======
 
-Environments
-------------
+Bandit environments
+-------------------
 
 .. autosummary::
    :toctree: generated/
@@ -273,18 +293,18 @@ Some general class of bandit algorithms are provided.
    agents.bandits.RandomizedAgent
    agents.bandits.TSAgent
 
-   A number of indices are provided to use in bandits algorithms:
+A number of indices are provided to use in bandits algorithms:
 
-   .. autosummary::
-      :toctree: generated/
-      :template: function.rst
+.. autosummary::
+  :toctree: generated/
+  :template: function.rst
 
-      agents.bandits.makeBoundedIMEDIndex
-      agents.bandits.makeBoundedMOSSIndex
-      agents.bandits.makeBoundedNPTSIndex
-      agents.bandits.makeBoundedUCBIndex
-      agents.bandits.makeBoundedUCBVIndex
-      agents.bandits.makeETCIndex
-      agents.bandits.makeEXP3Index
-      agents.bandits.makeSubgaussianMOSSIndex
-      agents.bandits.makeSubgaussianUCBIndex
+  agents.bandits.makeBoundedIMEDIndex
+  agents.bandits.makeBoundedMOSSIndex
+  agents.bandits.makeBoundedNPTSIndex
+  agents.bandits.makeBoundedUCBIndex
+  agents.bandits.makeBoundedUCBVIndex
+  agents.bandits.makeETCIndex
+  agents.bandits.makeEXP3Index
+  agents.bandits.makeSubgaussianMOSSIndex
+  agents.bandits.makeSubgaussianUCBIndex

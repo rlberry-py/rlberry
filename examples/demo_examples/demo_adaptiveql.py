@@ -1,6 +1,6 @@
-""" 
- ===================== 
- Demo: demo_adaptiveql 
+"""
+ =====================
+ Demo: demo_adaptiveql
  =====================
 """
 import numpy as np
@@ -14,7 +14,6 @@ from rlberry.manager import (
     evaluate_agents,
 )
 import matplotlib.pyplot as plt
-
 
 if __name__ == "__main__":
     env = (get_benchmark_env, dict(level=2))

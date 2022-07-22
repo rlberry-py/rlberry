@@ -1,9 +1,9 @@
 """
 .. _dqn_example:
 
- =====================
- Demo: demo_dqn_lambda
- =====================
+=====================
+Demo: demo_dqn_lambda
+=====================
 """
 
 from rlberry.agents.torch import DQNAgent
