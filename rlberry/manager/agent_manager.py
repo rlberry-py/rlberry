@@ -767,14 +767,15 @@ class AgentManager:
                     workers_output.append(future.result())
                 executor.shutdown()
 
-            log_queue.put_nowait(None)  # End the queue
-            listener.join()  # Stop the listener
+                log_queue.put_nowait(None)  # End the queue
+                listener.join()  # Stop the listener
 
         workers_output.sort(key=lambda x: x.id)
         self.agent_handlers = workers_output
 
         logger.info("... trained!")
 
+        screen.refresh()
         # gather all stats in a dictionary
         self._gather_default_writer_data()
 
@@ -1423,13 +1424,16 @@ def listener_process(queue, screen, screen_layout, n_fit):
     for process in range(min(3, n_fit)):
         update_screen("msg:Process" + str(process) + headers_msg, screen, screen_layout)
 
-    while True:
+    while queue.get() is not None:
         formatter = logger.handlers[0]
         record = formatter.format(queue.get())
         process, dict_message = _parse_log(record)
-        message = process + ("%15s " * len(headers)) % tuple(
-            [str(dict_message[key]) for key in dict_message]
-        )
+        if process is not None:
+            message = process + ("%15s " * len(headers)) % tuple(
+                [str(dict_message[key]) for key in dict_message]
+            )
+        else:
+            message = dict_message["message"]
         update_screen(message, screen, screen_layout)
 
 
@@ -1455,14 +1459,24 @@ def get_manager():
 
 
 def _parse_log(record):
-    categories = record.strip().split("|")
+    beginning_message = "msg:Process"
+    process = beginning_message + re.search(r"(?<=Process)\w+", record.strip()).group(0)
 
-    # get process name
-    process = "msg:Process" + re.search(r"(?<=Process)\w+", categories[0]).group(0)
-    dict_message = {
-        cat.split("=")[0].strip(): cat.split("=")[1].strip()
-        for cat in categories[1:-1]  # the first and last are styling strings
-    }
+    # Test if this is a process message or not.
+    if len(process) > len(beginning_message):
+        if "|" in record.strip():
+            categories = record.strip().split("|")
+
+            dict_message = {
+                cat.split("=")[0].strip(): cat.split("=")[1].strip()
+                for cat in categories[1:-1]  # the first and last are styling strings
+            }
+        else:
+            process = None
+            dict_message = {"message": record}
+    else:
+        process = None
+        dict_message = {"message": record}
 
     return process, dict_message
 
@@ -1519,14 +1533,17 @@ def wrapper(func, *args, **kwds):
             pass
 
         return func(stdscr, *args, **kwds)
-    finally:
-        # Set everything back to normal
+
+    except KeyboardInterrupt:
+        stdscr.addstr(1, 1, "Press q to quit !")
+        stdscr.move(2, 1)
+        stdscr.refresh()
         while True:
-            stdscr.addstr(1, 1, "Press q to quit")
-            stdscr.refresh()
+
             if stdscr.getch() == ord("q"):
                 break
 
+    finally:
         if "stdscr" in locals():
             stdscr.keypad(0)
             curses.echo()

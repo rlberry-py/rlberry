@@ -18,10 +18,9 @@ import curses
 import itertools
 from time import time
 from time import sleep
-import logging
+import rlberry
 
-
-logger = logging.getLogger(__name__)
+logger = rlberry.logger
 
 
 VALUE_LENGTH = 103
@@ -162,6 +161,14 @@ def initialize_screen(screen, screen_layout):
     set_screen_defaults(screen_layout)
     validate_screen_size(screen, screen_layout)
 
+    process_cols = [
+        screen_layout[category]["position"][1]
+        for category in screen_layout
+        if category[-8:] == "messages"
+    ]
+    y = screen_layout["Process1"]["position"][0]
+    for col in process_cols[1:]:
+        screen.vline(y, col - 1, "|", screen.getmaxyx()[0] - y)
     initialize_colors()
     curses.curs_set(0)
     update_screen_status(screen, "initialize", screen_layout["_screen"])
@@ -200,7 +207,7 @@ def finalize_screen(screen, screen_layout):
             return
 
 
-def get_category_values(message, offset, screen_layout):
+def get_category_values(message, offset, screen_layout, maxy, screen):
     """return list of tuples consisting of categories and their values from screen layout that match message"""
     category_values = []
     for category, data in screen_layout.items():
@@ -225,7 +232,9 @@ def get_category_values(message, offset, screen_layout):
 
                 original_value = value
                 if screen_layout[category].get("keep_count"):
-                    value = get_category_count(category, offset, screen_layout)
+                    value = get_category_count(
+                        category, offset, screen_layout, maxy, screen
+                    )
 
                 if screen_layout[category].get("replace_text"):
                     value = screen_layout[category]["replace_text"]
@@ -346,7 +355,7 @@ def get_category_color(category, message, screen_layout):
     return color
 
 
-def get_category_count(category, offset, screen_layout):
+def get_category_count(category, offset, screen_layout, maxy, screen):
     """return count for category in screen layout"""
     zfill = screen_layout[category].get("zfill", 3)
     if screen_layout[category].get("table"):
@@ -354,6 +363,30 @@ def get_category_count(category, offset, screen_layout):
         return str(screen_layout[category][offset]["_count"]).zfill(zfill)
 
     screen_layout[category]["_count"] += 1
+
+    if (
+        screen_layout[category]["_count"] + screen_layout[category]["position"][0]
+        > maxy - 2
+    ):
+        for f in range(2, screen_layout[category]["_count"]):
+            screen.move(screen_layout[category]["position"][0] + f, 1)
+            screen.clrtoeol()
+        process_cols = [
+            screen_layout[category]["position"][1]
+            for category in screen_layout
+            if category[-8:] == "messages"
+        ]
+        y = screen_layout["Process1"]["position"][0]
+        for col in process_cols[1:]:
+            screen.vline(y, col - 1, "|", screen.getmaxyx()[0] - y)
+        screen.refresh()
+
+        for categorybis in screen_layout:
+            if categorybis[-8:] == "messages":
+                screen_layout[categorybis]["_count"] = 1
+
+        screen_layout[category]["_count"] += 1
+
     return str(screen_layout[category]["_count"]).zfill(zfill)
 
 
@@ -411,19 +444,25 @@ def update_screen(message, screen, screen_layout):
     the category
     """
     offset, sanitized_message = sanitize_message(message)
-    category_values = get_category_values(sanitized_message, offset, screen_layout)
-    try:
-        for (category, value) in category_values:
-            y_pos = get_category_y_pos(category, offset, screen_layout)
-            x_pos = get_category_x_pos(category, offset, screen_layout)
-            color = get_category_color(category, sanitized_message, screen_layout)
-            process_clear(category, y_pos, x_pos, screen_layout, screen)
-            screen.addstr(y_pos, x_pos, value, curses.color_pair(color))
-            process_counter(offset, category, value, screen_layout, screen)
-            screen.refresh()
+    maxy, maxx = screen.getmaxyx()
+    category_values = get_category_values(
+        sanitized_message, offset, screen_layout, maxy, screen
+    )
+    sanitized_message = sanitized_message.strip()
+    if len(sanitized_message) > 0:
+        try:
+            for (category, value) in category_values:
+                y_pos = get_category_y_pos(category, offset, screen_layout)
+                x_pos = get_category_x_pos(category, offset, screen_layout)
+                color = get_category_color(category, sanitized_message, screen_layout)
+                process_clear(category, y_pos, x_pos, screen_layout, screen)
+                screen.addstr(y_pos, x_pos, value, curses.color_pair(color))
+                process_counter(offset, category, value, screen_layout, screen)
 
-    except Exception as exception:  # curses.error as exception:
-        logger.error(f"error occurred when updating screen: {exception}")
+                screen.refresh()
+
+        except Exception as exception:  # curses.error as exception:
+            logger.error(f"error occurred when updating screen: {exception}")
 
 
 def echo_to_screen(screen, data, screen_layout, offset=None):
