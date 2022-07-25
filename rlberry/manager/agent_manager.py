@@ -29,6 +29,20 @@ from rlberry.manager.utils import create_database
 from rlberry import types
 
 
+from .screen import initialize_screen
+from .screen import initialize_screen_offsets
+from .screen import finalize_screen
+from .screen import update_screen
+from .screen import echo_to_screen
+from .screen import refresh_screen
+from .screen import update_screen_status
+from .screen import blink
+
+import re
+import curses
+from io import StringIO
+
+
 _OPTUNA_INSTALLED = True
 try:
     import optuna
@@ -649,6 +663,9 @@ class AgentManager:
         ps.print_stats(20)
 
     def fit(self, budget=None, **kwargs):
+        wrapper(self._fit, budget, **kwargs)
+
+    def _fit(self, screen, budget=None, **kwargs):
         """Fit the agent instances in parallel.
 
         Parameters
@@ -656,9 +673,9 @@ class AgentManager:
         budget: int or None
             Computational or sample complexity budget.
         """
+
         del kwargs
         budget = budget or self.fit_budget
-
         # If spawn, test that protected by if __name__ == "__main__"
         if self.mp_context == "spawn":
             try:
@@ -699,7 +716,10 @@ class AgentManager:
                 concurrent.futures.ProcessPoolExecutor,
                 mp_context=multiprocessing.get_context(self.mp_context),
             )
-            lock = multiprocessing.Manager().Lock()
+            # manager = multiprocessing.Manager()
+            manager = get_manager()
+            lock = manager.Lock()
+            log_queue = manager.Queue()
         else:
             raise ValueError(
                 f"Invalid backend for parallelization: {self.parallelization}"
@@ -726,15 +746,29 @@ class AgentManager:
             workers_output = [_fit_worker(args[0])]
 
         else:
+            initialize_screen(screen, get_screen_layout(self.n_fit))
+            initialize_screen_offsets(
+                screen, get_screen_layout(self.n_fit), self.n_fit, self.n_fit
+            )
+            listener = multiprocessing.Process(
+                target=listener_process,
+                args=(log_queue, screen, get_screen_layout(self.n_fit), self.n_fit),
+            )
+            listener.start()  # Start the listener process
+
             with executor_class(max_workers=self.max_workers) as executor:
                 futures = []
-                for arg in args:
-                    futures.append(executor.submit(_fit_worker, arg))
+
+                for k, arg in enumerate(args):
+                    futures.append(executor.submit(_fit_worker, arg, log_queue, k))
 
                 workers_output = []
                 for future in concurrent.futures.as_completed(futures):
                     workers_output.append(future.result())
                 executor.shutdown()
+
+            log_queue.put_nowait(None)  # End the queue
+            listener.join()  # Stop the listener
 
         workers_output.sort(key=lambda x: x.id)
         self.agent_handlers = workers_output
@@ -1106,7 +1140,7 @@ class AgentManager:
 #
 
 
-def _fit_worker(args):
+def _fit_worker(args, log_queue, id_worker=None):
     """Create and fit an agent instance"""
     (
         lock,
@@ -1122,12 +1156,18 @@ def _fit_worker(args):
 
     # reseed external libraries
     set_external_seed(seeder)
+    configure_logging(worker_logging_level, default_msg="Process" + str(id_worker))
 
     # logging level in thread
-    configure_logging(worker_logging_level)
+    qh = logging.handlers.QueueHandler(log_queue)
+    # root_logger = logging.getLogger("test.log")
+    logger.handlers = [qh]
+
+    # root_logger.setLevel(logging.INFO)
 
     # Using a lock when creating envs and agents, to avoid problems
     # as here: https://github.com/openai/gym/issues/281
+
     with lock:
         if agent_handler.is_empty():
             # create agent
@@ -1276,3 +1316,194 @@ def _strip_seed_dir(dico):
     del res["seeder"]
     del res["output_dir"]
     return res
+
+
+def get_screen_layout(n_fit):
+    screen_layout = {
+        "_screen": {"title": "My cool program", "color": 256},
+        "total": {
+            "position": (1, 9),
+            "text": "Total: 0",
+            "text_color": 0,
+            "color": 1,
+            "regex": r"^(?P<value>\d+) total fits$",
+        },
+        "processed": {
+            "position": (2, 4),
+            "text": "Successful: -",
+            "text_color": 0,
+            "color": 2,
+            "keep_count": True,
+            "regex": r'^item ".*" was processed$',
+            "_count": 0,
+        },
+        # 'warnings': {
+        #     'position': (3, 6),
+        #     'text': 'Warnings: -',
+        #     'text_color': 0,
+        #     'color': 3,
+        #     #'keep_count': True,
+        #     'regex': r'^warning processing item ".*"$'
+        # },
+        # 'errors': {
+        #     'position': (4, 8),
+        #     'text': 'Errors: -',
+        #     'text_color': 0,
+        #     'color': 1,
+        #     #'keep_count': True,
+        #     'regex': r'^error processing item ".*"$'
+        # },
+        "processing": {
+            "position": (5, 4),
+            "text": "Processing: -",
+            "text_color": 0,
+            "color": 14,
+            "clear": True,
+            "regex": r'^processing item "(?P<value>.*)"$',
+        },
+        "processing_done": {
+            "position": (5, 4),
+            "replace_text": " ",
+            "clear": True,
+            "regex": r"^processing complete$",
+        },
+    }
+    for id_n in range(n_fit):
+        screen_layout["Process" + str(id_n)] = {
+            "position": (6, 2 + id_n * 40),
+            "text": "Process " + str(id_n),
+            "color": 1,
+            "text_color": 0,
+        }
+        screen_layout["Process" + str(id_n) + "_messages"] = {
+            "position": (6, 2 + id_n * 40),
+            "list": True,
+            "keep_count": True,
+            "regex": r"^Process" + str(id_n) + "(?P<value>.*)$",
+            "_count": 0,
+        }
+
+    return screen_layout
+
+
+def listener_process(queue, screen, screen_layout, n_fit):
+    """Listener process is a target for a multiprocess process
+    that runs and listens to a queue for logging events.
+
+    Arguments:
+        queue (multiprocessing.manager.Queue): queue to monitor
+        configurer (func): configures loggers
+        log_name (str): name of the log to use
+
+    Returns:
+        None
+    """
+    update_screen(str(n_fit) + " total fits", screen, screen_layout)
+    while True:
+        formatter = logging.Formatter("%(message)s")
+        record = formatter.format(queue.get())
+        message = _parse_log(record)
+        offset = None
+        control = None
+        message = "Process1 haha" + message
+        match = re.match(r"^#(?P<offset>\d+)-(?P<control>DONE|ERROR)$", str(message))
+        if match:
+            offset = int(match.group("offset"))
+            control = match.group("control")
+        message = {"offset": offset, "control": control, "message": message}
+        update_screen(message["message"], screen, screen_layout)
+
+
+from queue import Queue
+from multiprocessing.managers import SyncManager
+from multiprocessing import Process
+
+
+SENTINEL = None
+
+
+class MyQueue(Queue):
+    def get_attribute(self, name):
+        return getattr(self, name)
+
+
+class MyManager(SyncManager):
+    pass
+
+
+def get_manager():
+    MyManager.register("Queue", MyQueue)
+    m = MyManager()
+    m.start()
+    return m
+
+
+def _parse_log(record):
+    categories = record.strip().split("|")[1:]
+    dict_version = {
+        cat.split("=")[0].strip(): cat.split("=")[1].strip()
+        for cat in categories
+        if len(cat) > 2
+    }
+    return dict_version["episode_rewards"]
+
+
+# redirect stdout to logger
+# https://stackoverflow.com/questions/19425736/how-to-redirect-stdout-and-stderr-to-logger-in-python
+class LoggerWriter:
+    def __init__(self, level):
+        self.level = level
+
+    def write(self, message):
+        if message != "\n":
+            self.level(message)
+
+    def flush(self):
+        pass
+
+
+import sys
+
+sys.stdout = LoggerWriter(logger.info)
+# sys.stderr = LoggerWriter(logger.info)
+
+
+def wrapper(func, *args, **kwds):
+    """Wrapper function that initializes curses and calls another function,
+    restoring normal keyboard/screen behavior on error.
+    The callable object 'func' is then passed the main window 'stdscr'
+    as its first argument, followed by any other arguments passed to
+    wrapper().
+    """
+
+    try:
+        # Initialize curses
+        stdscr = curses.initscr()
+
+        # Turn off echoing of keys, and enter cbreak mode,
+        # where no buffering is performed on keyboard input
+        curses.noecho()
+        curses.cbreak()
+
+        # In keypad mode, escape sequences for special keys
+        # (like the cursor keys) will be interpreted and
+        # a special value like curses.KEY_LEFT will be returned
+        stdscr.keypad(1)
+
+        # Start color, too.  Harmless if the terminal doesn't have
+        # color; user can test with has_color() later on.  The try/catch
+        # works around a minor bit of over-conscientiousness in the curses
+        # module -- the error return from C start_color() is ignorable.
+        try:
+            curses.start_color()
+        except:
+            pass
+
+        return func(stdscr, *args, **kwds)
+    finally:
+        # Set everything back to normal
+        if "stdscr" in locals():
+            stdscr.keypad(0)
+            curses.echo()
+            curses.nocbreak()
+            # curses.endwin()  don't flush window to keep all messages.

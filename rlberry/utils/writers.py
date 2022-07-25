@@ -30,8 +30,6 @@ class DefaultWriter:
         If True, print logs to stderr.
     log_interval : int
         Minimum number of seconds between consecutive logs (with logging module).
-    style_log: str
-        Possible values are "multi_line" and "one_line". Define the style of the logs.
     tensorboard_kwargs : Optional[dict]
         Parameters for tensorboard SummaryWriter. If provided, DefaultWriter
         will behave as tensorboard.SummaryWriter, and will keep utilities to handle
@@ -49,7 +47,6 @@ class DefaultWriter:
         self,
         name: str,
         print_log: bool = True,
-        style_log: str = "multi_line",
         log_interval: int = 3,
         tensorboard_kwargs: Optional[dict] = None,
         execution_metadata: Optional[metadata_utils.ExecutionMetadata] = None,
@@ -63,8 +60,6 @@ class DefaultWriter:
         self._data = None
         self._time_last_log = None
         self._log_time = True
-        assert style_log in ["multi_line", "one_line"], "Style log for writer unknown."
-        self._style_log = style_log
         self._maxlen = maxlen
         self._maxlen_by_tag = maxlen_by_tag
         self.reset()
@@ -291,48 +286,18 @@ class DefaultWriter:
         if time_elapsed > self._log_interval:
 
             self._time_last_log = t_now
-            size_term = shutil.get_terminal_size().columns
+            message = ""
+            for tag in self._data:
+                val = self._data[tag]["value"][-1]
+                gstep = self._data[tag]["global_step"][-1]
+                message += f"{tag} = {val} | "
+                if not np.isnan(gstep):
+                    max_global_step = max(max_global_step, gstep)
 
-            if self._style_log == "multi_line":
-                df = pd.DataFrame()
-                df["agent_name"] = [self._name]
-                if self._execution_metadata:
-                    df["worker"] = [self._execution_metadata.obj_worker_id]
-                for tag in self._data:
-                    df[tag] = [np.around(self._data[tag]["value"][-1], 3)]
-                    gstep = self._data[tag]["global_step"][-1]
-                    if not np.isnan(gstep):
-                        max_global_step = max(max_global_step, gstep)
-                df["max_global_step"] = [max_global_step]
-
-                data_message = df.to_string(index=False, justify="center").split("\n")
-
-                if (len(data_message[0]) < size_term - 14) and (
-                    len(data_message[1]) < size_term - 14
-                ):
-                    message = data_message[0].center(size_term - 14).rstrip() + "\n"
-                    message += (
-                        " " * 14 + data_message[1].center(size_term - 14).rstrip()
-                    )
-                    # The -14 comes from the info  message
-                else:
-                    self._style_log = "one_line"
-            if self._style_log == "one_line":
-                self._time_last_log = t_now
-                message = ""
-                for tag in self._data:
-                    val = self._data[tag]["value"][-1]
-                    gstep = self._data[tag]["global_step"][-1]
-                    message += f"{tag} = {val} | "
-                    if not np.isnan(gstep):
-                        max_global_step = max(max_global_step, gstep)
-
-                header = self._name
-                if self._execution_metadata:
-                    header += f"[worker: {self._execution_metadata.obj_worker_id}]"
-                message = (
-                    f"[{header}] | max_global_step = {max_global_step} | " + message
-                )
+            header = self._name
+            if self._execution_metadata:
+                header += f"[worker: {self._execution_metadata.obj_worker_id}]"
+            message = f"[{header}] | max_global_step = {max_global_step} | " + message
 
             logger.info(message)
 
