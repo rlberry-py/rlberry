@@ -176,7 +176,7 @@ def initialize_screen_offsets(screen, screen_layout, offsets, processes_to_start
 
     for category, data in screen_layout.items():
         if category == "_counter_":
-            _initialize_counter(offsets, screen_layout)
+            initialize_counter(offsets, screen_layout)
         if data.get("text"):
             initialize_text(offsets, category, screen_layout, screen)
         if data.get("list") and not data.get("keep_count"):
@@ -302,10 +302,16 @@ def process_counter(offset, category, value, screen_layout, screen):
                 screen_layout["_counter_"][offset]["_modulus_count"] += 1
                 x_pos = x_pos + 1 if "regex" in screen_layout["_counter_"] else x_pos
                 screen.addstr(y_pos, x_pos, counter_value, curses.color_pair(color))
+                screen.addstr(y_pos, position[1] - 1, "[", curses.color_pair(0))
+                screen.addstr(
+                    y_pos,
+                    position[1] + screen_layout["_counter_"].get("width") + 1,
+                    "]",
+                    curses.color_pair(0),
+                )
         else:
             # increments the counter
             if screen_layout["_counter_"].get("width"):
-                # width and modulus are mutually exclusive
                 width = screen_layout["_counter_"]["width"]
                 count = screen_layout["_counter_"][offset]["_count"]
                 if count % width == 0:
@@ -315,6 +321,7 @@ def process_counter(offset, category, value, screen_layout, screen):
                     )
                     screen_layout["_counter_"][offset]["_count"] = 0
             screen.addstr(y_pos, x_pos, counter_value, curses.color_pair(color))
+
     elif category == "_counter_":
         # regex infers progress bar
         # this sets up the progress bar boundary

@@ -746,13 +746,13 @@ class AgentManager:
             workers_output = [_fit_worker(args[0])]
 
         else:
-            initialize_screen(screen, get_screen_layout(self.n_fit))
-            initialize_screen_offsets(
-                screen, get_screen_layout(self.n_fit), self.n_fit, self.n_fit
-            )
+            (y, x) = screen.getmaxyx()
+            screen_layout = get_screen_layout(self.n_fit, (y, x))
+            initialize_screen(screen, screen_layout)
+            initialize_screen_offsets(screen, screen_layout, self.n_fit, self.n_fit)
             listener = multiprocessing.Process(
                 target=listener_process,
-                args=(log_queue, screen, get_screen_layout(self.n_fit), self.n_fit),
+                args=(log_queue, screen, screen_layout, self.n_fit),
             )
             listener.start()  # Start the listener process
 
@@ -1156,12 +1156,17 @@ def _fit_worker(args, log_queue, id_worker=None):
 
     # reseed external libraries
     set_external_seed(seeder)
-    configure_logging(worker_logging_level, default_msg="Process" + str(id_worker))
+    configure_logging(worker_logging_level)
 
     # logging level in thread
     qh = logging.handlers.QueueHandler(log_queue)
+    qh.setFormatter(logging.Formatter("msg:Process" + str(id_worker) + "%(message)s"))
+
+    fh = logging.FileHandler("log_rlberry.log")
+    fh.setFormatter(logging.Formatter("%(message)s"))
+
     # root_logger = logging.getLogger("test.log")
-    logger.handlers = [qh]
+    logger.handlers = [qh, fh]
 
     # root_logger.setLevel(logging.INFO)
 
@@ -1199,6 +1204,7 @@ def _fit_worker(args, log_queue, id_worker=None):
 
     # garbage collector
     gc.collect()
+    logger.info(" finished")
 
     return agent_handler
 
@@ -1318,72 +1324,74 @@ def _strip_seed_dir(dico):
     return res
 
 
-def get_screen_layout(n_fit):
+def get_screen_layout(n_fit, maxyx):
+    y, x = maxyx
+    n_cols = min(n_fit, 3)
+    size_col = x // n_cols
+
     screen_layout = {
-        "_screen": {"title": "My cool program", "color": 256},
+        "_screen": {"title": "rlberry_logs", "color": 256},
         "total": {
-            "position": (1, 9),
-            "text": "Total: 0",
-            "text_color": 0,
+            "position": (1, 4),
+            "text": "n_fit: 0",
+            "text_color": 6,
             "color": 1,
-            "regex": r"^(?P<value>\d+) total fits$",
+            "regex": r"^msg:total fits:" + "(?P<value>\d+)$",
         },
-        "processed": {
+        "finished": {
             "position": (2, 4),
-            "text": "Successful: -",
-            "text_color": 0,
-            "color": 2,
+            "text": "fits finished: -",
+            "text_color": 6,
+            "color": 1,
             "keep_count": True,
-            "regex": r'^item ".*" was processed$',
+            "regex": r'^msg:Process".*" finished$',
             "_count": 0,
         },
-        # 'warnings': {
-        #     'position': (3, 6),
-        #     'text': 'Warnings: -',
-        #     'text_color': 0,
-        #     'color': 3,
-        #     #'keep_count': True,
-        #     'regex': r'^warning processing item ".*"$'
-        # },
-        # 'errors': {
-        #     'position': (4, 8),
-        #     'text': 'Errors: -',
-        #     'text_color': 0,
-        #     'color': 1,
-        #     #'keep_count': True,
-        #     'regex': r'^error processing item ".*"$'
-        # },
-        "processing": {
-            "position": (5, 4),
-            "text": "Processing: -",
-            "text_color": 0,
-            "color": 14,
-            "clear": True,
-            "regex": r'^processing item "(?P<value>.*)"$',
-        },
-        "processing_done": {
-            "position": (5, 4),
-            "replace_text": " ",
-            "clear": True,
-            "regex": r"^processing complete$",
-        },
-    }
-    for id_n in range(n_fit):
-        screen_layout["Process" + str(id_n)] = {
-            "position": (6, 2 + id_n * 40),
-            "text": "Process " + str(id_n),
-            "color": 1,
-            "text_color": 0,
-        }
-        screen_layout["Process" + str(id_n) + "_messages"] = {
-            "position": (6, 2 + id_n * 40),
+        "error messages": {
+            "position": (1, 40),
+            "text": "Other messages",
+            "text_color": 6,
             "list": True,
             "keep_count": True,
-            "regex": r"^Process" + str(id_n) + "(?P<value>.*)$",
             "_count": 0,
+            "regex": r"^(?!msg:Process).*" + "(?P<value>.*)$",
+        },
+    }
+    for id_n in range(n_cols):
+        screen_layout["Process" + str(id_n)] = {
+            "position": (7, 2 + id_n * size_col),
+            "text": "Process " + str(id_n),
+            "text_color": 6,
         }
 
+        screen_layout["Process" + str(id_n) + "_messages"] = {
+            "position": (7, 2 + id_n * size_col),
+            "list": True,
+            "keep_count": True,
+            "color": 0,
+            "regex": r"^msg:Process" + str(id_n) + "(?P<value>.*)$",
+            "_count": 0,
+        }
+    screen_layout["progress"] = {
+        "position": (4, 4),
+        "text": "Progress:",
+        "text_color": 6,
+        "color": 1,
+        "regex": r"^(?!.*)",
+    }
+    screen_layout["_counter_"] = {
+        "position": (5, 10),
+        "categories": ["Process" + str(id_n) + "_messages" for id_n in range(n_cols)],
+        "counter_text": "|",
+        "width": 50,
+        "color": 2,
+        "modulus": 2,
+    }
+
     return screen_layout
+
+
+MAX_SIZE_HEADER = 15
 
 
 def listener_process(queue, screen, screen_layout, n_fit):
@@ -1398,28 +1406,36 @@ def listener_process(queue, screen, screen_layout, n_fit):
     Returns:
         None
     """
-    update_screen(str(n_fit) + " total fits", screen, screen_layout)
+    update_screen("msg:total fits:" + str(n_fit), screen, screen_layout)
+    print("test")
+    # get headers
+    formatter = logger.handlers[0]
+    record = formatter.format(queue.get())
+    process, dict_message = _parse_log(record)
+    headers = []
+    for key in dict_message.keys():
+        if len(key) > MAX_SIZE_HEADER:
+            headers.append(key[:MAX_SIZE_HEADER])
+        else:
+            headers.append(key)
+    headers = tuple(headers)
+    headers_msg = ("%15s " * len(headers)) % headers
+    for process in range(min(3, n_fit)):
+        update_screen("msg:Process" + str(process) + headers_msg, screen, screen_layout)
+
     while True:
-        formatter = logging.Formatter("%(message)s")
+        formatter = logger.handlers[0]
         record = formatter.format(queue.get())
-        message = _parse_log(record)
-        offset = None
-        control = None
-        message = "Process1 haha" + message
-        match = re.match(r"^#(?P<offset>\d+)-(?P<control>DONE|ERROR)$", str(message))
-        if match:
-            offset = int(match.group("offset"))
-            control = match.group("control")
-        message = {"offset": offset, "control": control, "message": message}
-        update_screen(message["message"], screen, screen_layout)
+        process, dict_message = _parse_log(record)
+        message = process + ("%15s " * len(headers)) % tuple(
+            [str(dict_message[key]) for key in dict_message]
+        )
+        update_screen(message, screen, screen_layout)
 
 
 from queue import Queue
 from multiprocessing.managers import SyncManager
 from multiprocessing import Process
-
-
-SENTINEL = None
 
 
 class MyQueue(Queue):
@@ -1439,13 +1455,16 @@ def get_manager():
 
 
 def _parse_log(record):
-    categories = record.strip().split("|")[1:]
-    dict_version = {
+    categories = record.strip().split("|")
+
+    # get process name
+    process = "msg:Process" + re.search(r"(?<=Process)\w+", categories[0]).group(0)
+    dict_message = {
         cat.split("=")[0].strip(): cat.split("=")[1].strip()
-        for cat in categories
-        if len(cat) > 2
+        for cat in categories[1:-1]  # the first and last are styling strings
     }
-    return dict_version["episode_rewards"]
+
+    return process, dict_message
 
 
 # redirect stdout to logger
@@ -1502,8 +1521,14 @@ def wrapper(func, *args, **kwds):
         return func(stdscr, *args, **kwds)
     finally:
         # Set everything back to normal
+        while True:
+            stdscr.addstr(1, 1, "Press q to quit")
+            stdscr.refresh()
+            if stdscr.getch() == ord("q"):
+                break
+
         if "stdscr" in locals():
             stdscr.keypad(0)
             curses.echo()
             curses.nocbreak()
-            # curses.endwin()  don't flush window to keep all messages.
+            curses.endwin()  #  don't flush window to keep all messages.
