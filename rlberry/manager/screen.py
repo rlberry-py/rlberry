@@ -158,6 +158,18 @@ def initialize_screen(screen, screen_layout):
     """initialize screen"""
     logger.debug("initializing screen")
 
+    # Make separations between columns
+    process_cols = [
+        screen_layout[category]["position"][1]
+        for category in screen_layout
+        if category[-8:] == "messages"
+    ]
+    y = screen_layout["Process1"]["position"][0]
+    for col in process_cols[1:]:
+        screen.vline(y, col - 1, "|", screen.getmaxyx()[0] - y)
+    screen.refresh()
+    
+
     set_screen_defaults(screen_layout)
     validate_screen_size(screen, screen_layout)
 
@@ -195,16 +207,6 @@ def initialize_screen_offsets(screen, screen_layout, offsets, processes_to_start
     update_screen_status(screen, "process-update", screen_layout["_screen"])
 
 
-def finalize_screen(screen, screen_layout):
-    """finalize screen"""
-    logger.debug("finalizing screen")
-
-    update_screen_status(screen, "finalize", screen_layout["_screen"])
-    while True:
-        char = screen.getch()
-        if char == ord("q"):
-            curses.curs_set(2)
-            return
 
 
 def get_category_values(message, offset, screen_layout, maxy, screen):
@@ -311,13 +313,7 @@ def process_counter(offset, category, value, screen_layout, screen):
                 screen_layout["_counter_"][offset]["_modulus_count"] += 1
                 x_pos = x_pos + 1 if "regex" in screen_layout["_counter_"] else x_pos
                 screen.addstr(y_pos, x_pos, counter_value, curses.color_pair(color))
-                screen.addstr(y_pos, position[1] - 1, "[", curses.color_pair(0))
-                screen.addstr(
-                    y_pos,
-                    position[1] + screen_layout["_counter_"].get("width") + 1,
-                    "]",
-                    curses.color_pair(0),
-                )
+                
         else:
             # increments the counter
             if screen_layout["_counter_"].get("width"):
@@ -355,6 +351,19 @@ def get_category_color(category, message, screen_layout):
     return color
 
 
+def clear_columns(y, screen, screen_layout, maxy):
+    line = y
+    while line < maxy:
+        screen.move(line, 1)
+        screen.clrtoeol()
+        line += 1
+
+    for category in screen_layout:
+        if category[-8:] == "messages":
+            screen_layout[category]["_count"] = 1
+
+
+
 def get_category_count(category, offset, screen_layout, maxy, screen):
     """return count for category in screen layout"""
     zfill = screen_layout[category].get("zfill", 3)
@@ -362,30 +371,15 @@ def get_category_count(category, offset, screen_layout, maxy, screen):
         screen_layout[category][offset]["_count"] += 1
         return str(screen_layout[category][offset]["_count"]).zfill(zfill)
 
-    screen_layout[category]["_count"] += 1
-
     if (
         screen_layout[category]["_count"] + screen_layout[category]["position"][0]
         > maxy - 2
     ):
-        for f in range(2, screen_layout[category]["_count"]):
-            screen.move(screen_layout[category]["position"][0] + f, 1)
-            screen.clrtoeol()
-        process_cols = [
-            screen_layout[category]["position"][1]
-            for category in screen_layout
-            if category[-8:] == "messages"
-        ]
-        y = screen_layout["Process1"]["position"][0]
-        for col in process_cols[1:]:
-            screen.vline(y, col - 1, "|", screen.getmaxyx()[0] - y)
-        screen.refresh()
+        y = screen_layout[category]['position'][0]
+        clear_columns(y, screen, screen_layout, maxy)
+    
+    screen_layout[category]["_count"] += 1
 
-        for categorybis in screen_layout:
-            if categorybis[-8:] == "messages":
-                screen_layout[categorybis]["_count"] = 1
-
-        screen_layout[category]["_count"] += 1
 
     return str(screen_layout[category]["_count"]).zfill(zfill)
 

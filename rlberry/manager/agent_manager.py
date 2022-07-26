@@ -31,12 +31,13 @@ from rlberry import types
 
 from .screen import initialize_screen
 from .screen import initialize_screen_offsets
-from .screen import finalize_screen
 from .screen import update_screen
 from .screen import echo_to_screen
 from .screen import refresh_screen
 from .screen import update_screen_status
 from .screen import blink
+from .screen import clear_columns
+
 
 import re
 import curses
@@ -752,7 +753,7 @@ class AgentManager:
             initialize_screen_offsets(screen, screen_layout, self.n_fit, self.n_fit)
             listener = multiprocessing.Process(
                 target=listener_process,
-                args=(log_queue, screen, screen_layout, self.n_fit),
+                args=(log_queue, screen, screen_layout, self.n_fit, budget),
             )
             listener.start()  # Start the listener process
 
@@ -1161,13 +1162,19 @@ def _fit_worker(args, log_queue, id_worker=None):
 
     # logging level in thread
     qh = logging.handlers.QueueHandler(log_queue)
-    qh.setFormatter(logging.Formatter("msg:Process" + str(id_worker) + "%(message)s"))
+    
+    qh.setFormatter(logging.Formatter("msg:Process" + str(id_worker) + " %(message)s"))
 
     fh = logging.FileHandler("log_rlberry.log")
     fh.setFormatter(logging.Formatter("%(message)s"))
 
     # root_logger = logging.getLogger("test.log")
     logger.handlers = [qh, fh]
+
+    logger.info(' started')
+
+
+    
 
     # root_logger.setLevel(logging.INFO)
 
@@ -1324,7 +1331,7 @@ def _strip_seed_dir(dico):
     del res["output_dir"]
     return res
 
-
+Y_PROCESS = 8
 def get_screen_layout(n_fit, maxyx):
     y, x = maxyx
     n_cols = min(n_fit, 3)
@@ -1349,53 +1356,82 @@ def get_screen_layout(n_fit, maxyx):
             "_count": 0,
         },
         "error messages": {
-            "position": (1, 40),
-            "text": "Other messages",
+            "position": (1, 45),
+            "text": "Other messages:",
             "text_color": 6,
-            "list": True,
-            "keep_count": True,
-            "_count": 0,
+            'clear': True,
             "regex": r"^(?!msg:Process).*" + "(?P<value>.*)$",
         },
     }
     for id_n in range(n_cols):
         screen_layout["Process" + str(id_n)] = {
-            "position": (7, 2 + id_n * size_col),
+            "position": (Y_PROCESS, 2 + id_n * size_col),
             "text": "Process " + str(id_n),
             "text_color": 6,
         }
 
         screen_layout["Process" + str(id_n) + "_messages"] = {
-            "position": (7, 2 + id_n * size_col),
+            "position": (Y_PROCESS, 2 + id_n * size_col),
             "list": True,
             "keep_count": True,
             "color": 0,
-            "regex": r"^msg:Process" + str(id_n) + "(?P<value>.*)$",
+            "regex": r"^msg:Process" + str(id_n) +" "+"(?P<value>.*)$",
             "_count": 0,
         }
     screen_layout["progress"] = {
         "position": (4, 4),
-        "text": "Progress:",
+        "text": "Progress:["+(' '*40)+']',
         "text_color": 6,
-        "color": 1,
-        "regex": r"^(?!.*)",
     }
+    screen_layout["desc"] = {
+        "position": (6, 1),
+        "text": "Showing the first three processes:",
+        "text_color": 0,
+    }
+    screen_layout['progress_tracker'] = {
+        "position":(4,13),
+        "text":'',
+        'keep_bount':True,
+        "regex": r"^msg:Process:progress(?P<value>.*)$",
+        "_count": 0,
+        "color":2
+        }
     screen_layout["_counter_"] = {
-        "position": (5, 10),
-        "categories": ["Process" + str(id_n) + "_messages" for id_n in range(n_cols)],
+        "position": (4, 14),
+        "categories": ["progress_tracker"],
         "counter_text": "|",
-        "width": 50,
+        "width": 40,
         "color": 2,
-        "modulus": 2,
     }
 
     return screen_layout
 
 
+
+
 MAX_SIZE_HEADER = 15
+N_cols = 3
+
+def make_headers(dict_message, screen, screen_layout, n_fit):
+    headers = []
+    for key in dict_message.keys():
+        if key == "max_global_step":
+            key = "step"
+        if len(key) > MAX_SIZE_HEADER:
+            headers.append(key[:MAX_SIZE_HEADER])
+        else:
+            headers.append(key)
+
+    
+    headers = tuple(headers)
+    headers_msg = ("%12s  " * len(headers)) % headers
+    beginning_message = "msg:Process"
+    for process in range(min(N_cols, n_fit)):
+        update_screen(beginning_message + str(process) + headers_msg, screen, screen_layout)
+    return headers
 
 
-def listener_process(queue, screen, screen_layout, n_fit):
+def listener_process(queue, screen, screen_layout, n_fit, fit_budget):
     """Listener process is a target for a multiprocess process
     that runs and listens to a queue for logging events.
 
@@ -1412,29 +1448,80 @@ def listener_process(queue, screen, screen_layout, n_fit):
     # get headers
     formatter = logger.handlers[0]
     record = formatter.format(queue.get())
-    process, dict_message = _parse_log(record)
-    headers = []
-    for key in dict_message.keys():
-        if len(key) > MAX_SIZE_HEADER:
-            headers.append(key[:MAX_SIZE_HEADER])
-        else:
-            headers.append(key)
-    headers = tuple(headers)
-    headers_msg = ("%15s " * len(headers)) % headers
-    for process in range(min(3, n_fit)):
-        update_screen("msg:Process" + str(process) + headers_msg, screen, screen_layout)
+    headers_set = False
+    beginning_message = "msg:Process"
 
-    while queue.get() is not None:
-        formatter = logger.handlers[0]
-        record = formatter.format(queue.get())
-        process, dict_message = _parse_log(record)
-        if process is not None:
-            message = process + ("%15s " * len(headers)) % tuple(
-                [str(dict_message[key]) for key in dict_message]
-            )
+    global_steps = np.zeros(n_fit)
+    steps_per_update = n_fit * fit_budget / 40
+    n_updates = 1
+
+    in_progress = True
+    
+    process_columns = {str(id_p):False for id_p in range(N_cols)} # Whether the processes in the columns are finished
+    
+    while in_progress:
+        log = queue.get()
+        if log is not None:
+            formatter = logger.handlers[0]
+            record = formatter.format(log)
+            process, dict_message = _parse_log(record)
+            if process is not None:
+                if not headers_set:
+                    headers = make_headers(dict_message, screen, screen_layout, n_fit)
+                    headers_set = True
+                # update progress bar
+                process_num = int(process[len(beginning_message):])
+                global_steps[process_num] = int(dict_message['max_global_step'])
+                if (np.sum(global_steps)-n_updates*steps_per_update) > steps_per_update:
+                    n_updates += 1
+                    update_screen("msg:Process:progress", screen, screen_layout)
+
+                # format message
+                message = process + ("%12s  " * len(headers)) % tuple(
+                    [str(dict_message[key]) for key in dict_message]
+                )
+                
+            else:
+                message = dict_message["message"]
+                
+                # Test to see if finished process
+                is_finished = re.match(r'.*msg:Process.* finished$', message)
+                if is_finished :
+                    process = re.search(r"(?<=Process)\w+", record.strip()).group(0).strip()
+                    if process in process_columns:
+                        process_columns[process]=True
+
+                # Test if this is a new process beginning and there is space
+                begins = re.match(r'.*msg:Process.* started$', message)
+                if begins and np.any([ process_columns[k] for k in process_columns]) :
+                    begins_id =  re.search(r"(?<=Process)\w+", message).group(0)
+                    key_vacant_col = np.array(process_columns.keys())[[process_columns[k]  for k in process_columns]][0]
+                    clear_columns(Y_PROCESS, screen, screen_layout, maxy)
+                    del screen_layout['Process'+str(key_vacant_col)]
+                    del screen_layout['Process'+str(key_vacant_col)+'_messages']
+
+                    screen_layout["Process" + begins_id] = {
+                            "position": (Y_PROCESS, 2 + id_n * size_col),
+                                "text": "Process " + str(id_n),
+                                "text_color": 6,
+                            }
+
+                    screen_layout["Process" + begins_id + "_messages"] = {
+                        "position": (Y_PROCESS, 2 + id_n * size_col),
+                        "list": True,
+                        "keep_count": True,
+                        "color": 0,
+                        "regex": r"^msg:Process" + str(id_n) + ":(?P<value>.*)$",
+                        "_count": 0,
+                    }
+                    del process_columns[key_vacant_col]
+                    process_columns[begins_id]=True
+
+                    
+                
+            update_screen(message, screen, screen_layout)
         else:
-            message = dict_message["message"]
-        update_screen(message, screen, screen_layout)
+            in_progress = False
 
 
 from queue import Queue
@@ -1459,23 +1546,25 @@ def get_manager():
 
 
 def _parse_log(record):
+    is_process_msg = re.match(r'.*max_global_step.*', record)
+    #print(record)
+    record = record.strip()
     beginning_message = "msg:Process"
-    process = beginning_message + re.search(r"(?<=Process)\w+", record.strip()).group(0)
+    if is_process_msg:
+        
+        process = beginning_message + re.search(r"(?<=Process)\w+", record.strip()).group(0)
 
-    # Test if this is a process message or not.
-    if len(process) > len(beginning_message):
-        if "|" in record.strip():
-            categories = record.strip().split("|")
+        categories = record.strip().split("|")
 
-            dict_message = {
-                cat.split("=")[0].strip(): cat.split("=")[1].strip()
-                for cat in categories[1:-1]  # the first and last are styling strings
-            }
-        else:
-            process = None
-            dict_message = {"message": record}
+        dict_message = {
+            cat.split("=")[0].strip(): cat.split("=")[1].strip()
+            for cat in categories[1:-1]  # the first and last are styling strings
+        }
+
     else:
         process = None
+        if record[:len(beginning_message)]==beginning_message:
+            record = record[:len(beginning_message)]
         dict_message = {"message": record}
 
     return process, dict_message
@@ -1534,16 +1623,14 @@ def wrapper(func, *args, **kwds):
 
         return func(stdscr, *args, **kwds)
 
-    except KeyboardInterrupt:
-        stdscr.addstr(1, 1, "Press q to quit !")
-        stdscr.move(2, 1)
+    finally:
+        stdscr.addstr(0,stdscr.getmaxyx()[1]//2-10,  "Press q to quit !", curses.color_pair(1))
         stdscr.refresh()
         while True:
 
             if stdscr.getch() == ord("q"):
                 break
 
-    finally:
         if "stdscr" in locals():
             stdscr.keypad(0)
             curses.echo()
