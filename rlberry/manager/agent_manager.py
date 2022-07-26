@@ -1167,6 +1167,7 @@ def _fit_worker(args, log_queue, id_worker=None):
 
     fh = logging.FileHandler("log_rlberry.log")
     fh.setFormatter(logging.Formatter("%(message)s"))
+    #fh.setFormatter(logging.Formatter("msg:Process" + str(id_worker) + " %(message)s"))
 
     # root_logger = logging.getLogger("test.log")
     logger.handlers = [qh, fh]
@@ -1352,12 +1353,12 @@ def get_screen_layout(n_fit, maxyx):
             "text_color": 6,
             "color": 1,
             "keep_count": True,
-            "regex": r'^msg:Process".*" finished$',
+            "regex": r'.*msg:Process.* finished$',
             "_count": 0,
         },
         "error messages": {
             "position": (1, 45),
-            "text": "Other messages:",
+            "text": "Other messages: -",
             "text_color": 6,
             'clear': True,
             "regex": r"^(?!msg:Process).*" + "(?P<value>.*)$",
@@ -1484,38 +1485,39 @@ def listener_process(queue, screen, screen_layout, n_fit, fit_budget):
             else:
                 message = dict_message["message"]
                 
-                # Test to see if finished process
-                is_finished = re.match(r'.*msg:Process.* finished$', message)
-                if is_finished :
-                    process = re.search(r"(?<=Process)\w+", record.strip()).group(0).strip()
-                    if process in process_columns:
-                        process_columns[process]=True
+                # # Test to see if finished process
+                # is_finished = re.match(r'.*msg:Process.* finished', message)
+                # if is_finished :
+                #     process = re.search(r"(?<=Process)\w+", record.strip()).group(0).strip()
+                #     if process in process_columns.keys():
+                #         process_columns[process]=True
+                   
+                
+                # # Test if this is a new process beginning and there is space
+                # begins = re.match(r'.*msg:Process.* started', message)
+                # if begins and np.any([ process_columns[k] for k in process_columns]) :
+                #     begins_id =  re.search(r"(?<=Process)\w+", message).group(0)
+                #     key_vacant_col = np.array(process_columns.keys())[[process_columns[k]  for k in process_columns]][0]
+                #     clear_columns(Y_PROCESS, screen, screen_layout, maxy)
+                #     del screen_layout['Process'+str(key_vacant_col)]
+                #     del screen_layout['Process'+str(key_vacant_col)+'_messages']
 
-                # Test if this is a new process beginning and there is space
-                begins = re.match(r'.*msg:Process.* started$', message)
-                if begins and np.any([ process_columns[k] for k in process_columns]) :
-                    begins_id =  re.search(r"(?<=Process)\w+", message).group(0)
-                    key_vacant_col = np.array(process_columns.keys())[[process_columns[k]  for k in process_columns]][0]
-                    clear_columns(Y_PROCESS, screen, screen_layout, maxy)
-                    del screen_layout['Process'+str(key_vacant_col)]
-                    del screen_layout['Process'+str(key_vacant_col)+'_messages']
+                #     screen_layout["Process" + begins_id] = {
+                #             "position": (Y_PROCESS, 2 + id_n * size_col),
+                #                 "text": "Process " + str(id_n),
+                #                 "text_color": 6,
+                #             }
 
-                    screen_layout["Process" + begins_id] = {
-                            "position": (Y_PROCESS, 2 + id_n * size_col),
-                                "text": "Process " + str(id_n),
-                                "text_color": 6,
-                            }
-
-                    screen_layout["Process" + begins_id + "_messages"] = {
-                        "position": (Y_PROCESS, 2 + id_n * size_col),
-                        "list": True,
-                        "keep_count": True,
-                        "color": 0,
-                        "regex": r"^msg:Process" + str(id_n) + ":(?P<value>.*)$",
-                        "_count": 0,
-                    }
-                    del process_columns[key_vacant_col]
-                    process_columns[begins_id]=True
+                #     screen_layout["Process" + begins_id + "_messages"] = {
+                #         "position": (Y_PROCESS, 2 + id_n * size_col),
+                #         "list": True,
+                #         "keep_count": True,
+                #         "color": 0,
+                #         "regex": r"^msg:Process" + str(id_n) + ":(?P<value>.*)$",
+                #         "_count": 0,
+                #     }
+                #     del process_columns[key_vacant_col]
+                #     process_columns[begins_id]=True
 
                     
                 
