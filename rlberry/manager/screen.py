@@ -168,7 +168,6 @@ def initialize_screen(screen, screen_layout):
     for col in process_cols[1:]:
         screen.vline(y, col - 1, "|", screen.getmaxyx()[0] - y)
     screen.refresh()
-    
 
     set_screen_defaults(screen_layout)
     validate_screen_size(screen, screen_layout)
@@ -205,8 +204,6 @@ def initialize_screen_offsets(screen, screen_layout, offsets, processes_to_start
             initialize_keep_count(category, offsets, screen_layout)
 
     update_screen_status(screen, "process-update", screen_layout["_screen"])
-
-
 
 
 def get_category_values(message, offset, screen_layout, maxy, screen):
@@ -313,7 +310,7 @@ def process_counter(offset, category, value, screen_layout, screen):
                 screen_layout["_counter_"][offset]["_modulus_count"] += 1
                 x_pos = x_pos + 1 if "regex" in screen_layout["_counter_"] else x_pos
                 screen.addstr(y_pos, x_pos, counter_value, curses.color_pair(color))
-                
+
         else:
             # increments the counter
             if screen_layout["_counter_"].get("width"):
@@ -363,25 +360,22 @@ def clear_columns(y, screen, screen_layout, maxy):
             screen_layout[category]["_count"] = 1
 
 
-
 def get_category_count(category, offset, screen_layout, maxy, screen):
     """return count for category in screen layout"""
-    zfill = screen_layout[category].get("zfill", 3)
     if screen_layout[category].get("table"):
         screen_layout[category][offset]["_count"] += 1
-        return str(screen_layout[category][offset]["_count"]).zfill(zfill)
+        return str(screen_layout[category][offset]["_count"])
 
     if (
         screen_layout[category]["_count"] + screen_layout[category]["position"][0]
         > maxy - 2
     ):
-        y = screen_layout[category]['position'][0]
+        y = screen_layout[category]["position"][0]
         clear_columns(y, screen, screen_layout, maxy)
-    
+
     screen_layout[category]["_count"] += 1
 
-
-    return str(screen_layout[category]["_count"]).zfill(zfill)
+    return str(screen_layout[category]["_count"])
 
 
 def get_category_x_pos(category, offset, screen_layout):
