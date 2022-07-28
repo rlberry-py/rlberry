@@ -15,9 +15,6 @@
 import re
 import sys
 import curses
-import itertools
-from time import time
-from time import sleep
 import rlberry
 
 logger = rlberry.logger
@@ -115,12 +112,6 @@ def update_screen_status(
     elif state == "finalize":
         text = "[Press q to exit]"
         screen.addstr(0, 1, text, curses.color_pair(color))
-    elif state == "blink-on":
-        text = "RUNNING"
-        screen.addstr(0, 1, text, curses.color_pair(color))
-    elif state == "blink-off":
-        text = "RUNNING"
-        screen.addstr(0, 1, " " * len(text), curses.color_pair(color))
     elif state == "get-process-data":
         if data:
             text = (
@@ -453,28 +444,6 @@ def update_screen(message, screen, screen_layout):
             logger.error(f"error occurred when updating screen: {exception}")
 
 
-def echo_to_screen(screen, data, screen_layout, offset=None):
-    """iterate over items in data dict update screen with echo messages in shared data"""
-    for key, value in data.items():
-        message = ""
-        if isinstance(value, (int, float, str, bool)):
-            message = f"'{key}' is '{value}'"
-        elif isinstance(value, (list, dict, tuple)):
-            message = f"'{key}' has {len(value)} items"
-        if offset:
-            message = f"#{offset}-{message}"
-        logger.debug(message)
-        update_screen(message, screen, screen_layout)
-        if offset:
-            # send empty message at offset
-            update_screen(f"#{offset}-", screen, screen_layout)
-
-
-def refresh_screen(screen):
-    """refresh screen"""
-    screen.refresh()
-
-
 def get_table_position(screen_layout):
     """return first position of table encountered within screen layout"""
     for _, data in screen_layout.items():
@@ -584,13 +553,3 @@ def validate_screen_size(screen, screen_layout):
         raise Exception(
             "the screen is not large enough for the configured layout - make the screen wider"
         )
-
-
-def blink(queue, terminate=False):
-    """method to control screen blinking"""
-    blink_state = itertools.cycle(["blink-on", "blink-off"])
-    while True:
-        queue.put(next(blink_state))
-        sleep(0.9)
-        if terminate:
-            break
