@@ -31,7 +31,12 @@ from rlberry import types
 
 from .screen import initialize_screen
 from .screen import initialize_screen_offsets
-from .fancy_logs import listener_process, get_manager, get_screen_layout, curses_wrapper
+from .curses_logs import (
+    listener_process,
+    get_manager,
+    get_screen_layout,
+    curses_wrapper,
+)
 
 
 _OPTUNA_INSTALLED = True
@@ -233,7 +238,7 @@ class AgentManager:
     thread_shared_data : dict, optional
         Data to be shared among agent instances in different threads.
         If parallelization='process', data will be copied instead of shared.
-    fancy_logs : bool, optional
+    curses_logs : bool, optional
         If True, use curses interface to display logs.
 
     Attributes
@@ -280,7 +285,7 @@ class AgentManager:
         default_writer_kwargs=None,
         init_kwargs_per_instance=None,
         thread_shared_data=None,
-        fancy_logs=False,
+        curses_logs=False,
     ):
         # agent_class should only be None when the constructor is called
         # by the class method AgentManager.load(), since the agent class
@@ -424,8 +429,8 @@ class AgentManager:
         self.db_filename = None
         self.optuna_storage_url = None
 
-        # Fancy logs
-        self.fancy_logs = fancy_logs
+        # Curses logs
+        self.curses_logs = curses_logs
 
         # rlberry version for reproducibility purpose
         self.rlberry_version = rlberry.__version__
@@ -660,7 +665,7 @@ class AgentManager:
         ps.print_stats(20)
 
     def fit(self, budget=None, **kwargs):
-        if self.fancy_logs:
+        if self.curses_logs:
             curses_wrapper(self._fit, budget, **kwargs)
         else:
             self._fit(budget, **kwargs)
@@ -719,7 +724,7 @@ class AgentManager:
             # manager = multiprocessing.Manager()
             manager = get_manager()
             lock = manager.Lock()
-            if self.fancy_logs:
+            if self.curses_logs:
                 log_queue = manager.Queue()
             else:
                 log_queue = None
@@ -749,7 +754,7 @@ class AgentManager:
             workers_output = [_fit_worker(args[0])]
 
         else:
-            if self.fancy_logs:
+            if self.curses_logs:
                 (y, x) = screen.getmaxyx()
                 screen_layout = get_screen_layout(self.n_fit, (y, x))
                 initialize_screen(screen, screen_layout)
@@ -771,7 +776,7 @@ class AgentManager:
                     workers_output.append(future.result())
                 executor.shutdown()
 
-                if self.fancy_logs:
+                if self.curses_logs:
                     log_queue.put_nowait(None)  # End the queue
                     listener.join()  # Stop the listener
 
