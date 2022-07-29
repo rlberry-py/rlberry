@@ -10,6 +10,7 @@ import dill
 import gc
 import pickle
 import shutil
+import sys
 import threading
 import multiprocessing
 from multiprocessing.spawn import _check_not_importing_main
@@ -36,6 +37,7 @@ from .curses_logs import (
     get_manager,
     get_screen_layout,
     curses_wrapper,
+    LoggerWriter,
 )
 
 
@@ -239,7 +241,7 @@ class AgentManager:
         Data to be shared among agent instances in different threads.
         If parallelization='process', data will be copied instead of shared.
     curses_logs : bool, optional
-        If True, use curses interface to display logs.
+        If True, use curses interface to display logs. Only for process multiprocessing.
 
     Attributes
     ----------
@@ -666,9 +668,11 @@ class AgentManager:
 
     def fit(self, budget=None, **kwargs):
         if self.curses_logs:
+            # redirect stdout to logger
+            sys.stdout = LoggerWriter(logger.info)
             curses_wrapper(self._fit, budget, **kwargs)
         else:
-            self._fit(budget, **kwargs)
+            self._fit(None, budget, **kwargs)
 
     def _fit(self, screen, budget=None, **kwargs):
         """Fit the agent instances in parallel.
@@ -680,7 +684,9 @@ class AgentManager:
         """
 
         del kwargs
-        budget = budget or self.fit_budget
+        if budget is None:
+            budget = self.fit_budget
+
         # If spawn, test that protected by if __name__ == "__main__"
         if self.mp_context == "spawn":
             try:
@@ -716,6 +722,7 @@ class AgentManager:
         if self.parallelization == "thread":
             executor_class = concurrent.futures.ThreadPoolExecutor
             lock = threading.Lock()
+            log_queue = None
         elif self.parallelization == "process":
             executor_class = functools.partial(
                 concurrent.futures.ProcessPoolExecutor,
@@ -751,7 +758,7 @@ class AgentManager:
         ]
 
         if len(args) == 1:
-            workers_output = [_fit_worker(args[0])]
+            workers_output = [_fit_worker(args[0], log_queue)]
 
         else:
             if self.curses_logs:
