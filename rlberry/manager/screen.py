@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
+# Copied and modified from https://github.com/soda480/mpcurses
+
 import re
 import sys
 import curses
@@ -149,28 +152,22 @@ def initialize_screen(screen, screen_layout):
     """initialize screen"""
     logger.debug("initializing screen")
 
-    # Make separations between columns
-    process_cols = [
-        screen_layout[category]["position"][1]
-        for category in screen_layout
-        if category[-8:] == "messages"
-    ]
-    y = screen_layout["Process1"]["position"][0]
-    for col in process_cols[1:]:
-        screen.vline(y, col - 1, "|", screen.getmaxyx()[0] - y)
-    screen.refresh()
-
     set_screen_defaults(screen_layout)
     validate_screen_size(screen, screen_layout)
 
+    # Make separations between columns
     process_cols = [
-        screen_layout[category]["position"][1]
+        screen_layout[category]["position"]
         for category in screen_layout
-        if category[-8:] == "messages"
+        if category[-9:] == "_messages"
     ]
-    y = screen_layout["Process1"]["position"][0]
-    for col in process_cols[1:]:
+    y = process_cols[1][0]
+    process_cols = [position[1] for position in process_cols]
+
+    for col in process_cols:
         screen.vline(y, col - 1, "|", screen.getmaxyx()[0] - y)
+    screen.refresh()
+
     initialize_colors()
     curses.curs_set(0)
     update_screen_status(screen, "initialize", screen_layout["_screen"])
@@ -180,7 +177,7 @@ def initialize_screen_offsets(screen, screen_layout, offsets, processes_to_start
     """initialize screen offsets"""
     logger.debug("initializing screen offsets")
 
-    set_screen_defaults_processes(offsets, processes_to_start, screen_layout)
+    # set_screen_defaults_processes(offsets, processes_to_start, screen_layout)
     validate_screen_layout_processes(offsets, screen_layout)
 
     for category, data in screen_layout.items():
@@ -347,8 +344,21 @@ def clear_columns(y, screen, screen_layout, maxy):
         line += 1
 
     for category in screen_layout:
-        if category[-8:] == "messages":
+        if category[-9:] == "_messages":
             screen_layout[category]["_count"] = 1
+
+    # Make separations between columns
+    process_cols = [
+        screen_layout[category]["position"]
+        for category in screen_layout
+        if category[-9:] == "_messages"
+    ]
+    y = process_cols[1][0]
+    process_cols = [position[1] for position in process_cols]
+
+    for col in process_cols:
+        screen.vline(y, col - 1, "|", screen.getmaxyx()[0] - y)
+    screen.refresh()
 
 
 def get_category_count(category, offset, screen_layout, maxy, screen):
