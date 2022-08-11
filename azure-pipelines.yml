@@ -1,3 +1,10 @@
+trigger: false
+
+pr:
+  paths:
+    exclude:
+    - rlberry/_version.py
+    - docs
 
 jobs:
 
