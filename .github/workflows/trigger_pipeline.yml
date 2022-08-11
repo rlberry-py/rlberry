@@ -5,13 +5,12 @@ on:
     branches:
       - main
   pull_request:
-    branches:
-      - main
+    types: [opened, synchronize, reopened]
 
 
 jobs:
     build:
-        if: ${{ github.event.label.name == 'ready for review' }}
+        if: ${{ (github.event.label.name == 'ready for review') or (github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true) }}
         name: Call Azure Pipeline
         runs-on: ubuntu-latest
         steps:
