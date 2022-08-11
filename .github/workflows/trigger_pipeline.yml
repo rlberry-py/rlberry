@@ -1,15 +1,12 @@
 name: CI
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
     types: [opened, synchronize, reopened, labeled]
 
 jobs:
     build:
-        if: ${{ (github.event.label.name == 'ready for review') || (github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true) }}
+        if: ${{ github.event.label.name == 'ready for review' }}
         name: Call Azure Pipeline
         runs-on: ubuntu-latest
         steps:
