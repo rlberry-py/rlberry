@@ -7,7 +7,6 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
-
 jobs:
     build:
         if: ${{ (github.event.label.name == 'ready for review') or (github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true) }}
