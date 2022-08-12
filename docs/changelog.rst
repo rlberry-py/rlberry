@@ -3,8 +3,22 @@
 Changelog
 =========
 
+Dev version
+-----------
+
+*PR #226, #227*
+
+* Improve logging, the logging level can now be changed with :py:func:`rlberry.utils.logging.set_level`.
+* Introduce smoothing in curves done with `plot_writer_data` when only one seed is used.
+
+*PR #223*
+
+* Moved PPO from experimental to torch agents. Tested and benchmarked.
+
+
 Version 0.3.0 (latest stable version)
 -------------------------------------
+
 
 *PR #206*
 

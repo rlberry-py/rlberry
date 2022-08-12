@@ -1,10 +1,12 @@
 import gym
 import numpy as np
-import logging
+
 import inspect
 from rlberry.seeding import Seeder
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 class Model(gym.Env):

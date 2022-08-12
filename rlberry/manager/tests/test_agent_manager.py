@@ -142,9 +142,12 @@ def test_agent_manager_2():
         st.fit()
 
     # compare final policies
-    evaluate_agents(agent_manager_list, show=False)
-    evaluate_agents(agent_manager_list, show=False)
-
+    outputs = evaluate_agents(agent_manager_list, n_simulations=5, show=False)
+    assert len(outputs) == 5
+    outputs = evaluate_agents(
+        agent_manager_list, n_simulations=5, show=False, choose_random_agents=False
+    )
+    assert len(outputs) == 4 * 5
     # learning curves
     plot_writer_data(agent_manager_list, tag="episode_rewards", show=False)
 

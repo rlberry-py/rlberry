@@ -3,11 +3,13 @@ from rlberry.exploration_tools.discrete_counter import DiscreteCounter
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from rlberry.rendering.utils import video_write
 import gym.spaces as spaces
-import logging
+
 import matplotlib.pyplot as plt
 import numpy as np
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 class Transition:

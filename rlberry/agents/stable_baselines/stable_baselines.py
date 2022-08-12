@@ -1,4 +1,3 @@
-import logging
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple, Type, Union
 
@@ -13,7 +12,9 @@ from rlberry import types
 from rlberry.agents import AgentWithSimplePolicy
 
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 def is_recordable(value: Any) -> bool:
@@ -29,6 +30,7 @@ def is_recordable(value: Any) -> bool:
 class AgentWriter(sb_logging.KVWriter):
     """
     Wraps rlberry's writer to be compatible with stable_baselines3's Logger.
+
     Parameters:
     -----------
     writer: Agent's writer
@@ -71,6 +73,7 @@ class StableBaselinesAgent(AgentWithSimplePolicy):
     Notes
     -----
     Other keyword arguments are passed to the algorithm's constructor.
+
     Parameters
     -----------
     env: gym.Env
@@ -97,6 +100,15 @@ class StableBaselinesAgent(AgentWithSimplePolicy):
     _default_writer_kwargs : dict, optional
         Parameters to initialize :class:`~rlberry.utils.writers.DefaultWriter` (attribute self.writer).
         Used by :class:`~rlberry.manager.AgentManager`.
+
+    Examples
+    --------
+    >>> from rlberry.envs import gym_make
+    >>> from stable_baselines3 import A2C
+    >>> from rlberry.agents import StableBaselinesAgent
+    >>> env_ctor, env_kwargs = gym_make, dict(id="CartPole-v1")
+    >>> env = env_ctor(**env_kwargs)
+    >>> agent = StableBaselinesAgent(env, A2C, "MlpPolicy", verbose=1)
     """
 
     __rlberry_kwargs = [

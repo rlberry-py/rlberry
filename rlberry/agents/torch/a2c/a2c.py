@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-import logging
 
 import gym.spaces as spaces
 import numpy as np
@@ -13,7 +12,9 @@ from rlberry.utils.torch import choose_device
 from rlberry.utils.factory import load
 from typing import Optional
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 class A2CAgent(AgentWithSimplePolicy):

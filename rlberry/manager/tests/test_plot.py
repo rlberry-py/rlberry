@@ -7,7 +7,7 @@ from pathlib import Path
 
 from rlberry.wrappers import WriterWrapper
 from rlberry.envs import GridWorld
-from rlberry.manager import plot_writer_data, AgentManager
+from rlberry.manager import plot_writer_data, AgentManager, read_writer_data
 from rlberry.agents import UCBVIAgent
 
 
@@ -107,3 +107,14 @@ def test_plot_writer_data_with_directory_input(outdir_id_style):
         )
 
         assert np.all(output.shape == output_with_list_dirs.shape)
+
+        output = plot_writer_data(
+            data_source,
+            tag="reward",
+            xtag="dw_time_elapsed",
+            preprocess_func=_compute_reward,
+            title="Cumulative Reward",
+            show=False,
+            savefig_fname=tmpdirname + "/test.png",
+        )
+        output = read_writer_data(data_source)

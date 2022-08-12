@@ -1,8 +1,10 @@
 import numpy as np
 from rlberry.agents.bandits import BanditWithSimplePolicy
-import logging
 
-logger = logging.getLogger(__name__)
+
+import rlberry
+
+logger = rlberry.logger
 
 
 class RandomizedAgent(BanditWithSimplePolicy):

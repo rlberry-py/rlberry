@@ -1,31 +1,31 @@
 import concurrent.futures
 from copy import deepcopy
 from pathlib import Path
-
-import rlberry
-from rlberry.seeding import safe_reseed, set_external_seed
-from rlberry.seeding import Seeder
-from rlberry import metadata_utils
-
+import cProfile, pstats
+from pstats import SortKey
 import functools
 import json
 import logging
 import dill
 import gc
 import pickle
-import pandas as pd
 import shutil
 import threading
 import multiprocessing
 from multiprocessing.spawn import _check_not_importing_main
-import cProfile, pstats
-from pstats import SortKey
+from typing import List, Optional, Tuple, Union
+
 import numpy as np
+import pandas as pd
+
+import rlberry
+from rlberry.seeding import safe_reseed, set_external_seed
+from rlberry.seeding import Seeder
+from rlberry import metadata_utils
 from rlberry.envs.utils import process_env
 from rlberry.utils.logging import configure_logging
 from rlberry.utils.writers import DefaultWriter
 from rlberry.manager.utils import create_database
-from typing import List, Optional, Tuple, Union
 from rlberry import types
 
 
@@ -35,10 +35,8 @@ try:
 except Exception:
     _OPTUNA_INSTALLED = False
 
-logger = logging.getLogger(__name__)
+logger = rlberry.logger
 
-
-#
 # Aux
 #
 
@@ -203,8 +201,9 @@ class AgentManager:
         Warning: If you're using JAX or PyTorch, it only works with 'spawn'.
                  If running code on a notebook or interpreter, use 'fork'.
                  forkserver and fork are available on Unix OS only.
-        worker_logging_level : str, default: 'INFO'
-        Logging level in each of the threads/processes used to fit agents.
+        worker_logging_level : str, default: None
+            Logging level in each of the threads/processes used to fit agents.
+            If None, use default logger level.
     seed : :class:`numpy.random.SeedSequence`, :class:`~rlberry.seeding.seeder.Seeder` or int, default : None
         Seed sequence from which to spawn the random number generator.
         If None, generate random seed.
@@ -234,6 +233,22 @@ class AgentManager:
     ----------
     output_dir : :class:`pathlib.Path`
         Directory where the manager saves data.
+
+    Examples
+    --------
+    >>> from rlberry.agents.torch import A2CAgent
+    >>> from rlberry.envs import gym_make
+    >>> from rlberry.manager import AgentManager
+    >>> manager = AgentManager(
+    >>>      A2CAgent,
+    >>>      (env_ctor, env_kwargs),
+    >>>      fit_budget=100,
+    >>>      eval_kwargs=dict(eval_horizon=500)
+    >>>      n_fit=1,
+    >>>      parallelization="spawn"
+    >>>    )
+    >>>    if __name__ == '__main__':
+    >>>        manager.fit(1e4)
     """
 
     def __init__(
@@ -251,7 +266,7 @@ class AgentManager:
         parallelization="thread",
         max_workers=None,
         mp_context="spawn",
-        worker_logging_level="INFO",
+        worker_logging_level=None,
         seed=None,
         enable_tensorboard=False,
         outdir_id_style="timestamp",
@@ -316,6 +331,7 @@ class AgentManager:
 
         # params
         base_init_kwargs = init_kwargs or {}
+
         self._base_init_kwargs = deepcopy(base_init_kwargs)
         self.fit_kwargs = deepcopy(fit_kwargs)
         self.eval_kwargs = deepcopy(eval_kwargs)
@@ -323,7 +339,9 @@ class AgentManager:
         self.parallelization = parallelization
         self.max_workers = max_workers
         self.mp_context = mp_context
-        self.worker_logging_level = worker_logging_level
+        self.worker_logging_level = worker_logging_level or logging.getLevelName(
+            logger.getEffectiveLevel()
+        )
         self.output_dir = output_dir
         if fit_budget is not None:
             self.fit_budget = fit_budget
@@ -493,6 +511,8 @@ class AgentManager:
         self,
         n_simulations: Optional[int] = None,
         eval_kwargs: Optional[dict] = None,
+        agent_id: Optional[int] = None,
+        verbose: Optional[bool] = True,
     ) -> List[float]:
         """
         Call :meth:`eval` method in the managed agents and returns a list with the results.
@@ -504,6 +524,10 @@ class AgentManager:
         eval_kwargs : dict, optional
             Arguments to be sent to the .eval() method of each trained instance.
             If None, set to self.eval_kwargs.
+        agent_id: int, optional
+            Index of the agent to be evaluated. If None, choose randomly.
+        verbose: bool, optional
+            Whether to print a progress report.
 
         Returns
         -------
@@ -515,9 +539,23 @@ class AgentManager:
         if not n_simulations:
             n_simulations = 2 * self.n_fit
         values = []
+
+        if verbose:
+            if logger.getEffectiveLevel() > 10:
+                previous_handlers = logger.handlers
+                ch = logging.StreamHandler()
+                ch.terminator = ""
+                formatter = logging.Formatter("%(message)s")
+                ch.setFormatter(formatter)
+                logger.handlers = [ch]
+                logger.info("[INFO] Evaluation:")
+
         for ii in range(n_simulations):
-            # randomly choose one of the fitted agents
-            agent_idx = self.eval_seeder.rng.choice(len(self.agent_handlers))
+            if agent_id is None:
+                # randomly choose one of the fitted agents
+                agent_idx = self.eval_seeder.rng.choice(len(self.agent_handlers))
+            else:
+                agent_idx = agent_id
             agent = self.agent_handlers[agent_idx]
             if agent.is_empty():
                 logger.error(
@@ -526,7 +564,16 @@ class AgentManager:
                 )
                 return []
             values.append(agent.eval(**eval_kwargs))
-            logger.info(f"[eval]... simulation {ii + 1}/{n_simulations}")
+            if verbose:
+                if logger.getEffectiveLevel() <= 10:  # If debug
+                    logger.debug(f"[eval]... simulation {ii + 1}/{n_simulations}")
+                else:
+                    logger.info(".")
+        if verbose:
+            if logger.getEffectiveLevel() > 10:
+                logger.info("  Evaluation finished \n")
+                logger.handlers = previous_handlers
+
         return values
 
     def clear_output_dir(self):

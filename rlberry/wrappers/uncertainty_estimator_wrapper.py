@@ -1,11 +1,13 @@
 import torch
 
 from rlberry.envs import Wrapper
-import logging
+
 import numpy as np
 from rlberry.utils.factory import load
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 class UncertaintyEstimatorWrapper(Wrapper):

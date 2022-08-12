@@ -4,9 +4,11 @@ import shutil
 from subprocess import check_output, run, PIPE
 import numpy as np
 import torch
-import logging
 
-logger = logging.getLogger(__name__)
+
+import rlberry
+
+logger = rlberry.logger
 
 
 def get_gpu_memory_map():
@@ -29,7 +31,7 @@ cannot select device with most least memory used."
 
     memory_map = get_gpu_memory_map()
     device_id = np.argmin(memory_map)
-    logger.info(
+    logger.debug(
         f"Choosing GPU device: {device_id}, " f"memory used: {memory_map[device_id]}"
     )
     return torch.device("cuda:{}".format(device_id))
@@ -50,7 +52,7 @@ def choose_device(preferred_device, default_device="cpu"):
         try:
             preferred_device = least_used_device()
         except RuntimeError:
-            logger.info(
+            logger.debug(
                 f"Could not find least used device (nvidia-smi might be missing), use cuda:0 instead"
             )
             if torch.cuda.is_available():
@@ -60,7 +62,7 @@ def choose_device(preferred_device, default_device="cpu"):
     try:
         torch.zeros((1,), device=preferred_device)  # Test availability
     except (RuntimeError, AssertionError) as e:
-        logger.info(
+        logger.debug(
             f"Preferred device {preferred_device} unavailable ({e})."
             f"Switching to default {default_device}"
         )

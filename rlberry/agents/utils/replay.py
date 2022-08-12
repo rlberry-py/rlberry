@@ -3,12 +3,14 @@ New module aiming to replace memories.py
 """
 
 import numpy as np
-import logging
+
 from typing import NamedTuple
 from rlberry.agents.utils import replay_utils
 
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 class Batch(NamedTuple):

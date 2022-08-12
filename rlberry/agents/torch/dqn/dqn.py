@@ -1,4 +1,3 @@
-import logging
 import inspect
 
 import numpy as np
@@ -19,7 +18,9 @@ from rlberry.utils.factory import load
 from typing import Callable, Optional, Union
 
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 def default_q_net_fn(env, **kwargs):

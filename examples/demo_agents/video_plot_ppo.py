@@ -11,18 +11,15 @@ A demo of PPO algorithm in PBall2D environment
 """
 # sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_a2c.jpg'
 
-from rlberry.agents.experimental.torch import PPOAgent
+from rlberry.agents.torch import PPOAgent
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
 
 
 env = PBall2D()
-n_episodes = 200
-horizon = 256
+n_steps = 3e3
 
-agent = PPOAgent(
-    env, horizon=horizon, gamma=0.99, learning_rate=0.001, eps_clip=0.2, k_epochs=4
-)
-agent.fit(budget=n_episodes)
+agent = PPOAgent(env)
+agent.fit(budget=n_steps)
 
 env.enable_rendering()
 state = env.reset()

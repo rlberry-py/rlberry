@@ -1,9 +1,11 @@
 from pathlib import Path
 from rlberry.manager import AgentManager
 import pandas as pd
-import logging
 
-logger = logging.getLogger(__name__)
+
+import rlberry
+
+logger = rlberry.logger
 
 
 def _get_most_recent_path(path_list):

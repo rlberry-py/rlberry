@@ -1,9 +1,10 @@
-import logging
 import numpy as np
 import rlberry.spaces as spaces
 from rlberry.envs.finite import GridWorld
 
-logger = logging.getLogger(__name__)
+import rlberry
+
+logger = rlberry.logger
 
 
 class FourRoom(GridWorld):

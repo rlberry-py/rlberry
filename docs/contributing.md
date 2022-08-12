@@ -46,6 +46,21 @@ This will run all the examples, which takes a while. If you only want to generat
 EXAMPLES_PATTERN=your_regex_goes_here make html
 ```
 
+### Tests
+
+We use `pytest` for testing purpose. We cover two types of test: the coverage tests that check that every algorithm does what is intended using as little computer resources as possible and what we call long tests. The long tests are here to test the performance of our algorithms. These tests are too long to be run on the azure pipeline and hence they are not run automatically at each PR. Instead they can be launched locally to check that the main algorithms of rlberry perform as efficiently as previous implementation.
+
+Running tests from root of repository:
+```bash
+pytest .
+```
+
+Running long tests:
+```bash
+pytest -s long_tests/**/ltest*.py
+```
+
+Tests files must be named `test_[something]` and belong to one of the `tests` directory. Long test files must be names  `ltest_[something]` and belong to the `long_tests` directory.
 
 ### Guidelines for docstring
 
@@ -128,13 +143,13 @@ Infos, errors and warnings are printed using the `logging` library.
 
 * `logger.info()`, `logger.warning()` and `logger.error()` should be used inside the `rlberry` package, rather
   than `print()`.
-* The desired level of verbosity can be chosen by calling `configure_logging`, e.g.:
+* The desired level of verbosity can be chosen by calling `set_level`, e.g.:
 
 ```python
-from rlberry.utils.logging import configure_logging
+from rlberry.utils.logging import set_level
 
-configure_logging(level="DEBUG")
-configure_logging(level="INFO")
+set_level(level="DEBUG")
+set_level(level="INFO")
 # etc
 ```
 

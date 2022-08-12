@@ -16,6 +16,13 @@ def gym_make(id, wrap_spaces=False, **kwargs):
         that define a reseed() method.
     **kwargs
         Optional arguments to configure the environment.
+
+    Examples
+    --------
+    >>> from rlberry.envs import gym_make
+    >>> env_ctor = gym_make
+    >>> env_kwargs = {"id": "CartPole-v0"}
+    >>> env = env_ctor(**env_kwargs)
     """
     if "module_import" in kwargs:
         __import__(kwargs.pop("module_import"))
