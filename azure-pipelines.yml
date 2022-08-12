@@ -31,6 +31,8 @@ jobs:
 
 - job: 'linux'
   dependsOn: checkLabel
+  # Condition: have ready for review label or on the main branch.
+  condition: or(in(variables['Build.SourceBranch'], 'refs/heads/main'), eq(dependencies.build_and_static_validation.outputs['checkPrLabel.prHasCILabel'], true))
   pool:
     vmImage: ubuntu-latest
   strategy:
@@ -73,6 +75,8 @@ jobs:
 
 - job: 'Formatting'
   dependsOn: checkLabel
+  condition: or(in(variables['Build.SourceBranch'], 'refs/heads/main'), eq(dependencies.build_and_static_validation.outputs['checkPrLabel.prHasCILabel'], true))
+
   pool:
     vmImage: ubuntu-latest
   strategy:
@@ -95,6 +99,8 @@ jobs:
 
 - job: 'macOS'
   dependsOn: checkLabel
+  condition: or(in(variables['Build.SourceBranch'], 'refs/heads/main'), eq(dependencies.build_and_static_validation.outputs['checkPrLabel.prHasCILabel'], true))
+
   pool:
     vmImage: 'macOS-latest'
   strategy:
@@ -125,6 +131,7 @@ jobs:
 
 - job: 'windows'
   dependsOn: checkLabel
+  condition: or(in(variables['Build.SourceBranch'], 'refs/heads/main'), eq(dependencies.build_and_static_validation.outputs['checkPrLabel.prHasCILabel'], true))
   pool:
     vmImage: 'windows-latest'
   strategy:
