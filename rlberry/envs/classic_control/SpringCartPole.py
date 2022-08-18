@@ -16,7 +16,7 @@ class SpringCartPole(RenderInterface2D, Model):
 
     Parameters
     ----------
-    dt : float, defualt=0.1
+    dt : float, defualt=0.02
         Time step of the simulation.
     obs_trans : bool, default=False
         If True, state has dimension 10:
@@ -74,7 +74,7 @@ class SpringCartPole(RenderInterface2D, Model):
     domain_fig = None
     actions_num = 4
 
-    def __init__(self, dt=0.1, obs_trans=False, swing_up=True, random_init=True):
+    def __init__(self, dt=0.02, obs_trans=False, swing_up=True, random_init=True):
         Model.__init__(self)
         RenderInterface2D.__init__(self)
 
@@ -120,11 +120,13 @@ class SpringCartPole(RenderInterface2D, Model):
                 [
                     self.track_length,
                     np.finfo(np.float32).max,
-                    2 * np.pi,
+                    1,
+                    1,
                     np.finfo(np.float32).max,
                     self.track_length,
                     np.finfo(np.float32).max,
-                    2 * np.pi,
+                    1,
+                    1,
                     np.finfo(np.float32).max,
                 ]
             )
@@ -133,13 +135,11 @@ class SpringCartPole(RenderInterface2D, Model):
                 [
                     self.track_length,
                     np.finfo(np.float32).max,
-                    1,
-                    1,
+                    2 * np.pi,
                     np.finfo(np.float32).max,
                     self.track_length,
                     np.finfo(np.float32).max,
-                    1,
-                    1,
+                    2 * np.pi,
                     np.finfo(np.float32).max,
                 ]
             )
@@ -278,7 +278,7 @@ class SpringCartPole(RenderInterface2D, Model):
         else:
             self.state = ns
         terminal = self._terminal()
-        reward = self._reward()
+        reward = self._reward()[0]
         return self.state, reward, terminal, {}
 
     def _terminal(self):
