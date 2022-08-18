@@ -12,7 +12,7 @@ RL = 3
 action_dict = {0: "LL", 1: "RR", 2: "LR", 3: "RL"}
 
 
-HORIZON = 20
+HORIZON = 10
 
 
 def test_spring_cartpole():
@@ -86,7 +86,7 @@ def test_spring_cartpole():
             next_state = env.reset()
         state = next_state
 
-    env.render()
+    # env.render()
 
     # Save video
     # video = env.save_video("_video/video_plot_acrobot.mp4")
