@@ -154,8 +154,7 @@ class SpringCartPole(RenderInterface2D, Model):
 
     def transform_states(self, state):
         """Transform state with dim=8 to the state with dim=10"""
-        if state.shape[-1] == 10:
-            return state
+        assert state.shape[-1] == 8, "State has wrong shape, should be 8"
         shape = list(state.shape)
         shape[-1] = 10
         state_ = np.zeros(shape)
@@ -170,11 +169,11 @@ class SpringCartPole(RenderInterface2D, Model):
         state_[..., 8] = np.sin(theta2)
         return state_
 
-    def trigonometric2angle(self, costheta, sintheta):
-        C = costheta**2 + sintheta**2
-        costheta, sintheta = costheta / C, sintheta / C
-        theta = np.arctan2(sintheta / C, costheta / C)
-        return theta
+    # def trigonometric2angle(self, costheta, sintheta):
+    #     C = costheta**2 + sintheta**2
+    #     costheta, sintheta = costheta / C, sintheta / C
+    #     theta = np.arctan2(sintheta / C, costheta / C)
+    #     return theta
 
     def reset(self):
         if self.random_init:
@@ -234,7 +233,7 @@ class SpringCartPole(RenderInterface2D, Model):
         )
         theta1 = np.asarray(wrap(theta1, -np.pi, np.pi))
         theta2 = np.asarray(wrap(theta2, -np.pi, np.pi))
-        x1dot = np.asarray(bound(x1dot, -self.max_velocity, self.max_velocity))
+        x1dot = np.asarray(bound(x1dot, [-self.max_velocity, self.max_velocity]))
         x2dot = np.asarray(bound(x2dot, -self.max_velocity, self.max_velocity))
         theta1dot = np.asarray(bound(theta1dot, -self.ang_velocity, self.ang_velocity))
         theta2dot = np.asarray(bound(theta2dot, -self.max_velocity, self.ang_velocity))
