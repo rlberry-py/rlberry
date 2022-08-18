@@ -139,6 +139,7 @@ Benchmark Environments
     envs.benchmarks.grid_exploration.apple_gold.AppleGold
     envs.benchmarks.grid_exploration.nroom.NRoom
     envs.classic_control.MountainCar
+    envs.classic_control.SpringCartPole
     envs.finite.Chain
     envs.finite.GridWorld
 
