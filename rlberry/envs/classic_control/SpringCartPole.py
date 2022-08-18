@@ -18,16 +18,16 @@ class SpringCartPole(RenderInterface2D, Model):
     ----------
     dt : float, defualt=0.02
         Time step of the simulation.
-    obs_trans : bool, default=False
+    obs_trans : bool, default=True
         If True, state has dimension 10:
         State:
             'Cart position1', 'Cart velocity1', 'Pole cos1', 'Pole sin1', 'Pole angular velocity1',
             'Cart position2', 'Cart velocity2', 'Pole cos2', 'Pole sin2', 'Pole angular velocity2'
         If False, state has dimension 8:
-            State:
-                'Cart position1', 'Cart velocity1', 'Pole angle1', 'Pole angular velocity1',
-                'Cart position2', 'Cart velocity2', 'Pole angle2', 'Pole angular velocity2'
-    swing_up : bool, default=True
+        State:
+            'Cart position1', 'Cart velocity1', 'Pole angle1', 'Pole angular velocity1',
+            'Cart position2', 'Cart velocity2', 'Pole angle2', 'Pole angular velocity2'
+    swing_up : bool, default=False
         If True, the pole starting position is at the bottom
         If False, the pole starting position is at the top
     random_init : bool, default=True
@@ -74,7 +74,7 @@ class SpringCartPole(RenderInterface2D, Model):
     domain_fig = None
     actions_num = 4
 
-    def __init__(self, dt=0.02, obs_trans=False, swing_up=True, random_init=True):
+    def __init__(self, dt=0.02, obs_trans=True, swing_up=False, random_init=True):
         Model.__init__(self)
         RenderInterface2D.__init__(self)
 

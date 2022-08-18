@@ -15,6 +15,7 @@ Agent is not tuned and does not learn. This is just for illustration purpose.
 
 from rlberry.envs.classic_control import SpringCartPole
 from rlberry.agents.torch import DQNAgent
+from gym.wrappers.time_limit import TimeLimit
 
 model_configs = {
     "type": "MultiLayerPerceptron",
@@ -27,15 +28,18 @@ init_kwargs = dict(
     q_net_kwargs=model_configs,
 )
 
-env = SpringCartPole()
+env = SpringCartPole(obs_trans=False, swing_up=True)
+env = TimeLimit(env, max_episode_steps=500)
 agent = DQNAgent(env, **init_kwargs)
-agent.fit(budget=1e4)
+agent.fit(budget=1e5)
 
 env.enable_rendering()
 state = env.reset()
 for tt in range(1000):
     action = agent.policy(state)
     next_state, reward, done, _ = env.step(action)
+    if done:
+        next_state = env.reset()
     state = next_state
 
 # Save video
