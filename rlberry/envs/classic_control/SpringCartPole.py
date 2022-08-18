@@ -214,9 +214,7 @@ class SpringCartPole(RenderInterface2D, Model):
             cos2 = cos2 / C2
             sin2 = sin2 / C2
         else:
-            _, _, theta1, _, _, _, theta2, _ = np.split(
-                state, 8, axis=-1
-            )
+            _, _, theta1, _, _, _, theta2, _ = np.split(state, 8, axis=-1)
             cos1 = np.cos(theta1)
             sin1 = np.sin(theta1)
             cos2 = np.cos(theta2)
