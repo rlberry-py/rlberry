@@ -77,8 +77,8 @@ def test_spring_cartpole():
 
     state = env.reset()
     action = 0
-    for tt in range(2 * HORIZON):
-        next_state, reward, done, _ = env.step(action)
+    for _ in range(2 * HORIZON):
+        next_state, _, done, _ = env.step(action)
         if done:
             action += 1
             if action >= 4:

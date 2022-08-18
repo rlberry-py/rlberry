@@ -196,16 +196,16 @@ class SpringCartPole(RenderInterface2D, Model):
         state = self.state
         if state.shape[-1] == 10:
             (
-                x1,
-                x1dot,
+                _,
+                _,
                 cos1,
                 sin1,
-                theta1dot,
-                x2,
-                x2dot,
+                _,
+                _,
+                _,
                 cos2,
                 sin2,
-                theta2dot,
+                _,
             ) = np.split(state, 10, axis=-1)
             C1 = np.sqrt(cos1**2 + sin1**2)
             C2 = np.sqrt(cos2**2 + sin2**2)
@@ -214,7 +214,7 @@ class SpringCartPole(RenderInterface2D, Model):
             cos2 = cos2 / C2
             sin2 = sin2 / C2
         else:
-            x1, x1dot, theta1, theta1dot, x2, x2dot, theta2, theta2dot = np.split(
+            _, _, theta1, _, _, _, theta2, _ = np.split(
                 state, 8, axis=-1
             )
             cos1 = np.cos(theta1)
