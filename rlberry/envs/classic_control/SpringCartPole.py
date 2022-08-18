@@ -9,8 +9,6 @@ from rlberry.rendering import Scene, GeometricPrimitive, RenderInterface2D
 from rlberry.rendering.common_shapes import bar_shape, circle_shape
 
 
-
-
 class SpringCartPole(RenderInterface2D, Model):
     """
     SpringCartPole is an extension of the CartPole environment proposed in
@@ -22,7 +20,7 @@ class SpringCartPole(RenderInterface2D, Model):
         Time step of the simulation.
     obs_trans : bool, default=False
         If True, state has dimension 10:
-        State: 
+        State:
             'Cart position1', 'Cart velocity1', 'Pole cos1', 'Pole sin1', 'Pole angular velocity1',
             'Cart position2', 'Cart velocity2', 'Pole cos2', 'Pole sin2', 'Pole angular velocity2'
         If False, state has dimension 8:
@@ -41,7 +39,7 @@ class SpringCartPole(RenderInterface2D, Model):
         The state consists of the position of cart 1, its speed, the angle
         of pole 1 (expressed in radians or in a tuple of cos() and sin()) and
         its angular speed, and the same set of values for cart 2 and pole 2.
-        For both poles, the angle of 0 corresponds to the vertical position, 
+        For both poles, the angle of 0 corresponds to the vertical position,
         the positive angles correspond to a counterclockwise rotation.
 
     Actions:
@@ -63,20 +61,20 @@ class SpringCartPole(RenderInterface2D, Model):
 
     name = "SpringCartPole"
 
-
     ACT_RNG = 2.0
-    AVAIL_TORQUES = [np.array([-2., -2.]),
-                    np.array([2., 2.]),
-                    np.array([-2., 2.]),
-                    np.array([2., -2.])] 
-
+    AVAIL_TORQUES = [
+        np.array([-2.0, -2.0]),
+        np.array([2.0, 2.0]),
+        np.array([-2.0, 2.0]),
+        np.array([2.0, -2.0]),
+    ]
 
     book_or_nips = "book"
     action_arrow = None
     domain_fig = None
     actions_num = 4
 
-    def __init__(self, dt = 0.1, obs_trans=False, swing_up=True, random_init = True):
+    def __init__(self, dt=0.1, obs_trans=False, swing_up=True, random_init=True):
         Model.__init__(self)
         RenderInterface2D.__init__(self)
 
@@ -106,77 +104,77 @@ class SpringCartPole(RenderInterface2D, Model):
         else:
             self.obs_shape = 8
 
-
         # init base classes
         self.reward_range = (0.0, 1.0)
 
         # rendering info
         boundy = self.pole_length * 2 + 0.2
-        boundx = self.track_length + self.pole_length*2 + 0.2
+        boundx = self.track_length + self.pole_length * 2 + 0.2
         # (left, right, bottom, top)
         self.set_clipping_area((-boundx, boundx, -boundy, boundy))
         self.set_refresh_interval(10)  # in milliseconds
 
         # observation and action spaces
         if self.obs_trans:
-            high = np.array([
-                            self.track_length, 
-                            np.finfo(np.float32).max, 
-                            2*np.pi, 
-                            np.finfo(np.float32).max, 
-                            self.track_length, 
-                            np.finfo(np.float32).max,
-                            2*np.pi,
-                            np.finfo(np.float32).max])
+            high = np.array(
+                [
+                    self.track_length,
+                    np.finfo(np.float32).max,
+                    2 * np.pi,
+                    np.finfo(np.float32).max,
+                    self.track_length,
+                    np.finfo(np.float32).max,
+                    2 * np.pi,
+                    np.finfo(np.float32).max,
+                ]
+            )
         else:
-            high = np.array([
-                            self.track_length, 
-                            np.finfo(np.float32).max, 
-                            1,
-                            1, 
-                            np.finfo(np.float32).max, 
-                            self.track_length, 
-                            np.finfo(np.float32).max,
-                            1,
-                            1,
-                            np.finfo(np.float32).max])
+            high = np.array(
+                [
+                    self.track_length,
+                    np.finfo(np.float32).max,
+                    1,
+                    1,
+                    np.finfo(np.float32).max,
+                    self.track_length,
+                    np.finfo(np.float32).max,
+                    1,
+                    1,
+                    np.finfo(np.float32).max,
+                ]
+            )
         low = -high
         self.observation_space = spaces.Box(low=low, high=high)
         self.action_space = spaces.Discrete(4)
 
         # initialize
-        self.state = None # state in pos or angles
-        self.state_ = None # state in angles
+        self.state = None  # state in pos or angles
+        self.state_ = None  # state in angles
         self.reset()
 
-
-
-    def transform_states(self,state):
-        ''' Transform state with dim=8 to the state with dim=10 
-        '''
+    def transform_states(self, state):
+        """Transform state with dim=8 to the state with dim=10"""
         if state.shape[-1] == 10:
             return state
         shape = list(state.shape)
         shape[-1] = 10
         state_ = np.zeros(shape)
-        state_[...,:2] = state[..., :2]
+        state_[..., :2] = state[..., :2]
         state_[..., 4:7] = state[..., 3:6]
         state_[..., -1] = state[..., -1]
         theta1 = state[..., 2]
         theta2 = state[..., 6]
         state_[..., 2] = np.cos(theta1)
-        state_[...,3] = np.sin(theta1)
-        state_[...,7] = np.cos(theta2)
-        state_[...,8] = np.sin(theta2)
+        state_[..., 3] = np.sin(theta1)
+        state_[..., 7] = np.cos(theta2)
+        state_[..., 8] = np.sin(theta2)
         return state_
 
-
-    def trigonometric2angle(self,costheta,sintheta):
-        C = (costheta**2 + sintheta**2)
-        costheta,sintheta = costheta/C, sintheta/C
-        theta = np.arctan2(sintheta/C,costheta/C)
+    def trigonometric2angle(self, costheta, sintheta):
+        C = costheta**2 + sintheta**2
+        costheta, sintheta = costheta / C, sintheta / C
+        theta = np.arctan2(sintheta / C, costheta / C)
         return theta
-
 
     def reset(self):
         if self.random_init:
@@ -194,11 +192,21 @@ class SpringCartPole(RenderInterface2D, Model):
         self.state_ = rand_state
         return self.state
 
-
     def _reward(self):
         state = self.state
         if state.shape[-1] == 10:
-            x1, x1dot, cos1, sin1, theta1dot, x2, x2dot, cos2, sin2, theta2dot = np.split(state,10,axis=-1)
+            (
+                x1,
+                x1dot,
+                cos1,
+                sin1,
+                theta1dot,
+                x2,
+                x2dot,
+                cos2,
+                sin2,
+                theta2dot,
+            ) = np.split(state, 10, axis=-1)
             C1 = np.sqrt(cos1**2 + sin1**2)
             C2 = np.sqrt(cos2**2 + sin2**2)
             cos1 = cos1 / C1
@@ -206,7 +214,9 @@ class SpringCartPole(RenderInterface2D, Model):
             cos2 = cos2 / C2
             sin2 = sin2 / C2
         else:
-            x1, x1dot, theta1, theta1dot, x2, x2dot, theta2, theta2dot = np.split(state, 8, axis=-1)
+            x1, x1dot, theta1, theta1dot, x2, x2dot, theta2, theta2dot = np.split(
+                state, 8, axis=-1
+            )
             cos1 = np.cos(theta1)
             sin1 = np.sin(theta1)
             cos2 = np.cos(theta2)
@@ -214,21 +224,25 @@ class SpringCartPole(RenderInterface2D, Model):
 
         bad_condition = self._terminal()
 
-        pos_reward = (1+cos1)/4 + (1+cos2)/4
-        neg_reward = 0.
+        pos_reward = (1 + cos1) / 4 + (1 + cos2) / 4
+        neg_reward = 0.0
 
         return np.where(bad_condition, neg_reward, pos_reward)
 
-    def bound_states(self,state):
-        assert state.shape[-1] == 8, 'state must be of shape (8,)'
-        x1, x1dot, theta1, theta1dot, x2, x2dot, theta2, theta2dot = np.split(state, 8, axis=-1)
+    def bound_states(self, state):
+        assert state.shape[-1] == 8, "state must be of shape (8,)"
+        x1, x1dot, theta1, theta1dot, x2, x2dot, theta2, theta2dot = np.split(
+            state, 8, axis=-1
+        )
         theta1 = np.asarray(wrap(theta1, -np.pi, np.pi))
         theta2 = np.asarray(wrap(theta2, -np.pi, np.pi))
         x1dot = np.asarray(bound(x1dot, -self.max_velocity, self.max_velocity))
         x2dot = np.asarray(bound(x2dot, -self.max_velocity, self.max_velocity))
         theta1dot = np.asarray(bound(theta1dot, -self.ang_velocity, self.ang_velocity))
         theta2dot = np.asarray(bound(theta2dot, -self.max_velocity, self.ang_velocity))
-        state = np.concatenate([x1, x1dot, theta1, theta1dot, x2, x2dot, theta2, theta2dot], axis=-1)
+        state = np.concatenate(
+            [x1, x1dot, theta1, theta1dot, x2, x2dot, theta2, theta2dot], axis=-1
+        )
         return state
 
     def step(self, action):
@@ -267,7 +281,6 @@ class SpringCartPole(RenderInterface2D, Model):
         reward = self._reward()
         return self.state, reward, terminal, {}
 
-
     def _terminal(self):
         s = self.state_
         x1 = s[0]
@@ -282,44 +295,71 @@ class SpringCartPole(RenderInterface2D, Model):
         return bool(bad_condition)
 
     def _dsdt(self, sa, t):
-        assert sa.shape[-1] == 10, 'state + action must be of shape (10,)'
-        x1, x1dot, theta1, theta1dot, x2, x2dot, theta2, theta2dot, a1, a2 = np.split(sa, 10, axis=-1)
+        assert sa.shape[-1] == 10, "state + action must be of shape (10,)"
+        x1, x1dot, theta1, theta1dot, x2, x2dot, theta2, theta2dot, a1, a2 = np.split(
+            sa, 10, axis=-1
+        )
         cos1 = np.cos(theta1)
         sin1 = np.sin(theta1)
         cos2 = np.cos(theta2)
         sin2 = np.sin(theta2)
-        #x1 - size [N, 1] or [L, N, 1]
+        # x1 - size [N, 1] or [L, N, 1]
 
-        f1 = a1 + self.spring * (self.normal_spring_length - np.abs(x1- x2))
-        f2 = a2 + self.spring * (self.normal_spring_length - np.abs(x1- x2))
+        f1 = a1 + self.spring * (self.normal_spring_length - np.abs(x1 - x2))
+        f2 = a2 + self.spring * (self.normal_spring_length - np.abs(x1 - x2))
 
-        a11 = 4 *self.l/3
-        a22 = - self.masscart - self.masspole
+        a11 = 4 * self.l / 3
+        a22 = -self.masscart - self.masspole
 
-        a121 = - cos1
-        a122 = - cos2
-        a211 = self.l * self.masspole*cos1
-        a212 = self.l * self.masspole*cos2
+        a121 = -cos1
+        a122 = -cos2
+        a211 = self.l * self.masspole * cos1
+        a212 = self.l * self.masspole * cos2
 
-        b11 = self.gravity*sin1 - self.pole_friction * theta1dot/self.l/self.masspole
-        b12 = self.gravity*sin2 - self.pole_friction * theta2dot/self.l/self.masspole
+        b11 = (
+            self.gravity * sin1
+            - self.pole_friction * theta1dot / self.l / self.masspole
+        )
+        b12 = (
+            self.gravity * sin2
+            - self.pole_friction * theta2dot / self.l / self.masspole
+        )
 
-        b21 = self.l*self.masspole*sin1*theta1dot**2 - f1 + self.cart_friction*np.sign(x1dot)
-        b22 = self.l*self.masspole*sin2*theta2dot**2 - f2 + self.cart_friction*np.sign(x2dot)
+        b21 = (
+            self.l * self.masspole * sin1 * theta1dot**2
+            - f1
+            + self.cart_friction * np.sign(x1dot)
+        )
+        b22 = (
+            self.l * self.masspole * sin2 * theta2dot**2
+            - f2
+            + self.cart_friction * np.sign(x2dot)
+        )
 
-        theta1acc = (a121*b21 - a22*b11)/(a121 *a211- a11*a22)
-        theta2acc = (a122*b22 - a22*b12)/(a122 *a212- a11*a22)
+        theta1acc = (a121 * b21 - a22 * b11) / (a121 * a211 - a11 * a22)
+        theta2acc = (a122 * b22 - a22 * b12) / (a122 * a212 - a11 * a22)
 
-        x1acc = (b11 - a11*theta1acc)/ a121
-        x2acc = (b12 - a11*theta2acc)/ a122
+        x1acc = (b11 - a11 * theta1acc) / a121
+        x2acc = (b12 - a11 * theta2acc) / a122
 
         a1dot = np.zeros_like(a1)
         a2dot = np.zeros_like(a2)
 
-
-        return np.concatenate([x1dot, x1acc, theta1dot, theta1acc,
-                                x2dot, x2acc, theta2dot, theta2acc, a1dot, a2dot], axis =-1)
-
+        return np.concatenate(
+            [
+                x1dot,
+                x1acc,
+                theta1dot,
+                theta1acc,
+                x2dot,
+                x2acc,
+                theta2dot,
+                theta2acc,
+                a1dot,
+                a2dot,
+            ],
+            axis=-1,
+        )
 
     #
     # Below: code for rendering
@@ -333,20 +373,18 @@ class SpringCartPole(RenderInterface2D, Model):
         scene = Scene()
         SCALE = 3
 
-
-        assert state.shape[-1] == 8, 'state must be of shape (8,)'
+        assert state.shape[-1] == 8, "state must be of shape (8,)"
 
         x1 = state[0]
         x2 = state[4]
         theta1 = state[2]
         theta2 = state[6]
 
-        cartx1 = x1 * SCALE# MIDDLE OF CART 1
+        cartx1 = x1 * SCALE  # MIDDLE OF CART 1
 
         cartx2 = x2 * SCALE  # MIDDLE OF CART 2
 
         cartwidth = 0.05 * SCALE
-
 
         c1p1 = (
             cartx1 - cartwidth / 2,
@@ -376,7 +414,7 @@ class SpringCartPole(RenderInterface2D, Model):
 
         p2 = (
             cartx2 - np.sin(theta2) * self.pole_length * SCALE,
-            np.cos(theta2) * self.pole_length   * SCALE,
+            np.cos(theta2) * self.pole_length * SCALE,
         )
 
         cart1 = bar_shape(c1p1, c1p2, 0.02 * SCALE)
@@ -391,7 +429,14 @@ class SpringCartPole(RenderInterface2D, Model):
         pole2 = bar_shape(p02, p2, 0.01 * SCALE)
         pole2.set_color((255 / 255, 215 / 255, 0 / 255))
 
-        spring = bar_shape(p01, p02, 0.03 * np.sqrt(self.normal_spring_length) * SCALE/ np.sqrt(cartx2-cartx1))
+        spring = bar_shape(
+            p01,
+            p02,
+            0.03
+            * np.sqrt(self.normal_spring_length)
+            * SCALE
+            / np.sqrt(cartx2 - cartx1),
+        )
         spring.set_color((50 / 255, 50 / 255, 50 / 255))
 
         joint1 = circle_shape(p01, 0.03)
@@ -401,17 +446,17 @@ class SpringCartPole(RenderInterface2D, Model):
         joint2.set_color((0 / 255, 255 / 255, 0 / 255))
 
         track_line = GeometricPrimitive("LINES")
-        track_line.add_vertex((-self.track_length/2 * SCALE, -0.02*SCALE))
-        track_line.add_vertex((self.track_length/2 * SCALE, -0.02*SCALE))
+        track_line.add_vertex((-self.track_length / 2 * SCALE, -0.02 * SCALE))
+        track_line.add_vertex((self.track_length / 2 * SCALE, -0.02 * SCALE))
 
         axis1 = GeometricPrimitive("LINES")
         axis1.add_vertex((cartx1, 0))
-        axis1.add_vertex((cartx1, self.pole_length*SCALE))
+        axis1.add_vertex((cartx1, self.pole_length * SCALE))
         axis1.set_color((250 / 255, 250 / 255, 250 / 255))
 
         axis2 = GeometricPrimitive("LINES")
         axis2.add_vertex((cartx2, 0))
-        axis2.add_vertex((cartx2, self.pole_length*SCALE))
+        axis2.add_vertex((cartx2, self.pole_length * SCALE))
         axis2.set_color((250 / 255, 250 / 255, 250 / 255))
 
         scene.add_shape(cart1)
