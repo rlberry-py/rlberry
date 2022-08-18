@@ -13,48 +13,52 @@ from rlberry.rendering.common_shapes import bar_shape, circle_shape
 
 class SpringCartPole(RenderInterface2D, Model):
     """
-    Acrobot is a 2-link pendulum with only the second joint actuated.
-    Initially, both links point downwards. The goal is to swing the
-    end-effector at a height at least the length of one link above the base.
-    Both links can swing freely and can pass by each other, i.e., they don't
-    collide when they have the same angle.
+    SpringCartPole is an extension of the CartPole environment proposed in
+    PhD thesis J-F. Hren. It consists of two carts connected by a spring.
+
+    Parameters
+    ----------
+    dt : float, defualt=0.1
+        Time step of the simulation.
+    obs_trans : bool, default=False
+        If True, state has dimension 10:
+        State: 
+            'Cart position1', 'Cart velocity1', 'Pole cos1', 'Pole sin1', 'Pole angular velocity1',
+            'Cart position2', 'Cart velocity2', 'Pole cos2', 'Pole sin2', 'Pole angular velocity2'
+        If False, state has dimension 8:
+            State:
+                'Cart position1', 'Cart velocity1', 'Pole angle1', 'Pole angular velocity1',
+                'Cart position2', 'Cart velocity2', 'Pole angle2', 'Pole angular velocity2'
+    swing_up : bool, default=True
+        If True, the pole starting position is at the bottom
+        If False, the pole starting position is at the top
+    random_init : bool, default=True
+        If True, the noise is added to the carts and poles starting positions
 
     Notes
     -----
     State:
-        The state consists of the sin() and cos() of the two rotational joint
-        angles and the joint angular velocities:
-        [cos(theta1) sin(theta1) cos(theta2) sin(theta2) thetaDot1 thetaDot2].
-        For the first link, an angle of 0 corresponds to the link pointing
-        downwards.
-        The angle of the second link is relative to the angle of the first link.
-        An angle of 0 corresponds to having the same angle between the two links.
-        A state of [1, 0, 1, 0, ..., ...] means that both links point downwards.
+        The state consists of the position of cart 1, its speed, the angle
+        of pole 1 (expressed in radians or in a tuple of cos() and sin()) and
+        its angular speed, and the same set of values for cart 2 and pole 2.
+        For both poles, the angle of 0 corresponds to the vertical position, 
+        the positive angles correspond to a counterclockwise rotation.
 
     Actions:
-        The action is either applying +1, 0 or -1 torque on the joint between
-        the two pendulum links.
-    .. note::
-        The dynamics equations were missing some terms in the NIPS paper which
-        are present in the book. R. Sutton confirmed in personal correspondence
-        that the experimental results shown in the paper and the book were
-        generated with the equations shown in the book.
-        However, there is the option to run the domain with the paper equations
-        by setting book_or_nips = 'nips'
+        The action is either 0, 1, 2, or 3, corresponding to the four possible
+        actions:
+            LL = 0, move cart 1 to the left, cart 2 to the left
+            RR = 1, move cart 1 to the right, cart 2 to the right
+            LR = 2, move cart 1 to the left, cart 2 to the right
+            RL = 3, move cart 1 to the right, cart 2 to the left
+        The magnitude of actions is fixed to 2.0.
 
     Reference:
     .. seealso::
-        R. Sutton: Generalization in Reinforcement Learning:
-        Successful Examples Using Sparse Coarse Coding (NIPS 1996)
-    .. seealso::
-        R. Sutton and A. G. Barto:
-        Reinforcement learning: An introduction.
-        Cambridge: MIT press, 1998.
+        J-F. Hren: Planification optimiste pour systèmes déterministes, PhD thesis
     .. warning::
         This version of the domain uses the Runge-Kutta method for integrating
-        the system dynamics and is more realistic, but also considerably harder
-        than the original version which employs Euler integration,
-        see the AcrobotLegacy class.
+        the system dynamics and is more realistic than Euler method
     """
 
     name = "SpringCartPole"
@@ -141,7 +145,8 @@ class SpringCartPole(RenderInterface2D, Model):
         self.action_space = spaces.Discrete(4)
 
         # initialize
-        self.state = None
+        self.state = None # state in pos or angles
+        self.state_ = None # state in angles
         self.reset()
 
 
@@ -165,6 +170,7 @@ class SpringCartPole(RenderInterface2D, Model):
         state_[...,8] = np.sin(theta2)
         return state_
 
+
     def trigonometric2angle(self,costheta,sintheta):
         C = (costheta**2 + sintheta**2)
         costheta,sintheta = costheta/C, sintheta/C
@@ -185,6 +191,7 @@ class SpringCartPole(RenderInterface2D, Model):
             self.state = self.transform_states(rand_state)
         else:
             self.state = rand_state
+        self.state_ = rand_state
         return self.state
 
 
@@ -213,26 +220,15 @@ class SpringCartPole(RenderInterface2D, Model):
         return np.where(bad_condition, neg_reward, pos_reward)
 
     def bound_states(self,state):
-        if state.shape[-1] == 10:
-            x1, x1dot, cos1, sin1, theta1dot, x2, x2dot, cos2, sin2, theta2dot = np.split(state,10,axis=-1)
-            C1 = cos1**2 + sin1**2
-            C2 = cos2**2 + sin2**2
-            cos1 = np.sqrt(cos1 **2 / C1)
-            sin1 = np.sqrt(sin1**2 / C1)
-            cos2 = np.sqrt(cos2**2 / C2)
-            sin2 = np.sqrt(sin2**2 / C2)
-        else:
-            x1, x1dot, theta1, theta1dot, x2, x2dot, theta2, theta2dot = np.split(state, 8, axis=-1)
-            theta1 = np.asarray(wrap(theta1, -np.pi, np.pi))
-            theta2 = np.asarray(wrap(theta2, -np.pi, np.pi))
+        assert state.shape[-1] == 8, 'state must be of shape (8,)'
+        x1, x1dot, theta1, theta1dot, x2, x2dot, theta2, theta2dot = np.split(state, 8, axis=-1)
+        theta1 = np.asarray(wrap(theta1, -np.pi, np.pi))
+        theta2 = np.asarray(wrap(theta2, -np.pi, np.pi))
         x1dot = np.asarray(bound(x1dot, -self.max_velocity, self.max_velocity))
         x2dot = np.asarray(bound(x2dot, -self.max_velocity, self.max_velocity))
         theta1dot = np.asarray(bound(theta1dot, -self.ang_velocity, self.ang_velocity))
         theta2dot = np.asarray(bound(theta2dot, -self.max_velocity, self.ang_velocity))
-        if state.shape[-1] == 10:
-            state = np.concatenate([x1, x1dot, cos1, sin1, theta1dot, x2, x2dot, cos2, sin2, theta2dot], axis=-1)
-        else:   
-            state = np.concatenate([x1, x1dot, theta1, theta1dot, x2, x2dot, theta2, theta2dot], axis=-1)
+        state = np.concatenate([x1, x1dot, theta1, theta1dot, x2, x2dot, theta2, theta2dot], axis=-1)
         return state
 
     def step(self, action):
@@ -243,9 +239,9 @@ class SpringCartPole(RenderInterface2D, Model):
 
         # save state for rendering
         if self.is_render_enabled():
-            self.append_state_for_rendering(np.array(self.state))
+            self.append_state_for_rendering(np.array(self.state_))
 
-        s = self.state
+        s = self.state_
         torque = self.AVAIL_TORQUES[action]
 
         # # Add noise to the force action
@@ -259,27 +255,23 @@ class SpringCartPole(RenderInterface2D, Model):
         ns = rk4(self._dsdt, s_augmented, [0, self.dt])
         # only care about final timestep of integration returned by integrator
         ns = ns[-1]
-        ns = ns[:self.obs_shape]  # omit action
+        ns = ns[:-2]  # omit action
 
         ns = self.bound_states(ns)
-        self.state = ns
+        self.state_ = ns
+        if self.obs_trans:
+            self.state = self.transform_states(ns)
+        else:
+            self.state = ns
         terminal = self._terminal()
         reward = self._reward()
         return self.state, reward, terminal, {}
 
-    # def _get_ob(self):
-    #     s = self.state
-    #     return np.array(
-    #         [np.cos(s[0]), np.sin(s[0]), np.cos(s[1]), np.sin(s[1]), s[2], s[3]]
-    #     )
 
     def _terminal(self):
-        s = self.state
+        s = self.state_
         x1 = s[0]
-        if s.shape == 10:
-            x2 = s[5]
-        else:
-            x2 = s[4]
+        x2 = s[4]
         bad_condition = False
         bad_condition += np.abs(x1) > self.L
         bad_condition += np.abs(x2) > self.L
@@ -290,23 +282,12 @@ class SpringCartPole(RenderInterface2D, Model):
         return bool(bad_condition)
 
     def _dsdt(self, sa, t):
-        ''' Input state - [N,n] or [L,N,n]
-            Input action - [N, m] or [L, N, m]
-        '''
-        if sa.shape[-1]==12:
-            x1, x1dot, cos1, sin1, theta1dot, x2, x2dot, cos2, sin2, theta2dot, a1, a2 = np.split(sa, 12, axis=-1)
-            C1 = np.sqrt(cos1**2 + sin1**2)
-            C2 = np.sqrt(cos2**2 + sin2**2)
-            cos1 = cos1 / C1
-            sin1 = sin1 / C1
-            cos2 = cos2 / C2
-            sin2 = sin2 / C2
-        else:
-            x1, x1dot, theta1, theta1dot, x2, x2dot, theta2, theta2dot, a1, a2 = np.split(sa, 10, axis=-1)
-            cos1 = np.cos(theta1)
-            sin1 = np.sin(theta1)
-            cos2 = np.cos(theta2)
-            sin2 = np.sin(theta2)
+        assert sa.shape[-1] == 10, 'state + action must be of shape (10,)'
+        x1, x1dot, theta1, theta1dot, x2, x2dot, theta2, theta2dot, a1, a2 = np.split(sa, 10, axis=-1)
+        cos1 = np.cos(theta1)
+        sin1 = np.sin(theta1)
+        cos2 = np.cos(theta2)
+        sin2 = np.sin(theta2)
         #x1 - size [N, 1] or [L, N, 1]
 
         f1 = a1 + self.spring * (self.normal_spring_length - np.abs(x1- x2))
@@ -335,11 +316,8 @@ class SpringCartPole(RenderInterface2D, Model):
         a1dot = np.zeros_like(a1)
         a2dot = np.zeros_like(a2)
 
-        if sa.shape[-1]==12:
-            return np.concatenate([x1dot, x1acc, -sin1*theta1dot, cos1*theta1dot, theta1acc,
-                                x2dot, x2acc, -sin2*theta2dot, cos2*theta2dot, theta2acc, a1dot, a2dot], axis = -1)
-        else:
-            return np.concatenate([x1dot, x1acc, theta1dot, theta1acc,
+
+        return np.concatenate([x1dot, x1acc, theta1dot, theta1acc,
                                 x2dot, x2acc, theta2dot, theta2acc, a1dot, a2dot], axis =-1)
 
 
@@ -355,18 +333,13 @@ class SpringCartPole(RenderInterface2D, Model):
         scene = Scene()
         SCALE = 3
 
-        # p0 = (0.0, 0.0)
 
-        if state.shape[-1] == 10:
-            x1 = state[0]
-            x2 = state[5]
-            theta1 = self.trigonometric2angle(state[2], state[3])
-            theta2 = self.trigonometric2angle(state[7], state[8])
-        else:
-            x1 = state[0]
-            x2 = state[4]
-            theta1 = state[2]
-            theta2 = state[6]
+        assert state.shape[-1] == 8, 'state must be of shape (8,)'
+
+        x1 = state[0]
+        x2 = state[4]
+        theta1 = state[2]
+        theta2 = state[6]
 
         cartx1 = x1 * SCALE# MIDDLE OF CART 1
 
