@@ -11,7 +11,6 @@ pr:
     - docs
 
 
-
 jobs:
 
 - job: 'checkPrLabel'
