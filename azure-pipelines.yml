@@ -31,7 +31,7 @@ jobs:
     name: checkPrLabel
 
 - job: 'linux'
-  dependsOn: checkLabel
+  dependsOn: checkPrLabel
   # Condition: have ready for review label or on the main branch.
   condition: or(in(variables['Build.SourceBranch'], 'refs/heads/main'), eq(dependencies.build_and_static_validation.outputs['checkPrLabel.prHasCILabel'], true))
   pool:
@@ -75,7 +75,7 @@ jobs:
     displayName: 'Upload to codecov.io'
 
 - job: 'Formatting'
-  dependsOn: checkLabel
+  dependsOn: checkPrLabel
   condition: or(in(variables['Build.SourceBranch'], 'refs/heads/main'), eq(dependencies.build_and_static_validation.outputs['checkPrLabel.prHasCILabel'], true))
 
   pool:
@@ -99,7 +99,7 @@ jobs:
 
 
 - job: 'macOS'
-  dependsOn: checkLabel
+  dependsOn: checkPrLabel
   condition: or(in(variables['Build.SourceBranch'], 'refs/heads/main'), eq(dependencies.build_and_static_validation.outputs['checkPrLabel.prHasCILabel'], true))
 
   pool:
