@@ -131,7 +131,7 @@ jobs:
     displayName: 'pytest'
 
 - job: 'windows'
-  dependsOn: checkLabel
+  dependsOn: checkPrLabel
   condition: or(in(variables['Build.SourceBranch'], 'refs/heads/main'), eq(dependencies.build_and_static_validation.outputs['checkPrLabel.prHasCILabel'], true))
   pool:
     vmImage: 'windows-latest'
