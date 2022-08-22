@@ -10,9 +10,30 @@ pr:
     - rlberry/_version.py
     - docs
 
+
+
 jobs:
 
+- job: 'checkPrLabel'
+  continueOnError: false
+  pool:
+    vmImage: ubuntu-latest
+  steps:
+  - bash: |
+     echo "Looking for label at https://api.github.com/repos/$BUILD_REPOSITORY_ID/issues/$SYSTEM_PULLREQUEST_PULLREQUESTNUMBER/labels"
+     if curl -s "https://api.github.com/repos/$BUILD_REPOSITORY_ID/issues/$SYSTEM_PULLREQUEST_PULLREQUESTNUMBER/labels" | grep '"name": "ready for review"'
+     then
+       echo "##vso[task.setvariable variable=prHasCILabel;isOutput=true]true"
+       echo "[INFO] ready for review label found!"
+     fi
+    displayName: Check for CI label build on PR
+    condition: eq(variables['Build.Reason'], 'PullRequest') # only run step if it is a PR
+    name: checkPrLabel
+
 - job: 'linux'
+  dependsOn: checkPrLabel
+  # Condition: have ready for review label or on the main branch.
+  condition: or(in(variables['Build.SourceBranch'], 'refs/heads/main'), eq(dependencies.checkPrLabel.outputs['checkPrLabel.prHasCILabel'], true))
   pool:
     vmImage: ubuntu-latest
   strategy:
@@ -54,6 +75,9 @@ jobs:
     displayName: 'Upload to codecov.io'
 
 - job: 'Formatting'
+  dependsOn: checkPrLabel
+  condition: or(in(variables['Build.SourceBranch'], 'refs/heads/main'), eq(dependencies.checkPrLabel.outputs['checkPrLabel.prHasCILabel'], true))
+
   pool:
     vmImage: ubuntu-latest
   strategy:
@@ -75,6 +99,9 @@ jobs:
 
 
 - job: 'macOS'
+  dependsOn: checkPrLabel
+  condition: or(in(variables['Build.SourceBranch'], 'refs/heads/main'), eq(dependencies.checkPrLabel.outputs['checkPrLabel.prHasCILabel'], true))
+
   pool:
     vmImage: 'macOS-latest'
   strategy:
@@ -104,6 +131,8 @@ jobs:
     displayName: 'pytest'
 
 - job: 'windows'
+  dependsOn: checkPrLabel
+  condition: or(in(variables['Build.SourceBranch'], 'refs/heads/main'), eq(dependencies.checkPrLabel.outputs['checkPrLabel.prHasCILabel'], true))
   pool:
     vmImage: 'windows-latest'
   strategy:
