@@ -76,7 +76,7 @@ jobs:
 
 - job: 'Formatting'
   dependsOn: checkPrLabel
-  condition: or(in(variables['Build.SourceBranch'], 'refs/heads/main'), eq(dependencies.build_and_static_validation.outputs['checkPrLabel.prHasCILabel'], true))
+  condition: or(in(variables['Build.SourceBranch'], 'refs/heads/main'), eq(dependencies.checkPrLabel.outputs['checkPrLabel.prHasCILabel'], true))
 
   pool:
     vmImage: ubuntu-latest
@@ -100,7 +100,7 @@ jobs:
 
 - job: 'macOS'
   dependsOn: checkPrLabel
-  condition: or(in(variables['Build.SourceBranch'], 'refs/heads/main'), eq(dependencies.build_and_static_validation.outputs['checkPrLabel.prHasCILabel'], true))
+  condition: or(in(variables['Build.SourceBranch'], 'refs/heads/main'), eq(dependencies.checkPrLabel.outputs['checkPrLabel.prHasCILabel'], true))
 
   pool:
     vmImage: 'macOS-latest'
@@ -132,7 +132,7 @@ jobs:
 
 - job: 'windows'
   dependsOn: checkPrLabel
-  condition: or(in(variables['Build.SourceBranch'], 'refs/heads/main'), eq(dependencies.build_and_static_validation.outputs['checkPrLabel.prHasCILabel'], true))
+  condition: or(in(variables['Build.SourceBranch'], 'refs/heads/main'), eq(dependencies.checkPrLabel.outputs['checkPrLabel.prHasCILabel'], true))
   pool:
     vmImage: 'windows-latest'
   strategy:
