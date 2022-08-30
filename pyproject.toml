@@ -6,7 +6,7 @@ authors = ["rlberry team"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.11"
+python = ">=3.8,<3.11"
 scipy = "^1.8.1"
 pygame = "^2.1.2"
 matplotlib = "^3.5.2"
