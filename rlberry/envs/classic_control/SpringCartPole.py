@@ -16,7 +16,7 @@ class SpringCartPole(RenderInterface2D, Model):
 
     Parameters
     ----------
-    dt : float, defualt=0.02
+    dt : float, default=0.02
         Time step of the simulation.
     obs_trans : bool, default=True
         If True, state has dimension 10:
@@ -50,6 +50,11 @@ class SpringCartPole(RenderInterface2D, Model):
             LR = 2, move cart 1 to the left, cart 2 to the right
             RL = 3, move cart 1 to the right, cart 2 to the left
         The magnitude of actions is fixed to 2.0.
+
+    Reward:
+        If spring is not deformed (its length is within [self.min_spring_length, self.max_spring_length])
+        and the carts stay on the track (|Cart Position| <= self.track_length / 2)
+        then the reward is ((1 + Pole cos1) + (1 + Pole cos2)) / 4, else reward is 0.
 
     Reference:
     .. seealso::
@@ -263,9 +268,17 @@ class SpringCartPole(RenderInterface2D, Model):
         # _dsdt
         s_augmented = np.append(s, torque)
 
-        ns = rk4(self._dsdt, s_augmented, [0, self.dt])
-        # only care about final timestep of integration returned by integrator
-        ns = ns[-1]
+        try:
+            from scipy.integrate import solve_ivp
+
+            ns = solve_ivp(lambda t, y: self._dsdt(y, t), [0, self.dt], s_augmented)
+            ns = ns.y[:, -1]  # final timestep
+        except:
+            print("Can't import scipy library, use rk4 function")
+            ns = rk4(self._dsdt, s_augmented, [0, self.dt])
+            # only care about final timestep of integration returned by integrator
+            ns = ns[-1]
+
         ns = ns[:-2]  # omit action
 
         ns = self.bound_states(ns)

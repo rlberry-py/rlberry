@@ -5,7 +5,7 @@ A demo of SpringCartPole environment with DQNAgent
 Illustration of the training and video rendering of DQN Agent in
 SpringCartPole environment.
 
-Agent is not tuned and does not learn. This is just for illustration purpose.
+Agent is slightly tuned, but not optimal. This is just for illustration purpose.
 
 .. video:: ../../video_plot_springcartpole.mp4
    :width: 600

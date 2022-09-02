@@ -78,7 +78,6 @@ def test_spring_cartpole():
 
     _ = env.get_video()
 
-    # env.render()
 
-    # Save video
-    # video = env.save_video("_video/video_plot_acrobot.mp4")
+if __name__ == "__main__":
+    test_spring_cartpole()
