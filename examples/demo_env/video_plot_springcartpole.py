@@ -35,6 +35,7 @@ agent.fit(budget=1e5)
 
 env.enable_rendering()
 state = env.reset()
+
 for tt in range(1000):
     action = agent.policy(state)
     next_state, reward, done, _ = env.step(action)
