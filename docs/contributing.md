@@ -17,6 +17,7 @@ Please read the rest of this page for more information on how to contribute to
 rlberry and look at our [beginner developer guide](dev_guide) if you have questions
 about how to use git, do PR or for more informations about the documentation.
 
+For a PR to be accepted it must pass all the tests when the label 'ready for review' is set in the PR. The label 'ready for review' trigger additional tests to be done on the PR and should be set when the PR is ready.
 
 ## Documentation
 

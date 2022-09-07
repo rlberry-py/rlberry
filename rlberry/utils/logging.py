@@ -104,7 +104,7 @@ def configure_logging(
             "formatter": "detailed",
             "mode": "w",
         }
-        config["loggers"][""]["handlers"].append(file_path.name)
+        config["loggers"]["rlberry_logger"]["handlers"].append(file_path.name)
 
     logging.config.dictConfig(config)
     gym.logger.set_level(
