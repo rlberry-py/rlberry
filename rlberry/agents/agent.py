@@ -412,6 +412,8 @@ class AgentWithSimplePolicy(Agent):
 
     Requires a :meth:`policy` method, and a simple evaluation method (Monte-Carlo policy evaluation).
 
+    The :meth:`policy` method takes an observation as input and returns an action.
+
     Classes that implement this interface must send ``**kwargs``
     to :code:`AgentWithSimplePolicy.__init__()`
 
