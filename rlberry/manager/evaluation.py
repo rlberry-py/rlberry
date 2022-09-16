@@ -461,8 +461,9 @@ def plot_writer_data(
     if "style" in sns_kwargs:
         # Number of unique dash styles. Default: 4 styles max.
         n_uniq_dash = sns_kwargs.get("n_uniq_dash", 4)
+        linestyles = ["", (1, 1), (5, 5), (1, 5, 3, 5)]
         # Cycle through default sns linestyles.
-        dash_cycler = cycle(sns._core.unique_dashes(n_uniq_dash))
+        dash_cycler = cycle(linestyles[:n_uniq_dash])
         sns_kwargs["dashes"] = [
             next(dash_cycler) for _ in range(data["name"].unique().size)
         ]
