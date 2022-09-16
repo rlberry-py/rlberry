@@ -341,14 +341,14 @@ class Agent(ABC):
         obj = cls(**kwargs)
 
         try:
-            if not kwargs["compress_pickle"]:
+            if not obj.compress_pickle:
                 with filename.open("rb") as ff:
                     tmp_dict = pickle.load(ff)
             else:
                 with bz2.BZ2File(filename, "rb") as ff:
                     tmp_dict = cPickle.load(ff)
         except Exception:
-            if not kwargs["compress_pickle"]:
+            if not obj.compress_pickle:
                 with filename.open("rb") as ff:
                     tmp_dict = dill.load(ff)
             else:
