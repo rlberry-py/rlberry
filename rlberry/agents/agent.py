@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 import dill
 import pickle
+import bz2
+import _pickle as cPickle
 import numpy as np
 from inspect import signature
 from pathlib import Path
@@ -33,6 +35,8 @@ class Agent(ABC):
         Environment on which to evaluate the agent. If None, copied from env.
     copy_env : bool
         If true, makes a deep copy of the environment.
+    compress_pickle : bool
+        If true, compress the save files using bz2.
     seeder : :class:`~rlberry.seeding.seeder.Seeder`, int, or None
         Seeder/seed for random number generation.
     output_dir : str or Path
@@ -82,6 +86,7 @@ class Agent(ABC):
         env: types.Env = None,
         eval_env: Optional[types.Env] = None,
         copy_env: bool = True,
+        compress_pickle: bool = False,
         seeder: Optional[types.Seed] = None,
         output_dir: Optional[str] = None,
         _execution_metadata: Optional[metadata_utils.ExecutionMetadata] = None,
@@ -95,6 +100,7 @@ class Agent(ABC):
         self.seeder = Seeder(seeder)
         self.env = process_env(env, self.seeder, copy_env=copy_env)
 
+        self.compress_pickle = compress_pickle
         # evaluation environment
         eval_env = eval_env or env
         self.eval_env = process_env(eval_env, self.seeder, copy_env=True)
@@ -300,12 +306,20 @@ class Agent(ABC):
         filename = Path(filename).with_suffix(".pickle")
         filename.parent.mkdir(parents=True, exist_ok=True)
         try:
-            with filename.open("wb") as ff:
-                pickle.dump(self.__dict__, ff)
+            if not self.compress_pickle:
+                with filename.open("wb") as ff:
+                    pickle.dump(self.__dict__, ff)
+            else:
+                with bz2.BZ2File(filename, "wb") as ff:
+                    cPickle.dump(self.__dict__, ff)
         except Exception:
             try:
-                with filename.open("wb") as ff:
-                    dill.dump(self.__dict__, ff)
+                if not self.compress_pickle:
+                    with filename.open("wb") as ff:
+                        dill.dump(self.__dict__, ff)
+                else:
+                    with bz2.BZ2File(filename, "wb") as ff:
+                        dill.dump(self.__dict__, ff)
             except Exception as ex:
                 logger.warning("Agent instance cannot be pickled: " + str(ex))
                 return None
@@ -324,14 +338,22 @@ class Agent(ABC):
             Arguments to required by the __init__ method of the Agent subclass.
         """
         filename = Path(filename).with_suffix(".pickle")
-
         obj = cls(**kwargs)
+
         try:
-            with filename.open("rb") as ff:
-                tmp_dict = pickle.load(ff)
+            if not obj.compress_pickle:
+                with filename.open("rb") as ff:
+                    tmp_dict = pickle.load(ff)
+            else:
+                with bz2.BZ2File(filename, "rb") as ff:
+                    tmp_dict = cPickle.load(ff)
         except Exception:
-            with filename.open("rb") as ff:
-                tmp_dict = dill.load(ff)
+            if not obj.compress_pickle:
+                with filename.open("rb") as ff:
+                    tmp_dict = dill.load(ff)
+            else:
+                with bz2.BZ2File(filename, "rb") as ff:
+                    tmp_dict = dill.load(ff)
 
         obj.__dict__.clear()
         obj.__dict__.update(tmp_dict)
