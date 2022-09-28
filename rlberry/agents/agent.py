@@ -340,6 +340,7 @@ class Agent(ABC):
         filename = Path(filename).with_suffix(".pickle")
         obj = cls(**kwargs)
 
+        obj = cls(**kwargs)
         try:
             if not obj.compress_pickle:
                 with filename.open("rb") as ff:
