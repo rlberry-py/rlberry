@@ -5,10 +5,11 @@ import seaborn as sns
 from pathlib import Path
 from datetime import datetime
 import pickle
+import bz2
+import _pickle as cPickle
 from itertools import cycle
+
 from rlberry.manager import AgentManager
-
-
 import rlberry
 
 logger = rlberry.logger
@@ -307,6 +308,11 @@ def _get_last_xp(input_dir, name):
     return agent_folder, dir_name
 
 
+def is_bz_file(filepath):
+    with open(filepath, "rb") as test_f:
+        return test_f.read(2) == b"BZ"
+
+
 def _load_data(agent_folder, dir_name, id_agent):
     writer_data = {}
 
@@ -325,9 +331,22 @@ def _load_data(agent_folder, dir_name, id_agent):
     for ii in id_fits:
         # For each fit, load the writer data
         handler_name = agent_dir / Path(f"agent_handlers/idx_{ii}.pickle")
-        with handler_name.open("rb") as ff:
-            tmp_dict = pickle.load(ff)
-            writer_data[str(ii)] = tmp_dict.get("_writer").data
+        try:
+            if is_bz_file(handler_name):
+                with bz2.BZ2File(handler_name, "rb") as ff:
+                    tmp_dict = cPickle.load(ff)
+            else:
+                with handler_name.open("rb") as ff:
+                    tmp_dict = pickle.load(ff)
+        except Exception:
+            if not is_bz_file(handler_name):
+                with handler_name.open("rb") as ff:
+                    tmp_dict = dill.load(ff)
+            else:
+                with bz2.BZ2File(handler_name, "rb") as ff:
+                    tmp_dict = dill.load(ff)
+        writer_data[str(ii)] = tmp_dict.get("_writer").data
+
     return writer_data
 
 
