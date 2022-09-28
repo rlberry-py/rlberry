@@ -9,6 +9,8 @@ import logging
 import dill
 import gc
 import pickle
+import bz2
+import _pickle as cPickle
 import shutil
 import threading
 import multiprocessing
@@ -831,14 +833,26 @@ class AgentManager:
         filename = Path(filename).with_suffix(".pickle")
 
         obj = cls(None, None, None)
+
+        if "compress_pickle" in self.init_kwargs_per_instance[0]:
+            compress_pickle = self.init_kwargs_per_instance[0]["compress_pickle"]
+        else:
+            compress_pickle = False
+
         try:
-            with filename.open("rb") as ff:
-                tmp_dict = pickle.load(ff)
-            logger.info("Loaded AgentManager using pickle.")
+            if not compress_pickle:
+                with filename.open("rb") as ff:
+                    tmp_dict = pickle.load(ff)
+            else:
+                with bz2.BZ2File(filename, "rb") as ff:
+                    tmp_dict = cPickle.load(ff)
         except Exception:
-            with filename.open("rb") as ff:
-                tmp_dict = dill.load(ff)
-            logger.info("Loaded AgentManager using dill.")
+            if not compress_pickle:
+                with filename.open("rb") as ff:
+                    tmp_dict = dill.load(ff)
+            else:
+                with bz2.BZ2File(filename, "rb") as ff:
+                    tmp_dict = dill.load(ff)
 
         obj.__dict__.clear()
         obj.__dict__.update(tmp_dict)
