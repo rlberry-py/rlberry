@@ -330,7 +330,9 @@ def test_compress():
     train_env = (GridWorld, {})
 
     # Parameters
-    params = dict(hyperparameter1=-1, hyperparameter2=100, compress_pickle=True)
+    params = dict(
+        hyperparameter1=-1, hyperparameter2=lambda x: 42, compress_pickle=True
+    )
     eval_kwargs = dict(eval_horizon=10)
 
     # Run AgentManager
