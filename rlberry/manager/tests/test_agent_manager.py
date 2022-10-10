@@ -323,3 +323,27 @@ def test_profile():
     )
     stats_agent1.generate_profile(fname="profile.prof")
     assert os.path.getsize("profile.prof") > 100, "agent manager saved an empty profile"
+
+
+def test_compress():
+    # Define train and evaluation envs
+    train_env = (GridWorld, {})
+
+    # Parameters
+    params = dict(
+        hyperparameter1=-1, hyperparameter2=lambda x: 42, compress_pickle=True
+    )
+    eval_kwargs = dict(eval_horizon=10)
+
+    # Run AgentManager
+    stats = AgentManager(
+        DummyAgent,
+        train_env,
+        fit_budget=5,
+        eval_kwargs=eval_kwargs,
+        init_kwargs=params,
+        n_fit=3,
+        seed=123,
+    )
+    stats.fit()
+    evaluate_agents([stats], show=False)
