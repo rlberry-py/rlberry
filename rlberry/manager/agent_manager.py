@@ -834,10 +834,7 @@ class AgentManager:
 
         obj = cls(None, None, None)
 
-        if "compress_pickle" in self.init_kwargs_per_instance[0]:
-            compress_pickle = self.init_kwargs_per_instance[0]["compress_pickle"]
-        else:
-            compress_pickle = False
+        compress_pickle = is_bz_file(filename)
 
         try:
             if not compress_pickle:
@@ -1290,3 +1287,8 @@ def _strip_seed_dir(dico):
     del res["seeder"]
     del res["output_dir"]
     return res
+
+
+def is_bz_file(filepath):
+    with open(filepath, "rb") as test_f:
+        return test_f.read(2) == b"BZ"
