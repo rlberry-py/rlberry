@@ -9,6 +9,8 @@ import logging
 import dill
 import gc
 import pickle
+import bz2
+import _pickle as cPickle
 import shutil
 import threading
 import multiprocessing
@@ -831,14 +833,23 @@ class AgentManager:
         filename = Path(filename).with_suffix(".pickle")
 
         obj = cls(None, None, None)
+
+        compress_pickle = is_bz_file(filename)
+
         try:
-            with filename.open("rb") as ff:
-                tmp_dict = pickle.load(ff)
-            logger.info("Loaded AgentManager using pickle.")
+            if not compress_pickle:
+                with filename.open("rb") as ff:
+                    tmp_dict = pickle.load(ff)
+            else:
+                with bz2.BZ2File(filename, "rb") as ff:
+                    tmp_dict = cPickle.load(ff)
         except Exception:
-            with filename.open("rb") as ff:
-                tmp_dict = dill.load(ff)
-            logger.info("Loaded AgentManager using dill.")
+            if not compress_pickle:
+                with filename.open("rb") as ff:
+                    tmp_dict = dill.load(ff)
+            else:
+                with bz2.BZ2File(filename, "rb") as ff:
+                    tmp_dict = dill.load(ff)
 
         obj.__dict__.clear()
         obj.__dict__.update(tmp_dict)
@@ -1276,3 +1287,8 @@ def _strip_seed_dir(dico):
     del res["seeder"]
     del res["output_dir"]
     return res
+
+
+def is_bz_file(filepath):
+    with open(filepath, "rb") as test_f:
+        return test_f.read(2) == b"BZ"
