@@ -14,7 +14,6 @@ from distutils.version import LooseVersion
 from rlberry.manager import AgentManager
 import rlberry
 
-
 logger = rlberry.logger
 
 
