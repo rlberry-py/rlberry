@@ -86,7 +86,7 @@ class Agent(ABC):
         env: types.Env = None,
         eval_env: Optional[types.Env] = None,
         copy_env: bool = True,
-        compress_pickle: bool = False,
+        compress_pickle: bool = True,
         seeder: Optional[types.Seed] = None,
         output_dir: Optional[str] = None,
         _execution_metadata: Optional[metadata_utils.ExecutionMetadata] = None,

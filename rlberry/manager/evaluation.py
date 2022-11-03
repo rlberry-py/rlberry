@@ -8,6 +8,7 @@ import pickle
 import bz2
 import _pickle as cPickle
 from itertools import cycle
+import dill
 
 from rlberry.manager import AgentManager
 import rlberry
