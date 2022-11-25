@@ -66,7 +66,7 @@ jobs:
       # run doctests in the documentation
       # TODO: use following line for doctest ?
       pytest docs/*rst || echo "Ignoring exit status"
-      pytest --import-mode=importlib --cov-config=.coveragerc --cov=rlberry --cov-report xml rlberry
+      pytest --import-mode=importlib --omit=rlberry/agents/experimental/jax/* --cov=rlberry --cov-report xml rlberry
     displayName: 'Test and coverage'
   - script: |
       curl -Os https://uploader.codecov.io/latest/linux/codecov
