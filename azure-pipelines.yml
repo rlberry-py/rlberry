@@ -62,11 +62,11 @@ jobs:
 
   - script: |
       set -xe
-      pip install pytest==7.0.1 pytest-azurepipelines pytest-cov codecov pytest-xvfb pytest-xprocess
+      pip install pytest==7.0.1 pytest-azurepipelines pytest-cov codecov pytest-xvfb
       # run doctests in the documentation
       # TODO: use following line for doctest ?
       pytest docs/*rst || echo "Ignoring exit status"
-      pytest --import-mode=importlib --cov-config=.coveragerc --cov=rlberry --cov-report xml rlberry
+      pytest --import-mode=importlib --cov=rlberry --cov-report xml rlberry
     displayName: 'Test and coverage'
   - script: |
       curl -Os https://uploader.codecov.io/latest/linux/codecov
@@ -126,7 +126,7 @@ jobs:
     displayName: 'Install rlberry'
 
   - script: |
-      pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb pytest-xprocess
+      pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
       pytest --import-mode=importlib
     displayName: 'pytest'
 
@@ -157,6 +157,6 @@ jobs:
     displayName: 'Install rlberry'
 
   - script: |
-      pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb pytest-xprocess
+      pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
       pytest
     displayName: 'pytest'
