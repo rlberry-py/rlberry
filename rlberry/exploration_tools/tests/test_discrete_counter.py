@@ -46,7 +46,7 @@ def test_continuous_state_env(rate_power):
     )
 
     for N in [10, 20]:
-        for _ in range(50):
+        for _ in range(10):
             ss = env.observation_space.sample()
             aa = env.action_space.sample()
             for _ in range(N):
@@ -71,7 +71,7 @@ def test_continuous_state_env_2(rate_power):
     )
 
     for N in [10, 20]:
-        for _ in range(50):
+        for _ in range(10):
             ss = env.observation_space.sample()
             aa = env.action_space.sample()
             for nn in range(N):
@@ -91,7 +91,7 @@ def test_continuous_state_env_3():
         env.observation_space, env.action_space, rate_power=0.5, min_dist=0.0
     )
 
-    for N in range(10, 20):
+    for N in range(10, 20, 3):
         assert counter.get_n_visited_states() == 0
         assert counter.get_entropy() == 0.0
 

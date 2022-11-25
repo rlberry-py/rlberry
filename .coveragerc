@@ -1,0 +1,2 @@
+[run]
+omit = rlberry/agents/experimental/jax/*

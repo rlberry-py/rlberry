@@ -10,6 +10,8 @@ class BerryClient:
     """
     rlberry client
 
+    For now, works only on Linux systems
+
     Parameters
     ----------
     host :
