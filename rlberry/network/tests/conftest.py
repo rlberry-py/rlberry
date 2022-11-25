@@ -1,4 +1,5 @@
 # content of conftest.py
+# This file is used to spawn a server to connect to in the tests from test_server.py
 
 import multiprocessing
 
