@@ -62,7 +62,7 @@ jobs:
 
   - script: |
       set -xe
-      pip install pytest==7.0.1 pytest-azurepipelines pytest-cov codecov pytest-xvfb
+      pip install pytest==7.0.1 pytest-azurepipelines pytest-cov codecov pytest-xvfb pytest-xprocess
       # run doctests in the documentation
       # TODO: use following line for doctest ?
       pytest docs/*rst || echo "Ignoring exit status"
