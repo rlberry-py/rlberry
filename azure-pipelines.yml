@@ -126,8 +126,8 @@ jobs:
     displayName: 'Install rlberry'
 
   - script: |
-      pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb pytest-xprocess
-      pytest --import-mode=importlib
+      pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
+      pytest --ignore=rlberry/network
     displayName: 'pytest'
 
 - job: 'windows'
@@ -157,6 +157,6 @@ jobs:
     displayName: 'Install rlberry'
 
   - script: |
-      pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb pytest-xprocess
-      pytest
+      pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
+      pytest --ignore=rlberry/network
     displayName: 'pytest'
