@@ -4,12 +4,11 @@ train_env: 'rlberry/experiment/tests/room.yaml'
 eval_env: 'rlberry/experiment/tests/room.yaml'
 global_init_kwargs:
   reward_free: True
-  horizon: 51
+  horizon: 2
 global_eval_kwargs:
-  eval_horizon: 51
+  eval_horizon: 4
 global_fit_kwargs:
-  fit_budget: 10
+  fit_budget: 3
 agents:
   - 'rlberry/experiment/tests/rsucbvi.yaml'
   - 'rlberry/experiment/tests/rsucbvi_alternative.yaml'
-
