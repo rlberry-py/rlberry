@@ -15,9 +15,9 @@ def test_mock_args(monkeypatch):
         random_numbers.append(rng.uniform(size=10))
 
         assert agent_manager.agent_class is RSUCBVIAgent
-        assert agent_manager._base_init_kwargs["horizon"] == 51
-        assert agent_manager.fit_budget == 10
-        assert agent_manager.eval_kwargs["eval_horizon"] == 51
+        assert agent_manager._base_init_kwargs["horizon"] == 2
+        assert agent_manager.fit_budget == 3
+        assert agent_manager.eval_kwargs["eval_horizon"] == 4
 
         assert agent_manager._base_init_kwargs["lp_metric"] == 2
         assert agent_manager._base_init_kwargs["min_dist"] == 0.0
