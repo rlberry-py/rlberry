@@ -1,4 +1,6 @@
 import numpy as np
+import torch
+
 
 from rlberry.utils.jit_setup import numba_jit
 
@@ -6,6 +8,38 @@ from rlberry.utils.jit_setup import numba_jit
 import rlberry
 
 logger = rlberry.logger
+
+
+def stable_scaled_log_softmax(x, tau, axis=-1):
+    """Scaled log_softmax operation.
+    Args:
+      x: tensor of floats, inputs of the softmax (logits).
+      tau: float, softmax temperature.
+      axis: int, axis to perform the softmax operation.
+    Returns:
+      tau * tf.log_softmax(x/tau, axis=axis)
+    """
+    max_x = x.max(dim=axis, keepdim=True).values
+    y = x - max_x
+    tau_lse = max_x + tau * torch.log(
+        torch.sum(torch.exp(y / tau), dim=axis, keepdim=True)
+    )
+    return x - tau_lse
+
+
+def stable_softmax(x, tau, axis=-1):
+    """Stable softmax operation.
+    Args:
+      x: tensor of floats, inputs of the softmax (logits).
+      tau: float, softmax temperature.
+      axis: int, axis to perform the softmax operation.
+    Returns:
+      softmax(x/tau, axis=axis)
+    """
+    func = torch.nn.Softmax(dim=axis)
+    max_x = torch.max(x, dim=axis, keepdim=True).values
+    y = x - max_x
+    return func(y / tau)
 
 
 def polynomial_schedule(
