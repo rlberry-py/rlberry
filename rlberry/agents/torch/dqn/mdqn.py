@@ -13,7 +13,6 @@ from rlberry.agents.torch.utils.training import (
 )
 from rlberry.agents.torch.dqn.dqn_utils import (
     polynomial_schedule,
-    lambda_returns,
     stable_scaled_log_softmax,
     stable_softmax,
 )
