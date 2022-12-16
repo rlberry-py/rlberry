@@ -1,6 +1,5 @@
 import gym
 from rlberry.envs.basewrapper import Wrapper
-import numpy as np
 
 
 def gym_make(id, wrap_spaces=False, **kwargs):
@@ -27,60 +26,19 @@ def gym_make(id, wrap_spaces=False, **kwargs):
     """
     if "module_import" in kwargs:
         __import__(kwargs.pop("module_import"))
+
     env = gym.make(id,**kwargs)
     return Wrapper(env, wrap_spaces=wrap_spaces)
 
 
-def atari_make(id, scalarize=None, **kwargs):
+def atari_make(id, scalarize=True, **kwargs):
     from stable_baselines3.common.env_util import make_atari_env
     from stable_baselines3.common.vec_env import VecFrameStack
 
-    if scalarize is None:
-        if "n_envs" in kwargs.keys():
-            scalarize = False
-        else:
-            scalarize = True
-
-    if "atari_wrappers_dict" in kwargs.keys():
-        atari_wrappers_dict = kwargs["atari_wrappers_dict"]
-        kwargs.pop("atari_wrappers_dict", None)
-    else:
-        atari_wrappers_dict = dict(
-            terminal_on_life_loss=False
-        )  # hack, some errors with the "terminal_on_life_loss" wrapper : The 'false reset' can lead to make a step on a 'done' environment, then a crash.
-
-    env = make_atari_env(env_id=id, wrapper_kwargs=atari_wrappers_dict, **kwargs)
-
+    env = make_atari_env(env_id=id, **kwargs)
     env = VecFrameStack(env, n_stack=4)
-    env = AtariImageToPyTorch(env)
     if scalarize:
         from rlberry.wrappers.scalarize import ScalarizeEnvWrapper
 
         env = ScalarizeEnvWrapper(env)
     return env
-
-
-class AtariImageToPyTorch(Wrapper):
-    """
-    #transform the observation shape.
-    from: n_env, height, width, chan
-    to: n_env, chan, width, height
-    """
-
-    def __init__(self, env):
-        super(AtariImageToPyTorch, self).__init__(env)
-        old_shape = self.observation_space.shape
-        new_shape = (old_shape[-1], old_shape[0], old_shape[1])
-        self.observation_space = gym.spaces.Box(
-            low=0.0, high=1.0, shape=new_shape, dtype=np.float32
-        )
-
-    def observation(self, observation):
-        return np.transpose(observation, (0, 3, 2, 1))  # transform
-
-    def reset(self):
-        return self.observation(self.env.reset())
-
-    def step(self, action):
-        next_obs, reward, done, info = self.env.step(action)
-        return self.observation(next_obs), reward, done, info
