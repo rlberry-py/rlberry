@@ -31,7 +31,10 @@ def test_dqn_agent(use_double_dqn, use_prioritized_replay):
         Returns a default Q value network.
         """
         kwargs["in_size"] = env.observation_space.shape[0]
+        kwargs["out_size"] = env.action_space.n
         return model_factory(**kwargs)
 
-    new_agent = DQNAgent(env, q_net_constructor=mlp, q_net_kwargs=model_configs)
+    new_agent = DQNAgent(
+        env, q_net_constructor=mlp, q_net_kwargs=model_configs, learning_starts=100
+    )
     new_agent.fit(budget=2000)
