@@ -10,34 +10,44 @@ import rlberry
 logger = rlberry.logger
 
 
-def stable_scaled_log_softmax(x, tau, axis=-1):
+def stable_scaled_log_softmax(x, tau, dim=-1):
     """Scaled log_softmax operation.
-    Args:
-      x: tensor of floats, inputs of the softmax (logits).
-      tau: float, softmax temperature.
-      axis: int, axis to perform the softmax operation.
+
+    Parameters
+    ----------
+      x: tensor of floats,
+        inputs of the softmax (logits).
+      tau: float,
+        softmax temperature.
+      dim: int,
+        axis to perform the softmax operation.
     Returns:
-      tau * tf.log_softmax(x/tau, axis=axis)
+      tau * log softmax(x/tau, dim=dim)
     """
-    max_x = x.max(dim=axis, keepdim=True).values
+    max_x = x.max(dim=dim, keepdim=True).values
     y = x - max_x
     tau_lse = max_x + tau * torch.log(
-        torch.sum(torch.exp(y / tau), dim=axis, keepdim=True)
+        torch.sum(torch.exp(y / tau), dim=dim, keepdim=True)
     )
     return x - tau_lse
 
 
-def stable_softmax(x, tau, axis=-1):
+def stable_softmax(x, tau, dim=-1):
     """Stable softmax operation.
-    Args:
-      x: tensor of floats, inputs of the softmax (logits).
-      tau: float, softmax temperature.
-      axis: int, axis to perform the softmax operation.
+
+    Parameters
+    ----------
+      x: tensor of floats,
+        inputs of the softmax (logits).
+      tau: float,
+        softmax temperature.
+      dim: int,
+        axis to perform the softmax operation.
     Returns:
-      softmax(x/tau, axis=axis)
+      softmax(x/tau, dim=dim)
     """
-    func = torch.nn.Softmax(dim=axis)
-    max_x = torch.max(x, dim=axis, keepdim=True).values
+    func = torch.nn.Softmax(dim=dim)
+    max_x = torch.max(x, dim=dim, keepdim=True).values
     y = x - max_x
     return func(y / tau)
 

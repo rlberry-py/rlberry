@@ -47,6 +47,11 @@ class MunchausenDQNAgent(AgentWithSimplePolicy):
     Notes
     -----
     Uses Munchausen trick for DQN for computing targets by default.
+    Compared to DQN, the scaled log-policy was added to the immediate
+    reward. Slightly modifying DQN in that way provides an agent that
+    is competitive with distributional methods on Atari games, without
+    making use of distributional RL, n-step returns or prioritized replay.
+    See more: https://arxiv.org/pdf/2007.14430.pdf
 
     Parameters
     ----------
@@ -103,13 +108,13 @@ class MunchausenDQNAgent(AgentWithSimplePolicy):
                 "reshape": False,
             }
 
-            agent = DQNAgent(env,
+            agent = MunchausenDQNAgent(env,
                 q_net_constructor=model_factory_from_env,
                 q_net_kwargs=model_configs
                 )
         If str then it should correspond to the full path to the constructor function,
         e.g.::
-            agent = DQNAgent(env,
+            agent = MunchausenDQNAgent(env,
                 q_net_constructor='rlberry.agents.torch.utils.training.model_factory_from_env',
                 q_net_kwargs=model_configs
                 )
@@ -119,8 +124,6 @@ class MunchausenDQNAgent(AgentWithSimplePolicy):
 
     q_net_kwargs : optional, dict
         Parameters for q_net_constructor.
-    use_double_dqn : bool, default = False
-        If True, use Double DQN.
     use_prioritized_replay : bool, default = False
         If True, use Prioritized Experience Replay.
     train_interval: int
@@ -161,7 +164,6 @@ class MunchausenDQNAgent(AgentWithSimplePolicy):
         optimizer_type: str = "ADAM",
         q_net_constructor: Optional[Callable[..., torch.nn.Module]] = None,
         q_net_kwargs: Optional[dict] = None,
-        use_double_dqn: bool = False,
         use_prioritized_replay: bool = False,
         train_interval: int = 4,
         gradient_steps: int = -1,
@@ -314,14 +316,6 @@ class MunchausenDQNAgent(AgentWithSimplePolicy):
             next_qt_softmax = torch.sum(
                 (target_q_values_tp1 - log_softmax_pi_next) * softmax_pi_next, -1
             )
-            # Check if double DQN
-            # if self.use_double_dqn:
-            #     online_q_values_tp1 = self._qnet_online(
-            #         batch_next_observations
-            #     ).detach()
-            #     a_argmax = online_q_values_tp1.argmax(dim=-1).detach()
-            # else:
-            # a_argmax = target_q_values_tp1.argmax(dim=-1).detach()
 
             munchausen_term = torch.gather(
                 log_softmax_pi, dim=-1, index=batch_actions[:, :, None]
@@ -338,14 +332,6 @@ class MunchausenDQNAgent(AgentWithSimplePolicy):
                 + final_munchausen_term
                 + self.gamma * next_qt_softmax * (1.0 - batch_dones)
             )
-
-            # batch_lambda_returns = lambda_returns(
-            #     batch["rewards"],
-            #     self.gamma * (1.0 - np.array(batch["dones"], dtype=np.float32)),
-            #     v_tp1,
-            #     np.array(self.lambda_, dtype=np.float32),
-            # )
-            # targets = torch.tensor(batch_lambda_returns).to(self._device)
 
             # Compute loss
             batch_q_values = self._qnet_online(batch_observations)

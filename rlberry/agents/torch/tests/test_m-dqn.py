@@ -4,10 +4,8 @@ from rlberry.agents.torch.dqn import MunchausenDQNAgent
 from rlberry.agents.torch.utils.training import model_factory
 
 
-@pytest.mark.parametrize(
-    "use_double_dqn, use_prioritized_replay", [(False, False), (True, True)]
-)
-def test_mdqn_agent(use_double_dqn, use_prioritized_replay):
+@pytest.mark.parametrize("use_prioritized_replay", [(False), (True)])
+def test_mdqn_agent(use_prioritized_replay):
     env = gym_make("CartPole-v0")
     agent = MunchausenDQNAgent(
         env,
@@ -16,7 +14,6 @@ def test_mdqn_agent(use_double_dqn, use_prioritized_replay):
         eval_interval=75,
         train_interval=2,
         gradient_steps=-1,
-        use_double_dqn=use_double_dqn,
         use_prioritized_replay=use_prioritized_replay,
     )
     agent.fit(budget=50)
