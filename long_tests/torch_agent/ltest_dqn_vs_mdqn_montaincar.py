@@ -40,10 +40,8 @@ def test_dqn_vs_mdqn_montaincar():
         n_fit=4,
         parallelization="process",
         mp_context="fork",
-
         seed=42,
     )
-
 
     mdqnagent = AgentManager(
         MDQNAgent,
@@ -78,7 +76,7 @@ def test_dqn_vs_mdqn_montaincar():
         # ylabel_="Cumulative Reward",
         title=" Rewards during training",
         show=False,
-        savefig_fname="rewards.pdf"
+        savefig_fname="rewards.pdf",
     )
     plt.clf()
     plot_writer_data(
@@ -87,7 +85,7 @@ def test_dqn_vs_mdqn_montaincar():
         # ylabel_="Cumulative Reward",
         title="q_loss",
         show=False,
-        savefig_fname="losses.pdf"
+        savefig_fname="losses.pdf",
     )
     plt.clf()
     evaluation = evaluate_agents([dqnagent, mdqnagent], n_simulations=100, show=False)
