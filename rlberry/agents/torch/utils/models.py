@@ -5,7 +5,7 @@
 
 import torch
 import torch.nn as nn
-from torch.distributions import Categorical
+from torch.distributions import Categorical, MultivariateNormal
 from gym import spaces
 
 #
@@ -104,8 +104,13 @@ def default_policy_net_fn(env):
 
     if isinstance(env.action_space, spaces.Discrete):
         model_config["out_size"] = env.action_space.n
+        model_config["ctns_actions"] = False
     elif isinstance(env.action_space, spaces.Tuple):
         model_config["out_size"] = env.action_space.spaces[0].n
+        model_config["ctns_actions"] = False
+    elif isinstance(env.action_space, spaces.Box):
+        model_config["out_size"] = env.action_space.shape[0]
+        model_config["ctns_actions"] = True
 
     return model_factory(**model_config)
 
@@ -248,6 +253,7 @@ class MultiLayerPerceptron(BaseModule):
         out_size=None,
         activation="RELU",
         is_policy=False,
+        ctns_actions=False,
         **kwargs
     ):
         super().__init__(**kwargs)
@@ -257,6 +263,7 @@ class MultiLayerPerceptron(BaseModule):
         self.out_size = out_size
         self.activation = activation_factory(activation)
         self.is_policy = is_policy
+        self.ctns_actions = ctns_actions
         self.softmax = nn.Softmax(dim=-1)
         sizes = [in_size] + self.layer_sizes
         layers_list = [nn.Linear(sizes[i], sizes[i + 1]) for i in range(len(sizes) - 1)]
@@ -272,8 +279,12 @@ class MultiLayerPerceptron(BaseModule):
         if self.out_size:
             x = self.predict(x)
         if self.is_policy:
-            action_probs = self.softmax(x)
-            dist = Categorical(action_probs)
+            if self.ctns_actions:
+                std = 2
+                dist = MultivariateNormal(x, covariance_matrix= torch.eye(self.out_size) * std)
+            else:
+                action_probs = self.softmax(x)
+                dist = Categorical(action_probs)
             return dist
         return x
 

@@ -93,15 +93,15 @@ class A2CAgent(AgentWithSimplePolicy):
         self.device = choose_device(device)
         self.eval_interval = eval_interval
 
-        self.policy_net_kwargs = policy_net_kwargs or {}
+        self._policy_net_kwargs = policy_net_kwargs or {}
         self.value_net_kwargs = value_net_kwargs or {}
 
         if isinstance(policy_net_fn, str):
-            self.policy_net_fn = load(policy_net_fn)
+            self._policy_net_fn = load(policy_net_fn)
         elif policy_net_fn is None:
-            self.policy_net_fn = default_policy_net_fn
+            self._policy_net_fn = default_policy_net_fn
         else:
-            self.policy_net_fn = policy_net_fn
+            self._policy_net_fn = policy_net_fn
 
         if isinstance(value_net_fn, str):
             self.value_net_fn = load(value_net_fn)
@@ -114,7 +114,6 @@ class A2CAgent(AgentWithSimplePolicy):
 
         # check environment
         assert isinstance(self.env.observation_space, spaces.Box)
-        assert isinstance(self.env.action_space, spaces.Discrete)
 
         # get horizon
         if hasattr(self.env, "_max_episode_steps"):
@@ -123,17 +122,17 @@ class A2CAgent(AgentWithSimplePolicy):
             max_episode_steps = np.inf
         self._max_episode_steps = max_episode_steps
 
-        self.cat_policy = None  # categorical policy function
+        self._policy = None  # categorical policy function
 
         # initialize
         self.reset()
 
     def reset(self):
-        self.cat_policy = self.policy_net_fn(self.env, **self.policy_net_kwargs).to(
+        self._policy = self._policy_net_fn(self.env, **self._policy_net_kwargs).to(
             self.device
         )
-        self.policy_optimizer = optimizer_factory(
-            self.cat_policy.parameters(), **self.optimizer_kwargs
+        self._policy_optimizer = optimizer_factory(
+            self._policy.parameters(), **self.optimizer_kwargs
         )
 
         self.value_net = self.value_net_fn(self.env, **self.value_net_kwargs).to(
@@ -144,16 +143,19 @@ class A2CAgent(AgentWithSimplePolicy):
             self.value_net.parameters(), **self.optimizer_kwargs
         )
 
-        self.cat_policy_old = self.policy_net_fn(self.env, **self.policy_net_kwargs).to(
+        self._policy_old = self._policy_net_fn(self.env, **self._policy_net_kwargs).to(
             self.device
         )
-        self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
+        self._policy_old.load_state_dict(self._policy.state_dict())
 
         self.MseLoss = nn.MSELoss()
 
         self.memory = ReplayBuffer(max_replay_size=self.batch_size, rng=self.rng)
         self.memory.setup_entry("states", dtype=np.float32)
-        self.memory.setup_entry("actions", dtype=int)
+        if self._policy.ctns_actions:
+            self.memory.setup_entry("actions", dtype=np.float32)
+        else:
+            self.memory.setup_entry("actions", dtype=int)
         self.memory.setup_entry("rewards", dtype=np.float32)
         self.memory.setup_entry("dones", dtype=bool)
 
@@ -162,10 +164,13 @@ class A2CAgent(AgentWithSimplePolicy):
 
     def policy(self, observation):
         state = observation
-        assert self.cat_policy is not None
+        assert self._policy is not None
         state = torch.from_numpy(state).float().to(self.device)
-        action_dist = self.cat_policy_old(state)
-        action = action_dist.sample().item()
+        action_dist = self._policy_old(state)
+        if self._policy.ctns_actions:
+            action = action_dist.sample().numpy()
+        else:
+            action = action_dist.sample().item()
         return action
 
     def fit(self, budget: int, **kwargs):
@@ -186,7 +191,8 @@ class A2CAgent(AgentWithSimplePolicy):
         while timesteps_counter < budget:
             action = self._select_action(observation)
             next_obs, reward, done, _ = self.env.step(action)
-
+            # if self._policy.ctns_actions:
+            #     action = torch.from_numpy(action).float().to(self.device)
             # store data
             episode_rewards += reward
             self.memory.append(
@@ -241,9 +247,13 @@ class A2CAgent(AgentWithSimplePolicy):
 
     def _select_action(self, state):
         state = torch.from_numpy(state).float().to(self.device)
-        action_dist = self.cat_policy_old(state)
+        action_dist = self._policy_old(state)
         action = action_dist.sample()
-        return action.item()
+        if self._policy.ctns_actions:
+            action = action.numpy()
+        else:
+            action = action.item()
+        return action
 
     def _update(self):
         # monte carlo estimate of rewards
@@ -278,7 +288,7 @@ class A2CAgent(AgentWithSimplePolicy):
         old_actions = torch.stack(memory_actions_tensors).to(self.device).detach()
 
         # evaluate old actions and values
-        action_dist = self.cat_policy(old_states)
+        action_dist = self._policy(old_states)
         logprobs = action_dist.log_prob(old_actions)
         state_values = torch.squeeze(self.value_net(old_states))
         dist_entropy = action_dist.entropy()
@@ -295,16 +305,16 @@ class A2CAgent(AgentWithSimplePolicy):
         )
 
         # take gradient step
-        self.policy_optimizer.zero_grad()
+        self._policy_optimizer.zero_grad()
         self.value_optimizer.zero_grad()
 
         loss.mean().backward()
 
-        self.policy_optimizer.step()
+        self._policy_optimizer.step()
         self.value_optimizer.step()
 
         # copy new weights into old policy
-        self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
+        self._policy_old.load_state_dict(self._policy.state_dict())
 
     #
     # For hyperparameter optimization

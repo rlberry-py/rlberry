@@ -128,20 +128,19 @@ class PPOAgent(AgentWithSimplePolicy):
         self.normalize_advantages = normalize_advantages
 
         # function approximators
-        self.policy_net_kwargs = policy_net_kwargs or {}
+        self._policy_net_kwargs = policy_net_kwargs or {}
         self.value_net_kwargs = value_net_kwargs or {}
         # self.env = env[0](**env[1])
 
         self.state_dim = self.env.observation_space.shape[0]
-        self.action_dim = self.env.action_space.n
 
         #
         if isinstance(policy_net_fn, str):
-            self.policy_net_fn = load(policy_net_fn)
+            self._policy_net_fn = load(policy_net_fn)
         elif policy_net_fn is None:
-            self.policy_net_fn = default_policy_net_fn
+            self._policy_net_fn = default_policy_net_fn
         else:
-            self.policy_net_fn = policy_net_fn
+            self._policy_net_fn = policy_net_fn
 
         if isinstance(value_net_fn, str):
             self.value_net_fn = load(value_net_fn)
@@ -156,9 +155,8 @@ class PPOAgent(AgentWithSimplePolicy):
 
         # check environment
         assert isinstance(self.env.observation_space, spaces.Box)
-        assert isinstance(self.env.action_space, spaces.Discrete)
 
-        self.cat_policy = None  # categorical policy function
+        self._policy = None  # categorical policy function
 
         # initialize
         self.reset()
@@ -170,11 +168,11 @@ class PPOAgent(AgentWithSimplePolicy):
         return cls(**kwargs)
 
     def reset(self, **kwargs):
-        self.cat_policy = self.policy_net_fn(self.env, **self.policy_net_kwargs).to(
+        self._policy = self._policy_net_fn(self.env, **self._policy_net_kwargs).to(
             self.device
         )
-        self.policy_optimizer = optimizer_factory(
-            self.cat_policy.parameters(), **self.optimizer_kwargs
+        self._policy_optimizer = optimizer_factory(
+            self._policy.parameters(), **self.optimizer_kwargs
         )
 
         self.value_net = self.value_net_fn(self.env, **self.value_net_kwargs).to(
@@ -184,16 +182,19 @@ class PPOAgent(AgentWithSimplePolicy):
             self.value_net.parameters(), **self.optimizer_kwargs
         )
 
-        self.cat_policy_old = self.policy_net_fn(self.env, **self.policy_net_kwargs).to(
+        self._policy_old = self._policy_net_fn(self.env, **self._policy_net_kwargs).to(
             self.device
         )
-        self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
+        self._policy_old.load_state_dict(self._policy.state_dict())
 
         self.MseLoss = nn.MSELoss()  # TODO: turn into argument
 
         self.memory = ReplayBuffer(max_replay_size=self.n_steps, rng=self.rng)
         self.memory.setup_entry("states", dtype=np.float32)
-        self.memory.setup_entry("actions", dtype=int)
+        if self._policy.ctns_actions:
+            self.memory.setup_entry("actions", dtype=np.float32)
+        else:
+            self.memory.setup_entry("actions", dtype=int)
         self.memory.setup_entry("rewards", dtype=np.float32)
         self.memory.setup_entry("dones", dtype=bool)
         self.memory.setup_entry("action_logprobs", dtype=np.float32)
@@ -203,10 +204,13 @@ class PPOAgent(AgentWithSimplePolicy):
 
     def policy(self, observation):
         state = observation
-        assert self.cat_policy is not None
+        assert self._policy is not None
         state = torch.from_numpy(state).float().to(self.device)
-        action_dist = self.cat_policy_old(state)
-        action = action_dist.sample().item()
+        action_dist = self._policy_old(state)
+        if self._policy.ctns_actions:
+            action = action_dist.sample().numpy()
+        else:
+            action = action_dist.sample().item()
         return action
 
     def fit(self, budget: int, **kwargs):
@@ -230,7 +234,11 @@ class PPOAgent(AgentWithSimplePolicy):
             # running policy_old
             state = torch.from_numpy(state).float().to(self.device)
             action, action_logprob = self._select_action(state)
-            next_state, reward, done, _ = self.env.step(action.item())
+            next_state, reward, done, _ = self.env.step(action)
+            if self._policy.ctns_actions:
+                action = torch.from_numpy(action).float().to(self.device)
+            else:
+                action = torch.tensor(action).float().to(self.device)
 
             episode_rewards += reward
 
@@ -270,9 +278,13 @@ class PPOAgent(AgentWithSimplePolicy):
                 state = self.env.reset()
 
     def _select_action(self, state):
-        action_dist = self.cat_policy_old(state)
+        action_dist = self._policy_old(state)
         action = action_dist.sample()
         action_logprob = action_dist.log_prob(action)
+        if self._policy.ctns_actions:
+            action = action.numpy()
+        else:
+            action = action.item()
         return action, action_logprob
 
     def _update(self):
@@ -325,7 +337,7 @@ class PPOAgent(AgentWithSimplePolicy):
                 old_advantages = shuffled_advantages[batch_idx]
 
                 # evaluate old actions and values
-                action_dist = self.cat_policy(old_states)
+                action_dist = self._policy(old_states)
                 logprobs = action_dist.log_prob(old_actions)
                 state_values = torch.squeeze(self.value_net(old_states))
                 dist_entropy = action_dist.entropy()
@@ -355,12 +367,12 @@ class PPOAgent(AgentWithSimplePolicy):
                 loss = -surr_loss + loss_vf - loss_entropy
 
                 # take gradient step
-                self.policy_optimizer.zero_grad()
+                self._policy_optimizer.zero_grad()
                 self.value_optimizer.zero_grad()
 
                 loss.mean().backward()
 
-                self.policy_optimizer.step()
+                self._policy_optimizer.step()
                 self.value_optimizer.step()
 
         # log
@@ -377,7 +389,7 @@ class PPOAgent(AgentWithSimplePolicy):
             )
 
         # copy new weights into old policy
-        self.cat_policy_old.load_state_dict(self.cat_policy.state_dict())
+        self._policy_old.load_state_dict(self._policy.state_dict())
 
     def _compute_returns_avantages(self, rewards, is_terminals, state_values):
 
