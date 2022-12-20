@@ -149,7 +149,7 @@ class MunchausenDQNAgent(AgentWithSimplePolicy):
         env: types.Env,
         gamma: float = 0.99,
         batch_size: int = 32,
-        chunk_size: int = 1,
+        chunk_size: int = 8,
         lambda_: float = 0.5,
         tau: float = 0.03,
         alpha: float = 0.9,
