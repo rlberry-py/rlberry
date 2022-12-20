@@ -8,7 +8,10 @@ import seaborn as sns
 
 
 def test_dqn_vs_mdqn_acro():
-
+"""
+Long test to verify dqn and mdqn perform similary on acrobot.
+Losses, Rewards during training, and Evaluations are saved as pdfs.
+"""
     env_ctor = gym_make
     env_kwargs = dict(id="Acrobot-v1")
 
