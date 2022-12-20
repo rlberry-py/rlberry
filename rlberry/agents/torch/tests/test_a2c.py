@@ -26,6 +26,25 @@ def test_a2c():
 
     output = evaluate_agents([a2crlberry_stats], n_simulations=2, plot=False)
     a2crlberry_stats.clear_output_dir()
+    env = "Pendulum-v1"
+    mdp = make(env)
+    env_ctor = Wrapper
+    env_kwargs = dict(env=mdp)
+
+    a2crlberry_stats = AgentManager(
+        A2CAgent,
+        (env_ctor, env_kwargs),
+        fit_budget=int(100),
+        eval_kwargs=dict(eval_horizon=2),
+        init_kwargs=dict(batch_size=100),
+        n_fit=1,
+        agent_name="A2C_rlberry_" + env,
+    )
+
+    a2crlberry_stats.fit()
+
+    output = evaluate_agents([a2crlberry_stats], n_simulations=2, plot=False)
+    a2crlberry_stats.clear_output_dir()
 
     env = "Acrobot-v1"
     mdp = make(env)
