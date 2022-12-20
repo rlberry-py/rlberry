@@ -128,7 +128,7 @@ class PPOAgent(AgentWithSimplePolicy):
         self.normalize_advantages = normalize_advantages
 
         # function approximators
-        self._policy_net_kwargs = policy_net_kwargs or {}
+        self.policy_net_kwargs = policy_net_kwargs or {}
         self.value_net_kwargs = value_net_kwargs or {}
         # self.env = env[0](**env[1])
 
@@ -136,11 +136,11 @@ class PPOAgent(AgentWithSimplePolicy):
 
         #
         if isinstance(policy_net_fn, str):
-            self._policy_net_fn = load(policy_net_fn)
+            self.policy_net_fn = load(policy_net_fn)
         elif policy_net_fn is None:
-            self._policy_net_fn = default_policy_net_fn
+            self.policy_net_fn = default_policy_net_fn
         else:
-            self._policy_net_fn = policy_net_fn
+            self.policy_net_fn = policy_net_fn
 
         if isinstance(value_net_fn, str):
             self.value_net_fn = load(value_net_fn)
@@ -168,7 +168,7 @@ class PPOAgent(AgentWithSimplePolicy):
         return cls(**kwargs)
 
     def reset(self, **kwargs):
-        self._policy = self._policy_net_fn(self.env, **self._policy_net_kwargs).to(
+        self._policy = self.policy_net_fn(self.env, **self.policy_net_kwargs).to(
             self.device
         )
         self._policy_optimizer = optimizer_factory(
@@ -182,7 +182,7 @@ class PPOAgent(AgentWithSimplePolicy):
             self.value_net.parameters(), **self.optimizer_kwargs
         )
 
-        self._policy_old = self._policy_net_fn(self.env, **self._policy_net_kwargs).to(
+        self._policy_old = self.policy_net_fn(self.env, **self.policy_net_kwargs).to(
             self.device
         )
         self._policy_old.load_state_dict(self._policy.state_dict())
