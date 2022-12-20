@@ -281,7 +281,9 @@ class MultiLayerPerceptron(BaseModule):
         if self.is_policy:
             if self.ctns_actions:
                 std = 2
-                dist = MultivariateNormal(x, covariance_matrix= torch.eye(self.out_size) * std)
+                dist = MultivariateNormal(
+                    x, covariance_matrix=torch.eye(self.out_size) * std
+                )
             else:
                 action_probs = self.softmax(x)
                 dist = Categorical(action_probs)
