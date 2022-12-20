@@ -1,8 +1,6 @@
 from rlberry.envs import gym_make
 from rlberry.agents.torch import A2CAgent, PPOAgent
 from rlberry.manager import AgentManager, plot_writer_data, evaluate_agents
-from rlberry.agents.torch.utils.training import model_factory_from_env
-import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
