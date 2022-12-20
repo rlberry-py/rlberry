@@ -2,24 +2,26 @@ from rlberry.envs import gym_make
 from rlberry.agents.torch import DQNAgent
 from rlberry.agents.torch import MunchausenDQNAgent as MDQNAgent
 from rlberry.manager import AgentManager, evaluate_agents, plot_writer_data
-import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
 
 def test_dqn_vs_mdqn_acro():
-"""
-Long test to verify dqn and mdqn perform similary on acrobot.
-Losses, Rewards during training, and Evaluations are saved as pdfs.
-"""
+    """
+    Long test to verify dqn and mdqn perform similary on acrobot.
+    Losses, Rewards during training, and Evaluations are saved as pdfs.
+
+    Results of this test at the time of writing can be found in
+    the following pull request: https://github.com/rlberry-py/rlberry/pull/266
+    """
     env_ctor = gym_make
     env_kwargs = dict(id="Acrobot-v1")
 
     dqn_init_kwargs = dict(
         gamma=0.99,
         batch_size=32,
-        chunk_size=1,
-        lambda_=0,
+        chunk_size=8,
+        lambda_=0.5,
         target_update_parameter=0.005,
         learning_rate=1e-3,
         epsilon_init=1.0,
@@ -34,8 +36,8 @@ Losses, Rewards during training, and Evaluations are saved as pdfs.
     mdqn_init_kwargs = dict(
         gamma=0.99,
         batch_size=32,
-        chunk_size=1,
-        lambda_=0,
+        chunk_size=8,
+        lambda_=0.5,
         target_update_parameter=0.005,
         learning_rate=1e-3,
         epsilon_init=1.0,
