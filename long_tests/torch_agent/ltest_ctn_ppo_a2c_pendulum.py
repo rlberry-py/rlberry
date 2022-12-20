@@ -6,6 +6,7 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+
 def test_a2c_vs_ppo_pendul():
     """
     Long test to check that learning happens with ctn actions.
@@ -15,7 +16,6 @@ def test_a2c_vs_ppo_pendul():
 
     env_ctor = gym_make
     env_kwargs = dict(id="Pendulum-v1")
-
 
     a2cagent = AgentManager(
         A2CAgent,
@@ -36,7 +36,7 @@ def test_a2c_vs_ppo_pendul():
     ppoagent = AgentManager(
         PPOAgent,
         (env_ctor, env_kwargs),
-        init_kwargs = ppo_init_kwargs,
+        init_kwargs=ppo_init_kwargs,
         agent_name="PPOAgent",
         fit_budget=1e5,
         eval_kwargs=dict(eval_horizon=500),
