@@ -184,7 +184,7 @@ class MunchausenDQNAgent(AgentWithSimplePolicy):
         assert isinstance(env.observation_space, spaces.Box)
         assert isinstance(env.action_space, spaces.Discrete)
 
-        # DQN parameters
+        # M-DQN parameters
 
         # Online and target Q networks, torch device
         self._device = choose_device(device)
@@ -390,16 +390,11 @@ class MunchausenDQNAgent(AgentWithSimplePolicy):
             One step = one transition in the environment.
         """
         del kwargs
-        # started = False
         timesteps_counter = 0
         episode_rewards = 0.0
         episode_timesteps = 0
         observation = self.env.reset()
         while timesteps_counter < budget:
-            # if started:
-            #     print("M-DQN works")
-            # else:
-            #     started = True
             if self.total_timesteps < self._learning_starts:
                 action = self.env.action_space.sample()
             else:
