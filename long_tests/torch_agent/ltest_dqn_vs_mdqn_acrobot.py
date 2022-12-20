@@ -10,6 +10,9 @@ def test_dqn_vs_mdqn_acro():
     """
     Long test to verify dqn and mdqn perform similary on acrobot.
     Losses, Rewards during training, and Evaluations are saved as pdfs.
+
+    Results of this test at the time of writing can be found in
+    the following pull request: https://github.com/rlberry-py/rlberry/pull/266
     """
     env_ctor = gym_make
     env_kwargs = dict(id="Acrobot-v1")
