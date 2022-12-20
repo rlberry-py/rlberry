@@ -1,8 +1,10 @@
 import inspect
+from typing import Callable, Optional, Union
 
+from gym import spaces
 import numpy as np
 import torch
-from gym import spaces
+
 from rlberry import types
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.agents.torch.utils.training import (
@@ -15,7 +17,6 @@ from rlberry.agents.torch.dqn.dqn_utils import polynomial_schedule, lambda_retur
 from rlberry.agents.utils import replay
 from rlberry.utils.torch import choose_device
 from rlberry.utils.factory import load
-from typing import Callable, Optional, Union
 
 
 import rlberry

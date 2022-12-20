@@ -12,6 +12,7 @@ from rlberry.agents.torch.utils.training import (
     size_model_config,
 )
 from rlberry.agents.torch.dqn.dqn_utils import (
+    lambda_returns,
     polynomial_schedule,
     stable_scaled_log_softmax,
     stable_softmax,
@@ -152,7 +153,7 @@ class MunchausenDQNAgent(AgentWithSimplePolicy):
         lambda_: float = 0.5,
         tau: float = 0.03,
         alpha: float = 0.9,
-        target_update_parameter: Union[int, float] = 8000,
+        target_update_parameter: Union[int, float] = 0.005,
         # tardet_update_freq: int = 8000,
         device: str = "cuda:best",
         learning_rate: float = 5e-5,
@@ -291,47 +292,48 @@ class MunchausenDQNAgent(AgentWithSimplePolicy):
             batch_info = sampled.info
             assert batch["rewards"].shape == (self.batch_size, self.chunk_size)
 
-            # Compute targets
+            # Get batched tensors
             batch_observations = torch.FloatTensor(batch["observations"]).to(
                 self._device
             )
-
             batch_rewards = torch.FloatTensor(batch["rewards"]).to(self._device)
-
             batch_next_observations = torch.FloatTensor(batch["next_observations"]).to(
                 self._device
             )
             batch_actions = torch.LongTensor(batch["actions"]).to(self._device)
             batch_dones = torch.LongTensor(batch["dones"]).to(self._device)
 
+            # Get target Q estimates
             target_q_values_tp1 = self._qnet_target(batch_next_observations).detach()
             target_q_values = self._qnet_target(batch_observations).detach()
 
-            log_softmax_pi = stable_scaled_log_softmax(target_q_values, self.tau, -1)
-            log_softmax_pi_next = stable_scaled_log_softmax(
-                target_q_values_tp1, self.tau, -1
-            )
-            softmax_pi_next = stable_softmax(target_q_values_tp1, self.tau, -1)
+            # Compute softmax policies for the current and next step
+            log_pi = stable_scaled_log_softmax(target_q_values, self.tau, -1)
+            log_pi_tp1 = stable_scaled_log_softmax(target_q_values_tp1, self.tau, -1)
+            pi_tp1 = stable_softmax(target_q_values_tp1, self.tau, -1)
 
-            next_qt_softmax = torch.sum(
-                (target_q_values_tp1 - log_softmax_pi_next) * softmax_pi_next, -1
+            # Compute the "next step" part of the target
+            target_v_tp1 = (
+                torch.sum((target_q_values_tp1 - log_pi_tp1) * pi_tp1, -1).cpu().numpy()
             )
 
+            # Compute the Munchausen term
             munchausen_term = torch.gather(
-                log_softmax_pi, dim=-1, index=batch_actions[:, :, None]
+                log_pi, dim=-1, index=batch_actions[:, :, None]
             )[:, :, 0]
-
             clipped_munchausen_term = torch.clip(
                 munchausen_term, self.clip_value_min, 0
             )
-
             final_munchausen_term = self.alpha * clipped_munchausen_term
 
-            targets = (
-                batch_rewards
-                + final_munchausen_term
-                + self.gamma * next_qt_softmax * (1.0 - batch_dones)
+            # Compute the final target
+            batch_lambda_returns = lambda_returns(
+                (batch_rewards + final_munchausen_term).cpu().numpy(),
+                self.gamma * (1.0 - np.array(batch["dones"], dtype=np.float32)),
+                target_v_tp1,
+                np.array(self.lambda_, dtype=np.float32),
             )
+            targets = torch.tensor(batch_lambda_returns, device=self._device)
 
             # Compute loss
             batch_q_values = self._qnet_online(batch_observations)
