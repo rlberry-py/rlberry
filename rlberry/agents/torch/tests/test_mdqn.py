@@ -11,7 +11,7 @@ def test_mdqn_agent(use_prioritized_replay):
         env,
         learning_starts=5,
         batch_size=5,
-        eval_interval=75,
+        eval_interval=2,
         train_interval=2,
         gradient_steps=-1,
         use_prioritized_replay=use_prioritized_replay,
@@ -36,3 +36,4 @@ def test_mdqn_agent(use_prioritized_replay):
         env, q_net_constructor=mlp, q_net_kwargs=model_configs, learning_starts=100
     )
     new_agent.fit(budget=200)
+    new_agent.policy(env.reset())

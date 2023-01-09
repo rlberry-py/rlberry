@@ -38,3 +38,4 @@ def test_dqn_agent(use_double_dqn, use_prioritized_replay):
         env, q_net_constructor=mlp, q_net_kwargs=model_configs, learning_starts=100
     )
     new_agent.fit(budget=2000)
+
