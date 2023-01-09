@@ -14,6 +14,10 @@ First, we suggest you to create a virtual environment using
     $ conda create -n rlberry python=3.8
     $ conda activate rlberry
 
+OS dependency
+-------------
+
+In order to render videos in rlberry, `ffmpeg <https://ffmpeg.org/>`_ must be installed.
 
 Latest version (0.3.0)
 -------------------------------------
@@ -22,7 +26,7 @@ Install the latest version for a stable release.
 
 .. code:: bash
 
-    $ pip install git+https://github.com/rlberry-py/rlberry.git@v0.3.0#egg=rlberry[default]
+    $ pip install rlberry
 
 
 Development version
@@ -69,7 +73,7 @@ Deep RL agents require extra libraries, like PyTorch and JAX.
 .. code:: bash
 
     $ pip install git+https://github.com/rlberry-py/rlberry.git#egg=rlberry[torch_agents]
-    $ pip install tensorboard   # only if you're not installing jax_agents too!
+    $ pip install tensorboard
 
 * JAX agents (**Linux only, experimental**):
 

@@ -1,10 +1,8 @@
 import inspect
-from typing import Callable, Optional, Union
 
-from gym import spaces
 import numpy as np
 import torch
-
+from gym import spaces
 from rlberry import types
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.agents.torch.utils.training import (
@@ -13,10 +11,16 @@ from rlberry.agents.torch.utils.training import (
     optimizer_factory,
     size_model_config,
 )
-from rlberry.agents.torch.dqn.dqn_utils import polynomial_schedule, lambda_returns
+from rlberry.agents.torch.dqn.dqn_utils import (
+    lambda_returns,
+    polynomial_schedule,
+    stable_scaled_log_softmax,
+    stable_softmax,
+)
 from rlberry.agents.utils import replay
 from rlberry.utils.torch import choose_device
 from rlberry.utils.factory import load
+from typing import Callable, Optional, Union
 
 
 import rlberry
@@ -38,13 +42,17 @@ def default_q_net_fn(env, **kwargs):
     return model_factory(**model_config)
 
 
-class DQNAgent(AgentWithSimplePolicy):
-    """DQN Agent based on PyTorch.
+class MunchausenDQNAgent(AgentWithSimplePolicy):
+    """Munchausen DQN Agent based on PyTorch.
 
     Notes
     -----
-    Uses Q(lambda) for computing targets by default. To recover
-    the standard DQN, set :code:`lambda_ = 0.0` and :code:`chunk_size = 1`.
+    Uses Munchausen trick for DQN for computing targets by default.
+    Compared to DQN, the scaled log-policy was added to the immediate
+    reward. Slightly modifying DQN in that way provides an agent that
+    is competitive with distributional methods on Atari games, without
+    making use of distributional RL, n-step returns or prioritized replay.
+    See more: https://arxiv.org/pdf/2007.14430.pdf
 
     Parameters
     ----------
@@ -58,6 +66,10 @@ class DQNAgent(AgentWithSimplePolicy):
         Length of sub-trajectories sampled from the replay buffer.
     lambda_: float, default=0.5
         Q(lambda) parameter.
+    tau: float, default=0.03
+        softmax temperature for the policy
+    alpha: float, default=0.9
+        Munchausen coefficient
     target_update_parameter : int or float
         If int: interval (in number total number of online updates) between updates of the target network.
         If float: soft update coefficient
@@ -65,6 +77,8 @@ class DQNAgent(AgentWithSimplePolicy):
         Torch device, see :func:`~rlberry.utils.torch.choose_device`
     learning_rate : float, default = 1e-3
         Optimizer learning rate.
+    clip_value_min: float, default = -1,
+        minimum value for munchausen term
     loss_function: {"l1", "l2", "smooth_l1"}, default: "l2"
         Loss function used to compute Bellman error.
     epsilon_init: float, default = 1.0
@@ -95,13 +109,13 @@ class DQNAgent(AgentWithSimplePolicy):
                 "reshape": False,
             }
 
-            agent = DQNAgent(env,
+            agent = MunchausenDQNAgent(env,
                 q_net_constructor=model_factory_from_env,
                 q_net_kwargs=model_configs
                 )
         If str then it should correspond to the full path to the constructor function,
         e.g.::
-            agent = DQNAgent(env,
+            agent = MunchausenDQNAgent(env,
                 q_net_constructor='rlberry.agents.torch.utils.training.model_factory_from_env',
                 q_net_kwargs=model_configs
                 )
@@ -111,8 +125,6 @@ class DQNAgent(AgentWithSimplePolicy):
 
     q_net_kwargs : optional, dict
         Parameters for q_net_constructor.
-    use_double_dqn : bool, default = False
-        If True, use Double DQN.
     use_prioritized_replay : bool, default = False
         If True, use Prioritized Experience Replay.
     train_interval: int
@@ -130,7 +142,7 @@ class DQNAgent(AgentWithSimplePolicy):
         If None, never evaluate.
     """
 
-    name = "DQN"
+    name = "Munchausen DQN"
 
     def __init__(
         self,
@@ -139,9 +151,13 @@ class DQNAgent(AgentWithSimplePolicy):
         batch_size: int = 32,
         chunk_size: int = 8,
         lambda_: float = 0.5,
+        tau: float = 0.03,
+        alpha: float = 0.9,
         target_update_parameter: Union[int, float] = 0.005,
+        # tardet_update_freq: int = 8000,
         device: str = "cuda:best",
-        learning_rate: float = 1e-3,
+        learning_rate: float = 5e-5,
+        clip_value_min: float = -1.0,
         epsilon_init: float = 1.0,
         epsilon_final: float = 0.1,
         epsilon_decay_interval: int = 20_000,
@@ -149,11 +165,10 @@ class DQNAgent(AgentWithSimplePolicy):
         optimizer_type: str = "ADAM",
         q_net_constructor: Optional[Callable[..., torch.nn.Module]] = None,
         q_net_kwargs: Optional[dict] = None,
-        use_double_dqn: bool = False,
         use_prioritized_replay: bool = False,
-        train_interval: int = 10,
+        train_interval: int = 4,
         gradient_steps: int = -1,
-        max_replay_size: int = 200_000,
+        max_replay_size: int = 1_000_000,
         learning_starts: int = 5_000,
         eval_interval: Optional[int] = None,
         **kwargs,
@@ -169,7 +184,7 @@ class DQNAgent(AgentWithSimplePolicy):
         assert isinstance(env.observation_space, spaces.Box)
         assert isinstance(env.action_space, spaces.Discrete)
 
-        # DQN parameters
+        # M-DQN parameters
 
         # Online and target Q networks, torch device
         self._device = choose_device(device)
@@ -277,40 +292,48 @@ class DQNAgent(AgentWithSimplePolicy):
             batch_info = sampled.info
             assert batch["rewards"].shape == (self.batch_size, self.chunk_size)
 
-            # Compute targets
+            # Get batched tensors
             batch_observations = torch.FloatTensor(batch["observations"]).to(
                 self._device
             )
+            batch_rewards = torch.FloatTensor(batch["rewards"]).to(self._device)
             batch_next_observations = torch.FloatTensor(batch["next_observations"]).to(
                 self._device
             )
             batch_actions = torch.LongTensor(batch["actions"]).to(self._device)
+            batch_dones = torch.LongTensor(batch["dones"]).to(self._device)
 
+            # Get target Q estimates
             target_q_values_tp1 = self._qnet_target(batch_next_observations).detach()
-            # Check if double DQN
-            if self.use_double_dqn:
-                online_q_values_tp1 = self._qnet_online(
-                    batch_next_observations
-                ).detach()
-                a_argmax = online_q_values_tp1.argmax(dim=-1).detach()
-            else:
-                a_argmax = target_q_values_tp1.argmax(dim=-1).detach()
+            target_q_values = self._qnet_target(batch_observations).detach()
 
-            v_tp1 = (
-                torch.gather(target_q_values_tp1, dim=-1, index=a_argmax[:, :, None])[
-                    :, :, 0
-                ]
-                .cpu()
-                .numpy()
+            # Compute softmax policies for the current and next step
+            log_pi = stable_scaled_log_softmax(target_q_values, self.tau, -1)
+            log_pi_tp1 = stable_scaled_log_softmax(target_q_values_tp1, self.tau, -1)
+            pi_tp1 = stable_softmax(target_q_values_tp1, self.tau, -1)
+
+            # Compute the "next step" part of the target
+            target_v_tp1 = (
+                torch.sum((target_q_values_tp1 - log_pi_tp1) * pi_tp1, -1).cpu().numpy()
             )
 
+            # Compute the Munchausen term
+            munchausen_term = torch.gather(
+                log_pi, dim=-1, index=batch_actions[:, :, None]
+            )[:, :, 0]
+            clipped_munchausen_term = torch.clip(
+                munchausen_term, self.clip_value_min, 0
+            )
+            final_munchausen_term = self.alpha * clipped_munchausen_term
+
+            # Compute the final target
             batch_lambda_returns = lambda_returns(
-                batch["rewards"],
+                (batch_rewards + final_munchausen_term).cpu().numpy(),
                 self.gamma * (1.0 - np.array(batch["dones"], dtype=np.float32)),
-                v_tp1,
+                target_v_tp1,
                 np.array(self.lambda_, dtype=np.float32),
             )
-            targets = torch.tensor(batch_lambda_returns).to(self._device)
+            targets = torch.tensor(batch_lambda_returns, device=self._device)
 
             # Compute loss
             batch_q_values = self._qnet_online(batch_observations)
@@ -343,6 +366,7 @@ class DQNAgent(AgentWithSimplePolicy):
                 )
 
             # target update
+
             if self.target_update_parameter > 1:
                 if self._total_updates % self.target_update_parameter == 0:
                     self._qnet_target.load_state_dict(self._qnet_online.state_dict())
