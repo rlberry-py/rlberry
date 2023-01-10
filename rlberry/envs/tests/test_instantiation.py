@@ -87,7 +87,7 @@ def test_gridworld_from_layout():
 
 
 def test_ball2d_benchmark_instantiation():
-    for level in [1, 2, 3, 4, 5]:
+    for level in [0, 1, 2, 3, 4, 5]:
         env = get_benchmark_env(level)
         for aa in range(env.action_space.n):
             env.step(aa)
