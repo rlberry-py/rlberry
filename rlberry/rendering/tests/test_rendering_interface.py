@@ -11,6 +11,7 @@ from rlberry.envs.benchmarks.grid_exploration.four_room import FourRoom
 from rlberry.envs.benchmarks.grid_exploration.six_room import SixRoom
 from rlberry.envs.benchmarks.grid_exploration.apple_gold import AppleGold
 from rlberry.envs.benchmarks.ball_exploration import PBall2D, SimplePBallND
+from rlberry.envs.benchmarks.generalization.twinrooms import TwinRooms
 from rlberry.rendering import RenderInterface
 from rlberry.rendering import RenderInterface2D
 from rlberry.envs import Wrapper
@@ -32,6 +33,7 @@ classes = [
     FourRoom,
     SixRoom,
     AppleGold,
+    TwinRooms,
 ]
 
 

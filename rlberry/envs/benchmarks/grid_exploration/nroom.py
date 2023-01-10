@@ -9,15 +9,15 @@ import rlberry
 logger = rlberry.logger
 
 
-def get_nroom_state_coord(state_index, nroom_env):
-    yy, xx = nroom_env.index2coord[state_index]
-    # centering
-    xx = xx + 0.5
-    yy = yy + 0.5
-    # map to [0, 1]
-    xx = xx / nroom_env.ncols
-    yy = yy / nroom_env.nrows
-    return np.array([xx, yy])
+# def get_nroom_state_coord(state_index, nroom_env):
+#     yy, xx = nroom_env.index2coord[state_index]
+#     # centering
+#     xx = xx + 0.5
+#     yy = yy + 0.5
+#     # map to [0, 1]
+#     xx = xx / nroom_env.ncols
+#     yy = yy / nroom_env.nrows
+#     return np.array([xx, yy])
 
 
 class NRoom(GridWorld):
