@@ -3,6 +3,7 @@
    <img src="https://raw.githubusercontent.com/rlberry-py/rlberry/main/assets/logo_wide.svg" width="50%">
 </p>
 
+
 <!-- Short description -->
 <p align="center">
    A Reinforcement Learning Library for Research and Education
