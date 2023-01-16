@@ -1,5 +1,6 @@
 import numpy as np
 from rlberry.envs import SpringCartPole
+from rlberry.envs.classic_control.SpringCartPole import rk4
 
 
 # # actions
@@ -77,6 +78,26 @@ def test_spring_cartpole():
         _ = next_state
 
     _ = env.get_video()
+
+
+def test_rk4():
+    """
+    Test of the rk4 utils defined in speingcartpole
+    """
+    ## 2D system
+    def derivs6(x, t):
+        d1 = x[0] + 2 * x[1]
+        d2 = -3 * x[0] + 4 * x[1]
+        return (d1, d2)
+
+    dt = 0.0005
+    t = np.arange(0.0, 2.0, dt)
+    y0 = (1, 2)
+    yout = rk4(derivs6, y0, t)
+    assert np.abs(yout[0][0] - 1) < 1e-2
+    assert np.abs(yout[0][1] - 2) < 1e-2
+    assert np.abs(yout[-1][0] + 238.087) < 1e-2
+    assert np.abs(yout[-1][1] + 220.827) < 1e-2
 
 
 if __name__ == "__main__":
