@@ -5,6 +5,8 @@ Changelog
 
 Dev version
 -----------
+*PR #269*
+* Add :class:`rlberry.envs.PipelineEnv` a way to define pipeline of wrappers in a simple way.
 
 *PR #226, #227*
 
