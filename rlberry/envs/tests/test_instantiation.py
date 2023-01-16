@@ -1,6 +1,7 @@
 import numpy as np
 import pytest
 
+from rlberry.envs import gym_make, PipelineEnv
 from rlberry.envs.classic_control import MountainCar, Acrobot, Pendulum
 from rlberry.envs.finite import Chain
 from rlberry.envs.finite import GridWorld
@@ -220,3 +221,16 @@ def test_n_room(reward_free, array_observation, initial_state_distribution):
     if array_observation:
         assert isinstance(initial_state, np.ndarray)
         assert isinstance(next_state, np.ndarray)
+
+
+def test_pipeline():
+    from rlberry.wrappers import RescaleRewardWrapper
+
+    env_ctor, env_kwargs = PipelineEnv, {
+        "env_ctor": gym_make,
+        "env_kwargs": {"id": "Acrobot-v1"},
+        "wrappers": [(RescaleRewardWrapper, {"reward_range": (0, 1)})],
+    }
+    env = env_ctor(**env_kwargs)
+    _, reward, _, _ = env.step(0)
+    assert (reward <= 1) and (reward >= 0)
