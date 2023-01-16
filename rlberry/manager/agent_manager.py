@@ -863,6 +863,13 @@ class AgentManager:
             logger.warn(
                 "Loaded an agent manager that was created with an old version of rlberry."
             )
+            logger.warn(
+                "Current is "
+                + str(rlberry.__version__)
+                + ", version when constructed was "
+                + str(obj.rlberry_version)
+                + "."
+            )
 
         return obj
 
