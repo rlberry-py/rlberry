@@ -7,17 +7,21 @@ Dev version
 -----------
 
 *PR #262*
+
 * PPO can now handle continuous actions.
 
 *PR #261, #264*
+
 * Implementation of Munchausen DQN in :class:`rlberry.agents.torch.MDQNAgent`.
 * Comparison of MDQN with DQN agent in the long tests.
 
 
 *PR #244, #250, #253*
+
 * Compress the pickles used to save the trained agents.
 
 *PR #235*
+
 * Implementation  of :class:`rlberry.envs.SpringCartPole` environment, an RL environment featuring two cartpoles linked by a spring.
 
 *PR #226, #227*
