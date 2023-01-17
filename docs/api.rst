@@ -82,6 +82,7 @@ Torch Agents
    agents.torch.A2CAgent
    agents.torch.PPOAgent
    agents.torch.DQNAgent
+   agents.torch.MDQNAgent
    agents.torch.REINFORCEAgent
 
 Experimental torch agents
