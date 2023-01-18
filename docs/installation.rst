@@ -11,7 +11,7 @@ First, we suggest you to create a virtual environment using
 
 .. code:: bash
 
-    $ conda create -n rlberry python=3.8
+    $ conda create -n rlberry
     $ conda activate rlberry
 
 OS dependency
@@ -19,7 +19,7 @@ OS dependency
 
 In order to render videos in rlberry, `ffmpeg <https://ffmpeg.org/>`_ must be installed.
 
-Latest version (0.3.0)
+Latest version (0.4.0)
 -------------------------------------
 
 Install the latest version for a stable release.

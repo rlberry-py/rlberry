@@ -6,6 +6,10 @@ Changelog
 Dev version
 -----------
 
+
+Version 0.4.0  (latest stable version)
+--------------------------------------
+
 *PR #273*
 
 * Change the default behavior of `plot_writer_data` so that if seaborn has version >= 0.12.0 then
@@ -44,8 +48,8 @@ Dev version
 * Moved PPO from experimental to torch agents. Tested and benchmarked.
 
 
-Version 0.3.0 (latest stable version)
--------------------------------------
+Version 0.3.0
+-------------
 
 
 *PR #206*
