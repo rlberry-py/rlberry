@@ -859,17 +859,20 @@ class AgentManager:
 
         obj.__dict__.clear()
         obj.__dict__.update(tmp_dict)
-        if rlberry.__version__ != obj.rlberry_version:
-            logger.warn(
-                "Loaded an agent manager that was created with an old version of rlberry."
-            )
-            logger.warn(
-                "Current is "
-                + str(rlberry.__version__)
-                + ", version when constructed was "
-                + str(obj.rlberry_version)
-                + "."
-            )
+
+        # If the agent is loaded from an agent pickle, compare versions
+        if "rlberry_version" in obj.__dict__.keys():
+            if rlberry.__version__ != obj.__dict__["rlberry_version"]:
+                logger.warn(
+                    "Loaded an agent manager that was created with an old version of rlberry."
+                )
+                logger.warn(
+                    "Current is "
+                    + str(rlberry.__version__)
+                    + ", version when constructed was "
+                    + str(obj.rlberry_version)
+                    + "."
+                )
 
         return obj
 
