@@ -64,6 +64,29 @@ def test_plot_writer_data_with_manager_input(outdir_id_style):
         assert len(output) > 1
 
 
+def test_ci():
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        output_dir = tmpdirname + "/rlberry_data"
+        manager = _create_and_fit_agent_manager(output_dir, None)
+        os.system("ls " + tmpdirname + "/rlberry_data/manager_data")
+
+        # Plot of the cumulative reward
+        data_source = manager
+        output = plot_writer_data(
+            data_source,
+            tag="reward",
+            preprocess_func=_compute_reward,
+            title="Cumulative Reward",
+            show=False,
+            savefig_fname=tmpdirname + "/test.png",
+            sns_kwargs={"errorbar": "sd"},
+        )
+        assert (
+            os.path.getsize(tmpdirname + "/test.png") > 1000
+        ), "plot_writer_data saved an empty image"
+        assert len(output) > 1
+
+
 @pytest.mark.parametrize("outdir_id_style", ["timestamp"])
 def test_plot_writer_data_with_directory_input(outdir_id_style):
     with tempfile.TemporaryDirectory() as tmpdirname:
