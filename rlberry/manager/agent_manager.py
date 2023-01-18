@@ -167,6 +167,7 @@ class AgentManager:
     If parallelization="process" and mp_context="spawn" or mp_context="forkserver", make sure your main code
     has a guard `if __name__ == '__main__'`. See https://docs.python.org/3/library/multiprocessing.html#multiprocessing-programming.
 
+
     Parameters
     ----------
     agent_class
@@ -235,6 +236,11 @@ class AgentManager:
     ----------
     output_dir : :class:`pathlib.Path`
         Directory where the manager saves data.
+
+    rlberry_version: str
+        Current version of rlberry. This is saved when calling agent_manager.save()
+        and it is then used in load() to warn if the version of the agent is not a
+        match with current rlberry version.
 
     Examples
     --------
@@ -853,6 +859,17 @@ class AgentManager:
 
         obj.__dict__.clear()
         obj.__dict__.update(tmp_dict)
+        if rlberry.__version__ != obj.rlberry_version:
+            logger.warn(
+                "Loaded an agent manager that was created with an old version of rlberry."
+            )
+            logger.warn(
+                "Current is "
+                + str(rlberry.__version__)
+                + ", version when constructed was "
+                + str(obj.rlberry_version)
+                + "."
+            )
 
         return obj
 
