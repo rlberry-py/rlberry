@@ -145,14 +145,15 @@ Benchmark Environments
     envs.finite.GridWorld
 
 
-Environment importation tools
------------------------------
+Environment tools
+-----------------
 
 .. autosummary::
    :toctree: generated/
    :template: function.rst
 
     envs.gym_make
+    envs.PipelineEnv
 
 
 Seeding

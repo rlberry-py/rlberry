@@ -3,3 +3,4 @@ from .basewrapper import Wrapper
 from .classic_control import Acrobot, MountainCar, Pendulum, SpringCartPole
 from .finite import Chain, FiniteMDP, GridWorld
 from .interface import Model
+from .pipeline import PipelineEnv
