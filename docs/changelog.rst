@@ -5,6 +5,12 @@ Changelog
 
 Dev version
 -----------
+
+*PR #273*
+
+* Change the default behavior of `plot_writer_data` so that if seaborn has version >= 0.12.0 then
+  a 90% percentile interval is used instead of sd.
+
 *PR #269*
 
 * Add :class:`rlberry.envs.PipelineEnv` a way to define pipeline of wrappers in a simple way.
