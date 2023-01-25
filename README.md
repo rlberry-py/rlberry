@@ -3,6 +3,7 @@
    <img src="https://raw.githubusercontent.com/rlberry-py/rlberry/main/assets/logo_wide.svg" width="50%">
 </p>
 
+
 <!-- Short description -->
 <p align="center">
    A Reinforcement Learning Library for Research and Education
@@ -78,7 +79,7 @@ that you can spend most of your time developing agents.
 Install the latest version for a stable release.
 
 ```bash
-pip install -U git+https://github.com/rlberry-py/rlberry.git@v0.3.0#egg=rlberry[default]
+pip install rlberry
 ```
 
 The documentation includes more [installation instructions](https://rlberry.readthedocs.io/en/latest/installation.html) in particular for users that work with Jax.
@@ -114,18 +115,13 @@ If you use `rlberry` in scientific publications, we would appreciate citations u
     year = {2021}
 }
 ```
- 
 
 ## Development notes
 
 The modules listed below are experimental at the moment, that is, they are not thoroughly tested and are susceptible to evolve.
 
 * `rlberry.network`: Allows communication between a server and client via sockets, and can be used to run agents remotely.
-
-* `rlberry.agents.torch`, `rlberry.agents.jax`, `rlberry.exploration_tools.torch`: Deep RL agents are currently not stable, and their main purpose now is to illustrate how to implement and run those algorithms with the `rlberry` interface
-(e.g., run several agents in parallel, optimize hyperparameters etc.).
-Other libraries, such as [Stable Baselines](https://stable-baselines3.readthedocs.io/en/master/) provide reliable implementations of deep RL algorithms, and **can be used with `rlberry`**, as shown by
-[this example](https://rlberry.readthedocs.io/en/latest/auto_examples/demo_examples/demo_from_stable_baselines.html#sphx-glr-auto-examples-demo-examples-demo-from-stable-baselines-py).
+* `rlberry.agents.experimental`: Experimental agents that are not thoroughly tested.
 
 
 ## Contributing

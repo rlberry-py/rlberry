@@ -1,6 +1,7 @@
 import numpy as np
 import pytest
 
+from rlberry.envs import gym_make, PipelineEnv
 from rlberry.envs.classic_control import MountainCar, Acrobot, Pendulum
 from rlberry.envs.finite import Chain
 from rlberry.envs.finite import GridWorld
@@ -87,7 +88,7 @@ def test_gridworld_from_layout():
 
 
 def test_ball2d_benchmark_instantiation():
-    for level in [1, 2, 3, 4, 5]:
+    for level in [0, 1, 2, 3, 4, 5]:
         env = get_benchmark_env(level)
         for aa in range(env.action_space.n):
             env.step(aa)
@@ -220,3 +221,32 @@ def test_n_room(reward_free, array_observation, initial_state_distribution):
     if array_observation:
         assert isinstance(initial_state, np.ndarray)
         assert isinstance(next_state, np.ndarray)
+
+
+def test_pipeline():
+    from rlberry.wrappers import RescaleRewardWrapper
+    from rlberry.wrappers.discretize_state import DiscretizeStateWrapper
+
+    env_ctor, env_kwargs = PipelineEnv, {
+        "env_ctor": gym_make,
+        "env_kwargs": {"id": "Acrobot-v1"},
+        "wrappers": [(RescaleRewardWrapper, {"reward_range": (0, 1)})],
+    }
+    env = env_ctor(**env_kwargs)
+    _, reward, _, _ = env.step(0)
+    assert (reward <= 1) and (reward >= 0)
+
+    env_ctor, env_kwargs = PipelineEnv, {
+        "env_ctor": gym_make,
+        "env_kwargs": {"id": "Acrobot-v1"},
+        "wrappers": [
+            (RescaleRewardWrapper, {"reward_range": (0, 1)}),
+            (DiscretizeStateWrapper, {"n_bins": 10}),
+        ],
+    }
+    env = env_ctor(**env_kwargs)
+    # check that wrapped in the right order
+    assert isinstance(
+        env.env, RescaleRewardWrapper
+    ), "the environments in Pipeline env may not be wrapped in order"
+    assert isinstance(env.env.env, DiscretizeStateWrapper)

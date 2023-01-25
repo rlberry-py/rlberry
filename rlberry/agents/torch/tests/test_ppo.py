@@ -37,6 +37,26 @@ def test_ppo():
     output = evaluate_agents([pporlberry_stats], n_simulations=2, plot=False)
     pporlberry_stats.clear_output_dir()
 
+    env = "Pendulum-v1"
+    mdp = make(env)
+    env_ctor = Wrapper
+    env_kwargs = dict(env=mdp)
+
+    pporlberry_stats = AgentManager(
+        PPOAgent,
+        (env_ctor, env_kwargs),
+        fit_budget=int(100),
+        eval_kwargs=dict(eval_horizon=2),
+        init_kwargs=dict(batch_size=24, n_steps=96),
+        n_fit=1,
+        agent_name="PPO_rlberry_" + env,
+    )
+
+    pporlberry_stats.fit()
+
+    output = evaluate_agents([pporlberry_stats], n_simulations=2, plot=False)
+    pporlberry_stats.clear_output_dir()
+
     env = "Acrobot-v1"
     mdp = make(env)
     env_ctor = Wrapper
