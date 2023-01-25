@@ -27,11 +27,8 @@ def gym_make(id, wrap_spaces=False, **kwargs):
     """
     if "module_import" in kwargs:
         __import__(kwargs.pop("module_import"))
-    env = gym.make(id)
-    try:
-        env.configure(kwargs)
-    except AttributeError:
-        pass
+
+    env = gym.make(id, **kwargs)
     return Wrapper(env, wrap_spaces=wrap_spaces)
 
 

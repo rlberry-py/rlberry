@@ -103,7 +103,7 @@ class Agent(ABC):
         self.compress_pickle = compress_pickle
         # evaluation environment
         eval_env = eval_env or env
-        self.eval_env = process_env(eval_env, self.seeder, copy_env=True)
+        self.eval_env = process_env(eval_env, self.seeder, copy_env=copy_env)
 
         # metadata
         self._execution_metadata = (
