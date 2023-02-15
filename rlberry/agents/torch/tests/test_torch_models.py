@@ -62,7 +62,6 @@ def test_self_attention():
 
 
 def test_forward_atari_dqn():
-
     mlp_configs = {
         "type": "MultiLayerPerceptron",  # A network architecture
         "layer_sizes": [512],  # Network dimensions

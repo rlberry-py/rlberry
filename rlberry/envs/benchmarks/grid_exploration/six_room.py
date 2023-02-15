@@ -131,7 +131,7 @@ class SixRoom(GridWorld):
             bg.add_shape(shape)
 
         # rewards
-        for (y, x) in self.reward_at:
+        for y, x in self.reward_at:
             flag = GeometricPrimitive("POLYGON")
             rwd = self.reward_at[(y, x)]
             if rwd == 10:

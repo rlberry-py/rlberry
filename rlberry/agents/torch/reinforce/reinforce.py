@@ -72,7 +72,6 @@ class REINFORCEAgent(AgentWithSimplePolicy):
         device="cuda:best",
         **kwargs
     ):
-
         # For all parameters, define self.param = param
         _, _, _, values = inspect.getargvalues(inspect.currentframe())
         values.pop("self")

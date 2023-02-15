@@ -19,7 +19,6 @@ import shutil
 
 
 def test_ppo():
-
     env = "CartPole-v0"
     mdp = make(env)
     env_ctor = Wrapper
@@ -241,7 +240,6 @@ def test_ppo_classic_env():
 
 
 def test_ppo_agent_manager_classic_env():
-
     saving_path = "rlberry/agents/torch/tests/agentmanager_test_ppo_classic_env"
 
     # Remove previous save

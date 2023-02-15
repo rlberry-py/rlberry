@@ -148,7 +148,7 @@ class AppleGold(GridWorld):
             bg.add_shape(shape)
 
         # rewards
-        for (y, x) in self.reward_at:
+        for y, x in self.reward_at:
             rwd = self.reward_at[(y, x)]
             if rwd == -0.05:
                 rock = GeometricPrimitive("POLYGON")

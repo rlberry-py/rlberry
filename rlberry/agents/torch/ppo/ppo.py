@@ -107,7 +107,6 @@ class PPOAgent(AgentWithSimplePolicy):
         device="cuda:best",
         **kwargs
     ):
-
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
         self.batch_size = batch_size
@@ -230,7 +229,6 @@ class PPOAgent(AgentWithSimplePolicy):
         state = self.env.reset()
 
         while timesteps_counter < budget:
-
             # running policy_old
             state = torch.from_numpy(state).float().to(self.device)
             action, action_logprob = self._select_action(state)
@@ -288,7 +286,6 @@ class PPOAgent(AgentWithSimplePolicy):
         return action, action_logprob
 
     def _update(self):
-
         memory_data = self.memory.data
 
         # convert list to tensor
@@ -315,7 +312,6 @@ class PPOAgent(AgentWithSimplePolicy):
         n_batches = self.n_steps // self.batch_size
 
         for _ in range(self.k_epochs):
-
             # shuffle samples
             rd_indices = self.rng.choice(self.n_steps, size=self.n_steps, replace=False)
             shuffled_states = full_old_states[rd_indices]
@@ -325,7 +321,6 @@ class PPOAgent(AgentWithSimplePolicy):
             shuffled_advantages = full_old_advantages[rd_indices]
 
             for k in range(n_batches):
-
                 # sample batch
                 batch_idx = np.arange(
                     k * self.batch_size, min((k + 1) * self.batch_size, self.n_steps)
@@ -392,7 +387,6 @@ class PPOAgent(AgentWithSimplePolicy):
         self._policy_old.load_state_dict(self._policy.state_dict())
 
     def _compute_returns_avantages(self, rewards, is_terminals, state_values):
-
         length_rollout = len(rewards)
         returns = torch.zeros(length_rollout).to(self.device)
         advantages = torch.zeros(length_rollout).to(self.device)

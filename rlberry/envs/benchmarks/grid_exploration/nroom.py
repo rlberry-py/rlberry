@@ -70,7 +70,6 @@ class NRoom(GridWorld):
         initial_state_distribution="center",
         include_traps=False,
     ):
-
         assert nrooms > 0, "nrooms must be > 0"
         assert initial_state_distribution in ("center", "uniform")
 
@@ -263,7 +262,7 @@ class NRoom(GridWorld):
         bg = Scene()
 
         # traps
-        for (y, x) in self.traps:
+        for y, x in self.traps:
             shape = GeometricPrimitive("POLYGON")
             shape.set_color((0.5, 0.0, 0.0))
             shape.add_vertex((x, y))
@@ -284,7 +283,7 @@ class NRoom(GridWorld):
             bg.add_shape(shape)
 
         # rewards
-        for (y, x) in self.reward_at:
+        for y, x in self.reward_at:
             flag = GeometricPrimitive("POLYGON")
             rwd = self.reward_at[(y, x)]
             if rwd == 1.0:

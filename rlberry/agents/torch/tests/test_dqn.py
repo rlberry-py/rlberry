@@ -88,7 +88,6 @@ def test_dqn_classic_env():
 
 
 def test_dqn_agent_manager_classic_env():
-
     saving_path = "rlberry/agents/torch/tests/agentmanager_test_dqn_classic_env"
 
     # Remove previous save

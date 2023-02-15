@@ -877,7 +877,6 @@ class AgentManager:
         return obj
 
     def __eq__(self, other):
-
         result = True
         self_init_kwargs = [_strip_seed_dir(kw) for kw in self.init_kwargs]
         other_init_kwargs = [_strip_seed_dir(kw) for kw in other.init_kwargs]
