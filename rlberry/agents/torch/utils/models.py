@@ -7,6 +7,7 @@ import torch
 import torch.nn as nn
 from torch.distributions import Categorical, MultivariateNormal
 from gym import spaces
+import numpy as np
 
 #
 # Utility functions
@@ -62,7 +63,7 @@ def default_policy_net_fn(env):
         )
 
     if len(obs_shape) == 3:
-        if obs_shape[0] < obs_shape[1] and obs_shape[0] < obs_shape[1]:
+        if obs_shape[0] < obs_shape[1] and obs_shape[0] < obs_shape[2]:
             # Assume CHW observation space
             model_config = {
                 "type": "ConvolutionalNetwork",
@@ -361,6 +362,8 @@ class ConvolutionalNetwork(nn.Module):
     H = height;
     W = width.
 
+    For the CNN forward, if the tensor has more than 4 dimensions (not BCHW), it keeps the 3 last dimension as CHW and merge all first ones into 1 (Batch). Go through the CNN + MLP, then split the first dimension as before.
+
     Parameters
     ----------
     activation: {"RELU", "TANH", "ELU"}
@@ -397,17 +400,11 @@ class ConvolutionalNetwork(nn.Module):
         self.conv2 = nn.Conv2d(16, 32, kernel_size=2, stride=2)
         self.conv3 = nn.Conv2d(32, 64, kernel_size=2, stride=2)
 
-        # MLP Head
-        # Number of Linear input connections depends on output of conv2d layers
-        # and therefore the input image size, so compute it.
-        def conv2d_size_out(size, kernel_size=2, stride=2):
-            return (size - (kernel_size - 1) - 1) // stride + 1
-
-        convw = conv2d_size_out(conv2d_size_out(conv2d_size_out(in_width)))
-        convh = conv2d_size_out(conv2d_size_out(conv2d_size_out(in_height)))
-        assert convh > 0 and convw > 0
+        # MLP Head      
         self.head_mlp_kwargs = head_mlp_kwargs or {}
-        self.head_mlp_kwargs["in_size"] = convw * convh * 64
+        self.head_mlp_kwargs["in_size"] = self._get_conv_out_size(
+            [in_channels, in_height, in_width]
+        )  # Number of Linear input connections depends on output of conv layers
         self.head_mlp_kwargs["out_size"] = out_size
         self.head_mlp_kwargs["is_policy"] = is_policy
         self.head = model_factory(**self.head_mlp_kwargs)
@@ -415,9 +412,19 @@ class ConvolutionalNetwork(nn.Module):
         self.is_policy = is_policy
         self.transpose_obs = transpose_obs
 
+    def _get_conv_out_size(self, shape):
+        """
+        Computes the output dimensions of the convolution network.
+        Shape : dimension of the input of the CNN
+        """
+        conv_result = self.activation((self.conv1(torch.zeros(1, *shape))))
+        conv_result = self.activation((self.conv2(conv_result)))
+        conv_result = self.activation((self.conv3(conv_result)))
+        return int(np.prod(conv_result.size()))
+
     def convolutions(self, x):
         x = x.float()
-        if len(x.shape) == 3:
+        if (len(x.shape) == 3):  # if there is no batch (CHW), add one dimension to specify batch of 1 (and get format BCHW)
             x = x.unsqueeze(0)
         if self.transpose_obs:
             x = torch.transpose(x, -1, -3)
@@ -433,9 +440,28 @@ class ConvolutionalNetwork(nn.Module):
         Parameters
         ----------
         x: torch.tensor
-            Tensor of shape BCHW
+            Tensor of shape BCHW (Batch,Chanel,Height,Width : if more than 4 dimensions, merge all the first in batch dimension)
         """
-        return self.head(self.convolutions(x))
+        flag_view_to_change = False
+
+        if len(x.shape) > 4:
+            flag_view_to_change = True
+            dim_to_retore = x.shape[:-3]
+            inputview_size = tuple((-1,)) + tuple(x.shape[-3:])
+            outputview_size = tuple(dim_to_retore) + tuple(
+                (self.head_mlp_kwargs["out_size"],)
+            )
+            x = x.view(inputview_size)
+
+        conv_result = self.convolutions(x)
+        output_result = self.head(
+            conv_result.view(conv_result.size()[0], -1)
+        )  # give the 'conv_result' flattenned in 2 dimensions (batch and other) to the MLP (head)
+
+        if flag_view_to_change:
+            output_result = output_result.view(outputview_size)
+
+        return output_result
 
     def action_scores(self, x):
         return self.head.action_scores(self.convolutions(x))
