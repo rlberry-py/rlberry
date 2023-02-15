@@ -38,8 +38,8 @@ def test_dqn_agent(use_double_dqn, use_prioritized_replay):
         env, q_net_constructor=mlp, q_net_kwargs=model_configs, learning_starts=100
     )
     new_agent.fit(budget=2000)
-    
-    
+
+
 import os
 from rlberry.manager.agent_manager import AgentManager
 import shutil
@@ -144,5 +144,3 @@ def test_dqn_agent_manager_classic_env():
         state = next_s
 
     shutil.rmtree(saving_path)
-
-

@@ -59,9 +59,8 @@ def test_ego_attention():
 
 def test_self_attention():
     _ = SelfAttention()
-    
-    
-    
+
+
 def test_forward_atari_dqn():
 
     mlp_configs = {

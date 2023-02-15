@@ -400,7 +400,7 @@ class ConvolutionalNetwork(nn.Module):
         self.conv2 = nn.Conv2d(16, 32, kernel_size=2, stride=2)
         self.conv3 = nn.Conv2d(32, 64, kernel_size=2, stride=2)
 
-        # MLP Head      
+        # MLP Head
         self.head_mlp_kwargs = head_mlp_kwargs or {}
         self.head_mlp_kwargs["in_size"] = self._get_conv_out_size(
             [in_channels, in_height, in_width]
@@ -424,7 +424,9 @@ class ConvolutionalNetwork(nn.Module):
 
     def convolutions(self, x):
         x = x.float()
-        if (len(x.shape) == 3):  # if there is no batch (CHW), add one dimension to specify batch of 1 (and get format BCHW)
+        if (
+            len(x.shape) == 3
+        ):  # if there is no batch (CHW), add one dimension to specify batch of 1 (and get format BCHW)
             x = x.unsqueeze(0)
         if self.transpose_obs:
             x = torch.transpose(x, -1, -3)

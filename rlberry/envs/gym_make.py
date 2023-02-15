@@ -43,7 +43,7 @@ def atari_make(id, scalarize=None, **kwargs):
     #         scalarize = False
     #     else:
     #         scalarize = True
-    
+
     scalarize = True
 
     if "atari_wrappers_dict" in kwargs.keys():
@@ -55,7 +55,7 @@ def atari_make(id, scalarize=None, **kwargs):
         )  # hack, some errors with the "terminal_on_life_loss" wrapper : The 'false reset' can lead to make a step on a 'done' environment, then a crash.
 
     env = make_atari_env(env_id=id, wrapper_kwargs=atari_wrappers_dict, **kwargs)
-    
+
     env = VecFrameStack(env, n_stack=4)
     env = AtariImageToPyTorch(env)
     if scalarize:
@@ -63,6 +63,7 @@ def atari_make(id, scalarize=None, **kwargs):
 
         env = ScalarizeEnvWrapper(env)
     return env
+
 
 class AtariImageToPyTorch(Wrapper):
     """

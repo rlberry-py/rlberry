@@ -7,7 +7,7 @@
 # ppo = PPOAgent(env)
 # ppo.fit(4096)
 
-from rlberry.envs import Wrapper,gym_make
+from rlberry.envs import Wrapper, gym_make
 from rlberry.agents.torch import PPOAgent
 from rlberry.manager import AgentManager, evaluate_agents
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
@@ -201,8 +201,7 @@ def test_ppo():
 
     output = evaluate_agents([pporlberry_stats], n_simulations=2, plot=False)
     pporlberry_stats.clear_output_dir()
-    
-    
+
 
 def test_ppo_classic_env():
     env = gym_make("CartPole-v0")
