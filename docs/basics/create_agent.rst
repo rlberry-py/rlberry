@@ -17,21 +17,19 @@ The example below shows how to create an agent.
     import numpy as np
     from rlberry.agents import Agent
 
-    class MyAgent(Agent):
 
+    class MyAgent(Agent):
         name = "MyAgent"
 
-        def __init__(self,
-                     env,
-                     param1=0.99,
-                     param2=1e-5,
-                     **kwargs):   # it's important to put **kwargs to ensure compatibility with the base class
-                # self.env is initialized in the base class
-                # An evaluation environment is also initialized: self.eval_env
-                Agent.__init__(self, env, **kwargs)
+        def __init__(
+            self, env, param1=0.99, param2=1e-5, **kwargs
+        ):  # it's important to put **kwargs to ensure compatibility with the base class
+            # self.env is initialized in the base class
+            # An evaluation environment is also initialized: self.eval_env
+            Agent.__init__(self, env, **kwargs)
 
-                self.param1 = param1
-                self.param2 = param2
+            self.param1 = param1
+            self.param2 = param2
 
         def fit(self, budget, **kwargs):
             """
@@ -48,11 +46,11 @@ The example below shows how to create an agent.
                 state = self.env.reset()
                 done = False
                 while not done:
-                action = ...
-                next_state, reward, done, _ = self.env.step(action)
-                rewards[ep] += reward
+                    action = ...
+                    next_state, reward, done, _ = self.env.step(action)
+                    rewards[ep] += reward
 
-            info = {'episode_rewards': rewards}
+            info = {"episode_rewards": rewards}
             return info
 
         def eval(self, **kwargs):
