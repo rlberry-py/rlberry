@@ -8,9 +8,9 @@ params["n_samples"] = 8  # samples per state-action pair
 params["gamma"] = 0.9
 params["horizon"] = None
 
+
 # hyperparameters from https://github.com/DLR-RM/rl-baselines3-zoo
 def test_mbqvi_applegold():
-
     rbagent = AgentManager(
         MBQVIAgent,
         (AppleGold, None),

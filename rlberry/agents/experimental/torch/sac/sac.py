@@ -96,7 +96,6 @@ class SACAgent(AgentWithSimplePolicy):
         device="cuda:best",
         **kwargs
     ):
-
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
         self.use_bonus = use_bonus

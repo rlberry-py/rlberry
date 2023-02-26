@@ -2,7 +2,7 @@ Quickstart for Deep Reinforcement Learning in rlberry
 =====================================================
 
 .. highlight:: none
-               
+
 ..
   Authors: Riccardo Della Vecchia, Hector Kohler, Alena Shilova.
 

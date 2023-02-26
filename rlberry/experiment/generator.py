@@ -32,7 +32,7 @@ def experiment_generator():
     max_workers = int(args["--max_workers"])
     if max_workers == -1:
         max_workers = None
-    for (_, agent_manager_kwargs) in parse_experiment_config(
+    for _, agent_manager_kwargs in parse_experiment_config(
         Path(args["<experiment_path>"]),
         n_fit=int(args["--n_fit"]),
         max_workers=max_workers,

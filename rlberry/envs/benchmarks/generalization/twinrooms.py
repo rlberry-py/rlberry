@@ -158,7 +158,7 @@ class TwinRooms(RenderInterface2D, Model):
         bg.add_shape(shape)
 
         # rewards
-        for (x, y) in [
+        for x, y in [
             self.base_reward_pos,
             self.base_reward_pos + np.array([1.0, 0.0]),
         ]:

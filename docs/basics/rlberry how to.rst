@@ -12,7 +12,7 @@ Libraries
 
 .. parsed-literal::
 
-    [INFO] No OpenGL_accelerate module loaded: No module named 'OpenGL_accelerate' 
+    [INFO] No OpenGL_accelerate module loaded: No module named 'OpenGL_accelerate'
 
 
 Environment definition
@@ -54,16 +54,16 @@ two algorithms.
         name = 'RandomAgent'
         def __init__(self, env, **kwargs):
             AgentWithSimplePolicy.__init__(self, env, **kwargs)
-    
+
         def fit(self, budget=None, **kwargs):
             pass
-    
+
         def policy(self, observation):
             return self.env.action_space.sample()
-        
+
     # We will compare this agent to V
-    
-    
+
+
     # Define parameters
     vi_params = {'gamma':0.1, 'epsilon':1e-3}
 
@@ -95,7 +95,7 @@ our estimation.
         init_kwargs=vi_params,
         n_fit=1)
     vi_stats.fit()
-    
+
     # Create AgentManager for baseline
     baseline_stats = AgentManager(
         RandomAgent,
@@ -108,10 +108,10 @@ our estimation.
 
 .. parsed-literal::
 
-    [INFO] Running AgentManager fit() for ValueIteration...  
-    [INFO] ... trained! 
-    [INFO] Running AgentManager fit() for RandomAgent...  
-    [INFO] ... trained! 
+    [INFO] Running AgentManager fit() for ValueIteration...
+    [INFO] ... trained!
+    [INFO] Running AgentManager fit() for RandomAgent...
+    [INFO] ... trained!
 
 
 .. code:: ipython3
@@ -121,28 +121,28 @@ our estimation.
 
 .. parsed-literal::
 
-    [INFO] Evaluating ValueIteration... 
-    [INFO] [eval]... simulation 1/10 
-    [INFO] [eval]... simulation 2/10 
-    [INFO] [eval]... simulation 3/10 
-    [INFO] [eval]... simulation 4/10 
-    [INFO] [eval]... simulation 5/10 
-    [INFO] [eval]... simulation 6/10 
-    [INFO] [eval]... simulation 7/10 
-    [INFO] [eval]... simulation 8/10 
-    [INFO] [eval]... simulation 9/10 
-    [INFO] [eval]... simulation 10/10 
-    [INFO] Evaluating RandomAgent... 
-    [INFO] [eval]... simulation 1/10 
-    [INFO] [eval]... simulation 2/10 
-    [INFO] [eval]... simulation 3/10 
-    [INFO] [eval]... simulation 4/10 
-    [INFO] [eval]... simulation 5/10 
-    [INFO] [eval]... simulation 6/10 
-    [INFO] [eval]... simulation 7/10 
-    [INFO] [eval]... simulation 8/10 
-    [INFO] [eval]... simulation 9/10 
-    [INFO] [eval]... simulation 10/10 
+    [INFO] Evaluating ValueIteration...
+    [INFO] [eval]... simulation 1/10
+    [INFO] [eval]... simulation 2/10
+    [INFO] [eval]... simulation 3/10
+    [INFO] [eval]... simulation 4/10
+    [INFO] [eval]... simulation 5/10
+    [INFO] [eval]... simulation 6/10
+    [INFO] [eval]... simulation 7/10
+    [INFO] [eval]... simulation 8/10
+    [INFO] [eval]... simulation 9/10
+    [INFO] [eval]... simulation 10/10
+    [INFO] Evaluating RandomAgent...
+    [INFO] [eval]... simulation 1/10
+    [INFO] [eval]... simulation 2/10
+    [INFO] [eval]... simulation 3/10
+    [INFO] [eval]... simulation 4/10
+    [INFO] [eval]... simulation 5/10
+    [INFO] [eval]... simulation 6/10
+    [INFO] [eval]... simulation 7/10
+    [INFO] [eval]... simulation 8/10
+    [INFO] [eval]... simulation 9/10
+    [INFO] [eval]... simulation 10/10
 
 
 
@@ -163,7 +163,7 @@ array
         name = 'RandomAgent2'
         def __init__(self, env, **kwargs):
             super().__init__(env, **kwargs)
-        
+
         def eval(self,
                  eval_horizon=10 ** 5,
                  **kwargs):
@@ -175,13 +175,13 @@ array
                 observation, reward, done, _ = self.eval_env.step(action)
                 episode_regret[tt] = 1-reward # Optimal reward is 1
             return episode_regret
-    
-    
+
+
     class ValueIterationAgent2(ValueIterationAgent):
         name = 'ValueIterationAgent2'
         def __init__(self, env, gamma=0.95, horizon=None, epsilon=1e-6, **kwargs):
             super().__init__( env, gamma=0.95, horizon=None, epsilon=1e-6, **kwargs)
-        
+
         def eval(self,
                  eval_horizon=10 ** 5,
                  gamma=1,
@@ -193,7 +193,7 @@ array
                 action = self.policy(observation)
                 observation, reward, done, _ = self.eval_env.step(action)
                 episode_regret[tt] = 1-reward # Optimal reward is 1
-    
+
             return episode_regret
 
 Then, we do the Monte-Carlo simulations. This time, we directly do 100
@@ -212,7 +212,7 @@ the variability of our estimation).
         init_kwargs=vi_params,
         n_fit=4)
     vi_stats.fit()
-    
+
     # Create AgentManager for baseline
     baseline_stats = AgentManager(
         RandomAgent2,
@@ -225,10 +225,10 @@ the variability of our estimation).
 
 .. parsed-literal::
 
-    [INFO] Running AgentManager fit() for ValueIterationAgent2...  
-    [INFO] ... trained! 
-    [INFO] Running AgentManager fit() for RandomAgent2...  
-    [INFO] ... trained! 
+    [INFO] Running AgentManager fit() for ValueIterationAgent2...
+    [INFO] ... trained!
+    [INFO] Running AgentManager fit() for RandomAgent2...
+    [INFO] ... trained!
 
 
 .. code:: ipython3
@@ -238,208 +238,208 @@ the variability of our estimation).
 
 .. parsed-literal::
 
-    [INFO] Evaluating ValueIterationAgent2... 
-    [INFO] [eval]... simulation 1/100 
-    [INFO] [eval]... simulation 2/100 
-    [INFO] [eval]... simulation 3/100 
-    [INFO] [eval]... simulation 4/100 
-    [INFO] [eval]... simulation 5/100 
-    [INFO] [eval]... simulation 6/100 
-    [INFO] [eval]... simulation 7/100 
-    [INFO] [eval]... simulation 8/100 
-    [INFO] [eval]... simulation 9/100 
-    [INFO] [eval]... simulation 10/100 
-    [INFO] [eval]... simulation 11/100 
-    [INFO] [eval]... simulation 12/100 
-    [INFO] [eval]... simulation 13/100 
-    [INFO] [eval]... simulation 14/100 
-    [INFO] [eval]... simulation 15/100 
-    [INFO] [eval]... simulation 16/100 
-    [INFO] [eval]... simulation 17/100 
-    [INFO] [eval]... simulation 18/100 
-    [INFO] [eval]... simulation 19/100 
-    [INFO] [eval]... simulation 20/100 
-    [INFO] [eval]... simulation 21/100 
-    [INFO] [eval]... simulation 22/100 
-    [INFO] [eval]... simulation 23/100 
-    [INFO] [eval]... simulation 24/100 
-    [INFO] [eval]... simulation 25/100 
-    [INFO] [eval]... simulation 26/100 
-    [INFO] [eval]... simulation 27/100 
-    [INFO] [eval]... simulation 28/100 
-    [INFO] [eval]... simulation 29/100 
-    [INFO] [eval]... simulation 30/100 
-    [INFO] [eval]... simulation 31/100 
-    [INFO] [eval]... simulation 32/100 
-    [INFO] [eval]... simulation 33/100 
-    [INFO] [eval]... simulation 34/100 
-    [INFO] [eval]... simulation 35/100 
-    [INFO] [eval]... simulation 36/100 
-    [INFO] [eval]... simulation 37/100 
-    [INFO] [eval]... simulation 38/100 
-    [INFO] [eval]... simulation 39/100 
-    [INFO] [eval]... simulation 40/100 
-    [INFO] [eval]... simulation 41/100 
-    [INFO] [eval]... simulation 42/100 
-    [INFO] [eval]... simulation 43/100 
-    [INFO] [eval]... simulation 44/100 
-    [INFO] [eval]... simulation 45/100 
-    [INFO] [eval]... simulation 46/100 
-    [INFO] [eval]... simulation 47/100 
-    [INFO] [eval]... simulation 48/100 
-    [INFO] [eval]... simulation 49/100 
-    [INFO] [eval]... simulation 50/100 
-    [INFO] [eval]... simulation 51/100 
-    [INFO] [eval]... simulation 52/100 
-    [INFO] [eval]... simulation 53/100 
-    [INFO] [eval]... simulation 54/100 
-    [INFO] [eval]... simulation 55/100 
-    [INFO] [eval]... simulation 56/100 
-    [INFO] [eval]... simulation 57/100 
-    [INFO] [eval]... simulation 58/100 
-    [INFO] [eval]... simulation 59/100 
-    [INFO] [eval]... simulation 60/100 
-    [INFO] [eval]... simulation 61/100 
-    [INFO] [eval]... simulation 62/100 
-    [INFO] [eval]... simulation 63/100 
-    [INFO] [eval]... simulation 64/100 
-    [INFO] [eval]... simulation 65/100 
-    [INFO] [eval]... simulation 66/100 
-    [INFO] [eval]... simulation 67/100 
-    [INFO] [eval]... simulation 68/100 
-    [INFO] [eval]... simulation 69/100 
-    [INFO] [eval]... simulation 70/100 
-    [INFO] [eval]... simulation 71/100 
-    [INFO] [eval]... simulation 72/100 
-    [INFO] [eval]... simulation 73/100 
-    [INFO] [eval]... simulation 74/100 
-    [INFO] [eval]... simulation 75/100 
-    [INFO] [eval]... simulation 76/100 
-    [INFO] [eval]... simulation 77/100 
-    [INFO] [eval]... simulation 78/100 
-    [INFO] [eval]... simulation 79/100 
-    [INFO] [eval]... simulation 80/100 
-    [INFO] [eval]... simulation 81/100 
-    [INFO] [eval]... simulation 82/100 
-    [INFO] [eval]... simulation 83/100 
-    [INFO] [eval]... simulation 84/100 
-    [INFO] [eval]... simulation 85/100 
-    [INFO] [eval]... simulation 86/100 
-    [INFO] [eval]... simulation 87/100 
-    [INFO] [eval]... simulation 88/100 
-    [INFO] [eval]... simulation 89/100 
-    [INFO] [eval]... simulation 90/100 
-    [INFO] [eval]... simulation 91/100 
-    [INFO] [eval]... simulation 92/100 
-    [INFO] [eval]... simulation 93/100 
-    [INFO] [eval]... simulation 94/100 
-    [INFO] [eval]... simulation 95/100 
-    [INFO] [eval]... simulation 96/100 
-    [INFO] [eval]... simulation 97/100 
-    [INFO] [eval]... simulation 98/100 
-    [INFO] [eval]... simulation 99/100 
-    [INFO] [eval]... simulation 100/100 
-    [INFO] Evaluating RandomAgent2... 
-    [INFO] [eval]... simulation 1/100 
-    [INFO] [eval]... simulation 2/100 
-    [INFO] [eval]... simulation 3/100 
-    [INFO] [eval]... simulation 4/100 
-    [INFO] [eval]... simulation 5/100 
-    [INFO] [eval]... simulation 6/100 
-    [INFO] [eval]... simulation 7/100 
-    [INFO] [eval]... simulation 8/100 
-    [INFO] [eval]... simulation 9/100 
-    [INFO] [eval]... simulation 10/100 
-    [INFO] [eval]... simulation 11/100 
-    [INFO] [eval]... simulation 12/100 
-    [INFO] [eval]... simulation 13/100 
-    [INFO] [eval]... simulation 14/100 
-    [INFO] [eval]... simulation 15/100 
-    [INFO] [eval]... simulation 16/100 
-    [INFO] [eval]... simulation 17/100 
-    [INFO] [eval]... simulation 18/100 
-    [INFO] [eval]... simulation 19/100 
-    [INFO] [eval]... simulation 20/100 
-    [INFO] [eval]... simulation 21/100 
-    [INFO] [eval]... simulation 22/100 
-    [INFO] [eval]... simulation 23/100 
-    [INFO] [eval]... simulation 24/100 
-    [INFO] [eval]... simulation 25/100 
-    [INFO] [eval]... simulation 26/100 
-    [INFO] [eval]... simulation 27/100 
-    [INFO] [eval]... simulation 28/100 
-    [INFO] [eval]... simulation 29/100 
-    [INFO] [eval]... simulation 30/100 
-    [INFO] [eval]... simulation 31/100 
-    [INFO] [eval]... simulation 32/100 
-    [INFO] [eval]... simulation 33/100 
-    [INFO] [eval]... simulation 34/100 
-    [INFO] [eval]... simulation 35/100 
-    [INFO] [eval]... simulation 36/100 
-    [INFO] [eval]... simulation 37/100 
-    [INFO] [eval]... simulation 38/100 
-    [INFO] [eval]... simulation 39/100 
-    [INFO] [eval]... simulation 40/100 
-    [INFO] [eval]... simulation 41/100 
-    [INFO] [eval]... simulation 42/100 
-    [INFO] [eval]... simulation 43/100 
-    [INFO] [eval]... simulation 44/100 
-    [INFO] [eval]... simulation 45/100 
-    [INFO] [eval]... simulation 46/100 
-    [INFO] [eval]... simulation 47/100 
-    [INFO] [eval]... simulation 48/100 
-    [INFO] [eval]... simulation 49/100 
-    [INFO] [eval]... simulation 50/100 
-    [INFO] [eval]... simulation 51/100 
-    [INFO] [eval]... simulation 52/100 
-    [INFO] [eval]... simulation 53/100 
-    [INFO] [eval]... simulation 54/100 
-    [INFO] [eval]... simulation 55/100 
-    [INFO] [eval]... simulation 56/100 
-    [INFO] [eval]... simulation 57/100 
-    [INFO] [eval]... simulation 58/100 
-    [INFO] [eval]... simulation 59/100 
-    [INFO] [eval]... simulation 60/100 
-    [INFO] [eval]... simulation 61/100 
-    [INFO] [eval]... simulation 62/100 
-    [INFO] [eval]... simulation 63/100 
-    [INFO] [eval]... simulation 64/100 
-    [INFO] [eval]... simulation 65/100 
-    [INFO] [eval]... simulation 66/100 
-    [INFO] [eval]... simulation 67/100 
-    [INFO] [eval]... simulation 68/100 
-    [INFO] [eval]... simulation 69/100 
-    [INFO] [eval]... simulation 70/100 
-    [INFO] [eval]... simulation 71/100 
-    [INFO] [eval]... simulation 72/100 
-    [INFO] [eval]... simulation 73/100 
-    [INFO] [eval]... simulation 74/100 
-    [INFO] [eval]... simulation 75/100 
-    [INFO] [eval]... simulation 76/100 
-    [INFO] [eval]... simulation 77/100 
-    [INFO] [eval]... simulation 78/100 
-    [INFO] [eval]... simulation 79/100 
-    [INFO] [eval]... simulation 80/100 
-    [INFO] [eval]... simulation 81/100 
-    [INFO] [eval]... simulation 82/100 
-    [INFO] [eval]... simulation 83/100 
-    [INFO] [eval]... simulation 84/100 
-    [INFO] [eval]... simulation 85/100 
-    [INFO] [eval]... simulation 86/100 
-    [INFO] [eval]... simulation 87/100 
-    [INFO] [eval]... simulation 88/100 
-    [INFO] [eval]... simulation 89/100 
-    [INFO] [eval]... simulation 90/100 
-    [INFO] [eval]... simulation 91/100 
-    [INFO] [eval]... simulation 92/100 
-    [INFO] [eval]... simulation 93/100 
-    [INFO] [eval]... simulation 94/100 
-    [INFO] [eval]... simulation 95/100 
-    [INFO] [eval]... simulation 96/100 
-    [INFO] [eval]... simulation 97/100 
-    [INFO] [eval]... simulation 98/100 
-    [INFO] [eval]... simulation 99/100 
-    [INFO] [eval]... simulation 100/100 
+    [INFO] Evaluating ValueIterationAgent2...
+    [INFO] [eval]... simulation 1/100
+    [INFO] [eval]... simulation 2/100
+    [INFO] [eval]... simulation 3/100
+    [INFO] [eval]... simulation 4/100
+    [INFO] [eval]... simulation 5/100
+    [INFO] [eval]... simulation 6/100
+    [INFO] [eval]... simulation 7/100
+    [INFO] [eval]... simulation 8/100
+    [INFO] [eval]... simulation 9/100
+    [INFO] [eval]... simulation 10/100
+    [INFO] [eval]... simulation 11/100
+    [INFO] [eval]... simulation 12/100
+    [INFO] [eval]... simulation 13/100
+    [INFO] [eval]... simulation 14/100
+    [INFO] [eval]... simulation 15/100
+    [INFO] [eval]... simulation 16/100
+    [INFO] [eval]... simulation 17/100
+    [INFO] [eval]... simulation 18/100
+    [INFO] [eval]... simulation 19/100
+    [INFO] [eval]... simulation 20/100
+    [INFO] [eval]... simulation 21/100
+    [INFO] [eval]... simulation 22/100
+    [INFO] [eval]... simulation 23/100
+    [INFO] [eval]... simulation 24/100
+    [INFO] [eval]... simulation 25/100
+    [INFO] [eval]... simulation 26/100
+    [INFO] [eval]... simulation 27/100
+    [INFO] [eval]... simulation 28/100
+    [INFO] [eval]... simulation 29/100
+    [INFO] [eval]... simulation 30/100
+    [INFO] [eval]... simulation 31/100
+    [INFO] [eval]... simulation 32/100
+    [INFO] [eval]... simulation 33/100
+    [INFO] [eval]... simulation 34/100
+    [INFO] [eval]... simulation 35/100
+    [INFO] [eval]... simulation 36/100
+    [INFO] [eval]... simulation 37/100
+    [INFO] [eval]... simulation 38/100
+    [INFO] [eval]... simulation 39/100
+    [INFO] [eval]... simulation 40/100
+    [INFO] [eval]... simulation 41/100
+    [INFO] [eval]... simulation 42/100
+    [INFO] [eval]... simulation 43/100
+    [INFO] [eval]... simulation 44/100
+    [INFO] [eval]... simulation 45/100
+    [INFO] [eval]... simulation 46/100
+    [INFO] [eval]... simulation 47/100
+    [INFO] [eval]... simulation 48/100
+    [INFO] [eval]... simulation 49/100
+    [INFO] [eval]... simulation 50/100
+    [INFO] [eval]... simulation 51/100
+    [INFO] [eval]... simulation 52/100
+    [INFO] [eval]... simulation 53/100
+    [INFO] [eval]... simulation 54/100
+    [INFO] [eval]... simulation 55/100
+    [INFO] [eval]... simulation 56/100
+    [INFO] [eval]... simulation 57/100
+    [INFO] [eval]... simulation 58/100
+    [INFO] [eval]... simulation 59/100
+    [INFO] [eval]... simulation 60/100
+    [INFO] [eval]... simulation 61/100
+    [INFO] [eval]... simulation 62/100
+    [INFO] [eval]... simulation 63/100
+    [INFO] [eval]... simulation 64/100
+    [INFO] [eval]... simulation 65/100
+    [INFO] [eval]... simulation 66/100
+    [INFO] [eval]... simulation 67/100
+    [INFO] [eval]... simulation 68/100
+    [INFO] [eval]... simulation 69/100
+    [INFO] [eval]... simulation 70/100
+    [INFO] [eval]... simulation 71/100
+    [INFO] [eval]... simulation 72/100
+    [INFO] [eval]... simulation 73/100
+    [INFO] [eval]... simulation 74/100
+    [INFO] [eval]... simulation 75/100
+    [INFO] [eval]... simulation 76/100
+    [INFO] [eval]... simulation 77/100
+    [INFO] [eval]... simulation 78/100
+    [INFO] [eval]... simulation 79/100
+    [INFO] [eval]... simulation 80/100
+    [INFO] [eval]... simulation 81/100
+    [INFO] [eval]... simulation 82/100
+    [INFO] [eval]... simulation 83/100
+    [INFO] [eval]... simulation 84/100
+    [INFO] [eval]... simulation 85/100
+    [INFO] [eval]... simulation 86/100
+    [INFO] [eval]... simulation 87/100
+    [INFO] [eval]... simulation 88/100
+    [INFO] [eval]... simulation 89/100
+    [INFO] [eval]... simulation 90/100
+    [INFO] [eval]... simulation 91/100
+    [INFO] [eval]... simulation 92/100
+    [INFO] [eval]... simulation 93/100
+    [INFO] [eval]... simulation 94/100
+    [INFO] [eval]... simulation 95/100
+    [INFO] [eval]... simulation 96/100
+    [INFO] [eval]... simulation 97/100
+    [INFO] [eval]... simulation 98/100
+    [INFO] [eval]... simulation 99/100
+    [INFO] [eval]... simulation 100/100
+    [INFO] Evaluating RandomAgent2...
+    [INFO] [eval]... simulation 1/100
+    [INFO] [eval]... simulation 2/100
+    [INFO] [eval]... simulation 3/100
+    [INFO] [eval]... simulation 4/100
+    [INFO] [eval]... simulation 5/100
+    [INFO] [eval]... simulation 6/100
+    [INFO] [eval]... simulation 7/100
+    [INFO] [eval]... simulation 8/100
+    [INFO] [eval]... simulation 9/100
+    [INFO] [eval]... simulation 10/100
+    [INFO] [eval]... simulation 11/100
+    [INFO] [eval]... simulation 12/100
+    [INFO] [eval]... simulation 13/100
+    [INFO] [eval]... simulation 14/100
+    [INFO] [eval]... simulation 15/100
+    [INFO] [eval]... simulation 16/100
+    [INFO] [eval]... simulation 17/100
+    [INFO] [eval]... simulation 18/100
+    [INFO] [eval]... simulation 19/100
+    [INFO] [eval]... simulation 20/100
+    [INFO] [eval]... simulation 21/100
+    [INFO] [eval]... simulation 22/100
+    [INFO] [eval]... simulation 23/100
+    [INFO] [eval]... simulation 24/100
+    [INFO] [eval]... simulation 25/100
+    [INFO] [eval]... simulation 26/100
+    [INFO] [eval]... simulation 27/100
+    [INFO] [eval]... simulation 28/100
+    [INFO] [eval]... simulation 29/100
+    [INFO] [eval]... simulation 30/100
+    [INFO] [eval]... simulation 31/100
+    [INFO] [eval]... simulation 32/100
+    [INFO] [eval]... simulation 33/100
+    [INFO] [eval]... simulation 34/100
+    [INFO] [eval]... simulation 35/100
+    [INFO] [eval]... simulation 36/100
+    [INFO] [eval]... simulation 37/100
+    [INFO] [eval]... simulation 38/100
+    [INFO] [eval]... simulation 39/100
+    [INFO] [eval]... simulation 40/100
+    [INFO] [eval]... simulation 41/100
+    [INFO] [eval]... simulation 42/100
+    [INFO] [eval]... simulation 43/100
+    [INFO] [eval]... simulation 44/100
+    [INFO] [eval]... simulation 45/100
+    [INFO] [eval]... simulation 46/100
+    [INFO] [eval]... simulation 47/100
+    [INFO] [eval]... simulation 48/100
+    [INFO] [eval]... simulation 49/100
+    [INFO] [eval]... simulation 50/100
+    [INFO] [eval]... simulation 51/100
+    [INFO] [eval]... simulation 52/100
+    [INFO] [eval]... simulation 53/100
+    [INFO] [eval]... simulation 54/100
+    [INFO] [eval]... simulation 55/100
+    [INFO] [eval]... simulation 56/100
+    [INFO] [eval]... simulation 57/100
+    [INFO] [eval]... simulation 58/100
+    [INFO] [eval]... simulation 59/100
+    [INFO] [eval]... simulation 60/100
+    [INFO] [eval]... simulation 61/100
+    [INFO] [eval]... simulation 62/100
+    [INFO] [eval]... simulation 63/100
+    [INFO] [eval]... simulation 64/100
+    [INFO] [eval]... simulation 65/100
+    [INFO] [eval]... simulation 66/100
+    [INFO] [eval]... simulation 67/100
+    [INFO] [eval]... simulation 68/100
+    [INFO] [eval]... simulation 69/100
+    [INFO] [eval]... simulation 70/100
+    [INFO] [eval]... simulation 71/100
+    [INFO] [eval]... simulation 72/100
+    [INFO] [eval]... simulation 73/100
+    [INFO] [eval]... simulation 74/100
+    [INFO] [eval]... simulation 75/100
+    [INFO] [eval]... simulation 76/100
+    [INFO] [eval]... simulation 77/100
+    [INFO] [eval]... simulation 78/100
+    [INFO] [eval]... simulation 79/100
+    [INFO] [eval]... simulation 80/100
+    [INFO] [eval]... simulation 81/100
+    [INFO] [eval]... simulation 82/100
+    [INFO] [eval]... simulation 83/100
+    [INFO] [eval]... simulation 84/100
+    [INFO] [eval]... simulation 85/100
+    [INFO] [eval]... simulation 86/100
+    [INFO] [eval]... simulation 87/100
+    [INFO] [eval]... simulation 88/100
+    [INFO] [eval]... simulation 89/100
+    [INFO] [eval]... simulation 90/100
+    [INFO] [eval]... simulation 91/100
+    [INFO] [eval]... simulation 92/100
+    [INFO] [eval]... simulation 93/100
+    [INFO] [eval]... simulation 94/100
+    [INFO] [eval]... simulation 95/100
+    [INFO] [eval]... simulation 96/100
+    [INFO] [eval]... simulation 97/100
+    [INFO] [eval]... simulation 98/100
+    [INFO] [eval]... simulation 99/100
+    [INFO] [eval]... simulation 100/100
 
 
 .. code:: ipython3

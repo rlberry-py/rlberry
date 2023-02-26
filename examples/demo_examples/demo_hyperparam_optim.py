@@ -1,6 +1,6 @@
-""" 
- ===================== 
- Demo: demo_hyperparam_optim 
+"""
+ =====================
+ Demo: demo_hyperparam_optim
  =====================
 """
 from rlberry.envs.benchmarks.ball_exploration import PBall2D

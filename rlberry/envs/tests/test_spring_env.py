@@ -16,7 +16,6 @@ HORIZON = 20
 
 
 def test_spring_cartpole():
-
     # test 1 - default
     env = SpringCartPole()
 
@@ -84,6 +83,7 @@ def test_rk4():
     """
     Test of the rk4 utils defined in speingcartpole
     """
+
     ## 2D system
     def derivs6(x, t):
         d1 = x[0] + 2 * x[1]

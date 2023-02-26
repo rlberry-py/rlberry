@@ -28,7 +28,8 @@ It works as follows:
     # to ensure that their random number generators are independent.
     from rlberry.envs import gym_make
     from rlberry.agents import RSUCBVIAgent
-    env = gym_make('MountainCar-v0')
+
+    env = gym_make("MountainCar-v0")
     env.reseed(seeder)
 
     agent = RSUCBVIAgent(env)
@@ -55,6 +56,7 @@ It works as follows:
     # You can also use a seeder to seed external libraries (such as torch)
     # using the function set_external_seed
     from rlberry.seeding import set_external_seed
+
     set_external_seed(seeder)
 
 

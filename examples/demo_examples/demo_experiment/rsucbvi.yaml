@@ -1,6 +1,6 @@
-# """ 
-#  ===================== 
-#  Demo: rsucbvi.yaml 
+# """
+#  =====================
+#  Demo: rsucbvi.yaml
 #  =====================
 # """
 agent_class: 'rlberry.agents.kernel_based.rs_ucbvi.RSUCBVIAgent'

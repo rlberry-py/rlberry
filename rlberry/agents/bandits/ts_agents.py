@@ -68,7 +68,6 @@ class TSAgent(BanditWithSimplePolicy):
     def __init__(self, env, prior_info=None, **kwargs):
         BanditWithSimplePolicy.__init__(self, env, **kwargs)
         if prior_info is None:
-
             # Beta-Bernoulli prior by default
             def prior_params(tr):
                 """

@@ -9,7 +9,7 @@ Create an agent
 rlberry_ requires you to use a **very simple interface** to write agents, with basically
 two methods to implement: :code:`fit()` and :code:`eval()`.
 
-The example below shows how to create an agent. 
+The example below shows how to create an agent.
 
 
 .. code-block:: python
@@ -31,13 +31,13 @@ The example below shows how to create an agent.
                 Agent.__init__(self, env, **kwargs)
 
                 self.param1 = param1
-                self.param2 = param2 
+                self.param2 = param2
 
-        def fit(self, budget, **kwargs):  
+        def fit(self, budget, **kwargs):
             """
             The parameter budget can represent the number of steps, the number of episodes etc,
             depending on the agent.
-            * Interact with the environment (self.env); 
+            * Interact with the environment (self.env);
             * Train the agent
             * Return useful information
             """
@@ -48,7 +48,7 @@ The example below shows how to create an agent.
                 state = self.env.reset()
                 done = False
                 while not done:
-                action = ...  
+                action = ...
                 next_state, reward, done, _ = self.env.step(action)
                 rewards[ep] += reward
 
@@ -57,7 +57,7 @@ The example below shows how to create an agent.
 
         def eval(self, **kwargs):
             """
-            Returns a value corresponding to the evaluation of the agent on the 
+            Returns a value corresponding to the evaluation of the agent on the
             evaluation environment.
 
             For instance, it can be a Monte-Carlo evaluation of the policy learned in fit().
@@ -65,9 +65,9 @@ The example below shows how to create an agent.
             return 0.0
 
 
-.. note:: It's important that your agent accepts optional `**kwargs` and pass it to the base class as :code:`Agent.__init__(self, env, **kwargs)`. 
+.. note:: It's important that your agent accepts optional `**kwargs` and pass it to the base class as :code:`Agent.__init__(self, env, **kwargs)`.
 
 
 .. seealso::
-    Documentation of the classes :class:`~rlberry.agents.agent.Agent` 
+    Documentation of the classes :class:`~rlberry.agents.agent.Agent`
     and :class:`~rlberry.agents.agent.AgentWithSimplePolicy`.

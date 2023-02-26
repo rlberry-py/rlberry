@@ -279,7 +279,7 @@ class GridWorld(RenderInterface2D, FiniteMDP):
                     grid[rr][cc] = "o "
                 grid_idx[rr][cc] = str(self.coord2index[(rr, cc)]).zfill(3)
 
-        for (rr, cc) in self.reward_at:
+        for rr, cc in self.reward_at:
             rwd = self.reward_at[(rr, cc)]
             if rwd > 0:
                 grid[rr][cc] = "+ "
@@ -452,7 +452,7 @@ class GridWorld(RenderInterface2D, FiniteMDP):
             bg.add_shape(shape)
 
         # rewards
-        for (y, x) in self.reward_at:
+        for y, x in self.reward_at:
             flag = GeometricPrimitive("POLYGON")
             rwd = self.reward_at[(y, x)]
             color = 0.5 * np.abs(rwd) / self.reward_range[1]
