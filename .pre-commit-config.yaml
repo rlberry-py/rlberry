@@ -26,4 +26,4 @@ repos:
     -   id: flake8
         additional_dependencies: [flake8-docstrings]
         types: [file, python]
-        args: ['--select=F401,F405,D410,D411,D412', '--exclude=rlberry/check_packages.py', '--per-file-ignores="__init__.py:F401']
+        args: ['--select=F401,F405,D410,D411,D412 --exclude=rlberry/check_packages.py --per-file-ignores="__init__.py:F401']
