@@ -8,7 +8,7 @@ from rlberry.utils.check_agent import (
     check_agents_almost_equal,
 )
 from rlberry.spaces import Box, Dict, Discrete
-import gym
+import gymnasium as gym
 from rlberry.agents import ValueIterationAgent, UCBVIAgent
 
 

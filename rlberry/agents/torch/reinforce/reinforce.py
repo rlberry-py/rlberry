@@ -1,7 +1,7 @@
 import torch
 import inspect
 
-import gym.spaces as spaces
+import gymnasium.spaces as spaces
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.agents.utils.memories import Memory
 from rlberry.agents.torch.utils.training import optimizer_factory

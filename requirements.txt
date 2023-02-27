@@ -4,7 +4,7 @@ pygame
 matplotlib
 seaborn
 pandas
-gym[accept-rom-license]==0.21.0
+gymnasium[atari,accept-rom-license]
 dill
 docopt
 pyyaml
@@ -15,7 +15,8 @@ PyOpenGL==3.1.5
 PyOpenGL_accelerate==3.1.5
 pyvirtualdisplay
 torch>=1.6.0
-stable-baselines3
+# stable-baselines3
+pip install git+https://github.com/DLR-RM/stable-baselines3@feat/gymnasium-support
 protobuf==3.20.1
 tensorboard
 opencv-python

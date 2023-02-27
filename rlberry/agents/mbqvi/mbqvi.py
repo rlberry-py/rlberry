@@ -3,7 +3,7 @@ import numpy as np
 
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.agents.dynprog.utils import backward_induction, value_iteration
-from gym.spaces import Discrete
+from gymnasium.spaces import Discrete
 
 import rlberry
 

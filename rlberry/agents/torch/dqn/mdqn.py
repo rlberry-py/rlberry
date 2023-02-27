@@ -2,7 +2,7 @@ import inspect
 
 import numpy as np
 import torch
-from gym import spaces
+from gymnasium import spaces
 from rlberry import types
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.agents.torch.utils.training import (

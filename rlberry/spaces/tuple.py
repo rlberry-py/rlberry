@@ -1,11 +1,11 @@
-import gym
+import gymnasium as gym
 from rlberry.seeding import Seeder
 
 
 class Tuple(gym.spaces.Tuple):
     """
 
-    Inherited from gym.spaces.Tuple for compatibility with gym.
+    Inherited from gymnasium.spaces.Tuple for compatibility with gym.
 
     rlberry wraps gym.spaces to make sure the seeding
     mechanism is unified in the library (rlberry.seeding)

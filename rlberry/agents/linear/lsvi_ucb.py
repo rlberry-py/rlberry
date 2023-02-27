@@ -1,6 +1,6 @@
 import numpy as np
 from rlberry.agents import AgentWithSimplePolicy
-from gym.spaces import Discrete
+from gymnasium.spaces import Discrete
 from rlberry.utils.jit_setup import numba_jit
 
 import rlberry

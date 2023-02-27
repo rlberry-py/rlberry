@@ -1,7 +1,7 @@
 import numpy as np
 from rlberry.utils.jit_setup import numba_jit
 
-import gym.spaces as spaces
+import gymnasium.spaces as spaces
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.agents.dynprog.utils import backward_induction
 from rlberry.agents.dynprog.utils import backward_induction_in_place

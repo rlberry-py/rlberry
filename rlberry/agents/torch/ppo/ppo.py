@@ -2,8 +2,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 
-
-import gym.spaces as spaces
+import gymnasium.spaces as spaces
 from rlberry.agents import AgentWithSimplePolicy
 
 # from rlberry.agents.utils.memories import Memory

@@ -5,10 +5,10 @@ Based on https://github.com/openai/gym and then modified for our purpose.
 from typing import Union, Optional
 import inspect
 
-import gym
+import gymnasium as gym
 import numpy as np
-from gym import logger
-from gym import spaces
+from gymnasium import logger
+from gymnasium import spaces
 
 
 def _is_numpy_array_space(space: spaces.Space) -> bool:
@@ -129,7 +129,7 @@ def _check_returned_values(
     """
     Check the returned values by the env when calling `.reset()` or `.step()` methods.
     """
-    # because env inherits from gym.Env, we assume that `reset()` and `step()` methods exists
+    # because env inherits from gymnasium.Env, we assume that `reset()` and `step()` methods exists
     obs = env.reset()
 
     if isinstance(observation_space, spaces.Dict):

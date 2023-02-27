@@ -1,7 +1,7 @@
 from rlberry.agents.agent import AgentWithSimplePolicy
 import numpy as np
 
-import gym.spaces as spaces
+import gymnasium.spaces as spaces
 from rlberry.agents.dynprog.utils import backward_induction
 from rlberry.agents.dynprog.utils import backward_induction_in_place
 from rlberry.agents.kernel_based.common import map_to_representative

@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-import gym.spaces as spaces
+import gymnasium.spaces as spaces
 import numpy as np
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.agents.utils.replay import ReplayBuffer

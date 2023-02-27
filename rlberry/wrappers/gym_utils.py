@@ -1,4 +1,4 @@
-import gym
+import gymnasium as gym
 from rlberry.spaces import Discrete
 from rlberry.spaces import Box
 from rlberry.spaces import Tuple

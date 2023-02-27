@@ -6,7 +6,7 @@
 import torch
 import torch.nn as nn
 from torch.distributions import Categorical, MultivariateNormal
-from gym import spaces
+from gymnasium import spaces
 import numpy as np
 
 #

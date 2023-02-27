@@ -1,4 +1,4 @@
-import gym.spaces as spaces
+import gymnasium.spaces as spaces
 import numpy as np
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.agents.adaptiveql.tree import MDPTreePartition

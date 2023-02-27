@@ -1,7 +1,7 @@
 from functools import partial
 
 import torch
-import gym.spaces as spaces
+import gymnasium.spaces as spaces
 from torch.nn import functional as F
 
 from rlberry.agents.utils.memories import ReplayMemory

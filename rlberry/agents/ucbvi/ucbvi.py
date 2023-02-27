@@ -1,6 +1,6 @@
 import numpy as np
 
-import gym.spaces as spaces
+import gymnasium.spaces as spaces
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.agents.ucbvi.utils import (
     update_value_and_get_action,

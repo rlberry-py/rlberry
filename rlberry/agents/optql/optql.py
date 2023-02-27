@@ -1,6 +1,6 @@
 import numpy as np
 
-import gym.spaces as spaces
+import gymnasium.spaces as spaces
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.exploration_tools.discrete_counter import DiscreteCounter
 

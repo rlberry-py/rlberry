@@ -1,4 +1,4 @@
-import gym
+import gymnasium as gym
 from gym.envs.registration import registry, make, spec
 
 
