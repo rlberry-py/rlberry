@@ -11,7 +11,7 @@ def test_sb3_agent():
     # Test only one algorithm per action space type
     check_rl_agent(
         StableBaselinesAgent,
-        env=(gym_make, {"id": "Pendulum-v1"}),
+        env=(gym_make, {"id": "Pendulum-v1","old_gym":True}),
         init_kwargs={"algo_cls": A2C, "policy": "MlpPolicy", "verbose": 1},
     )
     check_rl_agent(
