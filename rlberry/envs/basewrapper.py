@@ -1,3 +1,4 @@
+import gymnasium as gym 
 from rlberry.seeding import Seeder, safe_reseed
 import numpy as np
 from rlberry.envs.interface import Model
@@ -75,18 +76,37 @@ class Wrapper(Model):
             self.seeder = self.seeder.spawn()
         else:
             self.seeder = Seeder(seed_seq)
-        # seed gym.Env that is not a rlberry Model
-        if not isinstance(self.env, Model):
-            # get a seed for gym environment; spaces are reseeded below.
-            safe_reseed(self.env, self.seeder, reseed_spaces=False)
-        # seed rlberry Model
-        else:
+
+        # #-------- OLD VERSION ----------
+        # # seed gym.Env that is not a rlberry Model
+        # if not isinstance(self.env, Model):
+        #     # get a seed for gym environment; spaces are reseeded below.
+        #     safe_reseed(self.env, self.seeder, reseed_spaces=False)
+        # # seed rlberry Model
+        # else:
+        #     self.env.reseed(self.seeder)
+        # #-------------------------------
+
+        
+        # get a seed for gym environment; spaces are reseeded below.
+        if isinstance(self.env, Model):
+            # seed rlberry Model
             self.env.reseed(self.seeder)
+        elif isinstance(self.env, gym.Env):
+            # seed gym.Env that is not a rlberry Model
+            #vvvv VERIFY MANAGMENT OF THIS SEED vvvv
+            seed_val = self.seeder.rng.integers(2**32).item()
+            self.env.reset(seed=seed_val)
+        else:
+            # other
+            safe_reseed(self.env, self.seeder, reseed_spaces=False)
+
+
         safe_reseed(self.observation_space, self.seeder)
         safe_reseed(self.action_space, self.seeder)
 
-    def reset(self):
-        return self.env.reset()
+    def reset(self,seed=None,options=None):
+        return self.env.reset(seed=seed,options=options)
 
     def step(self, action):
         return self.env.step(action)
@@ -101,7 +121,8 @@ class Wrapper(Model):
         return self.env.close()
 
     def seed(self, seed=None):
-        return self.env.seed(seed)
+        # return self.env.seed(seed)
+        return self.env.reset(seed=seed)
 
     def compute_reward(self, achieved_goal, desired_goal, info):
         return self.env.compute_reward(achieved_goal, desired_goal, info)
@@ -122,6 +143,101 @@ class Wrapper(Model):
             return True
         except Exception:
             return False
+
+    def __repr__(self):
+        return str(self)
+
+    def __str__(self):
+        return "<{}{}>".format(type(self).__name__, self.env)
+
+
+
+
+class ResetAPICompatibility(Model):
+    """
+    Wraps a given environment, similar to gymnasium's StepAPICompatibility to keep only the 'observation' (remove the 'info')
+
+    Parameters
+    ----------
+    env: gym.Env
+        Environment to be wrapped.
+    """
+
+    def __init__(self, env):
+        # Init base class
+        Model.__init__(self)
+
+        # Save reference to env
+        self.env = env
+
+        self.observation_space = self.env.observation_space
+        self.action_space = self.env.action_space
+        self.reward_range = self.env.reward_range
+
+    # def __getattr__(self, attr):
+    #     """
+    #     The first condition is to avoid infinite recursion when deep copying.
+    #     See https://stackoverflow.com/a/47300262
+    #     """
+    #     if attr[:2] == "__":
+    #         raise AttributeError(attr)
+    #     if attr in self.__dict__:
+    #         return getattr(self, attr)
+    #     return getattr(self.env, attr)
+
+    def reseed(self, seed_seq=None):
+        #copy from Wrapper upside
+        # self.seeder
+        if seed_seq is None:
+            self.seeder = self.seeder.spawn()
+        else:
+            self.seeder = Seeder(seed_seq)
+            
+        # get a seed for gym environment; spaces are reseeded below.
+        if isinstance(self.env, Model):
+            # seed rlberry Model
+            self.env.reseed(self.seeder)
+        elif isinstance(self.env, gym.Env):
+            # seed gym.Env that is not a rlberry Model
+            #vvvv VERIFY MANAGMENT OF THIS SEED vvvv
+            seed_val = self.seeder.rng.integers(2**32).item()
+            self.env.reset(seed=seed_val)
+        else:
+            # other
+            safe_reseed(self.env, self.seeder, reseed_spaces=False)
+        safe_reseed(self.observation_space, self.seeder)
+        safe_reseed(self.action_space, self.seeder)
+
+    def reset(self,seed=None,options=None):
+        obs, info = self.env.reset(seed=seed,options=options)
+        return obs
+        # return self.env.reset(seed=seed,options=options)
+
+    def step(self, action):
+        return self.env.step(action)
+
+    def sample(self, state, action):
+        return self.env.sample(state, action)
+
+    def render(self, mode="human", **kwargs):
+        return self.env.render(mode=mode, **kwargs)
+
+    def close(self):
+        return self.env.close()
+
+    def seed(self, seed=None):
+        # return self.env.seed(seed)
+        return self.env.reset(seed=seed)
+
+    def compute_reward(self, achieved_goal, desired_goal, info):
+        return self.env.compute_reward(achieved_goal, desired_goal, info)
+
+    def is_online(self):
+        return self.env.is_online()
+
+
+    def is_generative(self):
+        return self.env.is_generative()
 
     def __repr__(self):
         return str(self)

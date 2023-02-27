@@ -2,20 +2,23 @@ import pytest
 import numpy as np
 from rlberry.agents.utils import replay
 from rlberry.envs.finite import GridWorld
-from gym.wrappers import TimeLimit
-
+from gymnasium.wrappers import TimeLimit
+from gymnasium.wrappers import StepAPICompatibility
 
 def _get_filled_replay(max_replay_size):
     """runs env for ~ 2 * max_replay_size timesteps."""
     env = GridWorld(terminal_states=None)
-    env = TimeLimit(env, max_episode_steps=200)
+    #compatibility with gym V0.21
+    env = StepAPICompatibility(env,output_truncation_bool=True)  #compatibility old env -> gym0.26/gymnasiume
+    env = TimeLimit(env, max_episode_steps=200)                  #use gymnasium wrapper
+    env = StepAPICompatibility(env,output_truncation_bool=False) #compatibility gymnasium -> old env (our tests)
     env.reseed(123)
 
     rng = np.random.default_rng(456)
     buffer = replay.ReplayBuffer(
         max_replay_size,
         rng,
-        max_episode_steps=env._max_episode_steps,
+        max_episode_steps=env.env._max_episode_steps,  #inside the 'TimeLimit' wrapper
         enable_prioritized=True,
     )
     buffer.setup_entry("observations", np.float32)

@@ -7,20 +7,23 @@
 # ppo = PPOAgent(env)
 # ppo.fit(4096)
 
-from rlberry.envs import Wrapper, gym_make
+from rlberry.envs import Wrapper, gym_make, ResetAPICompatibility
 from rlberry.agents.torch import PPOAgent
 from rlberry.manager import AgentManager, evaluate_agents
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
-from gym import make
+from gymnasium import make
 from rlberry.agents.torch.utils.training import model_factory_from_env
 import os
 import pathlib
 import shutil
 
+from gymnasium.wrappers import StepAPICompatibility
 
 def test_ppo():
     env = "CartPole-v0"
     mdp = make(env)
+    mdp = StepAPICompatibility(mdp,output_truncation_bool=False)
+    mdp = ResetAPICompatibility(mdp)
     env_ctor = Wrapper
     env_kwargs = dict(env=mdp)
 
@@ -41,6 +44,8 @@ def test_ppo():
 
     env = "Pendulum-v1"
     mdp = make(env)
+    mdp = StepAPICompatibility(mdp,output_truncation_bool=False)
+    mdp = ResetAPICompatibility(mdp)
     env_ctor = Wrapper
     env_kwargs = dict(env=mdp)
 
@@ -61,6 +66,8 @@ def test_ppo():
 
     env = "Acrobot-v1"
     mdp = make(env)
+    mdp = StepAPICompatibility(mdp,output_truncation_bool=False)
+    mdp = ResetAPICompatibility(mdp)
     env_ctor = Wrapper
     env_kwargs = dict(env=mdp)
 
@@ -79,8 +86,11 @@ def test_ppo():
     output = evaluate_agents([pporlberry_stats], n_simulations=2, plot=False)
     pporlberry_stats.clear_output_dir()
 
-    env_ctor = PBall2D
-    env_kwargs = dict()
+    # env_ctor = PBall2D
+    # env_kwargs = dict()
+    env = StepAPICompatibility(PBall2D(),output_truncation_bool=False)
+    env_ctor = Wrapper
+    env_kwargs = dict(env=env)
 
     pporlberry_stats = AgentManager(
         PPOAgent,
@@ -100,6 +110,8 @@ def test_ppo():
     # test also non default
     env = "CartPole-v0"
     mdp = make(env)
+    mdp = StepAPICompatibility(mdp,output_truncation_bool=False)
+    mdp = ResetAPICompatibility(mdp)
     env_ctor = Wrapper
     env_kwargs = dict(env=mdp)
 
@@ -168,8 +180,11 @@ def test_ppo():
     output = evaluate_agents([pporlberry_stats], n_simulations=2, plot=False)
     pporlberry_stats.clear_output_dir()
 
-    env_ctor = PBall2D
-    env_kwargs = dict()
+    # env_ctor = PBall2D
+    # env_kwargs = dict()
+    env = StepAPICompatibility(PBall2D(),output_truncation_bool=False)
+    env_ctor = Wrapper
+    env_kwargs = dict(env=env)
 
     pporlberry_stats = AgentManager(
         PPOAgent,

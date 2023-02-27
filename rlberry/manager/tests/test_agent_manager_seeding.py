@@ -3,7 +3,7 @@ from rlberry.envs import gym_make
 from rlberry.envs.classic_control import MountainCar
 from rlberry.manager import AgentManager, MultipleManagers
 from rlberry.agents.torch import A2CAgent
-import gym
+import gymnasium as gym
 import pytest
 
 
@@ -11,8 +11,8 @@ import pytest
     "env, agent_class",
     [
         ((MountainCar, {}), A2CAgent),
-        ((gym_make, {"id": "MountainCar-v0"}), A2CAgent),
-        ((gym.make, {"id": "MountainCar-v0"}), A2CAgent),
+        ((gym_make, {"id": "MountainCar-v0","old_gym":True}), A2CAgent),
+        ((gym.make, {"id": "MountainCar-v0"}), A2CAgent),   #Crash because we can not add the compatibility wrapper easily 
     ],
 )
 def test_agent_manager_and_multiple_managers_seeding(env, agent_class):

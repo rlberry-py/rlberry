@@ -1,11 +1,12 @@
 from rlberry.seeding.seeding import safe_reseed
-import gym
+import gymnasium as gym
 import numpy as np
 import pytest
 from rlberry.seeding import Seeder
-from rlberry.envs import gym_make
+from rlberry.envs import gym_make,ResetAPICompatibility
 
 from copy import deepcopy
+from gymnasium.wrappers import StepAPICompatibility
 
 gym_envs = [
     "Acrobot-v1",
@@ -76,8 +77,16 @@ def test_gym_safe_reseed(env_name):
     seeder_aux = Seeder(123)
 
     env1 = gym.make(env_name)
+    env1 = StepAPICompatibility(env1,output_truncation_bool=False)
+    env1 = ResetAPICompatibility(env1)
+
     env2 = gym.make(env_name)
+    env2 = StepAPICompatibility(env2,output_truncation_bool=False)
+    env2 = ResetAPICompatibility(env2)
+
     env3 = gym.make(env_name)
+    env3 = StepAPICompatibility(env3,output_truncation_bool=False)
+    env3 = ResetAPICompatibility(env3)
 
     safe_reseed(env1, seeder)
     safe_reseed(env2, seeder)
