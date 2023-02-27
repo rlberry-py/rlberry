@@ -124,7 +124,7 @@ class Acrobot(RenderInterface2D, Model):
         self.state = None
         self.reset()
 
-    def reset(self):
+    def reset(self,seed=None,options=None):
         self.state = self.rng.uniform(low=-0.1, high=0.1, size=(4,))
         return self._get_ob()
 

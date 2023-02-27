@@ -106,7 +106,7 @@ class MountainCar(RenderInterface2D, Model):
 
         return next_state, reward, done, info
 
-    def reset(self):
+    def reset(self,seed=None,options=None):
         self.state = np.array([self.rng.uniform(low=-0.6, high=-0.4), 0])
         return self.state.copy()
 

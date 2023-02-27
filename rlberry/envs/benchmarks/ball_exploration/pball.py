@@ -167,7 +167,7 @@ does not make true projections onto the lp ball."
         # Initalize state
         self.reset()
 
-    def reset(self, state=None):
+    def reset(self, state=None, seed=None, options=None):
         if state is not None:
             self.state = state
         else:

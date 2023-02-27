@@ -53,7 +53,7 @@ class Pendulum(RenderInterface2D, Model):
         # initialize
         self.reset()
 
-    def reset(self):
+    def reset(self,seed=None,options=None):
         high = np.array([np.pi, 1])
         low = -high
         self.state = self.rng.uniform(low=low, high=high)

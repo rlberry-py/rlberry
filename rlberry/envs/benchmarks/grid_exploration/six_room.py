@@ -89,7 +89,7 @@ class SixRoom(GridWorld):
         yy = yy / self.nrows
         return np.array([xx, yy])
 
-    def reset(self):
+    def reset(self,seed=None,options=None):
         self.state = self.coord2index[self.start_coord]
         state_to_return = self.state
         if self.array_observation:

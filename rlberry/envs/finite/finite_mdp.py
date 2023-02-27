@@ -59,7 +59,7 @@ class FiniteMDP(Model):
         self._process_terminal_states()
         self._check()
 
-    def reset(self):
+    def reset(self,seed=None, options=None):
         """
         Reset the environment to a default state.
         """

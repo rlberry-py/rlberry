@@ -44,8 +44,8 @@ class DiscretizeStateWrapper(Wrapper):
         for ii in range(n_states):
             self.discretized_states[:, ii] = self.get_continuous_state(ii, False)
 
-    def reset(self):
-        return self.get_discrete_state(self.env.reset())
+    def reset(self,seed=None,options=None):
+        return self.get_discrete_state(self.env.reset(seed,options))
 
     def step(self, action):
         next_state, reward, done, info = self.env.step(action)
