@@ -5,7 +5,7 @@
 """
 from torch.utils.tensorboard import SummaryWriter
 
-import gym
+import gymnasium as gym
 
 from rlberry.agents.torch.dqn import DQNAgent
 

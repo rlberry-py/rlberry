@@ -13,7 +13,7 @@ A demo of A2C algorithm in PBall2D environment
 
 from rlberry.agents.torch import A2CAgent
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
-from gym.wrappers import TimeLimit
+from gymnasium.wrappers import TimeLimit
 
 
 env = PBall2D()

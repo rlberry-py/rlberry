@@ -15,7 +15,7 @@ Agent is slightly tuned, but not optimal. This is just for illustration purpose.
 
 from rlberry.envs.classic_control import SpringCartPole
 from rlberry.agents.torch import DQNAgent
-from gym.wrappers.time_limit import TimeLimit
+from gymnasium.wrappers.time_limit import TimeLimit
 
 model_configs = {
     "type": "MultiLayerPerceptron",

@@ -26,7 +26,7 @@ from torch.utils.tensorboard import SummaryWriter
 from rlberry.agents.torch.dqn import MunchausenDQNAgent
 from rlberry.utils.logging import configure_logging
 
-from gym.wrappers.monitoring import video_recorder
+from gymnasium.wrappers.monitoring import video_recorder
 
 
 configure_logging(level="INFO")

@@ -1,7 +1,7 @@
 from rlberry.envs.interface import Model
 from rlberry.envs import Wrapper
 from rlberry.envs import GridWorld
-import gym
+import gymnasium as gym
 
 
 def test_wrapper():

@@ -16,7 +16,7 @@ from rlberry.envs.basewrapper import Wrapper
 from rlberry.manager import plot_writer_data, AgentManager
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
 from rlberry.agents.experimental.torch import SACAgent
-import gym
+import gymnasium as gym
 
 
 # we dont need wrapper actually just 'return env' works
