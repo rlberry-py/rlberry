@@ -13,8 +13,9 @@ jobs:
     if: github.event.label.name == 'ready for review'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
       - uses: EndBug/add-and-commit@v9
         with:
           commit: --allow-empty
