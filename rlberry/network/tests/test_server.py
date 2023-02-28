@@ -32,7 +32,6 @@ def start_server(xprocess):
 
 
 def test_client():
-
     port = 4242
     client = BerryClient(port=port)
     # Send params for AgentManager

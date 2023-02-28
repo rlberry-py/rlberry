@@ -16,7 +16,6 @@ from rlberry.agents.torch.utils.training import model_factory_from_env
 
 
 def test_ppo():
-
     env = "CartPole-v0"
     mdp = make(env)
     env_ctor = Wrapper

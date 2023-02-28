@@ -1,6 +1,6 @@
-""" 
- ===================== 
- Demo: demo_vis2d 
+"""
+ =====================
+ Demo: demo_vis2d
  =====================
 """
 from rlberry.envs.benchmarks.grid_exploration.nroom import NRoom, get_nroom_state_coord

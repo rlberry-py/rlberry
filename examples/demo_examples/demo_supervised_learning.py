@@ -1,10 +1,10 @@
-""" 
+"""
  ==============================
  Using rlberry for supervised learning
  ==============================
 
- Using rlberry to tackle a simple regression problem: 
- train a multi-layer perceptron (with PyTorch) to fit a function, 
+ Using rlberry to tackle a simple regression problem:
+ train a multi-layer perceptron (with PyTorch) to fit a function,
  run cross-validation splits in parallel using AgentManager.
 
  This example requires scikit-learn to be installed,

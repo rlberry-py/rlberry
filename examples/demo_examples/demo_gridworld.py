@@ -1,6 +1,6 @@
-""" 
- ===================== 
- Demo: demo_gridworld 
+"""
+ =====================
+ Demo: demo_gridworld
  =====================
 """
 from rlberry.envs.finite import GridWorld

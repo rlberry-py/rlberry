@@ -9,6 +9,7 @@
    A Reinforcement Learning Library for Research and Education
 </p>
 
+
 <!-- The badges -->
 <p align="center">
    <a href="https://github.com/rlberry-py/rlberry/workflows/test/badge.svg">

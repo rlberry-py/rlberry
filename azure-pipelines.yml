@@ -10,8 +10,6 @@ pr:
     - rlberry/_version.py
     - docs
 
-
-
 jobs:
 
 - job: 'checkPrLabel'
@@ -73,29 +71,6 @@ jobs:
       chmod +x codecov
       ./codecov
     displayName: 'Upload to codecov.io'
-
-- job: 'Formatting'
-  dependsOn: checkPrLabel
-  condition: or(in(variables['Build.SourceBranch'], 'refs/heads/main'), eq(dependencies.checkPrLabel.outputs['checkPrLabel.prHasCILabel'], true))
-
-  pool:
-    vmImage: ubuntu-latest
-  strategy:
-    matrix:
-      Python39:
-        python.version: '3.9'
-
-  steps:
-  - script: |
-      python -m pip install --upgrade pip
-      pip install  black flake8 flake8-docstrings
-      black --check examples rlberry *py
-    displayName: "black"
-  - script: |
-      # ensure there is no unused imports with
-      flake8 --select F401,F405,D410,D411,D412 --exclude=rlberry/check_packages.py --per-file-ignores="__init__.py:F401"
-    displayName: 'flake8'
-
 
 
 - job: 'macOS'
