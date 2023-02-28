@@ -111,7 +111,6 @@ def generate_list(contributors):
 
 
 if __name__ == "__main__":
-
     members = get_contributors()
 
     with open(REPO_FOLDER / "docs" / "contributors.rst", "w+") as rst_file:

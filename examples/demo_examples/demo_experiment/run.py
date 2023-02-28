@@ -2,8 +2,6 @@
  =====================
  Demo: run
  =====================
-"""
-"""
 To run the experiment:
 
 $ python examples/demo_examples/demo_experiment/run.py examples/demo_examples/demo_experiment/params_experiment.yaml

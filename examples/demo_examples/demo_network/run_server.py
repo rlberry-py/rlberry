@@ -1,6 +1,6 @@
-""" 
- ===================== 
- Demo: run_server 
+"""
+ =====================
+ Demo: run_server
  =====================
 """
 from rlberry.network.interface import ResourceItem

@@ -1,6 +1,6 @@
-""" 
- ===================== 
- Demo: demo_gym_wrapper 
+"""
+ =====================
+ Demo: demo_gym_wrapper
  =====================
 """
 from rlberry.envs import gym_make
