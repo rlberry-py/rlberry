@@ -289,7 +289,6 @@ class DefaultWriter:
         # log if enough time has passed since the last log
         max_global_step = 0
         if time_elapsed > self._log_interval:
-
             self._time_last_log = t_now
             size_term = shutil.get_terminal_size().columns
 

@@ -1,6 +1,6 @@
-""" 
- ===================== 
- Demo: run_remote_manager 
+"""
+ =====================
+ Demo: run_remote_manager
  =====================
 """
 from rlberry.envs.gym_make import gym_make

@@ -279,7 +279,6 @@ def read_writer_data(data_source, tag=None, preprocess_func=None, id_agent=None)
 
 
 def _get_last_xp(input_dir, name):
-
     dir_name = Path(input_dir) / "manager_data"
 
     # list all of the experiments for this particular agent

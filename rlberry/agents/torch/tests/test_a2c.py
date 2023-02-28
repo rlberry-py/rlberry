@@ -6,7 +6,6 @@ from gym import make
 
 
 def test_a2c():
-
     env = "CartPole-v0"
     mdp = make(env)
     env_ctor = Wrapper

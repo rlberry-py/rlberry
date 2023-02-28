@@ -8,6 +8,8 @@ model_configs = {
     "layer_sizes": (256, 256),
     "reshape": False,
 }
+
+
 # hyperparameters from https://github.com/DLR-RM/rl-baselines3-zoo
 def test_dqn_montaincar():
     env_ctor = gym_make

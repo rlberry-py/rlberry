@@ -7,7 +7,7 @@ Compare different agents
 ========================
 
 
-Two or more agents can be compared using the classes 
+Two or more agents can be compared using the classes
 :class:`~rlberry.manager.agent_manager.AgentManager` and
 :class:`~rlberry.manager.multiple_managers.MultipleManagers`, as in the example below.
 
@@ -26,14 +26,14 @@ Two or more agents can be compared using the classes
 
         # Parameters
         params = {}
-        params['reinforce'] = dict(
-        gamma=0.99,
-        horizon=160,
+        params["reinforce"] = dict(
+            gamma=0.99,
+            horizon=160,
         )
 
-        params['kernel'] = dict(
-        gamma=0.99,
-        horizon=160,
+        params["kernel"] = dict(
+            gamma=0.99,
+            horizon=160,
         )
 
         eval_kwargs = dict(eval_horizon=200)
@@ -41,29 +41,31 @@ Two or more agents can be compared using the classes
         # Create AgentManager for REINFORCE and RSKernelUCBVI
         multimanagers = MultipleManagers()
         multimanagers.append(
-        AgentManager(
+            AgentManager(
                 REINFORCEAgent,
                 env,
-                init_kwargs=params['reinforce'],
+                init_kwargs=params["reinforce"],
                 fit_budget=100,
                 n_fit=4,
-                parallelization='thread')
+                parallelization="thread",
+            )
         )
         multimanagers.append(
-        AgentManager(
+            AgentManager(
                 RSKernelUCBVIAgent,
                 env,
-                init_kwargs=params['kernel'],
+                init_kwargs=params["kernel"],
                 fit_budget=100,
                 n_fit=4,
-                parallelization='thread')
+                parallelization="thread",
+            )
         )
 
         # Fit and plot
         multimanagers.run()
         plot_writer_data(
-        multimanagers.managers,
-        tag='episode_rewards',
-        preprocess_func=np.cumsum,
-        title="Cumulative Rewards")
-
+            multimanagers.managers,
+            tag="episode_rewards",
+            preprocess_func=np.cumsum,
+            title="Cumulative Rewards",
+        )

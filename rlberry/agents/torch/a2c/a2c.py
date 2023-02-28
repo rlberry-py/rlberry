@@ -83,7 +83,6 @@ class A2CAgent(AgentWithSimplePolicy):
         eval_interval: Optional[int] = None,
         **kwargs
     ):
-
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
         self.batch_size = batch_size
