@@ -254,6 +254,7 @@ class MultiLayerPerceptron(BaseModule):
         activation="RELU",
         is_policy=False,
         ctns_actions=False,
+        ctns_actions_std=1.0,
         **kwargs
     ):
         super().__init__(**kwargs)
@@ -264,6 +265,7 @@ class MultiLayerPerceptron(BaseModule):
         self.activation = activation_factory(activation)
         self.is_policy = is_policy
         self.ctns_actions = ctns_actions
+        self.ctns_actions_std = ctns_actions_std
         self.softmax = nn.Softmax(dim=-1)
         sizes = [in_size] + self.layer_sizes
         layers_list = [nn.Linear(sizes[i], sizes[i + 1]) for i in range(len(sizes) - 1)]
@@ -280,7 +282,7 @@ class MultiLayerPerceptron(BaseModule):
             x = self.predict(x)
         if self.is_policy:
             if self.ctns_actions:
-                std = 2
+                std = self.ctns_actions_std
                 dist = MultivariateNormal(
                     x, covariance_matrix=torch.eye(self.out_size) * std
                 )
