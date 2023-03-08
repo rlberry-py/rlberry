@@ -1,16 +1,13 @@
 #
 # Simple MLP and CNN models
 #
-
-
+import numpy as np
+from gym import spaces
 import torch
 import torch.nn as nn
-from torch.distributions import Categorical, MultivariateNormal
-from gym import spaces
+import torch.nn.functional as F
+from torch.distributions import Categorical, Normal
 
-#
-# Utility functions
-#
 from rlberry.agents.torch.utils.training import model_factory, activation_factory
 
 
@@ -50,7 +47,7 @@ def default_twinq_net_fn(env):
 
 def default_policy_net_fn(env):
     """
-    Returns a default value network.
+    Returns a default policy network.
     """
     if isinstance(env.observation_space, spaces.Box):
         obs_shape = env.observation_space.shape
@@ -224,6 +221,27 @@ class Table(torch.nn.Module):
         return self.policy(x.long())
 
 
+def orthogonal_layer_init(layer, std=np.log(2), bias=0.0):
+    """Initialize a layer with orthogonal weights and a given bias.
+
+    Parameters
+    ----------
+    layer: torch.nn.Linear
+        Layer to initialize
+    std: float
+        Standard deviation of the weights
+    bias: float
+        Bias of the layer
+
+    Returns
+    -------
+    layer: torch.nn.Linear
+    """
+    torch.nn.init.orthogonal_(layer.weight, std)
+    torch.nn.init.constant_(layer.bias, bias)
+    return layer
+
+
 class MultiLayerPerceptron(BaseModule):
     """Torch module for an MLP.
 
@@ -245,6 +263,10 @@ class MultiLayerPerceptron(BaseModule):
         distribution corresponding to the softmax of the output.
     """
 
+    __layer_init__ = {
+        "orthogonal": orthogonal_layer_init,
+    }
+
     def __init__(
         self,
         in_size=None,
@@ -254,7 +276,9 @@ class MultiLayerPerceptron(BaseModule):
         activation="RELU",
         is_policy=False,
         ctns_actions=False,
-        ctns_actions_std=1.0,
+        std0=1.0,
+        layer_init="orthogonal",
+        predict_init_std="auto",
         **kwargs
     ):
         super().__init__(**kwargs)
@@ -265,13 +289,27 @@ class MultiLayerPerceptron(BaseModule):
         self.activation = activation_factory(activation)
         self.is_policy = is_policy
         self.ctns_actions = ctns_actions
-        self.ctns_actions_std = ctns_actions_std
-        self.softmax = nn.Softmax(dim=-1)
+        self.std0 = std0
+        self.layer_init = layer_init
+        self.predict_init_std = predict_init_std
+
         sizes = [in_size] + self.layer_sizes
-        layers_list = [nn.Linear(sizes[i], sizes[i + 1]) for i in range(len(sizes) - 1)]
+        if layer_init is not None:
+            assert layer_init in self.__layer_init__, "Unknown layer init"
+            init = self.__layer_init__[layer_init]
+        else:
+            init = lambda l: l
+
+        layers_list = [
+            init(nn.Linear(sizes[i], sizes[i + 1])) for i in range(len(sizes) - 1)
+        ]
         self.layers = nn.ModuleList(layers_list)
         if out_size:
-            self.predict = nn.Linear(sizes[-1], out_size)
+            if ctns_actions:
+                self.logstd = nn.Parameter(np.log(std0) * torch.ones(out_size))
+            if predict_init_std == "auto":
+                predict_init_std = 0.01 if self.is_policy else 1.0
+            self.predict = init(nn.Linear(sizes[-1], out_size), std=predict_init_std)
 
     def forward(self, x):
         if self.reshape:
@@ -282,12 +320,10 @@ class MultiLayerPerceptron(BaseModule):
             x = self.predict(x)
         if self.is_policy:
             if self.ctns_actions:
-                std = self.ctns_actions_std
-                dist = MultivariateNormal(
-                    x, covariance_matrix=torch.eye(self.out_size) * std
-                )
+                std = torch.exp(self.logstd.expand_as(x))
+                dist = Normal(x, std)
             else:
-                action_probs = self.softmax(x)
+                action_probs = F.softmax(x, dim=-1)
                 dist = Categorical(action_probs)
             return dist
         return x
