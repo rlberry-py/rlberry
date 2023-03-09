@@ -462,6 +462,7 @@ class ConvolutionalNetwork(nn.Module):
         x = self.activation((self.conv1(x)))
         x = self.activation((self.conv2(x)))
         x = self.activation((self.conv3(x)))
+        x = x.view(x.size(0), -1)
         return x
 
     def forward(self, x):
