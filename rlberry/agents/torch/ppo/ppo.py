@@ -98,8 +98,8 @@ class PPOAgent(AgentWithSimplePolicy):
     eval_horizon : int
         Maximum number of steps per episode during evaluation.
     eval_freq : int
-        Number of updates between evaluations. If None, eval_freq is set to
-        budget // 10 when fit() is called.
+        Number of updates between evaluations. If None, no evaluation is
+        performed.
     device: str
         Device on which to put the tensors. 'cuda:best' by default.
 
@@ -288,7 +288,6 @@ class PPOAgent(AgentWithSimplePolicy):
 
         if lr_scheduler is None:
             lr_scheduler = self._get_lr_scheduler(budget)
-        eval_freq = self.eval_freq or (budget // 10)
         timesteps_counter = 0
 
         episode_returns = np.zeros(self.n_envs, dtype=np.float32)
@@ -352,7 +351,11 @@ class PPOAgent(AgentWithSimplePolicy):
             episode_lengths += 1
 
             # evaluation
-            if self.writer and self.total_timesteps % eval_freq == 0:
+            if (
+                self.writer
+                and self.eval_freq is not None
+                and self.total_timesteps % self.eval_freq == 0
+            ):
                 evaluation = self.eval(
                     eval_horizon=self.eval_horizon,
                     n_simulations=self.n_eval_episodes,
