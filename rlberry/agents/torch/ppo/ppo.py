@@ -1,27 +1,21 @@
+import gym.spaces as spaces
 import numpy as np
 import torch
 import torch.nn as nn
 
-
-import gym.spaces as spaces
+import rlberry
 from rlberry.agents import AgentWithSimplePolicy
-
-# from rlberry.agents.utils.memories import Memory
-
 from rlberry.envs.utils import process_env
 from rlberry.agents.torch.utils.training import optimizer_factory
 from rlberry.agents.torch.utils.models import default_policy_net_fn
 from rlberry.agents.torch.utils.models import default_value_net_fn
 from rlberry.utils.torch import choose_device
 from rlberry.utils.factory import load
-
 from rlberry.agents.torch.ppo.ppo_utils import (
     process_ppo_env,
     lambda_returns,
     RolloutBuffer,
 )
-
-import rlberry
 
 logger = rlberry.logger
 
@@ -42,46 +36,72 @@ class PPOAgent(AgentWithSimplePolicy):
 
     Policy gradient methods for reinforcement learning, which alternate between
     sampling data through interaction with the environment, and optimizing a
-    “surrogate” objective function using stochastic gradient ascent
+    “surrogate” objective function using stochastic gradient ascent.
 
     Parameters
     ----------
-    env : Model
-        Online model with continuous (Box) state space and discrete actions
-    batch_size : int
-        Size of mini batches during the k_epochs gradient descent steps.
+    env : rlberry Env
+        Environment with continuous (Box) observation space.
+    n_envs: int
+        Number of environments to be used.
     n_steps : int
-        Number of transitions to use for parameters updates.
-    gamma : double
+        Number of transitions to collect in each environment per update.
+    batch_size : int
+        Size of mini batches during each PPO update epoch. It is recommended
+        that n_envs * n_steps is divisible by batch_size.
+    gamma : float
         Discount factor in [0, 1].
-    entr_coef : double
+    k_epochs : int
+        Number of PPO epochs per update.
+    clip_eps : float
+        PPO clipping range (epsilon).
+    target_kl: float
+        Target KL divergence. If KL divergence between the current policy and
+        the new policy is greater than target_kl, the update is stopped early.
+        Set to None to disable early stopping.
+    normalize_avantages : bool
+        Whether or not to normalize advantages.
+    gae_lambda : float
+        Lambda parameter for TD(lambda) and Generalized Advantage Estimation.
+    entr_coef : float
         Entropy coefficient.
-    vf_coef : double
+    vf_coef : float
         Value function loss coefficient.
-    learning_rate : double
+    value_loss: str
+        Type of value loss. 'mse' corresponds to mean squared error,
+        'clipped' corresponds to the original PPO loss, and 'avec'
+        corresponds to the AVEC loss (Flet-Berliac et al. 2021).
+    max_grad_norm : float
+        Maximum norm of the gradient of both actor and critic networks.
+    learning_rate : float
         Learning rate.
+    lr_schedule: str
+        Learning rate schedule. 'constant' corresponds to a constant learning
+        rate, and 'linear' corresponds to a linearly decreasing learning rate,
+        starting at learning_rate and ending at 0.
     optimizer_type: str
         Type of optimizer. 'ADAM' by defaut.
-    clip_eps : double
-        PPO clipping range (epsilon).
-    k_epochs : int
-        Number of epochs per update.
     policy_net_fn : function(env, **kwargs)
         Function that returns an instance of a policy network (pytorch).
         If None, a default net is used.
+    policy_net_kwargs : dict
+        kwargs for policy_net_fn
     value_net_fn : function(env, **kwargs)
         Function that returns an instance of a value network (pytorch).
         If None, a default net is used.
-    policy_net_kwargs : dict
-        kwargs for policy_net_fn
     value_net_kwargs : dict
         kwargs for value_net_fn
-    normalize_rewards : bool
-        whether or not to normalize rewards
-    normalize_avantages : bool
-        whether or not to normalize advantages
+    eval_env : rlberry Env
+        Environment used for evaluation. If None, env is used.
+    n_eval_episodes : int
+        Number of episodes to be used for evaluation.
+    eval_horizon : int
+        Maximum number of steps per episode during evaluation.
+    eval_freq : int
+        Number of updates between evaluations. If None, eval_freq is set to
+        budget // 10 when fit() is called.
     device: str
-        Device to put the tensors on
+        Device on which to put the tensors. 'cuda:best' by default.
 
 
     References
@@ -93,6 +113,10 @@ class PPOAgent(AgentWithSimplePolicy):
     Schulman, J., Levine, S., Abbeel, P., Jordan, M., & Moritz, P. (2015).
     "Trust region policy optimization."
     In International Conference on Machine Learning (pp. 1889-1897).
+
+    Flet-Berliac, Y. , Ouhamma, R., Maillard, O.-A., Preux, P. (2021)
+    "Learning Value Functions in Deep Policy Gradients using Residual Variance."
+    In 9th International Conference on Learning Representations (ICLR).
     """
 
     name = "PPO"
@@ -103,30 +127,30 @@ class PPOAgent(AgentWithSimplePolicy):
         self,
         env,
         n_envs=1,
-        batch_size=32,
         n_steps=512,
+        batch_size=64,
         gamma=0.99,
+        k_epochs=10,
+        clip_eps=0.2,
+        target_kl=0.05,
+        normalize_advantages=True,
+        gae_lambda=0.95,
         entr_coef=0.01,
         vf_coef=0.5,
+        value_loss="mse",
+        max_grad_norm=0.5,
         learning_rate=3e-4,
         lr_schedule="constant",
         optimizer_type="ADAM",
-        value_loss="mse",
-        clip_eps=0.2,
-        k_epochs=10,
-        gae_lambda=0.95,
-        max_grad_norm=0.5,
-        target_kl=0.05,
-        normalize_advantages=True,
         policy_net_fn=None,
-        value_net_fn=None,
         policy_net_kwargs=None,
+        value_net_fn=None,
         value_net_kwargs=None,
+        eval_env=None,
         n_eval_episodes=10,
         eval_horizon=int(1e5),
         eval_freq=None,
         device="cuda:best",
-        eval_env=None,
         **kwargs
     ):
         kwargs.pop("eval_env", None)
@@ -141,6 +165,7 @@ class PPOAgent(AgentWithSimplePolicy):
         self.eval_env = process_env(eval_env, self.seeder, copy_env=True)
 
         # hyperparameters
+        value_loss, lr_schedule = value_loss.lower(), lr_schedule.lower()
         assert value_loss in self.__value_losses__, "value_loss must be in {}".format(
             self.__value_losses__
         )
@@ -148,26 +173,26 @@ class PPOAgent(AgentWithSimplePolicy):
             self.__lr_schedule___
         )
 
-        self.batch_size = batch_size
         self.n_steps = n_steps
+        self.batch_size = batch_size
         self.gamma = gamma
+        self.k_epochs = k_epochs
+        self.clip_eps = clip_eps
+        self.target_kl = target_kl
+        self.normalize_advantages = normalize_advantages
+        self.gae_lambda = gae_lambda
         self.entr_coef = entr_coef
         self.vf_coef = vf_coef
-        self.learning_rate = learning_rate
-        self.lr_schedule = lr_schedule
-        self.clip_eps = clip_eps
-        self.k_epochs = k_epochs
-        self.gae_lambda = gae_lambda
-        self.optimizer_type = optimizer_type
         self.value_loss = value_loss
         self.max_grad_norm = max_grad_norm
-        self.target_kl = target_kl
+        self.learning_rate = learning_rate
+        self.lr_schedule = lr_schedule
+        self.optimizer_type = optimizer_type
         self.n_eval_episodes = n_eval_episodes
         self.eval_horizon = eval_horizon
         self.eval_freq = eval_freq
         self.kwargs = kwargs
 
-        self.normalize_advantages = normalize_advantages
         self.state_dim = self.env.observation_space.shape[0]
 
         # policy network
@@ -190,13 +215,11 @@ class PPOAgent(AgentWithSimplePolicy):
 
         self.device = choose_device(device)
 
-        self.optimizer_kwargs = {"optimizer_type": optimizer_type, "lr": learning_rate}
-
-        # loss function
-        if self.value_loss == "mse":
-            self._loss = nn.MSELoss()
-        elif self.value_loss == "avec":
-            raise NotImplementedError("Avec loss not implemented yet.")
+        self.optimizer_kwargs = {
+            "optimizer_type": optimizer_type,
+            "lr": learning_rate,
+            "eps": 1e-5,
+        }
 
         # check environment
         # TODO: should we restrict this to Box?
@@ -214,17 +237,19 @@ class PPOAgent(AgentWithSimplePolicy):
         return cls(**kwargs)
 
     def reset(self, **kwargs):
+        """
+        Reset the agent.
+        """
         self.total_timesteps = 0
         self.total_episodes = 0
 
         # Initialize rollout buffer
-        # TODO: change states to observations
         self.memory = RolloutBuffer(self.rng, self.n_steps)
         self.memory.setup_entry("observations", dtype=np.float32)
         self.memory.setup_entry("actions", dtype=self.env.single_action_space.dtype)
         self.memory.setup_entry("rewards", dtype=np.float32)
         self.memory.setup_entry("dones", dtype=bool)
-        self.memory.setup_entry("action_logprobs", dtype=np.float32)
+        self.memory.setup_entry("logprobs", dtype=np.float32)
         self.memory.setup_entry("infos", dtype=dict)
 
         # Initialize neural networks and optimizers
@@ -234,9 +259,7 @@ class PPOAgent(AgentWithSimplePolicy):
         self.policy_net = self.policy_net_fn(env, **self.policy_net_kwargs).to(
             self.device
         )
-
         self.value_net = self.value_net_fn(env, **self.value_net_kwargs).to(self.device)
-
         self.optimizer = optimizer_factory(
             list(self.policy_net.parameters()) + list(self.value_net.parameters()),
             **self.optimizer_kwargs
@@ -256,7 +279,10 @@ class PPOAgent(AgentWithSimplePolicy):
         ----------
         budget: int
             Total number of steps to be performed in the environment. Parameters
-            are updated every n_steps steps using n_steps//batch_size mini batches.
+            are updated every n_steps interactions with the environment.
+        lr_scheduler: callable
+            A function that takes the current step and returns the current learning
+            rate. If None, a default scheduler is used.
         """
         del kwargs
 
@@ -265,7 +291,7 @@ class PPOAgent(AgentWithSimplePolicy):
         eval_freq = self.eval_freq or (budget // 10)
         timesteps_counter = 0
 
-        episode_rewards = np.zeros(self.n_envs, dtype=np.float32)
+        episode_returns = np.zeros(self.n_envs, dtype=np.float32)
         episode_lengths = np.zeros(self.n_envs, dtype=np.int32)
 
         next_obs = torch.Tensor(self.env.reset()).to(
@@ -282,6 +308,33 @@ class PPOAgent(AgentWithSimplePolicy):
             next_obs, reward, next_done, info = self.env.step(action)
             next_obs = torch.Tensor(next_obs).to(self.device)
 
+            # end of episode logging
+            for i in range(self.n_envs):
+                if next_done[i]:
+                    self.total_episodes += 1
+                    if self.writer and "episode" in info[i]:
+                        if "episode" in info[i]:
+                            r, l = info[i]["episode"]["r"], info[i]["episode"]["l"]
+                        else:
+                            r, l = episode_returns[i], episode_lengths[i]
+                        self.writer.add_scalar(
+                            "episode_returns", r, self.total_timesteps
+                        )
+                        self.writer.add_scalar(
+                            "episode_lengths", l, self.total_timesteps
+                        )
+                        self.writer.add_scalar(
+                            "total_episodes", self.total_episodes, self.total_timesteps
+                        )
+                    episode_returns[i], episode_lengths[i] = 0.0, 0
+
+            # only accept done if not truncated
+            # TODO: not needed with gymnasium
+            for i in range(self.n_envs):
+                if next_done[i]:
+                    if "TimeLimit.truncated" in info[i]:
+                        next_done[i] = False
+
             # append data to memory and update variables
             self.memory.append(
                 {
@@ -290,43 +343,27 @@ class PPOAgent(AgentWithSimplePolicy):
                     "rewards": reward,
                     "dones": done,
                     "infos": info,
-                    "action_logprobs": logprobs,
+                    "logprobs": logprobs,
                 }
             )
             self.total_timesteps += self.n_envs
             timesteps_counter += self.n_envs
-            episode_rewards += reward
+            episode_returns += reward
             episode_lengths += 1
-
-            # end of episode logging
-            for i in range(self.n_envs):
-                if done[i]:
-                    self.total_episodes += 1
-                    if self.writer:
-                        self.writer.add_scalar(
-                            "episode_rewards", episode_rewards[i], self.total_timesteps
-                        )
-                        self.writer.add_scalar(
-                            "episode_lengths", episode_lengths[i], self.total_timesteps
-                        )
-                        self.writer.add_scalar(
-                            "total_episodes", self.total_episodes, self.total_timesteps
-                        )
-                    episode_rewards[i], episode_lengths[i] = 0.0, 0
 
             # evaluation
             if self.writer and self.total_timesteps % eval_freq == 0:
                 evaluation = self.eval(
-                    eval_horizon=self.eval_horizon, n_simulations=self.n_eval_episodes
+                    eval_horizon=self.eval_horizon,
+                    n_simulations=self.n_eval_episodes,
+                    gamma=1.0,
                 )
-                self.writer.add_scalar(
-                    "fit/evaluation", evaluation, self.total_timesteps
-                )
+                self.writer.add_scalar("evaluation", evaluation, self.total_timesteps)
 
             # update with collected experience
             if timesteps_counter % (self.n_envs * self.n_steps) == 0:
                 if self.lr_schedule != "constant":
-                    lr = lr_scheduler(timesteps_counter)
+                    lr = lr_scheduler(self.total_timesteps)
                     self.optimizer.param_groups[0]["lr"] = lr
                 self._update(next_obs=next_obs, next_done=next_done)
 
@@ -337,7 +374,7 @@ class PPOAgent(AgentWithSimplePolicy):
         if self.lr_schedule == "constant":
             return lambda t: self.learning_rate
         elif self.lr_schedule == "linear":
-            return lambda t: self.learning_rate * (1 - t / budget)
+            return lambda t: self.learning_rate * (1 - t / float(budget))
 
     def _select_action(self, obs):
         """
@@ -364,7 +401,19 @@ class PPOAgent(AgentWithSimplePolicy):
 
         Parameters
         ----------
+        next_obs: torch.Tensor or None
+            Next observation tensor of shape (n_envs, obs_dim). Used to
+            bootstrap the value function. If None, the value function is
+            bootstrapped with zeros.
+        next_done: np.ndarray or None
+            Array of shape (n_envs,) indicating whether the next observation
+            is terminal. If None, this function assumes that they are not
+            terminal.
 
+        Notes
+        -----
+        This function assumes that the data in `self.memory` is complete,
+        and it will clear the memory during the update.
         """
         assert (
             int(next_obs is None) + int(next_done is None)
@@ -399,11 +448,9 @@ class PPOAgent(AgentWithSimplePolicy):
         #       the values here, because it is easier to implement and it has no
         #       impact on performance in most cases.
         with torch.no_grad():
-            b_values = self.value_net(b_obs.view(n_steps * n_envs, *obs_shape)).view(
-                n_steps, n_envs
-            )
+            b_values = self.value_net(b_obs).squeeze(-1)
             if next_obs is not None:
-                b_next_value = torch.squeeze(self.value_net(next_obs))
+                b_next_value = self.value_net(next_obs).squeeze(-1)
 
         # compute returns and advantages
         # using numpy and numba for speedup
@@ -414,19 +461,20 @@ class PPOAgent(AgentWithSimplePolicy):
         if next_obs is not None:
             next_dones[-1] = next_done
 
-        next_values = np.zeros_like(batch["rewards"])
-        next_values[:-1] = b_values[1:].cpu().numpy()
+        values = b_values.cpu().numpy()
+        next_values = np.zeros_like(values)
+        next_values[:-1] = values[1:]
         if next_obs is not None:
             next_values[-1] = b_next_value.cpu().numpy()
 
         returns = lambda_returns(
             rewards, next_dones, next_values, self.gamma, self.gae_lambda
         )
-        advantages = returns - b_values.cpu().numpy()
+        advantages = returns - values
 
         # convert to tensor
         b_actions = _to_tensor(batch["actions"])
-        b_logprobs = _to_tensor(batch["action_logprobs"])
+        b_logprobs = _to_tensor(batch["logprobs"])
         b_returns = _to_tensor(returns)
         b_advantages = _to_tensor(advantages)
 
@@ -444,7 +492,7 @@ class PPOAgent(AgentWithSimplePolicy):
         for epoch in range(self.k_epochs):
             self.rng.shuffle(b_indices)
             for start in range(0, n_steps * n_envs, self.batch_size):
-                end = start + self.batch_size
+                end = min(start + self.batch_size, n_steps * n_envs)
                 mb_indices = b_indices[start:end]
 
                 mb_obs = b_obs[mb_indices]
@@ -461,7 +509,7 @@ class PPOAgent(AgentWithSimplePolicy):
 
                 # forward pass to values and logprobs
                 action_dist = self.policy_net(mb_obs)
-                mb_values = self.value_net(mb_obs)
+                mb_values = self.value_net(mb_obs).squeeze(-1)
 
                 mb_logprobs = action_dist.log_prob(mb_actions)
                 mb_entropy = action_dist.entropy()
@@ -599,10 +647,3 @@ class PPOAgent(AgentWithSimplePolicy):
             "clip_eps": clip_eps,
             "k_epochs": k_epochs,
         }
-
-
-# if __name__ == "__main__":
-#     env = (gym_make, dict(id="Acrobot-v1"))
-#     # env = gym_make(id="Acrobot-v1")
-#     ppo = PPOAgent(env)
-#     ppo.fit(100000)
