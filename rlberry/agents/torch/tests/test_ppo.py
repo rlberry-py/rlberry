@@ -108,7 +108,6 @@ def test_ppo():
         init_kwargs=dict(
             batch_size=24,
             n_steps=96,
-            use_gae=False,
             policy_net_fn="rlberry.agents.torch.utils.training.model_factory_from_env",
             policy_net_kwargs=dict(
                 type="MultiLayerPerceptron",
@@ -139,7 +138,6 @@ def test_ppo():
         init_kwargs=dict(
             batch_size=24,
             n_steps=96,
-            use_gae=False,
             policy_net_fn=model_factory_from_env,
             policy_net_kwargs=dict(
                 type="MultiLayerPerceptron",
@@ -173,7 +171,7 @@ def test_ppo():
         (env_ctor, env_kwargs),
         fit_budget=int(100),
         eval_kwargs=dict(eval_horizon=2),
-        init_kwargs=dict(batch_size=24, n_steps=96, normalize_rewards=True),
+        init_kwargs=dict(batch_size=24, n_steps=96),
         n_fit=1,
         agent_name="PPO_rlberry_" + "PBall2D",
     )
@@ -197,3 +195,7 @@ def test_ppo():
 
     output = evaluate_agents([pporlberry_stats], n_simulations=2, plot=False)
     pporlberry_stats.clear_output_dir()
+
+
+if __name__ == "__main__":
+    test_ppo()
