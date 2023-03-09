@@ -271,7 +271,7 @@ class MultiLayerPerceptron(BaseModule):
         self,
         in_size=None,
         layer_sizes=None,
-        reshape=True,
+        reshape=False,
         out_size=None,
         activation="RELU",
         is_policy=False,
