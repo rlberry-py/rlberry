@@ -40,35 +40,6 @@ def process_ppo_env(env, seeder, num_envs=1, asynchronous=False):
     )
 
 
-# @numba_jit
-# def lambda_returns(r_t, discount_t, v_tp1, lambda_):
-#     """
-#     Computer lambda returns
-#     Parameters
-#     ----------
-#     r_t: array
-#         Array of shape (time_dim, batch_dim) containing the rewards.
-#     discount_t: array
-#         Array of shape (time_dim, batch_dim) containing the discounts (0.0 if terminal state).
-#     v_tp1: array
-#         Array of shape (time_dim, batch_dim) containing the values at timestep t+1
-#     lambda_ : float in [0, 1]
-#         Lambda-returns parameter.
-#     """
-#     print('lamda_returns')
-#     T = v_tp1.shape[0]
-#     returns = np.zeros_like(r_t)
-#     aux = v_tp1[-1]
-#     for tt in range(T):
-#         i = T - tt - 1
-#         print(i, r_t[i], aux, discount_t[i], v_tp1[i])
-#         aux = r_t[i] + discount_t[i] * (
-#             (1 - lambda_) * v_tp1[i] + lambda_ * aux)
-#         returns[i] = aux
-#         print(returns[i])
-#     return returns
-
-
 @numba_jit
 def lambda_returns(r_t, terminal_tp1, v_tp1, gamma, lambda_):
     """
