@@ -17,7 +17,7 @@ agent.set_writer(SummaryWriter())
 agent.fit(budget=100)
 
 while True:
-    state,info = env.reset()
+    state, info = env.reset()
     done = False
     while not done:
         action = agent.policy(state)

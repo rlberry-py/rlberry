@@ -20,7 +20,7 @@ def test_discretizer(n_bins):
     assert env.observation_space.n == n_bins * n_bins
 
     for _ in range(2):
-        state,info = env.reset()
+        state, info = env.reset()
         for _ in range(50):
             assert env.observation_space.contains(state)
             action = env.action_space.sample()
@@ -177,5 +177,5 @@ def test_discrete2onehot():
         initial_distr = np.zeros(env.unwrapped.observation_space.n)
         initial_distr[ii] = 1.0
         env.unwrapped.set_initial_state_distribution(initial_distr)
-        obs,info = env.reset()
+        obs, info = env.reset()
         assert np.array_equal(obs, initial_distr)

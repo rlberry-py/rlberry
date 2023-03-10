@@ -22,8 +22,8 @@ class ActionDictTestEnv(gym.Env):
         done = True
         return observation, reward, done
 
-    def reset(self,seed=None, options=None):
-        return np.array([1.0, 1.5, 0.5]),{}
+    def reset(self, seed=None, options=None):
+        return np.array([1.0, 1.5, 0.5]), {}
 
 
 class DummyAgent:
@@ -42,7 +42,7 @@ class ReferenceAgent(ValueIterationAgent):
         del kwargs  # unused
         episode_rewards = np.zeros(n_simulations)
         for sim in range(n_simulations):
-            observation,info = self.eval_env.reset()
+            observation, info = self.eval_env.reset()
             tt = 0
             while tt < eval_horizon:
                 action = self.policy(observation)

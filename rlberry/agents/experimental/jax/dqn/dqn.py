@@ -163,7 +163,7 @@ class DQNAgent(AgentWithSimplePolicy):
         # define specs
         # TODO: generalize. Observation is taken from reset() because gym is
         # mixing things up (returning double instead of float)
-        sample_obs,info = env.reset()
+        sample_obs, info = env.reset()
         try:
             obs_shape, obs_dtype = sample_obs.shape, sample_obs.dtype
         except AttributeError:  # in case sample_obs has no .shape attribute
@@ -252,7 +252,7 @@ class DQNAgent(AgentWithSimplePolicy):
         timesteps_counter = 0
         episode_rewards = 0.0
         episode_timesteps = 0
-        observation,info = self.env.reset()
+        observation, info = self.env.reset()
         with self._replay_buffer.get_writer() as buffer_writer:
             while timesteps_counter < budget:
                 self.rng_key, subkey = jax.random.split(self.rng_key)
@@ -330,7 +330,7 @@ class DQNAgent(AgentWithSimplePolicy):
                     buffer_writer.end_episode()
                     episode_rewards = 0.0
                     episode_timesteps = 0
-                    observation,info = self.env.reset()
+                    observation, info = self.env.reset()
 
     def _loss(self, all_params, batch):
         obs_tm1 = batch["observations"]

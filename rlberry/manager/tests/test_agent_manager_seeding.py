@@ -11,8 +11,11 @@ import pytest
     "env, agent_class",
     [
         ((MountainCar, {}), A2CAgent),
-        ((gym_make, {"id": "MountainCar-v0","old_gym":True}), A2CAgent),
-        ((gym.make, {"id": "MountainCar-v0"}), A2CAgent),   #Crash because we can not add the compatibility wrapper easily 
+        ((gym_make, {"id": "MountainCar-v0", "old_gym": True}), A2CAgent),
+        (
+            (gym.make, {"id": "MountainCar-v0"}),
+            A2CAgent,
+        ),  # Crash because we can not add the compatibility wrapper easily
     ],
 )
 def test_agent_manager_and_multiple_managers_seeding(env, agent_class):

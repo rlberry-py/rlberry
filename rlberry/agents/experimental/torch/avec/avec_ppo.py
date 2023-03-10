@@ -223,7 +223,7 @@ class AVECPPOAgent(AgentWithSimplePolicy):
     def _run_episode(self):
         # interact for H steps
         episode_rewards = 0
-        state,info = self.env.reset()
+        state, info = self.env.reset()
         for _ in range(self.horizon):
             # running policy_old
             action = self._select_action(state)

@@ -32,7 +32,7 @@ def gym_make(id, old_gym=True, wrap_spaces=False, **kwargs):
 
     if old_gym:
         env = gym.make(id, **kwargs)
-        env = StepAPICompatibility(env,output_truncation_bool=False)
+        env = StepAPICompatibility(env, output_truncation_bool=False)
     else:
         env = gym.make(id, **kwargs)
 
@@ -91,9 +91,9 @@ class AtariImageToPyTorch(Wrapper):
     def observation(self, observation):
         return np.transpose(observation, (0, 3, 2, 1))  # transform
 
-    def reset(self,seed=None,options=None):
-        obs,info = self.env.reset(seed=seed,options=options)
-        return self.observation(obs),info
+    def reset(self, seed=None, options=None):
+        obs, info = self.env.reset(seed=seed, options=options)
+        return self.observation(obs), info
 
     def step(self, action):
         next_obs, reward, done, info = self.env.step(action)

@@ -22,7 +22,7 @@ classes = [MountainCar, GridWorld, Chain, PBall2D, SimplePBallND, Acrobot]
 
 def get_env_trajectory(env, horizon):
     states = []
-    ss,info = env.reset()
+    ss, info = env.reset()
     for _ in range(horizon):
         states.append(ss)
         ss, _, _, _ = env.step(env.action_space.sample())
@@ -116,8 +116,8 @@ def test_gym_copy_reseeding():
     seeder = Seeder(123)
     if _GYM_INSTALLED:
         gym_env = gym.make("Acrobot-v1")
-        #compatibility with gym V0.21
-        gym_env = StepAPICompatibility(gym_env,output_truncation_bool=False)
+        # compatibility with gym V0.21
+        gym_env = StepAPICompatibility(gym_env, output_truncation_bool=False)
         env = Wrapper(gym_env)
         env.reseed(seeder)
 
@@ -134,8 +134,8 @@ def test_gym_copy_reseeding_2():
     seeder = Seeder(123)
     if _GYM_INSTALLED:
         gym_env = gym.make("Acrobot-v1")
-        #compatibility with gym V0.21
-        gym_env = StepAPICompatibility(gym_env,output_truncation_bool=False)
+        # compatibility with gym V0.21
+        gym_env = StepAPICompatibility(gym_env, output_truncation_bool=False)
 
         # nested wrapping
         env = RescaleRewardWrapper(Wrapper(Wrapper(gym_env)), (0, 1))

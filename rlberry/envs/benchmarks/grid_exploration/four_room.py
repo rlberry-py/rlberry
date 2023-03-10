@@ -103,12 +103,12 @@ class FourRoom(GridWorld):
         yy = yy / self.nrows
         return np.array([xx, yy])
 
-    def reset(self,seed=None,options=None):
+    def reset(self, seed=None, options=None):
         self.state = self.coord2index[self.start_coord]
         state_to_return = self.state
         if self.array_observation:
             state_to_return = self._convert_index_to_float_coord(self.state)
-        return state_to_return,{}
+        return state_to_return, {}
 
     def step(self, action):
         assert self.action_space.contains(action), "Invalid action!"

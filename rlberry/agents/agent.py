@@ -509,7 +509,7 @@ class AgentWithSimplePolicy(Agent):
         del kwargs  # unused
         episode_rewards = np.zeros(n_simulations)
         for sim in range(n_simulations):
-            observation,info = self.eval_env.reset()
+            observation, info = self.eval_env.reset()
             tt = 0
             while tt < eval_horizon:
                 action = self.policy(observation)

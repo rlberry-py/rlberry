@@ -45,7 +45,7 @@ The example below shows how to create an agent.
             rewards = np.zeros(n_episodes)
 
             for ep in range(n_episodes):
-                state,info = self.env.reset()
+                state, info = self.env.reset()
                 done = False
                 while not done:
                 action = ...  

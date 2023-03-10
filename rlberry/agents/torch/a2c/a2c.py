@@ -186,7 +186,7 @@ class A2CAgent(AgentWithSimplePolicy):
         timesteps_counter = 0
         episode_rewards = 0.0
         episode_timesteps = 0
-        observation,info = self.env.reset()
+        observation, info = self.env.reset()
         while timesteps_counter < budget:
             action = self._select_action(observation)
             next_obs, reward, done, _ = self.env.step(action)
@@ -242,10 +242,10 @@ class A2CAgent(AgentWithSimplePolicy):
                     )
                 episode_rewards = 0.0
                 episode_timesteps = 0
-                observation,info = self.env.reset()
+                observation, info = self.env.reset()
 
     def _select_action(self, state):
-        if isinstance(state,np.float64):
+        if isinstance(state, np.float64):
             print("break")
         state = torch.from_numpy(state).float().to(self.device)
         action_dist = self._policy_old(state)

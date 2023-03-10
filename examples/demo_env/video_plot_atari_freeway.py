@@ -94,7 +94,7 @@ if "render_modes" in env.metadata:
         "render_modes"
     ]  # bug with some 'gym' version
 
-state,info = env.reset()
+state, info = env.reset()
 for tt in range(30000):
     action = tuned_agent.get_agent_instances()[0].policy(state)
     next_s, _, done, test = env.step(action)

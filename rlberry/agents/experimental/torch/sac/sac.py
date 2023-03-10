@@ -3,7 +3,7 @@ from .utils import ReplayBuffer, get_qref, get_vref, alpha_sync
 import torch
 import torch.nn as nn
 from torch.nn.functional import one_hot
-import gymnasium .spaces as spaces
+import gymnasium.spaces as spaces
 
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.agents.torch.utils.training import optimizer_factory
@@ -248,7 +248,7 @@ class SACAgent(AgentWithSimplePolicy):
     def _run_episode(self):
         # interact for H steps
         episode_rewards = 0
-        state,info = self.env.reset()
+        state, info = self.env.reset()
         done = False
 
         while not done:

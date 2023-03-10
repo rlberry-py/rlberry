@@ -257,7 +257,7 @@ class LSVIUCBAgent(AgentWithSimplePolicy):
         return q_vec.argmax()
 
     def run_episode(self):
-        state,info = self.env.reset()
+        state, info = self.env.reset()
         episode_rewards = 0
         for hh in range(self.horizon):
             if self.bonus_scale_factor == 0.0:

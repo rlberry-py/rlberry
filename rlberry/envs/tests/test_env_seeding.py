@@ -27,7 +27,7 @@ classes = [
 
 def get_env_trajectory(env, horizon):
     states = []
-    ss,info = env.reset()
+    ss, info = env.reset()
     for ii in range(horizon):
         states.append(ss)
         ss, _, _, _ = env.step(env.action_space.sample())
@@ -72,7 +72,7 @@ def test_env_seeding(ModelClass):
     if deepcopy(env1).is_online():
         traj1 = get_env_trajectory(env1, 500)
         traj2 = get_env_trajectory(env2, 500)
-        traj3 = get_env_trajectory(env3, 500)                                       
+        traj3 = get_env_trajectory(env3, 500)
         traj4 = get_env_trajectory(env4, 500)
         traj5 = get_env_trajectory(env5, 500)
 

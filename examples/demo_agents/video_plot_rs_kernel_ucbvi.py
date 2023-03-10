@@ -32,7 +32,7 @@ agent = RSKernelUCBVIAgent(
 agent.fit(budget=500)
 
 env.enable_rendering()
-state,info = env.reset()
+state, info = env.reset()
 
 time_before_done = 0
 ended = False

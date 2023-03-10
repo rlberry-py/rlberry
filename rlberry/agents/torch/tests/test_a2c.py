@@ -10,7 +10,7 @@ from gymnasium.wrappers import StepAPICompatibility
 def test_a2c():
     env = "CartPole-v0"
     mdp = make(env)
-    mdp = StepAPICompatibility(mdp,output_truncation_bool=False)
+    mdp = StepAPICompatibility(mdp, output_truncation_bool=False)
     env_ctor = Wrapper
     env_kwargs = dict(env=mdp)
 
@@ -30,7 +30,7 @@ def test_a2c():
     a2crlberry_stats.clear_output_dir()
     env = "Pendulum-v1"
     mdp = make(env)
-    mdp = StepAPICompatibility(mdp,output_truncation_bool=False)
+    mdp = StepAPICompatibility(mdp, output_truncation_bool=False)
     env_ctor = Wrapper
     env_kwargs = dict(env=mdp)
 
@@ -51,7 +51,7 @@ def test_a2c():
 
     env = "Acrobot-v1"
     mdp = make(env)
-    mdp = StepAPICompatibility(mdp,output_truncation_bool=False)
+    mdp = StepAPICompatibility(mdp, output_truncation_bool=False)
     env_ctor = Wrapper
     env_kwargs = dict(env=mdp)
 
@@ -69,8 +69,8 @@ def test_a2c():
 
     output = evaluate_agents([a2crlberry_stats], n_simulations=2, plot=False)
     a2crlberry_stats.clear_output_dir()
-    
-    env = StepAPICompatibility(PBall2D(),output_truncation_bool=False)
+
+    env = StepAPICompatibility(PBall2D(), output_truncation_bool=False)
     env_ctor = Wrapper
     env_kwargs = dict(env=env)
 
@@ -92,7 +92,7 @@ def test_a2c():
     # test also non default
     env = "CartPole-v0"
     mdp = make(env)
-    mdp = StepAPICompatibility(mdp,output_truncation_bool=False)
+    mdp = StepAPICompatibility(mdp, output_truncation_bool=False)
     env_ctor = Wrapper
     env_kwargs = dict(env=mdp)
 

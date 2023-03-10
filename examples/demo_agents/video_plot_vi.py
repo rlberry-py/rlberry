@@ -20,7 +20,7 @@ info = agent.fit()
 print(info)
 
 env.enable_rendering()
-state,info = env.reset()
+state, info = env.reset()
 for tt in range(50):
     action = agent.policy(state)
     next_s, _, done, _ = env.step(action)

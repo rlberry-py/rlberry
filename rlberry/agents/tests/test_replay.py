@@ -5,20 +5,25 @@ from rlberry.envs.finite import GridWorld
 from gymnasium.wrappers import TimeLimit
 from gymnasium.wrappers import StepAPICompatibility
 
+
 def _get_filled_replay(max_replay_size):
     """runs env for ~ 2 * max_replay_size timesteps."""
     env = GridWorld(terminal_states=None)
-    #compatibility with gym V0.21
-    env = StepAPICompatibility(env,output_truncation_bool=True)  #compatibility old env -> gym0.26/gymnasiume
-    env = TimeLimit(env, max_episode_steps=200)                  #use gymnasium wrapper
-    env = StepAPICompatibility(env,output_truncation_bool=False) #compatibility gymnasium -> old env (our tests)
+    # compatibility with gym V0.21
+    env = StepAPICompatibility(
+        env, output_truncation_bool=True
+    )  # compatibility old env -> gym0.26/gymnasiume
+    env = TimeLimit(env, max_episode_steps=200)  # use gymnasium wrapper
+    env = StepAPICompatibility(
+        env, output_truncation_bool=False
+    )  # compatibility gymnasium -> old env (our tests)
     env.reseed(123)
 
     rng = np.random.default_rng(456)
     buffer = replay.ReplayBuffer(
         max_replay_size,
         rng,
-        max_episode_steps=env.env._max_episode_steps,  #inside the 'TimeLimit' wrapper
+        max_episode_steps=env.env._max_episode_steps,  # inside the 'TimeLimit' wrapper
         enable_prioritized=True,
     )
     buffer.setup_entry("observations", np.float32)
@@ -32,7 +37,7 @@ def _get_filled_replay(max_replay_size):
         if total_time > 2 * buffer._max_replay_size:
             break
         done = False
-        obs,info = env.reset()
+        obs, info = env.reset()
         while not done:
             total_time += 1
             action = env.action_space.sample()
@@ -116,7 +121,7 @@ def test_replay_samples_valid_indices(sampling_mode):
         if total_time > 1000:
             break
         done = False
-        obs,info = env.reset()
+        obs, info = env.reset()
         while not done:
             total_time += 1
             action = env.action_space.sample()
