@@ -7,7 +7,7 @@
 # ppo = PPOAgent(env)
 # ppo.fit(4096)
 
-from rlberry.envs import Wrapper, gym_make, ResetAPICompatibility
+from rlberry.envs import Wrapper, gym_make
 from rlberry.agents.torch import PPOAgent
 from rlberry.manager import AgentManager, evaluate_agents
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
@@ -23,7 +23,6 @@ def test_ppo():
     env = "CartPole-v0"
     mdp = make(env)
     mdp = StepAPICompatibility(mdp,output_truncation_bool=False)
-    mdp = ResetAPICompatibility(mdp)
     env_ctor = Wrapper
     env_kwargs = dict(env=mdp)
 
@@ -45,7 +44,6 @@ def test_ppo():
     env = "Pendulum-v1"
     mdp = make(env)
     mdp = StepAPICompatibility(mdp,output_truncation_bool=False)
-    mdp = ResetAPICompatibility(mdp)
     env_ctor = Wrapper
     env_kwargs = dict(env=mdp)
 
@@ -67,7 +65,6 @@ def test_ppo():
     env = "Acrobot-v1"
     mdp = make(env)
     mdp = StepAPICompatibility(mdp,output_truncation_bool=False)
-    mdp = ResetAPICompatibility(mdp)
     env_ctor = Wrapper
     env_kwargs = dict(env=mdp)
 
@@ -111,7 +108,6 @@ def test_ppo():
     env = "CartPole-v0"
     mdp = make(env)
     mdp = StepAPICompatibility(mdp,output_truncation_bool=False)
-    mdp = ResetAPICompatibility(mdp)
     env_ctor = Wrapper
     env_kwargs = dict(env=mdp)
 
@@ -243,12 +239,12 @@ def test_ppo_classic_env():
     assert loaded_agent
 
     # test the agent
-    state = test_load_env.reset()
+    state,info = test_load_env.reset()
     for tt in range(50):
         action = loaded_agent.policy(state)
         next_state, reward, done, _ = test_load_env.step(action)
         if done:
-            next_state = test_load_env.reset()
+            next_state,info = test_load_env.reset()
         state = next_state
 
     os.remove(saving_path)
@@ -296,7 +292,7 @@ def test_ppo_agent_manager_classic_env():
     assert loaded_agent_manager
 
     # test the agent
-    state = test_load_env.reset()
+    state,info = test_load_env.reset()
     for tt in range(50):
         action = loaded_agent_manager.get_agent_instances()[0].policy(state)
         next_s, _, done, test = test_load_env.step(action)

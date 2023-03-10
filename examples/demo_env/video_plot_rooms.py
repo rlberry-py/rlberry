@@ -30,7 +30,7 @@ print(info)
 env.enable_rendering()
 
 for _ in range(10):
-    state = env.reset()
+    state,info = env.reset()
     for tt in range(horizon):
         # action = agent.policy(state)
         action = env.action_space.sample()

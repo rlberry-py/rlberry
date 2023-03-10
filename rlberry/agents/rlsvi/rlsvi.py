@@ -208,7 +208,7 @@ class RLSVIAgent(AgentWithSimplePolicy):
                 self.v_max[0],
             )
 
-        state = self.env.reset()
+        state,info = self.env.reset()
         for hh in range(self.horizon):
             action = self._get_action(state, hh)
             next_state, reward, done, _ = self.env.step(action)

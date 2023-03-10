@@ -19,7 +19,7 @@ def test_spring_cartpole():
     # test 1 - default
     env = SpringCartPole()
 
-    _ = env.reset()
+    _,info = env.reset()
     for _ in range(2):
         action = np.random.randint(0, env.action_space.n)
         next_state, _, done, _ = env.step(action)
@@ -30,19 +30,19 @@ def test_spring_cartpole():
     # test 2 - obs_trans = True and random_init = False
     env = SpringCartPole(obs_trans=True, random_init=False)
 
-    _ = env.reset()
+    _,info = env.reset()
     for _ in range(2):
         action = np.random.randint(0, env.action_space.n)
         next_state, _, done, _ = env.step(action)
         # if done:
-        #     next_state = env.reset()
+        #     next_state,info = env.reset()
         # state = next_state
 
     # # test 3 - swingup = False and random_init = False
     # env = SpringCartPole(dt=0.01, swing_up=False, random_init=False)
     # # env.enable_rendering()
 
-    # state = env.reset()
+    # state,info = env.reset()
     # for tt in range(5):
     #     if state[2] > 0:
     #         if state[6] > 0:
@@ -57,7 +57,7 @@ def test_spring_cartpole():
     #     # print("Time: ", tt, "Action: ", action_dict[action], "Angle1: ", state[2], "Angle2: ", state[6])
     #     next_state, reward, done, _ = env.step(action)
     #     if done:
-    #         next_state = env.reset()
+    #         next_state,info = env.reset()
     #     state = next_state
 
     # test 4 - swingup = False and rendering = True
@@ -65,7 +65,7 @@ def test_spring_cartpole():
     env = SpringCartPole(dt=0.02, swing_up=False, obs_trans=True)
     env.enable_rendering()
 
-    _ = env.reset()
+    _,info = env.reset()
     action = 0
     for _ in range(2 * HORIZON):
         next_state, _, done, _ = env.step(action)
@@ -73,7 +73,7 @@ def test_spring_cartpole():
             action += 1
             if action >= 4:
                 action = 0
-            next_state = env.reset()
+            next_state,info = env.reset()
         _ = next_state
 
     _ = env.get_video()

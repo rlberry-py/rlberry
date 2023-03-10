@@ -24,7 +24,7 @@ agent.fit(budget=n_timesteps)
 
 env.enable_rendering()
 
-state = env.reset()
+state,info = env.reset()
 for tt in range(200):
     action = agent.policy(state)
     next_state, reward, done, _ = env.step(action)

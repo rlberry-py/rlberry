@@ -110,10 +110,10 @@ class Vis2dWrapper(Wrapper):
         self.current_state = None
         self.curret_step = 0
 
-    def reset(self):
+    def reset(self,seed=None, options=None):
         self.current_step = 0
-        self.current_state = self.env.reset()
-        return self.current_state
+        self.current_state,info = self.env.reset(seed,options)
+        return self.current_state,info
 
     def step(self, action):
         observation, reward, done, info = self.env.step(action)

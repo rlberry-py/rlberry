@@ -35,7 +35,7 @@ agent.fit(budget=100)
 
 env.enable_rendering()
 for ep in range(3):
-    state = env.reset()
+    state,info = env.reset()
     for tt in range(agent.horizon):
         action = agent.policy(state)
         next_s, _, _, _ = env.step(action)

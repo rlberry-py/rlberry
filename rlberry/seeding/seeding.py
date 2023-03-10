@@ -54,6 +54,7 @@ def safe_reseed(obj, seeder, reseed_spaces=True):
     True if reseeding was done, False otherwise.
 
     """
+    #TODO :Create new issue to refactor this function without the try/except but with introspection and if
     reseeded = False
     try:
         obj.reseed(seeder)
@@ -64,7 +65,11 @@ def safe_reseed(obj, seeder, reseed_spaces=True):
             obj.seed(seed_val)
             reseeded = True
         except AttributeError:
-            reseeded = False
+            try:
+                obj.reset(seed=seed_val)
+                reseeded = True
+            except AttributeError:
+                reseeded = False
 
     # check if the object has observation and action spaces to be reseeded.
     ########### TO CHECK : Is it possible to not have observation space, but an action space to reseed? ###############

@@ -58,7 +58,7 @@ class Pendulum(RenderInterface2D, Model):
         low = -high
         self.state = self.rng.uniform(low=low, high=high)
         self.last_action = None
-        return self._get_ob()
+        return self._get_ob(),{}
 
     def step(self, action):
         assert self.action_space.contains(action), "%r (%s) invalid" % (

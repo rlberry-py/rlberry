@@ -176,7 +176,7 @@ does not make true projections onto the lp ball."
             )
             # projection to unit ball
         self.state = projection_to_pball(self.state, self.p)
-        return self.state.copy()
+        return self.state.copy(),{}
 
     def sample(self, state, action):
         assert self.action_space.contains(action)

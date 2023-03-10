@@ -57,7 +57,7 @@ def test_render2d_interface(ModelClass):
 
         if env.is_online():
             for _ in range(2):
-                state = env.reset()
+                state,info = env.reset()
                 for _ in range(5):
                     assert env.observation_space.contains(state)
                     action = env.action_space.sample()
@@ -80,7 +80,7 @@ def test_render2d_interface_wrapped(ModelClass):
         env.enable_rendering()
         if env.is_online():
             for _ in range(2):
-                state = env.reset()
+                state,info = env.reset()
                 for _ in range(5):
                     assert env.observation_space.contains(state)
                     action = env.action_space.sample()

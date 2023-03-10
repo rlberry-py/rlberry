@@ -16,7 +16,7 @@ def test_rnd():
     )
 
     # Test
-    state = env.reset()
+    state,info = env.reset()
     for ii in range(1000):
         action = env.action_space.sample()
         next_s, reward, _, _ = env.step(action)

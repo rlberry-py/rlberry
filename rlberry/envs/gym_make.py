@@ -1,7 +1,7 @@
 import gymnasium as gym
 from gymnasium.wrappers import StepAPICompatibility
 
-from rlberry.envs.basewrapper import Wrapper,ResetAPICompatibility
+from rlberry.envs.basewrapper import Wrapper
 import numpy as np
 
 
@@ -33,7 +33,6 @@ def gym_make(id, old_gym=True, wrap_spaces=False, **kwargs):
     if old_gym:
         env = gym.make(id, **kwargs)
         env = StepAPICompatibility(env,output_truncation_bool=False)
-        env = ResetAPICompatibility(env)     
     else:
         env = gym.make(id, **kwargs)
 
@@ -71,7 +70,6 @@ def atari_make(id, scalarize=None, **kwargs):
         env = ScalarizeEnvWrapper(env)
 
     # env = StepAPICompatibility(env,output_truncation_bool=False)
-    # env = ResetAPICompatibility(env)
     return env
 
 
@@ -93,8 +91,9 @@ class AtariImageToPyTorch(Wrapper):
     def observation(self, observation):
         return np.transpose(observation, (0, 3, 2, 1))  # transform
 
-    def reset(self):
-        return self.observation(self.env.reset())
+    def reset(self,seed=None,options=None):
+        obs,info = self.env.reset(seed=seed,options=options)
+        return self.observation(obs),info
 
     def step(self, action):
         next_obs, reward, done, info = self.env.step(action)

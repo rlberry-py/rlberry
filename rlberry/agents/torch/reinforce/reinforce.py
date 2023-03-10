@@ -142,7 +142,7 @@ class REINFORCEAgent(AgentWithSimplePolicy):
     def _run_episode(self):
         # interact for H steps
         episode_rewards = 0
-        state = self.env.reset()
+        state,info = self.env.reset()
         for _ in range(self.horizon):
             # running policy
             action = self.policy(state)

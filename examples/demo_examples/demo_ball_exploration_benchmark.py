@@ -21,7 +21,7 @@ print(info)
 
 # evaluate policy in a deterministic version of the environment
 env.enable_rendering()
-state = env.reset()
+state,info = env.reset()
 for tt in range(5 * env.horizon):
     hh = tt
     if hh >= env.horizon:

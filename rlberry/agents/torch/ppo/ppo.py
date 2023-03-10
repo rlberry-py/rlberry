@@ -225,7 +225,7 @@ class PPOAgent(AgentWithSimplePolicy):
         timesteps_counter = 0
         episode_rewards = 0.0
         episode_timesteps = 0
-        state = self.env.reset()
+        state,info = self.env.reset()
 
         while timesteps_counter < budget:
             # running policy_old
@@ -272,7 +272,7 @@ class PPOAgent(AgentWithSimplePolicy):
                     )
                 episode_rewards = 0.0
                 episode_timesteps = 0
-                state = self.env.reset()
+                state,info = self.env.reset()
 
     def _select_action(self, state):
         action_dist = self._policy_old(state)

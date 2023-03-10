@@ -22,7 +22,7 @@ classes = [MountainCar, GridWorld, Chain, PBall2D, SimplePBallND, Acrobot]
 
 def get_env_trajectory(env, horizon):
     states = []
-    ss = env.reset()
+    ss,info = env.reset()
     for _ in range(horizon):
         states.append(ss)
         ss, _, _, _ = env.step(env.action_space.sample())

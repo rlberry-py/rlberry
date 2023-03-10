@@ -61,7 +61,7 @@ class ReplayBuffer:
     >>> env = gym_make("CartPole-v0")
     >>> for _ in range(500):
     >>>     done = False
-    >>>     obs = env.reset()
+    >>>     obs,info = env.reset()
     >>>     while not done:
     >>>         action = env.action_space.sample()
     >>>         next_obs, reward, done, info = env.step(action)

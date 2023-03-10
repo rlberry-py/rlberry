@@ -102,7 +102,7 @@ def check_agents_almost_equal(agent1, agent2, compare_using="policy", n_checks=5
     set_external_seed(SEED)
     results1 = []
     if compare_using == "policy":
-        state = agent1.env.reset()
+        state,info = agent1.env.reset()
     for f in range(n_checks):
         # do several tests if there is some randomness.
         if compare_using == "policy":

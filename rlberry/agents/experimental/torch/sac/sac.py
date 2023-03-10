@@ -248,7 +248,7 @@ class SACAgent(AgentWithSimplePolicy):
     def _run_episode(self):
         # interact for H steps
         episode_rewards = 0
-        state = self.env.reset()
+        state,info = self.env.reset()
         done = False
 
         while not done:

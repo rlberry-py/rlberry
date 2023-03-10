@@ -108,7 +108,7 @@ class FourRoom(GridWorld):
         state_to_return = self.state
         if self.array_observation:
             state_to_return = self._convert_index_to_float_coord(self.state)
-        return state_to_return
+        return state_to_return,{}
 
     def step(self, action):
         assert self.action_space.contains(action), "Invalid action!"

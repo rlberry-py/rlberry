@@ -1,4 +1,4 @@
-from rlberry.envs import Wrapper, ResetAPICompatibility
+from rlberry.envs import Wrapper
 from rlberry.agents.torch import A2CAgent
 from rlberry.manager import AgentManager, evaluate_agents
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
@@ -11,7 +11,6 @@ def test_a2c():
     env = "CartPole-v0"
     mdp = make(env)
     mdp = StepAPICompatibility(mdp,output_truncation_bool=False)
-    mdp = ResetAPICompatibility(mdp)
     env_ctor = Wrapper
     env_kwargs = dict(env=mdp)
 
@@ -32,7 +31,6 @@ def test_a2c():
     env = "Pendulum-v1"
     mdp = make(env)
     mdp = StepAPICompatibility(mdp,output_truncation_bool=False)
-    mdp = ResetAPICompatibility(mdp)
     env_ctor = Wrapper
     env_kwargs = dict(env=mdp)
 
@@ -54,7 +52,6 @@ def test_a2c():
     env = "Acrobot-v1"
     mdp = make(env)
     mdp = StepAPICompatibility(mdp,output_truncation_bool=False)
-    mdp = ResetAPICompatibility(mdp)
     env_ctor = Wrapper
     env_kwargs = dict(env=mdp)
 
@@ -96,7 +93,6 @@ def test_a2c():
     env = "CartPole-v0"
     mdp = make(env)
     mdp = StepAPICompatibility(mdp,output_truncation_bool=False)
-    mdp = ResetAPICompatibility(mdp)
     env_ctor = Wrapper
     env_kwargs = dict(env=mdp)
 

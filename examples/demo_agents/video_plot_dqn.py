@@ -46,7 +46,7 @@ vid = video_recorder.VideoRecorder(
 
 for episode in range(3):
     done = False
-    state = env.reset()
+    state,info = env.reset()
     while not done:
         action = agent.policy(state)
         state, reward, done, _ = env.step(action)

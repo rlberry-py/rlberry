@@ -59,9 +59,9 @@ class UncertaintyEstimatorWrapper(Wrapper):
         )
         self.previous_obs = None
 
-    def reset(self):
-        self.previous_obs = self.env.reset()
-        return self.previous_obs
+    def reset(self,seed=None,options=None):
+        self.previous_obs,info = self.env.reset(seed=seed,options=options)
+        return self.previous_obs,info
 
     def _update_and_get_bonus(self, state, action, next_state, reward):
         if self.previous_obs is None:

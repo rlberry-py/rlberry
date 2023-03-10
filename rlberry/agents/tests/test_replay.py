@@ -32,7 +32,7 @@ def _get_filled_replay(max_replay_size):
         if total_time > 2 * buffer._max_replay_size:
             break
         done = False
-        obs = env.reset()
+        obs,info = env.reset()
         while not done:
             total_time += 1
             action = env.action_space.sample()
@@ -116,7 +116,7 @@ def test_replay_samples_valid_indices(sampling_mode):
         if total_time > 1000:
             break
         done = False
-        obs = env.reset()
+        obs,info = env.reset()
         while not done:
             total_time += 1
             action = env.action_space.sample()

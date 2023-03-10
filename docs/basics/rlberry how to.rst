@@ -169,7 +169,7 @@ array
                  **kwargs):
             del kwargs  # unused
             episode_regret = np.zeros(eval_horizon)
-            observation = self.eval_env.reset()
+            observation,info = self.eval_env.reset()
             for tt in range(eval_horizon):
                 action = self.policy(observation)
                 observation, reward, done, _ = self.eval_env.step(action)
@@ -188,7 +188,7 @@ array
                  **kwargs):
             del kwargs  # unused
             episode_regret = np.zeros(eval_horizon)
-            observation = self.eval_env.reset()
+            observation,info = self.eval_env.reset()
             for tt in range(eval_horizon):
                 action = self.policy(observation)
                 observation, reward, done, _ = self.eval_env.step(action)

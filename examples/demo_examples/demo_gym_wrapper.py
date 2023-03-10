@@ -16,7 +16,7 @@ env = RescaleRewardWrapper(env, (0.0, 1.0))
 agent = RSUCBVIAgent(env, gamma=0.99, horizon=200, bonus_scale_factor=0.1, min_dist=0.2)
 agent.fit(budget=10)
 
-state = env.reset()
+state,info = env.reset()
 for tt in range(200):
     action = agent.policy(state)
     next_state, reward, done, _ = env.step(action)
