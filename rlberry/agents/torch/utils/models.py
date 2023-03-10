@@ -1,8 +1,10 @@
 #
 # Simple MLP and CNN models
 #
-import numpy as np
+from functools import partial
+
 from gym import spaces
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -175,17 +177,19 @@ class BaseModule(torch.nn.Module):
         - normalization parameters
     """
 
-    def __init__(self, activation_type="RELU", reset_type="XAVIER"):
+    def __init__(self, activation_type="RELU", reset_type="xavier"):
         super().__init__()
         self.activation = activation_factory(activation_type)
         self.reset_type = reset_type
 
-    def _init_weights(self, m):
+    def _init_weights(self, m, param=None):
         if hasattr(m, "weight"):
-            if self.reset_type == "XAVIER":
+            if self.reset_type == "xavier":
                 torch.nn.init.xavier_uniform_(m.weight.data)
-            elif self.reset_type == "ZEROS":
+            elif self.reset_type == "zeros":
                 torch.nn.init.constant_(m.weight.data, 0.0)
+            elif self.reset_type == "orthogonal":
+                torch.nn.init.orthogonal_(m.weight.data, gain=param)
             else:
                 raise ValueError("Unknown reset type")
         if hasattr(m, "bias") and m.bias is not None:
@@ -221,27 +225,6 @@ class Table(torch.nn.Module):
         return self.policy(x.long())
 
 
-def orthogonal_layer_init(layer, std=np.log(2), bias=0.0):
-    """Initialize a layer with orthogonal weights and a given bias.
-
-    Parameters
-    ----------
-    layer: torch.nn.Linear
-        Layer to initialize
-    std: float
-        Standard deviation of the weights
-    bias: float
-        Bias of the layer
-
-    Returns
-    -------
-    layer: torch.nn.Linear
-    """
-    torch.nn.init.orthogonal_(layer.weight, std)
-    torch.nn.init.constant_(layer.bias, bias)
-    return layer
-
-
 class MultiLayerPerceptron(BaseModule):
     """Torch module for an MLP.
 
@@ -259,13 +242,21 @@ class MultiLayerPerceptron(BaseModule):
     activation: {"RELU", "TANH", "ELU"}
         Activation function.
     is_policy: bool, default=False
-        If true, the :meth:`forward` method returns a categorical
-        distribution corresponding to the softmax of the output.
+        If true, the :meth:`forward` method returns a distribution over the
+        output.
+    ctns_actions: bool, default=False
+        If true, the :meth:`forward` method returns a normal distribution
+        corresponding to the output. Otherwise, a categorical distribution
+        is returned.
+    std0: float, default=1.0
+        Initial standard deviation for the normal distribution. Only used
+        if ctns_actions and is_policy are True.
+    reset_type: {"xavier", "orthogonal", "zeros"}, default="orthogonal"
+        Type of weight initialization.
+    pred_init_scale: float, default="auto"
+        Scale of the initial weights of the output layer. If "auto", the
+        scale is set to 0.01 for policy networks and 1.0 otherwise.
     """
-
-    __layer_init__ = {
-        "orthogonal": orthogonal_layer_init,
-    }
 
     def __init__(
         self,
@@ -277,11 +268,12 @@ class MultiLayerPerceptron(BaseModule):
         is_policy=False,
         ctns_actions=False,
         std0=1.0,
-        layer_init="orthogonal",
-        predict_init_std="auto",
+        reset_type="orthogonal",
+        pred_init_scale="auto",
         **kwargs
     ):
-        super().__init__(**kwargs)
+        super().__init__(reset_type=reset_type, **kwargs)
+
         self.reshape = reshape
         self.layer_sizes = layer_sizes or [64, 64]
         self.layer_sizes = list(self.layer_sizes)
@@ -290,26 +282,25 @@ class MultiLayerPerceptron(BaseModule):
         self.is_policy = is_policy
         self.ctns_actions = ctns_actions
         self.std0 = std0
-        self.layer_init = layer_init
-        self.predict_init_std = predict_init_std
+        self.pred_init_scale = pred_init_scale
 
         sizes = [in_size] + self.layer_sizes
-        if layer_init is not None:
-            assert layer_init in self.__layer_init__, "Unknown layer init"
-            init = self.__layer_init__[layer_init]
-        else:
-            init = lambda l: l
-
-        layers_list = [
-            init(nn.Linear(sizes[i], sizes[i + 1])) for i in range(len(sizes) - 1)
-        ]
-        self.layers = nn.ModuleList(layers_list)
+        self.layers = nn.ModuleList(
+            [nn.Linear(sizes[i], sizes[i + 1]) for i in range(len(sizes) - 1)]
+        )
         if out_size:
             if ctns_actions:
                 self.logstd = nn.Parameter(np.log(std0) * torch.ones(out_size))
-            if predict_init_std == "auto":
-                predict_init_std = 0.01 if self.is_policy else 1.0
-            self.predict = init(nn.Linear(sizes[-1], out_size), std=predict_init_std)
+            self.predict = nn.Linear(sizes[-1], out_size)
+        self.reset()
+
+    def reset(self):
+        self.apply(partial(self._init_weights, param=np.log(2)))
+        if self.pred_init_scale == "auto":
+            pred_init_scale = 0.01 if self.is_policy else 1.0
+        else:
+            pred_init_scale = self.pred_init_scale
+        self._init_weights(self.predict, param=pred_init_scale)
 
     def forward(self, x):
         if self.reshape:
@@ -462,7 +453,7 @@ class ConvolutionalNetwork(nn.Module):
         x = self.activation((self.conv1(x)))
         x = self.activation((self.conv2(x)))
         x = self.activation((self.conv3(x)))
-        x = x.view(x.size(0), -1)
+        x = x.view(x.size(0), -1)  # flatten
         return x
 
     def forward(self, x):

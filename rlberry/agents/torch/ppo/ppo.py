@@ -103,7 +103,6 @@ class PPOAgent(AgentWithSimplePolicy):
     device: str
         Device on which to put the tensors. 'cuda:best' by default.
 
-
     References
     ----------
     Schulman, J., Wolski, F., Dhariwal, P., Radford, A. & Klimov, O. (2017).
@@ -114,7 +113,7 @@ class PPOAgent(AgentWithSimplePolicy):
     "Trust region policy optimization."
     In International Conference on Machine Learning (pp. 1889-1897).
 
-    Flet-Berliac, Y. , Ouhamma, R., Maillard, O.-A., Preux, P. (2021)
+    Flet-Berliac, Y., Ouhamma, R., Maillard, O.-A., Preux, P. (2021)
     "Learning Value Functions in Deep Policy Gradients using Residual Variance."
     In 9th International Conference on Learning Representations (ICLR).
     """
