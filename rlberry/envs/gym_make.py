@@ -63,7 +63,7 @@ def atari_make(id, scalarize=None, **kwargs):
     env = make_atari_env(env_id=id, wrapper_kwargs=atari_wrappers_dict, **kwargs)
 
     env = VecFrameStack(env, n_stack=4)
-    env = AtariImageToPyTorch(env)
+    env = SB3_AtariImageToPyTorch(env)
     if scalarize:
         from rlberry.wrappers.scalarize import ScalarizeEnvWrapper
 
@@ -72,15 +72,20 @@ def atari_make(id, scalarize=None, **kwargs):
     return env
 
 
-class AtariImageToPyTorch(Wrapper):
+class SB3_AtariImageToPyTorch(Wrapper):
     """
-    #transform the observation shape.
+    transform the observations shape.
     from: n_env, height, width, chan
     to: n_env, chan, width, height
+
+    WARNING : Check the Reset and Step format :
+    https://github.com/DLR-RM/stable-baselines3/pull/1327/files#diff-a0b0c17357564df74e097f3094a5478e9b28b2af9dfdab2a91e60b6dbe174092
+
     """
 
+
     def __init__(self, env):
-        super(AtariImageToPyTorch, self).__init__(env)
+        super(SB3_AtariImageToPyTorch, self).__init__(env)
         old_shape = self.observation_space.shape
         new_shape = (old_shape[-1], old_shape[0], old_shape[1])
         self.observation_space = gym.spaces.Box(
@@ -90,11 +95,12 @@ class AtariImageToPyTorch(Wrapper):
     def observation(self, observation):
         return np.transpose(observation, (0, 3, 2, 1))  # transform
 
-    def reset(self, seed=None, options=None):
-        obs, info = self.env.reset(seed=seed, options=options)
-        return self.observation(obs), info
+    def reset(self):
+        obs = self.env.reset()
+        infos = self.env.reset_infos
+        return self.observation(obs), infos
 
-    def step(self, action):
-        next_observation, reward, terminated, truncated, info = self.env.step(action)
-        done = terminated or truncated
-        return self.observation(next_observation), reward, done, info
+    def step(self, actions):
+        next_observations, rewards, done, infos = self.env.step(actions)
+        # return self.observation(next_observations), rewards, done, [d["TimeLimit.truncated"] for d in infos], infos
+        return self.observation(next_observations), rewards, done, [None]*self.env.num_envs, infos

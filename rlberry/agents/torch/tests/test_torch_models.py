@@ -85,7 +85,9 @@ def test_forward_atari_dqn():
         DQNAgent,  # The Agent class.
         (
             atari_make,
-            dict(id="ALE/Breakout-v5", n_envs=3),
+            #uncomment when rlberry will manage vectorized env
+            # dict(id="ALE/Breakout-v5", n_envs=3),     
+            dict(id="ALE/Breakout-v5", n_envs=1),
         ),  # The Environment to solve.
         init_kwargs=dict(  # Where to put the agent's hyperparameters
             q_net_constructor="rlberry.agents.torch.utils.training.model_factory_from_env",
