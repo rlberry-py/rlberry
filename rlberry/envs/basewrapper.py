@@ -1,4 +1,4 @@
-import gymnasium as gym 
+import gymnasium as gym
 from rlberry.seeding import Seeder, safe_reseed
 import numpy as np
 from rlberry.envs.interface import Model
@@ -87,26 +87,24 @@ class Wrapper(Model):
         #     self.env.reseed(self.seeder)
         # #-------------------------------
 
-        
         # get a seed for gym environment; spaces are reseeded below.
         if isinstance(self.env, Model):
             # seed rlberry Model
             self.env.reseed(self.seeder)
         elif isinstance(self.env, gym.Env):
             # seed gym.Env that is not a rlberry Model
-            #vvvv TODO : VERIFY MANAGMENT OF THIS SEED vvvv
+            # vvvv TODO : VERIFY MANAGMENT OF THIS SEED vvvv
             seed_val = self.seeder.rng.integers(2**32).item()
             self.env.reset(seed=seed_val)
         else:
             # other
             safe_reseed(self.env, self.seeder, reseed_spaces=False)
 
-
         safe_reseed(self.observation_space, self.seeder)
         safe_reseed(self.action_space, self.seeder)
 
-    def reset(self,seed=None,options=None):
-        return self.env.reset(seed=seed,options=options)
+    def reset(self, seed=None, options=None):
+        return self.env.reset(seed=seed, options=options)
 
     def step(self, action):
         return self.env.step(action)

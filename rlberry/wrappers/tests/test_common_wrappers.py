@@ -176,5 +176,5 @@ def test_discrete2onehot():
         initial_distr = np.zeros(env.unwrapped.observation_space.n)
         initial_distr[ii] = 1.0
         env.unwrapped.set_initial_state_distribution(initial_distr)
-        obs,info = env.reset()
+        obs, info = env.reset()
         assert np.array_equal(obs, initial_distr)

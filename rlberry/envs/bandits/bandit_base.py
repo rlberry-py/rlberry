@@ -46,11 +46,11 @@ class Bandit(Model):
 
         return 0, reward, terminated, truncated, {}
 
-    def reset(self,seed=None,option=None):
+    def reset(self, seed=None, option=None):
         """
         Reset the environment to a default state.
         """
-        return 0,{}
+        return 0, {}
 
 
 class AdversarialBandit(Model):
@@ -89,8 +89,8 @@ class AdversarialBandit(Model):
 
         return 0, reward, done, {}
 
-    def reset(self,seed=None,option=None):
+    def reset(self, seed=None, option=None):
         """
         Reset the environment to a default state.
         """
-        return 0,{}
+        return 0, {}

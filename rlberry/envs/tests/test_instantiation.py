@@ -34,7 +34,7 @@ def test_instantiation(ModelClass):
 
     if env.is_online():
         for _ in range(2):
-            state,info = env.reset()
+            state, info = env.reset()
             for _ in range(50):
                 assert env.observation_space.contains(state)
                 action = env.action_space.sample()

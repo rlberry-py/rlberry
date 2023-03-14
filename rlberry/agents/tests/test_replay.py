@@ -113,7 +113,7 @@ def test_replay_samples_valid_indices(sampling_mode):
         if total_time > 1000:
             break
         done = False
-        obs,info = env.reset()
+        obs, info = env.reset()
         while not done:
             total_time += 1
             action = env.action_space.sample()

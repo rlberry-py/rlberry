@@ -16,7 +16,11 @@ env = RescaleRewardWrapper(env, (0.0, 1.0))
 agent = RSUCBVIAgent(env, gamma=0.99, horizon=200, bonus_scale_factor=0.1, min_dist=0.2)
 agent.fit(budget=10)
 
+<<<<<<< HEAD
 observation,info = env.reset()
+=======
+state, info = env.reset()
+>>>>>>> 7f57b7c4ad56d2f9ee5da82d9dacf082919f88e8
 for tt in range(200):
     action = agent.policy(observation)
     observation, reward, terminated, truncated, info  = env.step(action)

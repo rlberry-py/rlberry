@@ -90,9 +90,9 @@ class AtariImageToPyTorch(Wrapper):
     def observation(self, observation):
         return np.transpose(observation, (0, 3, 2, 1))  # transform
 
-    def reset(self,seed=None,options=None):
-        obs,info = self.env.reset(seed=seed,options=options)
-        return self.observation(obs),info
+    def reset(self, seed=None, options=None):
+        obs, info = self.env.reset(seed=seed, options=options)
+        return self.observation(obs), info
 
     def step(self, action):
         next_observation, reward, terminated, truncated, info = self.env.step(action)

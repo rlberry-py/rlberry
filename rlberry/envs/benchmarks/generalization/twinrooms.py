@@ -68,13 +68,13 @@ class TwinRooms(RenderInterface2D, Model):
         # reset
         self.reset()
 
-    def reset(self,seed=None,options=None):
+    def reset(self, seed=None, options=None):
         self.current_room = self.seeder.rng.integers(2)
         if self.current_room == 0:
             self.state = np.array([0.1, 0.1])
         else:
             self.state = np.array([1.1, 0.1])
-        return self.state.copy(),{}
+        return self.state.copy(), {}
 
     def _reward_fn(self, state):
         # max reward at (x, y) = reward_pos

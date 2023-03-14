@@ -54,7 +54,7 @@ def safe_reseed(obj, seeder, reseed_spaces=True):
     True if reseeding was done, False otherwise.
 
     """
-    #TODO :Create new issue to refactor this function without the try/except but with introspection and if
+    # TODO :Create new issue to refactor this function without the try/except but with introspection and if
     reseeded = False
     try:
         obj.reseed(seeder)

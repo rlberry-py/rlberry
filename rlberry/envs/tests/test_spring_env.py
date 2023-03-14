@@ -19,7 +19,7 @@ def test_spring_cartpole():
     # test 1 - default
     env = SpringCartPole()
 
-    _,info = env.reset()
+    _, info = env.reset()
     for _ in range(2):
         action = np.random.randint(0, env.action_space.n)
         next_observation, reward, terminated, truncated, info = env.step(action)
@@ -31,7 +31,7 @@ def test_spring_cartpole():
     # test 2 - obs_trans = True and random_init = False
     env = SpringCartPole(obs_trans=True, random_init=False)
 
-    _,info = env.reset()
+    _, info = env.reset()
     for _ in range(2):
         action = np.random.randint(0, env.action_space.n)
         next_observation, reward, terminated, truncated, info = env.step(action)
@@ -68,7 +68,7 @@ def test_spring_cartpole():
     env = SpringCartPole(dt=0.02, swing_up=False, obs_trans=True)
     env.enable_rendering()
 
-    _,info = env.reset()
+    _, info = env.reset()
     action = 0
     for _ in range(2 * HORIZON):
         next_observation, reward, terminated, truncated, info = env.step(action)

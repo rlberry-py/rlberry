@@ -131,7 +131,7 @@ Our goal is then to assess the performance of the two algorithms.
             AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
         def fit(self, budget=100, **kwargs):
-            observation,info = self.env.reset()
+            observation, info = self.env.reset()
             for ep in range(budget):
                 action = self.policy(observation)
                 observation, reward, done, _ = self.env.step(action)
@@ -294,7 +294,7 @@ it’s an agent that always chooses the action that moves to the right.
             self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
 
         def fit(self, budget=100, **kwargs):
-            observation,info = self.env.reset()
+            observation, info = self.env.reset()
             for ep in range(budget):
                 action = 1
                 observation, reward, terminated, truncated, info = self.env.step(action)

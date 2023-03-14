@@ -17,9 +17,9 @@ class AutoResetWrapper(Wrapper):
         assert self.horizon >= 1
         self.current_step = 0
 
-    def reset(self,seed=None,options=None):
+    def reset(self, seed=None, options=None):
         self.current_step = 0
-        return self.env.reset(seed=seed,options=options)
+        return self.env.reset(seed=seed, options=options)
 
     def step(self, action):
         observation, reward, terminated, truncated, info = self.env.step(action)

@@ -231,12 +231,12 @@ class NRoom(GridWorld):
         yy = yy / self.nrows
         return np.array([xx, yy])
 
-    def reset(self,seed=None,options=None):
-        self.state,info = GridWorld.reset(self,seed=seed,options=options)
+    def reset(self, seed=None, options=None):
+        self.state, info = GridWorld.reset(self, seed=seed, options=options)
         state_to_return = self.state
         if self.array_observation:
             state_to_return = self._convert_index_to_float_coord(self.state)
-        return state_to_return,info
+        return state_to_return, info
 
     def step(self, action):
         assert self.action_space.contains(action), "Invalid action!"

@@ -371,7 +371,7 @@ class DQNAgent(AgentWithSimplePolicy):
         timesteps_counter = 0
         episode_rewards = 0.0
         episode_timesteps = 0
-        observation,info = self.env.reset()
+        observation, info = self.env.reset()
         while timesteps_counter < budget:
             if self.total_timesteps < self._learning_starts:
                 action = self.env.action_space.sample()
@@ -433,7 +433,7 @@ class DQNAgent(AgentWithSimplePolicy):
                     )
                 episode_rewards = 0.0
                 episode_timesteps = 0
-                observation,info = self.env.reset()
+                observation, info = self.env.reset()
 
     def _policy(self, observation, evaluation=False):
         epsilon = self._epsilon_schedule(self.total_timesteps)

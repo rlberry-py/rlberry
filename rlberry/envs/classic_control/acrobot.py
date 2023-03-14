@@ -124,9 +124,9 @@ class Acrobot(RenderInterface2D, Model):
         self.state = None
         self.reset()
 
-    def reset(self,seed=None,options=None):
+    def reset(self, seed=None, options=None):
         self.state = self.rng.uniform(low=-0.1, high=0.1, size=(4,))
-        return self._get_ob(),{}
+        return self._get_ob(), {}
 
     def step(self, action):
         assert self.action_space.contains(action), "%r (%s) invalid" % (

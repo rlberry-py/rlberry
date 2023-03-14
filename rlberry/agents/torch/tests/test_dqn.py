@@ -135,7 +135,7 @@ def test_dqn_agent_manager_classic_env():
     assert loaded_agent_manager
 
     # test the agent
-    state,info = test_load_env.reset()
+    state, info = test_load_env.reset()
     for tt in range(50):
         action = loaded_agent_manager.get_agent_instances()[0].policy(state)
         next_s, _, terminated, truncated, test = test_load_env.step(action)

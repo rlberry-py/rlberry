@@ -194,7 +194,7 @@ class SpringCartPole(RenderInterface2D, Model):
         else:
             self.state = rand_state
         self.state_ = rand_state
-        return self.state,{}
+        return self.state, {}
 
     def _reward(self):
         state = self.state

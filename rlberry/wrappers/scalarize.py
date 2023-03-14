@@ -10,9 +10,9 @@ class ScalarizeEnvWrapper(Wrapper):
     def __init__(self, env):
         Wrapper.__init__(self, env)
 
-    def reset(self,seed=None,options=None):
-        obs,infos = self.env.reset(seed=seed,options=options)
-        return obs[0],infos[0]
+    def reset(self, seed=None, options=None):
+        obs, infos = self.env.reset(seed=seed, options=options)
+        return obs[0], infos[0]
 
     def step(self, action):
         observation, reward, terminated, truncated, info = self.env.step(
