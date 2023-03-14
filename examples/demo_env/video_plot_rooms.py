@@ -30,13 +30,13 @@ print(info)
 env.enable_rendering()
 
 for _ in range(10):
-    state,info = env.reset()
+    observation,info = env.reset()
     for tt in range(horizon):
-        # action = agent.policy(state)
+        # action = agent.policy(observation)
         action = env.action_space.sample()
-        next_s, _, done, _ = env.step(action)
+        observation, reward, terminated, truncated, info= env.step(action)
+        done = terminated or truncated
         if done:
             break
-        state = next_s
 env.render()
 video = env.save_video("_video/video_plot_rooms.mp4")

@@ -355,12 +355,13 @@ class RSKernelUCBVIAgent(AgentWithSimplePolicy):
     def _run_episode(self):
         # interact for H steps
         episode_rewards = 0
-        state,info = self.env.reset()
+        observation,info = self.env.reset()
         for hh in range(self.horizon):
-            action = self._get_action(state, hh)
-            next_state, reward, done, _ = self.env.step(action)
-            self._update(state, action, next_state, reward)
-            state = next_state
+            action = self._get_action(observation, hh)
+            next_observation, reward, terminated, truncated, info  = self.env.step(action)
+            done = terminated or truncated
+            self._update(observation, action, next_observation, reward)
+            observation = next_observation
             episode_rewards += reward
 
             if done:

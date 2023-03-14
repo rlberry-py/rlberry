@@ -94,13 +94,13 @@ if "render_modes" in env.metadata:
         "render_modes"
     ]  # bug with some 'gym' version
 
-state,info = env.reset()
+observation,info = env.reset()
 for tt in range(30000):
-    action = tuned_agent.get_agent_instances()[0].policy(state)
-    next_s, _, done, test = env.step(action)
+    action = tuned_agent.get_agent_instances()[0].policy(observation)
+    observation, reward, terminated, truncated, info = env.step(action)
+    done = terminated or truncated
     if done:
         break
-    state = next_s
 
 env.close()
 

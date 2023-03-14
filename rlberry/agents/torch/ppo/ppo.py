@@ -225,13 +225,14 @@ class PPOAgent(AgentWithSimplePolicy):
         timesteps_counter = 0
         episode_rewards = 0.0
         episode_timesteps = 0
-        state,info = self.env.reset()
+        observation,info = self.env.reset()
 
         while timesteps_counter < budget:
             # running policy_old
-            state = torch.from_numpy(state).float().to(self.device)
-            action, action_logprob = self._select_action(state)
-            next_state, reward, done, _ = self.env.step(action)
+            observation = torch.from_numpy(observation).float().to(self.device)
+            action, action_logprob = self._select_action(observation)
+            next_observation, reward, terminated, truncated, info = self.env.step(action)
+            done = terminated or truncated
             if self._policy.ctns_actions:
                 action = torch.from_numpy(action).float().to(self.device)
             else:
@@ -241,7 +242,7 @@ class PPOAgent(AgentWithSimplePolicy):
 
             self.memory.append(
                 {
-                    "states": state,
+                    "states": observation,
                     "actions": action,
                     "rewards": reward,
                     "dones": done,
@@ -253,7 +254,7 @@ class PPOAgent(AgentWithSimplePolicy):
             self.total_timesteps += 1
             timesteps_counter += 1
             episode_timesteps += 1
-            state = next_state
+            observation = next_observation
 
             if self.total_timesteps % self.n_steps == 0:
                 self._update()
@@ -272,7 +273,7 @@ class PPOAgent(AgentWithSimplePolicy):
                     )
                 episode_rewards = 0.0
                 episode_timesteps = 0
-                state,info = self.env.reset()
+                observation,info = self.env.reset()
 
     def _select_action(self, state):
         action_dist = self._policy_old(state)

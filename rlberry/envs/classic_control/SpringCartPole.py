@@ -287,9 +287,10 @@ class SpringCartPole(RenderInterface2D, Model):
             self.state = self.transform_states(ns)
         else:
             self.state = ns
-        terminal = self._terminal()
+        terminated = self._terminal()
+        truncated = False
         reward = self._reward()[0]
-        return self.state, reward, terminal, {}
+        return self.state, reward, terminated, truncated, {}
 
     def _terminal(self):
         s = self.state_

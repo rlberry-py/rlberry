@@ -105,9 +105,9 @@ class TwinRooms(RenderInterface2D, Model):
         if self.is_render_enabled():
             self.append_state_for_rendering(self.state)
 
-        next_state, reward, done, info = self.sample(self.state, action)
+        next_state, reward, terminated, truncated, info = self.sample(self.state, action)
         self.state = next_state
-        return self.state.copy(), reward, done, info
+        return self.state.copy(), reward, terminated, truncated, info
 
     def sample(self, state, action):
         delta = self.action_displacement
@@ -132,10 +132,11 @@ class TwinRooms(RenderInterface2D, Model):
         next_state = self._clip_to_room(next_state)
 
         reward = self._reward_fn(state)
-        done = False
+        terminated = False
+        truncated = False
         info = {}
 
-        return next_state, reward, done, info
+        return next_state, reward, terminated, truncated, info
 
     #
     # Code for rendering

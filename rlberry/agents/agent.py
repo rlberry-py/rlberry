@@ -473,7 +473,7 @@ class AgentWithSimplePolicy(Agent):
     >>>             observation,info = self.env.reset()
     >>>             for ep in range(budget):
     >>>                 action = self.policy(observation)
-    >>>                 observation, reward, done, _ = self.env.step(action)
+    >>>                 observation, reward, terminated, truncated, info = self.env.step(action)
     >>>
     >>>         def policy(self, observation):
     >>>             return self.env.action_space.sample()  # choose an action at random
@@ -513,7 +513,8 @@ class AgentWithSimplePolicy(Agent):
             tt = 0
             while tt < eval_horizon:
                 action = self.policy(observation)
-                observation, reward, done, _ = self.eval_env.step(action)
+                observation, reward, terminated, truncated, info = self.eval_env.step(action)
+                done = terminated or truncated
                 episode_rewards[sim] += reward * np.power(gamma, tt)
                 tt += 1
                 if done:

@@ -350,9 +350,9 @@ class GridWorld(RenderInterface2D, FiniteMDP):
             self.append_state_for_rendering(self.state)
 
         # take step
-        next_state, reward, done, info = self.sample(self.state, action)
+        next_state, reward, terminated, truncated, info = self.sample(self.state, action)
         self.state = next_state
-        return next_state, reward, done, info
+        return next_state, reward, terminated, truncated, info
 
     #
     # Code for rendering

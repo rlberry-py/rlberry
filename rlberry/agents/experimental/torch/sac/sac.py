@@ -248,13 +248,14 @@ class SACAgent(AgentWithSimplePolicy):
     def _run_episode(self):
         # interact for H steps
         episode_rewards = 0
-        state,info = self.env.reset()
+        observation,info = self.env.reset()
         done = False
 
         while not done:
             # running policy_old
-            action, action_logprob = self._select_action(state)
-            next_state, reward, done, info = self.env.step(action)
+            action, action_logprob = self._select_action(observation)
+            next_observation, reward, terminated, truncated, info = self.env.step(action)
+            done = terminated or truncated
             episode_rewards += reward
 
             # check whether to use bonus
@@ -265,11 +266,11 @@ class SACAgent(AgentWithSimplePolicy):
 
             # save in batch
             self.replay_buffer.push(
-                (state, next_state, action, action_logprob, reward + bonus, done)
+                (observation, next_observation, action, action_logprob, reward + bonus, done)
             )
 
-            # update state
-            state = next_state
+            # update observation
+            observation = next_observation
 
         # update; TODO this condition "self.episode % self.batch_size == 0:" seems to be  completely random to me
         # implement self.episode -> self.steps

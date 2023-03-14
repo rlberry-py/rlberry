@@ -41,9 +41,10 @@ class Bandit(Model):
         assert action < self.n_arms
 
         reward = self.laws[action].rvs(random_state=self.rng)
-        done = True
+        terminated = True
+        truncated = False
 
-        return 0, reward, done, {}
+        return 0, reward, terminated, truncated, {}
 
     def reset(self,seed=None,option=None):
         """

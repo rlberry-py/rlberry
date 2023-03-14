@@ -55,7 +55,7 @@ class BanditWithSimplePolicy(AgentWithSimplePolicy):
             # choose the optimal action
             # for demo purpose, we will always choose action 0
             action = 0
-            _, reward, _, _ = self.env.step(action)
+            _, reward, _, _, _  = self.env.step(action)
             self.tracker.update(action, reward)
             rewards[ep] = reward
 

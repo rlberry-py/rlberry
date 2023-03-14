@@ -11,7 +11,7 @@ import pytest
     "env, agent_class",
     [
         ((MountainCar, {}), A2CAgent),
-        ((gym_make, {"id": "MountainCar-v0","old_gym":True}), A2CAgent),
+        ((gym_make, {"id": "MountainCar-v0"}), A2CAgent),
         ((gym.make, {"id": "MountainCar-v0"}), A2CAgent),   #Crash because we can not add the compatibility wrapper easily 
     ],
 )

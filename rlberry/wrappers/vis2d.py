@@ -116,7 +116,7 @@ class Vis2dWrapper(Wrapper):
         return self.current_state,info
 
     def step(self, action):
-        observation, reward, done, info = self.env.step(action)
+        observation, reward, terminated, truncated, info  = self.env.step(action)
         # initialize new trajectory
         if self.current_step == 0:
             self.memory.end_trajectory()
@@ -139,7 +139,7 @@ class Vis2dWrapper(Wrapper):
         self.memory.append(transition)
         # update current state
         self.current_state = observation
-        return observation, reward, done, info
+        return observation, reward, terminated, truncated, info 
 
     def plot_trajectories(
         self,

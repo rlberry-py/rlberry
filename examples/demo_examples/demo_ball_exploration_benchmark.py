@@ -21,12 +21,12 @@ print(info)
 
 # evaluate policy in a deterministic version of the environment
 env.enable_rendering()
-state,info = env.reset()
+observation,info = env.reset()
 for tt in range(5 * env.horizon):
     hh = tt
     if hh >= env.horizon:
         hh = tt % env.horizon
-    action = agent.policy(state)
-    next_s, _, _, _ = env.step(action)
-    state = next_s
+    action = agent.policy(observation)
+    observation, reward, terminated, truncated, info = env.step(action)
+    done = terminated or truncated
 env.render()

@@ -104,7 +104,7 @@ class MBQVIAgent(AgentWithSimplePolicy):
         for ss in range(S):
             for aa in range(A):
                 for _ in range(self.n_samples):
-                    next_state, reward, _, _ = self.env.sample(ss, aa)
+                    next_state, reward, _, _, _ = self.env.sample(ss, aa)
                     self._update(ss, aa, next_state, reward)
 
                     count += 1

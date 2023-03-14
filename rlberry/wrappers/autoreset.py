@@ -22,13 +22,13 @@ class AutoResetWrapper(Wrapper):
         return self.env.reset(seed=seed,options=options)
 
     def step(self, action):
-        observation, reward, done, info = self.env.step(action)
+        observation, reward, terminated, truncated, info = self.env.step(action)
         self.current_step += 1
         # At H, always return to the initial state.
         # Also, set done to True.
-        #TODO : update the reset, and replace done, by truncated and terminated
         if self.current_step == self.horizon:
             self.current_step = 0
             observation,info = self.env.reset()
-            done = True
-        return observation, reward, done, info
+            terminated = True
+            truncated = False
+        return observation, reward, terminated, truncated, info

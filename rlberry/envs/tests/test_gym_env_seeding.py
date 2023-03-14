@@ -6,7 +6,6 @@ from rlberry.seeding import Seeder
 from rlberry.envs import gym_make
 
 from copy import deepcopy
-from gymnasium.wrappers import StepAPICompatibility
 
 gym_envs = [
     "Acrobot-v1",
@@ -17,12 +16,13 @@ gym_envs = [
 
 def get_env_trajectory(env, horizon):
     states = []
-    ss,info = env.reset()
+    observation,info = env.reset()
     for ii in range(horizon):
-        states.append(ss)
-        ss, _, done, _ = env.step(env.action_space.sample())
+        states.append(observation)
+        observation, _, terminated, truncated, _ = env.step(env.action_space.sample())
+        done = terminated or truncated
         if done:
-            ss,info = env.reset()
+            observation,info = env.reset()
     return states
 
 
@@ -77,13 +77,8 @@ def test_gym_safe_reseed(env_name):
     seeder_aux = Seeder(123)
 
     env1 = gym.make(env_name)
-    env1 = StepAPICompatibility(env1,output_truncation_bool=False)
-
     env2 = gym.make(env_name)
-    env2 = StepAPICompatibility(env2,output_truncation_bool=False)
-
     env3 = gym.make(env_name)
-    env3 = StepAPICompatibility(env3,output_truncation_bool=False)
 
     safe_reseed(env1, seeder)
     safe_reseed(env2, seeder)

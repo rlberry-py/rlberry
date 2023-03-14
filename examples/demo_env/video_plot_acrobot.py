@@ -25,11 +25,11 @@ agent = RSUCBVIAgent(
 agent.fit(budget=n_episodes)
 
 env.enable_rendering()
-state,info = env.reset()
+observation,info = env.reset()
 for tt in range(2 * agent.horizon):
-    action = agent.policy(state)
-    next_state, reward, done, _ = env.step(action)
-    state = next_state
+    action = agent.policy(observation)
+    observation, reward, terminated, truncated, info = env.step(action)
+    done = terminated or truncated
 
 # Save video
 video = env.save_video("_video/video_plot_acrobot.mp4")

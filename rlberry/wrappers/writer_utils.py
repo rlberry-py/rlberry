@@ -26,7 +26,7 @@ class WriterWrapper(Wrapper):
         self.iteration_ = 0
 
     def step(self, action):
-        observation, reward, done, info = self.env.step(action)
+        observation, reward, terminated, truncated, info = self.env.step(action)
 
         self.iteration_ += 1
         if self.write_scalar == "reward":
@@ -39,4 +39,4 @@ class WriterWrapper(Wrapper):
         else:
             raise ValueError("write_scalar %s is not known" % (self.write_scalar))
 
-        return observation, reward, done, info
+        return observation, reward, terminated, truncated, info 

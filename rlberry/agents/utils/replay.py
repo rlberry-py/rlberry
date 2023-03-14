@@ -64,7 +64,8 @@ class ReplayBuffer:
     >>>     obs,info = env.reset()
     >>>     while not done:
     >>>         action = env.action_space.sample()
-    >>>         next_obs, reward, done, info = env.step(action)
+    >>>         next_observation, reward, terminated, truncated, info = env.step(action)
+    >>>         done = terminated or truncated
     >>>         buffer.append(
     >>>             {
     >>>                 "observations": obs,
@@ -72,7 +73,7 @@ class ReplayBuffer:
     >>>                 "rewards": reward
     >>>             }
     >>>         )
-    >>>         obs = next_obs
+    >>>         obs = next_observation
     >>>         if done:
     >>>             buffer.end_episode()
     >>> # Sample a batch of 32 sub-trajectories of length 100.

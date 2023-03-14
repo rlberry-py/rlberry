@@ -378,7 +378,8 @@ class DQNAgent(AgentWithSimplePolicy):
             else:
                 self._timesteps_since_last_update += 1
                 action = self._policy(observation, evaluation=False)
-            next_obs, reward, done, _ = self.env.step(action)
+            next_observation, reward, terminated, truncated, info  = self.env.step(action)
+            done = terminated or truncated
 
             # store data
             episode_rewards += reward
@@ -388,7 +389,7 @@ class DQNAgent(AgentWithSimplePolicy):
                     "actions": action,
                     "rewards": reward,
                     "dones": done,
-                    "next_observations": next_obs,
+                    "next_observations": next_observation,
                 }
             )
 
@@ -396,7 +397,7 @@ class DQNAgent(AgentWithSimplePolicy):
             self._total_timesteps += 1
             timesteps_counter += 1
             episode_timesteps += 1
-            observation = next_obs
+            observation = next_observation
 
             # update
             run_update, n_gradient_steps = self._must_update(done)

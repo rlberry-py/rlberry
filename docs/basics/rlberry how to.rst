@@ -172,7 +172,8 @@ array
             observation,info = self.eval_env.reset()
             for tt in range(eval_horizon):
                 action = self.policy(observation)
-                observation, reward, done, _ = self.eval_env.step(action)
+                observation, reward, terminated, truncated, info = self.eval_env.step(action)
+                done = terminated or truncated
                 episode_regret[tt] = 1-reward # Optimal reward is 1
             return episode_regret
     
@@ -191,7 +192,8 @@ array
             observation,info = self.eval_env.reset()
             for tt in range(eval_horizon):
                 action = self.policy(observation)
-                observation, reward, done, _ = self.eval_env.step(action)
+                observation, reward, terminated, truncated, info = self.eval_env.step(action)
+                done = terminated or truncated
                 episode_regret[tt] = 1-reward # Optimal reward is 1
     
             return episode_regret

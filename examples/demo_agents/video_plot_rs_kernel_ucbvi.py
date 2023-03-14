@@ -32,18 +32,18 @@ agent = RSKernelUCBVIAgent(
 agent.fit(budget=500)
 
 env.enable_rendering()
-state,info = env.reset()
+observation,info = env.reset()
 
 time_before_done = 0
 ended = False
 for tt in range(2 * agent.horizon):
-    action = agent.policy(state)
-    next_state, reward, done, _ = env.step(action)
+    action = agent.policy(observation)
+    observation, reward, terminated, truncated, info = env.step(action)
+    done = terminated or truncated
     if not done and not ended:
         time_before_done += 1
     if done:
         ended = True
-    state = next_state
 
 print("steps to achieve the goal for the first time = ", time_before_done)
 video = env.save_video("_video/video_plot_rs_kernel_ucbvi.mp4")

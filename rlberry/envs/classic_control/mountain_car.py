@@ -101,10 +101,10 @@ class MountainCar(RenderInterface2D, Model):
         if self.is_render_enabled():
             self.append_state_for_rendering(np.array(self.state))
 
-        next_state, reward, done, info = self.sample(self.state, action)
+        next_state, reward, terminated, truncated, info = self.sample(self.state, action)
         self.state = next_state.copy()
 
-        return next_state, reward, done, info
+        return next_state, reward, terminated, truncated, info
 
     def reset(self,seed=None,options=None):
         self.state = np.array([self.rng.uniform(low=-0.6, high=-0.4), 0])
@@ -130,13 +130,15 @@ class MountainCar(RenderInterface2D, Model):
         if position == self.min_position and velocity < 0:
             velocity = 0
 
-        done = bool(position >= self.goal_position and velocity >= self.goal_velocity)
+        terminated = bool(position >= self.goal_position and velocity >= self.goal_velocity)
+        truncated = False
+        done = terminated or truncated
         reward = 0.0
         if done:
             reward = 1.0
 
         next_state = np.array([position, velocity])
-        return next_state, reward, done, {}
+        return next_state, reward, terminated, truncated, {}
 
     @staticmethod
     def _height(xs):

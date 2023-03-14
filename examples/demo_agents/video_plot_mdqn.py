@@ -46,9 +46,10 @@ vid = video_recorder.VideoRecorder(
 
 for episode in range(3):
     done = False
-    state,info = env.reset()
+    observation,info = env.reset()
     while not done:
-        action = agent.policy(state)
-        state, reward, done, _ = env.step(action)
+        action = agent.policy(observation)
+        observation, reward, terminated, truncated, info = env.step(action)
+        done = terminated or truncated
         vid.capture_frame()
 env.close()

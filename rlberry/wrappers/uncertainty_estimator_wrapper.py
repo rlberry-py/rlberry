@@ -19,7 +19,7 @@ class UncertaintyEstimatorWrapper(Wrapper):
     -------
 
     ```
-    observation, reward, done, info = env.step(action)
+    observation, reward, terminated, truncated, info  = env.step(action)
     bonus = info['exploration_bonus']
     ```
 
@@ -71,7 +71,8 @@ class UncertaintyEstimatorWrapper(Wrapper):
         return self.bonus(state, action)
 
     def step(self, action):
-        observation, reward, done, info = self.env.step(action)
+        observation, reward, terminated, truncated, info = self.env.step(action)
+        done = terminated or truncated
 
         # update uncertainty and compute bonus
         bonus = self._update_and_get_bonus(
@@ -92,7 +93,7 @@ class UncertaintyEstimatorWrapper(Wrapper):
 
         info["exploration_bonus"] = bonus
 
-        return observation, reward, done, info
+        return observation, reward, terminated, truncated, info 
 
     def sample(self, state, action):
         logger.warning(

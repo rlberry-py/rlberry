@@ -21,10 +21,10 @@ agent = RSUCBVIAgent(env, gamma=0.99, horizon=horizon, bonus_scale_factor=0.1)
 agent.fit(budget=500)
 
 env.enable_rendering()
-state,info = env.reset()
+observation,info = env.reset()
 for tt in range(200):
-    action = agent.policy(state)
-    next_state, reward, done, _ = env.step(action)
-    state = next_state
+    action = agent.policy(observation)
+    observation, reward, terminated, truncated, info = env.step(action)
+    done = terminated or truncated
 
 video = env.save_video("_video/video_plot_rsucbvi.mp4")

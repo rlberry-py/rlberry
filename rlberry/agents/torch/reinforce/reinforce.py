@@ -142,11 +142,12 @@ class REINFORCEAgent(AgentWithSimplePolicy):
     def _run_episode(self):
         # interact for H steps
         episode_rewards = 0
-        state,info = self.env.reset()
+        observation,info = self.env.reset()
         for _ in range(self.horizon):
             # running policy
-            action = self.policy(state)
-            next_state, reward, done, info = self.env.step(action)
+            action = self.policy(observation)
+            next_observation, reward, terminated, truncated, info  = self.env.step(action)
+            done = terminated or truncated
 
             # check whether to use bonus
             bonus = 0.0
@@ -155,7 +156,7 @@ class REINFORCEAgent(AgentWithSimplePolicy):
                     bonus = info["exploration_bonus"]
 
             # save in batch
-            self.memory.states.append(state)
+            self.memory.states.append(observation)
             self.memory.actions.append(action)
             self.memory.rewards.append(reward + bonus)  # add bonus here
             self.memory.is_terminals.append(done)
@@ -164,8 +165,8 @@ class REINFORCEAgent(AgentWithSimplePolicy):
             if done:
                 break
 
-            # update state
-            state = next_state
+            # update observation
+            observation = next_observation
 
         # update
         self.episode += 1

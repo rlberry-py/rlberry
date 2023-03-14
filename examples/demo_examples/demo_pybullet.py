@@ -17,9 +17,9 @@ agent.set_writer(SummaryWriter())
 agent.fit(budget=100)
 
 while True:
-    state,info = env.reset()
+    observation,info = env.reset()
     done = False
     while not done:
-        action = agent.policy(state)
-        next_state, reward, done, _ = env.step(action)
-        state = next_state
+        action = agent.policy(observation)
+        observation, reward, terminated, truncated, info = env.step(action)
+        done = terminated or truncated

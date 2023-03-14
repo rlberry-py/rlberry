@@ -38,7 +38,7 @@ def _check_nan(env: gym.Env, check_inf: bool = True) -> None:
     """Check for NaN and Inf."""
     for _ in range(10):
         action = env.action_space.sample()
-        observation, reward, _, _ = env.step(action)
+        observation, reward, _, _, _ = env.step(action)
 
         if np.any(np.isnan(observation)):
             logger.warn("Encountered NaN value in observations.")
@@ -130,48 +130,51 @@ def _check_returned_values(
     Check the returned values by the env when calling `.reset()` or `.step()` methods.
     """
     # because env inherits from gymnasium.Env, we assume that `reset()` and `step()` methods exists
-    obs,info = env.reset()
+    observation,info = env.reset()
 
     if isinstance(observation_space, spaces.Dict):
         assert isinstance(
-            obs, dict
+            observation, dict
         ), "The observation returned by `reset()` must be a dictionary"
         for key in observation_space.spaces.keys():
             try:
-                _check_obs(obs[key], observation_space.spaces[key], "reset")
+                _check_obs(observation[key], observation_space.spaces[key], "reset")
             except AssertionError as e:
                 raise AssertionError(f"Error while checking key={key}: " + str(e))
     else:
-        _check_obs(obs, observation_space, "reset")
+        _check_obs(observation, observation_space, "reset")
 
     # Sample a random action
     action = action_space.sample()
     data = env.step(action)
 
     assert (
-        len(data) == 4
-    ), "The `step()` method must return four values: obs, reward, done, info"
+        len(data) == 5
+    ), "The `step()` method must return four values: observation, reward, terminated, truncated, info "
 
     # Unpack
-    obs, reward, done, info = data
+    observation, reward, terminated, truncated, info = data
 
     if isinstance(observation_space, spaces.Dict):
         assert isinstance(
-            obs, dict
+            observation, dict
         ), "The observation returned by `step()` must be a dictionary"
         for key in observation_space.spaces.keys():
             try:
-                _check_obs(obs[key], observation_space.spaces[key], "step")
+                _check_obs(observation[key], observation_space.spaces[key], "step")
             except AssertionError as e:
                 raise AssertionError(f"Error while checking key={key}: " + str(e))
 
     else:
-        _check_obs(obs, observation_space, "step")
+        _check_obs(observation, observation_space, "step")
 
     # We also allow int because the reward will be cast to float
     assert isinstance(
         reward, (float, int, np.float32)
     ), "The reward returned by `step()` must be a float"
+    assert isinstance(terminated, bool), "The `done` signal must be a boolean"
+    assert isinstance(truncated, bool), "The `done` signal must be a boolean"
+    done = terminated or truncated
     assert isinstance(done, bool), "The `done` signal must be a boolean"
     assert isinstance(
         info, dict

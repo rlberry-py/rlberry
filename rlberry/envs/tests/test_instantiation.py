@@ -38,14 +38,14 @@ def test_instantiation(ModelClass):
             for _ in range(50):
                 assert env.observation_space.contains(state)
                 action = env.action_space.sample()
-                next_s, _, _, _ = env.step(action)
+                next_s, _, _, _, _ = env.step(action)
                 state = next_s
 
     if env.is_generative():
         for _ in range(100):
             state = env.observation_space.sample()
             action = env.action_space.sample()
-            next_s, _, _, _ = env.sample(state, action)
+            next_s, _, _, _, _ = env.sample(state, action)
             assert env.observation_space.contains(next_s)
 
 
@@ -122,7 +122,7 @@ def test_four_room(reward_free, difficulty, array_observation):
     )
 
     initial_state,info = env.reset()
-    next_state, reward, _, _ = env.step(1)
+    next_state, reward, _, _ , _= env.step(1)
 
     assert env.observation_space.contains(initial_state)
     assert env.observation_space.contains(next_state)
@@ -151,7 +151,7 @@ def test_six_room(reward_free, array_observation):
     env = SixRoom(reward_free=reward_free, array_observation=array_observation)
 
     initial_state,info = env.reset()
-    next_state, reward, _, _ = env.step(1)
+    next_state, reward, _, _, _ = env.step(1)
 
     assert env.observation_space.contains(initial_state)
     assert env.observation_space.contains(next_state)
@@ -177,7 +177,7 @@ def test_apple_gold(reward_free, array_observation):
     env = AppleGold(reward_free=reward_free, array_observation=array_observation)
 
     initial_state,info = env.reset()
-    next_state, reward, _, _ = env.step(1)
+    next_state, reward, _, _ ,_ = env.step(1)
     assert env.observation_space.contains(initial_state)
     assert env.observation_space.contains(next_state)
 
@@ -207,7 +207,7 @@ def test_n_room(reward_free, array_observation, initial_state_distribution):
     )
 
     initial_state,info = env.reset()
-    next_state, reward, _, _ = env.step(1)
+    next_state, reward, _, _, _ = env.step(1)
 
     if initial_state_distribution == "uniform":
         assert env.initial_state_distribution[0] == 1.0 / env.observation_space.n
@@ -233,7 +233,7 @@ def test_pipeline():
         "wrappers": [(RescaleRewardWrapper, {"reward_range": (0, 1)})],
     }
     env = env_ctor(**env_kwargs)
-    _, reward, _, _ = env.step(0)
+    _, reward, _, _, _ = env.step(0)
     assert (reward <= 1) and (reward >= 0)
 
     env_ctor, env_kwargs = PipelineEnv, {

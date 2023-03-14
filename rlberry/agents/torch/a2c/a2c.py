@@ -189,7 +189,8 @@ class A2CAgent(AgentWithSimplePolicy):
         observation,info = self.env.reset()
         while timesteps_counter < budget:
             action = self._select_action(observation)
-            next_obs, reward, done, _ = self.env.step(action)
+            next_observation, reward, terminated, truncated, info = self.env.step(action)
+            done = terminated or truncated
             # if self._policy.ctns_actions:
             #     action = torch.from_numpy(action).float().to(self.device)
             # store data
@@ -207,7 +208,7 @@ class A2CAgent(AgentWithSimplePolicy):
             self.total_timesteps += 1
             timesteps_counter += 1
             episode_timesteps += 1
-            observation = next_obs
+            observation = next_observation
 
             # update
             if self.total_timesteps % self.batch_size == 0:

@@ -1,11 +1,11 @@
 import gymnasium as gym
-from gymnasium.wrappers import StepAPICompatibility
+# from gymnasium.wrappers import StepAPICompatibility
 
 from rlberry.envs.basewrapper import Wrapper
 import numpy as np
 
 
-def gym_make(id, old_gym=True, wrap_spaces=False, **kwargs):
+def gym_make(id, wrap_spaces=False, **kwargs):
     """
     Same as gym.make, but wraps the environment
     to ensure unified seeding with rlberry.
@@ -30,11 +30,11 @@ def gym_make(id, old_gym=True, wrap_spaces=False, **kwargs):
     if "module_import" in kwargs:
         __import__(kwargs.pop("module_import"))
 
-    if old_gym:
-        env = gym.make(id, **kwargs)
-        env = StepAPICompatibility(env,output_truncation_bool=False)
-    else:
-        env = gym.make(id, **kwargs)
+    # if old_gym:
+    #     env = gym.make(id, **kwargs)
+    #     env = StepAPICompatibility(env,output_truncation_bool=False)
+    # else:
+    env = gym.make(id, **kwargs)
 
     return Wrapper(env, wrap_spaces=wrap_spaces)
 
@@ -69,7 +69,6 @@ def atari_make(id, scalarize=None, **kwargs):
 
         env = ScalarizeEnvWrapper(env)
 
-    # env = StepAPICompatibility(env,output_truncation_bool=False)
     return env
 
 
@@ -96,5 +95,6 @@ class AtariImageToPyTorch(Wrapper):
         return self.observation(obs),info
 
     def step(self, action):
-        next_obs, reward, done, info = self.env.step(action)
-        return self.observation(next_obs), reward, done, info
+        next_observation, reward, terminated, truncated, info = self.env.step(action)
+        done = terminated or truncated
+        return self.observation(next_observation), reward, done, info

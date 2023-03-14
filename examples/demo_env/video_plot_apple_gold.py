@@ -21,12 +21,12 @@ print(info)
 
 env.enable_rendering()
 
-state,info = env.reset()
+observation,info = env.reset()
 for tt in range(5):
-    action = agent.policy(state)
-    next_s, _, done, _ = env.step(action)
+    action = agent.policy(observation)
+    observation, reward, terminated, truncated, info = env.step(action)
+    done = terminated or truncated
     if done:
         break
-    state = next_s
 env.render()
 video = env.save_video("_video/video_plot_apple_gold.mp4")

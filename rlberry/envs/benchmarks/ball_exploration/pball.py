@@ -192,15 +192,16 @@ does not make true projections onto the lp ball."
         next_s = projection_to_pball(next_s, self.p)
 
         # done and reward
-        done = False
+        terminated = False
+        truncated = False
         reward = self.compute_reward_at(state)
 
-        return next_s, reward, done, {}
+        return next_s, reward, terminated, truncated, {}
 
     def step(self, action):
-        next_s, reward, done, info = self.sample(self.state, action)
+        next_s, reward, terminated, truncated, info = self.sample(self.state, action)
         self.state = next_s.copy()
-        return next_s, reward, done, info
+        return next_s, reward, terminated, truncated, info
 
     def compute_reward_at(self, x):
         reward = 0.0

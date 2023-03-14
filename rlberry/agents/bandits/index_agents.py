@@ -87,7 +87,7 @@ class IndexAgent(BanditWithSimplePolicy):
                 indices = self.index_function(self.tracker)
                 action = np.argmax(indices)
 
-            _, reward, _, _ = self.env.step(action)
+            _, reward, _, _, _  = self.env.step(action)
 
             # Feed the played action and the resulting reward to the tracker
             self.tracker.update(action, reward)

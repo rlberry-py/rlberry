@@ -3,22 +3,18 @@ import numpy as np
 from rlberry.agents.utils import replay
 from rlberry.envs.finite import GridWorld
 from gymnasium.wrappers import TimeLimit
-from gymnasium.wrappers import StepAPICompatibility
 
 def _get_filled_replay(max_replay_size):
     """runs env for ~ 2 * max_replay_size timesteps."""
     env = GridWorld(terminal_states=None)
-    #compatibility with gym V0.21
-    env = StepAPICompatibility(env,output_truncation_bool=True)  #compatibility old env -> gym0.26/gymnasiume
     env = TimeLimit(env, max_episode_steps=200)                  #use gymnasium wrapper
-    env = StepAPICompatibility(env,output_truncation_bool=False) #compatibility gymnasium -> old env (our tests)
     env.reseed(123)
 
     rng = np.random.default_rng(456)
     buffer = replay.ReplayBuffer(
         max_replay_size,
         rng,
-        max_episode_steps=env.env._max_episode_steps,  #inside the 'TimeLimit' wrapper
+        max_episode_steps=env._max_episode_steps,  #inside the 'TimeLimit' wrapper
         enable_prioritized=True,
     )
     buffer.setup_entry("observations", np.float32)
@@ -32,20 +28,21 @@ def _get_filled_replay(max_replay_size):
         if total_time > 2 * buffer._max_replay_size:
             break
         done = False
-        obs,info = env.reset()
+        observation,info = env.reset()
         while not done:
             total_time += 1
             action = env.action_space.sample()
-            next_obs, reward, done, _ = env.step(action)
+            next_observation, reward, terminated, truncated, info = env.step(action)
+            done = terminated or truncated
             buffer.append(
                 {
-                    "observations": obs,
+                    "observations": observation,
                     "actions": action,
                     "rewards": reward,
                     "dones": done,
                 }
             )
-            obs = next_obs
+            observation = next_observation
             if done:
                 buffer.end_episode()
     return buffer, env
@@ -120,7 +117,8 @@ def test_replay_samples_valid_indices(sampling_mode):
         while not done:
             total_time += 1
             action = env.action_space.sample()
-            next_obs, reward, done, _ = env.step(action)
+            next_obs, reward, terminated, truncated, _ = env.step(action)
+            done = terminated or truncated
             buffer.append(
                 {
                     "observations": obs,

@@ -96,10 +96,11 @@ if __name__ == "__main__":
     # Visualize policy
     env = stats_alternative.build_eval_env()
     agent = stats_alternative.agent_handlers[0]
-    obs,info = env.reset()
+    observation,info = env.reset()
     for i in range(2500):
-        action = agent.policy(obs)
-        obs, reward, done, info = env.step(action)
+        action = agent.policy(observation)
+        observation, reward, terminated, truncated, info  = env.step(action)
+        done = terminated or truncated
         env.render()
         if done:
             break

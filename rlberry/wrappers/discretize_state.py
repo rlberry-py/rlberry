@@ -49,20 +49,20 @@ class DiscretizeStateWrapper(Wrapper):
         return self.get_discrete_state(obs),info
 
     def step(self, action):
-        next_state, reward, done, info = self.env.step(action)
-        next_state = binary_search_nd(next_state, self._bins)
-        return next_state, reward, done, info
+        next_observation, reward, terminated, truncated, info = self.env.step(action)
+        next_observation = binary_search_nd(next_observation, self._bins)
+        return next_observation, reward, terminated, truncated, info
 
     def sample(self, discrete_state, action):
         # map disctete state to continuous one
         assert self.observation_space.contains(discrete_state)
         continuous_state = self.get_continuous_state(discrete_state, randomize=True)
         # sample in the true environment
-        next_state, reward, done, info = self.env.sample(continuous_state, action)
+        next_state, reward, terminated, truncated, info = self.env.sample(continuous_state, action)
         # discretize next state
         next_state = binary_search_nd(next_state, self._bins)
 
-        return next_state, reward, done, info
+        return next_state, reward, terminated, truncated, info
 
     def get_discrete_state(self, continuous_state):
         return binary_search_nd(continuous_state, self._bins)

@@ -118,11 +118,11 @@ class FourRoom(GridWorld):
             self.append_state_for_rendering(self.state)
 
         # take step
-        next_state, reward, done, info = self.sample(self.state, action)
+        next_state, reward, terminated, truncated, info = self.sample(self.state, action)
         self.state = next_state
 
         state_to_return = self.state
         if self.array_observation:
             state_to_return = self._convert_index_to_float_coord(self.state)
 
-        return state_to_return, reward, done, info
+        return state_to_return, reward, terminated, truncated, info

@@ -95,7 +95,7 @@ class Pendulum(RenderInterface2D, Model):
         newthetadot = np.clip(newthetadot, -self.max_speed, self.max_speed)
 
         self.state = np.array([newtheta, newthetadot])
-        return self._get_ob(), -costs, False, {}
+        return self._get_ob(), -costs, False, False, {}
 
     def _get_ob(self):
         theta, thetadot = self.state

@@ -158,17 +158,18 @@ class OptQLAgent(AgentWithSimplePolicy):
     def _run_episode(self):
         # interact for H steps
         episode_rewards = 0
-        state,info = self.env.reset()
+        observation,info = self.env.reset()
         for hh in range(self.horizon):
-            action = self._get_action(state, hh)
-            next_state, reward, done, _ = self.env.step(action)
+            action = self._get_action(observation, hh)
+            next_observation, reward, terminated, truncated, info = self.env.step(action)
+            done = terminated or truncated
             episode_rewards += reward  # used for logging only
 
-            self.counter.update(state, action)
+            self.counter.update(observation, action)
 
-            self._update(state, action, next_state, reward, hh)
+            self._update(observation, action, next_observation, reward, hh)
 
-            state = next_state
+            observation = next_observation
             if done:
                 break
 

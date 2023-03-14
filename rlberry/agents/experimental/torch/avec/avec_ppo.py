@@ -223,12 +223,12 @@ class AVECPPOAgent(AgentWithSimplePolicy):
     def _run_episode(self):
         # interact for H steps
         episode_rewards = 0
-        state,info = self.env.reset()
+        observation,info = self.env.reset()
         for _ in range(self.horizon):
             # running policy_old
-            action = self._select_action(state)
-            next_state, reward, done, info = self.env.step(action)
-
+            action = self._select_action(observation)
+            observation, reward, terminated, truncated, info = self.env.step(action)
+            done = terminated or truncated
             # check whether to use bonus
             bonus = 0.0
             if self.use_bonus:
@@ -242,10 +242,7 @@ class AVECPPOAgent(AgentWithSimplePolicy):
 
             if done:
                 break
-
-            # update state
-            state = next_state
-
+            
         # update
         self.episode += 1
 
