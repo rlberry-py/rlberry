@@ -246,7 +246,9 @@ class NRoom(GridWorld):
             self.append_state_for_rendering(self.state)
 
         # take step
-        next_state, reward, terminated, truncated, info = self.sample(self.state, action)
+        next_state, reward, terminated, truncated, info = self.sample(
+            self.state, action
+        )
         self.state = next_state
 
         state_to_return = self.state

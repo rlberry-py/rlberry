@@ -39,4 +39,4 @@ class WriterWrapper(Wrapper):
         else:
             raise ValueError("write_scalar %s is not known" % (self.write_scalar))
 
-        return observation, reward, terminated, truncated, info 
+        return observation, reward, terminated, truncated, info

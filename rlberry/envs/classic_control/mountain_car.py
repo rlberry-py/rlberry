@@ -101,7 +101,9 @@ class MountainCar(RenderInterface2D, Model):
         if self.is_render_enabled():
             self.append_state_for_rendering(np.array(self.state))
 
-        next_state, reward, terminated, truncated, info = self.sample(self.state, action)
+        next_state, reward, terminated, truncated, info = self.sample(
+            self.state, action
+        )
         self.state = next_state.copy()
 
         return next_state, reward, terminated, truncated, info
@@ -130,7 +132,9 @@ class MountainCar(RenderInterface2D, Model):
         if position == self.min_position and velocity < 0:
             velocity = 0
 
-        terminated = bool(position >= self.goal_position and velocity >= self.goal_velocity)
+        terminated = bool(
+            position >= self.goal_position and velocity >= self.goal_velocity
+        )
         truncated = False
         done = terminated or truncated
         reward = 0.0

@@ -21,7 +21,7 @@ print(info)
 
 env.enable_rendering()
 
-observation,info = env.reset()
+observation, info = env.reset()
 for tt in range(5):
     action = agent.policy(observation)
     observation, reward, terminated, truncated, info = env.step(action)

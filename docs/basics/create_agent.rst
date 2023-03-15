@@ -46,7 +46,7 @@ The example below shows how to create an agent.
                 state, info = self.env.reset()
                 done = False
                 while not done:
-                    action = ...  
+                    action = ...
                     observation, reward, terminated, truncated, info = self.env.step(action)
                     done = terminated or truncated
                     rewards[ep] += reward

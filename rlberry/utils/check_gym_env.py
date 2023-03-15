@@ -130,7 +130,7 @@ def _check_returned_values(
     Check the returned values by the env when calling `.reset()` or `.step()` methods.
     """
     # because env inherits from gymnasium.Env, we assume that `reset()` and `step()` methods exists
-    observation,info = env.reset()
+    observation, info = env.reset()
 
     if isinstance(observation_space, spaces.Dict):
         assert isinstance(

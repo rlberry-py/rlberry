@@ -35,10 +35,10 @@ agent.fit(budget=100)
 
 env.enable_rendering()
 for ep in range(3):
-    observation,info = env.reset()
+    observation, info = env.reset()
     for tt in range(agent.horizon):
         action = agent.policy(observation)
-        observation, reward, terminated, truncated, info  = env.step(action)
+        observation, reward, terminated, truncated, info = env.step(action)
 
 try:
     xlim = [env.observation_space.low[0], env.observation_space.high[0]]

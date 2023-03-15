@@ -237,10 +237,12 @@ class UCBVIAgent(AgentWithSimplePolicy):
     def _run_episode(self):
         # interact for H steps
         episode_rewards = 0
-        observation,info = self.env.reset()
+        observation, info = self.env.reset()
         for hh in range(self.horizon):
             action = self._get_action(observation, hh)
-            next_observation, reward, terminated, truncated, info = self.env.step(action)
+            next_observation, reward, terminated, truncated, info = self.env.step(
+                action
+            )
             done = terminated or truncated
             episode_rewards += reward  # used for logging only
 

@@ -21,7 +21,7 @@ agent = RSUCBVIAgent(env, gamma=0.99, horizon=horizon, bonus_scale_factor=0.1)
 agent.fit(budget=500)
 
 env.enable_rendering()
-observation,info = env.reset()
+observation, info = env.reset()
 for tt in range(200):
     action = agent.policy(observation)
     observation, reward, terminated, truncated, info = env.step(action)

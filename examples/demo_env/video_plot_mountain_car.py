@@ -20,7 +20,7 @@ agent = MBQVIAgent(env, n_samples=40, gamma=0.99)
 agent.fit()
 
 env.enable_rendering()
-observation,info = env.reset()
+observation, info = env.reset()
 for tt in range(200):
     action = agent.policy(observation)
     observation, reward, terminated, truncated, info = env.step(action)

@@ -1,4 +1,5 @@
 import gymnasium as gym
+
 # from gymnasium.wrappers import StepAPICompatibility
 
 from rlberry.envs.basewrapper import Wrapper
@@ -83,7 +84,6 @@ class SB3_AtariImageToPyTorch(Wrapper):
 
     """
 
-
     def __init__(self, env):
         super(SB3_AtariImageToPyTorch, self).__init__(env)
         old_shape = self.observation_space.shape
@@ -103,4 +103,10 @@ class SB3_AtariImageToPyTorch(Wrapper):
     def step(self, actions):
         next_observations, rewards, done, infos = self.env.step(actions)
         # return self.observation(next_observations), rewards, done, [d["TimeLimit.truncated"] for d in infos], infos
-        return self.observation(next_observations), rewards, done, [None]*self.env.num_envs, infos
+        return (
+            self.observation(next_observations),
+            rewards,
+            done,
+            [None] * self.env.num_envs,
+            infos,
+        )

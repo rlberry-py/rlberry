@@ -121,8 +121,8 @@ def test_four_room(reward_free, difficulty, array_observation):
         array_observation=array_observation,
     )
 
-    initial_state,info = env.reset()
-    next_state, reward, _, _ , _= env.step(1)
+    initial_state, info = env.reset()
+    next_state, reward, _, _, _ = env.step(1)
 
     assert env.observation_space.contains(initial_state)
     assert env.observation_space.contains(next_state)
@@ -150,7 +150,7 @@ def test_four_room(reward_free, difficulty, array_observation):
 def test_six_room(reward_free, array_observation):
     env = SixRoom(reward_free=reward_free, array_observation=array_observation)
 
-    initial_state,info = env.reset()
+    initial_state, info = env.reset()
     next_state, reward, _, _, _ = env.step(1)
 
     assert env.observation_space.contains(initial_state)
@@ -176,8 +176,8 @@ def test_six_room(reward_free, array_observation):
 def test_apple_gold(reward_free, array_observation):
     env = AppleGold(reward_free=reward_free, array_observation=array_observation)
 
-    initial_state,info = env.reset()
-    next_state, reward, _, _ ,_ = env.step(1)
+    initial_state, info = env.reset()
+    next_state, reward, _, _, _ = env.step(1)
     assert env.observation_space.contains(initial_state)
     assert env.observation_space.contains(next_state)
 
@@ -206,7 +206,7 @@ def test_n_room(reward_free, array_observation, initial_state_distribution):
         initial_state_distribution=initial_state_distribution,
     )
 
-    initial_state,info = env.reset()
+    initial_state, info = env.reset()
     next_state, reward, _, _, _ = env.step(1)
 
     if initial_state_distribution == "uniform":

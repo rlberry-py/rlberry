@@ -58,7 +58,9 @@ class DiscretizeStateWrapper(Wrapper):
         assert self.observation_space.contains(discrete_state)
         continuous_state = self.get_continuous_state(discrete_state, randomize=True)
         # sample in the true environment
-        next_state, reward, terminated, truncated, info = self.env.sample(continuous_state, action)
+        next_state, reward, terminated, truncated, info = self.env.sample(
+            continuous_state, action
+        )
         # discretize next state
         next_state = binary_search_nd(next_state, self._bins)
 

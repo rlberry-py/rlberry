@@ -80,7 +80,9 @@ def test_lsvi_without_bonus():
         while count < N:
             state = agent.env.observation_space.sample()
             action = agent.env.action_space.sample()
-            next_state, reward, terminated, truncated, info = agent.env.sample(state, action)
+            next_state, reward, terminated, truncated, info = agent.env.sample(
+                state, action
+            )
             done = terminated or truncated
             #
             #

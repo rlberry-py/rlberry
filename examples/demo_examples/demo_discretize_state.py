@@ -15,7 +15,9 @@ print("reset in discrete environment gives initial state = ", env.reset()[0])
 
 env.enable_rendering()
 for tt in range(20):
-    observation, reward, terminated, truncated, info = env.step(env.action_space.sample())
+    observation, reward, terminated, truncated, info = env.step(
+        env.action_space.sample()
+    )
     done = terminated or truncated
     env.sample(54, 1)
 env.render()

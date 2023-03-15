@@ -93,7 +93,7 @@ class UncertaintyEstimatorWrapper(Wrapper):
 
         info["exploration_bonus"] = bonus
 
-        return observation, reward, terminated, truncated, info 
+        return observation, reward, terminated, truncated, info
 
     def sample(self, state, action):
         logger.warning(

@@ -65,7 +65,7 @@ def test_a2c():
 
     output = evaluate_agents([a2crlberry_stats], n_simulations=2, plot=False)
     a2crlberry_stats.clear_output_dir()
-    
+
     env_ctor = PBall2D
     env_kwargs = dict()
 

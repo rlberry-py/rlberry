@@ -52,7 +52,7 @@ Let us see a graphical representation
 .. code:: python
 
     env.enable_rendering()
-    observation,info = env.reset()
+    observation, info = env.reset()
     for tt in range(5):
         observation, reward, terminated, truncated, info = env.step(1)
         done = terminated or truncated

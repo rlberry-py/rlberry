@@ -26,4 +26,4 @@ class DiscreteToOneHotWrapper(Wrapper):
     def step(self, action):
         observation, reward, terminated, truncated, info = self.env.step(action)
         observation = self.process_obs(observation)
-        return observation, reward, terminated, truncated, info 
+        return observation, reward, terminated, truncated, info

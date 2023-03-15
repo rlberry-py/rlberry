@@ -136,7 +136,9 @@ class SeqHalvAgent(BanditWithSimplePolicy):
                 for k in active_set:
                     action = k
                     actions += [action]
-                    observation, reward, terminated, truncated, info  = self.env.step(action)
+                    observation, reward, terminated, truncated, info = self.env.step(
+                        action
+                    )
                     rewards += [reward]
                     ep += 1
             reward_est = [

@@ -16,13 +16,13 @@ gym_envs = [
 
 def get_env_trajectory(env, horizon):
     states = []
-    observation,info = env.reset()
+    observation, info = env.reset()
     for ii in range(horizon):
         states.append(observation)
         observation, _, terminated, truncated, _ = env.step(env.action_space.sample())
         done = terminated or truncated
         if done:
-            observation,info = env.reset()
+            observation, info = env.reset()
     return states
 
 

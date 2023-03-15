@@ -293,7 +293,7 @@ class PPOAgent(AgentWithSimplePolicy):
         episode_returns = np.zeros(self.n_envs, dtype=np.float32)
         episode_lengths = np.zeros(self.n_envs, dtype=np.int32)
 
-        next_obs,infos = self.env.reset()
+        next_obs, infos = self.env.reset()
         next_obs = torch.Tensor(next_obs).to(
             self.device
         )  # should always be a torch tensor
@@ -305,7 +305,9 @@ class PPOAgent(AgentWithSimplePolicy):
             # select action and take step
             with torch.no_grad():
                 action, logprobs = self._select_action(obs)
-            next_obs, reward, next_terminated, next_truncated, info = self.env.step(action)
+            next_obs, reward, next_terminated, next_truncated, info = self.env.step(
+                action
+            )
             next_done = next_terminated or next_truncated
             next_obs = torch.Tensor(next_obs).to(self.device)
 
@@ -314,7 +316,7 @@ class PPOAgent(AgentWithSimplePolicy):
                 if next_done[i]:
                     self.total_episodes += 1
                     if self.writer and "episode" in info[i]:
-                    # if self.writer and info["episode"][i] in info[i]:
+                        # if self.writer and info["episode"][i] in info[i]:
                         if "episode" in info[i]:
                             r, l = info[i]["episode"]["r"], info[i]["episode"]["l"]
                         else:

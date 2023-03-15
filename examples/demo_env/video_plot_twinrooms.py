@@ -25,15 +25,15 @@ agent = MBQVIAgent(env, n_samples=10, gamma=1.0, horizon=horizon)
 agent.reseed(seeder)
 agent.fit()
 
-observation,info = env.reset()
+observation, info = env.reset()
 env.enable_rendering()
 for ii in range(10):
     action = agent.policy(observation)
-    observation, reward, terminated, truncated, info= env.step(action)
+    observation, reward, terminated, truncated, info = env.step(action)
     done = terminated or truncated
 
     if (ii + 1) % horizon == 0:
-        observation,info = env.reset()
+        observation, info = env.reset()
 
 env.render()
 video = env.save_video("_video/video_plot_twinrooms.mp4")

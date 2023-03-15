@@ -248,13 +248,15 @@ class SACAgent(AgentWithSimplePolicy):
     def _run_episode(self):
         # interact for H steps
         episode_rewards = 0
-        observation,info = self.env.reset()
+        observation, info = self.env.reset()
         done = False
 
         while not done:
             # running policy_old
             action, action_logprob = self._select_action(observation)
-            next_observation, reward, terminated, truncated, info = self.env.step(action)
+            next_observation, reward, terminated, truncated, info = self.env.step(
+                action
+            )
             done = terminated or truncated
             episode_rewards += reward
 
@@ -266,7 +268,14 @@ class SACAgent(AgentWithSimplePolicy):
 
             # save in batch
             self.replay_buffer.push(
-                (observation, next_observation, action, action_logprob, reward + bonus, done)
+                (
+                    observation,
+                    next_observation,
+                    action,
+                    action_logprob,
+                    reward + bonus,
+                    done,
+                )
             )
 
             # update observation
