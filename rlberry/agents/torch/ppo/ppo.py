@@ -78,7 +78,8 @@ class PPOAgent(AgentWithSimplePolicy):
     lr_schedule: str
         Learning rate schedule. 'constant' corresponds to a constant learning
         rate, and 'linear' corresponds to a linearly decreasing learning rate,
-        starting at learning_rate and ending at 0.
+        starting at learning_rate and ending at 0. WARNING: the schedule is
+        reset at each call to fit().
     optimizer_type: str
         Type of optimizer. 'ADAM' by defaut.
     policy_net_fn : function(env, **kwargs)

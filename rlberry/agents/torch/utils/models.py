@@ -292,15 +292,19 @@ class MultiLayerPerceptron(BaseModule):
             if ctns_actions:
                 self.logstd = nn.Parameter(np.log(std0) * torch.ones(out_size))
             self.predict = nn.Linear(sizes[-1], out_size)
+
         self.reset()
 
     def reset(self):
         self.apply(partial(self._init_weights, param=np.log(2)))
-        if self.pred_init_scale == "auto":
-            pred_init_scale = 0.01 if self.is_policy else 1.0
-        else:
-            pred_init_scale = self.pred_init_scale
-        self._init_weights(self.predict, param=pred_init_scale)
+        if self.out_size:
+            if self.ctns_actions:
+                self.logstd.data.fill_(np.log(self.std0))
+            if self.pred_init_scale == "auto":
+                pred_init_scale = 0.01 if self.is_policy else 1.0
+            else:
+                pred_init_scale = self.pred_init_scale
+            self._init_weights(self.predict, param=pred_init_scale)
 
     def forward(self, x):
         if self.reshape:
