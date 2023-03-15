@@ -1,6 +1,6 @@
-""" 
- ===================== 
- Demo: demo_discretize_state 
+"""
+ =====================
+ Demo: demo_discretize_state
  =====================
 """
 from rlberry.envs.classic_control import MountainCar

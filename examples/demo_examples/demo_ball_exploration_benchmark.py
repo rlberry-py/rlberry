@@ -1,6 +1,6 @@
-""" 
- ===================== 
- Demo: demo_ball_exploration_benchmark 
+"""
+ =====================
+ Demo: demo_ball_exploration_benchmark
  =====================
 """
 from rlberry.agents.mbqvi import MBQVIAgent

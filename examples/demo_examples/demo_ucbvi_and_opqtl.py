@@ -1,6 +1,6 @@
-""" 
- ===================== 
- Demo: demo_ucbvi_and_opqtl 
+"""
+ =====================
+ Demo: demo_ucbvi_and_opqtl
  =====================
 """
 import numpy as np

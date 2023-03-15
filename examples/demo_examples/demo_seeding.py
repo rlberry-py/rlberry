@@ -1,6 +1,6 @@
-""" 
- ===================== 
- Demo: demo_seeding 
+"""
+ =====================
+ Demo: demo_seeding
  =====================
 """
 from rlberry.seeding import Seeder

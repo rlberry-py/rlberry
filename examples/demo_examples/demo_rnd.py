@@ -1,6 +1,6 @@
-""" 
- ===================== 
- Demo: demo_rnd 
+"""
+ =====================
+ Demo: demo_rnd
  =====================
 """
 from rlberry.exploration_tools.torch.rnd import RandomNetworkDistillation

@@ -1,6 +1,6 @@
-""" 
- ===================== 
- Demo: demo_save_video 
+"""
+ =====================
+ Demo: demo_save_video
  =====================
 """
 from rlberry.agents.dynprog import ValueIterationAgent

@@ -4,10 +4,12 @@
 </p>
 
 
+
 <!-- Short description -->
 <p align="center">
    A Reinforcement Learning Library for Research and Education
 </p>
+
 
 <!-- The badges -->
 <p align="center">

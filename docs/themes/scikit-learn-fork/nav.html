@@ -70,12 +70,15 @@
       {%- if pagename != "search"%}
       <div id="searchbox" role="search">
           <div class="searchformwrapper">
-          <form class="search" action="{{ pathto('search') }}" method="get">
-            <input class="sk-search-text-input" type="text" name="q" aria-labelledby="searchlabel" />
-            <input class="sk-search-text-btn" type="submit" value="{{ _('Go') }}" />
-          </form>
+            <form action="https://duckduckgo.com/">
+            <input type="hidden" id="sites" name="sites" value="https://rlberry.readthedocs.io">
+            <input type="search" placeholder="Search &hellip;" value="" name="q" />
+            <input class="sk-search-text-btn" type="submit" value="{{ _('Go') }}" /></form>
+
           </div>
       </div>
+
+
       {%- endif %}
     </div>
   </div>

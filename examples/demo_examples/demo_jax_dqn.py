@@ -1,6 +1,6 @@
-""" 
- ===================== 
- Demo: demo_jax_dqn 
+"""
+ =====================
+ Demo: demo_jax_dqn
  =====================
 """
 import rlberry.agents.jax.nets.common as nets
