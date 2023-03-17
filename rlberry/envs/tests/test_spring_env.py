@@ -77,7 +77,7 @@ def test_spring_cartpole():
             action += 1
             if action >= 4:
                 action = 0
-            next_observation,info = env.reset()
+            next_observation, info = env.reset()
         _ = next_observation
 
     _ = env.get_video()

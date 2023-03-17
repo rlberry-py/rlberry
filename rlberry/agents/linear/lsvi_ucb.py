@@ -257,7 +257,7 @@ class LSVIUCBAgent(AgentWithSimplePolicy):
         return q_vec.argmax()
 
     def run_episode(self):
-        observation,info = self.env.reset()
+        observation, info = self.env.reset()
         episode_rewards = 0
         for hh in range(self.horizon):
             if self.bonus_scale_factor == 0.0:
@@ -265,7 +265,9 @@ class LSVIUCBAgent(AgentWithSimplePolicy):
             else:
                 action = self._optimistic_policy(observation, hh)
 
-            next_observation, reward, terminated, truncated, info  = self.env.step(action)
+            next_observation, reward, terminated, truncated, info = self.env.step(
+                action
+            )
             done = terminated or truncated
 
             feat = self.feature_map.map(observation, action)

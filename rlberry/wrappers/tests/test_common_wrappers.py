@@ -20,7 +20,7 @@ def test_discretizer(n_bins):
     assert env.observation_space.n == n_bins * n_bins
 
     for _ in range(2):
-        observation,info = env.reset()
+        observation, info = env.reset()
         for _ in range(50):
             assert env.observation_space.contains(observation)
             action = env.action_space.sample()

@@ -16,7 +16,7 @@ def test_rnd():
     )
 
     # Test
-    observation,info = env.reset()
+    observation, info = env.reset()
     for ii in range(1000):
         action = env.action_space.sample()
         next_observation, reward, terminated, truncated, info = env.step(action)

@@ -76,13 +76,15 @@ def test_dqn_classic_env():
     assert loaded_agent
 
     # test the agent
-    observation,info = test_load_env.reset()
+    observation, info = test_load_env.reset()
     for tt in range(50):
         action = loaded_agent.policy(observation)
-        next_observation, reward, terminated, truncated, info = test_load_env.step(action)
+        next_observation, reward, terminated, truncated, info = test_load_env.step(
+            action
+        )
         done = terminated or truncated
         if done:
-            next_observation,info = test_load_env.reset()
+            next_observation, info = test_load_env.reset()
         observation = next_observation
 
     os.remove(saving_path)

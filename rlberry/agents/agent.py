@@ -513,7 +513,9 @@ class AgentWithSimplePolicy(Agent):
             tt = 0
             while tt < eval_horizon:
                 action = self.policy(observation)
-                observation, reward, terminated, truncated, info = self.eval_env.step(action)
+                observation, reward, terminated, truncated, info = self.eval_env.step(
+                    action
+                )
                 done = terminated or truncated
                 episode_rewards[sim] += reward * np.power(gamma, tt)
                 tt += 1

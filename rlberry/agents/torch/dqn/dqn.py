@@ -378,7 +378,9 @@ class DQNAgent(AgentWithSimplePolicy):
             else:
                 self._timesteps_since_last_update += 1
                 action = self._policy(observation, evaluation=False)
-            next_observation, reward, terminated, truncated, info  = self.env.step(action)
+            next_observation, reward, terminated, truncated, info = self.env.step(
+                action
+            )
             done = terminated or truncated
 
             # store data

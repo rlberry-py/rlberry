@@ -28,7 +28,7 @@ class AutoResetWrapper(Wrapper):
         # Also, set done to True.
         if self.current_step == self.horizon:
             self.current_step = 0
-            observation,info = self.env.reset()
+            observation, info = self.env.reset()
             terminated = True
             truncated = False
         return observation, reward, terminated, truncated, info

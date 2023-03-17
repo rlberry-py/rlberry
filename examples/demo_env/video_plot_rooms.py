@@ -30,11 +30,11 @@ print(info)
 env.enable_rendering()
 
 for _ in range(10):
-    observation,info = env.reset()
+    observation, info = env.reset()
     for tt in range(horizon):
         # action = agent.policy(observation)
         action = env.action_space.sample()
-        observation, reward, terminated, truncated, info= env.step(action)
+        observation, reward, terminated, truncated, info = env.step(action)
         done = terminated or truncated
         if done:
             break

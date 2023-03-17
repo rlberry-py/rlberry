@@ -19,14 +19,14 @@ rnd = RandomNetworkDistillation(
 )
 
 # Test
-observation,info = env.reset()
+observation, info = env.reset()
 for ii in range(20000):
     action = env.action_space.sample()
-    next_observation, reward, terminated, truncated, info  = env.step(action)
+    next_observation, reward, terminated, truncated, info = env.step(action)
     rnd.update(observation, action, next_observation, reward)
     observation = next_observation
 
     if ii % 500 == 0:
-        state,info = env.reset()
+        state, info = env.reset()
         bonus = rnd.measure(observation, action)
         print("it = {}, bonus = {}, loss = {}".format(ii, bonus, rnd.loss.item()))

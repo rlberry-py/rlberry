@@ -105,7 +105,9 @@ class TwinRooms(RenderInterface2D, Model):
         if self.is_render_enabled():
             self.append_state_for_rendering(self.state)
 
-        next_state, reward, terminated, truncated, info = self.sample(self.state, action)
+        next_state, reward, terminated, truncated, info = self.sample(
+            self.state, action
+        )
         self.state = next_state
         return self.state.copy(), reward, terminated, truncated, info
 

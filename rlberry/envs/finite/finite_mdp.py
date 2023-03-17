@@ -131,7 +131,9 @@ class FiniteMDP(Model):
 
     def step(self, action):
         assert action in self._actions, "Invalid action!"
-        next_state, reward, terminated, truncated, info = self.sample(self.state, action)
+        next_state, reward, terminated, truncated, info = self.sample(
+            self.state, action
+        )
         self.state = next_state
         return next_state, reward, terminated, truncated, info
 

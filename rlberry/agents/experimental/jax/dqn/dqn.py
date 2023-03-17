@@ -264,7 +264,7 @@ class DQNAgent(AgentWithSimplePolicy):
                     evaluation=False,
                 )
                 action = actor_out.actions.item()
-                next_obs, reward, terminated, truncated, info  = self.env.step(action)
+                next_obs, reward, terminated, truncated, info = self.env.step(action)
                 done = terminated or truncated
 
                 # check max episode length

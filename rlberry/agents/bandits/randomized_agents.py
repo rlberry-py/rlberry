@@ -101,7 +101,7 @@ class RandomizedAgent(BanditWithSimplePolicy):
                 probs = self.prob_function(self.tracker)
                 action = self.rng.choice(self.arms, p=probs)
 
-            _, reward, _, _, _  = self.env.step(action)
+            _, reward, _, _, _ = self.env.step(action)
 
             # Feed the played action and the resulting reward and sampling
             # probability to the tracker.

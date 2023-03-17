@@ -25,7 +25,7 @@ agent = RSUCBVIAgent(
 agent.fit(budget=n_episodes)
 
 env.enable_rendering()
-observation,info = env.reset()
+observation, info = env.reset()
 for tt in range(2 * agent.horizon):
     action = agent.policy(observation)
     observation, reward, terminated, truncated, info = env.step(action)

@@ -50,9 +50,11 @@ class RescaleRewardWrapper(Wrapper):
     def step(self, action):
         observation, reward, terminated, truncated, info = self.env.step(action)
         rescaled_reward = self._rescale(reward)
-        return observation, rescaled_reward, terminated, truncated, info 
+        return observation, rescaled_reward, terminated, truncated, info
 
     def sample(self, state, action):
-        observation, reward, terminated, truncated, info = self.env.sample(state, action)
+        observation, reward, terminated, truncated, info = self.env.sample(
+            state, action
+        )
         rescaled_reward = self._rescale(reward)
-        return observation, rescaled_reward, terminated, truncated, info 
+        return observation, rescaled_reward, terminated, truncated, info
