@@ -5,7 +5,7 @@
 """
 from rlberry.envs import gym_make
 from stable_baselines3 import A2C as A2C
-from rlberry.agents import StableBaselinesAgent
+from rlberry.agents.stable_baselines import StableBaselinesAgent
 
 
 # Class for hyperparameter optimization
