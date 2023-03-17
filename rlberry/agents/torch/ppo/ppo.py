@@ -330,13 +330,6 @@ class PPOAgent(AgentWithSimplePolicy):
                         )
                     episode_returns[i], episode_lengths[i] = 0.0, 0
 
-            # only accept done if not truncated
-            # TODO: not needed with gymnasium
-            for i in range(self.n_envs):
-                if next_done[i]:
-                    if "TimeLimit.truncated" in info[i]:
-                        next_done[i] = False
-
             # append data to memory and update variables
             self.memory.append(
                 {

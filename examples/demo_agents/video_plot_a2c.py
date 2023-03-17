@@ -28,6 +28,6 @@ observation,info = env.reset()
 for tt in range(200):
     action = agent.policy(observation)
     observation, reward, terminated, truncated, info = env.step(action)
-    one = terminated or truncated
+    done = terminated or truncated
 
 video = env.save_video("_video/video_plot_a2c.mp4")
