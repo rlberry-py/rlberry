@@ -586,6 +586,8 @@ class AgentManager:
 
     def clear_output_dir(self):
         """Delete output_dir and all its data."""
+        if self.optuna_study:
+            optuna.delete_study(self.optuna_study.study_name, self.optuna_storage_url)
         try:
             shutil.rmtree(self.output_dir_)
         except FileNotFoundError:
