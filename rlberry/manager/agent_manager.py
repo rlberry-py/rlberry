@@ -12,6 +12,7 @@ import pickle
 import bz2
 import _pickle as cPickle
 import shutil
+import os
 import threading
 import multiprocessing
 from multiprocessing.spawn import _check_not_importing_main
@@ -589,7 +590,7 @@ class AgentManager:
         if self.optuna_study:
             optuna.delete_study(self.optuna_study.study_name, self.optuna_storage_url)
         try:
-            shutil.rmtree(self.output_dir_)
+            os.rmdir(self.output_dir_)
         except FileNotFoundError:
             logger.warning(f"No directory {self.output_dir_} found to be deleted.")
 
