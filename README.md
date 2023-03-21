@@ -125,6 +125,11 @@ The modules listed below are experimental at the moment, that is, they are not t
 * `rlberry.agents.experimental`: Experimental agents that are not thoroughly tested.
 
 
+## About us
+This project was initiated and is actively maintained by `INRIA SCOOL team <https://team.inria.fr/scool/>`.
+More information `here <https://rlberry.readthedocs.io/en/latest/about.html#>`.
+
+
 ## Contributing
 
 Want to contribute to `rlberry`? Please check [our contribution guidelines](https://rlberry.readthedocs.io/en/latest/contributing.html). **If you want to add any new agents or environments, do not hesitate
