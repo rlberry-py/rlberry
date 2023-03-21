@@ -126,8 +126,8 @@ The modules listed below are experimental at the moment, that is, they are not t
 
 
 ## About us
-This project was initiated and is actively maintained by `INRIA SCOOL team <https://team.inria.fr/scool/>`.
-More information `here <https://rlberry.readthedocs.io/en/latest/about.html#>`.
+This project was initiated and is actively maintained by [INRIA SCOOL team](https://team.inria.fr/scool/).
+More information [here](https://rlberry.readthedocs.io/en/latest/about.html#).
 
 
 ## Contributing
