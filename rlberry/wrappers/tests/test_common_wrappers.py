@@ -12,6 +12,35 @@ from rlberry.wrappers.discretize_state import DiscretizeStateWrapper
 from rlberry.wrappers.rescale_reward import RescaleRewardWrapper
 from rlberry.wrappers.uncertainty_estimator_wrapper import UncertaintyEstimatorWrapper
 from rlberry.wrappers.vis2d import Vis2dWrapper
+from rlberry.wrappers.gym_utils import OldGymCompatibilityWrapper
+
+
+
+from rlberry.wrappers.tests.old_env.old_acrobot import Old_Acrobot
+from rlberry.wrappers.tests.old_env.old_apple_gold import Old_AppleGold
+from rlberry.wrappers.tests.old_env.old_four_room import Old_FourRoom
+from rlberry.wrappers.tests.old_env.old_gridworld import Old_GridWorld
+from rlberry.wrappers.tests.old_env.old_mountain_car import Old_MountainCar
+from rlberry.wrappers.tests.old_env.old_nroom import Old_NRoom
+from rlberry.wrappers.tests.old_env.old_pendulum import Old_Pendulum
+from rlberry.wrappers.tests.old_env.old_pball import Old_PBall2D, Old_SimplePBallND
+from rlberry.wrappers.tests.old_env.old_six_room import Old_SixRoom
+from rlberry.wrappers.tests.old_env.old_twinrooms import Old_TwinRooms
+
+
+classes = [
+    Old_Acrobot,
+    Old_AppleGold,
+    Old_FourRoom,
+    Old_GridWorld,
+    Old_MountainCar,
+    Old_NRoom,
+    Old_PBall2D,
+    Old_Pendulum,
+    Old_SimplePBallND, 
+    Old_SixRoom,
+    Old_TwinRooms,
+]
 
 
 @pytest.mark.parametrize("n_bins", list(range(1, 10)))
@@ -178,3 +207,39 @@ def test_discrete2onehot():
         env.unwrapped.set_initial_state_distribution(initial_distr)
         obs, info = env.reset()
         assert np.array_equal(obs, initial_distr)
+
+
+
+@pytest.mark.parametrize("ModelClass", classes)
+def test_OldGymCompatibilityWrapper(ModelClass):
+# def test_OldGymCompatibilityWrapper(): 
+    
+    # tester ancien environnement
+    env = ModelClass()
+    # env = Old_Acrobot()
+    env.reseed(1)
+    result = env.reset()    
+    assert(not isinstance(result,tuple))
+    # assert(isinstance(result,np.ndarray))
+    action = env.action_space.sample()
+    result = env.step(action)
+    assert(isinstance(result,tuple))
+    assert(len(result)==4)
+    
+    # tester wrapper
+    env = ModelClass()
+    env = OldGymCompatibilityWrapper(env)
+    result= env.reset(seed=42)
+    assert(isinstance(result,tuple))
+    observations,infos=result
+    assert(isinstance(infos,dict))
+    for tt in range(5000):
+        action = env.action_space.sample()
+        result = env.step(action)
+        assert(isinstance(result,tuple))
+        assert(len(result)==5)
+        observation, reward, terminated, truncated, info = result
+        done = terminated or truncated
+        if done : 
+            observation,info = env.reset(42**2)
+
