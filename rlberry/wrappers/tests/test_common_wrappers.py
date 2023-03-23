@@ -239,6 +239,7 @@ def test_OldGymCompatibilityWrapper(ModelClass):
         assert(isinstance(result,tuple))
         assert(len(result)==5)
         observation, reward, terminated, truncated, info = result
+        assert env.observation_space.contains(observation)
         done = terminated or truncated
         if done : 
             observation,info = env.reset(42**2)
