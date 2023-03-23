@@ -15,7 +15,6 @@ from rlberry.wrappers.vis2d import Vis2dWrapper
 from rlberry.wrappers.gym_utils import OldGymCompatibilityWrapper
 
 
-
 from rlberry.wrappers.tests.old_env.old_acrobot import Old_Acrobot
 from rlberry.wrappers.tests.old_env.old_apple_gold import Old_AppleGold
 from rlberry.wrappers.tests.old_env.old_four_room import Old_FourRoom
@@ -37,7 +36,7 @@ classes = [
     Old_NRoom,
     Old_PBall2D,
     Old_Pendulum,
-    Old_SimplePBallND, 
+    Old_SimplePBallND,
     Old_SixRoom,
     Old_TwinRooms,
 ]
@@ -209,38 +208,36 @@ def test_discrete2onehot():
         assert np.array_equal(obs, initial_distr)
 
 
-
 @pytest.mark.parametrize("ModelClass", classes)
 def test_OldGymCompatibilityWrapper(ModelClass):
-# def test_OldGymCompatibilityWrapper(): 
-    
+    # def test_OldGymCompatibilityWrapper():
+
     # tester ancien environnement
     env = ModelClass()
     # env = Old_Acrobot()
     env.reseed(1)
-    result = env.reset()    
-    assert(not isinstance(result,tuple))
+    result = env.reset()
+    assert not isinstance(result, tuple)
     # assert(isinstance(result,np.ndarray))
     action = env.action_space.sample()
     result = env.step(action)
-    assert(isinstance(result,tuple))
-    assert(len(result)==4)
-    
+    assert isinstance(result, tuple)
+    assert len(result) == 4
+
     # tester wrapper
     env = ModelClass()
     env = OldGymCompatibilityWrapper(env)
-    result= env.reset(seed=42)
-    assert(isinstance(result,tuple))
-    observations,infos=result
-    assert(isinstance(infos,dict))
+    result = env.reset(seed=42)
+    assert isinstance(result, tuple)
+    observations, infos = result
+    assert isinstance(infos, dict)
     for tt in range(5000):
         action = env.action_space.sample()
         result = env.step(action)
-        assert(isinstance(result,tuple))
-        assert(len(result)==5)
+        assert isinstance(result, tuple)
+        assert len(result) == 5
         observation, reward, terminated, truncated, info = result
         assert env.observation_space.contains(observation)
         done = terminated or truncated
-        if done : 
-            observation,info = env.reset(42**2)
-
+        if done:
+            observation, info = env.reset(42**2)

@@ -43,8 +43,6 @@ def convert_space_from_gym(gym_space):
         raise ValueError("Unknown space class: {}".format(type(gym_space)))
 
 
-
-
 class OldGymCompatibilityWrapper(Wrapper):
     """
     Allow to use old gym env (V0.21) with rlberry (gymnasium).
@@ -55,13 +53,13 @@ class OldGymCompatibilityWrapper(Wrapper):
         Wrapper.__init__(self, env)
 
     def reset(self, seed=None, options=None):
-        if(seed):
+        if seed:
             self.env.reseed(seed)
         observation = self.env.reset()
-        return observation,{}
+        return observation, {}
 
     def step(self, action):
-        obs, rewards, terminated, truncated, info = step_api_compatibility(self.env.step(action), output_truncation_bool=True)
+        obs, rewards, terminated, truncated, info = step_api_compatibility(
+            self.env.step(action), output_truncation_bool=True
+        )
         return obs, rewards, terminated, truncated, info
-
-
