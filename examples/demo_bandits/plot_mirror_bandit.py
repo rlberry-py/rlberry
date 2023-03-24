@@ -96,11 +96,11 @@ class MirrorBandit(Model):
         truncated = False
         return 0, reward, terminated, truncated, {}
 
-    def reset(self,seed=None):
+    def reset(self, seed=None):
         """
         Reset the environment to a default state.
         """
-        return (0,{})
+        return (0, {})
 
 
 env_ctor = MirrorBandit

@@ -85,8 +85,8 @@ class AdversarialBandit(Model):
 
         rewards = self.rewards.popleft()
         reward = rewards[action]
-        terminated=True
-        truncated =False
+        terminated = True
+        truncated = False
         return 0, reward, terminated, truncated, {}
 
     def reset(self, seed=None, option=None):
