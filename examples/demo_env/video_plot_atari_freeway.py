@@ -87,6 +87,7 @@ print("-------- test agent with video--------")
 env = atari_make(
     "ALE/Freeway-v5",
 )
+env.render_mode="rgb_array"
 env = RecordVideo(env, "docs/_video/temp")
 
 if "render_modes" in env.metadata:

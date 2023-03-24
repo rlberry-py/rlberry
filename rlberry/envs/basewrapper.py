@@ -104,16 +104,20 @@ class Wrapper(Model):
         safe_reseed(self.action_space, self.seeder)
 
     def reset(self, seed=None, options=None):
+        if self.render_mode == "human":
+            self.render()
         return self.env.reset(seed=seed, options=options)
 
     def step(self, action):
+        if self.render_mode == "human":
+            self.render()
         return self.env.step(action)
 
     def sample(self, state, action):
         return self.env.sample(state, action)
 
-    def render(self, mode="human", **kwargs):
-        return self.env.render(mode=mode, **kwargs)
+    def render(self, **kwargs):
+        return self.env.render(**kwargs)
 
     def close(self):
         return self.env.close()
