@@ -34,6 +34,7 @@ class Wrapper(Model):
         # Save reference to env
         self.env = env
         self.metadata = self.env.metadata
+        self.render_mode = self.env.render_mode
 
         if wrap_spaces:
             self.observation_space = convert_space_from_gym(self.env.observation_space)
@@ -104,7 +105,7 @@ class Wrapper(Model):
         safe_reseed(self.action_space, self.seeder)
 
     def reset(self, seed=None, options=None):
-        if self.render_mode == "human":
+        if self.env.render_mode == "human":
             self.render()
         return self.env.reset(seed=seed, options=options)
 
