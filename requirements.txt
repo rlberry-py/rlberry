@@ -21,7 +21,7 @@ git+https://github.com/Stable-Baselines-Team/stable-baselines3-contrib@feat/gymn
 protobuf==3.20.1
 tensorboard
 opencv-python
-ale-py==0.7.4
+ale-py==0.8.0
 pytest
 pytest-xprocess
 moviepy
