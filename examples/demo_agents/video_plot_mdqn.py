@@ -33,7 +33,7 @@ import os
 
 configure_logging(level="INFO")
 
-env = gym_make("CartPole-v0",render_mode="rgb_array")
+env = gym_make("CartPole-v0", render_mode="rgb_array")
 agent = MunchausenDQNAgent(env, epsilon_decay_interval=1000)
 agent.set_writer(SummaryWriter())
 

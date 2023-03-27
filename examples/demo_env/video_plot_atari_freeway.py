@@ -84,9 +84,7 @@ final_train_time = datetime.now()
 
 print("-------- test agent with video--------")
 
-env = atari_make(
-    "ALE/Freeway-v5",render_mode="rgb_array"
-)
+env = atari_make("ALE/Freeway-v5", render_mode="rgb_array")
 env = RecordVideo(env, "_video/temp")
 
 if "render_modes" in env.metadata:
