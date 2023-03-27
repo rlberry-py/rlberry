@@ -61,7 +61,7 @@ def atari_make(id, scalarize=None, **kwargs):
             terminal_on_life_loss=False
         )  # hack, some errors with the "terminal_on_life_loss" wrapper : The 'false reset' can lead to make a step on a 'done' environment, then a crash.
 
-    render_mode=None
+    render_mode = None
     if "render_mode" in kwargs.keys():
         render_mode = kwargs["render_mode"]
         kwargs.pop("render_mode", None)
@@ -75,7 +75,7 @@ def atari_make(id, scalarize=None, **kwargs):
 
         env = ScalarizeEnvWrapper(env)
 
-    env.render_mode=render_mode
+    env.render_mode = render_mode
 
     return env
 
