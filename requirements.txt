@@ -4,7 +4,7 @@ pygame
 matplotlib
 seaborn
 pandas
-gymnasium[atari,accept-rom-license]=0.28.1
+gymnasium[atari,accept-rom-license]==0.28.1
 dill
 docopt
 pyyaml
