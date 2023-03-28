@@ -1,10 +1,10 @@
-numpy>=1.17
-scipy>=1.6
-pygame
+numpy>=1.23.5
+scipy>=1.10.0
+pygame>=2.1.3
 matplotlib
 seaborn
-pandas
-gymnasium[atari,accept-rom-license]
+pandas>=1.5.3
+gymnasium[atari,accept-rom-license]>=0.28.0
 dill
 docopt
 pyyaml
@@ -21,7 +21,7 @@ git+https://github.com/Stable-Baselines-Team/stable-baselines3-contrib@feat/gymn
 protobuf==3.20.1
 tensorboard
 opencv-python
-ale-py==0.7.4
+ale-py>=0.8.1
 pytest
 pytest-xprocess
-moviepy
+moviepy>=1.0.3
