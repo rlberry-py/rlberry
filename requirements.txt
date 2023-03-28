@@ -1,23 +1,20 @@
+pyyaml
+gymnasium[atari,accept-rom-license]
 numpy==1.23.5
 scipy>=1.10.0
 pygame>=2.1.3
 matplotlib
 seaborn
 pandas>=1.5.3
-gymnasium[atari,accept-rom-license]>=0.28.0
 dill
 docopt
-pyyaml
 numba
 optuna
 ffmpeg-python
 PyOpenGL==3.1.5
 PyOpenGL_accelerate==3.1.5
 pyvirtualdisplay
-torch>=1.6.0
-# stable-baselines3
-git+https://github.com/DLR-RM/stable-baselines3@feat/gymnasium-support
-git+https://github.com/Stable-Baselines-Team/stable-baselines3-contrib@feat/gymnasium-support
+torch==1.13.1
 protobuf==3.20.1
 tensorboard
 opencv-python
@@ -25,3 +22,6 @@ ale-py>=0.8.1
 pytest
 pytest-xprocess
 moviepy>=1.0.3
+# stable-baselines3
+# git+https://github.com/DLR-RM/stable-baselines3@feat/gymnasium-support
+# git+https://github.com/Stable-Baselines-Team/stable-baselines3-contrib@feat/gymnasium-support
