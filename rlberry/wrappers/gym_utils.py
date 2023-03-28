@@ -46,7 +46,7 @@ def convert_space_from_gym(gym_space):
 class OldGymCompatibilityWrapper(Wrapper):
     """
     Allow to use old gym env (V0.21) with rlberry (gymnasium).
-    (for basic use)
+    (for basic use only)
     """
 
     def __init__(self, env):

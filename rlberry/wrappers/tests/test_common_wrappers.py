@@ -210,15 +210,12 @@ def test_discrete2onehot():
 
 @pytest.mark.parametrize("ModelClass", classes)
 def test_OldGymCompatibilityWrapper(ModelClass):
-    # def test_OldGymCompatibilityWrapper():
 
     # tester ancien environnement
     env = ModelClass()
-    # env = Old_Acrobot()
     env.reseed(1)
     result = env.reset()
     assert not isinstance(result, tuple)
-    # assert(isinstance(result,np.ndarray))
     action = env.action_space.sample()
     result = env.step(action)
     assert isinstance(result, tuple)

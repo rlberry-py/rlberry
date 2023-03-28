@@ -86,3 +86,12 @@ Deep RL agents require extra libraries, like PyTorch and JAX.
     since :code:`pip install -e .[jax_agents]` installs tensorflow, which already contains
     tensorboard. Otherwise, there might be a conflict between the two installations
     and tensorboard will not work properly.
+
+
+* Stable-baselines3 agents with Gymnasium support:
+    (https://github.com/DLR-RM/stable-baselines3/pull/1327)
+.. code:: bash
+
+    $ pip install git+https://github.com/DLR-RM/stable-baselines3@feat/gymnasium-support
+    $ pip install git+https://github.com/Stable-Baselines-Team/stable-baselines3-contrib@feat/gymnasium-support
+
