@@ -36,8 +36,3 @@ for tt in range(2 * agent.horizon):
 
 # Save video
 video = env.save_video("_video/video_plot_old_gym_acrobot.mp4")
-
-
-
-
-

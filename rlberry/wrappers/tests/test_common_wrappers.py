@@ -210,7 +210,6 @@ def test_discrete2onehot():
 
 @pytest.mark.parametrize("ModelClass", classes)
 def test_OldGymCompatibilityWrapper(ModelClass):
-
     # tester ancien environnement
     env = ModelClass()
     env.reseed(1)
