@@ -52,10 +52,8 @@ def atari_make(id, scalarize=None, **kwargs):
     if "atari_wrappers_dict" in kwargs.keys():
         atari_wrappers_dict = kwargs["atari_wrappers_dict"]
         kwargs.pop("atari_wrappers_dict", None)
-    else:
-        atari_wrappers_dict = dict(
-            terminal_on_life_loss=True
-        )  # hack, some errors with the "terminal_on_life_loss" wrapper : The 'false reset' can lead to make a step on a 'done' environment, then a crash.
+
+    # #uncomment and test when rlberry will manage vectorized env
     # else:
     #     atari_wrappers_dict = dict(
     #         terminal_on_life_loss=False
