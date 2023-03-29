@@ -160,7 +160,7 @@ class DQNAgent(AgentWithSimplePolicy):
     ):
         # For all parameters, define self.param = param
         _, _, _, values = inspect.getargvalues(inspect.currentframe())
-       
+
         values.pop("self")
         for arg, val in values.items():
             setattr(self, arg, val)

@@ -18,8 +18,7 @@ install_requires = [
     "matplotlib",
     "seaborn",
     "pandas",
-    "gymnasium"
-    "dill",
+    "gymnasium" "dill",
     "docopt",
     "pyyaml",
 ]
@@ -43,8 +42,7 @@ default_requires = [
 torch_agents_requires = default_requires + [
     "torch>=1.6.0",
     "opencv-python",
-    "gymnasium[atari,accept-rom-license]"
-    "ale-py>=0.8.0",
+    "gymnasium[atari,accept-rom-license]" "ale-py>=0.8.0",
     # 'tensorboard'
 ]
 
