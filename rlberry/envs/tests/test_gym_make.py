@@ -1,5 +1,4 @@
 from rlberry.envs.gym_make import atari_make
-from stable_baselines3.common.atari_wrappers import EpisodicLifeEnv, MaxAndSkipEnv
 
 def test_atari_make():
 
