@@ -94,3 +94,26 @@ def test_render2d_interface_wrapped(ModelClass):
             os.remove("test_video.mp4")
         except Exception:
             pass
+
+
+
+
+def test_render_appelGold():
+    env = AppleGold()
+    env.render_mode="human"
+    env = Wrapper(env)
+    
+    if env.is_online():
+        for _ in range(2):
+            observation, info = env.reset()
+            for _ in range(5):
+                assert env.observation_space.contains(observation)
+                action = env.action_space.sample()
+                observation, _, _, _, _ = env.step(action)
+            env.render(loop=False)
+        env.save_video("test_video.mp4")
+        env.clear_render_buffer()
+    try:
+        os.remove("test_video.mp4")
+    except Exception:
+        pass

@@ -52,6 +52,7 @@ def atari_make(id, scalarize=None, **kwargs):
     if "atari_wrappers_dict" in kwargs.keys():
         atari_wrappers_dict = kwargs["atari_wrappers_dict"]
         kwargs.pop("atari_wrappers_dict", None)
+    else: atari_wrappers_dict=None
 
     # #uncomment and test when rlberry will manage vectorized env
     # else:
