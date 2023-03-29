@@ -96,13 +96,11 @@ def test_render2d_interface_wrapped(ModelClass):
             pass
 
 
-
-
 def test_render_appelGold():
     env = AppleGold()
-    env.render_mode="human"
+    env.render_mode = "human"
     env = Wrapper(env)
-    
+
     if env.is_online():
         for _ in range(2):
             observation, info = env.reset()
