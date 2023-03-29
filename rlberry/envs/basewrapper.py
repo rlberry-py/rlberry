@@ -78,23 +78,12 @@ class Wrapper(Model):
         else:
             self.seeder = Seeder(seed_seq)
 
-        # #-------- OLD VERSION ----------
-        # # seed gym.Env that is not a rlberry Model
-        # if not isinstance(self.env, Model):
-        #     # get a seed for gym environment; spaces are reseeded below.
-        #     safe_reseed(self.env, self.seeder, reseed_spaces=False)
-        # # seed rlberry Model
-        # else:
-        #     self.env.reseed(self.seeder)
-        # #-------------------------------
-
         # get a seed for gym environment; spaces are reseeded below.
         if isinstance(self.env, Model):
             # seed rlberry Model
             self.env.reseed(self.seeder)
         elif isinstance(self.env, gym.Env):
             # seed gym.Env that is not a rlberry Model
-            # vvvv TODO : VERIFY MANAGMENT OF THIS SEED vvvv
             seed_val = self.seeder.rng.integers(2**32).item()
             self.env.reset(seed=seed_val)
         else:

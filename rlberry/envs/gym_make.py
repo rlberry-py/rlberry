@@ -31,10 +31,6 @@ def gym_make(id, wrap_spaces=False, **kwargs):
     if "module_import" in kwargs:
         __import__(kwargs.pop("module_import"))
 
-    # if old_gym:
-    #     env = gym.make(id, **kwargs)
-    #     env = StepAPICompatibility(env,output_truncation_bool=False)
-    # else:
     env = gym.make(id, **kwargs)
 
     return Wrapper(env, wrap_spaces=wrap_spaces)
@@ -51,15 +47,19 @@ def atari_make(id, scalarize=None, **kwargs):
     #     else:
     #         scalarize = True
 
-    scalarize = True
+    scalarize = True    #to remove when rlberry will manage vectorized env
 
     if "atari_wrappers_dict" in kwargs.keys():
         atari_wrappers_dict = kwargs["atari_wrappers_dict"]
         kwargs.pop("atari_wrappers_dict", None)
     else:
         atari_wrappers_dict = dict(
-            terminal_on_life_loss=False
+            terminal_on_life_loss=True
         )  # hack, some errors with the "terminal_on_life_loss" wrapper : The 'false reset' can lead to make a step on a 'done' environment, then a crash.
+    # else:
+    #     atari_wrappers_dict = dict(
+    #         terminal_on_life_loss=False
+    #     )  # hack, some errors with the "terminal_on_life_loss" wrapper : The 'false reset' can lead to make a step on a 'done' environment, then a crash.
 
     render_mode = None
     if "render_mode" in kwargs.keys():

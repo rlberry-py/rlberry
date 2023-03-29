@@ -316,7 +316,6 @@ class PPOAgent(AgentWithSimplePolicy):
                 if next_done[i]:
                     self.total_episodes += 1
                     if self.writer and "episode" in info[i]:
-                        # if self.writer and info["episode"][i] in info[i]:
                         if "episode" in info[i]:
                             r, l = info[i]["episode"]["r"], info[i]["episode"]["l"]
                         else:

@@ -131,7 +131,6 @@ def test_gym_copy_reseeding_2():
     seeder = Seeder(123)
     if _GYM_INSTALLED:
         gym_env = gym.make("Acrobot-v1")
-
         # nested wrapping
         env = RescaleRewardWrapper(Wrapper(Wrapper(gym_env)), (0, 1))
         env.reseed(seeder)

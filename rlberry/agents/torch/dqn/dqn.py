@@ -160,10 +160,9 @@ class DQNAgent(AgentWithSimplePolicy):
     ):
         # For all parameters, define self.param = param
         _, _, _, values = inspect.getargvalues(inspect.currentframe())
-        #### NEED FIX : (BUG WITH PYTHON???) IF YOU DON'T COPY THE FOR LOOP ADD THE 'arg' AND 'val' INSIDE 'values' AND CRASH (CHANGE THE SIZE OF THE LOOP DURING THE LOOP)
-        values_fixed = dict(values)
-        values_fixed.pop("self")
-        for arg, val in values_fixed.items():
+       
+        values.pop("self")
+        for arg, val in values.items():
             setattr(self, arg, val)
 
         AgentWithSimplePolicy.__init__(self, env, **kwargs)

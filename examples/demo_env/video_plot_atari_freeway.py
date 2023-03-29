@@ -50,7 +50,8 @@ tuned_agent = AgentManager(
     (
         atari_make,
         dict(
-            id="ALE/Freeway-v5",
+            id="ALE/Breakout-v5",
+            # id="ALE/Freeway-v5",
         ),
     ),  # The Environment to solve.
     init_kwargs=dict(  # Where to put the agent's hyperparameters
@@ -84,7 +85,8 @@ final_train_time = datetime.now()
 
 print("-------- test agent with video--------")
 
-env = atari_make("ALE/Freeway-v5", render_mode="rgb_array")
+# env = atari_make("ALE/Freeway-v5", render_mode="rgb_array")
+env = atari_make("ALE/Breakout-v5", render_mode="rgb_array")
 env = RecordVideo(env, "_video/temp")
 
 if "render_modes" in env.metadata:

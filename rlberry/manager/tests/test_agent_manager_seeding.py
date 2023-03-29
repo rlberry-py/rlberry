@@ -15,7 +15,7 @@ import pytest
         (
             (gym.make, {"id": "MountainCar-v0"}),
             A2CAgent,
-        ),  # Crash because we can not add the compatibility wrapper easily
+        ),
     ],
 )
 def test_agent_manager_and_multiple_managers_seeding(env, agent_class):

@@ -72,7 +72,6 @@ def safe_reseed(obj, seeder, reseed_spaces=True):
                 reseeded = False
 
     # check if the object has observation and action spaces to be reseeded.
-    ########### TO CHECK : Is it possible to not have observation space, but an action space to reseed? ###############
     if reseed_spaces:
         try:
             safe_reseed(obj.observation_space, seeder)

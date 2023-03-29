@@ -100,7 +100,7 @@ class MirrorBandit(Model):
         """
         Reset the environment to a default state.
         """
-        return (0, {})
+        return 0, {}
 
 
 env_ctor = MirrorBandit

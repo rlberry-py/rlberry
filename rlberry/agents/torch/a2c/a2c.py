@@ -248,8 +248,6 @@ class A2CAgent(AgentWithSimplePolicy):
                 observation, info = self.env.reset()
 
     def _select_action(self, state):
-        if isinstance(state, np.float64):
-            print("break")
         state = torch.from_numpy(state).float().to(self.device)
         action_dist = self._policy_old(state)
         action = action_dist.sample()

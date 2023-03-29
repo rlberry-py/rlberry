@@ -172,8 +172,8 @@ def _check_returned_values(
     assert isinstance(
         reward, (float, int, np.float32)
     ), "The reward returned by `step()` must be a float"
-    assert isinstance(terminated, bool), "The `done` signal must be a boolean"
-    assert isinstance(truncated, bool), "The `done` signal must be a boolean"
+    assert isinstance(terminated, bool), "The `terminated` returned by `step()` must be a boolean"
+    assert isinstance(truncated, bool), "The `truncated` returned by `step()` must be a boolean"
     done = terminated or truncated
     assert isinstance(done, bool), "The `done` signal must be a boolean"
     assert isinstance(
