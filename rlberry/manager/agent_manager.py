@@ -1032,7 +1032,7 @@ class AgentManager:
             # storage
             self._init_optuna_storage_url()
             storage = optuna.storages.RDBStorage(self.optuna_storage_url)
-            
+
             # optuna study
             study = optuna.create_study(
                 sampler=sampler, pruner=pruner, storage=storage, direction="maximize"
