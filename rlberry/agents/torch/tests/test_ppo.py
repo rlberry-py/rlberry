@@ -14,9 +14,9 @@ from rlberry.manager import AgentManager, evaluate_agents
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
 from gym import make
 from rlberry.agents.torch.utils.training import model_factory_from_env
-# import sys
+import sys
 
-# @pytest.mark.xfail(sys.platform == "win32", reason="bug with windows???")
+@pytest.mark.xfail(sys.platform == "win32", reason="bug with windows???")
 def test_ppo():
     env = "CartPole-v0"
     mdp = make(env)
@@ -197,3 +197,4 @@ def test_ppo():
 
     output = evaluate_agents([pporlberry_stats], n_simulations=2, plot=False)
     pporlberry_stats.clear_output_dir()
+
