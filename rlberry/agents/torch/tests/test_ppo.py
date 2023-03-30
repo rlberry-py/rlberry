@@ -14,7 +14,9 @@ from rlberry.manager import AgentManager, evaluate_agents
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
 from gym import make
 from rlberry.agents.torch.utils.training import model_factory_from_env
+
 # import sys
+
 
 # @pytest.mark.xfail(sys.platform == "win32", reason="bug with windows???")
 def test_ppo():

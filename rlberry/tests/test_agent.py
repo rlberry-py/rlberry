@@ -57,6 +57,7 @@ def test_finite_state_agent(agent):
     check_rl_agent(agent, env="discrete_state")
     check_rlberry_agent(agent, env="discrete_state")
 
+
 @pytest.mark.xfail(sys.platform == "win32", reason="bug with windows???")
 @pytest.mark.parametrize("agent", CONTINUOUS_STATE_AGENTS)
 def test_continuous_state_agent(agent):
