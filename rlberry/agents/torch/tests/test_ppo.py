@@ -196,6 +196,3 @@ def test_ppo():
     output = evaluate_agents([pporlberry_stats], n_simulations=2, plot=False)
     pporlberry_stats.clear_output_dir()
 
-
-if __name__ == "__main__":
-    test_ppo()
