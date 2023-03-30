@@ -77,7 +77,7 @@ def test_dqn_classic_env():
 
     # test the agent
     observation, info = test_load_env.reset()
-    for tt in range(50):
+    for tt in range(100):
         action = loaded_agent.policy(observation)
         next_observation, reward, terminated, truncated, info = test_load_env.step(
             action

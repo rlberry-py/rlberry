@@ -204,6 +204,8 @@ def test_discrete2onehot():
         initial_distr = np.zeros(env.unwrapped.observation_space.n)
         initial_distr[ii] = 1.0
         env.unwrapped.set_initial_state_distribution(initial_distr)
+        action = env.action_space.sample()
+        observation, reward, terminated, truncated, info = env.step(action)
         obs, info = env.reset()
         assert np.array_equal(obs, initial_distr)
 

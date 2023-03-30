@@ -12,7 +12,7 @@ from rlberry.envs.classic_control.SpringCartPole import rk4
 # action_dict = {0: "LL", 1: "RR", 2: "LR", 3: "RL"}
 
 
-HORIZON = 20
+HORIZON = 50
 
 
 def test_spring_cartpole():
@@ -102,7 +102,3 @@ def test_rk4():
     assert np.abs(yout[0][1] - 2) < 1e-2
     assert np.abs(yout[-1][0] + 238.087) < 1e-2
     assert np.abs(yout[-1][1] + 220.827) < 1e-2
-
-
-if __name__ == "__main__":
-    test_spring_cartpole()
