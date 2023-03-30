@@ -38,7 +38,7 @@ class DummyAgent(AgentWithSimplePolicy):
         return {"hyperparameter1": hyperparameter1, "hyperparameter2": hyperparameter2}
 
 
-@pytest.mark.xfail(sys.platform == "win32",reason="bug with windows???") 
+@pytest.mark.xfail(sys.platform == "win32", reason="bug with windows???")
 def test_agent_manager_1():
     # Define train and evaluation envs
     train_env = (GridWorld, {})
