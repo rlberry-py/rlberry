@@ -290,4 +290,3 @@ def test_ppo_agent_manager_classic_env():
         state = next_s
 
     shutil.rmtree(saving_path)
-
