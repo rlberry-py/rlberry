@@ -7,14 +7,16 @@
 # ppo = PPOAgent(env)
 # ppo.fit(4096)
 
+import pytest
 from rlberry.envs import Wrapper
 from rlberry.agents.torch import PPOAgent
 from rlberry.manager import AgentManager, evaluate_agents
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
 from gym import make
 from rlberry.agents.torch.utils.training import model_factory_from_env
+# import sys
 
-
+# @pytest.mark.xfail(sys.platform == "win32", reason="bug with windows???")
 def test_ppo():
     env = "CartPole-v0"
     mdp = make(env)
