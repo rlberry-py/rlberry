@@ -227,9 +227,7 @@ def test_ppo_single_env():
     observation = test_load_env.reset()
     for tt in range(50):
         action = loaded_agent.policy(observation)
-        next_observation, reward, done, info = test_load_env.step(
-            action
-        )
+        next_observation, reward, done, info = test_load_env.step(action)
         if done:
             next_observation = test_load_env.reset()
         observation = next_observation
@@ -237,15 +235,9 @@ def test_ppo_single_env():
     os.remove(saving_path)
 
 
-
 def test_ppo_multi_env():
     env = gym_make("CartPole-v0")
-    agent = PPOAgent(
-        env,
-        learning_rate=1e-4,
-        optimizer_type="ADAM",
-        n_envs=3
-    )
+    agent = PPOAgent(env, learning_rate=1e-4, optimizer_type="ADAM", n_envs=3)
     agent.fit(budget=1000)
 
     saving_path = "rlberry/agents/torch/tests/agent_test_ppo_classic_env.pickle"
@@ -268,9 +260,7 @@ def test_ppo_multi_env():
     observation = test_load_env.reset()
     for tt in range(50):
         action = loaded_agent.policy(observation)
-        next_observation, reward, done, info = test_load_env.step(
-            action
-        )
+        next_observation, reward, done, info = test_load_env.step(action)
         if done:
             next_observation = test_load_env.reset()
         observation = next_observation
@@ -308,9 +298,7 @@ def test_ppo_multi_fit():
     observation = test_load_env.reset()
     for tt in range(50):
         action = loaded_agent.policy(observation)
-        next_observation, reward, done, info = test_load_env.step(
-            action
-        )
+        next_observation, reward, done, info = test_load_env.step(action)
         if done:
             next_observation = test_load_env.reset()
         observation = next_observation
@@ -320,12 +308,7 @@ def test_ppo_multi_fit():
 
 def test_ppo_multi_env_multi_fit():
     env = gym_make("CartPole-v0")
-    agent = PPOAgent(
-        env,
-        learning_rate=1e-4,
-        optimizer_type="ADAM",
-        n_envs=3
-    )
+    agent = PPOAgent(env, learning_rate=1e-4, optimizer_type="ADAM", n_envs=3)
     agent.fit(budget=1000)
     agent.fit(budget=1000)
 
@@ -349,14 +332,13 @@ def test_ppo_multi_env_multi_fit():
     observation = test_load_env.reset()
     for tt in range(50):
         action = loaded_agent.policy(observation)
-        next_observation, reward, done, info = test_load_env.step(
-            action
-        )
+        next_observation, reward, done, info = test_load_env.step(action)
         if done:
             next_observation = test_load_env.reset()
         observation = next_observation
 
     os.remove(saving_path)
+
 
 def test_ppo_agent_manager_single_env():
     saving_path = "rlberry/agents/torch/tests/agentmanager_test_ppo_classic_env"
@@ -411,7 +393,6 @@ def test_ppo_agent_manager_single_env():
     shutil.rmtree(saving_path)
 
 
-
 def test_ppo_agent_manager_multi_env():
     saving_path = "rlberry/agents/torch/tests/agentmanager_test_ppo_classic_env"
 
@@ -426,7 +407,7 @@ def test_ppo_agent_manager_multi_env():
             gym_make,
             dict(
                 id="CartPole-v0",
-            )
+            ),
         ),  # The Environment to solve.
         init_kwargs=dict(  # Where to put the agent's hyperparameters
             learning_rate=1e-4,
@@ -464,7 +445,6 @@ def test_ppo_agent_manager_multi_env():
         state = next_s
 
     shutil.rmtree(saving_path)
-
 
 
 def test_ppo_agent_manager_multi_fit():
@@ -535,7 +515,7 @@ def test_ppo_agent_manager_multi_env_multi_fit():
             gym_make,
             dict(
                 id="CartPole-v0",
-            )
+            ),
         ),  # The Environment to solve.
         init_kwargs=dict(  # Where to put the agent's hyperparameters
             learning_rate=1e-4,
@@ -574,4 +554,3 @@ def test_ppo_agent_manager_multi_env_multi_fit():
         state = next_s
 
     shutil.rmtree(saving_path)
-
