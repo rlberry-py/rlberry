@@ -292,6 +292,3 @@ def test_ppo_agent_manager_classic_env():
 
     shutil.rmtree(saving_path)
 
-
-if __name__ == "__main__":
-    test_ppo()
