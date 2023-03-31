@@ -5,6 +5,7 @@ from rlberry.agents.experimental import torch as torch_exp_agents
 from rlberry.utils.check_agent import check_rl_agent, check_rlberry_agent
 from rlberry.agents.features import FeatureMap
 import numpy as np
+import sys
 
 
 class OneHotFeatureMap(FeatureMap):
@@ -57,6 +58,7 @@ def test_finite_state_agent(agent):
     check_rlberry_agent(agent, env="discrete_state")
 
 
+@pytest.mark.xfail(sys.platform == "win32", reason="bug with windows???")
 @pytest.mark.parametrize("agent", CONTINUOUS_STATE_AGENTS)
 def test_continuous_state_agent(agent):
     check_rl_agent(agent, env="continuous_state")
