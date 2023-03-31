@@ -16,6 +16,7 @@ from gym import make
 from rlberry.agents.torch.utils.training import model_factory_from_env
 import sys
 
+
 @pytest.mark.xfail(sys.platform == "win32", reason="bug with windows???")
 def test_ppo():
     env = "CartPole-v0"
@@ -197,4 +198,3 @@ def test_ppo():
 
     output = evaluate_agents([pporlberry_stats], n_simulations=2, plot=False)
     pporlberry_stats.clear_output_dir()
-
