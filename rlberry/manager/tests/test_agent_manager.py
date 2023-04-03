@@ -5,7 +5,6 @@ import os
 from rlberry.envs import GridWorld
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.manager import AgentManager, plot_writer_data, evaluate_agents
-import time
 
 
 class DummyAgent(AgentWithSimplePolicy):
