@@ -169,7 +169,6 @@ def test_agent_manager_2():
     # test hyperparemeter optimization
     loaded_stats.optimize_hyperparams(n_trials=5)
 
-    time.sleep(3)
     # delete some writers
     stats_agent1.set_writer(1, None)
     stats_agent1.set_writer(2, None)
