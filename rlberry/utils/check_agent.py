@@ -276,12 +276,11 @@ def check_multi_fit(agent, env="continuous_state", init_kwargs=None):
 
     agent1 = agent(train_env, **init_kwargs)
 
-    try:        # stableBaselines don't have get_params()
+    try:  # stableBaselines don't have get_params()
         if "n_steps" in agent1.get_params():
-            agent1.n_steps = 30                
+            agent1.n_steps = 30
     except:
         pass
-
 
     agent1.fit(100)
     agent1.fit(100)
