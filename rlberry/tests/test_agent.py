@@ -2,7 +2,7 @@ import pytest
 import rlberry.agents as agents
 import rlberry.agents.torch as torch_agents
 from rlberry.agents.experimental import torch as torch_exp_agents
-from rlberry.utils.check_agent import check_rl_agent, check_rlberry_agent
+from rlberry.utils.check_agent import check_rl_agent, check_rlberry_agent, check_vectorized_env_agent
 from rlberry.agents.features import FeatureMap
 import numpy as np
 import sys
@@ -51,6 +51,9 @@ CONTINUOUS_STATE_AGENTS = [
     torch_exp_agents.AVECPPOAgent,
 ]
 
+MULTI_ENV_AGENTS= [
+    torch_agents.PPOAgent,
+]
 
 @pytest.mark.parametrize("agent", FINITE_MDP_AGENTS)
 def test_finite_state_agent(agent):
@@ -63,3 +66,8 @@ def test_finite_state_agent(agent):
 def test_continuous_state_agent(agent):
     check_rl_agent(agent, env="continuous_state")
     check_rlberry_agent(agent, env="continuous_state")
+
+@pytest.mark.xfail(sys.platform == "win32", reason="bug with windows???")
+@pytest.mark.parametrize("agent", MULTI_ENV_AGENTS)
+def test_continuous_vectorized_env_agent(agent):
+    check_vectorized_env_agent(agent, env="vectorized_env_continuous")

@@ -5,6 +5,9 @@ import numpy as np
 from rlberry.seeding import set_external_seed
 import tempfile
 import os
+from rlberry.envs.gym_make import gym_make
+import pathlib
+
 
 SEED = 42
 
@@ -20,6 +23,9 @@ def _make_env(env):
         elif env == "discrete_state":
             env_ctor = Chain
             env_kwargs = {}
+        elif env == "vectorized_env_continuous":
+            env_ctor = gym_make
+            env_kwargs =  dict(id="CartPole-v0")
         else:
             raise ValueError("The env given in parameter is not implemented")
     elif isinstance(env, tuple):
@@ -176,27 +182,48 @@ def check_save_load(agent, env="continuous_state", init_kwargs=None):
     if init_kwargs is None:
         init_kwargs = {}
 
-    train_env = _make_env(env)
-    env = train_env[0](**train_env[1])
+    train_env_tuple = _make_env(env)
     with tempfile.TemporaryDirectory() as tmpdirname:
-        agent = AgentManager(
+        manager = AgentManager(
             agent,
-            train_env,
+            train_env_tuple,
             fit_budget=5,
             n_fit=1,
             seed=SEED,
             init_kwargs=init_kwargs,
             output_dir=tmpdirname,
         )
-        agent.fit(3)
+        train_env = manager.train_env
+        test_env = train_env_tuple[0](**train_env_tuple[1])
+
+        manager.fit(3)
+
+        #test individual agents save and load
         assert (
-            os.path.getsize(str(agent.output_dir_) + "/agent_handlers/idx_0.pickle") > 1
+            os.path.getsize(str(manager.output_dir_) + "/agent_handlers/idx_0.pickle") > 1
         ), "The saved file is empty."
         try:
-            agent.load(str(agent.output_dir_) + "/agent_handlers/idx_0.pickle")
+            manager.load(str(manager.output_dir_) + "/agent_handlers/idx_0.pickle")
         except Exception:
             raise RuntimeError("Failed to load the agent file.")
+        
+        #test agentManager save and load
+        manager.save()
+        assert os.path.exists(tmpdirname)
 
+        path_to_load = next(pathlib.Path(tmpdirname).glob("**/*.pickle"))
+        loaded_agent_manager = AgentManager.load(path_to_load)
+        assert loaded_agent_manager
+
+        # test with firest agent of the manager
+        observation = test_env.reset()
+        for tt in range(50):
+            action = loaded_agent_manager.get_agent_instances()[0].policy(observation)
+            next_observation, reward, done, info = test_env.step(action)
+            if done:
+                next_observation = test_env.reset()
+            observation = next_observation
+    
 
 def check_seeding_agent(agent, env=None, continuous_state=False, init_kwargs=None):
     """
@@ -220,6 +247,95 @@ def check_seeding_agent(agent, env=None, continuous_state=False, init_kwargs=Non
     )
 
     assert result, "Agent not reproducible (same seed give different results)"
+
+
+def check_multi_fit (agent, env="continuous_state", init_kwargs=None):
+    """
+    Check that fitting two times with budget greater than n_step (buffer size) is working.
+
+    Parameters
+    ----------
+    agent: rlberry agent module
+        Agent class to test.
+    env: tuple (env_ctor, env_kwargs) or str in ["continuous_state", "discrete_state"], default="continuous_state"
+        if tuple, env is the constructor and keywords of the env on which to test.
+        if str in ["continuous_state", "discrete_state"], we use a default Benchmark environment.
+    init_kwargs : dict
+        Arguments required by the agent's constructor.
+    """
+    if init_kwargs is None:
+        init_kwargs = {}
+
+
+    init_kwargs["seeder"] = SEED
+    train_env_d = _make_env(env)
+    train_env = train_env_d[0](**train_env_d[1])
+
+    test_load_env_d = _make_env(env)
+    test_load_env = test_load_env_d[0](**test_load_env_d[1])
+
+    agent1 = agent(train_env, **init_kwargs)
+
+
+    if "n_steps" in agent1.get_params():
+        agent1.n_steps = 30
+
+    agent1.fit(100)
+    agent1.fit(100)
+
+    # test
+    state = test_load_env.reset()
+    for tt in range(50):
+        action = agent1.policy(state)
+        next_s, _, done, test = test_load_env.step(action)
+        if done:
+            break
+        state = next_s
+
+
+def check_vectorized_env_agent(agent,env="vectorized_env_continuous", agent_init_kwargs=None):
+    """
+    Check that (multi-)fitting vectorized_env is working.
+
+    Parameters
+    ----------
+    agent: rlberry agent module
+        Agent class to test.
+    env: tuple (env_ctor, env_kwargs) or str in {"continuous_state", "discrete_state","vectorized"}, default="vectorized_env_continuous"
+        if tuple, env is the constructor and keywords of the env on which to test.
+        if str in {"continuous_state", "discrete_state","vectorized"}, we use a default Benchmark environment.
+    agent_init_kwargs : dict
+        Arguments required by the agent's constructor.
+    """
+
+    if agent_init_kwargs is None:
+        agent_init_kwargs = dict(learning_rate=1e-4, optimizer_type="ADAM", n_envs=3, n_steps=30)
+
+
+    if "n_steps" not in agent_init_kwargs or agent_init_kwargs["n_envs"] is None:
+        agent_init_kwargs["n_envs"] = 3
+    if "n_steps" not in agent_init_kwargs or agent_init_kwargs["n_steps"] is None:
+        agent_init_kwargs["n_steps"] = 30
+
+    agent_init_kwargs["seeder"] = SEED
+    
+
+    env_d = _make_env(env)
+    train_env = env_d[0](**env_d[1])
+    test_env = env_d[0](**env_d[1])
+    
+    agent1 = agent(train_env, **agent_init_kwargs)
+    agent1.fit(100)
+    agent1.fit(100)
+    
+    # test the agent
+    state = test_env.reset()
+    for tt in range(50):
+        action = agent1.policy(state)
+        next_s, _, done, test = test_env.step(action)
+        if done:
+            break
+        state = next_s
 
 
 def check_rl_agent(agent, env="continuous_state", init_kwargs=None):
@@ -249,7 +365,7 @@ def check_rl_agent(agent, env="continuous_state", init_kwargs=None):
     check_seeding_agent(agent, env, init_kwargs=init_kwargs)  # check reproducibility
     check_fit_additive(agent, env, init_kwargs=init_kwargs)
     check_save_load(agent, env, init_kwargs=init_kwargs)
-
+    check_multi_fit(agent, env, init_kwargs=init_kwargs)
 
 def check_rlberry_agent(agent, env="continuous_state", init_kwargs=None):
     """
