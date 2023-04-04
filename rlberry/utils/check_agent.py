@@ -25,7 +25,7 @@ def _make_env(env):
             env_kwargs = {}
         elif env == "vectorized_env_continuous":
             env_ctor = gym_make
-            env_kwargs =  dict(id="CartPole-v0")
+            env_kwargs = dict(id="CartPole-v0")
         else:
             raise ValueError("The env given in parameter is not implemented")
     elif isinstance(env, tuple):
@@ -198,16 +198,17 @@ def check_save_load(agent, env="continuous_state", init_kwargs=None):
 
         manager.fit(3)
 
-        #test individual agents save and load
+        # test individual agents save and load
         assert (
-            os.path.getsize(str(manager.output_dir_) + "/agent_handlers/idx_0.pickle") > 1
+            os.path.getsize(str(manager.output_dir_) + "/agent_handlers/idx_0.pickle")
+            > 1
         ), "The saved file is empty."
         try:
             manager.load(str(manager.output_dir_) + "/agent_handlers/idx_0.pickle")
         except Exception:
             raise RuntimeError("Failed to load the agent file.")
-        
-        #test agentManager save and load
+
+        # test agentManager save and load
         manager.save()
         assert os.path.exists(tmpdirname)
 
@@ -223,7 +224,7 @@ def check_save_load(agent, env="continuous_state", init_kwargs=None):
             if done:
                 next_observation = test_env.reset()
             observation = next_observation
-    
+
 
 def check_seeding_agent(agent, env=None, continuous_state=False, init_kwargs=None):
     """
@@ -249,7 +250,7 @@ def check_seeding_agent(agent, env=None, continuous_state=False, init_kwargs=Non
     assert result, "Agent not reproducible (same seed give different results)"
 
 
-def check_multi_fit (agent, env="continuous_state", init_kwargs=None):
+def check_multi_fit(agent, env="continuous_state", init_kwargs=None):
     """
     Check that fitting two times with budget greater than n_step (buffer size) is working.
 
@@ -266,7 +267,6 @@ def check_multi_fit (agent, env="continuous_state", init_kwargs=None):
     if init_kwargs is None:
         init_kwargs = {}
 
-
     init_kwargs["seeder"] = SEED
     train_env_d = _make_env(env)
     train_env = train_env_d[0](**train_env_d[1])
@@ -275,7 +275,6 @@ def check_multi_fit (agent, env="continuous_state", init_kwargs=None):
     test_load_env = test_load_env_d[0](**test_load_env_d[1])
 
     agent1 = agent(train_env, **init_kwargs)
-
 
     if "n_steps" in agent1.get_params():
         agent1.n_steps = 30
@@ -293,7 +292,9 @@ def check_multi_fit (agent, env="continuous_state", init_kwargs=None):
         state = next_s
 
 
-def check_vectorized_env_agent(agent,env="vectorized_env_continuous", agent_init_kwargs=None):
+def check_vectorized_env_agent(
+    agent, env="vectorized_env_continuous", agent_init_kwargs=None
+):
     """
     Check that (multi-)fitting vectorized_env is working.
 
@@ -309,8 +310,9 @@ def check_vectorized_env_agent(agent,env="vectorized_env_continuous", agent_init
     """
 
     if agent_init_kwargs is None:
-        agent_init_kwargs = dict(learning_rate=1e-4, optimizer_type="ADAM", n_envs=3, n_steps=30)
-
+        agent_init_kwargs = dict(
+            learning_rate=1e-4, optimizer_type="ADAM", n_envs=3, n_steps=30
+        )
 
     if "n_steps" not in agent_init_kwargs or agent_init_kwargs["n_envs"] is None:
         agent_init_kwargs["n_envs"] = 3
@@ -318,16 +320,15 @@ def check_vectorized_env_agent(agent,env="vectorized_env_continuous", agent_init
         agent_init_kwargs["n_steps"] = 30
 
     agent_init_kwargs["seeder"] = SEED
-    
 
     env_d = _make_env(env)
     train_env = env_d[0](**env_d[1])
     test_env = env_d[0](**env_d[1])
-    
+
     agent1 = agent(train_env, **agent_init_kwargs)
     agent1.fit(100)
     agent1.fit(100)
-    
+
     # test the agent
     state = test_env.reset()
     for tt in range(50):
@@ -366,6 +367,7 @@ def check_rl_agent(agent, env="continuous_state", init_kwargs=None):
     check_fit_additive(agent, env, init_kwargs=init_kwargs)
     check_save_load(agent, env, init_kwargs=init_kwargs)
     check_multi_fit(agent, env, init_kwargs=init_kwargs)
+
 
 def check_rlberry_agent(agent, env="continuous_state", init_kwargs=None):
     """
