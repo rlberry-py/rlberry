@@ -217,12 +217,13 @@ def check_save_load(agent, env="continuous_state", init_kwargs=None):
         assert loaded_agent_manager
 
         # test with firest agent of the manager
-        observation = test_env.reset()
+        observation,info = test_env.reset()
         for tt in range(50):
             action = loaded_agent_manager.get_agent_instances()[0].policy(observation)
-            next_observation, reward, done, info = test_env.step(action)
+            next_observation, reward, terminated, truncated, info = test_env.step(action)
+            done = terminated or truncated
             if done:
-                next_observation = test_env.reset()
+                next_observation,info = test_env.reset()
             observation = next_observation
 
 
@@ -286,10 +287,11 @@ def check_multi_fit(agent, env="continuous_state", init_kwargs=None):
     agent1.fit(100)
 
     # test
-    state = test_load_env.reset()
+    state,info = test_load_env.reset()
     for tt in range(50):
         action = agent1.policy(state)
-        next_s, _, done, test = test_load_env.step(action)
+        next_s, _, terminated, truncated, test = test_load_env.step(action)
+        done = terminated or truncated
         if done:
             break
         state = next_s
@@ -333,10 +335,11 @@ def check_vectorized_env_agent(
     agent1.fit(100)
 
     # test the agent
-    state = test_env.reset()
+    state,info = test_env.reset()
     for tt in range(50):
         action = agent1.policy(state)
-        next_s, _, done, test = test_env.step(action)
+        next_s, _, terminated,truncated, test = test_env.step(action)
+        done = terminated or truncated
         if done:
             break
         state = next_s

@@ -312,7 +312,7 @@ class PPOAgent(AgentWithSimplePolicy):
             next_obs, reward, next_terminated, next_truncated, info = self.env.step(
                 action
             )
-            next_done = next_terminated or next_truncated
+            next_done = np.logical_or(next_terminated, next_truncated)
             next_obs = torch.Tensor(next_obs).to(self.device)
 
             # end of episode logging
