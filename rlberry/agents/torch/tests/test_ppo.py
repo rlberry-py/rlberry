@@ -42,7 +42,7 @@ def test_ppo():
     env = "Pendulum-v1"
     mdp = make(env)
     env_ctor = Wrapper
-    env_kwargs = dict(env=mdp)        
+    env_kwargs = dict(env=mdp)
 
     pporlberry_stats = AgentManager(
         PPOAgent,
@@ -196,4 +196,3 @@ def test_ppo():
 
     output = evaluate_agents([pporlberry_stats], n_simulations=2, plot=False)
     pporlberry_stats.clear_output_dir()
-
