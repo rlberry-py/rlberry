@@ -305,7 +305,7 @@ def check_vectorized_env_agent(
     ----------
     agent: rlberry agent module
         Agent class to test.
-    env: tuple (env_ctor, env_kwargs) or str in {"continuous_state", "discrete_state","vectorized"}, default="vectorized_env_continuous"
+    env: tuple (env_ctor, env_kwargs) or str "vectorized_env_continuous (default="vectorized_env_continuous")
         if tuple, env is the constructor and keywords of the env on which to test.
         if str in {"continuous_state", "discrete_state","vectorized"}, we use a default Benchmark environment.
     agent_init_kwargs : dict
