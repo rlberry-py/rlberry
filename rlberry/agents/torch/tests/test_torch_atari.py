@@ -3,7 +3,6 @@ from rlberry.agents.torch.dqn.dqn import DQNAgent
 from rlberry.envs.gym_make import atari_make
 
 
-
 def test_forward_dqn():
     mlp_configs = {
         "type": "MultiLayerPerceptron",  # A network architecture
@@ -52,7 +51,6 @@ def test_forward_dqn():
     )
 
     tuned_agent.fit()
-
 
 
 def test_forward_empty_input_dim():

@@ -111,7 +111,7 @@ def size_model_config(env, **model_config):
         return model_config
 
     # Assume CHW observation space
-    if "type" in model_config and  model_config["type"] == "ConvolutionalNetwork":
+    if "type" in model_config and model_config["type"] == "ConvolutionalNetwork":
         if "transpose_obs" in model_config and not model_config["transpose_obs"]:
             # Assume CHW observation space
             if "in_channels" not in model_config:
