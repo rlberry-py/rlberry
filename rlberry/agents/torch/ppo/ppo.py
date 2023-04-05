@@ -288,7 +288,11 @@ class PPOAgent(AgentWithSimplePolicy):
 
         if lr_scheduler is None:
             lr_scheduler = self._get_lr_scheduler(budget)
-        timesteps_counter = 0
+
+        if len(self.memory) == 0:
+            timesteps_counter = 0
+        else:  # it's not the first "fit" on this agent, so there is a previous buffer to continue
+            timesteps_counter = len(self.memory) * self.n_envs
 
         episode_returns = np.zeros(self.n_envs, dtype=np.float32)
         episode_lengths = np.zeros(self.n_envs, dtype=np.int32)
