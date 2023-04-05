@@ -292,6 +292,7 @@ def check_multi_fit(agent, env="continuous_state", init_kwargs=None):
         action = agent1.policy(state)
         next_s, _, terminated, truncated, test = test_load_env.step(action)
         done = terminated or truncated
+
         if done:
             break
         state = next_s
@@ -340,6 +341,7 @@ def check_vectorized_env_agent(
         action = agent1.policy(state)
         next_s, _, terminated,truncated, test = test_env.step(action)
         done = terminated or truncated
+
         if done:
             break
         state = next_s

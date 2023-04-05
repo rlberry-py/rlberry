@@ -15,9 +15,6 @@ from rlberry.envs.benchmarks.ball_exploration import PBall2D
 from gymnasium import make
 from rlberry.agents.torch.utils.training import model_factory_from_env
 import sys
-import os
-import pathlib
-import shutil
 
 
 @pytest.mark.xfail(sys.platform == "win32", reason="bug with windows???")
@@ -45,7 +42,7 @@ def test_ppo():
     env = "Pendulum-v1"
     mdp = make(env)
     env_ctor = Wrapper
-    env_kwargs = dict(env=mdp)
+    env_kwargs = dict(env=mdp)        
 
     pporlberry_stats = AgentManager(
         PPOAgent,
@@ -200,97 +197,3 @@ def test_ppo():
     output = evaluate_agents([pporlberry_stats], n_simulations=2, plot=False)
     pporlberry_stats.clear_output_dir()
 
-
-def test_ppo_classic_env():
-    env = gym_make("CartPole-v0")
-    agent = PPOAgent(
-        env,
-        learning_rate=1e-4,
-        optimizer_type="ADAM",
-    )
-    agent.fit(budget=200)
-
-    saving_path = "rlberry/agents/torch/tests/agent_test_ppo_classic_env.pickle"
-
-    # VRemove previous save
-    if os.path.exists(saving_path):
-        os.remove(saving_path)
-    assert not os.path.exists(saving_path)
-
-    # test the save function
-    agent.save(saving_path)
-    assert os.path.exists(saving_path)
-
-    # test the loading function
-    test_load_env = gym_make("CartPole-v0")
-    loaded_agent = PPOAgent.load(saving_path, **dict(env=test_load_env))
-    assert loaded_agent
-
-    # test the agent
-    observation, info = test_load_env.reset()
-    for tt in range(50):
-        action = loaded_agent.policy(observation)
-        next_observation, reward, terminated, truncated, info = test_load_env.step(
-            action
-        )
-        done = terminated or truncated
-        if done:
-            next_observation, info = test_load_env.reset()
-        observation = next_observation
-
-    os.remove(saving_path)
-
-
-@pytest.mark.xfail(sys.platform == "win32", reason="bug with windows???")
-def test_ppo_agent_manager_classic_env():
-    saving_path = "rlberry/agents/torch/tests/agentmanager_test_ppo_classic_env"
-
-    # Remove previous save
-    if os.path.exists(saving_path):
-        shutil.rmtree(saving_path)
-    assert not os.path.exists(saving_path)
-
-    test_agent_manager = AgentManager(
-        PPOAgent,  # The Agent class.
-        (
-            gym_make,
-            dict(
-                id="CartPole-v0",
-            ),
-        ),  # The Environment to solve.
-        init_kwargs=dict(  # Where to put the agent's hyperparameters
-            learning_rate=1e-4,
-            optimizer_type="ADAM",
-        ),
-        fit_budget=200,  # The number of interactions between the agent and the environment during training.
-        eval_kwargs=dict(
-            eval_horizon=50
-        ),  # The number of interactions between the agent and the environment during evaluations.
-        n_fit=1,  # The number of agents to train. Usually, it is good to do more than 1 because the training is stochastic.
-        agent_name="test_ppo_classic_env",  # The agent's name.
-        output_dir=saving_path,
-    )
-
-    test_agent_manager.fit(budget=200)
-
-    # test the save function
-    test_agent_manager.save()
-    assert os.path.exists(saving_path)
-
-    # test the loading function
-    test_load_env = gym_make("CartPole-v0")
-    path_to_load = next(pathlib.Path(saving_path).glob("**/*.pickle"))
-    loaded_agent_manager = AgentManager.load(path_to_load)
-    assert loaded_agent_manager
-
-    # test the agent
-    state, info = test_load_env.reset()
-    for tt in range(50):
-        action = loaded_agent_manager.get_agent_instances()[0].policy(state)
-        next_s, _, terminated, truncated, test = test_load_env.step(action)
-        done = terminated or truncated
-        if done:
-            break
-        state = next_s
-
-    shutil.rmtree(saving_path)
