@@ -8,7 +8,7 @@
 # ppo.fit(4096)
 
 import pytest
-from rlberry.envs import Wrapper, gym_make
+from rlberry.envs import Wrapper
 from rlberry.agents.torch import PPOAgent
 from rlberry.manager import AgentManager, evaluate_agents
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
