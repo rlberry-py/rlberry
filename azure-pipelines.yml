@@ -51,4 +51,4 @@ jobs:
 
   - script: |
       pytest -s --ignore=rlberry/network
-    displayName: 'pytest 4' 
+    displayName: 'pytest 4'
