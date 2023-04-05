@@ -18,7 +18,7 @@ install_requires = [
     "matplotlib",
     "seaborn",
     "pandas",
-    "gym",
+    "gym==0.21",
     "dill",
     "docopt",
     "pyyaml",
