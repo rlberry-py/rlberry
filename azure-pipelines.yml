@@ -15,7 +15,7 @@ jobs:
 - job: 'checkPrLabel'
   continueOnError: false
   pool:
-    vmImage: ubuntu-latest
+    vmImage: ubuntu-22.04
   steps:
   - bash: |
      echo "Looking for label at https://api.github.com/repos/$BUILD_REPOSITORY_ID/issues/$SYSTEM_PULLREQUEST_PULLREQUESTNUMBER/labels"
@@ -81,7 +81,7 @@ jobs:
   condition: or(in(variables['Build.SourceBranch'], 'refs/heads/main'), eq(dependencies.checkPrLabel.outputs['checkPrLabel.prHasCILabel'], true))
 
   pool:
-    vmImage: 'macOS-latest'
+    vmImage: 'macOS-12'
   strategy:
     matrix:
       Python39:
@@ -116,7 +116,7 @@ jobs:
   dependsOn: checkPrLabel
   condition: or(in(variables['Build.SourceBranch'], 'refs/heads/main'), eq(dependencies.checkPrLabel.outputs['checkPrLabel.prHasCILabel'], true))
   pool:
-    vmImage: 'windows-latest'
+    vmImage: 'windows-2022'
   strategy:
     matrix:
       Python39:

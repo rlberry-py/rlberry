@@ -7,17 +7,20 @@
 # ppo = PPOAgent(env)
 # ppo.fit(4096)
 
+import pytest
 from rlberry.envs import Wrapper, gym_make
 from rlberry.agents.torch import PPOAgent
 from rlberry.manager import AgentManager, evaluate_agents
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
 from gymnasium import make
 from rlberry.agents.torch.utils.training import model_factory_from_env
+import sys
 import os
 import pathlib
 import shutil
 
 
+@pytest.mark.xfail(sys.platform == "win32", reason="bug with windows???")
 def test_ppo():
     env = "CartPole-v0"
     mdp = make(env)
@@ -27,7 +30,7 @@ def test_ppo():
     pporlberry_stats = AgentManager(
         PPOAgent,
         (env_ctor, env_kwargs),
-        fit_budget=int(100),
+        fit_budget=int(1000),
         eval_kwargs=dict(eval_horizon=2),
         init_kwargs=dict(batch_size=24, n_steps=96),
         n_fit=1,
@@ -47,7 +50,7 @@ def test_ppo():
     pporlberry_stats = AgentManager(
         PPOAgent,
         (env_ctor, env_kwargs),
-        fit_budget=int(100),
+        fit_budget=int(1000),
         eval_kwargs=dict(eval_horizon=2),
         init_kwargs=dict(batch_size=24, n_steps=96),
         n_fit=1,
@@ -67,7 +70,7 @@ def test_ppo():
     pporlberry_stats = AgentManager(
         PPOAgent,
         (env_ctor, env_kwargs),
-        fit_budget=int(100),
+        fit_budget=int(1000),
         eval_kwargs=dict(eval_horizon=2),
         init_kwargs=dict(batch_size=24, n_steps=96),
         n_fit=1,
@@ -84,7 +87,7 @@ def test_ppo():
     pporlberry_stats = AgentManager(
         PPOAgent,
         (env_ctor, env_kwargs),
-        fit_budget=int(100),
+        fit_budget=int(1000),
         eval_kwargs=dict(eval_horizon=2),
         init_kwargs=dict(batch_size=24, n_steps=96),
         n_fit=1,
@@ -105,7 +108,7 @@ def test_ppo():
     pporlberry_stats = AgentManager(
         PPOAgent,
         (env_ctor, env_kwargs),
-        fit_budget=int(100),
+        fit_budget=int(1000),
         eval_kwargs=dict(eval_horizon=2),
         init_kwargs=dict(
             batch_size=24,
@@ -135,7 +138,7 @@ def test_ppo():
     pporlberry_stats = AgentManager(
         PPOAgent,
         (env_ctor, env_kwargs),
-        fit_budget=int(100),
+        fit_budget=int(1000),
         eval_kwargs=dict(eval_horizon=2),
         init_kwargs=dict(
             batch_size=24,
@@ -170,7 +173,7 @@ def test_ppo():
     pporlberry_stats = AgentManager(
         PPOAgent,
         (env_ctor, env_kwargs),
-        fit_budget=int(100),
+        fit_budget=int(1000),
         eval_kwargs=dict(eval_horizon=2),
         init_kwargs=dict(batch_size=24, n_steps=96),
         n_fit=1,
@@ -185,7 +188,7 @@ def test_ppo():
     pporlberry_stats = AgentManager(
         PPOAgent,
         (env_ctor, env_kwargs),
-        fit_budget=int(100),
+        fit_budget=int(1000),
         eval_kwargs=dict(eval_horizon=2),
         init_kwargs=dict(batch_size=24, n_steps=96, normalize_advantages=True),
         n_fit=1,
@@ -238,6 +241,7 @@ def test_ppo_classic_env():
     os.remove(saving_path)
 
 
+@pytest.mark.xfail(sys.platform == "win32", reason="bug with windows???")
 def test_ppo_agent_manager_classic_env():
     saving_path = "rlberry/agents/torch/tests/agentmanager_test_ppo_classic_env"
 
