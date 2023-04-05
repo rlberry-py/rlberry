@@ -13,8 +13,6 @@ pr:
 jobs:
 
 - job: 'windows'
-  dependsOn: checkPrLabel
-  condition: or(in(variables['Build.SourceBranch'], 'refs/heads/main'), eq(dependencies.checkPrLabel.outputs['checkPrLabel.prHasCILabel'], true))
   pool:
     vmImage: 'windows-latest'
   strategy:
@@ -40,5 +38,17 @@ jobs:
 
   - script: |
       pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
+      pytest -s rlberry/agents/torch/tests/test_mdqn.py
+    displayName: 'pytest 1'
+
+  - script: |
+      pytest -s rlberry/agents/torch/tests/test_mdqn.py
+    displayName: 'pytest 2'
+
+  - script: |
+      pytest -s rlberry/agents/torch/tests/test_mdqn.py
+    displayName: 'pytest 3'
+
+  - script: |
       pytest -s --ignore=rlberry/network
-    displayName: 'pytest'
+    displayName: 'pytest 4' 
