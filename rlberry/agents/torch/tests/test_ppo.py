@@ -27,7 +27,7 @@ def test_ppo():
     pporlberry_stats = AgentManager(
         PPOAgent,
         (env_ctor, env_kwargs),
-        fit_budget=int(100),
+        fit_budget=int(1000),
         eval_kwargs=dict(eval_horizon=2),
         init_kwargs=dict(batch_size=24, n_steps=96),
         n_fit=1,
@@ -47,7 +47,7 @@ def test_ppo():
     pporlberry_stats = AgentManager(
         PPOAgent,
         (env_ctor, env_kwargs),
-        fit_budget=int(100),
+        fit_budget=int(1000),
         eval_kwargs=dict(eval_horizon=2),
         init_kwargs=dict(batch_size=24, n_steps=96),
         n_fit=1,
@@ -67,7 +67,7 @@ def test_ppo():
     pporlberry_stats = AgentManager(
         PPOAgent,
         (env_ctor, env_kwargs),
-        fit_budget=int(100),
+        fit_budget=int(1000),
         eval_kwargs=dict(eval_horizon=2),
         init_kwargs=dict(batch_size=24, n_steps=96),
         n_fit=1,
@@ -81,11 +81,10 @@ def test_ppo():
 
     env_ctor = PBall2D
     env_kwargs = dict()
-
     pporlberry_stats = AgentManager(
         PPOAgent,
         (env_ctor, env_kwargs),
-        fit_budget=int(100),
+        fit_budget=int(1000),
         eval_kwargs=dict(eval_horizon=2),
         init_kwargs=dict(batch_size=24, n_steps=96),
         n_fit=1,
@@ -106,7 +105,7 @@ def test_ppo():
     pporlberry_stats = AgentManager(
         PPOAgent,
         (env_ctor, env_kwargs),
-        fit_budget=int(100),
+        fit_budget=int(1000),
         eval_kwargs=dict(eval_horizon=2),
         init_kwargs=dict(
             batch_size=24,
@@ -136,7 +135,7 @@ def test_ppo():
     pporlberry_stats = AgentManager(
         PPOAgent,
         (env_ctor, env_kwargs),
-        fit_budget=int(100),
+        fit_budget=int(1000),
         eval_kwargs=dict(eval_horizon=2),
         init_kwargs=dict(
             batch_size=24,
@@ -168,11 +167,10 @@ def test_ppo():
 
     env_ctor = PBall2D
     env_kwargs = dict()
-
     pporlberry_stats = AgentManager(
         PPOAgent,
         (env_ctor, env_kwargs),
-        fit_budget=int(100),
+        fit_budget=int(1000),
         eval_kwargs=dict(eval_horizon=2),
         init_kwargs=dict(batch_size=24, n_steps=96),
         n_fit=1,
@@ -187,7 +185,7 @@ def test_ppo():
     pporlberry_stats = AgentManager(
         PPOAgent,
         (env_ctor, env_kwargs),
-        fit_budget=int(100),
+        fit_budget=int(1000),
         eval_kwargs=dict(eval_horizon=2),
         init_kwargs=dict(batch_size=24, n_steps=96, normalize_advantages=True),
         n_fit=1,
