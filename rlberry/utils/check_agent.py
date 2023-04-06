@@ -17,7 +17,9 @@ def _make_tuple_env(env):
     """
     Help function to get the tuple(ctor,kwargs) corresponding to the env to make.
     """
-    if isinstance(env, str):        #If env param is a str, we use the corresponding "by default" env, and return it as tuple
+    if isinstance(
+        env, str
+    ):  # If env param is a str, we use the corresponding "by default" env, and return it as tuple
         if env == "continuous_state":
             env_ctor = PBall2D
             env_kwargs = {}
@@ -29,7 +31,7 @@ def _make_tuple_env(env):
             env_kwargs = dict(id="CartPole-v0")
         else:
             raise ValueError("The env given in parameter is not implemented")
-    elif isinstance(env, tuple):    #If env param is a tuple, return it
+    elif isinstance(env, tuple):  # If env param is a tuple, return it
         env_ctor = env[0]
         env_kwargs = env[1]
     else:
@@ -87,13 +89,12 @@ def _fit_agent(agent, env="continuous_state", init_kwargs=None):
     env = train_env[0](**train_env[1])
 
     try:
-        my_agent = agent(env,**init_kwargs)
+        my_agent = agent(env, **init_kwargs)
         my_agent.fit(10)
     except Exception as exc:
         raise RuntimeError("Agent can not fit without Agent Manager") from exc
 
     return my_agent
-
 
 
 def check_agent_manager(agent, env="continuous_state", init_kwargs=None):
@@ -111,7 +112,7 @@ def check_agent_manager(agent, env="continuous_state", init_kwargs=None):
         Arguments required by the agent's constructor.
     """
     manager = _fit_agent_manager(agent, env, init_kwargs=init_kwargs)
-    assert(manager is not None)
+    assert manager is not None
 
 
 def check_agent_base(agent, env="continuous_state", init_kwargs=None):
@@ -129,7 +130,7 @@ def check_agent_base(agent, env="continuous_state", init_kwargs=None):
         Arguments required by the agent's constructor.
     """
     agent = _fit_agent(agent, env, init_kwargs=init_kwargs)
-    assert(agent is not None)
+    assert agent is not None
 
 
 def check_agents_almost_equal(agent1, agent2, compare_using="policy", n_checks=5):
@@ -214,9 +215,11 @@ def check_fit_additive(agent, env="continuous_state", init_kwargs=None):
         result
     ), "Error: fitting the agent two times for 10 steps is not equivalent to fitting it one time for 20 steps."
 
+
 def check_save_load(agent, env="continuous_state", init_kwargs=None):
     _check_save_load_with_manager(agent, env, init_kwargs)
     _check_save_load_without_manager(agent, env, init_kwargs)
+
 
 def _check_save_load_with_manager(agent, env="continuous_state", init_kwargs=None):
     """
@@ -297,23 +300,23 @@ def _check_save_load_without_manager(agent, env="continuous_state", init_kwargs=
 
     train_env_tuple = _make_tuple_env(env)
     with tempfile.TemporaryDirectory() as tmpdirname:
-        my_agent = _fit_agent(agent,train_env_tuple,init_kwargs)
+        my_agent = _fit_agent(agent, train_env_tuple, init_kwargs)
         train_env = my_agent.env
         test_env = train_env_tuple[0](**train_env_tuple[1])
 
         my_agent.fit(3)
 
-        saving_path = tmpdirname+"/agent_test.pickle"
+        saving_path = tmpdirname + "/agent_test.pickle"
 
         # test agentManager save and load
         my_agent.save(saving_path)
         assert os.path.exists(tmpdirname)
 
         params_for_loader = dict(env=train_env)
-        
-        #extract the class name to check if we need to add some param to load
-        if issubclass(agent,StableBaselinesAgent) : 
-            params_for_loader["algo_cls"]=init_kwargs["algo_cls"]
+
+        # extract the class name to check if we need to add some param to load
+        if issubclass(agent, StableBaselinesAgent):
+            params_for_loader["algo_cls"] = init_kwargs["algo_cls"]
 
         loaded_agent = agent.load(saving_path, **params_for_loader)
         assert loaded_agent
@@ -326,6 +329,7 @@ def _check_save_load_without_manager(agent, env="continuous_state", init_kwargs=
             if done:
                 next_observation = test_env.reset()
             observation = next_observation
+
 
 def check_seeding_agent(agent, env=None, continuous_state=False, init_kwargs=None):
     """
@@ -467,9 +471,7 @@ def check_rl_agent(agent, env="continuous_state", init_kwargs=None):
     check_agent_manager(
         agent, env, init_kwargs=init_kwargs
     )  # check manager compatible.
-    check_agent_base(
-        agent, env, init_kwargs=init_kwargs
-    )  # check without manager
+    check_agent_base(agent, env, init_kwargs=init_kwargs)  # check without manager
     check_seeding_agent(agent, env, init_kwargs=init_kwargs)  # check reproducibility
     check_fit_additive(agent, env, init_kwargs=init_kwargs)
     check_save_load(agent, env, init_kwargs=init_kwargs)
