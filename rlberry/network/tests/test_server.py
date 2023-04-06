@@ -4,34 +4,38 @@ import py
 import pytest
 from xprocess import ProcessStarter
 import numpy as np
-import multiprocessing
 
 from rlberry.network.client import BerryClient
 from rlberry.network import interface
 from rlberry.network.interface import Message, ResourceRequest
 from rlberry.manager.remote_agent_manager import RemoteAgentManager
 from rlberry.manager.evaluation import evaluate_agents
-from rlberry.network.tests.conftest import server
-import time
+
+from rlberry.network.interface import ResourceItem
+from rlberry.network.server import BerryServer
+from rlberry.agents import ValueIterationAgent
+from rlberry.agents.torch import REINFORCEAgent
+from rlberry.envs import GridWorld, gym_make
+from rlberry.utils.writers import DefaultWriter
+
 
 server_name = "berry"
 
 
 def test_server():
-    try:
-        from pytest_cov.embed import cleanup_on_sigterm
-    except ImportError:
-        pass
-    else:
-        cleanup_on_sigterm()
-    default_port = 4242
-    p = multiprocessing.Process(target=server, args=(default_port,))
-    try:
-        p.start()
-        time.sleep(1)
-        p.terminate()
-    finally:
-        p.join()
+    resources = dict(
+        GridWorld=ResourceItem(obj=GridWorld, description="GridWorld constructor"),
+        gym_make=ResourceItem(obj=gym_make, description="gym_make"),
+        REINFORCEAgent=ResourceItem(obj=REINFORCEAgent, description="REINFORCEAgent"),
+        ValueIterationAgent=ResourceItem(
+            obj=ValueIterationAgent,
+            description="ValueIterationAgent constructor" + ValueIterationAgent.__doc__,
+        ),
+        DefaultWriter=ResourceItem(
+            obj=DefaultWriter, description="rlberry default writer"
+        ),
+    )
+    server = BerryServer(resources=resources, port=6553, client_socket_timeout=120.0)
 
 
 @pytest.fixture(autouse=True)
