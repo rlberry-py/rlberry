@@ -500,8 +500,8 @@ def check_rlberry_agent(agent, env="continuous_state", init_kwargs=None):
     >>> from rlberry.utils import check_rl_agent
     >>> check_rl_agent(UCBVIAgent) #
     """
-    agent = _fit_agent_manager(agent, env, init_kwargs=init_kwargs).agent_handlers[0]
+    manager = _fit_agent_manager(agent, env, init_kwargs=init_kwargs).agent_handlers[0]
     try:
-        params = agent.get_params()
+        params = manager.get_params()
     except Exception:
         raise RuntimeError("Fail to call get_params on the agent.")

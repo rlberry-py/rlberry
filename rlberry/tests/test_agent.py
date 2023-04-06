@@ -52,6 +52,7 @@ CONTINUOUS_STATE_AGENTS = [
     torch_agents.MunchausenDQNAgent,
     torch_agents.REINFORCEAgent,
     torch_agents.PPOAgent,
+    torch_agents.A2CAgent,
 ]
 
 MULTI_ENV_AGENTS = [
