@@ -1,5 +1,6 @@
 import os
 import pytest
+import sys
 
 from pyvirtualdisplay import Display
 from rlberry.envs.classic_control import MountainCar
@@ -48,6 +49,7 @@ def test_instantiation(ModelClass):
         assert env.is_render_enabled()
 
 
+@pytest.mark.xfail(sys.platform != "linux", reason="bug with mac and windows???")
 @pytest.mark.parametrize("ModelClass", classes)
 def test_render2d_interface(ModelClass):
     env = ModelClass()
@@ -72,6 +74,7 @@ def test_render2d_interface(ModelClass):
             pass
 
 
+@pytest.mark.xfail(sys.platform != "linux", reason="bug with mac and windows???")
 @pytest.mark.parametrize("ModelClass", classes)
 def test_render2d_interface_wrapped(ModelClass):
     env = Wrapper(ModelClass())

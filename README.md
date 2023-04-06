@@ -4,6 +4,7 @@
 </p>
 
 
+
 <!-- Short description -->
 <p align="center">
    A Reinforcement Learning Library for Research and Education
@@ -123,6 +124,11 @@ The modules listed below are experimental at the moment, that is, they are not t
 
 * `rlberry.network`: Allows communication between a server and client via sockets, and can be used to run agents remotely.
 * `rlberry.agents.experimental`: Experimental agents that are not thoroughly tested.
+
+
+## About us
+This project was initiated and is actively maintained by [INRIA SCOOL team](https://team.inria.fr/scool/).
+More information [here](https://rlberry.readthedocs.io/en/latest/about.html#).
 
 
 ## Contributing
