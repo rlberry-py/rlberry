@@ -4,15 +4,26 @@ import py
 import pytest
 from xprocess import ProcessStarter
 import numpy as np
+import multiprocessing
 
 from rlberry.network.client import BerryClient
 from rlberry.network import interface
 from rlberry.network.interface import Message, ResourceRequest
 from rlberry.manager.remote_agent_manager import RemoteAgentManager
-
 from rlberry.manager.evaluation import evaluate_agents
+from rlberry.network.tests.conftest import server
+import time
 
 server_name = "berry"
+
+
+def test_server():
+    default_port = 4242
+    p = multiprocessing.Process(target=server, args=(default_port,))
+    p.start()
+    time.sleep(1)
+    p.terminate()
+    p.join()
 
 
 @pytest.fixture(autouse=True)
