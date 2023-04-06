@@ -18,12 +18,20 @@ server_name = "berry"
 
 
 def test_server():
+    try:
+        from pytest_cov.embed import cleanup_on_sigterm
+    except ImportError:
+        pass
+    else:
+        cleanup_on_sigterm()
     default_port = 4242
     p = multiprocessing.Process(target=server, args=(default_port,))
-    p.start()
-    time.sleep(1)
-    p.terminate()
-    p.join()
+    try:
+        p.start()
+        time.sleep(1)
+        p.terminate()
+    finally:
+        p.join()
 
 
 @pytest.fixture(autouse=True)
