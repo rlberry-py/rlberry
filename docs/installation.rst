@@ -66,7 +66,7 @@ to install version 0.1.
 Deep RL agents
 --------------
 
-Deep RL agents require extra libraries, like PyTorch.
+Deep RL agents require extra libraries, like PyTorch and JAX.
 
 * PyTorch agents:
 
@@ -74,3 +74,15 @@ Deep RL agents require extra libraries, like PyTorch.
 
     $ pip install git+https://github.com/rlberry-py/rlberry.git#egg=rlberry[torch_agents]
     $ pip install tensorboard
+
+* JAX agents (**Linux only, experimental**):
+
+.. code:: bash
+
+    $ pip install git+https://github.com/rlberry-py/rlberry.git#egg=rlberry[jax_agents]
+
+.. warning::
+    If you're using PyTorch agents *and* JAX agents, do not install tensorboard separately,
+    since :code:`pip install -e .[jax_agents]` installs tensorflow, which already contains
+    tensorboard. Otherwise, there might be a conflict between the two installations
+    and tensorboard will not work properly.

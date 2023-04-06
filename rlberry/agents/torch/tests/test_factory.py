@@ -8,6 +8,7 @@ from rlberry.agents.torch.utils.training import model_factory
         "MultiLayerPerceptron",
         "ConvolutionalNetwork",
         "DuelingNetwork",
+        "EgoAttentionNetwork",
         "Table",
     ],
 )
@@ -17,6 +18,8 @@ def test_dqn_agent(ntype):
     elif ntype == "ConvolutionalNetwork":
         nkwargs = dict(in_channels=10, in_height=20, in_width=30, out_size=15)
     elif ntype == "DuelingNetwork":
+        nkwargs = {"in_size": 5, "out_size": 3}
+    elif ntype == "EgoAttentionNetwork":
         nkwargs = {"in_size": 5, "out_size": 3}
     elif ntype == "Table":
         nkwargs = dict(state_size=5, action_size=3)

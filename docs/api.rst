@@ -92,7 +92,14 @@ Experimental torch agents
    :toctree: generated/
    :template: class.rst
 
+   agents.experimental.torch.AVECPPOAgent
    agents.experimental.torch.SACAgent
+
+Experimental Jax Agents
+-------------------------
+
+Still experimental. Look at the source of `rlberry.agents.experimental.jax` for more info.
+
 
 Environments
 ============
@@ -249,6 +256,7 @@ Torch
   agents.torch.utils.models.ConvolutionalNetwork
   agents.torch.utils.models.DuelingNetwork
   agents.torch.utils.models.Table
+  agents.torch.utils.attention_models.EgoAttentionNetwork
 
 
 Bandits
