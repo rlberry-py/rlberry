@@ -50,6 +50,7 @@ CONTINUOUS_STATE_AGENTS = [
     agents.RSUCBVIAgent,
     agents.RSKernelUCBVIAgent,
     torch_agents.DQNAgent,
+    torch_agents.MunchausenDQNAgent,
     torch_agents.REINFORCEAgent,
     torch_agents.PPOAgent,
     torch_exp_agents.AVECPPOAgent,
