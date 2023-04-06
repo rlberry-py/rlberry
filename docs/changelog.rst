@@ -6,14 +6,17 @@ Changelog
 Dev version
 -----------
 
+*PR#281*
+
+* New branch for code compatible with Gymnasium
 
 Version 0.4.0  (latest stable version)
 --------------------------------------
 
-*PR #273*
+*PR#273*
 
 * Change the default behavior of `plot_writer_data` so that if seaborn has version >= 0.12.0 then
-  a 90% percentile interval is used instead of sd.
+  a 90% percentile interval is used instead of sd. 
 
 *PR #269*
 
