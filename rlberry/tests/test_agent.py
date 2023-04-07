@@ -5,7 +5,7 @@ from rlberry.utils.check_agent import (
     check_rl_agent,
     check_rlberry_agent,
     check_vectorized_env_agent,
-    check_hyperparam_optimisation_agent
+    check_hyperparam_optimisation_agent,
 )
 from rlberry.agents.features import FeatureMap
 import numpy as np
