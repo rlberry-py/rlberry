@@ -9,6 +9,7 @@ from rlberry.envs.gym_make import gym_make
 import pathlib
 from rlberry.agents.stable_baselines.stable_baselines import StableBaselinesAgent
 
+from optuna.samplers import TPESampler
 
 SEED = 42
 
@@ -505,3 +506,161 @@ def check_rlberry_agent(agent, env="continuous_state", init_kwargs=None):
         params = manager.get_params()
     except Exception:
         raise RuntimeError("Fail to call get_params on the agent.")
+
+
+def check_hyperparam_optimisation_agent(agent, env="continuous_state", init_kwargs=None):
+    """
+    Check hyperparameter optimisation compatibility with manager
+    Raises an exception if a check fails.
+
+    Parameters
+    ----------
+    agent: rlberry agent module
+        Agent class to test.
+    env: tuple (env_ctor, env_kwargs) or str in {"continuous_state", "discrete_state"}, default="continuous_state"
+        if tuple, env is the constructor and keywords of the env on which to test.
+        if str in {"continuous_state", "discrete_state"}, we use a default Benchmark environment.
+    init_kwargs : dict
+        Arguments required by the agent's constructor.
+
+    """
+    _test_hyperparam_optim_tpe(agent, env, init_kwargs=init_kwargs)
+    _test_hyperparam_optim_grid(agent, env, init_kwargs=init_kwargs)
+    _test_hyperparam_optim_cmaes(agent, env, init_kwargs=init_kwargs)
+    _test_discount_optimization(agent, env, init_kwargs=init_kwargs)
+
+    def _custom_eval_function(agents):
+        vals = [agent.eval() for agent in agents]
+        return np.mean(vals) - 0.1 * np.std(vals)
+
+    _test_hyperparam_optim_random("process", None, 1.0,agent, env, init_kwargs=init_kwargs)
+    _test_hyperparam_optim_random("thread", None, 1.0,agent, env, init_kwargs=init_kwargs)
+    _test_hyperparam_optim_random("process", _custom_eval_function, 1.0,agent, env, init_kwargs=init_kwargs)
+    _test_hyperparam_optim_random("process", _custom_eval_function, 0.5,agent, env, init_kwargs=init_kwargs)
+
+
+def _test_hyperparam_optim_tpe(agent, env="continuous_state", init_kwargs=None):
+    # Define trainenv
+    if init_kwargs is None:
+        init_kwargs = {}
+    init_kwargs["seeder"] = SEED
+    train_env = _make_tuple_env(env)
+
+    # Run AgentManager
+    stats_agent = AgentManager(
+        agent,
+        train_env,
+        fit_budget=1,
+        init_kwargs={},
+        eval_kwargs={"eval_horizon": 5},
+        n_fit=4,
+    )
+
+    # test hyperparameter optimization with TPE sampler
+    # using hyperopt default values
+    sampler_kwargs = TPESampler.hyperopt_parameters()
+    stats_agent.optimize_hyperparams(sampler_kwargs=sampler_kwargs, n_trials=5)
+    stats_agent.clear_output_dir()
+
+def _test_hyperparam_optim_grid(agent, env="continuous_state", init_kwargs=None):
+    # Define trainenv
+    if init_kwargs is None:
+        init_kwargs = {}
+    init_kwargs["seeder"] = SEED
+    train_env = _make_tuple_env(env)
+
+    # Run AgentManager
+    stats_agent = AgentManager(
+        agent,
+        train_env,
+        init_kwargs={},
+        fit_budget=1,
+        eval_kwargs={"eval_horizon": 5},
+        n_fit=4,
+    )
+
+    # test hyperparameter optimization with grid sampler
+    search_space = {"hyperparameter1": [1, 2, 3], "hyperparameter2": [-5, 0, 5]}
+    sampler_kwargs = {"search_space": search_space}
+    stats_agent.optimize_hyperparams(
+        n_trials=3 * 3, sampler_method="grid", sampler_kwargs=sampler_kwargs
+    )
+    stats_agent.clear_output_dir()
+
+def _test_hyperparam_optim_cmaes(agent, env="continuous_state", init_kwargs=None):
+    # Define trainenv
+    if init_kwargs is None:
+        init_kwargs = {}
+    init_kwargs["seeder"] = SEED
+    train_env = _make_tuple_env(env)
+
+    # Run AgentManager
+    stats_agent = AgentManager(
+        agent,
+        train_env,
+        init_kwargs={},
+        fit_budget=1,
+        eval_kwargs={"eval_horizon": 5},
+        n_fit=4,
+    )
+
+    # test hyperparameter optimization with CMA-ES sampler
+    stats_agent.optimize_hyperparams(sampler_method="cmaes", n_trials=5)
+    stats_agent.clear_output_dir()
+
+def _test_discount_optimization(agent, env="continuous_state", init_kwargs=None):
+    # Define trainenv
+    if init_kwargs is None:
+        init_kwargs = {}
+    init_kwargs["seeder"] = SEED
+    train_env = _make_tuple_env(env)
+
+    vi_params = {"gamma": 0.1, "epsilon": 1e-3}
+
+    vi_stats = AgentManager(
+        agent,
+        train_env,
+        fit_budget=0,
+        eval_kwargs=dict(eval_horizon=20),
+        init_kwargs=vi_params,
+        n_fit=4,
+        seed=123,
+    )
+
+    vi_stats.optimize_hyperparams(
+        n_trials=5, n_fit=1, sampler_method="random", pruner_method="none"
+    )
+
+    assert vi_stats.optuna_study
+    vi_stats.clear_output_dir()
+
+def _test_hyperparam_optim_random(parallelization, custom_eval_function, fit_fraction,agent, env="continuous_state", init_kwargs=None):
+    # Define trainenv
+    if init_kwargs is None:
+        init_kwargs = {}
+    init_kwargs["seeder"] = SEED
+    train_env = _make_tuple_env(env)
+
+    # Run AgentManager
+    stats_agent = AgentManager(
+        agent,
+        train_env,
+        init_kwargs={},
+        fit_budget=1,
+        eval_kwargs={"eval_horizon": 5},
+        n_fit=4,
+        parallelization=parallelization,
+    )
+
+    # test hyperparameter optimization with random sampler
+    stats_agent.optimize_hyperparams(
+        sampler_method="random",
+        n_trials=5,
+        optuna_parallelization=parallelization,
+        custom_eval_function=custom_eval_function,
+        fit_fraction=fit_fraction,
+    )
+    stats_agent.clear_output_dir()
+
+
+
