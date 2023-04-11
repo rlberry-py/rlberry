@@ -33,7 +33,7 @@ def gym_make(id, wrap_spaces=False, **kwargs):
     return Wrapper(env, wrap_spaces=wrap_spaces)
 
 
-def atari_make(id, scalarize=None, **kwargs):
+def atari_make(id, scalarize=False, **kwargs):
     from stable_baselines3.common.env_util import make_atari_env
     from stable_baselines3.common.vec_env import VecFrameStack
 
@@ -44,11 +44,10 @@ def atari_make(id, scalarize=None, **kwargs):
     #     else:
     #         scalarize = True
 
-    scalarize = True
+    scalarize = True    #TODO : to remove with th PR :[WIP] Atari part2   (https://github.com/rlberry-py/rlberry/pull/285)
 
     if "atari_wrappers_dict" in kwargs.keys():
-        atari_wrappers_dict = kwargs["atari_wrappers_dict"]
-        kwargs.pop("atari_wrappers_dict", None)
+        atari_wrappers_dict = kwargs.pop("atari_wrappers_dict")
     else:
         atari_wrappers_dict = dict(
             terminal_on_life_loss=False
