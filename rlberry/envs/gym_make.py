@@ -34,6 +34,29 @@ def gym_make(id, wrap_spaces=False, **kwargs):
 
 
 def atari_make(id, scalarize=False, **kwargs):
+    """
+    Adaptator to work with 'make_atari_env' in stableBaselines.
+    WARNING "work in progress" : For the moment, it can't handle VecEnv, it uses only 1 env. (scalarize is forced to True)
+    (TODO PR : https://github.com/rlberry-py/rlberry/pull/285)
+
+    Parameters
+    ----------
+    id : str
+        Environment id.
+    scalarize : bool, default = False
+        If true, add a wrapper for stable_baselines VecEnv, so that they accept non-vectorized actions,
+    and return non-vectorized states. (use only the first env from VecEnv)
+    **kwargs
+        Optional arguments to configure the environment.
+
+    Examples
+    --------
+    >>> from rlberry.envs.gym_make import atari_make
+    >>> env_ctor = atari_make
+    >>> env_kwargs = {"id": "ALE/Freeway-v5", "n_envs":1, "atari_wrappers_dict":dict(terminal_on_life_loss=False)}
+    >>> env = env_ctor(**env_kwargs)
+    """
+        
     from stable_baselines3.common.env_util import make_atari_env
     from stable_baselines3.common.vec_env import VecFrameStack
 
