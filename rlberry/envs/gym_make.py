@@ -67,7 +67,7 @@ def atari_make(id, scalarize=False, **kwargs):
     #     else:
     #         scalarize = True
 
-    scalarize = True    #TODO : to remove with th PR :[WIP] Atari part2   (https://github.com/rlberry-py/rlberry/pull/285)
+    scalarize = True  # TODO : to remove with th PR :[WIP] Atari part2   (https://github.com/rlberry-py/rlberry/pull/285)
 
     if "atari_wrappers_dict" in kwargs.keys():
         atari_wrappers_dict = kwargs.pop("atari_wrappers_dict")
