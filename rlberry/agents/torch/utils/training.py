@@ -49,7 +49,6 @@ def model_factory(type="MultiLayerPerceptron", **kwargs) -> nn.Module:
     type: {"MultiLayerPerceptron",
            "ConvolutionalNetwork",
            "DuelingNetwork",
-           "EgoAttentionNetwork",
            "Table"}, default = "MultiLayerPerceptron"
         Type of neural network.
     **kwargs: dict
@@ -61,11 +60,8 @@ def model_factory(type="MultiLayerPerceptron", **kwargs) -> nn.Module:
 
         * :class:`~rlberry.agents.torch.utils.models.DuelingNetwork`
 
-        * :class:`~rlberry.agents.torch.utils.attention_models.EgoAttentionNetwork`
-
         * :class:`~rlberry.agents.torch.utils.models.Table`
     """
-    from rlberry.agents.torch.utils.attention_models import EgoAttentionNetwork
     from rlberry.agents.torch.utils.models import (
         MultiLayerPerceptron,
         DuelingNetwork,
@@ -79,8 +75,6 @@ def model_factory(type="MultiLayerPerceptron", **kwargs) -> nn.Module:
         return DuelingNetwork(**kwargs)
     elif type == "ConvolutionalNetwork":
         return ConvolutionalNetwork(**kwargs)
-    elif type == "EgoAttentionNetwork":
-        return EgoAttentionNetwork(**kwargs)
     elif type == "Table":
         return Table(**kwargs)
     else:
