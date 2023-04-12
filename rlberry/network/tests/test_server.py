@@ -12,54 +12,6 @@ from rlberry.manager.remote_agent_manager import RemoteAgentManager
 from rlberry.manager.evaluation import evaluate_agents
 
 
-from rlberry.network.tests.conftest import server
-import multiprocessing
-
-server_name = "berry"
-
-
-def test_server():
-    default_port = 4242
-    try:
-        from pytest_cov.embed import cleanup_on_sigterm
-    except ImportError:
-        pass
-    else:
-        cleanup_on_sigterm()
-    p = multiprocessing.Process(target=server, args=(default_port, 1))
-    p.start()
-    sys.stderr.write("Server startup completed!")
-    client = BerryClient(port=default_port)
-    # Send params for AgentManager
-    client.send(
-        Message.create(
-            command=interface.Command.AGENT_MANAGER_CREATE_INSTANCE,
-            params=dict(
-                agent_class=ResourceRequest(name="ValueIterationAgent"),
-                train_env=ResourceRequest(name="GridWorld", kwargs=dict(nrows=3)),
-                fit_budget=2,
-                init_kwargs=dict(gamma=0.95),
-                eval_kwargs=dict(eval_horizon=2, n_simulations=2),
-                n_fit=2,
-                seed=10,
-            ),
-            data=None,
-        ),
-        Message.create(
-            command=interface.Command.LIST_RESOURCES, params=dict(), data=dict()
-        ),
-    )
-
-    client.send(
-        Message.create(
-            command=interface.Command.NONE,
-            params=dict(),
-            data=dict(big_list=list(1.0 * np.arange(2**4))),
-        ),
-        print_response=True,
-    )
-
-
 @pytest.fixture(autouse=True)
 def start_server(xprocess):
     python_executable_full_path = sys.executable
