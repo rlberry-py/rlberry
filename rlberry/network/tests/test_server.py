@@ -18,24 +18,46 @@ from rlberry.agents.torch import REINFORCEAgent
 from rlberry.envs import GridWorld, gym_make
 from rlberry.utils.writers import DefaultWriter
 
+from rlberry.network.tests.conftest import server
+import multiprocessing
 
 server_name = "berry"
 
 
 def test_server():
-    resources = dict(
-        GridWorld=ResourceItem(obj=GridWorld, description="GridWorld constructor"),
-        gym_make=ResourceItem(obj=gym_make, description="gym_make"),
-        REINFORCEAgent=ResourceItem(obj=REINFORCEAgent, description="REINFORCEAgent"),
-        ValueIterationAgent=ResourceItem(
-            obj=ValueIterationAgent,
-            description="ValueIterationAgent constructor" + ValueIterationAgent.__doc__,
+    default_port = 4242
+    p = multiprocessing.Process(target=server, args=(default_port, 1))
+    p.start()
+    sys.stderr.write("Server startup completed!")
+    client = BerryClient(port=default_port)
+    # Send params for AgentManager
+    client.send(
+        Message.create(
+            command=interface.Command.AGENT_MANAGER_CREATE_INSTANCE,
+            params=dict(
+                agent_class=ResourceRequest(name="ValueIterationAgent"),
+                train_env=ResourceRequest(name="GridWorld", kwargs=dict(nrows=3)),
+                fit_budget=2,
+                init_kwargs=dict(gamma=0.95),
+                eval_kwargs=dict(eval_horizon=2, n_simulations=2),
+                n_fit=2,
+                seed=10,
+            ),
+            data=None,
         ),
-        DefaultWriter=ResourceItem(
-            obj=DefaultWriter, description="rlberry default writer"
+        Message.create(
+            command=interface.Command.LIST_RESOURCES, params=dict(), data=dict()
         ),
     )
-    server = BerryServer(resources=resources, port=6553, client_socket_timeout=120.0)
+
+    client.send(
+        Message.create(
+            command=interface.Command.NONE,
+            params=dict(),
+            data=dict(big_list=list(1.0 * np.arange(2**4))),
+        ),
+        print_response=True,
+    )
 
 
 @pytest.fixture(autouse=True)
@@ -48,9 +70,7 @@ def start_server(xprocess):
         args = [python_executable_full_path, python_server_script_full_path]
 
     xprocess.ensure(server_name, Starter)
-
     yield
-
     xprocess.getinfo(server_name).terminate()
 
 

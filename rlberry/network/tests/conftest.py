@@ -18,7 +18,7 @@ def print_err(s):
     sys.stderr.flush()
 
 
-def server(port):
+def server(port, terminate_after=None):
     # definition of server
     resources = dict(
         GridWorld=ResourceItem(obj=GridWorld, description="GridWorld constructor"),
