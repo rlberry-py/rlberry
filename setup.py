@@ -18,7 +18,7 @@ install_requires = [
     "matplotlib",
     "seaborn",
     "pandas",
-    "gym==0.21",
+    "gym[accept-rom-license]==0.21.0",
     "dill",
     "docopt",
     "pyyaml",
@@ -42,6 +42,8 @@ default_requires = [
 # dm-reverb-nightly[tensorflow] in jax_agents_requires
 torch_agents_requires = default_requires + [
     "torch>=1.6.0",
+    "opencv-python",
+    "ale-py==0.7.4",
     # 'tensorboard'
 ]
 
