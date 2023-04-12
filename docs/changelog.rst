@@ -9,6 +9,10 @@ Dev version
 
 * Move old scripts (jax agents, attention networks, old examples...) that we won't maintain from the main branch to an archive branch.
 
+*PR #277*
+
+* Add and update code to use "Atari games" env
+
 
 Version 0.4.0  (latest stable version)
 --------------------------------------
