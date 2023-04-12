@@ -11,12 +11,6 @@ from rlberry.network.interface import Message, ResourceRequest
 from rlberry.manager.remote_agent_manager import RemoteAgentManager
 from rlberry.manager.evaluation import evaluate_agents
 
-from rlberry.network.interface import ResourceItem
-from rlberry.network.server import BerryServer
-from rlberry.agents import ValueIterationAgent
-from rlberry.agents.torch import REINFORCEAgent
-from rlberry.envs import GridWorld, gym_make
-from rlberry.utils.writers import DefaultWriter
 
 from rlberry.network.tests.conftest import server
 import multiprocessing
@@ -26,6 +20,12 @@ server_name = "berry"
 
 def test_server():
     default_port = 4242
+    try:
+        from pytest_cov.embed import cleanup_on_sigterm
+    except ImportError:
+        pass
+    else:
+        cleanup_on_sigterm()
     p = multiprocessing.Process(target=server, args=(default_port, 1))
     p.start()
     sys.stderr.write("Server startup completed!")
