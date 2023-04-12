@@ -282,8 +282,8 @@ def check_multi_fit(agent, env="continuous_state", init_kwargs=None):
     except:
         pass
 
-    agent1.fit(9)
-    agent1.fit(9)
+    agent1.fit(13)
+    agent1.fit(13)
 
     # test
     state = test_load_env.reset()
@@ -329,8 +329,8 @@ def check_vectorized_env_agent(
     test_env = env_d[0](**env_d[1])
 
     agent1 = agent(train_env, **agent_init_kwargs)
-    agent1.fit(9)
-    agent1.fit(9)
+    agent1.fit(13)
+    agent1.fit(13)
 
     # test the agent
     state = test_env.reset()
