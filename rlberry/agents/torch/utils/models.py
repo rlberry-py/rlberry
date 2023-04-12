@@ -459,9 +459,8 @@ class ConvolutionalNetwork(nn.Module):
 
     def convolutions(self, x):
         x = x.float()
-        if (
-            len(x.shape) == 3
-        ):  # if there is no batch (CHW), add one dimension to specify batch of 1 (and get format BCHW)
+        # if there is no batch (CHW), add one dimension to specify batch of 1 (and get format BCHW)
+        if len(x.shape) == 3:
             x = x.unsqueeze(0)
         if self.transpose_obs:
             x = torch.transpose(x, -1, -3)

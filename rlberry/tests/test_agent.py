@@ -1,7 +1,6 @@
 import pytest
 import rlberry.agents as agents
 import rlberry.agents.torch as torch_agents
-from rlberry.agents.experimental import torch as torch_exp_agents
 from rlberry.utils.check_agent import (
     check_rl_agent,
     check_rlberry_agent,
@@ -52,7 +51,6 @@ CONTINUOUS_STATE_AGENTS = [
     torch_agents.DQNAgent,
     torch_agents.REINFORCEAgent,
     torch_agents.PPOAgent,
-    torch_exp_agents.AVECPPOAgent,
 ]
 
 MULTI_ENV_AGENTS = [

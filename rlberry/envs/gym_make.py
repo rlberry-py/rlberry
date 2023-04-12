@@ -36,7 +36,30 @@ def gym_make(id, wrap_spaces=False, **kwargs):
     return Wrapper(env, wrap_spaces=wrap_spaces)
 
 
-def atari_make(id, scalarize=None, **kwargs):
+def atari_make(id, scalarize=False, **kwargs):
+    """
+    Adaptator to work with 'make_atari_env' in stableBaselines.
+    WARNING "work in progress" : For the moment, it can't handle VecEnv, it uses only 1 env. (scalarize is forced to True)
+    (TODO PR : https://github.com/rlberry-py/rlberry/pull/285)
+
+    Parameters
+    ----------
+    id : str
+        Environment id.
+    scalarize : bool, default = False
+        If true, add a wrapper for stable_baselines VecEnv, so that they accept non-vectorized actions,
+    and return non-vectorized states. (use only the first env from VecEnv)
+    **kwargs
+        Optional arguments to configure the environment.
+
+    Examples
+    --------
+    >>> from rlberry.envs.gym_make import atari_make
+    >>> env_ctor = atari_make
+    >>> env_kwargs = {"id": "ALE/Freeway-v5", "n_envs":1, "atari_wrappers_dict":dict(terminal_on_life_loss=False)}
+    >>> env = env_ctor(**env_kwargs)
+    """
+
     from stable_baselines3.common.env_util import make_atari_env
     from stable_baselines3.common.vec_env import VecFrameStack
 
@@ -47,19 +70,14 @@ def atari_make(id, scalarize=None, **kwargs):
     #     else:
     #         scalarize = True
 
-    scalarize = True  # to remove when rlberry will manage vectorized env
+    scalarize = True  # TODO : to remove with th PR :[WIP] Atari part2   (https://github.com/rlberry-py/rlberry/pull/285)
 
     if "atari_wrappers_dict" in kwargs.keys():
-        atari_wrappers_dict = kwargs["atari_wrappers_dict"]
-        kwargs.pop("atari_wrappers_dict", None)
+        atari_wrappers_dict = kwargs.pop("atari_wrappers_dict")
     else:
-        atari_wrappers_dict = None
-
-    # #uncomment and test when rlberry will manage vectorized env
-    # else:
-    #     atari_wrappers_dict = dict(
-    #         terminal_on_life_loss=False
-    #     )  # hack, some errors with the "terminal_on_life_loss" wrapper : The 'false reset' can lead to make a step on a 'done' environment, then a crash.
+        atari_wrappers_dict = dict(
+            terminal_on_life_loss=False
+        )  # hack, some errors with the "terminal_on_life_loss" wrapper : The 'false reset' can lead to make a step on a 'done' environment, then a crash.
 
     render_mode = None
     if "render_mode" in kwargs.keys():
