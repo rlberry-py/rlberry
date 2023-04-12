@@ -15,5 +15,7 @@ class ScalarizeEnvWrapper(Wrapper):
         return obs[0]
 
     def step(self, action):
-        observation, reward, done, info = self.env.step([action])
+        observation, reward, done, info = self.env.step(
+            [action] * self.env.env.num_envs
+        )
         return observation[0], reward[0], done[0], info[0]
