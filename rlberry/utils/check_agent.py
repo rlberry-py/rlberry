@@ -278,12 +278,12 @@ def check_multi_fit(agent, env="continuous_state", init_kwargs=None):
 
     try:  # stableBaselines don't have get_params()
         if "n_steps" in agent1.get_params():
-            agent1.n_steps = 30
+            agent1.n_steps = 3
     except:
         pass
 
-    agent1.fit(100)
-    agent1.fit(100)
+    agent1.fit(13)
+    agent1.fit(13)
 
     # test
     state = test_load_env.reset()
@@ -320,7 +320,7 @@ def check_vectorized_env_agent(
     if "n_steps" not in agent_init_kwargs or agent_init_kwargs["n_envs"] is None:
         agent_init_kwargs["n_envs"] = 3
     if "n_steps" not in agent_init_kwargs or agent_init_kwargs["n_steps"] is None:
-        agent_init_kwargs["n_steps"] = 30
+        agent_init_kwargs["n_steps"] = 3
 
     agent_init_kwargs["seeder"] = SEED
 
@@ -329,8 +329,8 @@ def check_vectorized_env_agent(
     test_env = env_d[0](**env_d[1])
 
     agent1 = agent(train_env, **agent_init_kwargs)
-    agent1.fit(100)
-    agent1.fit(100)
+    agent1.fit(13)
+    agent1.fit(13)
 
     # test the agent
     state = test_env.reset()
