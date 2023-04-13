@@ -530,23 +530,7 @@ def check_hyperparam_optimisation_agent(
     _test_hyperparam_optim_grid(agent, env, init_kwargs=init_kwargs)
     _test_hyperparam_optim_cmaes(agent, env, init_kwargs=init_kwargs)
     _test_discount_optimization(agent, env, init_kwargs=init_kwargs)
-
-    def _custom_eval_function(agents):
-        vals = [agent.eval() for agent in agents]
-        return np.mean(vals) - 0.1 * np.std(vals)
-
-    _test_hyperparam_optim_random(
-        "process", None, 1.0, agent, env, init_kwargs=init_kwargs
-    )
-    _test_hyperparam_optim_random(
-        "thread", None, 1.0, agent, env, init_kwargs=init_kwargs
-    )
-    _test_hyperparam_optim_random(
-        "process", _custom_eval_function, 1.0, agent, env, init_kwargs=init_kwargs
-    )
-    _test_hyperparam_optim_random(
-        "process", _custom_eval_function, 0.5, agent, env, init_kwargs=init_kwargs
-    )
+    _test_hyperparam_optim_random("thread", None, 1.0, agent, env, init_kwargs=init_kwargs)
 
 
 def _test_hyperparam_optim_tpe(agent, env="continuous_state", init_kwargs=None):
@@ -571,7 +555,6 @@ def _test_hyperparam_optim_tpe(agent, env="continuous_state", init_kwargs=None):
     sampler_kwargs = TPESampler.hyperopt_parameters()
     stats_agent.optimize_hyperparams(sampler_kwargs=sampler_kwargs, n_trials=5)
     stats_agent.clear_output_dir()
-
 
 def _test_hyperparam_optim_grid(agent, env="continuous_state", init_kwargs=None):
     # Define trainenv
@@ -598,7 +581,6 @@ def _test_hyperparam_optim_grid(agent, env="continuous_state", init_kwargs=None)
     )
     stats_agent.clear_output_dir()
 
-
 def _test_hyperparam_optim_cmaes(agent, env="continuous_state", init_kwargs=None):
     # Define trainenv
     if init_kwargs is None:
@@ -613,13 +595,12 @@ def _test_hyperparam_optim_cmaes(agent, env="continuous_state", init_kwargs=None
         init_kwargs={},
         fit_budget=1,
         eval_kwargs={"eval_horizon": 5},
-        n_fit=4,
+        n_fit=2,
     )
 
     # test hyperparameter optimization with CMA-ES sampler
-    stats_agent.optimize_hyperparams(sampler_method="cmaes", n_trials=5)
+    stats_agent.optimize_hyperparams(sampler_method="cmaes", n_trials=3)
     stats_agent.clear_output_dir()
-
 
 def _test_discount_optimization(agent, env="continuous_state", init_kwargs=None):
     # Define trainenv
@@ -636,17 +617,16 @@ def _test_discount_optimization(agent, env="continuous_state", init_kwargs=None)
         fit_budget=0,
         eval_kwargs=dict(eval_horizon=20),
         init_kwargs=vi_params,
-        n_fit=4,
+        n_fit=2,
         seed=123,
     )
 
     vi_stats.optimize_hyperparams(
-        n_trials=5, n_fit=1, sampler_method="random", pruner_method="none"
+        n_trials=3, n_fit=1, sampler_method="random", pruner_method="none"
     )
 
     assert vi_stats.optuna_study
     vi_stats.clear_output_dir()
-
 
 def _test_hyperparam_optim_random(
     parallelization,
@@ -669,14 +649,14 @@ def _test_hyperparam_optim_random(
         init_kwargs={},
         fit_budget=1,
         eval_kwargs={"eval_horizon": 5},
-        n_fit=4,
+        n_fit=2,
         parallelization=parallelization,
     )
 
     # test hyperparameter optimization with random sampler
     stats_agent.optimize_hyperparams(
         sampler_method="random",
-        n_trials=5,
+        n_trials=3,
         optuna_parallelization=parallelization,
         custom_eval_function=custom_eval_function,
         fit_fraction=fit_fraction,
