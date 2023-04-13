@@ -11,6 +11,8 @@ from rlberry.network.interface import Message, ResourceRequest
 from rlberry.manager.remote_agent_manager import RemoteAgentManager
 from rlberry.manager.evaluation import evaluate_agents
 
+server_name = "berry"
+
 
 @pytest.fixture(autouse=True)
 def start_server(xprocess):
