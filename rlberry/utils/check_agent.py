@@ -530,7 +530,9 @@ def check_hyperparam_optimisation_agent(
     _test_hyperparam_optim_grid(agent, env, init_kwargs=init_kwargs)
     _test_hyperparam_optim_cmaes(agent, env, init_kwargs=init_kwargs)
     _test_discount_optimization(agent, env, init_kwargs=init_kwargs)
-    _test_hyperparam_optim_random("thread", None, 1.0, agent, env, init_kwargs=init_kwargs)
+    _test_hyperparam_optim_random(
+        "thread", None, 1.0, agent, env, init_kwargs=init_kwargs
+    )
 
 
 def _test_hyperparam_optim_tpe(agent, env="continuous_state", init_kwargs=None):
@@ -555,6 +557,7 @@ def _test_hyperparam_optim_tpe(agent, env="continuous_state", init_kwargs=None):
     sampler_kwargs = TPESampler.hyperopt_parameters()
     stats_agent.optimize_hyperparams(sampler_kwargs=sampler_kwargs, n_trials=5)
     stats_agent.clear_output_dir()
+
 
 def _test_hyperparam_optim_grid(agent, env="continuous_state", init_kwargs=None):
     # Define trainenv
@@ -581,6 +584,7 @@ def _test_hyperparam_optim_grid(agent, env="continuous_state", init_kwargs=None)
     )
     stats_agent.clear_output_dir()
 
+
 def _test_hyperparam_optim_cmaes(agent, env="continuous_state", init_kwargs=None):
     # Define trainenv
     if init_kwargs is None:
@@ -601,6 +605,7 @@ def _test_hyperparam_optim_cmaes(agent, env="continuous_state", init_kwargs=None
     # test hyperparameter optimization with CMA-ES sampler
     stats_agent.optimize_hyperparams(sampler_method="cmaes", n_trials=3)
     stats_agent.clear_output_dir()
+
 
 def _test_discount_optimization(agent, env="continuous_state", init_kwargs=None):
     # Define trainenv
@@ -627,6 +632,7 @@ def _test_discount_optimization(agent, env="continuous_state", init_kwargs=None)
 
     assert vi_stats.optuna_study
     vi_stats.clear_output_dir()
+
 
 def _test_hyperparam_optim_random(
     parallelization,
