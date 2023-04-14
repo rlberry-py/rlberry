@@ -3,7 +3,9 @@
 #
 from functools import partial
 
+
 from gymnasium import spaces
+from gymnasium.vector.sync_vector_env import SyncVectorEnv
 import numpy as np
 import torch
 import torch.nn as nn
@@ -51,6 +53,9 @@ def default_policy_net_fn(env):
     """
     Returns a default policy network.
     """
+    if type(env) is SyncVectorEnv:
+        env = env.envs[0]
+
     if isinstance(env.observation_space, spaces.Box):
         obs_shape = env.observation_space.shape
     elif isinstance(env.observation_space, spaces.Tuple):
@@ -118,6 +123,10 @@ def default_value_net_fn(env):
     """
     Returns a default value network.
     """
+
+    if type(env) is SyncVectorEnv:
+        env = env.envs[0]
+
     if isinstance(env.observation_space, spaces.Box):
         obs_shape = env.observation_space.shape
     elif isinstance(env.observation_space, spaces.Tuple):

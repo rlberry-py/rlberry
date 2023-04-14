@@ -110,6 +110,7 @@ class A2CAgent(AgentWithSimplePolicy):
             self.value_net_fn = value_net_fn
 
         self.optimizer_kwargs = {"optimizer_type": optimizer_type, "lr": learning_rate}
+        self.optimizer_type = optimizer_type
 
         # check environment
         assert isinstance(self.env.observation_space, spaces.Box)
