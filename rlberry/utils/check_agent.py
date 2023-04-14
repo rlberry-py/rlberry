@@ -327,13 +327,15 @@ def _check_save_load_without_manager(agent, env="continuous_state", init_kwargs=
         assert loaded_agent
 
         # test the agent
-        observation,info = test_env.reset()
+        observation, info = test_env.reset()
         for tt in range(50):
             action = loaded_agent.policy(observation)
-            next_observation, reward, terminated, truncated, info = test_env.step(action)
+            next_observation, reward, terminated, truncated, info = test_env.step(
+                action
+            )
             done = terminated or truncated
             if done:
-                next_observation,info = test_env.reset()
+                next_observation, info = test_env.reset()
             observation = next_observation
 
 
