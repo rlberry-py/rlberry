@@ -7,16 +7,20 @@ import tempfile
 import os
 from rlberry.envs.gym_make import gym_make
 import pathlib
+from rlberry.agents.stable_baselines.stable_baselines import StableBaselinesAgent
 
+from optuna.samplers import TPESampler
 
 SEED = 42
 
 
-def _make_env(env):
+def _make_tuple_env(env):
     """
-    Help function to construct env from parameter env.
+    Help function to get the tuple(ctor,kwargs) corresponding to the env to make.
     """
-    if isinstance(env, str):
+    if isinstance(
+        env, str
+    ):  # If env param is a str, we use the corresponding "by default" env, and return it as tuple
         if env == "continuous_state":
             env_ctor = PBall2D
             env_kwargs = {}
@@ -28,7 +32,7 @@ def _make_env(env):
             env_kwargs = dict(id="CartPole-v0")
         else:
             raise ValueError("The env given in parameter is not implemented")
-    elif isinstance(env, tuple):
+    elif isinstance(env, tuple):  # If env param is a tuple, return it
         env_ctor = env[0]
         env_kwargs = env[1]
     else:
@@ -46,14 +50,14 @@ def _fit_agent_manager(agent, env="continuous_state", init_kwargs=None):
         Agent class to test.
     env: tuple (env_ctor, env_kwargs) or str in {"continuous_state", "discrete_state"}, default="continuous_state"
         if tuple, env is the constructor and keywords of the env on which to test.
-        if str in {"continuous_state", "discrete_state"}, we use a default Benchmark environment.
+        if str in {"continuous_state", "discrete_state","vectorized_env_continuous"}, we use a default Benchmark environment.
     init_kwargs : dict
         Arguments required by the agent's constructor.
     """
     if init_kwargs is None:
         init_kwargs = {}
 
-    train_env = _make_env(env)
+    train_env = _make_tuple_env(env)
     try:
         agent = AgentManager(
             agent, train_env, fit_budget=5, n_fit=1, seed=SEED, init_kwargs=init_kwargs
@@ -63,6 +67,35 @@ def _fit_agent_manager(agent, env="continuous_state", init_kwargs=None):
         raise RuntimeError("Agent not compatible with Agent Manager") from exc
 
     return agent
+
+
+def _fit_agent(agent, env="continuous_state", init_kwargs=None):
+    """
+    Check that the agent can fit without agentManager.
+
+    Parameters
+    ----------
+    agent: rlberry agent module
+        Agent class to test.
+    env: tuple (env_ctor, env_kwargs) or str in {"continuous_state", "discrete_state"}, default="continuous_state"
+        if tuple, env is the constructor and keywords of the env on which to test.
+        if str in {"continuous_state", "discrete_state","vectorized_env_continuous"}, we use a default Benchmark environment.
+    init_kwargs : dict
+        Arguments required by the agent's constructor.
+    """
+    if init_kwargs is None:
+        init_kwargs = {}
+
+    train_env = _make_tuple_env(env)
+    env = train_env[0](**train_env[1])
+
+    try:
+        my_agent = agent(env, **init_kwargs)
+        my_agent.fit(10)
+    except Exception as exc:
+        raise RuntimeError("Agent can not fit without Agent Manager") from exc
+
+    return my_agent
 
 
 def check_agent_manager(agent, env="continuous_state", init_kwargs=None):
@@ -79,7 +112,26 @@ def check_agent_manager(agent, env="continuous_state", init_kwargs=None):
     init_kwargs : dict
         Arguments required by the agent's constructor.
     """
-    _ = _fit_agent_manager(agent, env, init_kwargs=init_kwargs)
+    manager = _fit_agent_manager(agent, env, init_kwargs=init_kwargs)
+    assert manager is not None
+
+
+def check_agent_base(agent, env="continuous_state", init_kwargs=None):
+    """
+    Check that the agent is compatible with :class:`~rlberry.manager.AgentManager`.
+
+    Parameters
+    ----------
+    agent: rlberry agent module
+        Agent class to test.
+    env: tuple (env_ctor, env_kwargs) or str in {"continuous_state", "discrete_state"}, default="continuous_state"
+        if tuple, env is the constructor and keywords of the env on which to test.
+        if str in {"continuous_state", "discrete_state"}, we use a default Benchmark environment.
+    init_kwargs : dict
+        Arguments required by the agent's constructor.
+    """
+    agent = _fit_agent(agent, env, init_kwargs=init_kwargs)
+    assert agent is not None
 
 
 def check_agents_almost_equal(agent1, agent2, compare_using="policy", n_checks=5):
@@ -147,7 +199,7 @@ def check_fit_additive(agent, env="continuous_state", init_kwargs=None):
     if init_kwargs is None:
         init_kwargs = {}
     init_kwargs["seeder"] = SEED
-    train_env = _make_env(env)
+    train_env = _make_tuple_env(env)
 
     set_external_seed(SEED)
     agent1 = agent(train_env, **init_kwargs)
@@ -166,6 +218,11 @@ def check_fit_additive(agent, env="continuous_state", init_kwargs=None):
 
 
 def check_save_load(agent, env="continuous_state", init_kwargs=None):
+    _check_save_load_with_manager(agent, env, init_kwargs)
+    _check_save_load_without_manager(agent, env, init_kwargs)
+
+
+def _check_save_load_with_manager(agent, env="continuous_state", init_kwargs=None):
     """
     Check that the agent save a non-empty file and can load.
 
@@ -182,7 +239,7 @@ def check_save_load(agent, env="continuous_state", init_kwargs=None):
     if init_kwargs is None:
         init_kwargs = {}
 
-    train_env_tuple = _make_env(env)
+    train_env_tuple = _make_tuple_env(env)
     with tempfile.TemporaryDirectory() as tmpdirname:
         manager = AgentManager(
             agent,
@@ -193,7 +250,6 @@ def check_save_load(agent, env="continuous_state", init_kwargs=None):
             init_kwargs=init_kwargs,
             output_dir=tmpdirname,
         )
-        train_env = manager.train_env
         test_env = train_env_tuple[0](**train_env_tuple[1])
 
         manager.fit(3)
@@ -216,10 +272,60 @@ def check_save_load(agent, env="continuous_state", init_kwargs=None):
         loaded_agent_manager = AgentManager.load(path_to_load)
         assert loaded_agent_manager
 
-        # test with firest agent of the manager
+        # test with first agent of the manager
         observation = test_env.reset()
         for tt in range(50):
             action = loaded_agent_manager.get_agent_instances()[0].policy(observation)
+            next_observation, reward, done, info = test_env.step(action)
+            if done:
+                next_observation = test_env.reset()
+            observation = next_observation
+
+
+def _check_save_load_without_manager(agent, env="continuous_state", init_kwargs=None):
+    """
+    Check that the agent save a non-empty file and can load.
+
+    Parameters
+    ----------
+    agent: rlberry agent module
+        Agent class to test.
+    env: tuple (env_ctor, env_kwargs) or str in {"continuous_state", "discrete_state"}, default="continuous_state"
+        if tuple, env is the constructor and keywords of the env on which to test.
+        if str in {"continuous_state", "discrete_state"}, we use a default Benchmark environment.
+    init_kwargs : dict
+        Arguments required by the agent's constructor.
+    """
+    if init_kwargs is None:
+        init_kwargs = {}
+
+    train_env_tuple = _make_tuple_env(env)
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        my_agent = _fit_agent(agent, train_env_tuple, init_kwargs)
+        train_env = my_agent.env
+        test_env = train_env_tuple[0](**train_env_tuple[1])
+
+        my_agent.fit(3)
+
+        saving_path = tmpdirname + "/agent_test.pickle"
+
+        # test agentManager save and load
+        my_agent.save(saving_path)
+        assert os.path.exists(tmpdirname)
+
+        params_for_loader = dict(env=train_env)
+
+        # extract the class name to check if we need to add some param to load
+        if issubclass(agent, StableBaselinesAgent):
+            params_for_loader["algo_cls"] = init_kwargs["algo_cls"]
+
+        loaded_agent = agent.load(saving_path, **params_for_loader)
+        assert loaded_agent
+
+        # test the agent
+        observation = test_env.reset()
+        for tt in range(50):
+            action = loaded_agent.policy(observation)
             next_observation, reward, done, info = test_env.step(action)
             if done:
                 next_observation = test_env.reset()
@@ -268,10 +374,10 @@ def check_multi_fit(agent, env="continuous_state", init_kwargs=None):
         init_kwargs = {}
 
     init_kwargs["seeder"] = SEED
-    train_env_d = _make_env(env)
+    train_env_d = _make_tuple_env(env)
     train_env = train_env_d[0](**train_env_d[1])
 
-    test_load_env_d = _make_env(env)
+    test_load_env_d = _make_tuple_env(env)
     test_load_env = test_load_env_d[0](**test_load_env_d[1])
 
     agent1 = agent(train_env, **init_kwargs)
@@ -324,7 +430,7 @@ def check_vectorized_env_agent(
 
     agent_init_kwargs["seeder"] = SEED
 
-    env_d = _make_env(env)
+    env_d = _make_tuple_env(env)
     train_env = env_d[0](**env_d[1])
     test_env = env_d[0](**env_d[1])
 
@@ -366,6 +472,7 @@ def check_rl_agent(agent, env="continuous_state", init_kwargs=None):
     check_agent_manager(
         agent, env, init_kwargs=init_kwargs
     )  # check manager compatible.
+    check_agent_base(agent, env, init_kwargs=init_kwargs)  # check without manager
     check_seeding_agent(agent, env, init_kwargs=init_kwargs)  # check reproducibility
     check_fit_additive(agent, env, init_kwargs=init_kwargs)
     check_save_load(agent, env, init_kwargs=init_kwargs)
@@ -394,8 +501,170 @@ def check_rlberry_agent(agent, env="continuous_state", init_kwargs=None):
     >>> from rlberry.utils import check_rl_agent
     >>> check_rl_agent(UCBVIAgent) #
     """
-    agent = _fit_agent_manager(agent, env, init_kwargs=init_kwargs).agent_handlers[0]
+    manager = _fit_agent_manager(agent, env, init_kwargs=init_kwargs).agent_handlers[0]
     try:
-        params = agent.get_params()
+        params = manager.get_params()
     except Exception:
         raise RuntimeError("Fail to call get_params on the agent.")
+
+
+def check_hyperparam_optimisation_agent(
+    agent, env="continuous_state", init_kwargs=None
+):
+    """
+    Check hyperparameter optimisation compatibility with manager
+    Raises an exception if a check fails.
+
+    Parameters
+    ----------
+    agent: rlberry agent module
+        Agent class to test.
+    env: tuple (env_ctor, env_kwargs) or str in {"continuous_state", "discrete_state"}, default="continuous_state"
+        if tuple, env is the constructor and keywords of the env on which to test.
+        if str in {"continuous_state", "discrete_state"}, we use a default Benchmark environment.
+    init_kwargs : dict
+        Arguments required by the agent's constructor.
+
+    """
+    _test_hyperparam_optim_tpe(agent, env, init_kwargs=init_kwargs)
+    _test_hyperparam_optim_grid(agent, env, init_kwargs=init_kwargs)
+    _test_hyperparam_optim_cmaes(agent, env, init_kwargs=init_kwargs)
+    _test_discount_optimization(agent, env, init_kwargs=init_kwargs)
+    _test_hyperparam_optim_random(
+        "thread", None, 1.0, agent, env, init_kwargs=init_kwargs
+    )
+
+
+def _test_hyperparam_optim_tpe(agent, env="continuous_state", init_kwargs=None):
+    # Define trainenv
+    if init_kwargs is None:
+        init_kwargs = {}
+    init_kwargs["seeder"] = SEED
+    train_env = _make_tuple_env(env)
+
+    # Run AgentManager
+    stats_agent = AgentManager(
+        agent,
+        train_env,
+        fit_budget=1,
+        init_kwargs={},
+        eval_kwargs={"eval_horizon": 5},
+        n_fit=4,
+    )
+
+    # test hyperparameter optimization with TPE sampler
+    # using hyperopt default values
+    sampler_kwargs = TPESampler.hyperopt_parameters()
+    stats_agent.optimize_hyperparams(sampler_kwargs=sampler_kwargs, n_trials=5)
+    stats_agent.clear_output_dir()
+
+
+def _test_hyperparam_optim_grid(agent, env="continuous_state", init_kwargs=None):
+    # Define trainenv
+    if init_kwargs is None:
+        init_kwargs = {}
+    init_kwargs["seeder"] = SEED
+    train_env = _make_tuple_env(env)
+
+    # Run AgentManager
+    stats_agent = AgentManager(
+        agent,
+        train_env,
+        init_kwargs={},
+        fit_budget=1,
+        eval_kwargs={"eval_horizon": 5},
+        n_fit=4,
+    )
+
+    # test hyperparameter optimization with grid sampler
+    search_space = {"hyperparameter1": [1, 2, 3], "hyperparameter2": [-5, 0, 5]}
+    sampler_kwargs = {"search_space": search_space}
+    stats_agent.optimize_hyperparams(
+        n_trials=3 * 3, sampler_method="grid", sampler_kwargs=sampler_kwargs
+    )
+    stats_agent.clear_output_dir()
+
+
+def _test_hyperparam_optim_cmaes(agent, env="continuous_state", init_kwargs=None):
+    # Define trainenv
+    if init_kwargs is None:
+        init_kwargs = {}
+    init_kwargs["seeder"] = SEED
+    train_env = _make_tuple_env(env)
+
+    # Run AgentManager
+    stats_agent = AgentManager(
+        agent,
+        train_env,
+        init_kwargs={},
+        fit_budget=1,
+        eval_kwargs={"eval_horizon": 5},
+        n_fit=2,
+    )
+
+    # test hyperparameter optimization with CMA-ES sampler
+    stats_agent.optimize_hyperparams(sampler_method="cmaes", n_trials=3)
+    stats_agent.clear_output_dir()
+
+
+def _test_discount_optimization(agent, env="continuous_state", init_kwargs=None):
+    # Define trainenv
+    if init_kwargs is None:
+        init_kwargs = {}
+    init_kwargs["seeder"] = SEED
+    train_env = _make_tuple_env(env)
+
+    vi_params = {"gamma": 0.1, "epsilon": 1e-3}
+
+    vi_stats = AgentManager(
+        agent,
+        train_env,
+        fit_budget=0,
+        eval_kwargs=dict(eval_horizon=20),
+        init_kwargs=vi_params,
+        n_fit=2,
+        seed=123,
+    )
+
+    vi_stats.optimize_hyperparams(
+        n_trials=3, n_fit=1, sampler_method="random", pruner_method="none"
+    )
+
+    assert vi_stats.optuna_study
+    vi_stats.clear_output_dir()
+
+
+def _test_hyperparam_optim_random(
+    parallelization,
+    custom_eval_function,
+    fit_fraction,
+    agent,
+    env="continuous_state",
+    init_kwargs=None,
+):
+    # Define trainenv
+    if init_kwargs is None:
+        init_kwargs = {}
+    init_kwargs["seeder"] = SEED
+    train_env = _make_tuple_env(env)
+
+    # Run AgentManager
+    stats_agent = AgentManager(
+        agent,
+        train_env,
+        init_kwargs={},
+        fit_budget=1,
+        eval_kwargs={"eval_horizon": 5},
+        n_fit=2,
+        parallelization=parallelization,
+    )
+
+    # test hyperparameter optimization with random sampler
+    stats_agent.optimize_hyperparams(
+        sampler_method="random",
+        n_trials=3,
+        optuna_parallelization=parallelization,
+        custom_eval_function=custom_eval_function,
+        fit_fraction=fit_fraction,
+    )
+    stats_agent.clear_output_dir()
