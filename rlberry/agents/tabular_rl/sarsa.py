@@ -1,50 +1,78 @@
+from typing import Optional, Literal
 import numpy as np
-from rlberry.agents import AgentWithSimplePolicy
 from gym import spaces
 from scipy.special import softmax
 
+from rlberry import types
+from rlberry.agents import AgentWithSimplePolicy
+
 
 class SARSAAgent(AgentWithSimplePolicy):
-    name = "SARSA"
+    """SARSA Agent.
 
-    def __init__(self, env, gamma=0.99, alpha=0.1, epsilon=None, tau=None, **kwargs):
+    Parameters
+    ----------
+    env: :class:`~rlberry.types.Env`
+        Environment with discrete states and actions.
+    gamma: float, default = 0.99
+        Discount factor.
+    alpha: float, default = 0.1
+        Learning rate.
+    exploration_type: {"epsilon", "boltzmann"}, default: None
+        If "epsilon": Epsilon-Greedy exploration.
+        If "boltzmann": Boltzmann exploration.
+        If None: No exploration.
+    exploration_rate: float, default: None
+        epsilon parameter for Epsilon-Greedy exploration or tau parameter for Boltzmann exploration.
+    """
+
+    def __init__(
+        self,
+        env: types.Env,
+        gamma: float = 0.99,
+        alpha: float = 0.1,
+        exploration_type: Optional[Literal["epsilon", "boltzmann"]] = None,
+        exploration_rate: Optional[float] = None,
+        **kwargs
+    ):
         # init base class
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
         self.gamma = gamma
-        self.eps = epsilon
-        self.tau = tau
         self.alpha = alpha
+        self.exploration_type = exploration_type
+        self.exploration_rate = exploration_rate
         # check environment
         assert isinstance(self.env.observation_space, spaces.Discrete)
         assert isinstance(self.env.action_space, spaces.Discrete)
-        assert (self.eps is not None and self.tau is None) or (
-            self.tau is not None and self.eps is None
-        )
-        # initialize
-        self.reset()
+
+        # check exploration type
+        if self.exploration_type is not None:
+            assert (
+                exploration_type == "epsilon" or "boltzmann"
+            ) and exploration_rate is not None
+
+        self.Q = np.zeros((self.env.observation_space.n, self.env.action_space.n))
 
     def reset(self, **kwargs):
-        S = self.env.observation_space.n
-        A = self.env.action_space.n
-        self.Q = np.zeros((S, A))
+        self.Q.fill(0)
 
     def policy(self, observation):
-        """Recommended policy."""
-        s = observation
-        return self.Q[s].argmax()
+        return self.Q[observation].argmax()
 
-    def get_action(self, s):
-        if self.eps:
-            if np.random.random() <= self.eps:
-                a = np.random.choice(self.env.action_space.n)
-            else:
-                a = self.Q[s].argmax()
-        else:
-            a = np.random.choice(
-                self.env.action_space.n, p=softmax(self.tau * self.Q[s])
+    def get_action(self, observation):
+        if (
+            self.exploration_type == "epsilon"
+            and np.random.random() <= self.exploration_rate
+        ):
+            return np.random.choice(self.env.action_space.n)
+        elif self.exploration_type == "boltzmann":
+            return np.random.choice(
+                self.env.action_space.n,
+                p=softmax(self.exploration_rate * self.Q[observation]),
             )
-        return a
+        else:
+            return self.Q[observation].argmax()
 
     def fit(self, budget: int, **kwargs):
         """
@@ -55,24 +83,24 @@ class SARSAAgent(AgentWithSimplePolicy):
             number of Q updates.
         """
         del kwargs
-        s = self.env.reset()
-        cumul_r = 0
+        observation = self.env.reset()
+        episode_rewards = 0
         for i in range(budget):
-            a = self.get_action(s)
-            snext, r, done, _ = self.env.step(a)
-            cumul_r += r
-            anext = self.get_action(snext)
-
+            action = self.get_action(observation)
+            next_observation, reward, done, _ = self.env.step(action)
+            episode_rewards += reward
             if self.writer is not None:
-                self.writer.add_scalar("cumul_reward", cumul_r, i)
-
+                self.writer.add_scalar("episode_rewards", episode_rewards, i)
             if done:
-                self.Q[s, a] = r
+                self.Q[observation, action] = reward
             else:
-                self.Q[s, a] = self.Q[s, a] + self.alpha * (
-                    r + self.gamma * self.Q[snext, anext] - self.Q[s, a]
+                next_action = self.get_action(next_observation)
+                self.Q[observation, action] = self.Q[observation, action] + self.alpha * (
+                        reward
+                        + self.gamma * self.Q[next_observation, next_action]
+                        - self.Q[observation, action]
                 )
-            s = snext
+            observation = next_observation
             if done:
-                s = self.env.reset()
-                cumul_r = 0
+                observation = self.env.reset()
+                episode_rewards = 0
