@@ -95,10 +95,12 @@ class SARSAAgent(AgentWithSimplePolicy):
                 self.Q[observation, action] = reward
             else:
                 next_action = self.get_action(next_observation)
-                self.Q[observation, action] = self.Q[observation, action] + self.alpha * (
-                        reward
-                        + self.gamma * self.Q[next_observation, next_action]
-                        - self.Q[observation, action]
+                self.Q[observation, action] = self.Q[
+                    observation, action
+                ] + self.alpha * (
+                    reward
+                    + self.gamma * self.Q[next_observation, next_action]
+                    - self.Q[observation, action]
                 )
             observation = next_observation
             if done:

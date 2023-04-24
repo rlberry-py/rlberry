@@ -96,10 +96,12 @@ class QLAgent(AgentWithSimplePolicy):
             if done:
                 self.Q[observation, action] = reward
             else:
-                self.Q[observation, action] = self.Q[observation, action] + self.alpha * (
-                        reward
-                        + self.gamma * np.amax(self.Q[next_observation])
-                        - self.Q[observation, action]
+                self.Q[observation, action] = self.Q[
+                    observation, action
+                ] + self.alpha * (
+                    reward
+                    + self.gamma * np.amax(self.Q[next_observation])
+                    - self.Q[observation, action]
                 )
             observation = next_observation
             if done:
