@@ -67,13 +67,12 @@ def test_render2d_interface(ModelClass):
                     action = env.action_space.sample()
                     observation, _, _, _, _ = env.step(action)
                 env.render(loop=False)
-            
+
             with tempfile.TemporaryDirectory() as tmpdirname:
-                saving_path = tmpdirname+"/test_video.mp4"
+                saving_path = tmpdirname + "/test_video.mp4"
 
                 env.save_video(saving_path)
                 env.clear_render_buffer()
-
 
 
 @pytest.mark.xfail(sys.platform != "linux", reason="bug with mac and windows???")
@@ -91,10 +90,9 @@ def test_render2d_interface_wrapped(ModelClass):
                     action = env.action_space.sample()
                     observation, _, _, _, _ = env.step(action)
                 env.render(loop=False)
-            
 
             with tempfile.TemporaryDirectory() as tmpdirname:
-                saving_path = tmpdirname+"/test_video.mp4"
+                saving_path = tmpdirname + "/test_video.mp4"
                 env.save_video(saving_path)
                 env.clear_render_buffer()
         try:
@@ -117,9 +115,8 @@ def test_render_appelGold():
                 observation, _, _, _, _ = env.step(action)
             env.render(loop=False)
 
-        
         with tempfile.TemporaryDirectory() as tmpdirname:
-            saving_path = tmpdirname+"/test_video.mp4"    
+            saving_path = tmpdirname + "/test_video.mp4"
             env.save_video(saving_path)
             env.clear_render_buffer()
     try:
