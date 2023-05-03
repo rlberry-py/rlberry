@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 def process_ppo_env(env, seeder, num_envs=1, asynchronous=False):
     """
-    Process environment for PPO. It is the only agent that supports vectorized
+    Process environment for PPO. It's the only agent that supports vectorized
     environments.
 
     Parameters

@@ -6,6 +6,8 @@ from functools import partial
 
 from gymnasium import spaces
 from gymnasium.vector.sync_vector_env import SyncVectorEnv
+from gymnasium.vector.async_vector_env import AsyncVectorEnv
+from gymnasium.wrappers.vector_list_info import VectorListInfo
 import numpy as np
 import torch
 import torch.nn as nn
@@ -53,7 +55,9 @@ def default_policy_net_fn(env):
     """
     Returns a default policy network.
     """
-    if type(env) is SyncVectorEnv:
+
+    #remove potential wrappers
+    while type(env) in [SyncVectorEnv,AsyncVectorEnv,VectorListInfo]:
         env = env.envs[0]
 
     if isinstance(env.observation_space, spaces.Box):
@@ -124,7 +128,8 @@ def default_value_net_fn(env):
     Returns a default value network.
     """
 
-    if type(env) is SyncVectorEnv:
+    #remove potential wrappers
+    while type(env) in [SyncVectorEnv,AsyncVectorEnv,VectorListInfo]:
         env = env.envs[0]
 
     if isinstance(env.observation_space, spaces.Box):
