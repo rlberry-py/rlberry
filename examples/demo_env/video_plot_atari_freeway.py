@@ -106,6 +106,7 @@ print("-------- test agent with video : done!--------")
 final_test_time = datetime.now()
 tuned_agent.save()
 
+#need to move the final result inside the folder used for documentation
 os.rename("_video/temp/rl-video-episode-0.mp4", "_video/video_plot_atari_freeway.mp4")
 shutil.rmtree("_video/temp/")
 

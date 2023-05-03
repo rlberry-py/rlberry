@@ -11,6 +11,10 @@ logger = rlberry.logger
 
 class Old_FiniteMDP(Model):
     """
+    'Old' because it's a pre-gymnasium version (like gym=0.21)
+        - step with 'done' instead of 'terminated' and 'truncated'
+        - reset with 'observation' only, instead of 'observation' and 'info'
+
     Base class for a finite MDP.
 
     Terminal states are set to be absorbing, and

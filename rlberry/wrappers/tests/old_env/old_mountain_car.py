@@ -21,6 +21,10 @@ from rlberry.rendering import Scene, GeometricPrimitive, RenderInterface2D
 
 class Old_MountainCar(RenderInterface2D, Model):
     """
+    'Old' because it's a pre-gymnasium version (like gym=0.21)
+        - step with 'done' instead of 'terminated' and 'truncated'
+        - reset with 'observation' only, instead of 'observation' and 'info'
+
     The agent (a car) is started at the bottom of a valley. For any given
     state the agent may choose to accelerate to the left, right or cease
     any acceleration.

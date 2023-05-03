@@ -17,6 +17,8 @@ from rlberry.rendering import RenderInterface
 from rlberry.rendering import RenderInterface2D
 from rlberry.envs import Wrapper
 
+import tempfile
+
 try:
     display = Display(visible=0, size=(1400, 900))
     display.start()
@@ -65,12 +67,13 @@ def test_render2d_interface(ModelClass):
                     action = env.action_space.sample()
                     observation, _, _, _, _ = env.step(action)
                 env.render(loop=False)
-            env.save_video("test_video.mp4")
-            env.clear_render_buffer()
-        try:
-            os.remove("test_video.mp4")
-        except Exception:
-            pass
+            
+            with tempfile.TemporaryDirectory() as tmpdirname:
+                saving_path = tmpdirname+"/test_video.mp4"
+
+                env.save_video(saving_path)
+                env.clear_render_buffer()
+
 
 
 @pytest.mark.xfail(sys.platform != "linux", reason="bug with mac and windows???")
@@ -88,8 +91,12 @@ def test_render2d_interface_wrapped(ModelClass):
                     action = env.action_space.sample()
                     observation, _, _, _, _ = env.step(action)
                 env.render(loop=False)
-            env.save_video("test_video.mp4")
-            env.clear_render_buffer()
+            
+
+            with tempfile.TemporaryDirectory() as tmpdirname:
+                saving_path = tmpdirname+"/test_video.mp4"
+                env.save_video(saving_path)
+                env.clear_render_buffer()
         try:
             os.remove("test_video.mp4")
         except Exception:
@@ -109,8 +116,12 @@ def test_render_appelGold():
                 action = env.action_space.sample()
                 observation, _, _, _, _ = env.step(action)
             env.render(loop=False)
-        env.save_video("test_video.mp4")
-        env.clear_render_buffer()
+
+        
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            saving_path = tmpdirname+"/test_video.mp4"    
+            env.save_video(saving_path)
+            env.clear_render_buffer()
     try:
         os.remove("test_video.mp4")
     except Exception:

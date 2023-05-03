@@ -21,6 +21,16 @@ class Wrapper(Model):
     wrap_spaces: bool, default = False
         If True, gym.spaces are converted to rlberry.spaces, which defined a reseed() method.
 
+    Attributes
+    ----------
+    env : gym.Env
+        The wrapped environment
+    metadata : dict
+        InitiallThe meatadata of the wrapped environment
+    render_mode : str
+        The render_mode of the wrapped environment
+
+
     See also:
     https://stackoverflow.com/questions/1443129/completely-wrap-an-object-in-python
 

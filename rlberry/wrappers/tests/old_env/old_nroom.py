@@ -22,6 +22,10 @@ logger = rlberry.logger
 
 class Old_NRoom(Old_GridWorld):
     """
+    'Old' because it's a pre-gymnasium version (like gym=0.21)
+        - step with 'done' instead of 'terminated' and 'truncated'
+        - reset with 'observation' only, instead of 'observation' and 'info'
+
     GridWorld with N rooms of size L x L. The agent starts in the middle room.
 
     There is one small and easy reward in the first room,

@@ -48,6 +48,10 @@ def _get_autoreset_env(env):
 #
 class Old_BallLevel0(Old_PBall2D):
     """
+    'Old' because it's a pre-gymnasium version (like gym=0.21)
+        - step with 'done' instead of 'terminated' and 'truncated'
+        - reset with 'observation' only, instead of 'observation' and 'info'
+
     Reward-free (0 reward)
     """
 
@@ -95,6 +99,10 @@ class Old_BallLevel0(Old_PBall2D):
 
 class Old_BallLevel1(Old_PBall2D):
     """
+    'Old' because it's a pre-gymnasium version (like gym=0.21)
+        - step with 'done' instead of 'terminated' and 'truncated'
+        - reset with 'observation' only, instead of 'observation' and 'info'
+
     Dense rewards
     """
 
@@ -142,6 +150,10 @@ class Old_BallLevel1(Old_PBall2D):
 
 class Old_BallLevel2(Old_BallLevel1):
     """
+    'Old' because it's a pre-gymnasium version (like gym=0.21)
+        - step with 'done' instead of 'terminated' and 'truncated'
+        - reset with 'observation' only, instead of 'observation' and 'info'
+
     Sparse rewards
     """
 
@@ -160,6 +172,10 @@ class Old_BallLevel2(Old_BallLevel1):
 
 class Old_BallLevel3(Old_BallLevel2):
     """
+    'Old' because it's a pre-gymnasium version (like gym=0.21)
+        - step with 'done' instead of 'terminated' and 'truncated'
+        - reset with 'observation' only, instead of 'observation' and 'info'
+
     Sparse rewards, noisier
     """
 
@@ -176,6 +192,10 @@ class Old_BallLevel3(Old_BallLevel2):
 
 class Old_BallLevel4(Old_BallLevel1):
     """
+    'Old' because it's a pre-gymnasium version (like gym=0.21)
+        - step with 'done' instead of 'terminated' and 'truncated'
+        - reset with 'observation' only, instead of 'observation' and 'info'
+
     Far sparse reward (as lvl 2) + dense suboptimal rewards
     """
 
@@ -198,6 +218,10 @@ class Old_BallLevel4(Old_BallLevel1):
 
 class Old_BallLevel5(Old_BallLevel4):
     """
+    'Old' because it's a pre-gymnasium version (like gym=0.21)
+        - step with 'done' instead of 'terminated' and 'truncated'
+        - reset with 'observation' only, instead of 'observation' and 'info'
+
     Far sparse reward (as lvl 2) + dense suboptimal rewards, noisier
     """
 

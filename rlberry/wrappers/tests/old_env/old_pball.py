@@ -39,6 +39,10 @@ def projection_to_pball(x, p):
 
 class Old_PBall(Model):
     """
+    'Old' because it's a pre-gymnasium version (like gym=0.21)
+        - step with 'done' instead of 'terminated' and 'truncated'
+        - reset with 'observation' only, instead of 'observation' and 'info'
+
     Parametric family of environments whose state space is a unit sphere
     according to the p-norm in R^d.
 
@@ -237,6 +241,10 @@ does not make true projections onto the lp ball."
 
 class Old_PBall2D(RenderInterface2D, Old_PBall):
     """
+    'Old' because it's a pre-gymnasium version (like gym=0.21)
+        - step with 'done' instead of 'terminated' and 'truncated'
+        - reset with 'observation' only, instead of 'observation' and 'info'
+
     Parametric family of environments whose state space is a unit sphere
     according to the p-norm in R^d.
 
@@ -416,6 +424,10 @@ class Old_PBall2D(RenderInterface2D, Old_PBall):
 
 class Old_SimplePBallND(Old_PBall):
     """
+    'Old' because it's a pre-gymnasium version (like gym=0.21)
+        - step with 'done' instead of 'terminated' and 'truncated'
+        - reset with 'observation' only, instead of 'observation' and 'info'
+
     PBall environment in d dimensions with simple dynamics.
     """
 

@@ -9,6 +9,10 @@ logger = rlberry.logger
 
 class Old_FourRoom(Old_GridWorld):
     """
+    'Old' because it's a pre-gymnasium version (like gym=0.21)
+        - step with 'done' instead of 'terminated' and 'truncated'
+        - reset with 'observation' only, instead of 'observation' and 'info'
+
     GridWorld with four rooms.
 
     Parameters

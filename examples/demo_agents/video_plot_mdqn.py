@@ -52,5 +52,6 @@ for episode in range(3):
         done = terminated or truncated
 env.close()
 
+#need to move the final result inside the folder used for documentation
 os.rename("_video/temp/rl-video-episode-0.mp4", "_video/video_plot_mdqn.mp4")
 shutil.rmtree("_video/temp/")
