@@ -56,8 +56,8 @@ def default_policy_net_fn(env):
     Returns a default policy network.
     """
 
-    #remove potential wrappers
-    while type(env) in [SyncVectorEnv,AsyncVectorEnv,VectorListInfo]:
+    # remove potential wrappers
+    while type(env) in [SyncVectorEnv, AsyncVectorEnv, VectorListInfo]:
         env = env.envs[0]
 
     if isinstance(env.observation_space, spaces.Box):
@@ -128,8 +128,8 @@ def default_value_net_fn(env):
     Returns a default value network.
     """
 
-    #remove potential wrappers
-    while type(env) in [SyncVectorEnv,AsyncVectorEnv,VectorListInfo]:
+    # remove potential wrappers
+    while type(env) in [SyncVectorEnv, AsyncVectorEnv, VectorListInfo]:
         env = env.envs[0]
 
     if isinstance(env.observation_space, spaces.Box):
