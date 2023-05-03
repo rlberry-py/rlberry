@@ -4,7 +4,6 @@ from rlberry.agents.torch.dqn import DQNAgent
 from rlberry.agents.torch.utils.training import model_factory
 from rlberry.manager.agent_manager import AgentManager
 import os
-import shutil
 import pathlib
 
 import tempfile
