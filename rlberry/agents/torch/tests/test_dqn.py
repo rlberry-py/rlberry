@@ -59,7 +59,7 @@ def test_dqn_classic_env():
     agent.fit(budget=200)
 
     with tempfile.TemporaryDirectory() as tmpdirname:
-        saving_path = tmpdirname+"/agent_test_dqn_classic_env.pickle"
+        saving_path = tmpdirname + "/agent_test_dqn_classic_env.pickle"
 
         # test the save function
         agent.save(saving_path)
@@ -83,13 +83,11 @@ def test_dqn_classic_env():
             observation = next_observation
 
 
-
-
 def test_dqn_agent_manager_classic_env():
     # saving_path = "rlberry/agents/torch/tests/agentmanager_test_dqn_classic_env"
 
     with tempfile.TemporaryDirectory() as tmpdirname:
-        saving_path = tmpdirname+"/agentmanager_test_dqn_classic_env"
+        saving_path = tmpdirname + "/agentmanager_test_dqn_classic_env"
 
         test_agent_manager = AgentManager(
             DQNAgent,  # The Agent class.
@@ -138,4 +136,3 @@ def test_dqn_agent_manager_classic_env():
             if done:
                 break
             state = next_s
-
