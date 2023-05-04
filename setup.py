@@ -14,7 +14,7 @@ packages = find_packages(exclude=["docs", "notebooks", "assets"])
 install_requires = [
     "numpy>=1.17",
     "scipy>=1.6",
-    "pygame",
+    "pygame-ce",
     "matplotlib",
     "seaborn",
     "pandas",
