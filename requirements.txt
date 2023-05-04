@@ -1,7 +1,7 @@
 git+https://github.com/Pythoniasm/gym-fork@fix-v0.21.0
 numpy>=1.17
 scipy>=1.6
-pygame
+pygame-ce
 matplotlib
 seaborn
 pandas
