@@ -19,7 +19,6 @@ install_requires = [
     "seaborn",
     "pandas",
     "gymnasium",
-    "dill",
     "docopt",
     "pyyaml",
 ]
@@ -36,6 +35,7 @@ default_requires = [
     "PyOpenGL==3.1.5",
     "PyOpenGL_accelerate==3.1.5",
     "pyvirtualdisplay",
+    "gymnasium",
 ]
 
 # tensorboard must be installed manually, due to conflicts with
@@ -45,6 +45,7 @@ torch_agents_requires = default_requires + [
     "opencv-python",
     "gymnasium[atari,accept-rom-license]",
     "ale-py>=0.8.0",
+    "stable-baselines3",
     # 'tensorboard'
 ]
 

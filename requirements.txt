@@ -1,4 +1,4 @@
-git+https://github.com/Pythoniasm/gym-fork@fix-v0.21.0
+
 numpy>=1.17
 scipy>=1.6
 pygame-ce
@@ -6,6 +6,7 @@ matplotlib
 seaborn
 pandas
 gymnasium[atari,accept-rom-license]
+gym[accept-rom-license] @ git+https://github.com/rlberry-py/gym_fix_021
 dill
 docopt
 pyyaml
