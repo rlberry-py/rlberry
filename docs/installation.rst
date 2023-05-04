@@ -74,3 +74,12 @@ Deep RL agents require extra libraries, like PyTorch.
 
     $ pip install git+https://github.com/rlberry-py/rlberry.git#egg=rlberry[torch_agents]
     $ pip install tensorboard
+
+
+
+* Stable-baselines3 agents with Gymnasium support:
+    (https://github.com/DLR-RM/stable-baselines3/pull/1327)
+.. code:: bash
+
+    $ pip install git+https://github.com/DLR-RM/stable-baselines3@feat/gymnasium-support
+    $ pip install git+https://github.com/Stable-Baselines-Team/stable-baselines3-contrib@feat/gymnasium-support

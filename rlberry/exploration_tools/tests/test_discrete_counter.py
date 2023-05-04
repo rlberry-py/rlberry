@@ -23,7 +23,7 @@ def test_discrete_env(rate_power):
         for ss in range(env.observation_space.n):
             for aa in range(env.action_space.n):
                 for _ in range(N):
-                    ns, rr, _, _ = env.sample(ss, aa)
+                    ns, rr, _, _, _ = env.sample(ss, aa)
                     counter.update(ss, aa, ns, rr)
                 assert counter.N_sa[ss, aa] == N
                 assert counter.count(ss, aa) == N
@@ -50,7 +50,7 @@ def test_continuous_state_env(rate_power):
             ss = env.observation_space.sample()
             aa = env.action_space.sample()
             for _ in range(N):
-                ns, rr, _, _ = env.sample(ss, aa)
+                ns, rr, _, _, _ = env.sample(ss, aa)
                 counter.update(ss, aa, ns, rr)
 
             dss = counter.state_discretizer.discretize(ss)
@@ -75,7 +75,7 @@ def test_continuous_state_env_2(rate_power):
             ss = env.observation_space.sample()
             aa = env.action_space.sample()
             for nn in range(N):
-                ns, rr, _, _ = env.sample(ss, aa)
+                ns, rr, _, _, _ = env.sample(ss, aa)
                 counter.update(ss, aa, ns, rr)
             assert counter.count(ss, aa) == N
             if rate_power == pytest.approx(1):
@@ -98,7 +98,7 @@ def test_continuous_state_env_3():
         for ss in range(env.discrete_observation_space.n):
             for aa in range(env.action_space.n):
                 for _ in range(N):
-                    ns, rr, _, _ = env.sample(ss, aa)
+                    ns, rr, _, _, _ = env.sample(ss, aa)
                     continuous_ss = env._convert_index_to_float_coord(ss)
                     counter.update(continuous_ss, aa, None, rr)
                 assert counter.N_sa[ss, aa] == N

@@ -1,4 +1,4 @@
-import gym
+import gymnasium as gym
 import numpy as np
 from rlberry.seeding import Seeder
 
@@ -10,7 +10,7 @@ class Box(gym.spaces.Box):
     [a_1, b_1] x [a_2, b_2] x ... x [a_n, b_n]
 
 
-    Inherited from gym.spaces.Box for compatibility with gym.
+    Inherited from gymnasium.spaces.Box for compatibility with gym.
 
     rlberry wraps gym.spaces to make sure the seeding
     mechanism is unified in the library (rlberry.seeding)

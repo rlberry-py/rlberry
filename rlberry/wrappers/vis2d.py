@@ -2,7 +2,7 @@ from rlberry.envs import Wrapper
 from rlberry.exploration_tools.discrete_counter import DiscreteCounter
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from rlberry.rendering.utils import video_write
-import gym.spaces as spaces
+import gymnasium.spaces as spaces
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -110,13 +110,13 @@ class Vis2dWrapper(Wrapper):
         self.current_state = None
         self.curret_step = 0
 
-    def reset(self):
+    def reset(self, seed=None, options=None):
         self.current_step = 0
-        self.current_state = self.env.reset()
-        return self.current_state
+        self.current_state, info = self.env.reset(seed, options)
+        return self.current_state, info
 
     def step(self, action):
-        observation, reward, done, info = self.env.step(action)
+        observation, reward, terminated, truncated, info = self.env.step(action)
         # initialize new trajectory
         if self.current_step == 0:
             self.memory.end_trajectory()
@@ -139,7 +139,7 @@ class Vis2dWrapper(Wrapper):
         self.memory.append(transition)
         # update current state
         self.current_state = observation
-        return observation, reward, done, info
+        return observation, reward, terminated, truncated, info
 
     def plot_trajectories(
         self,

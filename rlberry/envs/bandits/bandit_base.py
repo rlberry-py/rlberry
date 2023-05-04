@@ -41,15 +41,16 @@ class Bandit(Model):
         assert action < self.n_arms
 
         reward = self.laws[action].rvs(random_state=self.rng)
-        done = True
+        terminated = True
+        truncated = False
 
-        return 0, reward, done, {}
+        return 0, reward, terminated, truncated, {}
 
-    def reset(self):
+    def reset(self, seed=None, option=None):
         """
         Reset the environment to a default state.
         """
-        return 0
+        return 0, {}
 
 
 class AdversarialBandit(Model):
@@ -84,12 +85,12 @@ class AdversarialBandit(Model):
 
         rewards = self.rewards.popleft()
         reward = rewards[action]
-        done = True
+        terminated = True
+        truncated = False
+        return 0, reward, terminated, truncated, {}
 
-        return 0, reward, done, {}
-
-    def reset(self):
+    def reset(self, seed=None, option=None):
         """
         Reset the environment to a default state.
         """
-        return 0
+        return 0, {}

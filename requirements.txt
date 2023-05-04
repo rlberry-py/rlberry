@@ -1,10 +1,12 @@
+
 numpy>=1.17
 scipy>=1.6
-pygame
+pygame-ce
 matplotlib
 seaborn
 pandas
-gym==0.21
+gymnasium[atari,accept-rom-license]
+gym[accept-rom-license] @ git+https://github.com/rlberry-py/gym_fix_021
 dill
 docopt
 pyyaml
@@ -15,6 +17,13 @@ PyOpenGL==3.1.5
 PyOpenGL_accelerate==3.1.5
 pyvirtualdisplay
 torch>=1.6.0
-stable-baselines3
 protobuf==3.20.1
 tensorboard
+opencv-python
+ale-py>=0.8.0
+pytest
+pytest-xprocess
+moviepy>=1.0.3
+stable-baselines3
+# git+https://github.com/DLR-RM/stable-baselines3@feat/gymnasium-support
+# git+https://github.com/Stable-Baselines-Team/stable-baselines3-contrib@feat/gymnasium-support

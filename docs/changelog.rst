@@ -9,11 +9,18 @@ Dev version
 
 * Move old scripts (jax agents, attention networks, old examples...) that we won't maintain from the main branch to an archive branch.
 
+*PR #277*
+
+* Add and update code to use "Atari games" env
+
+*PR#281*
+
+* New branch for code compatible with Gymnasium
 
 Version 0.4.0  (latest stable version)
 --------------------------------------
 
-*PR #273*
+*PR#273*
 
 * Change the default behavior of `plot_writer_data` so that if seaborn has version >= 0.12.0 then
   a 90% percentile interval is used instead of sd.

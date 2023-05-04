@@ -220,6 +220,7 @@ Environment Wrappers
   :template: class.rst
 
   wrappers.discretize_state.DiscretizeStateWrapper
+  wrappers.gym_utils.OldGymCompatibilityWrapper
   wrappers.RescaleRewardWrapper
   wrappers.scalarize.ScalarizeEnvWrapper
   wrappers.vis2d.Vis2dWrapper

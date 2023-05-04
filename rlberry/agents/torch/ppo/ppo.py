@@ -1,8 +1,8 @@
-import gym.spaces as spaces
 import numpy as np
 import torch
 import torch.nn as nn
 
+import gymnasium.spaces as spaces
 import rlberry
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.envs.utils import process_env
@@ -297,7 +297,8 @@ class PPOAgent(AgentWithSimplePolicy):
         episode_returns = np.zeros(self.n_envs, dtype=np.float32)
         episode_lengths = np.zeros(self.n_envs, dtype=np.int32)
 
-        next_obs = torch.Tensor(self.env.reset()).to(
+        next_obs, infos = self.env.reset()
+        next_obs = torch.Tensor(next_obs).to(
             self.device
         )  # should always be a torch tensor
         next_done = np.zeros(self.n_envs, dtype=bool)  # initialize done to False
@@ -308,7 +309,10 @@ class PPOAgent(AgentWithSimplePolicy):
             # select action and take step
             with torch.no_grad():
                 action, logprobs = self._select_action(obs)
-            next_obs, reward, next_done, info = self.env.step(action)
+            next_obs, reward, next_terminated, next_truncated, info = self.env.step(
+                action
+            )
+            next_done = np.logical_or(next_terminated, next_truncated)
             next_obs = torch.Tensor(next_obs).to(self.device)
 
             # end of episode logging
@@ -330,13 +334,6 @@ class PPOAgent(AgentWithSimplePolicy):
                             "total_episodes", self.total_episodes, self.total_timesteps
                         )
                     episode_returns[i], episode_lengths[i] = 0.0, 0
-
-            # only accept done if not truncated
-            # TODO: not needed with gymnasium
-            for i in range(self.n_envs):
-                if next_done[i]:
-                    if "TimeLimit.truncated" in info[i]:
-                        next_done[i] = False
 
             # append data to memory and update variables
             self.memory.append(

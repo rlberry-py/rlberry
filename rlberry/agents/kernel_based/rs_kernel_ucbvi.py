@@ -1,7 +1,7 @@
 import numpy as np
 from rlberry.utils.jit_setup import numba_jit
 
-import gym.spaces as spaces
+import gymnasium.spaces as spaces
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.agents.dynprog.utils import backward_induction
 from rlberry.agents.dynprog.utils import backward_induction_in_place
@@ -355,12 +355,15 @@ class RSKernelUCBVIAgent(AgentWithSimplePolicy):
     def _run_episode(self):
         # interact for H steps
         episode_rewards = 0
-        state = self.env.reset()
+        observation, info = self.env.reset()
         for hh in range(self.horizon):
-            action = self._get_action(state, hh)
-            next_state, reward, done, _ = self.env.step(action)
-            self._update(state, action, next_state, reward)
-            state = next_state
+            action = self._get_action(observation, hh)
+            next_observation, reward, terminated, truncated, info = self.env.step(
+                action
+            )
+            done = terminated or truncated
+            self._update(observation, action, next_observation, reward)
+            observation = next_observation
             episode_rewards += reward
 
             if done:

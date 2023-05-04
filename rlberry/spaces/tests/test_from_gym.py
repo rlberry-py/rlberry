@@ -1,13 +1,13 @@
 import numpy as np
 import pytest
-import gym.spaces
+import gymnasium.spaces
 import rlberry.spaces
 from rlberry.spaces.from_gym import convert_space_from_gym
 
 
 @pytest.mark.parametrize("n", list(range(1, 10)))
 def test_discrete_space(n):
-    gym_sp = gym.spaces.Discrete(n)
+    gym_sp = gymnasium.spaces.Discrete(n)
     sp = convert_space_from_gym(gym_sp)
     assert isinstance(sp, rlberry.spaces.Discrete)
     sp.reseed(123)
@@ -40,7 +40,7 @@ def test_discrete_space(n):
 )
 def test_box_space_case_1(low, high, dim):
     shape = (dim, 1)
-    gym_sp = gym.spaces.Box(low, high, shape=shape)
+    gym_sp = gymnasium.spaces.Box(low, high, shape=shape)
     sp = convert_space_from_gym(gym_sp)
     assert isinstance(sp, rlberry.spaces.Box)
     sp.reseed(123)
@@ -59,7 +59,7 @@ def test_box_space_case_1(low, high, dim):
     ],
 )
 def test_box_space_case_2(low, high):
-    gym_sp = gym.spaces.Box(low, high, dtype=np.float64)
+    gym_sp = gymnasium.spaces.Box(low, high, dtype=np.float64)
     sp = convert_space_from_gym(gym_sp)
     assert isinstance(sp, rlberry.spaces.Box)
     sp.reseed(123)
@@ -72,9 +72,9 @@ def test_box_space_case_2(low, high):
 
 
 def test_tuple():
-    sp1 = gym.spaces.Box(0.0, 1.0, shape=(3, 2))
-    sp2 = gym.spaces.Discrete(2)
-    gym_sp = gym.spaces.Tuple([sp1, sp2])
+    sp1 = gymnasium.spaces.Box(0.0, 1.0, shape=(3, 2))
+    sp2 = gymnasium.spaces.Discrete(2)
+    gym_sp = gymnasium.spaces.Tuple([sp1, sp2])
     sp = convert_space_from_gym(gym_sp)
     assert isinstance(sp, rlberry.spaces.Tuple)
     assert isinstance(sp.spaces[0], rlberry.spaces.Box)
@@ -85,7 +85,7 @@ def test_tuple():
 
 
 def test_multidiscrete():
-    gym_sp = gym.spaces.MultiDiscrete([5, 2, 2])
+    gym_sp = gymnasium.spaces.MultiDiscrete([5, 2, 2])
     sp = convert_space_from_gym(gym_sp)
     assert isinstance(sp, rlberry.spaces.MultiDiscrete)
     sp.reseed(123)
@@ -95,7 +95,7 @@ def test_multidiscrete():
 
 def test_multibinary():
     for n in [1, 5, [3, 4]]:
-        gym_sp = gym.spaces.MultiBinary(n)
+        gym_sp = gymnasium.spaces.MultiBinary(n)
         sp = convert_space_from_gym(gym_sp)
         assert isinstance(sp, rlberry.spaces.MultiBinary)
         for _ in range(10):
@@ -104,30 +104,30 @@ def test_multibinary():
 
 
 def test_dict():
-    nested_observation_space = gym.spaces.Dict(
+    nested_observation_space = gymnasium.spaces.Dict(
         {
-            "sensors": gym.spaces.Dict(
+            "sensors": gymnasium.spaces.Dict(
                 {
-                    "position": gym.spaces.Box(low=-100, high=100, shape=(3,)),
-                    "velocity": gym.spaces.Box(low=-1, high=1, shape=(3,)),
-                    "front_cam": gym.spaces.Tuple(
+                    "position": gymnasium.spaces.Box(low=-100, high=100, shape=(3,)),
+                    "velocity": gymnasium.spaces.Box(low=-1, high=1, shape=(3,)),
+                    "front_cam": gymnasium.spaces.Tuple(
                         (
-                            gym.spaces.Box(low=0, high=1, shape=(10, 10, 3)),
-                            gym.spaces.Box(low=0, high=1, shape=(10, 10, 3)),
+                            gymnasium.spaces.Box(low=0, high=1, shape=(10, 10, 3)),
+                            gymnasium.spaces.Box(low=0, high=1, shape=(10, 10, 3)),
                         )
                     ),
-                    "rear_cam": gym.spaces.Box(low=0, high=1, shape=(10, 10, 3)),
+                    "rear_cam": gymnasium.spaces.Box(low=0, high=1, shape=(10, 10, 3)),
                 }
             ),
-            "ext_controller": gym.spaces.MultiDiscrete((5, 2, 2)),
-            "inner_state": gym.spaces.Dict(
+            "ext_controller": gymnasium.spaces.MultiDiscrete((5, 2, 2)),
+            "inner_state": gymnasium.spaces.Dict(
                 {
-                    "charge": gym.spaces.Discrete(100),
-                    "system_checks": gym.spaces.MultiBinary(10),
-                    "job_status": gym.spaces.Dict(
+                    "charge": gymnasium.spaces.Discrete(100),
+                    "system_checks": gymnasium.spaces.MultiBinary(10),
+                    "job_status": gymnasium.spaces.Dict(
                         {
-                            "task": gym.spaces.Discrete(5),
-                            "progress": gym.spaces.Box(low=0, high=100, shape=()),
+                            "task": gymnasium.spaces.Discrete(5),
+                            "progress": gymnasium.spaces.Box(low=0, high=100, shape=()),
                         }
                     ),
                 }
@@ -141,7 +141,7 @@ def test_dict():
         assert sp.contains(sp.sample())
     sp.reseed(123)
 
-    gym_sp2 = gym.spaces.Dict(sp.spaces)
+    gym_sp2 = gymnasium.spaces.Dict(sp.spaces)
     sp2 = convert_space_from_gym(gym_sp2)
     assert isinstance(sp2, rlberry.spaces.Dict)
     for _ in range(10):

@@ -26,29 +26,32 @@ from torch.utils.tensorboard import SummaryWriter
 from rlberry.agents.torch.dqn import MunchausenDQNAgent
 from rlberry.utils.logging import configure_logging
 
-from gym.wrappers.monitoring import video_recorder
+from gymnasium.wrappers.record_video import RecordVideo
+import shutil
+import os
 
 
 configure_logging(level="INFO")
 
-env = gym_make("CartPole-v0")
+env = gym_make("CartPole-v0", render_mode="rgb_array")
 agent = MunchausenDQNAgent(env, epsilon_decay_interval=1000)
 agent.set_writer(SummaryWriter())
 
 print(f"Running Munchausen DQN on {env}")
 
 agent.fit(budget=10**5)
-vid = video_recorder.VideoRecorder(
-    env,
-    path="_video/video_plot_mdqn.mp4",
-    enabled=True,
-)
+env = RecordVideo(env, "_video/temp")
+
 
 for episode in range(3):
     done = False
-    state = env.reset()
+    observation, info = env.reset()
     while not done:
-        action = agent.policy(state)
-        state, reward, done, _ = env.step(action)
-        vid.capture_frame()
+        action = agent.policy(observation)
+        observation, reward, terminated, truncated, info = env.step(action)
+        done = terminated or truncated
 env.close()
+
+# need to move the final result inside the folder used for documentation
+os.rename("_video/temp/rl-video-episode-0.mp4", "_video/video_plot_mdqn.mp4")
+shutil.rmtree("_video/temp/")

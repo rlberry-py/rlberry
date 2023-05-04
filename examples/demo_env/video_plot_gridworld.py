@@ -23,15 +23,14 @@ info = agent.fit()
 print(info)
 
 env.enable_rendering()
-state = env.reset()
+observation, info = env.reset()
 for tt in range(50):
-    action = agent.policy(state)
-    next_s, _, done, _ = env.step(action)
+    action = agent.policy(observation)
+    observation, reward, terminated, truncated, info = env.step(action)
+    done = terminated or truncated
     if done:
         # Warning: this will never happen in the present case because there is no terminal state.
         # See the doc of GridWorld for more informations on the default parameters of GridWorld.
         break
-    state = next_s
-
 # Save the video
 video = env.save_video("_video/video_plot_gridworld.mp4", framerate=10)

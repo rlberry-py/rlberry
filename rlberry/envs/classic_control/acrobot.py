@@ -124,9 +124,9 @@ class Acrobot(RenderInterface2D, Model):
         self.state = None
         self.reset()
 
-    def reset(self):
+    def reset(self, seed=None, options=None):
         self.state = self.rng.uniform(low=-0.1, high=0.1, size=(4,))
-        return self._get_ob()
+        return self._get_ob(), {}
 
     def step(self, action):
         assert self.action_space.contains(action), "%r (%s) invalid" % (
@@ -164,9 +164,10 @@ class Acrobot(RenderInterface2D, Model):
         ns[2] = bound(ns[2], -self.MAX_VEL_1, self.MAX_VEL_1)
         ns[3] = bound(ns[3], -self.MAX_VEL_2, self.MAX_VEL_2)
         self.state = ns
-        terminal = self._terminal()
-        reward = -1.0 if not terminal else 0.0
-        return self._get_ob(), reward, terminal, {}
+        terminated = self._terminal()
+        truncated = False
+        reward = -1.0 if not terminated else 0.0
+        return self._get_ob(), reward, terminated, truncated, {}
 
     def _get_ob(self):
         s = self.state

@@ -56,11 +56,14 @@ jobs:
       set -xe
       pip install -e .
     displayName: 'Install rlberry'
-
+  - script: |
+      pip install git+https://github.com/DLR-RM/stable-baselines3@feat/gymnasium-support
+      pip install git+https://github.com/Stable-Baselines-Team/stable-baselines3-contrib@feat/gymnasium-support
+    displayName: 'Install stable-baselines3 for Gymnasium'
 
   - script: |
       set -xe
-      pip install pytest==7.0.1 pytest-azurepipelines pytest-cov codecov pytest-xvfb pytest-xprocess
+      pip install pytest==7.0.1 pytest-azurepipelines pytest-cov pytest-xvfb pytest-xprocess
       # run doctests in the documentation
       # TODO: use following line for doctest ?
       pytest docs/*rst || echo "Ignoring exit status"
@@ -99,6 +102,10 @@ jobs:
       set -xe
       pip install -e .
     displayName: 'Install rlberry'
+  - script: |
+      pip install git+https://github.com/DLR-RM/stable-baselines3@feat/gymnasium-support
+      pip install git+https://github.com/Stable-Baselines-Team/stable-baselines3-contrib@feat/gymnasium-support
+    displayName: 'Install stable-baselines3 for Gymnasium'
 
   - script: |
       pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
@@ -130,6 +137,10 @@ jobs:
       pip wheel . -w dist\
       pip install --pre --no-index --find-links dist\ rlberry
     displayName: 'Install rlberry'
+  - script: |
+      pip install git+https://github.com/DLR-RM/stable-baselines3@feat/gymnasium-support
+      pip install git+https://github.com/Stable-Baselines-Team/stable-baselines3-contrib@feat/gymnasium-support
+    displayName: 'Install stable-baselines3 for Gymnasium'
 
   - script: |
       pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb

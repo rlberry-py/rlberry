@@ -1,7 +1,7 @@
 import copy
 import logging
 
-import gym
+import gymnasium as gym
 import numpy as np
 
 from rlberry.envs.utils import process_env
@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 def process_ppo_env(env, seeder, num_envs=1, asynchronous=False):
     """
-    Process environment for PPO. It is the only agent that supports vectorized
+    Process environment for PPO. It's the only agent that supports vectorized
     environments.
 
     Parameters
@@ -29,14 +29,16 @@ def process_ppo_env(env, seeder, num_envs=1, asynchronous=False):
 
     Returns
     -------
-    vec_env : gym.vector.VectorEnv
+    vec_env : gymnasium.vector.VectorEnv
         Vectorized environment.
     """
     vec_env_cls = (
         gym.vector.AsyncVectorEnv if asynchronous else gym.vector.SyncVectorEnv
     )
-    return vec_env_cls(
-        [lambda: process_env(env, seeder, copy_env=True) for _ in range(num_envs)]
+    return gym.wrappers.VectorListInfo(
+        vec_env_cls(
+            [lambda: process_env(env, seeder, copy_env=True) for _ in range(num_envs)]
+        )
     )
 
 

@@ -162,3 +162,6 @@ dmypy.json
 
 # PyCharm
 .idea
+.project
+.pydevproject
+profile.prof

@@ -14,12 +14,11 @@ packages = find_packages(exclude=["docs", "notebooks", "assets"])
 install_requires = [
     "numpy>=1.17",
     "scipy>=1.6",
-    "pygame",
+    "pygame-ce",
     "matplotlib",
     "seaborn",
     "pandas",
-    "gym==0.21",
-    "dill",
+    "gymnasium",
     "docopt",
     "pyyaml",
 ]
@@ -33,15 +32,20 @@ default_requires = [
     "numba",
     "optuna",
     "ffmpeg-python",
-    "PyOpenGL",
-    "PyOpenGL_accelerate",
+    "PyOpenGL==3.1.5",
+    "PyOpenGL_accelerate==3.1.5",
     "pyvirtualdisplay",
+    "gymnasium",
 ]
 
 # tensorboard must be installed manually, due to conflicts with
 # dm-reverb-nightly[tensorflow] in jax_agents_requires
 torch_agents_requires = default_requires + [
     "torch>=1.6.0",
+    "opencv-python",
+    "gymnasium[atari,accept-rom-license]",
+    "ale-py>=0.8.0",
+    "stable-baselines3",
     # 'tensorboard'
 ]
 
