@@ -18,7 +18,7 @@ install_requires = [
     "matplotlib",
     "seaborn",
     "pandas",
-    "git+https://github.com/rlberry-py/gym_fix_021[accept-rom-license]",
+    "gym[accept-rom-licens] @ git+https://github.com/rlberry-py/gym_fix_021",
     "dill",
     "docopt",
     "pyyaml",
