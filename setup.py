@@ -19,6 +19,7 @@ install_requires = [
     "seaborn",
     "pandas",
     "gymnasium",
+    "dill",
     "docopt",
     "pyyaml",
 ]
