@@ -1,9 +1,7 @@
 from collections import deque
 
-
 from rlberry.envs.interface import Model
 import rlberry.spaces as spaces
-
 
 import rlberry
 
@@ -32,6 +30,12 @@ class Bandit(Model):
         self.laws = laws
         self.n_arms = len(self.laws)
         self.action_space = spaces.Discrete(self.n_arms)
+        # Pre-sample 10 samples
+        self.rewards = [
+            deque(self.laws[action].rvs(size=10, random_state=self.rng))
+            for action in range(self.n_arms)
+        ]
+        self.n_rewards = [10] * self.n_arms
 
     def step(self, action):
         """
@@ -40,7 +44,18 @@ class Bandit(Model):
         # test that the action exists
         assert action < self.n_arms
 
-        reward = self.laws[action].rvs(random_state=self.rng)
+        # If the queue of reward for the action is empty, sample 2*size of old reward queue. Otherwise, pop from queue
+        if self.rewards[action]:
+            reward = self.rewards[action].pop()
+        else:
+            self.n_rewards[action] = 2 * self.n_rewards[action]
+            self.rewards[action] = deque(
+                self.laws[action].rvs(
+                    size=self.n_rewards[action], random_state=self.rng
+                )
+            )
+            reward = self.rewards[action].pop()
+
         done = True
 
         return 0, reward, done, {}
