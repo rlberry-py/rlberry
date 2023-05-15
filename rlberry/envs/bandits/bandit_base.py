@@ -2,6 +2,7 @@ from collections import deque
 
 from rlberry.envs.interface import Model
 import rlberry.spaces as spaces
+from rlberry.seeding import Seeder
 
 import rlberry
 
@@ -30,6 +31,7 @@ class Bandit(Model):
         self.laws = laws
         self.n_arms = len(self.laws)
         self.action_space = spaces.Discrete(self.n_arms)
+
         # Pre-sample 10 samples
         self.rewards = [
             deque(self.laws[action].rvs(size=10, random_state=self.rng))
@@ -59,6 +61,20 @@ class Bandit(Model):
         done = True
 
         return 0, reward, done, {}
+
+    def reseed(self, seed_seq=None):
+        if seed_seq is None:
+            self.seeder = self.seeder.spawn()
+        else:
+            self.seeder = Seeder(seed_seq)
+        # spaces
+        self.action_space.reseed(self.seeder.seed_seq)
+
+        self.rewards = [
+            deque(self.laws[action].rvs(size=10, random_state=self.rng))
+            for action in range(self.n_arms)
+        ]
+        self.n_rewards = [10] * self.n_arms
 
     def reset(self):
         """

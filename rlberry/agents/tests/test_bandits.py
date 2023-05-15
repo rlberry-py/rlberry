@@ -54,7 +54,9 @@ def test_bounded_indices():
                     self, env, index, tracker_params=tracker_params, **kwargs
                 )
 
-        assert check_bandit_agent(Agent, BernoulliBandit, seed=TEST_SEED)
+        assert check_bandit_agent(
+            Agent, BernoulliBandit, seed=TEST_SEED
+        ), "Agent not reproducible"
 
 
 def test_subgaussian_indices():
@@ -69,7 +71,9 @@ def test_subgaussian_indices():
                     self, env, index, tracker_params=tracker_params, **kwargs
                 )
 
-        assert check_bandit_agent(Agent, NormalBandit, seed=TEST_SEED)
+        assert check_bandit_agent(
+            Agent, NormalBandit, seed=TEST_SEED
+        ), "Agent not reproducible"
 
 
 def test_misc_indices():
@@ -84,7 +88,9 @@ def test_misc_indices():
                     self, env, index, tracker_params=tracker_params, **kwargs
                 )
 
-        assert check_bandit_agent(Agent, BernoulliBandit, seed=TEST_SEED)
+        assert check_bandit_agent(
+            Agent, BernoulliBandit, seed=TEST_SEED
+        ), "Agent not reproducible"
 
 
 def test_randomized_bandits():
@@ -97,7 +103,9 @@ def test_randomized_bandits():
                 self, env, prob, tracker_params=tracker_params, **kwargs
             )
 
-    assert check_bandit_agent(EXP3Agent, BernoulliBandit, seed=TEST_SEED)
+    assert check_bandit_agent(
+        EXP3Agent, BernoulliBandit, seed=TEST_SEED
+    ), "Agent not reproducible"
 
 
 priors = {
@@ -118,4 +126,6 @@ def test_TS():
                     self, env, prior_info, tracker_params=tracker_params, **kwargs
                 )
 
-        assert check_bandit_agent(Agent, Bandit, seed=TEST_SEED)
+        assert check_bandit_agent(
+            Agent, Bandit, seed=TEST_SEED
+        ), "Agent not reproducible"
