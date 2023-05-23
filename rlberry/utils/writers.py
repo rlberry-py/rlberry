@@ -6,6 +6,10 @@ from timeit import default_timer as timer
 from rlberry import check_packages
 from rlberry import metadata_utils
 import shutil
+from tqdm import tqdm
+from tqdm.utils import _screen_shape_wrapper
+import sys
+
 
 if check_packages.TENSORBOARD_INSTALLED:
     from torch.utils.tensorboard import SummaryWriter
@@ -63,7 +67,11 @@ class DefaultWriter:
         self._data = None
         self._time_last_log = None
         self._log_time = True
-        assert style_log in ["multi_line", "one_line"], "Style log for writer unknown."
+        assert style_log in [
+            "multi_line",
+            "one_line",
+            "progressbar",
+        ], "Style log for writer unknown."
         self._style_log = style_log
         self._maxlen = maxlen
         self._maxlen_by_tag = maxlen_by_tag
@@ -99,6 +107,11 @@ class DefaultWriter:
         for tag in self._data:
             df = pd.concat([df, pd.DataFrame(self._data[tag])], ignore_index=True)
         return df
+
+    def set_max_global_step(self, max_global_step):
+        self._max_global_step = max_global_step
+        self.pbar = extending_tqdm(total=int(max_global_step), desc=" ", leave=False)
+        self.progressbar_current_step = 0
 
     def read_tag_value(self, tag, main_tag: str = ""):
         """
@@ -314,6 +327,7 @@ class DefaultWriter:
                         " " * 14 + data_message[1].center(size_term - 14).rstrip()
                     )
                     # The -14 comes from the info  message
+                    logger.info(message)
                 else:
                     self._style_log = "one_line"
             if self._style_log == "one_line":
@@ -332,8 +346,28 @@ class DefaultWriter:
                 message = (
                     f"[{header}] | max_global_step = {max_global_step} | " + message
                 )
+                logger.info(message)
 
-            logger.info(message)
+            elif self._style_log == "progressbar":
+                self._time_last_log = t_now
+                message = ""
+                for tag in self._data:
+                    val = self._data[tag]["value"][-1]
+                    gstep = self._data[tag]["global_step"][-1]
+                    message += f"{tag} = {val} | "
+                    if not np.isnan(gstep):
+                        max_global_step = max(max_global_step, gstep)
+
+                header = self._name
+                if self._execution_metadata:
+                    header += f"[worker: {self._execution_metadata.obj_worker_id}]"
+                message = (
+                    f"[{header}] | max_global_step = {max_global_step} | " + message
+                )
+
+                self.pbar.set_description(message)
+                self.pbar.update(max_global_step - self.progressbar_current_step)
+                self.progressbar_current_step = max_global_step
 
     def __getattr__(self, attr):
         """
@@ -371,3 +405,45 @@ class DefaultWriter:
                 **newstate["_tensorboard_kwargs"]
             )
         self.__dict__.update(newstate)
+
+
+class extending_tqdm(tqdm):
+    def __init__(self, *args, desc="", **kwargs):
+        super().__init__(*args, **kwargs)
+        self.subbar = None
+        self.set_description(desc)
+
+    def set_description(self, desc=None, refresh=True):
+        screen_width, _ = _screen_shape_wrapper()(sys.stdout)
+        max_len = screen_width
+        if len(desc) > max_len * 0.7:
+            if not self.subbar:
+                self.subbar = extending_tqdm(range(len(self)))
+                self.subbar.n = self.n
+                self.default_bar_format = self.bar_format
+                self.bar_format = "{desc}"
+
+            super().set_description_str(desc=desc[:screen_width], refresh=refresh)
+            self.subbar.set_description(desc[screen_width:])
+        else:
+            if self.subbar:
+                self.bar_format = self.default_bar_format
+                self.subbar.leave = False
+                self.subbar.close()
+
+            super().set_description(desc=desc, refresh=refresh)
+
+    def update(self, n=1):
+        if self.subbar:
+            self.subbar.update(n)
+            self.last_print_n = self.subbar.last_print_n
+            self.n = self.subbar.n
+        else:
+            super().update(n)
+
+    def close(self):
+        if self.subbar:
+            self.subbar.leave = self.leave
+            self.subbar.close()
+
+        super().close()
