@@ -63,7 +63,6 @@ def atari_make(id, **kwargs):
     from stable_baselines3.common.vec_env import VecFrameStack
     from rlberry.wrappers.scalarize import ScalarizeEnvWrapper
 
-
     if "atari_wrappers_dict" in kwargs.keys():
         atari_wrappers_dict = kwargs.pop("atari_wrappers_dict")
     else:
@@ -78,9 +77,13 @@ def atari_make(id, **kwargs):
 
     env = make_atari_env(env_id=id, wrapper_kwargs=atari_wrappers_dict, **kwargs)
 
-    env = VecFrameStack(env, n_stack=4)     #Stack previous images to have an "idea of the motion"
-    env = SB3_Atari_Wrapper(env)            #Convert from SB3 API to gymnasium API, and to PyTorch format.
-    env = ScalarizeEnvWrapper(env)          #wrap the vectorized env into a single env.
+    env = VecFrameStack(
+        env, n_stack=4
+    )  # Stack previous images to have an "idea of the motion"
+    env = SB3_Atari_Wrapper(
+        env
+    )  # Convert from SB3 API to gymnasium API, and to PyTorch format.
+    env = ScalarizeEnvWrapper(env)  # wrap the vectorized env into a single env.
 
     env.render_mode = render_mode
 
@@ -91,14 +94,14 @@ class SB3_Atari_Wrapper(Wrapper):
     """
     Convert from SB3 API to gymnasium API, and to PyTorch format.
 
-    _observation : 
+    _observation :
     transform the observations shape.
     from: n_env, height, width, chan
     to: n_env, chan, width, height
 
     _convert_info_list_to_dict :
     transform the info format from "list of dict" to "dict of list"
-    
+
     WARNING : Check the Reset and Step format :
     https://github.com/DLR-RM/stable-baselines3/pull/1327/files#diff-a0b0c17357564df74e097f3094a5478e9b28b2af9dfdab2a91e60b6dbe174092
     https://stable-baselines3.readthedocs.io/en/master/guide/vec_envs.html#vecenv-api-vs-gym-api
@@ -116,9 +119,8 @@ class SB3_Atari_Wrapper(Wrapper):
     def _observation(self, observation):
         return np.transpose(observation, (0, 3, 2, 1))  # transform
 
-
     def reset(self, seed=None, options=None):
-        if seed :
+        if seed:
             self.env.seed(seed=seed)
         obs = self.env.reset()
         infos = self.env.venv.reset_infos
@@ -126,14 +128,18 @@ class SB3_Atari_Wrapper(Wrapper):
 
         return self._observation(obs), infos
 
-
     def step(self, actions):
         next_observations, rewards, done, infos = self.env.step(actions)
         infos = self._convert_info_list_to_dict(infos)
-        return self._observation(next_observations), rewards, done, infos["TimeLimit.truncated"], infos       
+        return (
+            self._observation(next_observations),
+            rewards,
+            done,
+            infos["TimeLimit.truncated"],
+            infos,
+        )
 
-
-    def _convert_info_list_to_dict(self, infos: List[dict]) -> dict :
+    def _convert_info_list_to_dict(self, infos: List[dict]) -> dict:
         """
         Convert the list info of the vectorized environment into a dict of list where each key has a list of the specific info for each env
 
@@ -145,15 +151,19 @@ class SB3_Atari_Wrapper(Wrapper):
         ----------------------------
         This is the opposit of the VectorListInfo wrapper:
         https://gymnasium.farama.org/api/wrappers/misc_wrappers/#gymnasium.wrappers.VectorListInfo
-        
+
         because StableBaselines and Gymnasium don't use the same 'info' API:
         https://stable-baselines3.readthedocs.io/en/master/guide/vec_envs.html#vecenv-api-vs-gym-api
         """
-        all_keys = set().union(*[dictIni.keys() for dictIni in infos])  # Get all unique keys for all the dict in the list
+        all_keys = set().union(
+            *[dictIni.keys() for dictIni in infos]
+        )  # Get all unique keys for all the dict in the list
 
         dict_info = {}
         for key in all_keys:
-            values = [dictIni.get(key) for dictIni in infos]  # Get the values of the key for each dictionary
+            values = [
+                dictIni.get(key) for dictIni in infos
+            ]  # Get the values of the key for each dictionary
             dict_info[key] = values
 
         return dict_info

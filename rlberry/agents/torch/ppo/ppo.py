@@ -330,7 +330,10 @@ class PPOAgent(AgentWithSimplePolicy):
                     self.total_episodes += 1
                     if self.writer and "episode" in info["final_info"][i]:
                         if "episode" in info["final_info"][i]:
-                            r, l = info["final_info"][i]["episode"]["r"], info["final_info"][i]["episode"]["l"]
+                            r, l = (
+                                info["final_info"][i]["episode"]["r"],
+                                info["final_info"][i]["episode"]["l"],
+                            )
                         else:
                             r, l = episode_returns[i], episode_lengths[i]
                         self.writer.add_scalar(
@@ -661,8 +664,6 @@ class PPOAgent(AgentWithSimplePolicy):
             "k_epochs": k_epochs,
         }
 
-
-
     ##### Overwrite some inherited functions
 
     def save(self, filename):
@@ -681,7 +682,7 @@ class PPOAgent(AgentWithSimplePolicy):
         Note: dill[1]_ is used when pickle fails
         (see https://stackoverflow.com/a/25353243, for instance).
         Pickle is tried first, since it is faster.
-        
+
         Parameters
         ----------
         filename: Path or str
@@ -739,7 +740,7 @@ class PPOAgent(AgentWithSimplePolicy):
         ----- documentation from original load -----
         Load agent object.
         If overridden, save() method must also be overriden.
-        
+
         Parameters
         ----------
         **kwargs: dict

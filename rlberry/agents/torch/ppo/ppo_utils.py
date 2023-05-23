@@ -38,7 +38,6 @@ def process_ppo_env(env, seeder, num_envs=1, asynchronous=False, copy_env=True):
     return vec_env_cls(
         [lambda: process_env(env, seeder, copy_env=copy_env) for _ in range(num_envs)]
     )
-    
 
 
 @numba_jit
