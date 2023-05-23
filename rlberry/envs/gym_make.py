@@ -1,9 +1,8 @@
 import gymnasium as gym
 
-# from gymnasium.wrappers import StepAPICompatibility
-
 from rlberry.envs.basewrapper import Wrapper
 import numpy as np
+from typing import List
 
 
 def gym_make(id, wrap_spaces=False, **kwargs):
@@ -36,9 +35,10 @@ def gym_make(id, wrap_spaces=False, **kwargs):
     return Wrapper(env, wrap_spaces=wrap_spaces)
 
 
-def atari_make(id, scalarize=False, **kwargs):
+def atari_make(id, **kwargs):
     """
     Adaptator to work with 'make_atari_env' in stableBaselines.
+    Use 'ScalarizeEnvWrapper' to ignore the vectorizedEnv from StableBaseline
     WARNING "work in progress" : For the moment, it can't handle VecEnv, it uses only 1 env. (scalarize is forced to True)
     (TODO PR : https://github.com/rlberry-py/rlberry/pull/285)
 
@@ -46,31 +46,23 @@ def atari_make(id, scalarize=False, **kwargs):
     ----------
     id : str
         Environment id.
-    scalarize : bool, default = False
-        If true, add a wrapper for stable_baselines VecEnv, so that they accept non-vectorized actions,
-    and return non-vectorized states. (use only the first env from VecEnv)
     **kwargs
         Optional arguments to configure the environment.
-
+    Returns
+    -------
+    Atari env with wrapper to be used as Gymnasium env.
     Examples
     --------
     >>> from rlberry.envs.gym_make import atari_make
     >>> env_ctor = atari_make
-    >>> env_kwargs = {"id": "ALE/Freeway-v5", "n_envs":1, "atari_wrappers_dict":dict(terminal_on_life_loss=False)}
+    >>> env_kwargs = {"id": "ALE/Freeway-v5", "atari_wrappers_dict":dict(terminal_on_life_loss=False)}
     >>> env = env_ctor(**env_kwargs)
     """
 
     from stable_baselines3.common.env_util import make_atari_env
     from stable_baselines3.common.vec_env import VecFrameStack
+    from rlberry.wrappers.scalarize import ScalarizeEnvWrapper
 
-    # #uncomment when rlberry will manage vectorized env
-    # if scalarize is None:
-    #     if "n_envs" in kwargs.keys() and int(kwargs["n_envs"])>1:
-    #         scalarize = False
-    #     else:
-    #         scalarize = True
-
-    scalarize = True  # TODO : to remove with th PR :[WIP] Atari part2   (https://github.com/rlberry-py/rlberry/pull/285)
 
     if "atari_wrappers_dict" in kwargs.keys():
         atari_wrappers_dict = kwargs.pop("atari_wrappers_dict")
@@ -86,52 +78,82 @@ def atari_make(id, scalarize=False, **kwargs):
 
     env = make_atari_env(env_id=id, wrapper_kwargs=atari_wrappers_dict, **kwargs)
 
-    env = VecFrameStack(env, n_stack=4)
-    env = SB3_AtariImageToPyTorch(env)
-    if scalarize:
-        from rlberry.wrappers.scalarize import ScalarizeEnvWrapper
-
-        env = ScalarizeEnvWrapper(env)
+    env = VecFrameStack(env, n_stack=4)     #Stack previous images to have an "idea of the motion"
+    env = SB3_Atari_Wrapper(env)            #Convert from SB3 API to gymnasium API, and to PyTorch format.
+    env = ScalarizeEnvWrapper(env)          #wrap the vectorized env into a single env.
 
     env.render_mode = render_mode
 
     return env
 
 
-class SB3_AtariImageToPyTorch(Wrapper):
+class SB3_Atari_Wrapper(Wrapper):
     """
+    Convert from SB3 API to gymnasium API, and to PyTorch format.
+
+    _observation : 
     transform the observations shape.
     from: n_env, height, width, chan
     to: n_env, chan, width, height
 
+    _convert_info_list_to_dict :
+    transform the info format from "list of dict" to "dict of list"
+    
     WARNING : Check the Reset and Step format :
     https://github.com/DLR-RM/stable-baselines3/pull/1327/files#diff-a0b0c17357564df74e097f3094a5478e9b28b2af9dfdab2a91e60b6dbe174092
+    https://stable-baselines3.readthedocs.io/en/master/guide/vec_envs.html#vecenv-api-vs-gym-api
 
     """
 
     def __init__(self, env):
-        super(SB3_AtariImageToPyTorch, self).__init__(env)
+        super(SB3_Atari_Wrapper, self).__init__(env)
         old_shape = self.observation_space.shape
         new_shape = (old_shape[-1], old_shape[0], old_shape[1])
         self.observation_space = gym.spaces.Box(
             low=0.0, high=1.0, shape=new_shape, dtype=np.float32
         )
 
-    def observation(self, observation):
+    def _observation(self, observation):
         return np.transpose(observation, (0, 3, 2, 1))  # transform
 
-    def reset(self):
+
+    def reset(self, seed=None, options=None):
+        if seed :
+            self.env.seed(seed=seed)
         obs = self.env.reset()
-        infos = self.env.reset_infos
-        return self.observation(obs), infos
+        infos = self.env.venv.reset_infos
+        infos = self._convert_info_list_to_dict(infos)
+
+        return self._observation(obs), infos
+
 
     def step(self, actions):
         next_observations, rewards, done, infos = self.env.step(actions)
-        # return self.observation(next_observations), rewards, done, [d["TimeLimit.truncated"] for d in infos], infos
-        return (
-            self.observation(next_observations),
-            rewards,
-            done,
-            [None] * self.env.num_envs,
-            infos,
-        )
+        infos = self._convert_info_list_to_dict(infos)
+        return self._observation(next_observations), rewards, done, infos["TimeLimit.truncated"], infos       
+
+
+    def _convert_info_list_to_dict(self, infos: List[dict]) -> dict :
+        """
+        Convert the list info of the vectorized environment into a dict of list where each key has a list of the specific info for each env
+
+        Args:
+            infos (list): info list coming from the envs.
+        Returns:
+            dict_info (dict): converted info.
+
+        ----------------------------
+        This is the opposit of the VectorListInfo wrapper:
+        https://gymnasium.farama.org/api/wrappers/misc_wrappers/#gymnasium.wrappers.VectorListInfo
+        
+        because StableBaselines and Gymnasium don't use the same 'info' API:
+        https://stable-baselines3.readthedocs.io/en/master/guide/vec_envs.html#vecenv-api-vs-gym-api
+        """
+        all_keys = set().union(*[dictIni.keys() for dictIni in infos])  # Get all unique keys for all the dict in the list
+
+        dict_info = {}
+        for key in all_keys:
+            values = [dictIni.get(key) for dictIni in infos]  # Get the values of the key for each dictionary
+            dict_info[key] = values
+
+        return dict_info
