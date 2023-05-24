@@ -88,7 +88,6 @@ tuned_agent = AgentManager(
         k_epochs=10,
         n_steps=1024,
     ),
-
     fit_budget=10_000_000,  # The number of interactions between the agent and the environment during training.
     eval_kwargs=dict(
         eval_horizon=500
@@ -132,7 +131,10 @@ final_test_time = datetime.now()
 tuned_agent.save()
 
 # need to move the final result inside the folder used for documentation
-os.rename("_video/temp/rl-video-episode-0.mp4", "_video/video_plot_atari_Atlantis_vectorized_ppo.mp4")
+os.rename(
+    "_video/temp/rl-video-episode-0.mp4",
+    "_video/video_plot_atari_Atlantis_vectorized_ppo.mp4",
+)
 shutil.rmtree("_video/temp/")
 
 

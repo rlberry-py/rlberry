@@ -13,7 +13,6 @@ import os
 import tempfile
 
 
-
 def test_forward_dqn():
     mlp_configs = {
         "type": "MultiLayerPerceptron",  # A network architecture
@@ -111,9 +110,8 @@ def test_forward_empty_input_dim():
     tuned_agent.fit()
 
 
-@pytest.mark.parametrize("num_envs", [1,3])
+@pytest.mark.parametrize("num_envs", [1, 3])
 def test_ppo_vectorized_atari_env(num_envs):
-
     policy_mlp_configs = {
         "type": "MultiLayerPerceptron",  # A network architecture
         "layer_sizes": [512],  # Network dimensions
@@ -152,7 +150,7 @@ def test_ppo_vectorized_atari_env(num_envs):
         "out_size": 1,
     }
 
-    agent = PPOAgent(        
+    agent = PPOAgent(
         (
             atari_make,
             dict(id="ALE/Freeway-v5"),
@@ -168,8 +166,6 @@ def test_ppo_vectorized_atari_env(num_envs):
     )
     agent.fit(budget=1000)
 
-
-
     with tempfile.TemporaryDirectory() as tmpdirname:
         saving_path = tmpdirname + "/agent_test_ppo_vect_env.pickle"
 
@@ -180,7 +176,9 @@ def test_ppo_vectorized_atari_env(num_envs):
         # test the loading function
         test_load_env = atari_make("ALE/Freeway-v5")
         test_load_env.reset()
-        loaded_agent = PPOAgent.load(saving_path, **dict(env=test_load_env),copy_env=False)
+        loaded_agent = PPOAgent.load(
+            saving_path, **dict(env=test_load_env), copy_env=False
+        )
         assert loaded_agent
 
         # test the agent
@@ -196,12 +194,8 @@ def test_ppo_vectorized_atari_env(num_envs):
             observation = next_observation
 
 
-
-
-
-@pytest.mark.parametrize("num_envs", [1,3])
+@pytest.mark.parametrize("num_envs", [1, 3])
 def test_ppo_agent_manager_vectorized_atari_env(num_envs):
-
     with tempfile.TemporaryDirectory() as tmpdirname:
         saving_path = tmpdirname + "/agentmanager_test_ppo_vectorized_env"
 
@@ -285,8 +279,7 @@ def test_ppo_agent_manager_vectorized_atari_env(num_envs):
         obs, infos = test_load_env.reset()
         for tt in range(50):
             actions = loaded_agent_manager.get_agent_instances()[0].policy(obs)
-            obs, reward, terminated, truncated, info  = test_load_env.step(actions)
+            obs, reward, terminated, truncated, info = test_load_env.step(actions)
             done = np.logical_or(terminated, truncated)
             if done:
                 break
-
