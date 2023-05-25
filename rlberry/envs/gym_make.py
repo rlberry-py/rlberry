@@ -39,8 +39,7 @@ def atari_make(id, **kwargs):
     """
     Adaptator to work with 'make_atari_env' in stableBaselines.
     Use 'ScalarizeEnvWrapper' to ignore the vectorizedEnv from StableBaseline
-    WARNING "work in progress" : For the moment, it can't handle VecEnv, it uses only 1 env. (scalarize is forced to True)
-    (TODO PR : https://github.com/rlberry-py/rlberry/pull/285)
+
 
     Parameters
     ----------
@@ -48,6 +47,7 @@ def atari_make(id, **kwargs):
         Environment id.
     **kwargs
         Optional arguments to configure the environment.
+        (render_mode, n_frame_stack, and other arguments for StableBaselines's make_atari_env : https://stable-baselines3.readthedocs.io/en/master/common/env_util.html#stable_baselines3.common.env_util.make_atari_env )
     Returns
     -------
     Atari env with wrapper to be used as Gymnasium env.
@@ -55,7 +55,7 @@ def atari_make(id, **kwargs):
     --------
     >>> from rlberry.envs.gym_make import atari_make
     >>> env_ctor = atari_make
-    >>> env_kwargs = {"id": "ALE/Freeway-v5", "atari_wrappers_dict":dict(terminal_on_life_loss=False)}
+    >>> env_kwargs = {"id": "ALE/Freeway-v5", "atari_wrappers_dict":dict(terminal_on_life_loss=False),"n_frame_stack":5}}
     >>> env = env_ctor(**env_kwargs)
     """
 
@@ -75,10 +75,16 @@ def atari_make(id, **kwargs):
         render_mode = kwargs["render_mode"]
         kwargs.pop("render_mode", None)
 
+    if "n_frame_stack" in kwargs.keys():
+        n_frame_stack = kwargs.pop("n_frame_stack")
+    else :
+        n_frame_stack = 4
+
+
     env = make_atari_env(env_id=id, wrapper_kwargs=atari_wrappers_dict, **kwargs)
 
     env = VecFrameStack(
-        env, n_stack=4
+        env, n_stack=n_frame_stack
     )  # Stack previous images to have an "idea of the motion"
     env = SB3_Atari_Wrapper(
         env
