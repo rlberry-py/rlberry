@@ -7,11 +7,11 @@ ATARI Atlantis environment.
 
 Agent is slightly tuned, but not optimal. This is just for illustration purpose.
 
-.. video:: ../../video_plot_atari_Atlantis_vectorized_ppo.mp4
+.. video:: ../../example_atari_atlantis_vectorized_ppo.mp4
    :width: 600
 
 """
-# sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_atari_Atlantis_vectorized_ppo.jpg'
+# sphinx_gallery_thumbnail_path = 'thumbnails/example_atari_atlantis_vectorized_ppo.jpg'
 
 
 from rlberry.manager.agent_manager import AgentManager
@@ -94,7 +94,7 @@ tuned_agent = AgentManager(
     ),  # The number of interactions between the agent and the environment during evaluations.
     n_fit=1,  # The number of agents to train. Usually, it is good to do more than 1 because the training is stochastic.
     agent_name="PPO_tuned",  # The agent's name.
-    output_dir="PPO_for_Atlantis",
+    output_dir="PPO_for_atlantis",
 )
 
 print("-------- init agent : done!--------")
@@ -133,7 +133,7 @@ tuned_agent.save()
 # need to move the final result inside the folder used for documentation
 os.rename(
     "_video/temp/rl-video-episode-0.mp4",
-    "_video/video_plot_atari_Atlantis_vectorized_ppo.mp4",
+    "_video/example_atari_atlantis_vectorized_ppo.mp4",
 )
 shutil.rmtree("_video/temp/")
 
