@@ -77,9 +77,8 @@ def atari_make(id, **kwargs):
 
     if "n_frame_stack" in kwargs.keys():
         n_frame_stack = kwargs.pop("n_frame_stack")
-    else :
+    else:
         n_frame_stack = 4
-
 
     env = make_atari_env(env_id=id, wrapper_kwargs=atari_wrappers_dict, **kwargs)
 
