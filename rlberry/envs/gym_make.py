@@ -3,7 +3,6 @@ import gymnasium as gym
 from rlberry.envs.basewrapper import Wrapper
 import numpy as np
 from numpy import ndarray
-from typing import List
 
 
 # VERSION_ORIGINE = True
