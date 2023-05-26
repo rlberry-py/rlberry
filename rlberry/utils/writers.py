@@ -350,22 +350,35 @@ class DefaultWriter:
 
             elif self._style_log == "progressbar":
                 self._time_last_log = t_now
-                message = ""
+                messages = []
                 for tag in self._data:
                     val = self._data[tag]["value"][-1]
                     gstep = self._data[tag]["global_step"][-1]
-                    message += f"{tag} = {val} | "
+                    my_data = np.array(self._data[tag]["value"])
+                    if len(my_data) > 40:
+                        improvement_lag = 20
+                        improvement = np.mean(my_data[-improvement_lag:]) - np.mean(
+                            my_data[-2 * improvement_lag : -improvement_lag]
+                        )
+                    else:
+                        improvement = np.nan
+                    messages += [
+                        f"{tag} = {val} (improvement over last 40: {improvement}) "
+                    ]
                     if not np.isnan(gstep):
                         max_global_step = max(max_global_step, gstep)
 
                 header = self._name
                 if self._execution_metadata:
                     header += f"[worker: {self._execution_metadata.obj_worker_id}]"
-                message = (
-                    f"[{header}] | max_global_step = {max_global_step} | " + message
-                )
+                header_msg = f"[{header}] | max_global_step = {max_global_step} |"
+                messages = [
+                    "-" * len(header_msg),
+                    header_msg,
+                    "-" * len(header_msg),
+                ] + messages
 
-                self.pbar.set_description(message)
+                self.pbar.set_description(messages)
                 self.pbar.update(max_global_step - self.progressbar_current_step)
                 self.progressbar_current_step = max_global_step
 
@@ -416,22 +429,23 @@ class extending_tqdm(tqdm):
     def set_description(self, desc=None, refresh=True):
         screen_width, _ = _screen_shape_wrapper()(sys.stdout)
         max_len = screen_width
-        if len(desc) > max_len * 0.7:
+        if len(desc) > 1:
             if not self.subbar:
                 self.subbar = extending_tqdm(range(len(self)))
                 self.subbar.n = self.n
                 self.default_bar_format = self.bar_format
                 self.bar_format = "{desc}"
-
-            super().set_description_str(desc=desc[:screen_width], refresh=refresh)
-            self.subbar.set_description(desc[screen_width:])
+            desc_now = desc.pop(0)
+            super().set_description_str(
+                desc=desc_now + " " * (screen_width - len(desc_now)), refresh=refresh
+            )
+            self.subbar.set_description(desc)
         else:
             if self.subbar:
                 self.bar_format = self.default_bar_format
                 self.subbar.leave = False
                 self.subbar.close()
-
-            super().set_description(desc=desc, refresh=refresh)
+            super().set_description(desc=" ", refresh=refresh)
 
     def update(self, n=1):
         if self.subbar:
