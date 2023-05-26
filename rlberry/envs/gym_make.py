@@ -9,6 +9,7 @@ from typing import List
 # VERSION_ORIGINE = True
 VERSION_ORIGINE = False
 
+
 def gym_make(id, wrap_spaces=False, **kwargs):
     """
     Same as gym.make, but wraps the environment
@@ -68,7 +69,7 @@ def atari_make(id, seed=None, **kwargs):
         MaxAndSkipEnv,
         NoopResetEnv,
         NoopResetEnv,
-        StickyActionEnv
+        StickyActionEnv,
     )
 
     from stable_baselines3.common.monitor import Monitor
@@ -77,11 +78,10 @@ def atari_make(id, seed=None, **kwargs):
     noop_max = 30
     frame_skip = 4
     screen_size = 84
-    terminal_on_life_loss=False #different from SB3 : some errors with the "terminal_on_life_loss" wrapper : The 'false reset' can lead to make a step on a 'done' environment, then a crash.
+    terminal_on_life_loss = False  # different from SB3 : some errors with the "terminal_on_life_loss" wrapper : The 'false reset' can lead to make a step on a 'done' environment, then a crash.
     clip_reward = True
     action_repeat_probability = 0.0
 
-    
     if "atari_SB3_wrappers_dict" in kwargs.keys():
         atari_wrappers_dict = kwargs.pop("atari_SB3_wrappers_dict")
         if "noop_max" in atari_wrappers_dict.keys():
@@ -96,12 +96,12 @@ def atari_make(id, seed=None, **kwargs):
             clip_reward = atari_wrappers_dict["clip_reward"]
         if "action_repeat_probability" in atari_wrappers_dict.keys():
             action_repeat_probability = atari_wrappers_dict["action_repeat_probability"]
-        
+
     render_mode = None
     if "render_mode" in kwargs.keys():
         render_mode = kwargs["render_mode"]
         kwargs.pop("render_mode", None)
-    
+
     if "n_frame_stack" in kwargs.keys():
         n_frame_stack = kwargs.pop("n_frame_stack")
     else:
@@ -121,7 +121,7 @@ def atari_make(id, seed=None, **kwargs):
         env = EpisodicLifeEnv(env)
     if "FIRE" in env.unwrapped.get_action_meanings():
         env = FireResetEnv(env)
-    if clip_reward :
+    if clip_reward:
         env = ClipRewardEnv(env)
     env = gym.wrappers.ResizeObservation(env, (screen_size, screen_size))
     env = gym.wrappers.GrayScaleObservation(env)
@@ -131,7 +131,7 @@ def atari_make(id, seed=None, **kwargs):
         env.action_space.seed(seed)
         env.observation_space.seed(seed)
 
-    env = CompatibleWrapper(env)    #Wrapper to make it compatible with rlberry
+    env = CompatibleWrapper(env)  # Wrapper to make it compatible with rlberry
 
     env.render_mode = render_mode
     return env
@@ -143,10 +143,10 @@ class CompatibleWrapper(Wrapper):
         self.render_mode = None
 
     def step(self, action):
-        if type(action) is ndarray and action.size ==1:
+        if type(action) is ndarray and action.size == 1:
             action = action[0]
 
-        next_observations, rewards, terminated,truncated, infos = self.env.step(action)
+        next_observations, rewards, terminated, truncated, infos = self.env.step(action)
         return (
             np.array(next_observations),
             rewards,
@@ -156,6 +156,6 @@ class CompatibleWrapper(Wrapper):
         )
 
     def reset(self, seed=None, options=None):
-        obs,infos = self.env.reset(seed=seed,options=options)
- 
+        obs, infos = self.env.reset(seed=seed, options=options)
+
         return np.array(obs), infos
