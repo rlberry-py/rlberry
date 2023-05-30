@@ -135,3 +135,60 @@ jobs:
       pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
       pytest --ignore=rlberry/network
     displayName: 'pytest'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+- job: 'linux_non-editable'
+  dependsOn: checkPrLabel
+  # Condition: have ready for review label or on the main branch.
+  condition: or(in(variables['Build.SourceBranch'], 'refs/heads/main'), eq(dependencies.checkPrLabel.outputs['checkPrLabel.prHasCILabel'], true))
+  pool:
+    vmImage: ubuntu-latest
+  strategy:
+    matrix:
+      Python39:
+        python.version: '3.9'
+  variables:
+    NUMBA_DISABLE_JIT: "1"
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+    displayName: 'Use Python $(python.version)'
+
+  # - script: |
+  #     python -m pip install --upgrade pip
+  #     pip install -r requirements.txt
+  #     sudo apt install libglu1-mesa
+  - script: |
+      python -m pip install --upgrade pip
+      sudo apt install libglu1-mesa
+    displayName: 'Install dependencies'
+  - script: |
+      set -xe
+      pip install .
+    displayName: 'Install rlberry'
+  - script: |
+      pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
+      pytest --ignore=rlberry/network
+    displayName: 'pytest'
+
+
+
