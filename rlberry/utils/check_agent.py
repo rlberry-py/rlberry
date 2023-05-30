@@ -535,7 +535,6 @@ def check_hyperparam_optimisation_agent(
 
 
 def _test_hyperparam_optim_tpe(agent, env="continuous_state", init_kwargs=None):
-
     from optuna.samplers import TPESampler
 
     # Define trainenv
