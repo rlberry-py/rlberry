@@ -9,7 +9,6 @@ from rlberry.envs.gym_make import gym_make
 import pathlib
 from rlberry.agents.stable_baselines.stable_baselines import StableBaselinesAgent
 
-from optuna.samplers import TPESampler
 
 SEED = 42
 
@@ -536,6 +535,9 @@ def check_hyperparam_optimisation_agent(
 
 
 def _test_hyperparam_optim_tpe(agent, env="continuous_state", init_kwargs=None):
+
+    from optuna.samplers import TPESampler
+
     # Define trainenv
     if init_kwargs is None:
         init_kwargs = {}
