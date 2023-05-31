@@ -169,3 +169,70 @@ jobs:
       pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
       pytest rlberry/tests/test_no_extra_install.py
     displayName: 'pytest'
+
+
+
+
+
+
+- job: 'macOS_non_editable'
+  dependsOn: checkPrLabel
+  condition: or(in(variables['Build.SourceBranch'], 'refs/heads/main'), eq(dependencies.checkPrLabel.outputs['checkPrLabel.prHasCILabel'], true))
+
+  pool:
+    vmImage: 'macOS-12'
+  strategy:
+    matrix:
+      Python39:
+        python.version: '3.9'
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+    displayName: 'Use Python $(python.version)'
+
+  - script: |
+      python -m pip install --upgrade pip
+    displayName: 'Install dependencies'
+
+  - script: |
+      set -xe
+      pip install .
+    displayName: 'Install rlberry'
+
+  - script: |
+      pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
+      pytest rlberry/tests/test_no_extra_install.py
+    displayName: 'pytest'
+
+- job: 'windows_non_editable'
+  dependsOn: checkPrLabel
+  condition: or(in(variables['Build.SourceBranch'], 'refs/heads/main'), eq(dependencies.checkPrLabel.outputs['checkPrLabel.prHasCILabel'], true))
+  pool:
+    vmImage: 'windows-2022'
+  strategy:
+    matrix:
+      Python39:
+        python.version: '3.9'
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+    displayName: 'Use Python $(python.version)'
+
+  - script: |
+      python -m pip install --upgrade pip
+    displayName: 'Install dependencies'
+
+  - script: |
+      pip wheel . -w dist\
+      pip install --pre --no-index --find-links dist\ rlberry
+    displayName: 'Install rlberry'
+
+  - script: |
+      pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
+      pytest rlberry/tests/test_no_extra_install.py
+    displayName: 'pytest'
+
