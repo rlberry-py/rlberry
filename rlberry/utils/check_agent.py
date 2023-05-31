@@ -7,7 +7,6 @@ import tempfile
 import os
 from rlberry.envs.gym_make import gym_make
 import pathlib
-from rlberry.agents.stable_baselines.stable_baselines import StableBaselinesAgent
 
 
 SEED = 42
@@ -315,8 +314,12 @@ def _check_save_load_without_manager(agent, env="continuous_state", init_kwargs=
         params_for_loader = dict(env=train_env)
 
         # extract the class name to check if we need to add some param to load
-        if issubclass(agent, StableBaselinesAgent):
-            params_for_loader["algo_cls"] = init_kwargs["algo_cls"]
+        try:           
+            from rlberry.agents.stable_baselines.stable_baselines import StableBaselinesAgent
+            if issubclass(agent, StableBaselinesAgent):
+                params_for_loader["algo_cls"] = init_kwargs["algo_cls"]
+        except ModuleNotFoundError:
+            pass
 
         loaded_agent = agent.load(saving_path, **params_for_loader)
         assert loaded_agent
