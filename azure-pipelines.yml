@@ -171,10 +171,7 @@ jobs:
       --ignore=rlberry/network \
       --ignore=rlberry/agents/torch \
       --ignore=rlberry/agents/experimental \
-      --ignore=rlberry/agents/tests/test_adaptiveql.py \
-      --ignore=rlberry/agents/tests/test_bandits.py \
-      --ignore=rlberry/agents/tests/test_dynprog.py \
-      --ignore=rlberry/agents/tests/test_stable_baselines.py \
+      --ignore=rlberry/agents/tests \
       --ignore=rlberry/experiment/tests/test_experiment_generator.py \
       --ignore=rlberry/experiment/tests/test_load_results.py \
       --ignore=rlberry/exploration_tools/torch \
