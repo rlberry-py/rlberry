@@ -64,7 +64,7 @@ jobs:
       # run doctests in the documentation
       # TODO: use following line for doctest ?
       pytest docs/*rst || echo "Ignoring exit status"
-      pytest --import-mode=importlib --cov=rlberry --cov-report xml rlberry
+      pytest --import-mode=importlib --cov=rlberry --cov-report xml rlberry --ignore=rlberry/tests/test_no_extra_install.py
     displayName: 'Test and coverage'
   - script: |
       curl -Os https://uploader.codecov.io/latest/linux/codecov
@@ -102,7 +102,7 @@ jobs:
 
   - script: |
       pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
-      pytest --ignore=rlberry/network
+      pytest --ignore=rlberry/network --ignore=rlberry/tests/test_no_extra_install.py
     displayName: 'pytest'
 
 - job: 'windows'
@@ -133,7 +133,7 @@ jobs:
 
   - script: |
       pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
-      pytest --ignore=rlberry/network
+      pytest --ignore=rlberry/network --ignore=rlberry/tests/test_no_extra_install.py
     displayName: 'pytest'
 
 
@@ -167,17 +167,5 @@ jobs:
   #ignore les tests qui viennent des extras : torch, experimental, stablebaselines, optuna
   - script: |
       pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
-      pytest \
-      --ignore=rlberry/network \
-      --ignore=rlberry/agents/torch \
-      --ignore=rlberry/agents/experimental \
-      --ignore=rlberry/agents/tests \
-      --ignore=rlberry/experiment/tests/test_experiment_generator.py \
-      --ignore=rlberry/experiment/tests/test_load_results.py \
-      --ignore=rlberry/exploration_tools/torch \
-      --ignore=rlberry/manager/tests/test_agent_manager_seeding.py \
-      --ignore=rlberry/manager/tests/test_hyperparam_optim.py \
-      --ignore=rlberry/tests \
-      --ignore=rlberry/utils/tests \
-      --ignore=rlberry/wrappers/tests/test_common_wrappers.py
+      pytest rlberry/tests/test_no_extra_install.py
     displayName: 'pytest'
