@@ -160,16 +160,25 @@ jobs:
       python -m pip install --upgrade pip
       sudo apt install libglu1-mesa
     displayName: 'Install dependencies'
-  # - script: |
-  #     python -m pip install --upgrade pip
-  #     pip install -r requirements.txt
-  #     sudo apt install libglu1-mesa
-  #   displayName: 'Install dependencies'
   - script: |
       set -xe
       pip install .
     displayName: 'Install rlberry'
+  #ignore les tests qui viennent des extras : torch, experimental, stablebaselines, optuna
   - script: |
       pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
-      pytest --ignore=rlberry/network
+      pytest \
+      --ignore=rlberry/network \
+      --ignore=rlberry/agents/torch \
+      --ignore=rlberry/agents/experimental \
+      --ignore=rlberry/agents/tests/test_bandits.py \
+      --ignore=rlberry/agents/tests/test_stable_baselines.py \
+      --ignore=rlberry/experiment/tests/test_experiment_generator.py \
+      --ignore=rlberry/experiment/tests/test_load_results.py \
+      --ignore=rlberry/exploration_tools/torch \
+      --ignore=rlberry/manager/tests/test_agent_manager_seeding.py \
+      --ignore=rlberry/manager/tests/test_hyperparam_optim.py \
+      --ignore=rlberry/tests \
+      --ignore=rlberry/utils/tests \
+      --ignore=rlberry/wrappers/tests/test_common_wrappers.py 
     displayName: 'pytest'
