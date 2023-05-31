@@ -169,4 +169,3 @@ jobs:
       pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
       pytest --ignore=rlberry/network
     displayName: 'pytest'
-
