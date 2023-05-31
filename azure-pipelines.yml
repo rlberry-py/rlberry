@@ -235,4 +235,3 @@ jobs:
       pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
       pytest rlberry/tests/test_no_extra_install.py
     displayName: 'pytest'
-
