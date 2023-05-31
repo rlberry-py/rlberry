@@ -227,8 +227,7 @@ jobs:
     displayName: 'Install dependencies'
 
   - script: |
-      pip wheel . -w dist\
-      pip install --pre --no-index --find-links dist\ rlberry
+      pip install .
     displayName: 'Install rlberry'
 
   - script: |
