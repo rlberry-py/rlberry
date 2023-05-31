@@ -138,22 +138,6 @@ jobs:
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 - job: 'linux_non-editable'
   dependsOn: checkPrLabel
   # Condition: have ready for review label or on the main branch.
@@ -172,20 +156,17 @@ jobs:
     inputs:
       versionSpec: '$(python.version)'
     displayName: 'Use Python $(python.version)'
-
-  # - script: |
-  #     python -m pip install --upgrade pip
-  #     pip install -r requirements.txt
-  #     sudo apt install libglu1-mesa
   - script: |
       python -m pip install --upgrade pip
+      pip install -r requirements.txt
       sudo apt install libglu1-mesa
     displayName: 'Install dependencies'
   - script: |
       set -xe
-      pip install .
+      pip install -e .
     displayName: 'Install rlberry'
   - script: |
       pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
       pytest --ignore=rlberry/network
     displayName: 'pytest'
+
