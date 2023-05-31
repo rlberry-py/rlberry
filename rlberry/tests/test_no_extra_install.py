@@ -31,6 +31,7 @@ from rlberry.utils.check_env import check_env, check_rlberry_env
 
 #### TESTS AGENTS ####
 
+
 class OneHotFeatureMap(FeatureMap):
     def __init__(self, S, A):
         self.S = S
@@ -71,7 +72,6 @@ CONTINUOUS_STATE_AGENTS = [
 ]
 
 
-
 @pytest.mark.parametrize("agent", FINITE_MDP_AGENTS)
 def test_finite_state_agent(agent):
     check_rl_agent(agent, env="discrete_state")
@@ -83,7 +83,6 @@ def test_finite_state_agent(agent):
 def test_continuous_state_agent(agent):
     check_rl_agent(agent, env="continuous_state")
     check_rlberry_agent(agent, env="continuous_state")
-
 
 
 #### TESTS ENVS ####
@@ -106,5 +105,3 @@ ALL_ENVS = [
 def test_env(Env):
     check_env(Env())
     check_rlberry_env(Env())
-
-
