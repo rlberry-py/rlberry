@@ -34,21 +34,12 @@ class OneHotLSVI(agents.LSVIUCBAgent):
             self, env, feature_map_fn=feature_map_fn, horizon=10, **kwargs
         )
 
-
-FINITE_MDP_AGENTS = [
-    agents.ValueIterationAgent,
-    agents.MBQVIAgent,
-    agents.UCBVIAgent,
-    agents.OptQLAgent,
-    agents.PSRLAgent,
-    agents.RLSVIAgent,
-    OneHotLSVI,
-]
+# No agent "FINITE_MDP" in extra
+# FINITE_MDP_AGENTS = [
+# ]
 
 
 CONTINUOUS_STATE_AGENTS = [
-    agents.RSUCBVIAgent,
-    agents.RSKernelUCBVIAgent,
     torch_agents.DQNAgent,
     torch_agents.MunchausenDQNAgent,
     torch_agents.REINFORCEAgent,
@@ -68,11 +59,11 @@ MULTI_ENV_AGENTS = [
     torch_agents.PPOAgent,
 ]
 
-
-@pytest.mark.parametrize("agent", FINITE_MDP_AGENTS)
-def test_finite_state_agent(agent):
-    check_rl_agent(agent, env="discrete_state")
-    check_rlberry_agent(agent, env="discrete_state")
+# No agent "FINITE_MDP" in extra
+# @pytest.mark.parametrize("agent", FINITE_MDP_AGENTS)
+# def test_finite_state_agent(agent):
+#     check_rl_agent(agent, env="discrete_state")
+#     check_rlberry_agent(agent, env="discrete_state")
 
 
 @pytest.mark.xfail(sys.platform == "win32", reason="bug with windows???")

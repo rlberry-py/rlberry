@@ -64,7 +64,7 @@ jobs:
       # run doctests in the documentation
       # TODO: use following line for doctest ?
       pytest docs/*rst || echo "Ignoring exit status"
-      pytest --import-mode=importlib --cov=rlberry --cov-report xml rlberry --ignore=rlberry/tests/test_no_extra_install.py
+      pytest --import-mode=importlib --cov=rlberry --cov-report xml rlberry
     displayName: 'Test and coverage'
   - script: |
       curl -Os https://uploader.codecov.io/latest/linux/codecov
@@ -102,7 +102,7 @@ jobs:
 
   - script: |
       pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
-      pytest --ignore=rlberry/network --ignore=rlberry/tests/test_no_extra_install.py
+      pytest --ignore=rlberry/network 
     displayName: 'pytest'
 
 - job: 'windows'
@@ -133,9 +133,8 @@ jobs:
 
   - script: |
       pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
-      pytest --ignore=rlberry/network --ignore=rlberry/tests/test_no_extra_install.py
+      pytest --ignore=rlberry/network 
     displayName: 'pytest'
-
 
 
 - job: 'linux_non_editable'
@@ -167,12 +166,8 @@ jobs:
   #ignore les tests qui viennent des extras : torch, experimental, stablebaselines, optuna
   - script: |
       pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
-      pytest rlberry/tests/test_no_extra_install.py
+      pytest rlberry/tests/test_agents_base.py rlberry/tests/test_envs.py
     displayName: 'pytest'
-
-
-
-
 
 
 - job: 'macOS_non_editable'
@@ -203,7 +198,7 @@ jobs:
 
   - script: |
       pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
-      pytest rlberry/tests/test_no_extra_install.py
+      pytest rlberry/tests/test_agents_base.py rlberry/tests/test_envs.py
     displayName: 'pytest'
 
 - job: 'windows_non_editable'
@@ -232,5 +227,5 @@ jobs:
 
   - script: |
       pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
-      pytest rlberry/tests/test_no_extra_install.py
+      pytest rlberry/tests/test_agents_base.py rlberry/tests/test_envs.py
     displayName: 'pytest'
