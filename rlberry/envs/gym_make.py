@@ -106,7 +106,7 @@ def atari_make(id, seed=None, **kwargs):
     else:
         n_frame_stack = 4
 
-    env = gym.make(id)
+    env = gym.make(id, render_mode=render_mode)
     env = Wrapper(env)
     env = Monitor(env)
 
