@@ -34,6 +34,7 @@ class OneHotLSVI(agents.LSVIUCBAgent):
             self, env, feature_map_fn=feature_map_fn, horizon=10, **kwargs
         )
 
+
 # No agent "FINITE_MDP" in extra
 # FINITE_MDP_AGENTS = [
 # ]
