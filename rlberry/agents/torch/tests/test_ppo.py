@@ -29,7 +29,7 @@ def test_ppo():
         (env_ctor, env_kwargs),
         fit_budget=int(132),
         eval_kwargs=dict(eval_horizon=2),
-        init_kwargs=dict(batch_size=24, n_steps=96),
+        init_kwargs=dict(batch_size=24, n_steps=96, device="cpu"),
         n_fit=1,
         agent_name="PPO_rlberry_" + env,
     )
@@ -49,7 +49,7 @@ def test_ppo():
         (env_ctor, env_kwargs),
         fit_budget=int(132),
         eval_kwargs=dict(eval_horizon=2),
-        init_kwargs=dict(batch_size=24, n_steps=96),
+        init_kwargs=dict(batch_size=24, n_steps=96, device="cpu"),
         n_fit=1,
         agent_name="PPO_rlberry_" + env,
     )
@@ -69,7 +69,7 @@ def test_ppo():
         (env_ctor, env_kwargs),
         fit_budget=int(132),
         eval_kwargs=dict(eval_horizon=2),
-        init_kwargs=dict(batch_size=24, n_steps=96),
+        init_kwargs=dict(batch_size=24, n_steps=96, device="cpu"),
         n_fit=1,
         agent_name="PPO_rlberry_" + env,
     )
@@ -86,7 +86,7 @@ def test_ppo():
         (env_ctor, env_kwargs),
         fit_budget=int(132),
         eval_kwargs=dict(eval_horizon=2),
-        init_kwargs=dict(batch_size=24, n_steps=96),
+        init_kwargs=dict(batch_size=24, n_steps=96, device="cpu"),
         n_fit=1,
         agent_name="PPO_rlberry_" + "PBall2D",
     )
@@ -172,7 +172,7 @@ def test_ppo():
         (env_ctor, env_kwargs),
         fit_budget=int(132),
         eval_kwargs=dict(eval_horizon=2),
-        init_kwargs=dict(batch_size=24, n_steps=96),
+        init_kwargs=dict(batch_size=24, n_steps=96, device="cpu"),
         n_fit=1,
         agent_name="PPO_rlberry_" + "PBall2D",
     )
@@ -187,7 +187,9 @@ def test_ppo():
         (env_ctor, env_kwargs),
         fit_budget=int(132),
         eval_kwargs=dict(eval_horizon=2),
-        init_kwargs=dict(batch_size=24, n_steps=96, normalize_advantages=True),
+        init_kwargs=dict(
+            batch_size=24, n_steps=96, normalize_advantages=True, device="cpu"
+        ),
         n_fit=1,
         agent_name="PPO_rlberry_" + "PBall2D",
     )
