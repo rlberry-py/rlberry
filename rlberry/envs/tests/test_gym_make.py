@@ -21,16 +21,14 @@ def test_atari_make():
     assert env2.render_mode == "human"
 
 
-
 def test_rendering_with_atari_make():
-
     from rlberry.manager.agent_manager import AgentManager
     from rlberry.agents.torch import PPOAgent
     from gymnasium.wrappers.record_video import RecordVideo
     import os
     from rlberry.envs.gym_make import atari_make
     from rlberry.agents.torch.utils.training import model_factory_from_env
-    import tempfile  
+    import tempfile
 
     with tempfile.TemporaryDirectory() as tmpdirname:
         policy_mlp_configs = {
@@ -98,13 +96,13 @@ def test_rendering_with_atari_make():
             ),  # The number of interactions between the agent and the environment during evaluations.
             n_fit=1,  # The number of agents to train. Usually, it is good to do more than 1 because the training is stochastic.
             agent_name="PPO_tuned",  # The agent's name.
-            output_dir=str(tmpdirname)+"/PPO_for_breakout",
+            output_dir=str(tmpdirname) + "/PPO_for_breakout",
         )
 
         tuned_agent.fit()
 
         env = atari_make("ALE/Breakout-v5", render_mode="rgb_array")
-        env = RecordVideo(env, str(tmpdirname)+"/_video/temp")
+        env = RecordVideo(env, str(tmpdirname) + "/_video/temp")
 
         if "render_modes" in env.metadata:
             env.metadata["render.modes"] = env.metadata[
@@ -121,5 +119,4 @@ def test_rendering_with_atari_make():
 
         env.close()
 
-        assert os.path.exists(str(tmpdirname)+"/_video/temp/rl-video-episode-0.mp4")
-
+        assert os.path.exists(str(tmpdirname) + "/_video/temp/rl-video-episode-0.mp4")
