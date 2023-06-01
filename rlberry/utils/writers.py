@@ -355,15 +355,17 @@ class DefaultWriter:
                     val = self._data[tag]["value"][-1]
                     gstep = self._data[tag]["global_step"][-1]
                     my_data = np.array(self._data[tag]["value"])
-                    if len(my_data) > 40:
-                        improvement_lag = 20
+                    if len(my_data) > 20:
+                        improvement_lag = len(my_data) // 20
                         improvement = np.mean(my_data[-improvement_lag:]) - np.mean(
                             my_data[-2 * improvement_lag : -improvement_lag]
                         )
+                        windowed_std = np.std(my_data[-2 * improvement_lag :])
                     else:
                         improvement = np.nan
+                        windowed_std = np.nan
                     messages += [
-                        f"{tag} = {val} (improvement over last 40: {improvement}) "
+                        f"{tag} = {val} (improvement over last 10%: {np.round(improvement, 4)}, std over last 10%: {np.round(windowed_std,4)})"
                     ]
                     if not np.isnan(gstep):
                         max_global_step = max(max_global_step, gstep)
