@@ -4,12 +4,10 @@
 </p>
 
 
-
 <!-- Short description -->
 <p align="center">
    A Reinforcement Learning Library for Research and Education
 </p>
-
 
 <!-- The badges -->
 <p align="center">
@@ -81,7 +79,7 @@ that you can spend most of your time developing agents.
 Install the latest version for a stable release.
 
 ```bash
-pip install rlberry
+pip install -U git+https://github.com/rlberry-py/rlberry.git@v0.3.0#egg=rlberry[default]
 ```
 
 The documentation includes more [installation instructions](https://rlberry.readthedocs.io/en/latest/installation.html) in particular for users that work with Jax.
@@ -117,6 +115,7 @@ If you use `rlberry` in scientific publications, we would appreciate citations u
     year = {2021}
 }
 ```
+
 
 ## Development notes
 
