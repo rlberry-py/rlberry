@@ -22,3 +22,4 @@ opencv-python
 ale-py==0.7.4
 pytest
 pytest-xprocess
+pytest-timeout
