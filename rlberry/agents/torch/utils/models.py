@@ -316,6 +316,9 @@ class MultiLayerPerceptron(BaseModule):
         if self.out_size:
             if self.ctns_actions:
                 self.logstd.data.fill_(np.log(self.std0))
+                self.apply(
+                    partial(self._init_weights, param=np.log(2), put_bias_to_zero=True)
+                )
             self._init_weights(self.predict, param=self.pred_init_scale)
 
     def forward(self, x):
