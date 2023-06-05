@@ -28,8 +28,23 @@ repos:
         types: [file, python]
         exclude: (.*/__init__.py|rlberry/check_packages.py)
         args: ['--select=F401,F405,D410,D411,D412']
-
--   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: ''  # Use the sha / tag you want to point at
-    hooks:
-    -   id: mypy
+- repo: local
+  # We do not use pre-commit/mirrors-mypy, "./run-mypy"
+  # as it comes with opinionated defaults
+  # (like --ignore-missing-imports)
+  # and is difficult to configure to run
+  # with the dependencies correctly installed.
+  hooks:
+    - id: mypy
+      name: mypy
+      entry:  "./scripts/run_mypy.sh"
+      language: python
+      # use your preferred Python version
+      language_version: python3.9
+      additional_dependencies: ["mypy"]
+      types: [python]
+      # use require_serial so that script
+      # is only called once per commit
+      require_serial: true
+      # Print the number of files as a sanity-check
+      verbose: true

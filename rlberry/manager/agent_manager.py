@@ -14,7 +14,6 @@ import _pickle as cPickle
 import shutil
 import threading
 import multiprocessing
-from multiprocessing.spawn import _check_not_importing_main
 from typing import List, Optional, Tuple, Union
 
 import numpy as np
@@ -545,7 +544,7 @@ class AgentManager:
         """
         eval_kwargs = eval_kwargs or self.eval_kwargs
         if not n_simulations:
-            n_simulations = 2 * self.n_fit
+            n_simu = 2 * self.n_fit
         values = []
 
         if verbose:
@@ -558,7 +557,7 @@ class AgentManager:
                 logger.handlers = [ch]
                 logger.info("[INFO] Evaluation:")
 
-        for ii in range(n_simulations):
+        for ii in range(n_simu):
             if agent_id is None:
                 # randomly choose one of the fitted agents
                 agent_idx = self.eval_seeder.rng.choice(len(self.agent_handlers))
@@ -574,7 +573,7 @@ class AgentManager:
             values.append(agent.eval(**eval_kwargs))
             if verbose:
                 if logger.getEffectiveLevel() <= 10:  # If debug
-                    logger.debug(f"[eval]... simulation {ii + 1}/{n_simulations}")
+                    logger.debug(f"[eval]... simulation {ii + 1}/{n_simu}")
                 else:
                     logger.info(".")
         if verbose:
@@ -672,7 +671,7 @@ class AgentManager:
         # If spawn, test that protected by if __name__ == "__main__"
         if self.mp_context == "spawn":
             try:
-                _check_not_importing_main()
+                multiprocessing.spawn._check_not_importing_main()
             except RuntimeError as exc:
                 raise RuntimeError(
                     """Warning: in AgentManager, if mp_context='spawn' and
