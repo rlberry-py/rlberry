@@ -3,7 +3,7 @@ import tempfile
 import os
 import numpy as np
 from pathlib import Path
-
+import sys
 
 from rlberry.wrappers import WriterWrapper
 from rlberry.envs import GridWorld
