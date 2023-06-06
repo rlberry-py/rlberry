@@ -4,7 +4,12 @@ import sys
 import os
 from rlberry.envs import GridWorld
 from rlberry.agents import AgentWithSimplePolicy
-from rlberry.manager import AgentManager, plot_writer_data, evaluate_agents
+from rlberry.manager import (
+    AgentManager,
+    plot_writer_data,
+    evaluate_agents,
+    preset_manager,
+)
 
 
 class DummyAgent(AgentWithSimplePolicy):
@@ -326,6 +331,30 @@ def test_profile():
     )
     stats_agent1.generate_profile(fname="profile.prof")
     assert os.path.getsize("profile.prof") > 100, "agent manager saved an empty profile"
+
+
+def test_preset():
+    # Define train and evaluation envs
+    train_env = (GridWorld, {})
+
+    # Parameters
+    params = dict(hyperparameter1=-1, hyperparameter2=100)
+    eval_kwargs = dict(eval_horizon=10)
+
+    # Run AgentManager
+    params_per_instance = [dict(hyperparameter2=ii) for ii in range(4)]
+
+    manager_maker = preset_manager(
+        train_env=train_env,
+        fit_budget=2,
+        eval_kwargs=eval_kwargs,
+        init_kwargs=params,
+        n_fit=2,
+        seed=123,
+        init_kwargs_per_instance=params_per_instance,
+    )
+    manager = manager_maker(DummyAgent)
+    manager.fit()
 
 
 def test_compress():
