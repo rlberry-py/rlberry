@@ -346,10 +346,10 @@ def test_preset():
 
     manager_maker = preset_manager(
         train_env=train_env,
-        fit_budget=2,
+        fit_budget=4,
         eval_kwargs=eval_kwargs,
         init_kwargs=params,
-        n_fit=2,
+        n_fit=4,
         seed=123,
         init_kwargs_per_instance=params_per_instance,
     )
