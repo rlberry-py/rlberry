@@ -17,7 +17,7 @@ import rlberry
 logger = rlberry.logger
 
 
-class A2CAgent(AgentTorch,AgentWithSimplePolicy):
+class A2CAgent(AgentTorch, AgentWithSimplePolicy):
     """
     Advantage Actor Critic Agent.
 

@@ -6,7 +6,7 @@ import numpy as np
 import torch
 
 from rlberry import types
-from rlberry.agents import AgentWithSimplePolicy,AgentTorch
+from rlberry.agents import AgentWithSimplePolicy, AgentTorch
 from rlberry.agents.torch.utils.training import (
     loss_function_factory,
     model_factory,
@@ -38,7 +38,7 @@ def default_q_net_fn(env, **kwargs):
     return model_factory(**model_config)
 
 
-class DQNAgent(AgentTorch,AgentWithSimplePolicy):
+class DQNAgent(AgentTorch, AgentWithSimplePolicy):
     """DQN Agent based on PyTorch.
 
     Notes
