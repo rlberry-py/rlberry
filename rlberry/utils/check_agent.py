@@ -261,7 +261,10 @@ def _check_save_load_with_manager(agent, env="continuous_state", init_kwargs=Non
         ), "The saved file is empty."
         try:
             params_for_loader = dict(env=test_env)
-            agent.load(str(manager.output_dir_) + "/agent_handlers/idx_0.pickle",**params_for_loader)
+            agent.load(
+                str(manager.output_dir_) + "/agent_handlers/idx_0.pickle",
+                **params_for_loader
+            )
         except Exception:
             raise RuntimeError("Failed to load the agent file.")
 

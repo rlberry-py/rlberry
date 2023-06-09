@@ -310,7 +310,7 @@ class Agent(ABC):
         filename.parent.mkdir(parents=True, exist_ok=True)
 
         dict_to_save = dict(self.__dict__)
-        if not self.save_envs :
+        if not self.save_envs:
             del dict_to_save["env"]
             del dict_to_save["eval_env"]
 
@@ -364,14 +364,14 @@ class Agent(ABC):
                 with bz2.BZ2File(filename, "rb") as ff:
                     tmp_dict = dill.load(ff)
 
-        if not obj.save_envs :
+        if not obj.save_envs:
             temp_env = obj.__dict__["env"]
             temp_eval_env = obj.__dict__["eval_env"]
 
         obj.__dict__.clear()
         obj.__dict__.update(tmp_dict)
 
-        if not obj.save_envs :
+        if not obj.save_envs:
             obj.__dict__["env"] = temp_env
             obj.__dict__["eval_env"] = temp_eval_env
 
@@ -544,7 +544,7 @@ class AgentWithSimplePolicy(Agent):
 
 class AgentTorch(Agent):
     """Interface for torch agent agents to specify the save and load.
-    
+
     Parameters
     ----------
     env : gym.Env or tuple (constructor, kwargs)
@@ -650,21 +650,21 @@ class AgentTorch(Agent):
             if not self.compress_pickle:
                 with filename.open("wb") as ff:
                     # pickle.dump(dict_to_save, ff)
-                    torch.save(dict_to_save, ff,pickle)
+                    torch.save(dict_to_save, ff, pickle)
             else:
                 with bz2.BZ2File(filename, "wb") as ff:
                     # cPickle.dump(dict_to_save, ff)
-                    torch.save(dict_to_save, ff,cPickle)
+                    torch.save(dict_to_save, ff, cPickle)
         except Exception as ex:
             try:
                 if not self.compress_pickle:
                     with filename.open("wb") as ff:
                         # dill.dump(dict_to_save, ff)
-                        torch.save(dict_to_save, ff,dill)
+                        torch.save(dict_to_save, ff, dill)
                 else:
                     with bz2.BZ2File(filename, "wb") as ff:
                         # dill.dump(dict_to_save, ff)
-                        torch.save(dict_to_save, ff,dill)
+                        torch.save(dict_to_save, ff, dill)
             except Exception as ex:
                 logger.warning("Agent instance cannot be pickled: " + str(ex))
                 return None
@@ -689,8 +689,7 @@ class AgentTorch(Agent):
         from rlberry.utils.torch import choose_device
         import torch
 
-
-        device_str="cuda:best"
+        device_str = "cuda:best"
         if "device" in kwargs.keys():
             device_str = kwargs.pop("device", None)
         device = choose_device(device_str)
@@ -701,17 +700,19 @@ class AgentTorch(Agent):
         try:
             if not obj.compress_pickle:
                 with filename.open("rb") as ff:
-                    tmp_dict = torch.load(ff,map_location=device,pickle_module=pickle)
+                    tmp_dict = torch.load(ff, map_location=device, pickle_module=pickle)
             else:
                 with bz2.BZ2File(filename, "rb") as ff:
-                    tmp_dict = torch.load(ff,map_location=device,pickle_module=cPickle)
+                    tmp_dict = torch.load(
+                        ff, map_location=device, pickle_module=cPickle
+                    )
         except Exception as ex:
             if not obj.compress_pickle:
                 with filename.open("rb") as ff:
-                    tmp_dict = torch.load(ff,map_location=device,pickle_module=dill)
+                    tmp_dict = torch.load(ff, map_location=device, pickle_module=dill)
             else:
                 with bz2.BZ2File(filename, "rb") as ff:
-                    tmp_dict = torch.load(ff,map_location=device,pickle_module=dill)
+                    tmp_dict = torch.load(ff, map_location=device, pickle_module=dill)
 
         # if not obj.save_envs :
         temp_env = obj.__dict__["env"]
