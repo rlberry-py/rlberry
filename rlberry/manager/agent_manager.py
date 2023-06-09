@@ -851,7 +851,7 @@ class AgentManager:
             else:
                 with bz2.BZ2File(filename, "rb") as ff:
                     tmp_dict = cPickle.load(ff)
-        except Exception:
+        except Exception as ex:
             if not compress_pickle:
                 with filename.open("rb") as ff:
                     tmp_dict = dill.load(ff)

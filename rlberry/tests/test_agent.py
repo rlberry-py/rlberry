@@ -78,6 +78,10 @@ def test_finite_state_agent(agent):
 @pytest.mark.xfail(sys.platform == "win32", reason="bug with windows???")
 @pytest.mark.parametrize("agent", CONTINUOUS_STATE_AGENTS)
 def test_continuous_state_agent(agent):
+    # save_envs = not issubclass(agent, agents.AgentTorch)
+    # kwargs = {"save_envs":save_envs}
+    # check_rl_agent(agent, env="continuous_state", init_kwargs=kwargs)
+    # check_rlberry_agent(agent, env="continuous_state", init_kwargs=kwargs)
     check_rl_agent(agent, env="continuous_state")
     check_rlberry_agent(agent, env="continuous_state")
 
