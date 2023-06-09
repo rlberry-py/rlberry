@@ -2,7 +2,7 @@ import torch
 import inspect
 
 import gymnasium.spaces as spaces
-from rlberry.agents import AgentWithSimplePolicy
+from rlberry.agents import AgentWithSimplePolicy,AgentTorch
 from rlberry.agents.utils.memories import Memory
 from rlberry.agents.torch.utils.training import optimizer_factory
 from rlberry.agents.torch.utils.models import default_policy_net_fn
@@ -13,7 +13,7 @@ import rlberry
 logger = rlberry.logger
 
 
-class REINFORCEAgent(AgentWithSimplePolicy):
+class REINFORCEAgent(AgentTorch,AgentWithSimplePolicy):
     """
     REINFORCE with entropy regularization.
 
