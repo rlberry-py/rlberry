@@ -312,9 +312,9 @@ class Agent(ABC):
         filename.parent.mkdir(parents=True, exist_ok=True)
 
         dict_to_save = dict(self.__dict__)
-        if not self.save_envs:
-            del dict_to_save["env"]
-            del dict_to_save["eval_env"]
+        # if not self.save_envs:
+        #     del dict_to_save["env"]
+        #     del dict_to_save["eval_env"]
 
         try:
             if not self.compress_pickle:
@@ -366,16 +366,16 @@ class Agent(ABC):
                 with bz2.BZ2File(filename, "rb") as ff:
                     tmp_dict = dill.load(ff)
 
-        if not obj.save_envs:
-            temp_env = obj.__dict__["env"]
-            temp_eval_env = obj.__dict__["eval_env"]
+        # if not obj.save_envs:
+        #     temp_env = obj.__dict__["env"]
+        #     temp_eval_env = obj.__dict__["eval_env"]
 
         obj.__dict__.clear()
         obj.__dict__.update(tmp_dict)
 
-        if not obj.save_envs:
-            obj.__dict__["env"] = temp_env
-            obj.__dict__["eval_env"] = temp_eval_env
+        # if not obj.save_envs:
+        #     obj.__dict__["env"] = temp_env
+        #     obj.__dict__["eval_env"] = temp_eval_env
 
         return obj
 
@@ -644,9 +644,9 @@ class AgentTorch(Agent):
         filename.parent.mkdir(parents=True, exist_ok=True)
 
         dict_to_save = dict(self.__dict__)
-        # if not self.save_envs :
-        del dict_to_save["env"]
-        del dict_to_save["eval_env"]
+        # # if not self.save_envs :
+        # del dict_to_save["env"]
+        # del dict_to_save["eval_env"]
 
         try:
             if not self.compress_pickle:
@@ -718,15 +718,15 @@ class AgentTorch(Agent):
 
         # with torch agent we never save env
         # if not obj.save_envs :
-        temp_env = obj.__dict__["env"]
-        temp_eval_env = obj.__dict__["eval_env"]
+        # temp_env = obj.__dict__["env"]
+        # temp_eval_env = obj.__dict__["eval_env"]
 
         obj.__dict__.clear()
         obj.__dict__.update(tmp_dict)
 
         # if not obj.save_envs :
-        obj.__dict__["env"] = temp_env
-        obj.__dict__["eval_env"] = temp_eval_env
+        # obj.__dict__["env"] = temp_env
+        # obj.__dict__["eval_env"] = temp_eval_env
 
         obj.device = device
         return obj
