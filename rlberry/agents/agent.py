@@ -321,7 +321,7 @@ class Agent(ABC):
             else:
                 with bz2.BZ2File(filename, "wb") as ff:
                     cPickle.dump(dict_to_save, ff)
-        except Exception:
+        except Exception as ex:
             try:
                 if not self.compress_pickle:
                     with filename.open("wb") as ff:
@@ -356,7 +356,7 @@ class Agent(ABC):
             else:
                 with bz2.BZ2File(filename, "rb") as ff:
                     tmp_dict = cPickle.load(ff)
-        except Exception:
+        except Exception as ex:
             if not obj.compress_pickle:
                 with filename.open("rb") as ff:
                     tmp_dict = dill.load(ff)
@@ -714,6 +714,7 @@ class AgentTorch(Agent):
                 with bz2.BZ2File(filename, "rb") as ff:
                     tmp_dict = torch.load(ff, map_location=device, pickle_module=dill)
 
+        #with torch agent we never save env
         # if not obj.save_envs :
         temp_env = obj.__dict__["env"]
         temp_eval_env = obj.__dict__["eval_env"]

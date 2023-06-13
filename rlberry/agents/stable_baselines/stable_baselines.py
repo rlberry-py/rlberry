@@ -131,6 +131,7 @@ class StableBaselinesAgent(AgentWithSimplePolicy):
         tensorboard_log: Optional[str] = None,
         eval_env: Optional[types.Env] = None,
         copy_env: bool = True,
+        save_envs=True,
         seeder: Optional[types.Seeder] = None,
         output_dir: Optional[str] = None,
         _execution_metadata: Optional[metadata_utils.ExecutionMetadata] = None,
