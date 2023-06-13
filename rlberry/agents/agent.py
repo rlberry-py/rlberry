@@ -714,7 +714,7 @@ class AgentTorch(Agent):
                 with bz2.BZ2File(filename, "rb") as ff:
                     tmp_dict = torch.load(ff, map_location=device, pickle_module=dill)
 
-        #with torch agent we never save env
+        # with torch agent we never save env
         # if not obj.save_envs :
         temp_env = obj.__dict__["env"]
         temp_eval_env = obj.__dict__["eval_env"]
