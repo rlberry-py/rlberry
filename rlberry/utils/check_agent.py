@@ -261,6 +261,7 @@ def _check_save_load_with_manager(agent, env="continuous_state", init_kwargs=Non
         ), "The saved file is empty."
         try:
             params_for_loader = dict(env=test_env)
+            
             # extract the class name to check if we need to add some param to load
             if issubclass(agent, StableBaselinesAgent):
                 params_for_loader["algo_cls"] = init_kwargs["algo_cls"]

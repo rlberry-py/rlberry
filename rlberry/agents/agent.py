@@ -35,6 +35,8 @@ class Agent(ABC):
         Environment on which to evaluate the agent. If None, copied from env.
     copy_env : bool
         If true, makes a deep copy of the environment.
+    save_envs : bool
+        Save and loading the environment with the agent. 
     compress_pickle : bool
         If true, compress the save files using bz2.
     seeder : :class:`~rlberry.seeding.seeder.Seeder`, int, or None
@@ -46,7 +48,7 @@ class Agent(ABC):
         Used by :class:`~rlberry.manager.AgentManager`.
     _default_writer_kwargs : dict, optional
         Parameters to initialize :class:`~rlberry.utils.writers.DefaultWriter` (attribute self.writer).
-        Used by :class:`~rlberry.manager.AgentManager`.
+        Used by :class:`~rlberry.save_envsmanager.AgentManager`.
     _thread_shared_data : dict, optional
         Used by :class:`~rlberry.manager.AgentManager` to share data across Agent
         instances created in different threads.
