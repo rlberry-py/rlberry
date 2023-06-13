@@ -36,7 +36,7 @@ class Agent(ABC):
     copy_env : bool
         If true, makes a deep copy of the environment.
     save_envs : bool
-        Save and loading the environment with the agent. 
+        Save and loading the environment with the agent.
     compress_pickle : bool
         If true, compress the save files using bz2.
     seeder : :class:`~rlberry.seeding.seeder.Seeder`, int, or None

@@ -91,7 +91,7 @@ class StableBaselinesAgent(AgentWithSimplePolicy):
     copy_env : bool
         If true, makes a deep copy of the environment.
     save_envs : bool
-        Save and loading the environment with the agent. 
+        Save and loading the environment with the agent.
     seeder : :class:`~rlberry.seeding.seeder.Seeder`, int, or None
         Seeder/seed for random number generation.
     output_dir : str or Path
