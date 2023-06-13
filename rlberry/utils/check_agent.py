@@ -262,8 +262,8 @@ def _check_save_load_with_manager(agent, env="continuous_state", init_kwargs=Non
         try:
             params_for_loader = dict(env=test_env)
 
-            # extract the class name to check if we need to add some param to load
             if issubclass(agent, StableBaselinesAgent):
+                # StableBaselinesAgent need to add some params to load
                 params_for_loader["algo_cls"] = init_kwargs["algo_cls"]
 
             agent.load(
@@ -327,9 +327,9 @@ def _check_save_load_without_manager(agent, env="continuous_state", init_kwargs=
         assert os.path.exists(tmpdirname)
 
         params_for_loader = dict(env=train_env)
-
-        # extract the class name to check if we need to add some param to load
+        
         if issubclass(agent, StableBaselinesAgent):
+            # StableBaselinesAgent need to add some params to load
             params_for_loader["algo_cls"] = init_kwargs["algo_cls"]
 
         loaded_agent = agent.load(saving_path, **params_for_loader)
