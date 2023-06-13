@@ -327,7 +327,7 @@ def _check_save_load_without_manager(agent, env="continuous_state", init_kwargs=
         assert os.path.exists(tmpdirname)
 
         params_for_loader = dict(env=train_env)
-        
+
         if issubclass(agent, StableBaselinesAgent):
             # StableBaselinesAgent need to add some params to load
             params_for_loader["algo_cls"] = init_kwargs["algo_cls"]
