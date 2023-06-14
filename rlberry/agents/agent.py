@@ -358,7 +358,6 @@ class Agent(ABC):
                 with bz2.BZ2File(filename, "rb") as ff:
                     tmp_dict = dill.load(ff)
 
-
         obj.__dict__.clear()
         obj.__dict__.update(tmp_dict)
 
