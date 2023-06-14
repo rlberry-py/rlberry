@@ -162,8 +162,8 @@ def test_ppo_vectorized_atari_env(num_envs):
         value_net_fn=model_factory_from_env,  # A Critic network constructor
         value_net_kwargs=critic_configs,  # Critic network's architecure.
         n_envs=num_envs,
-        n_steps = 64,
-        batch_size = 128,
+        n_steps=64,
+        batch_size=128,
         # **dict(eval_env=(atari_make,dict(id="ALE/Freeway-v5",n_envs=1)))
     )
     agent.fit(budget=500)
@@ -253,8 +253,8 @@ def test_ppo_agent_manager_vectorized_atari_env(num_envs):
                 value_net_fn=model_factory_from_env,  # A Critic network constructor
                 value_net_kwargs=critic_configs,  # Critic network's architecure.
                 n_envs=num_envs,
-                n_steps = 64,
-                batch_size = 128,
+                n_steps=64,
+                batch_size=128,
             ),
             fit_budget=200,  # The number of interactions between the agent and the environment during training.
             eval_kwargs=dict(
