@@ -35,8 +35,6 @@ class Agent(ABC):
         Environment on which to evaluate the agent. If None, copied from env.
     copy_env : bool
         If true, makes a deep copy of the environment.
-    save_envs : bool
-        Save and loading the environment with the agent.
     compress_pickle : bool
         If true, compress the save files using bz2.
     seeder : :class:`~rlberry.seeding.seeder.Seeder`, int, or None
@@ -48,7 +46,7 @@ class Agent(ABC):
         Used by :class:`~rlberry.manager.AgentManager`.
     _default_writer_kwargs : dict, optional
         Parameters to initialize :class:`~rlberry.utils.writers.DefaultWriter` (attribute self.writer).
-        Used by :class:`~rlberry.save_envsmanager.AgentManager`.
+        Used by :class:`~rlberry.manager.AgentManager`.
     _thread_shared_data : dict, optional
         Used by :class:`~rlberry.manager.AgentManager` to share data across Agent
         instances created in different threads.
@@ -88,7 +86,6 @@ class Agent(ABC):
         env: types.Env = None,
         eval_env: Optional[types.Env] = None,
         copy_env: bool = True,
-        save_envs: bool = True,
         compress_pickle: bool = True,
         seeder: Optional[types.Seed] = None,
         output_dir: Optional[str] = None,
@@ -107,8 +104,6 @@ class Agent(ABC):
         # evaluation environment
         eval_env = eval_env or env
         self.eval_env = process_env(eval_env, self.seeder, copy_env=copy_env)
-
-        self.save_envs = save_envs
 
         # metadata
         self._execution_metadata = (
@@ -312,9 +307,6 @@ class Agent(ABC):
         filename.parent.mkdir(parents=True, exist_ok=True)
 
         dict_to_save = dict(self.__dict__)
-        # if not self.save_envs:
-        #     del dict_to_save["env"]
-        #     del dict_to_save["eval_env"]
 
         try:
             if not self.compress_pickle:
@@ -366,16 +358,9 @@ class Agent(ABC):
                 with bz2.BZ2File(filename, "rb") as ff:
                     tmp_dict = dill.load(ff)
 
-        # if not obj.save_envs:
-        #     temp_env = obj.__dict__["env"]
-        #     temp_eval_env = obj.__dict__["eval_env"]
 
         obj.__dict__.clear()
         obj.__dict__.update(tmp_dict)
-
-        # if not obj.save_envs:
-        #     obj.__dict__["env"] = temp_env
-        #     obj.__dict__["eval_env"] = temp_eval_env
 
         return obj
 
@@ -644,9 +629,6 @@ class AgentTorch(Agent):
         filename.parent.mkdir(parents=True, exist_ok=True)
 
         dict_to_save = dict(self.__dict__)
-        # # if not self.save_envs :
-        # del dict_to_save["env"]
-        # del dict_to_save["eval_env"]
 
         try:
             if not self.compress_pickle:
@@ -716,17 +698,8 @@ class AgentTorch(Agent):
                 with bz2.BZ2File(filename, "rb") as ff:
                     tmp_dict = torch.load(ff, map_location=device, pickle_module=dill)
 
-        # with torch agent we never save env
-        # if not obj.save_envs :
-        # temp_env = obj.__dict__["env"]
-        # temp_eval_env = obj.__dict__["eval_env"]
-
         obj.__dict__.clear()
         obj.__dict__.update(tmp_dict)
-
-        # if not obj.save_envs :
-        # obj.__dict__["env"] = temp_env
-        # obj.__dict__["eval_env"] = temp_eval_env
 
         obj.device = device
         return obj
