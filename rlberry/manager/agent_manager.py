@@ -404,11 +404,11 @@ class AgentManager:
                 )
         # Update DefaultWriter according to user's settings.
         default_writer_kwargs = default_writer_kwargs or {}
-        if default_writer_kwargs:
-            logger.warning(
-                "(Re)defining the following DefaultWriter"
-                f" parameters in AgentManager: {list(default_writer_kwargs.keys())}"
-            )
+        # if default_writer_kwargs:
+        #     logger.warning(
+        #         "(Re)defining the following DefaultWriter"
+        #         f" parameters in AgentManager: {list(default_writer_kwargs.keys())}"
+        #     )
         for ii in range(n_fit):
             self.agent_default_writer_kwargs[ii].update(default_writer_kwargs)
 
@@ -670,6 +670,7 @@ class AgentManager:
         budget = budget or self.fit_budget
 
         # If spawn, test that protected by if __name__ == "__main__"
+
         if self.mp_context == "spawn":
             try:
                 _check_not_importing_main()
@@ -1177,6 +1178,9 @@ def _fit_worker(args):
         writer_fn = writer[0]
         writer_kwargs = writer[1]
         agent_handler.set_writer(writer_fn(**writer_kwargs))
+
+    if agent_handler.writer._style_log == "progressbar":
+        agent_handler.writer.set_max_global_step(fit_budget)
     # fit agent
     agent_handler.fit(fit_budget, **fit_kwargs)
 
@@ -1184,6 +1188,10 @@ def _fit_worker(args):
     # unless the agent uses DefaultWriter
     if not isinstance(agent_handler.writer, DefaultWriter):
         agent_handler.set_writer(None)
+
+    if agent_handler.writer._style_log == "progressbar":
+        agent_handler.writer.pbar.close()
+        agent_handler.writer.pbar = None
 
     # remove from memory to avoid pickle issues
     agent_handler.dump()
