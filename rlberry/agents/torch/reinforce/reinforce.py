@@ -1,5 +1,6 @@
 import torch
 import inspect
+import numpy as np
 
 import gym.spaces as spaces
 from rlberry.agents import AgentWithSimplePolicy
@@ -197,7 +198,7 @@ class REINFORCEAgent(AgentWithSimplePolicy):
             rewards.insert(0, discounted_reward)
 
         # convert list to tensor
-        states = torch.FloatTensor(self.memory.states).to(self.device)
+        states = torch.FloatTensor(np.array(self.memory.states)).to(self.device)
         actions = torch.LongTensor(self.memory.actions).to(self.device)
         rewards = torch.FloatTensor(rewards).to(self.device)
         if self.normalize:
