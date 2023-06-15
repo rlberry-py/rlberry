@@ -27,7 +27,7 @@ def _make_tuple_env(env):
             env_kwargs = {}
         elif env == "vectorized_env_continuous":
             env_ctor = gym_make
-            env_kwargs = dict(id="CartPole-v0")
+            env_kwargs = dict(id="CartPole-v1")
         else:
             raise ValueError("The env given in parameter is not implemented")
     elif isinstance(env, tuple):  # If env param is a tuple, return it

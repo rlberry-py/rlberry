@@ -6,7 +6,7 @@ from gym import make
 
 
 def test_a2c():
-    env = "CartPole-v0"
+    env = "CartPole-v1"
     mdp = make(env)
     env_ctor = Wrapper
     env_kwargs = dict(env=mdp)
@@ -84,7 +84,7 @@ def test_a2c():
     a2crlberry_stats.clear_output_dir()
 
     # test also non default
-    env = "CartPole-v0"
+    env = "CartPole-v1"
     mdp = make(env)
     env_ctor = Wrapper
     env_kwargs = dict(env=mdp)

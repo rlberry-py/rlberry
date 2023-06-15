@@ -6,7 +6,7 @@ from rlberry.agents.torch.utils.training import model_factory
 
 @pytest.mark.parametrize("use_prioritized_replay", [(False), (True)])
 def test_mdqn_agent(use_prioritized_replay):
-    env = gym_make("CartPole-v0")
+    env = gym_make("CartPole-v1")
     agent = MunchausenDQNAgent(
         env,
         learning_starts=5,

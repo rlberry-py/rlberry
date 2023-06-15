@@ -36,17 +36,17 @@ agent = AgentManager(
 )
 
 # basic version
-# env_kwargs = dict(id = "CartPole-v0")
+# env_kwargs = dict(id = "CartPole-v1")
 # agent = AgentManager(SACAgent, (gym_make, env_kwargs), fit_budget=200, n_fit=1)
 
 # # timothe's
-# env = gym_make("CartPole-v0")
+# env = gym_make("CartPole-v1")
 # agent = AgentManager(
 #     SACAgent, (env.__class__, dict()), fit_budget=200, n_fit=1, enable_tensorboard=True,
 # )
 
 # Omar's
-# env = gym_make("CartPole-v0")
+# env = gym_make("CartPole-v1")
 # from copy import deepcopy
 # def env_constructor():
 #     return deepcopy(env)
