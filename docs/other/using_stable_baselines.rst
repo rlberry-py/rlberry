@@ -54,8 +54,8 @@ implementation of `Stable Baselines`_ and evaluate two hyperparameter configurat
 
         @classmethod
         def sample_parameters(cls, trial):
-            learning_rate = trial.suggest_float("learning_rate", 1e-5, 1,log=True)
-            ent_coef = trial.suggest_float("ent_coef", 0.00000001, 0.1,log=True)
+            learning_rate = trial.suggest_float("learning_rate", 1e-5, 1, log=True)
+            ent_coef = trial.suggest_float("ent_coef", 0.00000001, 0.1, log=True)
             vf_coef = trial.suggest_float("vf_coef", 0, 1)
             normalize_advantage = trial.suggest_categorical(
                 "normalize_advantage", [False, True]

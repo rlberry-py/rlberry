@@ -75,8 +75,8 @@ For :class:`~rlberry.agents.reinforce.reinforce.REINFORCEAgent`, this method loo
         """
         batch_size = trial.suggest_categorical("batch_size", [1, 4, 8, 16, 32])
         gamma = trial.suggest_categorical("gamma", [0.9, 0.95, 0.99])
-        learning_rate = trial.suggest_float("learning_rate", 1e-5, 1,log=True)
-        entr_coef = trial.suggest_float("entr_coef", 1e-8, 0.1,log=True)
+        learning_rate = trial.suggest_float("learning_rate", 1e-5, 1, log=True)
+        entr_coef = trial.suggest_float("entr_coef", 1e-8, 0.1, log=True)
 
         return {
             "batch_size": batch_size,
