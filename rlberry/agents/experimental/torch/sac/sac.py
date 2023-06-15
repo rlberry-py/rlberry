@@ -363,8 +363,9 @@ class SACAgent(AgentWithSimplePolicy):
     def sample_parameters(cls, trial):
         batch_size = trial.suggest_categorical("batch_size", [1, 4, 8, 16, 32])
         gamma = trial.suggest_categorical("gamma", [0.9, 0.95, 0.99])
-        learning_rate = trial.suggest_loguniform("learning_rate", 1e-5, 1)
-        entr_coef = trial.suggest_loguniform("entr_coef", 1e-8, 0.1)
+        learning_rate = trial.suggest_float("learning_rate", 1e-5, 1,log=True)
+        entr_coef = trial.suggest_float("entr_coef", 1e-8, 0.1,log=True)
+
         k_epochs = trial.suggest_categorical("k_epochs", [1, 5, 10, 20])
 
         return {
