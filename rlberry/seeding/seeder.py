@@ -1,4 +1,4 @@
-from numpy.random import SeedSequence, Generator, SFC64
+from numpy.random import SeedSequence, default_rng
 
 
 class Seeder:
@@ -57,7 +57,7 @@ class Seeder:
             seed_seq = seed_seq.spawn(1)[0]
 
         self.seed_seq = seed_seq
-        self.rng = Generator(SFC64(self.seed_seq))
+        self.rng = default_rng(self.seed_seq)
 
     def reseed(self, seed_seq=None):
         """
@@ -88,7 +88,7 @@ class Seeder:
         seed_seq = seed_seq.spawn(1)[0]
 
         self.seed_seq = seed_seq
-        self.rng = Generator(SFC64(self.seed_seq))
+        self.rng = default_rng(self.seed_seq)
 
     def spawn(self, n=1, squeeze=True):
         """
