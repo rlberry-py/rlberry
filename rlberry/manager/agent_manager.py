@@ -1320,3 +1320,35 @@ def _strip_seed_dir(dico):
 def is_bz_file(filepath):
     with open(filepath, "rb") as test_f:
         return test_f.read(2) == b"BZ"
+
+
+def preset_manager(*args, **kwds):
+    """Preset an Agent Manager to some fixed keywords.
+
+    Examples
+    --------
+    >>> from rlberry.agents.torch import PPOAgent, DQNAgent
+    >>> from rlberry.manager import preset_manager
+    >>> from rlberry.envs import Acrobot
+    >>> env_ctor = Acrobot
+    >>> env_kwargs = {}
+    >>>
+    >>> manager_maker =  preset_manager(train_env=(env_ctor, env_kwargs),
+    >>>                                 eval_kwargs=dict(eval_horizon=500),
+    >>>                                 n_fit=4,
+    >>>                                 parallelization = "process",
+    >>>                                 mp_context="spawn",
+    >>>                                 seed=42,
+    >>>                                 max_workers=6
+    >>>                                 )
+    >>> ppo = manager_maker(PPOAgent, fit_budget = 100) # of type AgentManager
+    >>> dqn = manager_maker(DQNAgent, fit_budget = 200)
+    >>>
+    >>> ppo.fit()
+    >>> dqn.fit()
+    """
+
+    class Manager(AgentManager):
+        __init__ = functools.partialmethod(AgentManager.__init__, *args, **kwds)
+
+    return Manager

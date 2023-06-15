@@ -168,6 +168,15 @@ Seeding
 Utilities, Logging & Typing
 ===========================
 
+Manager Utilitis
+----------------
+
+.. autosummary::
+   :toctree: generated/
+   :template: function.rst
+   manager.preset_manager
+
+
 Writer Utilities
 ----------------
 
