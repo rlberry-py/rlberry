@@ -840,6 +840,9 @@ class AgentManager:
         """
         filename = Path(filename).with_suffix(".pickle")
 
+        if filename.name != 'manager_obj.pickle':
+            raise ValueError("The agent_manager objects should be save in file named 'manager_obj.pickle'")
+
         obj = cls(None, None, None)
 
         compress_pickle = is_bz_file(filename)
