@@ -1,15 +1,23 @@
+"""
+===============================================
+Tests for the installation without extra (StableBaselines3, torch, optuna, ...)
+===============================================
+tests based on test_agent.py and test_envs.py
+
+"""
+
+
 import pytest
+import numpy as np
+import sys
+
 import rlberry.agents as agents
-import rlberry.agents.torch as torch_agents
+from rlberry.agents.features import FeatureMap
+
 from rlberry.utils.check_agent import (
     check_rl_agent,
     check_rlberry_agent,
-    check_vectorized_env_agent,
-    check_hyperparam_optimisation_agent,
 )
-from rlberry.agents.features import FeatureMap
-import numpy as np
-import sys
 
 
 class OneHotFeatureMap(FeatureMap):
@@ -49,23 +57,6 @@ FINITE_MDP_AGENTS = [
 CONTINUOUS_STATE_AGENTS = [
     agents.RSUCBVIAgent,
     agents.RSKernelUCBVIAgent,
-    torch_agents.DQNAgent,
-    torch_agents.MunchausenDQNAgent,
-    torch_agents.REINFORCEAgent,
-    torch_agents.PPOAgent,
-    torch_agents.A2CAgent,
-]
-
-
-HYPERPARAM_OPTI_AGENTS = [
-    torch_agents.PPOAgent,
-    torch_agents.REINFORCEAgent,
-    torch_agents.A2CAgent,
-]
-
-
-MULTI_ENV_AGENTS = [
-    torch_agents.PPOAgent,
 ]
 
 
@@ -80,15 +71,3 @@ def test_finite_state_agent(agent):
 def test_continuous_state_agent(agent):
     check_rl_agent(agent, env="continuous_state")
     check_rlberry_agent(agent, env="continuous_state")
-
-
-@pytest.mark.xfail(sys.platform == "win32", reason="bug with windows???")
-@pytest.mark.parametrize("agent", MULTI_ENV_AGENTS)
-def test_continuous_vectorized_env_agent(agent):
-    check_vectorized_env_agent(agent, env="vectorized_env_continuous")
-
-
-@pytest.mark.xfail(sys.platform == "win32", reason="bug with windows???")
-@pytest.mark.parametrize("agent", HYPERPARAM_OPTI_AGENTS)
-def test_hyperparam_optimisation_agent(agent):
-    check_hyperparam_optimisation_agent(agent, env="continuous_state")

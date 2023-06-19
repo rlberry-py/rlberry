@@ -14,11 +14,11 @@ packages = find_packages(exclude=["docs", "notebooks", "assets"])
 install_requires = [
     "numpy>=1.17",
     "scipy>=1.6",
-    "pygame",
+    "pygame-ce",
     "matplotlib",
     "seaborn",
     "pandas",
-    "gym[accept-rom-license]==0.21.0",
+    "gym[accept-rom-license] @ git+https://github.com/rlberry-py/gym_fix_021",
     "dill",
     "docopt",
     "pyyaml",
