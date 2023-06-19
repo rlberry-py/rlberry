@@ -18,6 +18,13 @@ from rlberry.agents.torch.ppo.ppo_utils import (
     RolloutBuffer,
 )
 
+import dill
+import pickle
+import bz2
+import _pickle as cPickle
+from pathlib import Path
+
+
 logger = rlberry.logger
 
 
@@ -657,3 +664,114 @@ class PPOAgent(AgentTorch, AgentWithSimplePolicy):
             "clip_eps": clip_eps,
             "k_epochs": k_epochs,
         }
+
+    ##### Overwrite some inherited functions
+
+    def save(self, filename):
+        """
+        Overwrite the 'save' and 'load' functions to not store the env if it's a "vectorized env" (can't be managed with pickle)
+
+        ----- documentation from original save -----
+
+        Save agent object. By default, the agent is pickled.
+
+        If overridden, the load() method must also be overriden.
+
+        Before saving, consider setting writer to None if it can't be pickled (tensorboard writers
+        keep references to files and cannot be pickled).
+
+        Note: dill[1]_ is used when pickle fails
+        (see https://stackoverflow.com/a/25353243, for instance).
+        Pickle is tried first, since it is faster.
+
+        Parameters
+        ----------
+        filename: Path or str
+            File in which to save the Agent.
+
+        Returns
+        -------
+        pathlib.Path
+            If save() is successful, a Path object corresponding to the filename is returned.
+            Otherwise, None is returned.
+        .. warning:: The returned filename might differ from the input filename: For instance,
+        the method can append the correct suffix to the name before saving.
+
+        References
+        ----------
+        .. [1] https://github.com/uqfoundation/dill
+        """
+        # remove writer if not pickleable
+        if not dill.pickles(self.writer):
+            self.set_writer(None)
+        # save
+        filename = Path(filename).with_suffix(".pickle")
+        filename.parent.mkdir(parents=True, exist_ok=True)
+
+        dict_to_save = dict(self.__dict__)
+        del dict_to_save["env"]
+        del dict_to_save["eval_env"]
+
+        try:
+            if not self.compress_pickle:
+                with filename.open("wb") as ff:
+                    pickle.dump(dict_to_save, ff)
+            else:
+                with bz2.BZ2File(filename, "wb") as ff:
+                    cPickle.dump(dict_to_save, ff)
+        except Exception:
+            try:
+                if not self.compress_pickle:
+                    with filename.open("wb") as ff:
+                        dill.dump(dict_to_save, ff)
+                else:
+                    with bz2.BZ2File(filename, "wb") as ff:
+                        dill.dump(dict_to_save, ff)
+            except Exception as ex:
+                logger.warning("Agent instance cannot be pickled: " + str(ex))
+                return None
+
+        return filename
+
+    @classmethod
+    def load(cls, filename, **kwargs):
+        """
+        Overwrite the 'save' and 'load' functions to not store the env if it's a "vectorized env" (can't be managed with pickle)
+
+        ----- documentation from original load -----
+        Load agent object.
+        If overridden, save() method must also be overriden.
+
+        Parameters
+        ----------
+        **kwargs: dict
+            Arguments to required by the __init__ method of the Agent subclass.
+        """
+        filename = Path(filename).with_suffix(".pickle")
+        obj = cls(**kwargs)
+
+        try:
+            if not obj.compress_pickle:
+                with filename.open("rb") as ff:
+                    tmp_dict = pickle.load(ff)
+            else:
+                with bz2.BZ2File(filename, "rb") as ff:
+                    tmp_dict = cPickle.load(ff)
+        except Exception:
+            if not obj.compress_pickle:
+                with filename.open("rb") as ff:
+                    tmp_dict = dill.load(ff)
+            else:
+                with bz2.BZ2File(filename, "rb") as ff:
+                    tmp_dict = dill.load(ff)
+
+        temp_env = obj.__dict__["env"]
+        temp_eval_env = obj.__dict__["eval_env"]
+
+        obj.__dict__.clear()
+        obj.__dict__.update(tmp_dict)
+
+        obj.__dict__["env"] = temp_env
+        obj.__dict__["eval_env"] = temp_eval_env
+
+        return obj

@@ -16,7 +16,7 @@ import tempfile
 def test_forward_dqn():
     mlp_configs = {
         "type": "MultiLayerPerceptron",  # A network architecture
-        "layer_sizes": [512],  # Network dimensions
+        "layer_sizes": [32],  # Network dimensions
         "reshape": False,
         "is_policy": False,  # The network should output a distribution
         # over actions
@@ -66,7 +66,7 @@ def test_forward_dqn():
 def test_forward_empty_input_dim():
     mlp_configs = {
         "type": "MultiLayerPerceptron",  # A network architecture
-        "layer_sizes": [512],  # Network dimensions
+        "layer_sizes": [32],  # Network dimensions
         "reshape": False,
         "is_policy": False,  # The network should output a distribution
         # over actions
@@ -114,7 +114,7 @@ def test_forward_empty_input_dim():
 def test_ppo_vectorized_atari_env(num_envs):
     policy_mlp_configs = {
         "type": "MultiLayerPerceptron",  # A network architecture
-        "layer_sizes": [512],  # Network dimensions
+        "layer_sizes": [32],  # Network dimensions
         "reshape": False,
         "is_policy": True,  # The network should output a distribution
         # over actions
@@ -122,7 +122,7 @@ def test_ppo_vectorized_atari_env(num_envs):
 
     critic_mlp_configs = {
         "type": "MultiLayerPerceptron",
-        "layer_sizes": [512],
+        "layer_sizes": [32],
         "reshape": False,
         "out_size": 1,  # The critic network is an approximator of
         # a value function V: States -> |R
@@ -162,9 +162,11 @@ def test_ppo_vectorized_atari_env(num_envs):
         value_net_fn=model_factory_from_env,  # A Critic network constructor
         value_net_kwargs=critic_configs,  # Critic network's architecure.
         n_envs=num_envs,
+        n_steps=64,
+        batch_size=128,
         # **dict(eval_env=(atari_make,dict(id="ALE/Freeway-v5",n_envs=1)))
     )
-    agent.fit(budget=1000)
+    agent.fit(budget=500)
 
     with tempfile.TemporaryDirectory() as tmpdirname:
         saving_path = tmpdirname + "/agent_test_ppo_vect_env.pickle"
@@ -201,7 +203,7 @@ def test_ppo_agent_manager_vectorized_atari_env(num_envs):
 
         policy_mlp_configs = {
             "type": "MultiLayerPerceptron",  # A network architecture
-            "layer_sizes": [512],  # Network dimensions
+            "layer_sizes": [32],  # Network dimensions
             "reshape": False,
             "is_policy": True,  # The network should output a distribution
             # over actions
@@ -209,7 +211,7 @@ def test_ppo_agent_manager_vectorized_atari_env(num_envs):
 
         critic_mlp_configs = {
             "type": "MultiLayerPerceptron",
-            "layer_sizes": [512],
+            "layer_sizes": [32],
             "reshape": False,
             "out_size": 1,  # The critic network is an approximator of
             # a value function V: States -> |R
@@ -251,6 +253,8 @@ def test_ppo_agent_manager_vectorized_atari_env(num_envs):
                 value_net_fn=model_factory_from_env,  # A Critic network constructor
                 value_net_kwargs=critic_configs,  # Critic network's architecure.
                 n_envs=num_envs,
+                n_steps=64,
+                batch_size=128,
             ),
             fit_budget=200,  # The number of interactions between the agent and the environment during training.
             eval_kwargs=dict(
@@ -261,8 +265,7 @@ def test_ppo_agent_manager_vectorized_atari_env(num_envs):
             output_dir=saving_path,
             # eval_env = (atari_make,dict(id="ALE/Atlantis-v5",n_envs=1))
         )
-
-        test_agent_manager.fit(budget=1000)
+        test_agent_manager.fit(budget=500)
 
         # test the save function
         test_agent_manager.save()
