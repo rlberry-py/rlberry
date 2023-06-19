@@ -5,6 +5,16 @@ Changelog
 
 Dev version
 -----------
+
+
+
+Version 0.4.1  (latest stable version)
+--------------------------------------
+
+*PR #307*
+
+* Create fork gym0.21 for setuptools non-retrocompatible changes.
+
 *PR #306*
 
 * Add Q-learning agent in :class:`rlberry.agents.QLAgent` and SARSA agent in :class:`rlberry.agents.SARSAAgent`.
@@ -18,8 +28,8 @@ Dev version
 * Add and update code to use "Atari games" env
 
 
-Version 0.4.0  (latest stable version)
---------------------------------------
+Version 0.4.0
+-------------
 
 *PR #273*
 
