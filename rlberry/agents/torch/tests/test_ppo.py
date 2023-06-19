@@ -20,7 +20,7 @@ import sys
 @pytest.mark.timeout(300)
 @pytest.mark.xfail(sys.platform == "win32", reason="bug with windows???")
 def test_ppo():
-    env = "CartPole-v0"
+    env = "CartPole-v1"
     mdp = make(env)
     env_ctor = Wrapper
     env_kwargs = dict(env=mdp)
@@ -98,7 +98,7 @@ def test_ppo():
     pporlberry_stats.clear_output_dir()
 
     # test also non default
-    env = "CartPole-v0"
+    env = "CartPole-v1"
     mdp = make(env)
     env_ctor = Wrapper
     env_kwargs = dict(env=mdp)

@@ -1,5 +1,6 @@
 import torch
 import inspect
+import numpy as np
 
 import gym.spaces as spaces
 from rlberry.agents import AgentWithSimplePolicy
@@ -197,7 +198,7 @@ class REINFORCEAgent(AgentWithSimplePolicy):
             rewards.insert(0, discounted_reward)
 
         # convert list to tensor
-        states = torch.FloatTensor(self.memory.states).to(self.device)
+        states = torch.FloatTensor(np.array(self.memory.states)).to(self.device)
         actions = torch.LongTensor(self.memory.actions).to(self.device)
         rewards = torch.FloatTensor(rewards).to(self.device)
         if self.normalize:
@@ -225,9 +226,9 @@ class REINFORCEAgent(AgentWithSimplePolicy):
     def sample_parameters(cls, trial):
         batch_size = trial.suggest_categorical("batch_size", [1, 4, 8, 16, 32])
         gamma = trial.suggest_categorical("gamma", [0.9, 0.95, 0.99])
-        learning_rate = trial.suggest_loguniform("learning_rate", 1e-5, 1)
+        learning_rate = trial.suggest_float("learning_rate", 1e-5, 1, log=True)
 
-        entr_coef = trial.suggest_loguniform("entr_coef", 1e-8, 0.1)
+        entr_coef = trial.suggest_float("entr_coef", 1e-8, 0.1, log=True)
 
         return {
             "batch_size": batch_size,

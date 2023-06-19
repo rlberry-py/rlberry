@@ -67,7 +67,7 @@ def test_remote_manager():
     remote_manager = RemoteAgentManager(
         client,
         agent_class=ResourceRequest(name="REINFORCEAgent"),
-        train_env=ResourceRequest(name="gym_make", kwargs=dict(id="CartPole-v0")),
+        train_env=ResourceRequest(name="gym_make", kwargs=dict(id="CartPole-v1")),
         fit_budget=10,
         init_kwargs=dict(gamma=0.99),
         eval_kwargs=dict(eval_horizon=2, n_simulations=2),

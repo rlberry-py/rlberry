@@ -38,7 +38,7 @@ class DummyAgent(AgentWithSimplePolicy):
     @classmethod
     def sample_parameters(cls, trial):
         hyperparameter1 = trial.suggest_categorical("hyperparameter1", [1, 2, 3])
-        hyperparameter2 = trial.suggest_uniform("hyperparameter2", -10, 10)
+        hyperparameter2 = trial.suggest_float("hyperparameter2", -10, 10)
         return {"hyperparameter1": hyperparameter1, "hyperparameter2": hyperparameter2}
 
 
