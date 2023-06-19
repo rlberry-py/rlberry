@@ -18,7 +18,7 @@ class AdaptiveQLAgent(AgentWithSimplePolicy):
     Parameters
     ----------
     env : gym.Env
-        Environment with discrete states and actions.
+        Environment with continuous states and discrete actions.
     gamma : double, default: 1.0
         Discount factor in [0, 1].
     horizon : int

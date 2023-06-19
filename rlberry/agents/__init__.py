@@ -13,3 +13,4 @@ from .optql import OptQLAgent
 from .psrl import PSRLAgent
 from .rlsvi import RLSVIAgent
 from .ucbvi import UCBVIAgent
+from .tabular_rl import QLAgent, SARSAAgent

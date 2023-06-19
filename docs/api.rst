@@ -50,6 +50,8 @@ Basic Agents
    :toctree: generated/
    :template: class.rst
 
+   agents.QLAgent
+   agents.SARSAAgent
    agents.ValueIterationAgent
    agents.MBQVIAgent
    agents.UCBVIAgent
