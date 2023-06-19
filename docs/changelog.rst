@@ -5,6 +5,10 @@ Changelog
 
 Dev version
 -----------
+*PR #308*
+
+* Update make_atari_env and PPO to be compatible together and use vectorized env (PPO manage the vector)
+
 *PR #298*
 
 * Move old scripts (jax agents, attention networks, old examples...) that we won't maintain from the main branch to an archive branch.

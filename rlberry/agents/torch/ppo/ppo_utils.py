@@ -11,7 +11,7 @@ from rlberry.utils.jit_setup import numba_jit
 logger = logging.getLogger(__name__)
 
 
-def process_ppo_env(env, seeder, num_envs=1, asynchronous=False):
+def process_ppo_env(env, seeder, num_envs=1, asynchronous=False, copy_env=True):
     """
     Process environment for PPO. It's the only agent that supports vectorized
     environments.
@@ -35,10 +35,8 @@ def process_ppo_env(env, seeder, num_envs=1, asynchronous=False):
     vec_env_cls = (
         gym.vector.AsyncVectorEnv if asynchronous else gym.vector.SyncVectorEnv
     )
-    return gym.wrappers.VectorListInfo(
-        vec_env_cls(
-            [lambda: process_env(env, seeder, copy_env=True) for _ in range(num_envs)]
-        )
+    return vec_env_cls(
+        [lambda: process_env(env, seeder, copy_env=copy_env) for _ in range(num_envs)]
     )
 
 
