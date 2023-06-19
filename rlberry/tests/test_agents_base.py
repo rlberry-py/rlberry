@@ -44,6 +44,8 @@ class OneHotLSVI(agents.LSVIUCBAgent):
 
 
 FINITE_MDP_AGENTS = [
+    agents.QLAgent,
+    agents.SARSAAgent,
     agents.ValueIterationAgent,
     agents.MBQVIAgent,
     agents.UCBVIAgent,

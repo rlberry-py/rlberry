@@ -24,6 +24,21 @@ class QLAgent(AgentWithSimplePolicy):
         If None: No exploration.
     exploration_rate: float, default: None
         epsilon parameter for Epsilon-Greedy exploration or tau parameter for Boltzmann exploration.
+
+    Attributes
+    ----------
+    Q : ndarray
+        2D array that stores the estimation ofexpected rewards for state-action pairs.
+
+    Examples
+    --------
+    >>> from rlberry.envs import GridWorld
+    >>>
+    >>> env = GridWorld(walls=(), nrows=5, ncols=5)
+    >>> agent = QLAgent()
+    >>> agent.fit(budget=1000)
+    >>> agent.policy(env.observation_space.sample())
+    >>> agent.reset()
     """
 
     name = "QL"
