@@ -265,7 +265,6 @@ def test_ppo_agent_manager_vectorized_atari_env(num_envs):
             output_dir=saving_path,
             # eval_env = (atari_make,dict(id="ALE/Atlantis-v5",n_envs=1))
         )
-
         test_agent_manager.fit(budget=500)
 
         # test the save function

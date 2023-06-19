@@ -260,15 +260,24 @@ def _check_save_load_with_manager(agent, env="continuous_state", init_kwargs=Non
             > 1
         ), "The saved file is empty."
         try:
-            manager.load(str(manager.output_dir_) + "/agent_handlers/idx_0.pickle")
-        except Exception:
+            params_for_loader = dict(env=test_env)
+
+            if issubclass(agent, StableBaselinesAgent):
+                # StableBaselinesAgent need to add some params to load
+                params_for_loader["algo_cls"] = init_kwargs["algo_cls"]
+
+            agent.load(
+                str(manager.output_dir_) + "/agent_handlers/idx_0.pickle",
+                **params_for_loader
+            )
+        except Exception as ex:
             raise RuntimeError("Failed to load the agent file.")
 
         # test agentManager save and load
         manager.save()
         assert os.path.exists(tmpdirname)
 
-        path_to_load = next(pathlib.Path(tmpdirname).glob("**/*.pickle"))
+        path_to_load = next(pathlib.Path(tmpdirname).glob("**/manager_obj.pickle"))
         loaded_agent_manager = AgentManager.load(path_to_load)
         assert loaded_agent_manager
 
@@ -319,8 +328,8 @@ def _check_save_load_without_manager(agent, env="continuous_state", init_kwargs=
 
         params_for_loader = dict(env=train_env)
 
-        # extract the class name to check if we need to add some param to load
         if issubclass(agent, StableBaselinesAgent):
+            # StableBaselinesAgent need to add some params to load
             params_for_loader["algo_cls"] = init_kwargs["algo_cls"]
 
         loaded_agent = agent.load(saving_path, **params_for_loader)

@@ -5,6 +5,7 @@ import torch.nn as nn
 import gymnasium.spaces as spaces
 import rlberry
 from rlberry.agents import AgentWithSimplePolicy
+from rlberry.agents import AgentTorch
 from rlberry.envs.utils import process_env
 from rlberry.agents.torch.utils.training import optimizer_factory
 from rlberry.agents.torch.utils.models import default_policy_net_fn
@@ -37,7 +38,7 @@ logger = rlberry.logger
 # - close() closes all environments
 
 
-class PPOAgent(AgentWithSimplePolicy):
+class PPOAgent(AgentTorch, AgentWithSimplePolicy):
     """
     Proximal Policy Optimization Agent.
 

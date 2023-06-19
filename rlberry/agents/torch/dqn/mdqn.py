@@ -4,7 +4,7 @@ import numpy as np
 import torch
 from gymnasium import spaces
 from rlberry import types
-from rlberry.agents import AgentWithSimplePolicy
+from rlberry.agents import AgentWithSimplePolicy, AgentTorch
 from rlberry.agents.torch.utils.training import (
     loss_function_factory,
     model_factory,
@@ -42,7 +42,7 @@ def default_q_net_fn(env, **kwargs):
     return model_factory(**model_config)
 
 
-class MunchausenDQNAgent(AgentWithSimplePolicy):
+class MunchausenDQNAgent(AgentTorch, AgentWithSimplePolicy):
     """Munchausen DQN Agent based on PyTorch.
 
     Notes

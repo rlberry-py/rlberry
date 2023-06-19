@@ -5,6 +5,10 @@ Changelog
 
 Dev version
 -----------
+*PR #318*
+
+* Update to allow the training on a computer with GPU, save the agents, then load it on a computer without GPU.
+
 *PR #308*
 
 * Update make_atari_env and PPO to be compatible together and use vectorized env (PPO manage the vector)

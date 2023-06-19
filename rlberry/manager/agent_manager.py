@@ -840,6 +840,11 @@ class AgentManager:
         """
         filename = Path(filename).with_suffix(".pickle")
 
+        if filename.name != "manager_obj.pickle":
+            raise ValueError(
+                "The agent_manager objects should be save in file named 'manager_obj.pickle'"
+            )
+
         obj = cls(None, None, None)
 
         compress_pickle = is_bz_file(filename)
@@ -851,7 +856,7 @@ class AgentManager:
             else:
                 with bz2.BZ2File(filename, "rb") as ff:
                     tmp_dict = cPickle.load(ff)
-        except Exception:
+        except Exception as ex:
             if not compress_pickle:
                 with filename.open("rb") as ff:
                     tmp_dict = dill.load(ff)
