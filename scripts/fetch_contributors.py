@@ -26,6 +26,8 @@ MEMBERS = [
     "riccardodv",
     "AleShi94",
     "KohlerHECTOR",
+    "JulienT01",
+    "riiswa"
 ]
 
 
