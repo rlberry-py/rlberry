@@ -23,7 +23,7 @@ if __name__ == "__main__":
 
     local_manager = AgentManager(
         agent_class=REINFORCEAgent,
-        train_env=(gym_make, dict(id="CartPole-v0")),
+        train_env=(gym_make, dict(id="CartPole-v1")),
         fit_budget=FIT_BUDGET,
         init_kwargs=dict(gamma=0.99),
         eval_kwargs=dict(eval_horizon=200, n_simulations=20),
@@ -36,7 +36,7 @@ if __name__ == "__main__":
     remote_manager = RemoteAgentManager(
         client,
         agent_class=ResourceRequest(name="REINFORCEAgent"),
-        train_env=ResourceRequest(name="gym_make", kwargs=dict(id="CartPole-v0")),
+        train_env=ResourceRequest(name="gym_make", kwargs=dict(id="CartPole-v1")),
         fit_budget=FIT_BUDGET,
         init_kwargs=dict(gamma=0.99),
         eval_kwargs=dict(eval_horizon=200, n_simulations=20),

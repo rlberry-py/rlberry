@@ -195,7 +195,7 @@ class BaseModule(torch.nn.Module):
         self.activation = activation_factory(activation_type)
         self.reset_type = reset_type
 
-    def _init_weights(self, m, param=None):
+    def _init_weights(self, m, param=None, put_bias_to_zero=False):
         if hasattr(m, "weight"):
             if self.reset_type == "xavier":
                 torch.nn.init.xavier_uniform_(m.weight.data)
@@ -205,8 +205,9 @@ class BaseModule(torch.nn.Module):
                 torch.nn.init.orthogonal_(m.weight.data, gain=param)
             else:
                 raise ValueError("Unknown reset type")
-        if hasattr(m, "bias") and m.bias is not None:
-            torch.nn.init.constant_(m.bias.data, 0.0)
+        if put_bias_to_zero:
+            if hasattr(m, "bias") and m.bias is not None:
+                torch.nn.init.constant_(m.bias.data, 0.0)
 
     def reset(self):
         self.apply(self._init_weights)
@@ -320,6 +321,9 @@ class MultiLayerPerceptron(BaseModule):
         if self.out_size:
             if self.ctns_actions:
                 self.logstd.data.fill_(np.log(self.std0))
+                self.apply(
+                    partial(self._init_weights, param=np.log(2), put_bias_to_zero=True)
+                )
             self._init_weights(self.predict, param=self.pred_init_scale)
 
     def forward(self, x):

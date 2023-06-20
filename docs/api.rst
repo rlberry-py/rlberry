@@ -50,6 +50,8 @@ Basic Agents
    :toctree: generated/
    :template: class.rst
 
+   agents.QLAgent
+   agents.SARSAAgent
    agents.ValueIterationAgent
    agents.MBQVIAgent
    agents.UCBVIAgent
@@ -168,6 +170,15 @@ Seeding
 
 Utilities, Logging & Typing
 ===========================
+
+Manager Utilitis
+----------------
+
+.. autosummary::
+   :toctree: generated/
+   :template: function.rst
+   manager.preset_manager
+
 
 Writer Utilities
 ----------------

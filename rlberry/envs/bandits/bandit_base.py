@@ -3,7 +3,7 @@ from collections import deque
 
 from rlberry.envs.interface import Model
 import rlberry.spaces as spaces
-
+from rlberry.seeding import Seeder
 
 import rlberry
 
@@ -32,6 +32,13 @@ class Bandit(Model):
         self.laws = laws
         self.n_arms = len(self.laws)
         self.action_space = spaces.Discrete(self.n_arms)
+
+        # Pre-sample 10 samples
+        self.rewards = [
+            deque(self.laws[action].rvs(size=10, random_state=self.rng))
+            for action in range(self.n_arms)
+        ]
+        self.n_rewards = [10] * self.n_arms
 
     def step(self, action):
         """

@@ -28,7 +28,7 @@ def gym_make(id, wrap_spaces=False, **kwargs):
     --------
     >>> from rlberry.envs import gym_make
     >>> env_ctor = gym_make
-    >>> env_kwargs = {"id": "CartPole-v0"}
+    >>> env_kwargs = {"id": "CartPole-v1"}
     >>> env = env_ctor(**env_kwargs)
     """
     if "module_import" in kwargs:

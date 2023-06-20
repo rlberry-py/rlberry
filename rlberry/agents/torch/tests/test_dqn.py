@@ -13,7 +13,7 @@ import tempfile
     "use_double_dqn, use_prioritized_replay", [(False, False), (True, True)]
 )
 def test_dqn_agent(use_double_dqn, use_prioritized_replay):
-    env = gym_make("CartPole-v0")
+    env = gym_make("CartPole-v1")
     agent = DQNAgent(
         env,
         learning_starts=5,

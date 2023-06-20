@@ -58,7 +58,7 @@ class ReplayBuffer:
     >>> buffer.setup_entry("rewards", np.float32)
     >>>
     >>> # Store data in the replay
-    >>> env = gym_make("CartPole-v0")
+    >>> env = gym_make("CartPole-v1")
     >>> for _ in range(500):
     >>>     done = False
     >>>     obs,info = env.reset()

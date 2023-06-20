@@ -9,7 +9,6 @@ from rlberry.envs.gym_make import gym_make
 import pathlib
 from rlberry.agents.stable_baselines.stable_baselines import StableBaselinesAgent
 
-from optuna.samplers import TPESampler
 
 SEED = 42
 
@@ -29,7 +28,7 @@ def _make_tuple_env(env):
             env_kwargs = {}
         elif env == "vectorized_env_continuous":
             env_ctor = gym_make
-            env_kwargs = dict(id="CartPole-v0")
+            env_kwargs = dict(id="CartPole-v1")
         else:
             raise ValueError("The env given in parameter is not implemented")
     elif isinstance(env, tuple):  # If env param is a tuple, return it
@@ -556,6 +555,8 @@ def check_hyperparam_optimisation_agent(
 
 
 def _test_hyperparam_optim_tpe(agent, env="continuous_state", init_kwargs=None):
+    from optuna.samplers import TPESampler
+
     # Define trainenv
     if init_kwargs is None:
         init_kwargs = {}

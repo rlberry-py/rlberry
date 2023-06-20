@@ -25,8 +25,8 @@ Dev version
 
 * New branch for code compatible with Gymnasium
 
-Version 0.4.0  (latest stable version)
---------------------------------------
+Version 0.4.0
+-------------
 
 *PR#273*
 

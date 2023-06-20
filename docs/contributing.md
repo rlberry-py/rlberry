@@ -122,7 +122,7 @@ class MyAgent(Agent):
         # for example, param_1 could be the batch_size...
         param_1 = trial.suggest_categorical("param_1", [1, 4, 8, 16, 32, 64])
         # ... and param_2 could be a learning_rate
-        param_2 = trial.suggest_loguniform("param_2", 1e-5, 1)
+        param_2 = trial.suggest_float("param_2", 1e-5, 1, log=True)
         return {
             "param_1": param_1,
             "param_2": param_2,
