@@ -22,6 +22,7 @@ install_requires = [
     "dill",
     "docopt",
     "pyyaml",
+    "tqdm",
 ]
 
 #
