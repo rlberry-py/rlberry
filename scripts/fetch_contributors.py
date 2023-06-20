@@ -27,7 +27,7 @@ MEMBERS = [
     "AleShi94",
     "KohlerHECTOR",
     "JulienT01",
-    "riiswa"
+    "riiswa",
 ]
 
 
