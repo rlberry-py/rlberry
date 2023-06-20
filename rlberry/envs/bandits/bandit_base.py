@@ -3,7 +3,6 @@ from collections import deque
 
 from rlberry.envs.interface import Model
 import rlberry.spaces as spaces
-from rlberry.seeding import Seeder
 
 import rlberry
 
