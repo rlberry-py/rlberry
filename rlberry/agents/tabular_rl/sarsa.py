@@ -101,7 +101,9 @@ class SARSAAgent(AgentWithSimplePolicy):
         episode_rewards = 0
         for i in range(budget):
             action = self.get_action(observation)
-            next_observation, reward, terminated, truncated, info  = self.env.step(action)
+            next_observation, reward, terminated, truncated, info = self.env.step(
+                action
+            )
             done = terminated or truncated
             episode_rewards += reward
             if self.writer is not None:
@@ -119,5 +121,5 @@ class SARSAAgent(AgentWithSimplePolicy):
                 )
             observation = next_observation
             if done:
-                observation,info = self.env.reset()
+                observation, info = self.env.reset()
                 episode_rewards = 0
