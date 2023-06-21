@@ -46,7 +46,7 @@ def test_dqn_agent(use_double_dqn, use_prioritized_replay):
 
 
 def test_dqn_classic_env():
-    env = gym_make("CartPole-v0")
+    env = gym_make("CartPole-v1")
     agent = DQNAgent(
         env,
         learning_starts=5,
@@ -66,7 +66,7 @@ def test_dqn_classic_env():
         assert os.path.exists(saving_path)
 
         # test the loading function
-        test_load_env = gym_make("CartPole-v0")
+        test_load_env = gym_make("CartPole-v1")
         loaded_agent = DQNAgent.load(saving_path, **dict(env=test_load_env))
         assert loaded_agent
 
@@ -94,7 +94,7 @@ def test_dqn_agent_manager_classic_env():
             (
                 gym_make,
                 dict(
-                    id="CartPole-v0",
+                    id="CartPole-v1",
                 ),
             ),  # The Environment to solve.
             init_kwargs=dict(  # Where to put the agent's hyperparameters
@@ -122,7 +122,7 @@ def test_dqn_agent_manager_classic_env():
         assert os.path.exists(saving_path)
 
         # test the loading function
-        test_load_env = gym_make("CartPole-v0")
+        test_load_env = gym_make("CartPole-v1")
         path_to_load = next(pathlib.Path(saving_path).glob("**/*.pickle"))
         loaded_agent_manager = AgentManager.load(path_to_load)
         assert loaded_agent_manager
