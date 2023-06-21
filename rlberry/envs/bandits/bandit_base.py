@@ -46,7 +46,7 @@ class Bandit(Model):
         # test that the action exists
         assert action < self.n_arms
 
-        reward = self.laws[action].rvs(random_state=self.rng)
+        reward = self.laws[action].rvs(random_state=self.rng, size=1)
         terminated = True
         truncated = False
 
