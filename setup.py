@@ -34,8 +34,7 @@ default_requires = [
     "numba",
     "optuna",
     "ffmpeg-python",
-    "PyOpenGL==3.1.5",
-    "PyOpenGL_accelerate==3.1.5",
+    "PyOpenGL",
     "pyvirtualdisplay",
     "gymnasium",
 ]
