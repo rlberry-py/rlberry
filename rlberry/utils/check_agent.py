@@ -260,7 +260,7 @@ def _check_save_load_with_manager(agent, env="continuous_state", init_kwargs=Non
         try:
             params_for_loader = dict(env=test_env)
 
-            if agent.__module__ == 'rlberry.agents.stable_baselines.stable_baselines':
+            if agent.__module__ == "rlberry.agents.stable_baselines.stable_baselines":
                 # StableBaselinesAgent need to add some params to load
                 params_for_loader["algo_cls"] = init_kwargs["algo_cls"]
 
@@ -326,7 +326,7 @@ def _check_save_load_without_manager(agent, env="continuous_state", init_kwargs=
 
         params_for_loader = dict(env=train_env)
 
-        if agent.__module__ == 'rlberry.agents.stable_baselines.stable_baselines':
+        if agent.__module__ == "rlberry.agents.stable_baselines.stable_baselines":
             # StableBaselinesAgent need to add some params to load
             params_for_loader["algo_cls"] = init_kwargs["algo_cls"]
 
