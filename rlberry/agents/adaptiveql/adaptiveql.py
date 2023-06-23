@@ -1,4 +1,4 @@
-import gym.spaces as spaces
+import gymnasium.spaces as spaces
 import numpy as np
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.agents.adaptiveql.tree import MDPTreePartition
@@ -134,15 +134,18 @@ class AdaptiveQLAgent(AgentWithSimplePolicy):
     def _run_episode(self):
         # interact for H steps
         episode_rewards = 0
-        state = self.env.reset()
+        observation, info = self.env.reset()
         for hh in range(self.horizon):
-            action, node = self._get_action_and_node(state, hh)
-            next_state, reward, done, _ = self.env.step(action)
+            action, node = self._get_action_and_node(observation, hh)
+            next_observation, reward, terminated, truncated, info = self.env.step(
+                action
+            )
+            done = terminated or truncated
             episode_rewards += reward
 
-            self._update(node, state, action, next_state, reward, hh)
+            self._update(node, observation, action, next_observation, reward, hh)
 
-            state = next_state
+            observation = next_observation
             if done:
                 break
 

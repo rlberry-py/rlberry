@@ -92,14 +92,15 @@ class MirrorBandit(Model):
         assert action < self.n_arms
 
         reward = -get_time(self.url_list[action])
-        done = True
-        return 0, reward, done, {}
+        terminated = True
+        truncated = False
+        return 0, reward, terminated, truncated, {}
 
-    def reset(self):
+    def reset(self, seed=None):
         """
         Reset the environment to a default state.
         """
-        return 0
+        return 0, {}
 
 
 env_ctor = MirrorBandit
@@ -136,7 +137,9 @@ class SeqHalvAgent(BanditWithSimplePolicy):
                 for k in active_set:
                     action = k
                     actions += [action]
-                    _, reward, _, _ = self.env.step(action)
+                    observation, reward, terminated, truncated, info = self.env.step(
+                        action
+                    )
                     rewards += [reward]
                     ep += 1
             reward_est = [

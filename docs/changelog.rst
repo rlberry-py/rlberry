@@ -5,19 +5,13 @@ Changelog
 
 Dev version
 -----------
+*PR #318*
 
+* Update to allow the training on a computer with GPU, save the agents, then load it on a computer without GPU.
 
+*PR #308*
 
-Version 0.4.1  (latest stable version)
---------------------------------------
-
-*PR #307*
-
-* Create fork gym0.21 for setuptools non-retrocompatible changes.
-
-*PR #306*
-
-* Add Q-learning agent in :class:`rlberry.agents.QLAgent` and SARSA agent in :class:`rlberry.agents.SARSAAgent`.
+* Update make_atari_env and PPO to be compatible together and use vectorized env (PPO manage the vector)
 
 *PR #298*
 
@@ -27,11 +21,14 @@ Version 0.4.1  (latest stable version)
 
 * Add and update code to use "Atari games" env
 
+*PR#281*
+
+* New branch for code compatible with Gymnasium
 
 Version 0.4.0
 -------------
 
-*PR #273*
+*PR#273*
 
 * Change the default behavior of `plot_writer_data` so that if seaborn has version >= 0.12.0 then
   a 90% percentile interval is used instead of sd.

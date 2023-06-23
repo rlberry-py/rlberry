@@ -49,7 +49,8 @@ def check_bandit_agent(Agent, environment=BernoulliBandit, seed=42):
 
     agent1.fit()
     agent2.fit()
-    state = 0
+    env = env_ctor(**env_kwargs)
+    state, info = env.reset()
     result = True
     for _ in range(5):
         # test reproducibility on 5 actions

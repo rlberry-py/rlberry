@@ -1,4 +1,4 @@
-import gym
+import gymnasium as gym
 import numpy as np
 
 from rlberry.envs.bullet3.pybullet_envs.robot_bases import URDFBasedRobot2

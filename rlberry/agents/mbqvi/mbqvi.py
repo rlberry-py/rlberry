@@ -3,7 +3,7 @@ import numpy as np
 
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.agents.dynprog.utils import backward_induction, value_iteration
-from gym.spaces import Discrete
+from gymnasium.spaces import Discrete
 
 import rlberry
 
@@ -104,7 +104,7 @@ class MBQVIAgent(AgentWithSimplePolicy):
         for ss in range(S):
             for aa in range(A):
                 for _ in range(self.n_samples):
-                    next_state, reward, _, _ = self.env.sample(ss, aa)
+                    next_state, reward, _, _, _ = self.env.sample(ss, aa)
                     self._update(ss, aa, next_state, reward)
 
                     count += 1

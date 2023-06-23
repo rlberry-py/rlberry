@@ -1,8 +1,8 @@
 from collections import deque
 
+
 from rlberry.envs.interface import Model
 import rlberry.spaces as spaces
-from rlberry.seeding import Seeder
 
 import rlberry
 
@@ -46,41 +46,17 @@ class Bandit(Model):
         # test that the action exists
         assert action < self.n_arms
 
-        # If the queue of reward for the action is empty, sample 2*size of old reward queue. Otherwise, pop from queue
-        if self.rewards[action]:
-            reward = self.rewards[action].pop()
-        else:
-            self.n_rewards[action] = 2 * self.n_rewards[action]
-            self.rewards[action] = deque(
-                self.laws[action].rvs(
-                    size=self.n_rewards[action], random_state=self.rng
-                )
-            )
-            reward = self.rewards[action].pop()
+        reward = self.laws[action].rvs(random_state=self.rng, size=1)[0]
+        terminated = True
+        truncated = False
 
-        done = True
+        return 0, reward, terminated, truncated, {}
 
-        return 0, reward, done, {}
-
-    def reseed(self, seed_seq=None):
-        if seed_seq is None:
-            self.seeder = self.seeder.spawn()
-        else:
-            self.seeder = Seeder(seed_seq)
-        # spaces
-        self.action_space.reseed(self.seeder.seed_seq)
-
-        self.rewards = [
-            deque(self.laws[action].rvs(size=10, random_state=self.rng))
-            for action in range(self.n_arms)
-        ]
-        self.n_rewards = [10] * self.n_arms
-
-    def reset(self):
+    def reset(self, seed=None, option=None):
         """
         Reset the environment to a default state.
         """
-        return 0
+        return 0, {}
 
 
 class AdversarialBandit(Model):
@@ -115,12 +91,12 @@ class AdversarialBandit(Model):
 
         rewards = self.rewards.popleft()
         reward = rewards[action]
-        done = True
+        terminated = True
+        truncated = False
+        return 0, reward, terminated, truncated, {}
 
-        return 0, reward, done, {}
-
-    def reset(self):
+    def reset(self, seed=None, option=None):
         """
         Reset the environment to a default state.
         """
-        return 0
+        return 0, {}

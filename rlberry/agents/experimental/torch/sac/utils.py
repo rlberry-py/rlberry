@@ -1,6 +1,6 @@
 import torch
 from torch.nn.functional import one_hot
-import gym.spaces as spaces
+import gymnasium.spaces as spaces
 import numpy as np
 
 

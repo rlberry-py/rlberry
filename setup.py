@@ -18,10 +18,11 @@ install_requires = [
     "matplotlib",
     "seaborn",
     "pandas",
-    "gym[accept-rom-license] @ git+https://github.com/rlberry-py/gym_fix_021",
+    "gymnasium",
     "dill",
     "docopt",
     "pyyaml",
+    "tqdm",
 ]
 
 #
@@ -34,8 +35,8 @@ default_requires = [
     "optuna",
     "ffmpeg-python",
     "PyOpenGL",
-    "PyOpenGL_accelerate",
     "pyvirtualdisplay",
+    "gymnasium",
 ]
 
 # tensorboard must be installed manually, due to conflicts with
@@ -43,7 +44,9 @@ default_requires = [
 torch_agents_requires = default_requires + [
     "torch>=1.6.0",
     "opencv-python",
-    "ale-py==0.7.4",
+    "gymnasium[atari,accept-rom-license]",
+    "ale-py>=0.8.0",
+    "stable-baselines3",
     # 'tensorboard'
 ]
 

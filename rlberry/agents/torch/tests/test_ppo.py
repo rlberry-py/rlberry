@@ -12,7 +12,7 @@ from rlberry.envs import Wrapper
 from rlberry.agents.torch import PPOAgent
 from rlberry.manager import AgentManager, evaluate_agents
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
-from gym import make
+from gymnasium import make
 from rlberry.agents.torch.utils.training import model_factory_from_env
 import sys
 

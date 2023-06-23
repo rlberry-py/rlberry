@@ -2,7 +2,7 @@ from rlberry.envs import Wrapper
 from rlberry.agents.torch import A2CAgent
 from rlberry.manager import AgentManager, evaluate_agents
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
-from gym import make
+from gymnasium import make
 
 
 def test_a2c():

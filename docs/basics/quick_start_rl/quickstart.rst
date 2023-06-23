@@ -52,10 +52,10 @@ Let us see a graphical representation
 .. code:: python
 
     env.enable_rendering()
-    state = env.reset()
+    observation, info = env.reset()
     for tt in range(5):
-        next_s, _, done, _ = env.step(1)
-        state = next_s
+        observation, reward, terminated, truncated, info = env.step(1)
+        done = terminated or truncated
     video = env.save_video("video_chain.mp4", framerate=5)
 
 
@@ -131,7 +131,7 @@ Our goal is then to assess the performance of the two algorithms.
             AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
         def fit(self, budget=100, **kwargs):
-            observation = self.env.reset()
+            observation, info = self.env.reset()
             for ep in range(budget):
                 action = self.policy(observation)
                 observation, reward, done, _ = self.env.step(action)
@@ -294,10 +294,11 @@ it’s an agent that always chooses the action that moves to the right.
             self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
 
         def fit(self, budget=100, **kwargs):
-            observation = self.env.reset()
+            observation, info = self.env.reset()
             for ep in range(budget):
                 action = 1
-                observation, reward, done, _ = self.env.step(action)
+                observation, reward, terminated, truncated, info = self.env.step(action)
+                done = terminated or truncated
 
         def policy(self, observation):
             return 1

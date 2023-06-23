@@ -17,7 +17,7 @@ Agent is slightly tuned, but not optimal. This is just for illustration purpose.
 from rlberry.manager.agent_manager import AgentManager
 from datetime import datetime
 from rlberry.agents.torch.dqn.dqn import DQNAgent
-from gym.wrappers.record_video import RecordVideo
+from gymnasium.wrappers.record_video import RecordVideo
 import shutil
 import os
 from rlberry.envs.gym_make import atari_make
@@ -84,23 +84,21 @@ final_train_time = datetime.now()
 
 print("-------- test agent with video--------")
 
-env = atari_make(
-    "ALE/Freeway-v5",
-)
-env = RecordVideo(env, "docs/_video/temp")
+env = atari_make("ALE/Freeway-v5", render_mode="rgb_array")
+env = RecordVideo(env, "_video/temp")
 
 if "render_modes" in env.metadata:
     env.metadata["render.modes"] = env.metadata[
         "render_modes"
     ]  # bug with some 'gym' version
 
-state = env.reset()
+observation, info = env.reset()
 for tt in range(30000):
-    action = tuned_agent.get_agent_instances()[0].policy(state)
-    next_s, _, done, test = env.step(action)
+    action = tuned_agent.get_agent_instances()[0].policy(observation)
+    observation, reward, terminated, truncated, info = env.step(action)
+    done = terminated or truncated
     if done:
         break
-    state = next_s
 
 env.close()
 
@@ -108,6 +106,7 @@ print("-------- test agent with video : done!--------")
 final_test_time = datetime.now()
 tuned_agent.save()
 
+# need to move the final result inside the folder used for documentation
 os.rename("_video/temp/rl-video-episode-0.mp4", "_video/video_plot_atari_freeway.mp4")
 shutil.rmtree("_video/temp/")
 

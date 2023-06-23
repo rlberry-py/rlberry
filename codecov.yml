@@ -22,6 +22,7 @@ parsers:
 
 ignore:
   - "./rlberry/rendering/opengl_render2d.py"
+  - "./rlberry/wrappers/tests/old_env/*.py"
   - "./rlberry/rendering/pygame_render2d.py"
   - "./rlberry/colab_utils/display_setup.py"
   - "./rlberry/agents/experimental/jax/**/*.py"

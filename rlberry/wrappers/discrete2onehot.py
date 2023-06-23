@@ -19,11 +19,11 @@ class DiscreteToOneHotWrapper(Wrapper):
         one_hot_obs[obs] = 1.0
         return one_hot_obs
 
-    def reset(self):
-        obs = self.env.reset()
-        return self.process_obs(obs)
+    def reset(self, seed=None, options=None):
+        obs, info = self.env.reset(seed=seed, options=options)
+        return self.process_obs(obs), info
 
     def step(self, action):
-        observation, reward, done, info = self.env.step(action)
+        observation, reward, terminated, truncated, info = self.env.step(action)
         observation = self.process_obs(observation)
-        return observation, reward, done, info
+        return observation, reward, terminated, truncated, info

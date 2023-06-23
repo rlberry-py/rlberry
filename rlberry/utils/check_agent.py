@@ -158,7 +158,7 @@ def check_agents_almost_equal(agent1, agent2, compare_using="policy", n_checks=5
     set_external_seed(SEED)
     results1 = []
     if compare_using == "policy":
-        state = agent1.env.reset()
+        state, info = agent1.env.reset()
     for f in range(n_checks):
         # do several tests if there is some randomness.
         if compare_using == "policy":
@@ -258,25 +258,38 @@ def _check_save_load_with_manager(agent, env="continuous_state", init_kwargs=Non
             > 1
         ), "The saved file is empty."
         try:
-            manager.load(str(manager.output_dir_) + "/agent_handlers/idx_0.pickle")
-        except Exception:
+            params_for_loader = dict(env=test_env)
+
+            if agent.__module__ == "rlberry.agents.stable_baselines.stable_baselines":
+                # StableBaselinesAgent need to add some params to load
+                params_for_loader["algo_cls"] = init_kwargs["algo_cls"]
+
+            agent.load(
+                str(manager.output_dir_) + "/agent_handlers/idx_0.pickle",
+                **params_for_loader
+            )
+        except Exception as ex:
             raise RuntimeError("Failed to load the agent file.")
 
         # test agentManager save and load
         manager.save()
         assert os.path.exists(tmpdirname)
 
-        path_to_load = next(pathlib.Path(tmpdirname).glob("**/*.pickle"))
+        path_to_load = next(pathlib.Path(tmpdirname).glob("**/manager_obj.pickle"))
         loaded_agent_manager = AgentManager.load(path_to_load)
         assert loaded_agent_manager
 
         # test with first agent of the manager
-        observation = test_env.reset()
+        observation, info = test_env.reset()
+
         for tt in range(50):
             action = loaded_agent_manager.get_agent_instances()[0].policy(observation)
-            next_observation, reward, done, info = test_env.step(action)
+            next_observation, reward, terminated, truncated, info = test_env.step(
+                action
+            )
+            done = terminated or truncated
             if done:
-                next_observation = test_env.reset()
+                next_observation, info = test_env.reset()
             observation = next_observation
 
 
@@ -313,27 +326,23 @@ def _check_save_load_without_manager(agent, env="continuous_state", init_kwargs=
 
         params_for_loader = dict(env=train_env)
 
-        # extract the class name to check if we need to add some param to load
-        try:
-            from rlberry.agents.stable_baselines.stable_baselines import (
-                StableBaselinesAgent,
-            )
-
-            if issubclass(agent, StableBaselinesAgent):
-                params_for_loader["algo_cls"] = init_kwargs["algo_cls"]
-        except ModuleNotFoundError:
-            pass
+        if agent.__module__ == "rlberry.agents.stable_baselines.stable_baselines":
+            # StableBaselinesAgent need to add some params to load
+            params_for_loader["algo_cls"] = init_kwargs["algo_cls"]
 
         loaded_agent = agent.load(saving_path, **params_for_loader)
         assert loaded_agent
 
         # test the agent
-        observation = test_env.reset()
+        observation, info = test_env.reset()
         for tt in range(50):
             action = loaded_agent.policy(observation)
-            next_observation, reward, done, info = test_env.step(action)
+            next_observation, reward, terminated, truncated, info = test_env.step(
+                action
+            )
+            done = terminated or truncated
             if done:
-                next_observation = test_env.reset()
+                next_observation, info = test_env.reset()
             observation = next_observation
 
 
@@ -397,10 +406,12 @@ def check_multi_fit(agent, env="continuous_state", init_kwargs=None):
     agent1.fit(13)
 
     # test
-    state = test_load_env.reset()
+    state, info = test_load_env.reset()
     for tt in range(50):
         action = agent1.policy(state)
-        next_s, _, done, test = test_load_env.step(action)
+        next_s, _, terminated, truncated, test = test_load_env.step(action)
+        done = terminated or truncated
+
         if done:
             break
         state = next_s
@@ -444,10 +455,12 @@ def check_vectorized_env_agent(
     agent1.fit(13)
 
     # test the agent
-    state = test_env.reset()
+    state, info = test_env.reset()
     for tt in range(50):
         action = agent1.policy(state)
-        next_s, _, done, test = test_env.step(action)
+        next_s, _, terminated, truncated, test = test_env.step(action)
+        done = terminated or truncated
+
         if done:
             break
         state = next_s

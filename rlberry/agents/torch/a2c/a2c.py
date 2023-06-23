@@ -1,9 +1,9 @@
 import torch
 import torch.nn as nn
 
-import gym.spaces as spaces
+import gymnasium.spaces as spaces
 import numpy as np
-from rlberry.agents import AgentWithSimplePolicy
+from rlberry.agents import AgentWithSimplePolicy, AgentTorch
 from rlberry.agents.utils.replay import ReplayBuffer
 from rlberry.agents.torch.utils.training import optimizer_factory
 from rlberry.agents.torch.utils.models import default_policy_net_fn
@@ -17,7 +17,7 @@ import rlberry
 logger = rlberry.logger
 
 
-class A2CAgent(AgentWithSimplePolicy):
+class A2CAgent(AgentTorch, AgentWithSimplePolicy):
     """
     Advantage Actor Critic Agent.
 
@@ -187,10 +187,13 @@ class A2CAgent(AgentWithSimplePolicy):
         timesteps_counter = 0
         episode_rewards = 0.0
         episode_timesteps = 0
-        observation = self.env.reset()
+        observation, info = self.env.reset()
         while timesteps_counter < budget:
             action = self._select_action(observation)
-            next_obs, reward, done, _ = self.env.step(action)
+            next_observation, reward, terminated, truncated, info = self.env.step(
+                action
+            )
+            done = terminated or truncated
             # if self._policy.ctns_actions:
             #     action = torch.from_numpy(action).float().to(self.device)
             # store data
@@ -208,7 +211,7 @@ class A2CAgent(AgentWithSimplePolicy):
             self.total_timesteps += 1
             timesteps_counter += 1
             episode_timesteps += 1
-            observation = next_obs
+            observation = next_observation
 
             # update
             if self.total_timesteps % self.batch_size == 0:
@@ -243,7 +246,7 @@ class A2CAgent(AgentWithSimplePolicy):
                     )
                 episode_rewards = 0.0
                 episode_timesteps = 0
-                observation = self.env.reset()
+                observation, info = self.env.reset()
 
     def _select_action(self, state):
         state = torch.from_numpy(state).float().to(self.device)

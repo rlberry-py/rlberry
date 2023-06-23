@@ -12,7 +12,7 @@ from rlberry.wrappers import RescaleRewardWrapper
 
 _GYM_INSTALLED = True
 try:
-    import gym
+    import gymnasium as gym
 except Exception:
     _GYM_INSTALLED = False
 
@@ -21,10 +21,10 @@ classes = [MountainCar, GridWorld, Chain, PBall2D, SimplePBallND, Acrobot]
 
 def get_env_trajectory(env, horizon):
     states = []
-    ss = env.reset()
+    ss, info = env.reset()
     for _ in range(horizon):
         states.append(ss)
-        ss, _, _, _ = env.step(env.action_space.sample())
+        ss, _, _, _, _ = env.step(env.action_space.sample())
     return states
 
 

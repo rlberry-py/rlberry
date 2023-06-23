@@ -1,6 +1,6 @@
 from typing import Optional, Literal
 import numpy as np
-from gym import spaces
+from gymnasium import spaces
 from scipy.special import softmax
 
 from rlberry import types
@@ -100,11 +100,14 @@ class QLAgent(AgentWithSimplePolicy):
             number of Q updates.
         """
         del kwargs
-        observation = self.env.reset()
+        observation, info = self.env.reset()
         episode_rewards = 0
         for i in range(budget):
             action = self.get_action(observation)
-            next_observation, reward, done, _ = self.env.step(action)
+            next_observation, reward, terminated, truncated, info = self.env.step(
+                action
+            )
+            done = terminated or truncated
             episode_rewards += reward
             if self.writer is not None:
                 self.writer.add_scalar("episode_rewards", episode_rewards, i)
@@ -120,5 +123,5 @@ class QLAgent(AgentWithSimplePolicy):
                 )
             observation = next_observation
             if done:
-                observation = self.env.reset()
+                observation, info = self.env.reset()
                 episode_rewards = 0

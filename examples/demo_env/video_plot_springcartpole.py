@@ -15,7 +15,7 @@ Agent is slightly tuned, but not optimal. This is just for illustration purpose.
 
 from rlberry.envs.classic_control import SpringCartPole
 from rlberry.agents.torch import DQNAgent
-from gym.wrappers.time_limit import TimeLimit
+from gymnasium.wrappers.time_limit import TimeLimit
 
 model_configs = {
     "type": "MultiLayerPerceptron",
@@ -34,14 +34,14 @@ agent = DQNAgent(env, **init_kwargs)
 agent.fit(budget=1e5)
 
 env.enable_rendering()
-state = env.reset()
+observation, info = env.reset()
 
 for tt in range(1000):
-    action = agent.policy(state)
-    next_state, reward, done, _ = env.step(action)
+    action = agent.policy(observation)
+    observation, reward, terminated, truncated, info = env.step(action)
+    done = terminated or truncated
     if done:
-        next_state = env.reset()
-    state = next_state
+        observation, info = env.reset()
 
 # Save video
 video = env.save_video("_video/video_plot_springcartpole.mp4")

@@ -36,4 +36,5 @@ def test_mdqn_agent(use_prioritized_replay):
         env, q_net_constructor=mlp, q_net_kwargs=model_configs, learning_starts=100
     )
     new_agent.fit(budget=200)
-    new_agent.policy(env.reset())
+    observation, info = env.reset()
+    new_agent.policy(observation)

@@ -169,10 +169,11 @@ array
                  **kwargs):
             del kwargs  # unused
             episode_regret = np.zeros(eval_horizon)
-            observation = self.eval_env.reset()
+            observation,info = self.eval_env.reset()
             for tt in range(eval_horizon):
                 action = self.policy(observation)
-                observation, reward, done, _ = self.eval_env.step(action)
+                observation, reward, terminated, truncated, info = self.eval_env.step(action)
+                done = terminated or truncated
                 episode_regret[tt] = 1-reward # Optimal reward is 1
             return episode_regret
 
@@ -188,10 +189,11 @@ array
                  **kwargs):
             del kwargs  # unused
             episode_regret = np.zeros(eval_horizon)
-            observation = self.eval_env.reset()
+            observation,info = self.eval_env.reset()
             for tt in range(eval_horizon):
                 action = self.policy(observation)
-                observation, reward, done, _ = self.eval_env.step(action)
+                observation, reward, terminated, truncated, info = self.eval_env.step(action)
+                done = terminated or truncated
                 episode_regret[tt] = 1-reward # Optimal reward is 1
 
             return episode_regret
