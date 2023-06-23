@@ -5,6 +5,17 @@ Changelog
 
 Dev version
 -----------
+
+Version 0.5.0
+-------------
+
+*PR #281, #323*
+
+ * Merge gymnasium branch into main, make gymnasium the default library for environments in rlberry.
+
+Version 0.4.1
+-------------
+
 *PR #318*
 
 * Update to allow the training on a computer with GPU, save the agents, then load it on a computer without GPU.
@@ -21,14 +32,14 @@ Dev version
 
 * Add and update code to use "Atari games" env
 
-*PR#281*
+*PR #281*
 
 * New branch for code compatible with Gymnasium
 
 Version 0.4.0
 -------------
 
-*PR#273*
+*PR #273*
 
 * Change the default behavior of `plot_writer_data` so that if seaborn has version >= 0.12.0 then
   a 90% percentile interval is used instead of sd.

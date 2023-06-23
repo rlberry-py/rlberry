@@ -19,7 +19,7 @@ OS dependency
 
 In order to render videos in rlberry, `ffmpeg <https://ffmpeg.org/>`_ must be installed.
 
-Latest version (0.4.1)
+Latest version (0.5.0)
 -------------------------------------
 
 Install the latest version for a stable release.
