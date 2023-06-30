@@ -1,12 +1,12 @@
 import time
 
-import gym.spaces as spaces
+import gymnasium.spaces as spaces
 import numpy as np
 import rlberry
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from rlberry.agents import AgentWithSimplePolicy
+from rlberry.agents import AgentTorch, AgentWithSimplePolicy
 from rlberry.agents.torch.sac.sac_utils import (default_policy_net_fn,
                                                 default_q_net_fn)
 from rlberry.agents.torch.utils.training import optimizer_factory
@@ -17,16 +17,17 @@ from rlberry.utils.torch import choose_device
 logger = rlberry.logger
 
 
-class SACAgent(AgentWithSimplePolicy):
+class SACAgent(AgentTorch, AgentWithSimplePolicy):
     """
     Experimental Soft Actor Critic Agent (WIP).
     TODO:
-        - [ ] Port to gymnasium
-        - [ ] Add more mujoco benchmarks
+        - [x] Port to gymnasium
         - [ ] Add seeding
-        - [ ] Stop and continue training (fitting)
+        - [ ] Stop and continue training (fitting/saving/loading)
         - [ ] Device setting can be improved maybe ?
+        - [ ] Add more mujoco benchmarks
         - [ ] Should record statistics wrapper be inside the agent ?
+        - [ ] Benchmark - 10 seed pendulum classic + classic control gym
 
     SAC, or SOFT Actor Critic, an offpolicy actor-critic deep RL algorithm
     based on the maximum entropy reinforcement learning framework. In this
@@ -106,6 +107,9 @@ class SACAgent(AgentWithSimplePolicy):
         assert isinstance(self.env.observation_space, spaces.Box)
         assert isinstance(self.env.action_space, spaces.Box)
 
+        # Setup cuda device
+        self.device = choose_device(device)
+
         # Hyperparameters
         self.batch_size = batch_size
         self.gamma = gamma
@@ -143,8 +147,7 @@ class SACAgent(AgentWithSimplePolicy):
             "lr": q_learning_rate,
         }
 
-        # Setup cuda device and tensorboard writer
-        self.device = choose_device(device)
+        # Setup tensorboard writer
         self.writer_frequency = writer_frequency
 
         # Setup Actor action scaling
@@ -245,7 +248,7 @@ class SACAgent(AgentWithSimplePolicy):
         """
 
         # Intialize environment and get first observation
-        state = self.env.reset()
+        state, _ = self.env.reset()
 
         while self.total_timesteps < budget:
             # Select action
@@ -260,7 +263,8 @@ class SACAgent(AgentWithSimplePolicy):
                 action = action.detach().cpu().numpy()[0]
 
             # Step through the environment
-            next_state, reward, done, info = self.env.step(action)
+            next_state, reward, next_terminated, next_truncated, info = self.env.step(action)
+            done = np.logical_or(next_terminated, next_truncated)
 
             # End of episode logging
             if "episode" in info.keys():
@@ -289,7 +293,7 @@ class SACAgent(AgentWithSimplePolicy):
 
             # Reset the environment if episode is over
             if done:
-                state = self.env.reset()
+                state, _ = self.env.reset()
                 self.memory.end_episode()
 
             # Learning starts when there are enough samples in replay buffer
