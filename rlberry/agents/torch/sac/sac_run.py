@@ -1,5 +1,6 @@
 import gym
 from rlberry.agents.torch.sac import SACAgent
+
 # from rlberry.envs import Pendulum
 from rlberry.manager import AgentManager
 
