@@ -71,6 +71,7 @@ class SACAgent(AgentTorch, AgentWithSimplePolicy):
         Device to put the tensors on
     writer_frequency : int
         Frequency of tensorboard logging
+
     References
     ----------
     Haarnoja, Tuomas, et al. "Soft actor-critic algorithms and applications."
@@ -309,14 +310,19 @@ class SACAgent(AgentTorch, AgentWithSimplePolicy):
         This function selects an action to take based on the current state.
         The action is sampled from a squashed Gaussian distribution defined by the policy network.
 
-        Args:
-            state (numpy.ndarray or torch.Tensor): The current state of the environment.
+        Parameters
+        ----------
+        state: numpy.ndarray or torch.Tensor
+            The current state of the environment
 
-        Returns:
-            numpy.ndarray: The selected action.
-            torch.Tensor: The log probability of the selected action.
-
+        Returns
+        -------
+        action torch.Tensor
+            The selected action
+        log_prob torch.Tensor
+            The log probability of the selected action
         """
+
         # Convert the state to a torch.Tensor if it's not already
         state = torch.FloatTensor(state).to(self.device)
 
@@ -349,11 +355,8 @@ class SACAgent(AgentTorch, AgentWithSimplePolicy):
 
         It updates the Q-networks and the policy network based on the collected
         experiences from the replay buffer.
-
-        Returns:
-            None
-
         """
+
         # Sample a batch from replay buffer
         memory_data = self.memory.sample(self.batch_size, 1).data
         states = (
