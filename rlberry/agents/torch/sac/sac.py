@@ -21,8 +21,8 @@ class SACAgent(AgentTorch, AgentWithSimplePolicy):
     Experimental Soft Actor Critic Agent (WIP).
     TODO:
         - [x] Port to gymnasium
-        - [ ] Add seeding
-        - [ ] Stop and continue training (fitting/saving/loading)
+        - [x] Add seeding
+        - [x] Stop and continue training (fitting/saving/loading)
         - [ ] Add more mujoco benchmarks
         - [ ] Should record statistics wrapper be inside the agent ?
         - [ ] Benchmark - 10 seed pendulum classic + classic control gym
@@ -118,31 +118,32 @@ class SACAgent(AgentTorch, AgentWithSimplePolicy):
         self.learning_start = learning_start
         self.policy_frequency = policy_frequency
         self.tau = tau
+        self.optimizer_type = optimizer_type
 
         # Setup Actor
         self.policy_net_kwargs = policy_net_kwargs or {}
         self.policy_net_fn = policy_net_fn or default_policy_net_fn
         self.policy_optimizer_kwargs = {
-            "optimizer_type": optimizer_type,
+            "optimizer_type": self.optimizer_type,
             "lr": policy_learning_rate,
         }
 
         # Setup Q networks and their targets
         if isinstance(q_net_constructor, str):
-            q_net_ctor = load(q_net_constructor)
+            q_net_constructor = load(q_net_constructor)
         elif q_net_constructor is None:
-            q_net_ctor = default_q_net_fn
+            q_net_constructor = default_q_net_fn
         else:
-            q_net_ctor = q_net_constructor
+            q_net_constructor = q_net_constructor
         q_net_kwargs = q_net_kwargs or {}
         self.q_net_kwargs = q_net_kwargs
-        self.q_net_ctor = q_net_ctor
-        self.q1 = q_net_ctor(self.env, **q_net_kwargs).to(self.device)
-        self.q2 = q_net_ctor(self.env, **q_net_kwargs).to(self.device)
-        self.q1_target = q_net_ctor(self.env, **q_net_kwargs).to(self.device)
-        self.q2_target = q_net_ctor(self.env, **q_net_kwargs).to(self.device)
+        self.q_net_constructor = q_net_constructor
+        self.q1 = q_net_constructor(self.env, **q_net_kwargs).to(self.device)
+        self.q2 = q_net_constructor(self.env, **q_net_kwargs).to(self.device)
+        self.q1_target = q_net_constructor(self.env, **q_net_kwargs).to(self.device)
+        self.q2_target = q_net_constructor(self.env, **q_net_kwargs).to(self.device)
         self.q_optimizer_kwargs = {
-            "optimizer_type": optimizer_type,
+            "optimizer_type": self.optimizer_type,
             "lr": q_learning_rate,
         }
 
@@ -160,8 +161,8 @@ class SACAgent(AgentTorch, AgentWithSimplePolicy):
         ).to(self.device)
 
         # Autotune alpha or use a fixed default value
-        self.autotune = autotune_alpha
-        if not self.autotune:
+        self.autotune_alpha = autotune_alpha
+        if not self.autotune_alpha:
             self.alpha = alpha
 
         # initialize
@@ -191,10 +192,10 @@ class SACAgent(AgentTorch, AgentWithSimplePolicy):
         self.cont_policy.load_state_dict(self.cont_policy.state_dict())
 
         # Intialize the Q networks and their targets
-        self.q1 = self.q_net_ctor(self.env, **self.q_net_kwargs)
-        self.q2 = self.q_net_ctor(self.env, **self.q_net_kwargs)
-        self.q1_target = self.q_net_ctor(self.env, **self.q_net_kwargs)
-        self.q2_target = self.q_net_ctor(self.env, **self.q_net_kwargs)
+        self.q1 = self.q_net_constructor(self.env, **self.q_net_kwargs)
+        self.q2 = self.q_net_constructor(self.env, **self.q_net_kwargs)
+        self.q1_target = self.q_net_constructor(self.env, **self.q_net_kwargs)
+        self.q2_target = self.q_net_constructor(self.env, **self.q_net_kwargs)
         self.q1.to(self.device)
         self.q2.to(self.device)
         self.q1_target.to(self.device)
@@ -215,7 +216,7 @@ class SACAgent(AgentTorch, AgentWithSimplePolicy):
         self.MseLoss = nn.MSELoss()
 
         # Automatic entropy tuning
-        if self.autotune:
+        if self.autotune_alpha:
             self.target_entropy = -torch.prod(
                 torch.Tensor(self.env.action_space.shape).to(self.device)
             ).item()
@@ -228,12 +229,27 @@ class SACAgent(AgentTorch, AgentWithSimplePolicy):
         self.total_timesteps = 0
         self.time = time.time()
 
-    def policy(self):
-        """
-        TODO:
-            This is needed for Agent class, can replace _select action later
-        """
-        pass
+    def policy(self, state):
+        assert self.cont_policy is not None
+        state = np.array([state])
+        state = torch.FloatTensor(state).to(self.device)
+
+        # Get the mean and log standard deviation of the action distribution from the policy network
+        action_dist = self.cont_policy(state)
+        mean, log_std = action_dist
+
+        # Compute the standard deviation and
+        # create a normal distribution with the computed mean and standard deviation
+        std = log_std.exp()
+        action_dist = torch.distributions.Normal(mean, std)
+
+        # Sample an action using the reparameterization trick
+        x_t = action_dist.rsample()
+        y_t = torch.tanh(x_t)
+
+        # Apply scaling and bias to the action
+        action = y_t * self.action_scale + self.action_bias
+        return action.detach().cpu().numpy()[0]
 
     def fit(self, budget: int, **kwargs):
         """
@@ -450,7 +466,7 @@ class SACAgent(AgentTorch, AgentWithSimplePolicy):
                 self.policy_optimizer.step()
 
                 # Update alpha if autotuning is enabled
-                if self.autotune:
+                if self.autotune_alpha:
                     with torch.no_grad():
                         state_action, state_log_pi = self._select_action(
                             states.detach().cpu().numpy()
@@ -507,7 +523,7 @@ class SACAgent(AgentTorch, AgentWithSimplePolicy):
                 int(self.total_timesteps / (time.time() - self.time)),
                 self.total_timesteps,
             )
-            if self.autotune and alpha_loss:
+            if self.autotune_alpha and alpha_loss:
                 self.writer.add_scalar(
                     "fit/alpha_loss", float(alpha_loss.detach()), self.total_timesteps
                 )
