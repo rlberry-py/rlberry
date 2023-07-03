@@ -48,6 +48,9 @@ CONTINUOUS_STATE_AGENTS = [
     torch_agents.A2CAgent,
 ]
 
+# Maybe add PPO ?
+CONTINUOUS_ACTIONS_AGENTS = [torch_agents.SACAgent]
+
 
 HYPERPARAM_OPTI_AGENTS = [
     torch_agents.PPOAgent,
@@ -72,6 +75,13 @@ MULTI_ENV_AGENTS = [
 def test_continuous_state_agent(agent):
     check_rl_agent(agent, env="continuous_state")
     check_rlberry_agent(agent, env="continuous_state")
+
+
+@pytest.mark.xfail(sys.platform == "win32", reason="bug with windows???")
+@pytest.mark.parametrize("agent", CONTINUOUS_ACTIONS_AGENTS)
+def test_continuous_action_agent(agent):
+    check_rl_agent(agent, env="continuous_action")
+    check_rlberry_agent(agent, env="continuous_action")
 
 
 @pytest.mark.xfail(sys.platform == "win32", reason="bug with windows???")

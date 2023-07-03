@@ -1,4 +1,4 @@
-from rlberry.envs import Chain
+from rlberry.envs import Chain, Pendulum
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
 from rlberry.manager import AgentManager
 import numpy as np
@@ -28,6 +28,9 @@ def _make_tuple_env(env):
         elif env == "vectorized_env_continuous":
             env_ctor = gym_make
             env_kwargs = dict(id="CartPole-v1")
+        elif env == "continuous_action":
+            env_ctor = Pendulum
+            env_kwargs = {}
         else:
             raise ValueError("The env given in parameter is not implemented")
     elif isinstance(env, tuple):  # If env param is a tuple, return it
