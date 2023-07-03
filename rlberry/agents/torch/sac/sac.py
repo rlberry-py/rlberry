@@ -7,8 +7,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from rlberry.agents import AgentTorch, AgentWithSimplePolicy
-from rlberry.agents.torch.sac.sac_utils import (default_policy_net_fn,
-                                                default_q_net_fn)
+from rlberry.agents.torch.sac.sac_utils import default_policy_net_fn, default_q_net_fn
 from rlberry.agents.torch.utils.training import optimizer_factory
 from rlberry.agents.utils.replay import ReplayBuffer
 from rlberry.utils.factory import load
@@ -24,7 +23,6 @@ class SACAgent(AgentTorch, AgentWithSimplePolicy):
         - [x] Port to gymnasium
         - [ ] Add seeding
         - [ ] Stop and continue training (fitting/saving/loading)
-        - [ ] Device setting can be improved maybe ?
         - [ ] Add more mujoco benchmarks
         - [ ] Should record statistics wrapper be inside the agent ?
         - [ ] Benchmark - 10 seed pendulum classic + classic control gym
@@ -264,7 +262,9 @@ class SACAgent(AgentTorch, AgentWithSimplePolicy):
                 action = action.detach().cpu().numpy()[0]
 
             # Step through the environment
-            next_state, reward, next_terminated, next_truncated, info = self.env.step(action)
+            next_state, reward, next_terminated, next_truncated, info = self.env.step(
+                action
+            )
             done = np.logical_or(next_terminated, next_truncated)
 
             # End of episode logging
@@ -479,7 +479,10 @@ class SACAgent(AgentTorch, AgentWithSimplePolicy):
             )
 
         # Log metrics
-        if self.writer is not None and self.total_episodes % self.writer_frequency == 0:
+        if (
+            self.writer is not None
+            and self.total_timesteps % self.writer_frequency == 0
+        ):
             self.writer.add_scalar(
                 "fit/loss_q1", float(q1_loss_v.detach()), self.total_timesteps
             )
