@@ -1,5 +1,3 @@
-
-
 print("ok-3")
 
 from rlberry.envs import gym_make
@@ -10,6 +8,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 print("ok-2")
+
 
 def test_dqn_vs_mdqn_acro():
     """
@@ -23,7 +22,6 @@ def test_dqn_vs_mdqn_acro():
     print("ok-1")
     env_ctor = gym_make
     env_kwargs = dict(id="Acrobot-v1")
-
 
     print("ok0")
     dqn_init_kwargs = dict(
@@ -113,5 +111,6 @@ def test_dqn_vs_mdqn_acro():
     plt.title("Evals")
     plt.gcf().savefig("mdqn_acro_eval.pdf")
     plt.clf()
+
 
 test_dqn_vs_mdqn_acro()
