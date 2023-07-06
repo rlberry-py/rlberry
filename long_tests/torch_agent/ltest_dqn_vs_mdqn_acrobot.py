@@ -1,13 +1,9 @@
-print("ok-3")
-
 from rlberry.envs import gym_make
 from rlberry.agents.torch import DQNAgent
 from rlberry.agents.torch import MunchausenDQNAgent as MDQNAgent
 from rlberry.manager import AgentManager, evaluate_agents, plot_writer_data
 import matplotlib.pyplot as plt
 import seaborn as sns
-
-print("ok-2")
 
 
 def test_dqn_vs_mdqn_acro():
@@ -18,12 +14,9 @@ def test_dqn_vs_mdqn_acro():
     Results of this test at the time of writing can be found in
     the following pull request: https://github.com/rlberry-py/rlberry/pull/266
     """
-
-    print("ok-1")
     env_ctor = gym_make
     env_kwargs = dict(id="Acrobot-v1")
 
-    print("ok0")
     dqn_init_kwargs = dict(
         gamma=0.99,
         batch_size=32,
@@ -56,7 +49,6 @@ def test_dqn_vs_mdqn_acro():
         learning_starts=5_000,
     )
 
-    print("ok1")
     dqnagent = AgentManager(
         DQNAgent,
         (env_ctor, env_kwargs),
@@ -68,7 +60,6 @@ def test_dqn_vs_mdqn_acro():
         mp_context="fork",
     )
 
-    print("ok2")
     mdqnagent = AgentManager(
         MDQNAgent,
         (env_ctor, env_kwargs),
@@ -80,11 +71,8 @@ def test_dqn_vs_mdqn_acro():
         mp_context="fork",
     )
 
-    print("ok4")
     mdqnagent.fit()
-    print("ok5")
     dqnagent.fit()
-    print("ok6")
     plot_writer_data(
         [mdqnagent, dqnagent],
         tag="episode_rewards",
@@ -111,6 +99,3 @@ def test_dqn_vs_mdqn_acro():
     plt.title("Evals")
     plt.gcf().savefig("mdqn_acro_eval.pdf")
     plt.clf()
-
-
-test_dqn_vs_mdqn_acro()
