@@ -7,7 +7,7 @@ from rlberry.spaces.from_gym import convert_space_from_gym
 
 class Wrapper(Model):
     """
-    Wraps a given environment, similar to OpenAI gym's wrapper [1].
+    Wraps a given environment, similar to OpenAI gym's wrapper [1,2] (now updated to gymnasium).
     Can also be used to wrap gym environments.
 
     Note:
@@ -35,6 +35,7 @@ class Wrapper(Model):
     https://stackoverflow.com/questions/1443129/completely-wrap-an-object-in-python
 
     [1] https://github.com/openai/gym/blob/master/gym/core.py
+    [2] https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/core.py
     """
 
     def __init__(self, env, wrap_spaces=False):
