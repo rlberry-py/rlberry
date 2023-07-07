@@ -58,7 +58,7 @@ Compatibility with External Libraries
 
 We provide examples to show you how to use rlberry with:
 
-- :ref:`OpenAI Gym <gym>`;
+- :ref:`Gymnasium <gym>`;
 - :ref:`Stable Baselines <stable_baselines>`.
 
 

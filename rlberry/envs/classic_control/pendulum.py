@@ -1,10 +1,11 @@
 """
-Pendulum environment adapted from OpenAI gym [1].
+Pendulum environment adapted from OpenAI gym [1]. (updated to gymnasium template [2])
 
 Modifications:
 * render function follows the rlberry rendering interface
 
 [1] https://github.com/openai/gym/blob/master/gym/
+[2] https://gymnasium.farama.org/api/env/
 envs/classic_control/pendulum.py
 """
 

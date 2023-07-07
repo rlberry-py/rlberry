@@ -236,9 +236,9 @@ def check_gym_env(
     env: gym.Env, warn: bool = True, skip_render_check: bool = True
 ) -> None:
     """
-    Check that an environment follows Gym API.
+    Check that an environment follows Gymnasium API.
     This is particularly useful when using a custom environment.
-    Please take a look at https://github.com/openai/gym/blob/master/gym/core.py
+    Please take a look at https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/core.py
     for more information about the API.
     It also optionally check that the environment is compatible with Stable-Baselines.
     :param env: The Gym environment that will be checked

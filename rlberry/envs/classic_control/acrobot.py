@@ -1,11 +1,12 @@
 """
-Acrobot environment adapted from OpenAI gym [1].
+Acrobot environment adapted from OpenAI gym [1]. (updated to gymnasium template [2])
 
 Modifications:
 * define reward_range
 * render function follows the rlberry rendering interface.
 
 [1] https://github.com/openai/gym/blob/master/gym/
+[2] https://gymnasium.farama.org/api/env/
 envs/classic_control/acrobot.py
 """
 
