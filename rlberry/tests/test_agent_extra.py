@@ -56,6 +56,7 @@ HYPERPARAM_OPTI_AGENTS = [
     torch_agents.PPOAgent,
     torch_agents.REINFORCEAgent,
     torch_agents.A2CAgent,
+    torch_agents.SACAgent,
 ]
 
 
