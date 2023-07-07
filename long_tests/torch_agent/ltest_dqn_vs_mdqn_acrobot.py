@@ -56,8 +56,8 @@ def test_dqn_vs_mdqn_acro():
         fit_budget=5e4,
         eval_kwargs=dict(eval_horizon=500),
         n_fit=4,
-        parallelization="process",
-        mp_context="fork",
+        # parallelization="process",
+        # mp_context="fork",
     )
 
     mdqnagent = AgentManager(
@@ -67,8 +67,8 @@ def test_dqn_vs_mdqn_acro():
         fit_budget=5e4,
         eval_kwargs=dict(eval_horizon=500),
         n_fit=4,
-        parallelization="process",
-        mp_context="fork",
+        # parallelization="process",
+        # mp_context="fork",
     )
 
     mdqnagent.fit()
