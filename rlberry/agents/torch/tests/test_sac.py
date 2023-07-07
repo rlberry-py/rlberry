@@ -40,9 +40,10 @@ def test_sac():
         SACAgent,
         (env_ctor, env_kwargs),
         fit_budget=int(1024),
-        learning_start=int(512),
         eval_kwargs=dict(eval_horizon=2),
         init_kwargs=dict(
+            learning_start=int(512),
+            autotune_alpha=False,
             batch_size=24,
             policy_net_kwargs=dict(
                 type="MultiLayerPerceptron",
@@ -60,7 +61,6 @@ def test_sac():
             ),
         ),
         n_fit=1,
-        autotune_alpha=False,
         agent_name="SAC_rlberry_" + env,
     )
     sacrlberry_stats.fit()
