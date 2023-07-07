@@ -18,14 +18,7 @@ logger = rlberry.logger
 
 class SACAgent(AgentTorch, AgentWithSimplePolicy):
     """
-    Experimental Soft Actor Critic Agent (WIP).
-    TODO:
-        - [x] Port to gymnasium
-        - [x] Add seeding
-        - [x] Stop and continue training (fitting/saving/loading)
-        - [ ] Add more mujoco benchmarks
-        - [ ] Should record statistics wrapper be inside the agent ?
-        - [ ] Benchmark - 10 seed pendulum classic + classic control gym
+    Soft Actor Critic Agent.
 
     SAC, or SOFT Actor Critic, an offpolicy actor-critic deep RL algorithm
     based on the maximum entropy reinforcement learning framework. In this
