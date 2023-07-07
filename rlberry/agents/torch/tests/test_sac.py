@@ -39,7 +39,8 @@ def test_sac():
     sacrlberry_stats = AgentManager(
         SACAgent,
         (env_ctor, env_kwargs),
-        fit_budget=int(132),
+        fit_budget=int(1024),
+        learning_start=int(512),
         eval_kwargs=dict(eval_horizon=2),
         init_kwargs=dict(
             batch_size=24,
@@ -59,33 +60,7 @@ def test_sac():
             ),
         ),
         n_fit=1,
-        agent_name="SAC_rlberry_" + env,
-    )
-    sacrlberry_stats.fit()
-
-    sacrlberry_stats = AgentManager(
-        SACAgent,
-        (env_ctor, env_kwargs),
-        fit_budget=int(132),
-        eval_kwargs=dict(eval_horizon=2),
-        init_kwargs=dict(
-            batch_size=24,
-            policy_net_kwargs=dict(
-                type="MultiLayerPerceptron",
-                layer_sizes=(256,),
-                reshape=False,
-                is_policy=True,
-            ),
-            q_net_kwargs=dict(
-                type="MultiLayerPerceptron",
-                layer_sizes=[
-                    512,
-                ],
-                reshape=False,
-                out_size=1,
-            ),
-        ),
-        n_fit=1,
+        autotune_alpha=False,
         agent_name="SAC_rlberry_" + env,
     )
     sacrlberry_stats.fit()
