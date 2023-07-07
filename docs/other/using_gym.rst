@@ -2,7 +2,7 @@
 .. _Gymnasium: https://gymnasium.farama.org/
 
 
-Using rlberry_ and Gymnasium_  
+Using rlberry_ and Gymnasium_
 ================================
 
 If you want to use Gymnasium_ environments with rlberry_, simply do the following:
