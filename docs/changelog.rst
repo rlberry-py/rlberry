@@ -5,6 +5,9 @@ Changelog
 
 Dev version
 -----------
+*PR #326*
+
+ * Moved SAC from experimental to torch agents. Tested and benchmarked.
 
 Version 0.5.0
 -------------
