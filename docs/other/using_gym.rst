@@ -1,8 +1,8 @@
 .. _rlberry: https://github.com/rlberry-py/rlberry
 .. _Gymnasium: https://gymnasium.farama.org/
+.. _Gymnasium_ancor:
 
-
-Using rlberry_ and Gymnasiumym_
+Using rlberry_ and Gymnasium_
 ================================
 
 If you want to use Gymnasium_ environments with rlberry_, simply do the following:
