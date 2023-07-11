@@ -206,7 +206,7 @@ class SACAgent(AgentTorch, AgentWithSimplePolicy):
             self.q2.parameters(), **self.q_optimizer_kwargs
         )
         # Define the loss
-        self.MseLoss = nn.MSELoss()
+        self.mse_loss = nn.MSELoss()
 
         # Automatic entropy tuning
         if self.autotune_alpha:
@@ -399,10 +399,10 @@ class SACAgent(AgentTorch, AgentWithSimplePolicy):
             )
             # Compute the next state's Q-values
             q1_next_target = self.q1_target(
-                torch.cat([next_state, next_state_actions], dim=1)
+                torch.cat([next_state, next_state_actions], dim=-1)
             )
             q2_next_target = self.q2_target(
-                torch.cat([next_state, next_state_actions], dim=1)
+                torch.cat([next_state, next_state_actions], dim=-1)
             )
             # Compute Q targets:
             #   - Compute the minimum Q-values between Q1 and Q2
@@ -418,10 +418,10 @@ class SACAgent(AgentTorch, AgentWithSimplePolicy):
             ).view(-1)
 
         # Compute Q loss
-        q1_v = self.q1(torch.cat([states, actions], dim=1))
-        q2_v = self.q2(torch.cat([states, actions], dim=1))
-        q1_loss_v = self.MseLoss(q1_v.squeeze(), next_q_value)
-        q2_loss_v = self.MseLoss(q2_v.squeeze(), next_q_value)
+        q1_v = self.q1(torch.cat([states, actions], dim=-1))
+        q2_v = self.q2(torch.cat([states, actions], dim=-1))
+        q1_loss_v = self.mse_loss(q1_v.squeeze(), next_q_value)
+        q2_loss_v = self.mse_loss(q2_v.squeeze(), next_q_value)
         q_loss_v = q1_loss_v + q2_loss_v
 
         # Update Q networks
@@ -443,8 +443,8 @@ class SACAgent(AgentTorch, AgentWithSimplePolicy):
                     states.detach().cpu().numpy()
                 )
                 # Compute the next state's Q-values
-                q_out_v1 = self.q1(torch.cat([states, state_action], dim=1))
-                q_out_v2 = self.q2(torch.cat([states, state_action], dim=1))
+                q_out_v1 = self.q1(torch.cat([states, state_action], dim=-1))
+                q_out_v2 = self.q2(torch.cat([states, state_action], dim=-1))
                 # Select the minimum Q to reduce over estimation and improve stability
                 q_out_v = torch.min(q_out_v1, q_out_v2)
                 # Compute policy loss:
