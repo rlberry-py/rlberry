@@ -11,7 +11,6 @@ or it can mean that there have not been enough fits to assess the variability of
 
 """
 
-
 import numpy as np
 
 from rlberry.manager.comparison import compare_agents
@@ -30,7 +29,7 @@ from rlberry.agents.bandits import (
 # Parameters of the problem
 means = np.array([0.6, 0.6, 0.6, 0.9])  # means of the arms
 A = len(means)
-T = 3000  # Horizon
+T = 2000  # Horizon
 N = 50  # number of fits
 
 # Construction of the experiment
@@ -112,4 +111,6 @@ def eval_function(manager, eval_budget=None, agent_id=0):
     return T * np.max(means) - np.sum(df.loc[df["tag"] == "reward", "value"])
 
 
-compare_agents(managers, method="permutation", eval_function=eval_function, B=10_000)
+print(
+    compare_agents(managers, method="tukey_hsd", eval_function=eval_function, B=10_000)
+)
