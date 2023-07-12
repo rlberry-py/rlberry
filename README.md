@@ -13,6 +13,9 @@
 
 <!-- The badges -->
 <p align="center">
+   <a href="https://pypi.org/project/rlberry/">
+      <img alt="Python Version" src="https://img.shields.io/badge/python-3.10-blue">
+   </a> 
    <a href="https://github.com/rlberry-py/rlberry/workflows/test/badge.svg">
       <img alt="pytest" src="https://github.com/rlberry-py/rlberry/workflows/test/badge.svg">
    </a>
