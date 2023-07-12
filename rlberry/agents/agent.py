@@ -103,7 +103,7 @@ class Agent(ABC):
         self.compress_pickle = compress_pickle
         # evaluation environment
         eval_env = eval_env or env
-        self.eval_env = process_env(eval_env, self.seeder, copy_env=True)
+        self.eval_env = process_env(eval_env, self.seeder, copy_env=copy_env)
 
         # metadata
         self._execution_metadata = (
@@ -305,21 +305,24 @@ class Agent(ABC):
         # save
         filename = Path(filename).with_suffix(".pickle")
         filename.parent.mkdir(parents=True, exist_ok=True)
+
+        dict_to_save = dict(self.__dict__)
+
         try:
             if not self.compress_pickle:
                 with filename.open("wb") as ff:
-                    pickle.dump(self.__dict__, ff)
+                    pickle.dump(dict_to_save, ff)
             else:
                 with bz2.BZ2File(filename, "wb") as ff:
-                    cPickle.dump(self.__dict__, ff)
-        except Exception:
+                    cPickle.dump(dict_to_save, ff)
+        except Exception as ex:
             try:
                 if not self.compress_pickle:
                     with filename.open("wb") as ff:
-                        dill.dump(self.__dict__, ff)
+                        dill.dump(dict_to_save, ff)
                 else:
                     with bz2.BZ2File(filename, "wb") as ff:
-                        dill.dump(self.__dict__, ff)
+                        dill.dump(dict_to_save, ff)
             except Exception as ex:
                 logger.warning("Agent instance cannot be pickled: " + str(ex))
                 return None
@@ -347,7 +350,7 @@ class Agent(ABC):
             else:
                 with bz2.BZ2File(filename, "rb") as ff:
                     tmp_dict = cPickle.load(ff)
-        except Exception:
+        except Exception as ex:
             if not obj.compress_pickle:
                 with filename.open("rb") as ff:
                     tmp_dict = dill.load(ff)
@@ -357,6 +360,7 @@ class Agent(ABC):
 
         obj.__dict__.clear()
         obj.__dict__.update(tmp_dict)
+
         return obj
 
     @classmethod
@@ -470,10 +474,10 @@ class AgentWithSimplePolicy(Agent):
     >>>         AgentWithSimplePolicy.__init__(self, env, **kwargs)
     >>>
     >>>         def fit(self, budget=100, **kwargs):
-    >>>             observation = self.env.reset()
+    >>>             observation,info = self.env.reset()
     >>>             for ep in range(budget):
     >>>                 action = self.policy(observation)
-    >>>                 observation, reward, done, _ = self.env.step(action)
+    >>>                 observation, reward, terminated, truncated, info = self.env.step(action)
     >>>
     >>>         def policy(self, observation):
     >>>             return self.env.action_space.sample()  # choose an action at random
@@ -509,13 +513,192 @@ class AgentWithSimplePolicy(Agent):
         del kwargs  # unused
         episode_rewards = np.zeros(n_simulations)
         for sim in range(n_simulations):
-            observation = self.eval_env.reset()
+            observation, info = self.eval_env.reset()
             tt = 0
             while tt < eval_horizon:
                 action = self.policy(observation)
-                observation, reward, done, _ = self.eval_env.step(action)
+                observation, reward, terminated, truncated, info = self.eval_env.step(
+                    action
+                )
+                done = terminated or truncated
                 episode_rewards[sim] += reward * np.power(gamma, tt)
                 tt += 1
                 if done:
                     break
         return episode_rewards.mean()
+
+
+class AgentTorch(Agent):
+    """Interface for torch agent agents to specify the save and load.
+
+    Parameters
+    ----------
+    env : gym.Env or tuple (constructor, kwargs)
+        Environment used to fit the agent.
+    eval_env : gym.Env or tuple (constructor, kwargs)
+        Environment on which to evaluate the agent. If None, copied from env.
+    copy_env : bool
+        If true, makes a deep copy of the environment.
+    compress_pickle : bool
+        If true, compress the save files using bz2.
+    seeder : :class:`~rlberry.seeding.seeder.Seeder`, int, or None
+        Seeder/seed for random number generation.
+    output_dir : str or Path
+        Directory that the agent can use to store data.
+    _execution_metadata : ExecutionMetadata, optional
+        Extra information about agent execution (e.g. about which is the process id where the agent is running).
+        Used by :class:`~rlberry.manager.AgentManager`.
+    _default_writer_kwargs : dict, optional
+        Parameters to initialize :class:`~rlberry.utils.writers.DefaultWriter` (attribute self.writer).
+        Used by :class:`~rlberry.manager.AgentManager`.
+    _thread_shared_data : dict, optional
+        Used by :class:`~rlberry.manager.AgentManager` to share data across Agent
+        instances created in different threads.
+    **kwargs : dict
+        Classes that implement this interface must send ``**kwargs``
+        to :code:`Agent.__init__()`.
+
+    Attributes
+    ----------
+    name : string
+        Agent identifier (not necessarily unique).
+    env : :class:`gym.Env` or tuple (constructor, kwargs)
+        Environment on which to train the agent.
+    eval_env : :class:`gym.Env` or tuple (constructor, kwargs)
+        Environment on which to evaluate the agent. If None, copied from env.
+    writer : object, default: None
+        Writer object (e.g. tensorboard SummaryWriter).
+    seeder : :class:`~rlberry.seeding.seeder.Seeder`, int, or None
+        Seeder/seed for random number generation.
+    rng : :class:`numpy.random._generator.Generator`
+        Random number generator. If you use random numbers in your agent, this
+        attribute must be used in order to ensure reproducibility. See `numpy's
+        documentation <https://numpy.org/doc/stable/reference/random/generator.html>`_.
+    output_dir : str or Path
+        Directory that the agent can use to store data.
+    unique_id : str
+        Unique identifier for the agent instance. Can be used, for example,
+        to create files/directories for the agent to log data safely.
+    thread_shared_data : dict
+        Data shared by agent instances among different threads.
+    """
+
+    def save(self, filename):
+        """
+        Overwrite the 'save' function to manage CPU vs GPU  save/load in torch agent
+
+        ----- documentation from original save -----
+
+        Save agent object. By default, the agent is pickled.
+
+        If overridden, the load() method must also be overriden.
+
+        Before saving, consider setting writer to None if it can't be pickled (tensorboard writers
+        keep references to files and cannot be pickled).
+
+        Note: dill[1]_ is used when pickle fails
+        (see https://stackoverflow.com/a/25353243, for instance).
+        Pickle is tried first, since it is faster.
+
+        Parameters
+        ----------
+        filename: Path or str
+            File in which to save the Agent.
+
+        Returns
+        -------
+        pathlib.Path
+            If save() is successful, a Path object corresponding to the filename is returned.
+            Otherwise, None is returned.
+        .. warning:: The returned filename might differ from the input filename: For instance,
+        the method can append the correct suffix to the name before saving.
+
+        References
+        ----------
+        .. [1] https://github.com/uqfoundation/dill
+        """
+
+        import torch
+
+        # remove writer if not pickleable
+        if not dill.pickles(self.writer):
+            self.set_writer(None)
+        # save
+        filename = Path(filename).with_suffix(".pickle")
+        filename.parent.mkdir(parents=True, exist_ok=True)
+
+        dict_to_save = dict(self.__dict__)
+
+        try:
+            if not self.compress_pickle:
+                with filename.open("wb") as ff:
+                    # pickle.dump(dict_to_save, ff)
+                    torch.save(dict_to_save, ff, pickle)
+            else:
+                with bz2.BZ2File(filename, "wb") as ff:
+                    # cPickle.dump(dict_to_save, ff)
+                    torch.save(dict_to_save, ff, cPickle)
+        except Exception as ex:
+            try:
+                if not self.compress_pickle:
+                    with filename.open("wb") as ff:
+                        # dill.dump(dict_to_save, ff)
+                        torch.save(dict_to_save, ff, dill)
+                else:
+                    with bz2.BZ2File(filename, "wb") as ff:
+                        # dill.dump(dict_to_save, ff)
+                        torch.save(dict_to_save, ff, dill)
+            except Exception as ex:
+                logger.warning("Agent instance cannot be pickled: " + str(ex))
+                return None
+
+        return filename
+
+    @classmethod
+    def load(cls, filename, **kwargs):
+        """
+        Overwrite the 'save' and 'load' functions to manage CPU vs GPU  save/load in torch agent.
+
+        ----- documentation from original load -----
+        Load agent object.
+        If overridden, save() method must also be overriden.
+
+        Parameters
+        ----------
+        **kwargs: dict
+            Arguments to required by the __init__ method of the Agent subclass.
+        """
+
+        from rlberry.utils.torch import choose_device
+        import torch
+
+        device_str = "cuda:best"
+        if "device" in kwargs.keys():
+            device_str = kwargs.pop("device", None)
+        device = choose_device(device_str)
+
+        filename = Path(filename).with_suffix(".pickle")
+        obj = cls(**kwargs)
+
+        try:
+            if not obj.compress_pickle:
+                with filename.open("rb") as ff:
+                    tmp_dict = torch.load(ff, map_location=device, pickle_module=pickle)
+            else:
+                with bz2.BZ2File(filename, "rb") as ff:
+                    tmp_dict = torch.load(
+                        ff, map_location=device, pickle_module=cPickle
+                    )
+        except Exception as ex:
+            if not obj.compress_pickle:
+                with filename.open("rb") as ff:
+                    tmp_dict = torch.load(ff, map_location=device, pickle_module=dill)
+            else:
+                with bz2.BZ2File(filename, "rb") as ff:
+                    tmp_dict = torch.load(ff, map_location=device, pickle_module=dill)
+
+        obj.__dict__.clear()
+        obj.__dict__.update(tmp_dict)
+
+        obj.device = device
+        return obj

@@ -1,5 +1,5 @@
 """
-Mountain Car environment adapted from OpenAI gym [1].
+Mountain Car environment adapted from OpenAI gym [1]. (updated to gymnasium template [2])
 
 * default reward is 0       (instead of -1)
 * reward in goal state is 1 (instead of 0)
@@ -7,6 +7,7 @@ Mountain Car environment adapted from OpenAI gym [1].
 * render function follows the rlberry rendering interface.
 
 [1] https://github.com/openai/gym/blob/master/gym/envs/
+[2] https://gymnasium.farama.org/api/env/
 classic_control/mountain_car.py
 """
 
@@ -101,14 +102,16 @@ class MountainCar(RenderInterface2D, Model):
         if self.is_render_enabled():
             self.append_state_for_rendering(np.array(self.state))
 
-        next_state, reward, done, info = self.sample(self.state, action)
+        next_state, reward, terminated, truncated, info = self.sample(
+            self.state, action
+        )
         self.state = next_state.copy()
 
-        return next_state, reward, done, info
+        return next_state, reward, terminated, truncated, info
 
-    def reset(self):
+    def reset(self, seed=None, options=None):
         self.state = np.array([self.rng.uniform(low=-0.6, high=-0.4), 0])
-        return self.state.copy()
+        return self.state.copy(), {}
 
     def sample(self, state, action):
         if not isinstance(state, np.ndarray):
@@ -130,13 +133,17 @@ class MountainCar(RenderInterface2D, Model):
         if position == self.min_position and velocity < 0:
             velocity = 0
 
-        done = bool(position >= self.goal_position and velocity >= self.goal_velocity)
+        terminated = bool(
+            position >= self.goal_position and velocity >= self.goal_velocity
+        )
+        truncated = False
+        done = terminated or truncated
         reward = 0.0
         if done:
             reward = 1.0
 
         next_state = np.array([position, velocity])
-        return next_state, reward, done, {}
+        return next_state, reward, terminated, truncated, {}
 
     @staticmethod
     def _height(xs):

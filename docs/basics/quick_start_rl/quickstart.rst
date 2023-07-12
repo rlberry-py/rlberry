@@ -1,7 +1,7 @@
 .. _quick_start:
 
 .. highlight:: none
-               
+
 Quick Start for Reinforcement Learning in rlberry
 =================================================
 
@@ -52,15 +52,15 @@ Let us see a graphical representation
 .. code:: python
 
     env.enable_rendering()
-    state = env.reset()
+    observation, info = env.reset()
     for tt in range(5):
-        next_s, _, done, _ = env.step(1)
-        state = next_s
+        observation, reward, terminated, truncated, info = env.step(1)
+        done = terminated or truncated
     video = env.save_video("video_chain.mp4", framerate=5)
 
 
 .. parsed-literal::
-              
+
     ffmpeg version n5.0 Copyright (c) 2000-2022 the FFmpeg developers
       built with gcc 11.2.0 (GCC)
       configuration: --prefix=/usr --disable-debug --disable-static --disable-stripping --enable-amf --enable-avisynth --enable-cuda-llvm --enable-lto --enable-fontconfig --enable-gmp --enable-gnutls --enable-gpl --enable-ladspa --enable-libaom --enable-libass --enable-libbluray --enable-libdav1d --enable-libdrm --enable-libfreetype --enable-libfribidi --enable-libgsm --enable-libiec61883 --enable-libjack --enable-libmfx --enable-libmodplug --enable-libmp3lame --enable-libopencore_amrnb --enable-libopencore_amrwb --enable-libopenjpeg --enable-libopus --enable-libpulse --enable-librav1e --enable-librsvg --enable-libsoxr --enable-libspeex --enable-libsrt --enable-libssh --enable-libsvtav1 --enable-libtheora --enable-libv4l2 --enable-libvidstab --enable-libvmaf --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxcb --enable-libxml2 --enable-libxvid --enable-libzimg --enable-nvdec --enable-nvenc --enable-shared --enable-version3
@@ -131,7 +131,7 @@ Our goal is then to assess the performance of the two algorithms.
             AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
         def fit(self, budget=100, **kwargs):
-            observation = self.env.reset()
+            observation, info = self.env.reset()
             for ep in range(budget):
                 action = self.policy(observation)
                 observation, reward, done, _ = self.env.step(action)
@@ -294,10 +294,11 @@ it’s an agent that always chooses the action that moves to the right.
             self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
 
         def fit(self, budget=100, **kwargs):
-            observation = self.env.reset()
+            observation, info = self.env.reset()
             for ep in range(budget):
                 action = 1
-                observation, reward, done, _ = self.env.step(action)
+                observation, reward, terminated, truncated, info = self.env.step(action)
+                done = terminated or truncated
 
         def policy(self, observation):
             return 1

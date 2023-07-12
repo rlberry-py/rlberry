@@ -59,7 +59,7 @@ class FiniteMDP(Model):
         self._process_terminal_states()
         self._check()
 
-    def reset(self):
+    def reset(self, seed=None, options=None):
         """
         Reset the environment to a default state.
         """
@@ -69,7 +69,7 @@ class FiniteMDP(Model):
             )
         else:
             self.state = self.initial_state_distribution
-        return self.state
+        return self.state, {}
 
     def _process_terminal_states(self):
         """
@@ -124,15 +124,18 @@ class FiniteMDP(Model):
         prob = self.P[state, action, :]
         next_state = self.rng.choice(self._states, p=prob)
         reward = self.reward_fn(state, action, next_state)
-        done = self.is_terminal(state)
+        terminated = self.is_terminal(state)
+        truncated = False
         info = {}
-        return next_state, reward, done, info
+        return next_state, reward, terminated, truncated, info
 
     def step(self, action):
         assert action in self._actions, "Invalid action!"
-        next_state, reward, done, info = self.sample(self.state, action)
+        next_state, reward, terminated, truncated, info = self.sample(
+            self.state, action
+        )
         self.state = next_state
-        return next_state, reward, done, info
+        return next_state, reward, terminated, truncated, info
 
     def is_terminal(self, state):
         """

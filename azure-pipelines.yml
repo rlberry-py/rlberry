@@ -10,14 +10,12 @@ pr:
     - rlberry/_version.py
     - docs
 
-
-
 jobs:
 
 - job: 'checkPrLabel'
   continueOnError: false
   pool:
-    vmImage: ubuntu-latest
+    vmImage: ubuntu-22.04
   steps:
   - bash: |
      echo "Looking for label at https://api.github.com/repos/$BUILD_REPOSITORY_ID/issues/$SYSTEM_PULLREQUEST_PULLREQUESTNUMBER/labels"
@@ -58,11 +56,14 @@ jobs:
       set -xe
       pip install -e .
     displayName: 'Install rlberry'
-
+  - script: |
+      pip install git+https://github.com/DLR-RM/stable-baselines3@feat/gymnasium-support
+      pip install git+https://github.com/Stable-Baselines-Team/stable-baselines3-contrib@feat/gymnasium-support
+    displayName: 'Install stable-baselines3 for Gymnasium'
 
   - script: |
       set -xe
-      pip install pytest==7.0.1 pytest-azurepipelines pytest-cov codecov pytest-xvfb pytest-xprocess
+      pip install pytest==7.0.1 pytest-azurepipelines pytest-cov pytest-xvfb pytest-xprocess
       # run doctests in the documentation
       # TODO: use following line for doctest ?
       pytest docs/*rst || echo "Ignoring exit status"
@@ -74,36 +75,13 @@ jobs:
       ./codecov
     displayName: 'Upload to codecov.io'
 
-- job: 'Formatting'
-  dependsOn: checkPrLabel
-  condition: or(in(variables['Build.SourceBranch'], 'refs/heads/main'), eq(dependencies.checkPrLabel.outputs['checkPrLabel.prHasCILabel'], true))
-
-  pool:
-    vmImage: ubuntu-latest
-  strategy:
-    matrix:
-      Python39:
-        python.version: '3.9'
-
-  steps:
-  - script: |
-      python -m pip install --upgrade pip
-      pip install  black flake8 flake8-docstrings
-      black --check examples rlberry *py
-    displayName: "black"
-  - script: |
-      # ensure there is no unused imports with
-      flake8 --select F401,F405,D410,D411,D412 --exclude=rlberry/check_packages.py --per-file-ignores="__init__.py:F401"
-    displayName: 'flake8'
-
-
 
 - job: 'macOS'
   dependsOn: checkPrLabel
   condition: or(in(variables['Build.SourceBranch'], 'refs/heads/main'), eq(dependencies.checkPrLabel.outputs['checkPrLabel.prHasCILabel'], true))
 
   pool:
-    vmImage: 'macOS-latest'
+    vmImage: 'macOS-12'
   strategy:
     matrix:
       Python39:
@@ -124,6 +102,10 @@ jobs:
       set -xe
       pip install -e .
     displayName: 'Install rlberry'
+  - script: |
+      pip install git+https://github.com/DLR-RM/stable-baselines3@feat/gymnasium-support
+      pip install git+https://github.com/Stable-Baselines-Team/stable-baselines3-contrib@feat/gymnasium-support
+    displayName: 'Install stable-baselines3 for Gymnasium'
 
   - script: |
       pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
@@ -134,7 +116,7 @@ jobs:
   dependsOn: checkPrLabel
   condition: or(in(variables['Build.SourceBranch'], 'refs/heads/main'), eq(dependencies.checkPrLabel.outputs['checkPrLabel.prHasCILabel'], true))
   pool:
-    vmImage: 'windows-latest'
+    vmImage: 'windows-2022'
   strategy:
     matrix:
       Python39:
@@ -155,8 +137,106 @@ jobs:
       pip wheel . -w dist\
       pip install --pre --no-index --find-links dist\ rlberry
     displayName: 'Install rlberry'
+  - script: |
+      pip install git+https://github.com/DLR-RM/stable-baselines3@feat/gymnasium-support
+      pip install git+https://github.com/Stable-Baselines-Team/stable-baselines3-contrib@feat/gymnasium-support
+    displayName: 'Install stable-baselines3 for Gymnasium'
 
   - script: |
       pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
       pytest --ignore=rlberry/network
+    displayName: 'pytest'
+
+
+- job: 'linux_non_editable'
+  dependsOn: checkPrLabel
+  # Condition: have ready for review label or on the main branch.
+  condition: or(in(variables['Build.SourceBranch'], 'refs/heads/main'), eq(dependencies.checkPrLabel.outputs['checkPrLabel.prHasCILabel'], true))
+  pool:
+    vmImage: ubuntu-latest
+  strategy:
+    matrix:
+      Python39:
+        python.version: '3.9'
+  variables:
+    NUMBA_DISABLE_JIT: "1"
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+    displayName: 'Use Python $(python.version)'
+  - script: |
+      python -m pip install --upgrade pip
+      sudo apt install libglu1-mesa
+    displayName: 'Install dependencies'
+  - script: |
+      set -xe
+      pip install .
+    displayName: 'Install rlberry'
+  #ignore les tests qui viennent des extras : torch, experimental, stablebaselines, optuna
+  - script: |
+      pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
+      pytest rlberry/tests/test_agents_base.py rlberry/tests/test_envs.py
+    displayName: 'pytest'
+
+
+- job: 'macOS_non_editable'
+  dependsOn: checkPrLabel
+  condition: or(in(variables['Build.SourceBranch'], 'refs/heads/main'), eq(dependencies.checkPrLabel.outputs['checkPrLabel.prHasCILabel'], true))
+
+  pool:
+    vmImage: 'macOS-12'
+  strategy:
+    matrix:
+      Python39:
+        python.version: '3.9'
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+    displayName: 'Use Python $(python.version)'
+
+  - script: |
+      python -m pip install --upgrade pip
+    displayName: 'Install dependencies'
+
+  - script: |
+      set -xe
+      pip install .
+    displayName: 'Install rlberry'
+
+  - script: |
+      pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
+      pytest rlberry/tests/test_agents_base.py rlberry/tests/test_envs.py
+    displayName: 'pytest'
+
+- job: 'windows_non_editable'
+  dependsOn: checkPrLabel
+  condition: or(in(variables['Build.SourceBranch'], 'refs/heads/main'), eq(dependencies.checkPrLabel.outputs['checkPrLabel.prHasCILabel'], true))
+  pool:
+    vmImage: 'windows-2022'
+  strategy:
+    matrix:
+      Python39:
+        python.version: '3.9'
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+    displayName: 'Use Python $(python.version)'
+
+  - script: |
+      python -m pip install --upgrade pip
+    displayName: 'Install dependencies'
+
+  - script: |
+      pip install .
+    displayName: 'Install rlberry'
+
+  - script: |
+      pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
+      pytest rlberry/tests/test_agents_base.py rlberry/tests/test_envs.py
     displayName: 'pytest'

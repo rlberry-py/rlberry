@@ -404,11 +404,11 @@ class AgentManager:
                 )
         # Update DefaultWriter according to user's settings.
         default_writer_kwargs = default_writer_kwargs or {}
-        if default_writer_kwargs:
-            logger.warning(
-                "(Re)defining the following DefaultWriter"
-                f" parameters in AgentManager: {list(default_writer_kwargs.keys())}"
-            )
+        # if default_writer_kwargs:
+        #     logger.warning(
+        #         "(Re)defining the following DefaultWriter"
+        #         f" parameters in AgentManager: {list(default_writer_kwargs.keys())}"
+        #     )
         for ii in range(n_fit):
             self.agent_default_writer_kwargs[ii].update(default_writer_kwargs)
 
@@ -586,6 +586,8 @@ class AgentManager:
 
     def clear_output_dir(self):
         """Delete output_dir and all its data."""
+        if self.optuna_study:
+            optuna.delete_study(self.optuna_study.study_name, self.optuna_storage_url)
         try:
             shutil.rmtree(self.output_dir_)
         except FileNotFoundError:
@@ -668,6 +670,7 @@ class AgentManager:
         budget = budget or self.fit_budget
 
         # If spawn, test that protected by if __name__ == "__main__"
+
         if self.mp_context == "spawn":
             try:
                 _check_not_importing_main()
@@ -838,6 +841,11 @@ class AgentManager:
         """
         filename = Path(filename).with_suffix(".pickle")
 
+        if filename.name != "manager_obj.pickle":
+            raise ValueError(
+                "The agent_manager objects should be save in file named 'manager_obj.pickle'"
+            )
+
         obj = cls(None, None, None)
 
         compress_pickle = is_bz_file(filename)
@@ -849,7 +857,7 @@ class AgentManager:
             else:
                 with bz2.BZ2File(filename, "rb") as ff:
                     tmp_dict = cPickle.load(ff)
-        except Exception:
+        except Exception as ex:
             if not compress_pickle:
                 with filename.open("rb") as ff:
                     tmp_dict = dill.load(ff)
@@ -877,7 +885,6 @@ class AgentManager:
         return obj
 
     def __eq__(self, other):
-
         result = True
         self_init_kwargs = [_strip_seed_dir(kw) for kw in self.init_kwargs]
         other_init_kwargs = [_strip_seed_dir(kw) for kw in other.init_kwargs]
@@ -1033,7 +1040,6 @@ class AgentManager:
             # storage
             self._init_optuna_storage_url()
             storage = optuna.storages.RDBStorage(self.optuna_storage_url)
-
             # optuna study
             study = optuna.create_study(
                 sampler=sampler, pruner=pruner, storage=storage, direction="maximize"
@@ -1177,6 +1183,9 @@ def _fit_worker(args):
         writer_fn = writer[0]
         writer_kwargs = writer[1]
         agent_handler.set_writer(writer_fn(**writer_kwargs))
+
+    if agent_handler.writer._style_log == "progressbar":
+        agent_handler.writer.set_max_global_step(fit_budget)
     # fit agent
     agent_handler.fit(fit_budget, **fit_kwargs)
 
@@ -1184,6 +1193,10 @@ def _fit_worker(args):
     # unless the agent uses DefaultWriter
     if not isinstance(agent_handler.writer, DefaultWriter):
         agent_handler.set_writer(None)
+
+    if agent_handler.writer._style_log == "progressbar":
+        agent_handler.writer.pbar.close()
+        agent_handler.writer.pbar = None
 
     # remove from memory to avoid pickle issues
     agent_handler.dump()
@@ -1312,3 +1325,35 @@ def _strip_seed_dir(dico):
 def is_bz_file(filepath):
     with open(filepath, "rb") as test_f:
         return test_f.read(2) == b"BZ"
+
+
+def preset_manager(*args, **kwds):
+    """Preset an Agent Manager to some fixed keywords.
+
+    Examples
+    --------
+    >>> from rlberry.agents.torch import PPOAgent, DQNAgent
+    >>> from rlberry.manager import preset_manager
+    >>> from rlberry.envs import Acrobot
+    >>> env_ctor = Acrobot
+    >>> env_kwargs = {}
+    >>>
+    >>> manager_maker =  preset_manager(train_env=(env_ctor, env_kwargs),
+    >>>                                 eval_kwargs=dict(eval_horizon=500),
+    >>>                                 n_fit=4,
+    >>>                                 parallelization = "process",
+    >>>                                 mp_context="spawn",
+    >>>                                 seed=42,
+    >>>                                 max_workers=6
+    >>>                                 )
+    >>> ppo = manager_maker(PPOAgent, fit_budget = 100) # of type AgentManager
+    >>> dqn = manager_maker(DQNAgent, fit_budget = 200)
+    >>>
+    >>> ppo.fit()
+    >>> dqn.fit()
+    """
+
+    class Manager(AgentManager):
+        __init__ = functools.partialmethod(AgentManager.__init__, *args, **kwds)
+
+    return Manager

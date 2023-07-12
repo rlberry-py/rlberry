@@ -1,6 +1,6 @@
 import numpy as np
 import torch
-from gym import spaces
+from gymnasium import spaces
 from torch import nn as nn
 from torch.nn import functional as F
 
@@ -49,7 +49,6 @@ def model_factory(type="MultiLayerPerceptron", **kwargs) -> nn.Module:
     type: {"MultiLayerPerceptron",
            "ConvolutionalNetwork",
            "DuelingNetwork",
-           "EgoAttentionNetwork",
            "Table"}, default = "MultiLayerPerceptron"
         Type of neural network.
     **kwargs: dict
@@ -61,11 +60,8 @@ def model_factory(type="MultiLayerPerceptron", **kwargs) -> nn.Module:
 
         * :class:`~rlberry.agents.torch.utils.models.DuelingNetwork`
 
-        * :class:`~rlberry.agents.torch.utils.attention_models.EgoAttentionNetwork`
-
         * :class:`~rlberry.agents.torch.utils.models.Table`
     """
-    from rlberry.agents.torch.utils.attention_models import EgoAttentionNetwork
     from rlberry.agents.torch.utils.models import (
         MultiLayerPerceptron,
         DuelingNetwork,
@@ -79,8 +75,6 @@ def model_factory(type="MultiLayerPerceptron", **kwargs) -> nn.Module:
         return DuelingNetwork(**kwargs)
     elif type == "ConvolutionalNetwork":
         return ConvolutionalNetwork(**kwargs)
-    elif type == "EgoAttentionNetwork":
-        return EgoAttentionNetwork(**kwargs)
     elif type == "Table":
         return Table(**kwargs)
     else:
@@ -111,10 +105,23 @@ def size_model_config(env, **model_config):
         return model_config
 
     # Assume CHW observation space
-    if model_config["type"] == "ConvolutionalNetwork":
-        model_config["in_channels"] = int(obs_shape[0])
-        model_config["in_height"] = int(obs_shape[1])
-        model_config["in_width"] = int(obs_shape[2])
+    if "type" in model_config and model_config["type"] == "ConvolutionalNetwork":
+        if "transpose_obs" in model_config and not model_config["transpose_obs"]:
+            # Assume CHW observation space
+            if "in_channels" not in model_config:
+                model_config["in_channels"] = int(obs_shape[0])
+            if "in_height" not in model_config:
+                model_config["in_height"] = int(obs_shape[1])
+            if "in_width" not in model_config:
+                model_config["in_width"] = int(obs_shape[2])
+        else:
+            # Assume WHC observation space to transpose
+            if "in_channels" not in model_config:
+                model_config["in_channels"] = int(obs_shape[2])
+            if "in_height" not in model_config:
+                model_config["in_height"] = int(obs_shape[1])
+            if "in_width" not in model_config:
+                model_config["in_width"] = int(obs_shape[0])
     else:
         model_config["in_size"] = int(np.prod(obs_shape))
 

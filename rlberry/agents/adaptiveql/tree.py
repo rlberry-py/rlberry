@@ -1,4 +1,4 @@
-import gym.spaces as spaces
+import gymnasium.spaces as spaces
 import numpy as np
 import matplotlib.pyplot as plt
 from rlberry.agents.adaptiveql.utils import bounds_contains, split_bounds

@@ -72,6 +72,7 @@ coverage.xml
 *.py,cover
 .hypothesis/
 .pytest_cache/
+profile.prof
 
 # Translations
 *.mo
@@ -162,3 +163,8 @@ dmypy.json
 
 # PyCharm
 .idea
+.project
+.pydevproject
+
+
+profile.prof

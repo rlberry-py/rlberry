@@ -1,6 +1,6 @@
 import torch
 from torch.nn.functional import one_hot
-import gym.spaces as spaces
+import gymnasium.spaces as spaces
 import numpy as np
 
 
@@ -46,7 +46,6 @@ def get_qref(batch, target_val_net, gamma, device="cpu"):
 
 @torch.no_grad()
 def get_vref(env, batch, twinq_net, policy_net, ent_alpha: float, device="cpu"):
-
     assert isinstance(twinq_net, tuple)
     assert isinstance(env.action_space, spaces.Discrete)
     num_actions = env.action_space.n

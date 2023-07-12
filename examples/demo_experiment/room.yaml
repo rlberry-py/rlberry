@@ -1,0 +1,10 @@
+# """
+#  =====================
+#  Demo: room.yaml
+#  =====================
+# """
+constructor: 'rlberry.envs.benchmarks.grid_exploration.nroom.NRoom'
+params:
+  reward_free: false
+  array_observation: true
+  nrooms: 5

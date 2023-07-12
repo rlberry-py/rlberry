@@ -8,7 +8,7 @@ from rlberry.utils.check_agent import (
     check_agents_almost_equal,
 )
 from rlberry.spaces import Box, Dict, Discrete
-import gym
+import gymnasium as gym
 from rlberry.agents import ValueIterationAgent, UCBVIAgent
 
 
@@ -22,8 +22,8 @@ class ActionDictTestEnv(gym.Env):
         done = True
         return observation, reward, done
 
-    def reset(self):
-        return np.array([1.0, 1.5, 0.5])
+    def reset(self, seed=None, options=None):
+        return np.array([1.0, 1.5, 0.5]), {}
 
 
 class DummyAgent:
@@ -42,11 +42,14 @@ class ReferenceAgent(ValueIterationAgent):
         del kwargs  # unused
         episode_rewards = np.zeros(n_simulations)
         for sim in range(n_simulations):
-            observation = self.eval_env.reset()
+            observation, info = self.eval_env.reset()
             tt = 0
             while tt < eval_horizon:
                 action = self.policy(observation)
-                observation, reward, done, _ = self.eval_env.step(action)
+                observation, reward, terminated, truncated, info = self.eval_env.step(
+                    action
+                )
+                done = terminated or truncated
                 episode_rewards[sim] += reward * np.power(gamma, tt)
                 tt += 1
 

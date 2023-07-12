@@ -235,7 +235,7 @@ class OpenGLRender2D:
                 # See https://stackoverflow.com/a/42754578/5691288
                 #
                 string_image = self.get_gl_image_str()
-                temp_surf = pg.image.fromstring(
+                temp_surf = pg.image.frombytes(
                     string_image, (self.window_width, self.window_height), "RGB"
                 )
                 tmp_arr = pg.surfarray.array3d(temp_surf)

@@ -2,9 +2,9 @@ import inspect
 
 import numpy as np
 import torch
-from gym import spaces
+from gymnasium import spaces
 from rlberry import types
-from rlberry.agents import AgentWithSimplePolicy
+from rlberry.agents import AgentWithSimplePolicy, AgentTorch
 from rlberry.agents.torch.utils.training import (
     loss_function_factory,
     model_factory,
@@ -42,7 +42,7 @@ def default_q_net_fn(env, **kwargs):
     return model_factory(**model_config)
 
 
-class MunchausenDQNAgent(AgentWithSimplePolicy):
+class MunchausenDQNAgent(AgentTorch, AgentWithSimplePolicy):
     """Munchausen DQN Agent based on PyTorch.
 
     Notes
@@ -393,14 +393,17 @@ class MunchausenDQNAgent(AgentWithSimplePolicy):
         timesteps_counter = 0
         episode_rewards = 0.0
         episode_timesteps = 0
-        observation = self.env.reset()
+        observation, info = self.env.reset()
         while timesteps_counter < budget:
             if self.total_timesteps < self._learning_starts:
                 action = self.env.action_space.sample()
             else:
                 self._timesteps_since_last_update += 1
                 action = self._policy(observation, evaluation=False)
-            next_obs, reward, done, _ = self.env.step(action)
+            next_observation, reward, terminated, truncated, info = self.env.step(
+                action
+            )
+            done = terminated or truncated
 
             # store data
             episode_rewards += reward
@@ -410,7 +413,7 @@ class MunchausenDQNAgent(AgentWithSimplePolicy):
                     "actions": action,
                     "rewards": reward,
                     "dones": done,
-                    "next_observations": next_obs,
+                    "next_observations": next_observation,
                 }
             )
 
@@ -418,7 +421,7 @@ class MunchausenDQNAgent(AgentWithSimplePolicy):
             self._total_timesteps += 1
             timesteps_counter += 1
             episode_timesteps += 1
-            observation = next_obs
+            observation = next_observation
 
             # update
             run_update, n_gradient_steps = self._must_update(done)
@@ -454,7 +457,7 @@ class MunchausenDQNAgent(AgentWithSimplePolicy):
                     )
                 episode_rewards = 0.0
                 episode_timesteps = 0
-                observation = self.env.reset()
+                observation, info = self.env.reset()
 
     def _policy(self, observation, evaluation=False):
         epsilon = self._epsilon_schedule(self.total_timesteps)

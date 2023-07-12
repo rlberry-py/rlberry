@@ -180,8 +180,8 @@ class PyGameRender2D:
                 #
                 # See https://stackoverflow.com/a/42754578/5691288
                 #
-                string_image = pg.image.tostring(self.screen, "RGB")
-                temp_surf = pg.image.fromstring(
+                string_image = pg.image.tobytes(self.screen, "RGB")
+                temp_surf = pg.image.frombytes(
                     string_image, (self.window_width, self.window_height), "RGB"
                 )
                 tmp_arr = pg.surfarray.array3d(temp_surf)

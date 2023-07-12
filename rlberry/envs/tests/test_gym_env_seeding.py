@@ -1,5 +1,5 @@
 from rlberry.seeding.seeding import safe_reseed
-import gym
+import gymnasium as gym
 import numpy as np
 import pytest
 from rlberry.seeding import Seeder
@@ -16,12 +16,13 @@ gym_envs = [
 
 def get_env_trajectory(env, horizon):
     states = []
-    ss = env.reset()
+    observation, info = env.reset()
     for ii in range(horizon):
-        states.append(ss)
-        ss, _, done, _ = env.step(env.action_space.sample())
+        states.append(observation)
+        observation, _, terminated, truncated, _ = env.step(env.action_space.sample())
+        done = terminated or truncated
         if done:
-            ss = env.reset()
+            observation, info = env.reset()
     return states
 
 

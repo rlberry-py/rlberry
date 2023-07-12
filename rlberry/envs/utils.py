@@ -22,7 +22,7 @@ def process_env(env, seeder, copy_env=True):
             try:
                 processed_env = deepcopy(env)
             except Exception as ex:
-                logger.warning("[Agent] Not possible to deepcopy env: " + str(ex))
+                raise RuntimeError("[Agent] Not possible to deepcopy env: " + str(ex))
         else:
             processed_env = env
     reseeded = safe_reseed(processed_env, seeder)

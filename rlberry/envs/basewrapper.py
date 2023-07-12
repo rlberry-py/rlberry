@@ -1,3 +1,4 @@
+import gymnasium as gym
 from rlberry.seeding import Seeder, safe_reseed
 import numpy as np
 from rlberry.envs.interface import Model
@@ -6,7 +7,7 @@ from rlberry.spaces.from_gym import convert_space_from_gym
 
 class Wrapper(Model):
     """
-    Wraps a given environment, similar to OpenAI gym's wrapper [1].
+    Wraps a given environment, similar to OpenAI gym's wrapper [1,2] (now updated to gymnasium).
     Can also be used to wrap gym environments.
 
     Note:
@@ -20,10 +21,21 @@ class Wrapper(Model):
     wrap_spaces: bool, default = False
         If True, gym.spaces are converted to rlberry.spaces, which defined a reseed() method.
 
+    Attributes
+    ----------
+    env : gym.Env
+        The wrapped environment
+    metadata : dict
+        InitiallThe meatadata of the wrapped environment
+    render_mode : str
+        The render_mode of the wrapped environment
+
+
     See also:
     https://stackoverflow.com/questions/1443129/completely-wrap-an-object-in-python
 
     [1] https://github.com/openai/gym/blob/master/gym/core.py
+    [2] https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/core.py
     """
 
     def __init__(self, env, wrap_spaces=False):
@@ -33,6 +45,7 @@ class Wrapper(Model):
         # Save reference to env
         self.env = env
         self.metadata = self.env.metadata
+        self.render_mode = self.env.render_mode
 
         if wrap_spaces:
             self.observation_space = convert_space_from_gym(self.env.observation_space)
@@ -75,33 +88,44 @@ class Wrapper(Model):
             self.seeder = self.seeder.spawn()
         else:
             self.seeder = Seeder(seed_seq)
-        # seed gym.Env that is not a rlberry Model
-        if not isinstance(self.env, Model):
-            # get a seed for gym environment; spaces are reseeded below.
-            safe_reseed(self.env, self.seeder, reseed_spaces=False)
-        # seed rlberry Model
-        else:
+
+        # get a seed for gym environment; spaces are reseeded below.
+        if isinstance(self.env, Model):
+            # seed rlberry Model
             self.env.reseed(self.seeder)
+        elif isinstance(self.env, gym.Env):
+            # seed gym.Env that is not a rlberry Model
+            seed_val = self.seeder.rng.integers(2**32).item()
+            self.env.reset(seed=seed_val)
+        else:
+            # other
+            safe_reseed(self.env, self.seeder, reseed_spaces=False)
+
         safe_reseed(self.observation_space, self.seeder)
         safe_reseed(self.action_space, self.seeder)
 
-    def reset(self):
-        return self.env.reset()
+    def reset(self, seed=None, options=None):
+        if self.env.render_mode == "human":
+            self.render()
+        return self.env.reset(seed=seed, options=options)
 
     def step(self, action):
+        if self.render_mode == "human":
+            self.render()
         return self.env.step(action)
 
     def sample(self, state, action):
         return self.env.sample(state, action)
 
-    def render(self, mode="human", **kwargs):
-        return self.env.render(mode=mode, **kwargs)
+    def render(self, **kwargs):
+        return self.env.render(**kwargs)
 
     def close(self):
         return self.env.close()
 
     def seed(self, seed=None):
-        return self.env.seed(seed)
+        # return self.env.seed(seed)
+        return self.env.reset(seed=seed)
 
     def compute_reward(self, achieved_goal, desired_goal, info):
         return self.env.compute_reward(achieved_goal, desired_goal, info)

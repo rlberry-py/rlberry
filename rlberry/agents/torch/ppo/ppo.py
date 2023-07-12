@@ -2,74 +2,115 @@ import numpy as np
 import torch
 import torch.nn as nn
 
-
-import gym.spaces as spaces
+import gymnasium.spaces as spaces
+import rlberry
 from rlberry.agents import AgentWithSimplePolicy
-
-# from rlberry.agents.utils.memories import Memory
-
-from rlberry.agents.utils.replay import ReplayBuffer
+from rlberry.agents import AgentTorch
+from rlberry.envs.utils import process_env
 from rlberry.agents.torch.utils.training import optimizer_factory
 from rlberry.agents.torch.utils.models import default_policy_net_fn
 from rlberry.agents.torch.utils.models import default_value_net_fn
 from rlberry.utils.torch import choose_device
 from rlberry.utils.factory import load
+from rlberry.agents.torch.ppo.ppo_utils import (
+    process_ppo_env,
+    lambda_returns,
+    RolloutBuffer,
+)
 
-# from rlberry.envs import gym_make
+import dill
+import pickle
+import bz2
+import _pickle as cPickle
+from pathlib import Path
 
-
-import rlberry
 
 logger = rlberry.logger
 
 
-class PPOAgent(AgentWithSimplePolicy):
+# Notes about VecEnvs:
+# - reset() returns a numpy array of shape (n_envs, state_dim)
+# - step() returns a tuple of arrays (states, rewards, dones, infos)
+#   - states: np.array (n_envs, state_dim) dtype varies
+#   - rewards: np.array (n_envs,) np.float64
+#   - dones: np.array (n_envs,) bool
+#   - infos: list (n_envs,) dict
+# - close() closes all environments
+
+
+class PPOAgent(AgentTorch, AgentWithSimplePolicy):
     """
     Proximal Policy Optimization Agent.
 
     Policy gradient methods for reinforcement learning, which alternate between
     sampling data through interaction with the environment, and optimizing a
-    “surrogate” objective function using stochastic gradient ascent
+    “surrogate” objective function using stochastic gradient ascent.
 
     Parameters
     ----------
-    env : Model
-        Online model with continuous (Box) state space and discrete actions
-    batch_size : int
-        Size of mini batches during the k_epochs gradient descent steps.
+    env : rlberry Env
+        Environment with continuous (Box) observation space.
+    n_envs: int
+        Number of environments to be used.
     n_steps : int
-        Number of transitions to use for parameters updates.
-    gamma : double
+        Number of transitions to collect in each environment per update.
+    batch_size : int
+        Size of mini batches during each PPO update epoch. It is recommended
+        that n_envs * n_steps is divisible by batch_size.
+    gamma : float
         Discount factor in [0, 1].
-    entr_coef : double
+    k_epochs : int
+        Number of PPO epochs per update.
+    clip_eps : float
+        PPO clipping range (epsilon).
+    target_kl: float
+        Target KL divergence. If KL divergence between the current policy and
+        the new policy is greater than target_kl, the update is stopped early.
+        Set to None to disable early stopping.
+    normalize_avantages : bool
+        Whether or not to normalize advantages.
+    gae_lambda : float
+        Lambda parameter for TD(lambda) and Generalized Advantage Estimation.
+    entr_coef : float
         Entropy coefficient.
-    vf_coef : double
+    vf_coef : float
         Value function loss coefficient.
-    learning_rate : double
+    value_loss: str
+        Type of value loss. 'mse' corresponds to mean squared error,
+        'clipped' corresponds to the original PPO loss, and 'avec'
+        corresponds to the AVEC loss (Flet-Berliac et al. 2021).
+    max_grad_norm : float
+        Maximum norm of the gradient of both actor and critic networks.
+    learning_rate : float
         Learning rate.
+    lr_schedule: str
+        Learning rate schedule. 'constant' corresponds to a constant learning
+        rate, and 'linear' corresponds to a linearly decreasing learning rate,
+        starting at learning_rate and ending at 0. WARNING: the schedule is
+        reset at each call to fit().
     optimizer_type: str
         Type of optimizer. 'ADAM' by defaut.
-    eps_clip : double
-        PPO clipping range (epsilon).
-    k_epochs : int
-        Number of epochs per update.
     policy_net_fn : function(env, **kwargs)
         Function that returns an instance of a policy network (pytorch).
         If None, a default net is used.
+    policy_net_kwargs : dict
+        kwargs for policy_net_fn
     value_net_fn : function(env, **kwargs)
         Function that returns an instance of a value network (pytorch).
         If None, a default net is used.
-    policy_net_kwargs : dict
-        kwargs for policy_net_fn
     value_net_kwargs : dict
         kwargs for value_net_fn
-    normalize_rewards : bool
-        whether or not to normalize rewards
-    normalize_avantages : bool
-        whether or not to normalize advantages
+    eval_env : rlberry Env
+        Environment used for evaluation. If None, env is used.
+    n_eval_episodes : int
+        Number of episodes to be used for evaluation.
+    eval_horizon : int
+        Maximum number of steps per episode during evaluation.
+    eval_freq : int
+        Number of updates between evaluations. If None, no evaluation is
+        performed.
     device: str
-        Device to put the tensors on
-
+        Device on which to put the tensors. 'cuda:best' by default.
 
     References
     ----------
@@ -80,61 +121,92 @@ class PPOAgent(AgentWithSimplePolicy):
     Schulman, J., Levine, S., Abbeel, P., Jordan, M., & Moritz, P. (2015).
     "Trust region policy optimization."
     In International Conference on Machine Learning (pp. 1889-1897).
+
+    Flet-Berliac, Y., Ouhamma, R., Maillard, O.-A., Preux, P. (2021)
+    "Learning Value Functions in Deep Policy Gradients using Residual Variance."
+    In 9th International Conference on Learning Representations (ICLR).
     """
 
     name = "PPO"
+    __value_losses__ = ["clipped", "mse", "avec"]
+    __lr_schedule___ = ["constant", "linear"]
 
     def __init__(
         self,
         env,
+        copy_env=True,
+        n_envs=1,
+        n_steps=512,
         batch_size=64,
-        n_steps=2048,
         gamma=0.99,
+        k_epochs=10,
+        clip_eps=0.2,
+        target_kl=0.05,
+        normalize_advantages=True,
+        gae_lambda=0.95,
         entr_coef=0.01,
         vf_coef=0.5,
-        learning_rate=0.01,
+        value_loss="mse",
+        max_grad_norm=0.5,
+        learning_rate=3e-4,
+        lr_schedule="constant",
         optimizer_type="ADAM",
-        eps_clip=0.2,
-        k_epochs=5,
-        use_gae=True,
-        gae_lambda=0.95,
         policy_net_fn=None,
-        value_net_fn=None,
         policy_net_kwargs=None,
+        value_net_fn=None,
         value_net_kwargs=None,
-        normalize_rewards=False,
-        normalize_advantages=False,
+        eval_env=None,
+        n_eval_episodes=10,
+        eval_horizon=int(1e5),
+        eval_freq=None,
         device="cuda:best",
         **kwargs
     ):
+        kwargs.pop("eval_env", None)
+        AgentWithSimplePolicy.__init__(
+            self, None, **kwargs
+        )  # PPO handles the env internally
 
-        AgentWithSimplePolicy.__init__(self, env, **kwargs)
+        # create environment
+        self.copy_env = copy_env
+        self.n_envs = n_envs
+        self.env = process_ppo_env(env, self.seeder, num_envs=n_envs, copy_env=copy_env)
+        eval_env = eval_env or env
+        self.eval_env = process_env(eval_env, self.seeder, copy_env=copy_env)
 
-        self.batch_size = batch_size
+        # hyperparameters
+        value_loss, lr_schedule = value_loss.lower(), lr_schedule.lower()
+        assert value_loss in self.__value_losses__, "value_loss must be in {}".format(
+            self.__value_losses__
+        )
+        assert lr_schedule in self.__lr_schedule___, "lr_schedule must be in {}".format(
+            self.__lr_schedule___
+        )
+
         self.n_steps = n_steps
+        self.batch_size = batch_size
         self.gamma = gamma
+        self.k_epochs = k_epochs
+        self.clip_eps = clip_eps
+        self.target_kl = target_kl
+        self.normalize_advantages = normalize_advantages
+        self.gae_lambda = gae_lambda
         self.entr_coef = entr_coef
         self.vf_coef = vf_coef
+        self.value_loss = value_loss
+        self.max_grad_norm = max_grad_norm
         self.learning_rate = learning_rate
-        self.eps_clip = eps_clip
-        self.k_epochs = k_epochs
-        self.use_gae = use_gae
-        self.gae_lambda = gae_lambda
-        # self.env = env
+        self.lr_schedule = lr_schedule
         self.optimizer_type = optimizer_type
+        self.n_eval_episodes = n_eval_episodes
+        self.eval_horizon = eval_horizon
+        self.eval_freq = eval_freq
         self.kwargs = kwargs
-
-        self.normalize_rewards = normalize_rewards
-        self.normalize_advantages = normalize_advantages
-
-        # function approximators
-        self.policy_net_kwargs = policy_net_kwargs or {}
-        self.value_net_kwargs = value_net_kwargs or {}
-        # self.env = env[0](**env[1])
 
         self.state_dim = self.env.observation_space.shape[0]
 
-        #
+        # policy network
+        self.policy_net_kwargs = policy_net_kwargs or {}
         if isinstance(policy_net_fn, str):
             self.policy_net_fn = load(policy_net_fn)
         elif policy_net_fn is None:
@@ -142,6 +214,8 @@ class PPOAgent(AgentWithSimplePolicy):
         else:
             self.policy_net_fn = policy_net_fn
 
+        # value network
+        self.value_net_kwargs = value_net_kwargs or {}
         if isinstance(value_net_fn, str):
             self.value_net_fn = load(value_net_fn)
         elif value_net_fn is None:
@@ -151,14 +225,19 @@ class PPOAgent(AgentWithSimplePolicy):
 
         self.device = choose_device(device)
 
-        self.optimizer_kwargs = {"optimizer_type": optimizer_type, "lr": learning_rate}
+        self.optimizer_kwargs = {
+            "optimizer_type": optimizer_type,
+            "lr": learning_rate,
+            "eps": 1e-5,
+        }
 
         # check environment
+        # TODO: should we restrict this to Box?
+        #       what about the action space?
         assert isinstance(self.env.observation_space, spaces.Box)
 
-        self._policy = None  # categorical policy function
-
         # initialize
+        self.policy_net = self.value_net = None
         self.reset()
 
     @classmethod
@@ -168,52 +247,41 @@ class PPOAgent(AgentWithSimplePolicy):
         return cls(**kwargs)
 
     def reset(self, **kwargs):
-        self._policy = self.policy_net_fn(self.env, **self.policy_net_kwargs).to(
-            self.device
-        )
-        self._policy_optimizer = optimizer_factory(
-            self._policy.parameters(), **self.optimizer_kwargs
-        )
-
-        self.value_net = self.value_net_fn(self.env, **self.value_net_kwargs).to(
-            self.device
-        )
-        self.value_optimizer = optimizer_factory(
-            self.value_net.parameters(), **self.optimizer_kwargs
-        )
-
-        self._policy_old = self.policy_net_fn(self.env, **self.policy_net_kwargs).to(
-            self.device
-        )
-        self._policy_old.load_state_dict(self._policy.state_dict())
-
-        self.MseLoss = nn.MSELoss()  # TODO: turn into argument
-
-        self.memory = ReplayBuffer(max_replay_size=self.n_steps, rng=self.rng)
-        self.memory.setup_entry("states", dtype=np.float32)
-        if self._policy.ctns_actions:
-            self.memory.setup_entry("actions", dtype=np.float32)
-        else:
-            self.memory.setup_entry("actions", dtype=int)
-        self.memory.setup_entry("rewards", dtype=np.float32)
-        self.memory.setup_entry("dones", dtype=bool)
-        self.memory.setup_entry("action_logprobs", dtype=np.float32)
-
+        """
+        Reset the agent.
+        """
         self.total_timesteps = 0
         self.total_episodes = 0
 
-    def policy(self, observation):
-        state = observation
-        assert self._policy is not None
-        state = torch.from_numpy(state).float().to(self.device)
-        action_dist = self._policy_old(state)
-        if self._policy.ctns_actions:
-            action = action_dist.sample().numpy()
-        else:
-            action = action_dist.sample().item()
-        return action
+        # Initialize rollout buffer
+        self.memory = RolloutBuffer(self.rng, self.n_steps)
+        self.memory.setup_entry("observations", dtype=np.float32)
+        self.memory.setup_entry("actions", dtype=self.env.single_action_space.dtype)
+        self.memory.setup_entry("rewards", dtype=np.float32)
+        self.memory.setup_entry("dones", dtype=bool)
+        self.memory.setup_entry("logprobs", dtype=np.float32)
+        self.memory.setup_entry("infos", dtype=dict)
 
-    def fit(self, budget: int, **kwargs):
+        # Initialize neural networks and optimizers
+        # TODO: using a single env to configure the networks is a hack that
+        #       should be fixed when model factories are revised
+        env = self.env.envs[0]
+        self.policy_net = self.policy_net_fn(env, **self.policy_net_kwargs).to(
+            self.device
+        )
+        self.value_net = self.value_net_fn(env, **self.value_net_kwargs).to(self.device)
+        self.optimizer = optimizer_factory(
+            list(self.policy_net.parameters()) + list(self.value_net.parameters()),
+            **self.optimizer_kwargs
+        )
+
+    def policy(self, observation):
+        assert self.policy_net is not None
+        obs = torch.from_numpy(observation).float().to(self.device)
+        action = self.policy_net(obs).sample()
+        return action.cpu().numpy()
+
+    def fit(self, budget: int, lr_scheduler=None, **kwargs):
         """
         Train the agent using the provided environment.
 
@@ -221,231 +289,357 @@ class PPOAgent(AgentWithSimplePolicy):
         ----------
         budget: int
             Total number of steps to be performed in the environment. Parameters
-            are updated every n_steps steps using n_steps//batch_size mini batches.
+            are updated every n_steps interactions with the environment.
+        lr_scheduler: callable
+            A function that takes the current step and returns the current learning
+            rate. If None, a default scheduler is used.
         """
         del kwargs
-        timesteps_counter = 0
-        episode_rewards = 0.0
-        episode_timesteps = 0
-        state = self.env.reset()
 
+        if lr_scheduler is None:
+            lr_scheduler = self._get_lr_scheduler(budget)
+
+        if len(self.memory) == 0:
+            timesteps_counter = 0
+        else:  # it's not the first "fit" on this agent, so there is a previous buffer to continue
+            timesteps_counter = len(self.memory) * self.n_envs
+
+        episode_returns = np.zeros(self.n_envs, dtype=np.float32)
+        episode_lengths = np.zeros(self.n_envs, dtype=np.int32)
+
+        next_obs, infos = self.env.reset()
+        next_obs = torch.Tensor(next_obs).to(
+            self.device
+        )  # should always be a torch tensor
+        next_done = np.zeros(self.n_envs, dtype=bool)  # initialize done to False
         while timesteps_counter < budget:
+            obs = next_obs
+            done = next_done
 
-            # running policy_old
-            state = torch.from_numpy(state).float().to(self.device)
-            action, action_logprob = self._select_action(state)
-            next_state, reward, done, _ = self.env.step(action)
-            if self._policy.ctns_actions:
-                action = torch.from_numpy(action).float().to(self.device)
-            else:
-                action = torch.tensor(action).float().to(self.device)
+            # select action and take step
+            with torch.no_grad():
+                action, logprobs = self._select_action(obs)
+            next_obs, reward, next_terminated, next_truncated, info = self.env.step(
+                action
+            )
+            next_done = np.logical_or(next_terminated, next_truncated)
+            next_obs = torch.Tensor(next_obs).to(self.device)
 
-            episode_rewards += reward
+            # end of episode logging
+            for i in range(self.n_envs):
+                if next_done[i]:
+                    self.total_episodes += 1
+                    if self.writer and "episode" in info["final_info"][i]:
+                        if "episode" in info["final_info"][i]:
+                            r, l = (
+                                info["final_info"][i]["episode"]["r"],
+                                info["final_info"][i]["episode"]["l"],
+                            )
+                        else:
+                            r, l = episode_returns[i], episode_lengths[i]
+                        self.writer.add_scalar(
+                            "episode_returns", r, self.total_timesteps
+                        )
+                        self.writer.add_scalar(
+                            "episode_lengths", l, self.total_timesteps
+                        )
+                        self.writer.add_scalar(
+                            "total_episodes", self.total_episodes, self.total_timesteps
+                        )
+                    episode_returns[i], episode_lengths[i] = 0.0, 0
 
+            # append data to memory and update variables
             self.memory.append(
                 {
-                    "states": state,
+                    "observations": obs.cpu().numpy(),
                     "actions": action,
                     "rewards": reward,
                     "dones": done,
-                    "action_logprobs": action_logprob,
+                    "infos": info,
+                    "logprobs": logprobs,
                 }
             )
+            self.total_timesteps += self.n_envs
+            timesteps_counter += self.n_envs
+            episode_returns += reward
+            episode_lengths += 1
 
-            # counters and next obs
-            self.total_timesteps += 1
-            timesteps_counter += 1
-            episode_timesteps += 1
-            state = next_state
+            # evaluation
+            if (
+                self.writer
+                and self.eval_freq is not None
+                and self.total_timesteps % self.eval_freq == 0
+            ):
+                evaluation = self.eval(
+                    eval_horizon=self.eval_horizon,
+                    n_simulations=self.n_eval_episodes,
+                    gamma=1.0,
+                )
+                self.writer.add_scalar("evaluation", evaluation, self.total_timesteps)
 
-            if self.total_timesteps % self.n_steps == 0:
-                self._update()
+            # update with collected experience
+            if timesteps_counter % (self.n_envs * self.n_steps) == 0:
+                if self.lr_schedule != "constant":
+                    lr = lr_scheduler(self.total_timesteps)
+                    self.optimizer.param_groups[0]["lr"] = lr
+                self._update(next_obs=next_obs, next_done=next_done)
 
-            # update state
+    def _get_lr_scheduler(self, budget):
+        """
+        Returns a learning rate schedule for the policy and value networks.
+        """
+        if self.lr_schedule == "constant":
+            return lambda t: self.learning_rate
+        elif self.lr_schedule == "linear":
+            return lambda t: self.learning_rate * (1 - t / float(budget))
 
-            if done:
-                self.total_episodes += 1
-                self.memory.end_episode()
-                if self.writer:
-                    self.writer.add_scalar(
-                        "episode_rewards", episode_rewards, self.total_timesteps
-                    )
-                    self.writer.add_scalar(
-                        "total_episodes", self.total_episodes, self.total_timesteps
-                    )
-                episode_rewards = 0.0
-                episode_timesteps = 0
-                state = self.env.reset()
+    def _select_action(self, obs):
+        """
+        Select an action given the current state using the policy network.
+        Also returns the log probability of the selected action.
 
-    def _select_action(self, state):
-        action_dist = self._policy_old(state)
+        Parameters
+        ----------
+        obs: torch.Tensor
+            Observation tensor of shape (batch_size, obs_dim)
+
+        Returns
+        -------
+        A tuple (action, log_prob).
+        """
+        action_dist = self.policy_net(obs)
         action = action_dist.sample()
         action_logprob = action_dist.log_prob(action)
-        if self._policy.ctns_actions:
-            action = action.numpy()
-        else:
-            action = action.item()
-        return action, action_logprob
+        return action.cpu().numpy(), action_logprob.cpu().numpy()
 
-    def _update(self):
+    def _update(self, next_obs=None, next_done=None):
+        """
+        Performs a PPO update based on the data in `self.memory`.
 
-        memory_data = self.memory.data
+        Parameters
+        ----------
+        next_obs: torch.Tensor or None
+            Next observation tensor of shape (n_envs, obs_dim). Used to
+            bootstrap the value function. If None, the value function is
+            bootstrapped with zeros.
+        next_done: np.ndarray or None
+            Array of shape (n_envs,) indicating whether the next observation
+            is terminal. If None, this function assumes that they are not
+            terminal.
 
-        # convert list to tensor
-        full_old_states = torch.stack(memory_data["states"]).to(self.device).detach()
-        full_old_actions = torch.stack(memory_data["actions"]).to(self.device).detach()
-        full_old_logprobs = (
-            torch.stack(memory_data["action_logprobs"]).to(self.device).detach()
-        )
-
-        state_values = self.value_net(full_old_states).detach()
-        state_values = torch.squeeze(state_values).tolist()
-
-        returns, advantages = self._compute_returns_avantages(
-            memory_data["rewards"], memory_data["dones"], state_values
-        )
-
-        full_old_returns = returns.to(self.device).detach()
-        full_old_advantages = advantages.to(self.device).detach()
-
-        # optimize policy for K epochs
+        Notes
+        -----
+        This function assumes that the data in `self.memory` is complete,
+        and it will clear the memory during the update.
+        """
         assert (
-            self.n_steps >= self.batch_size
-        ), "n_samples must be greater than batch_size"
-        n_batches = self.n_steps // self.batch_size
+            int(next_obs is None) + int(next_done is None)
+        ) % 2 == 0, "'next_obs' and 'next_done' should be both None or not None at the same time."
 
-        for _ in range(self.k_epochs):
+        # get batch data
+        batch = self.memory.get()
+        self.memory.clear()
 
-            # shuffle samples
-            rd_indices = self.rng.choice(self.n_steps, size=self.n_steps, replace=False)
-            shuffled_states = full_old_states[rd_indices]
-            shuffled_actions = full_old_actions[rd_indices]
-            shuffled_logprobs = full_old_logprobs[rd_indices]
-            shuffled_returns = full_old_returns[rd_indices]
-            shuffled_advantages = full_old_advantages[rd_indices]
+        # get shapes
+        n_steps, n_envs, *obs_shape = batch["observations"].shape
+        _, _, *action_shape = batch["actions"].shape
 
-            for k in range(n_batches):
+        # create tensors from batch data
+        def _to_tensor(x):
+            return torch.from_numpy(x).to(self.device).detach()
 
-                # sample batch
-                batch_idx = np.arange(
-                    k * self.batch_size, min((k + 1) * self.batch_size, self.n_steps)
+        b_obs = _to_tensor(batch["observations"])
+
+        # create buffers
+        b_values = torch.zeros(
+            (n_steps, n_envs), dtype=torch.float32, device=self.device
+        )
+        b_advantages = torch.zeros_like(b_values)
+        b_returns = torch.zeros_like(b_values)
+
+        # compute values
+        # note: some implementations compute the value when collecting the data
+        #       and use those stale values for the update. This can be better
+        #       in architectures with a shared encoder, because you avoid two
+        #       forward passes through the encoder. However, we choose to compute
+        #       the values here, because it is easier to implement and it has no
+        #       impact on performance in most cases.
+        with torch.no_grad():
+            b_values = self.value_net(b_obs).squeeze(-1)
+            if next_obs is not None:
+                b_next_value = self.value_net(next_obs).squeeze(-1)
+
+        # compute returns and advantages
+        # using numpy and numba for speedup
+        rewards = np.copy(batch["rewards"])
+
+        next_dones = np.zeros_like(batch["dones"])
+        next_dones[:-1] = batch["dones"][1:]
+        if next_obs is not None:
+            next_dones[-1] = next_done
+
+        values = b_values.cpu().numpy()
+        next_values = np.zeros_like(values)
+        next_values[:-1] = values[1:]
+        if next_obs is not None:
+            next_values[-1] = b_next_value.cpu().numpy()
+
+        returns = lambda_returns(
+            rewards, next_dones, next_values, self.gamma, self.gae_lambda
+        )
+        advantages = returns - values
+
+        # convert to tensor
+        b_actions = _to_tensor(batch["actions"])
+        b_logprobs = _to_tensor(batch["logprobs"])
+        b_returns = _to_tensor(returns)
+        b_advantages = _to_tensor(advantages)
+
+        # flatten the batch
+        b_obs = b_obs.view(n_steps * n_envs, *obs_shape)
+        b_actions = b_actions.view(n_steps * n_envs, *action_shape)
+        b_logprobs = b_logprobs.view(n_steps * n_envs, *action_shape)
+        b_values = b_values.view(n_steps * n_envs)
+        b_returns = b_returns.view(n_steps * n_envs)
+        b_advantages = b_advantages.view(n_steps * n_envs)
+
+        # run minibatch updates
+        clipped = []  # whether the policy loss was clipped
+        b_indices = np.arange(n_steps * n_envs)
+        for epoch in range(self.k_epochs):
+            self.rng.shuffle(b_indices)
+            for start in range(0, n_steps * n_envs, self.batch_size):
+                end = min(start + self.batch_size, n_steps * n_envs)
+                mb_indices = b_indices[start:end]
+
+                mb_obs = b_obs[mb_indices]
+                mb_actions = b_actions[mb_indices]
+                mb_old_logprobs = b_logprobs[mb_indices]
+                mb_returns = b_returns[mb_indices]
+                mb_advantages = b_advantages[mb_indices]
+
+                # normalize advantages
+                if self.normalize_advantages:
+                    mb_advantages = (mb_advantages - mb_advantages.mean()) / (
+                        mb_advantages.std() + 1e-8
+                    )
+
+                # forward pass to values and logprobs
+                action_dist = self.policy_net(mb_obs)
+                mb_values = self.value_net(mb_obs).squeeze(-1)
+
+                mb_logprobs = action_dist.log_prob(mb_actions)
+                mb_entropy = action_dist.entropy()
+                if len(mb_logprobs.shape) > 1:
+                    # in continuous action spaces, the distribution returns one
+                    # value per action dim, so we sum over them
+                    mb_logprobs = torch.sum(mb_logprobs, dim=-1)
+                    mb_old_logprobs = torch.sum(mb_old_logprobs, dim=-1)
+                    mb_entropy = torch.sum(mb_entropy, dim=-1)
+                mb_logratio = mb_logprobs - mb_old_logprobs
+                mb_ratio = torch.exp(mb_logratio)
+
+                # compute approximated kl divergence and whether the policy loss
+                # was clipped
+                with torch.no_grad():
+                    approx_kl = torch.mean((mb_ratio - 1) - mb_logratio)
+                    clipped.append(
+                        (torch.abs(mb_ratio - 1.0) > self.clip_eps)
+                        .float()
+                        .mean()
+                        .item()
+                    )
+
+                # policy loss
+                pg_loss1 = -mb_advantages * mb_ratio
+                pg_loss2 = -mb_advantages * torch.clamp(
+                    mb_ratio, 1 - self.clip_eps, 1 + self.clip_eps
                 )
-                old_states = shuffled_states[batch_idx]
-                old_actions = shuffled_actions[batch_idx]
-                old_logprobs = shuffled_logprobs[batch_idx]
-                old_returns = shuffled_returns[batch_idx]
-                old_advantages = shuffled_advantages[batch_idx]
+                pg_loss = torch.mean(torch.max(pg_loss1, pg_loss2))
 
-                # evaluate old actions and values
-                action_dist = self._policy(old_states)
-                logprobs = action_dist.log_prob(old_actions)
-                state_values = torch.squeeze(self.value_net(old_states))
-                dist_entropy = action_dist.entropy()
+                # value loss
+                if self.value_loss == "mse":
+                    v_loss = 0.5 * torch.mean((mb_values - mb_returns) ** 2)
+                elif self.value_loss == "avec":
+                    v_loss = torch.var(mb_returns - mb_values)
+                elif self.value_loss == "clipped":
+                    mb_old_values = b_values[
+                        mb_indices
+                    ]  # these are stale after the first minibatch
+                    mb_clipped_values = mb_old_values + torch.clamp(
+                        mb_values - mb_old_values, -self.clip_eps, self.clip_eps
+                    )
 
-                # find ratio (pi_theta / pi_theta__old)
-                ratios = torch.exp(logprobs - old_logprobs)
+                    v_loss_unclipped = (mb_values - mb_returns) ** 2
+                    v_loss_clipped = (mb_clipped_values - mb_returns) ** 2
+                    v_loss = 0.5 * torch.mean(
+                        torch.max(v_loss_unclipped, v_loss_clipped)
+                    )
 
-                old_advantages = old_advantages.view(
-                    -1,
-                )
+                # entropy loss
+                entropy_loss = torch.mean(mb_entropy)
 
-                # compute surrogate loss
-                surr1 = ratios * old_advantages
-                surr2 = (
-                    torch.clamp(ratios, 1 - self.eps_clip, 1 + self.eps_clip)
-                    * old_advantages
-                )
-                surr_loss = torch.min(surr1, surr2)
+                # total loss
+                loss = pg_loss + self.vf_coef * v_loss - self.entr_coef * entropy_loss
 
-                # compute value function loss
-                loss_vf = self.vf_coef * self.MseLoss(state_values, old_returns)
+                # optimize
+                self.optimizer.zero_grad()
+                loss.backward()
+                if self.max_grad_norm is not None:
+                    nn.utils.clip_grad_norm_(
+                        list(self.policy_net.parameters())
+                        + list(self.value_net.parameters()),
+                        self.max_grad_norm,
+                    )
+                self.optimizer.step()
 
-                # compute entropy loss
-                loss_entropy = self.entr_coef * dist_entropy
+            if self.target_kl and approx_kl > self.target_kl:
+                break
 
-                # compute total loss
-                loss = -surr_loss + loss_vf - loss_entropy
+        # compute explained variance
+        y_pred, y_true = b_values.cpu().numpy(), b_returns.cpu().numpy()
+        var_y = np.var(y_true)
+        explained_var = np.nan if var_y == 0 else 1 - np.var(y_true - y_pred) / var_y
 
-                # take gradient step
-                self._policy_optimizer.zero_grad()
-                self.value_optimizer.zero_grad()
-
-                loss.mean().backward()
-
-                self._policy_optimizer.step()
-                self.value_optimizer.step()
-
-        # log
+        # log metrics
+        # note: this approach only logs the last batch of the last
+        # epoch, which is not ideal. However, it is the way it is
+        # done in most implementations of PPO.
         if self.writer:
             self.writer.add_scalar(
-                "fit/surrogate_loss",
-                surr_loss.mean().cpu().detach().numpy(),
-                self.total_episodes,
+                "fit/policy_loss",
+                pg_loss.item(),
+                self.total_timesteps,
+            )
+            self.writer.add_scalar(
+                "fit/value_loss",
+                v_loss.item(),
+                self.total_timesteps,
             )
             self.writer.add_scalar(
                 "fit/entropy_loss",
-                dist_entropy.mean().cpu().detach().numpy(),
+                entropy_loss.item(),
                 self.total_episodes,
             )
-
-        # copy new weights into old policy
-        self._policy_old.load_state_dict(self._policy.state_dict())
-
-    def _compute_returns_avantages(self, rewards, is_terminals, state_values):
-
-        length_rollout = len(rewards)
-        returns = torch.zeros(length_rollout).to(self.device)
-        advantages = torch.zeros(length_rollout).to(self.device)
-
-        # normalizing the rewards (rewards is a list)
-        if self.normalize_rewards:
-            mean_rew = np.mean(rewards)
-            std_rew = np.std(rewards)
-            rewards = [(i - mean_rew) / (std_rew + 1e-8) for i in rewards]
-
-        if not self.use_gae:
-            for t in reversed(range(length_rollout)):
-                if t == length_rollout - 1:
-                    returns[t] = (
-                        rewards[t]
-                        + self.gamma * (1 - is_terminals[t]) * state_values[-1]
-                    )
-                else:
-                    returns[t] = (
-                        rewards[t] + self.gamma * (1 - is_terminals[t]) * returns[t + 1]
-                    )
-
-                advantages[t] = returns[t] - state_values[t]
-        else:
-            last_adv = 0
-            for t in reversed(range(length_rollout)):
-                if t == length_rollout - 1:
-                    returns[t] = (
-                        rewards[t]
-                        + self.gamma * (1 - is_terminals[t]) * state_values[-1]
-                    )
-                    td_error = returns[t] - state_values[t]
-                else:
-                    returns[t] = (
-                        rewards[t] + self.gamma * (1 - is_terminals[t]) * returns[t + 1]
-                    )
-                    td_error = (
-                        rewards[t]
-                        + self.gamma * (1 - is_terminals[t]) * state_values[t + 1]
-                        - state_values[t]
-                    )
-
-                last_adv = (
-                    self.gae_lambda * self.gamma * (1 - is_terminals[t]) * last_adv
-                    + td_error
-                )
-                advantages[t] = last_adv
-
-        # normalize the advantages (here advantages is a tensor)
-        if self.normalize_advantages:
-            advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
-
-        return returns, advantages
+            self.writer.add_scalar(
+                "fit/approx_kl",
+                approx_kl.item(),
+                self.total_episodes,
+            )
+            self.writer.add_scalar(
+                "fit/clipfrac",
+                np.mean(clipped),
+                self.total_episodes,
+            )
+            self.writer.add_scalar(
+                "fit/explained_variance",
+                explained_var,
+                self.total_episodes,
+            )
+            self.writer.add_scalar(
+                "fit/learning_rate",
+                self.optimizer.param_groups[0]["lr"],
+            )
 
     #
     # For hyperparameter optimization
@@ -454,11 +648,10 @@ class PPOAgent(AgentWithSimplePolicy):
     def sample_parameters(cls, trial):
         batch_size = trial.suggest_categorical("batch_size", [1, 4, 8, 16, 32])
         gamma = trial.suggest_categorical("gamma", [0.9, 0.95, 0.99])
-        learning_rate = trial.suggest_loguniform("learning_rate", 1e-5, 1)
+        learning_rate = trial.suggest_float("learning_rate", 1e-5, 1, log=True)
+        entr_coef = trial.suggest_float("entr_coef", 1e-8, 0.1, log=True)
 
-        entr_coef = trial.suggest_loguniform("entr_coef", 1e-8, 0.1)
-
-        eps_clip = trial.suggest_categorical("eps_clip", [0.1, 0.2, 0.3])
+        clip_eps = trial.suggest_categorical("clip_eps", [0.1, 0.2, 0.3])
 
         k_epochs = trial.suggest_categorical("k_epochs", [1, 5, 10, 20])
 
@@ -467,13 +660,117 @@ class PPOAgent(AgentWithSimplePolicy):
             "gamma": gamma,
             "learning_rate": learning_rate,
             "entr_coef": entr_coef,
-            "eps_clip": eps_clip,
+            "clip_eps": clip_eps,
             "k_epochs": k_epochs,
         }
 
+    ##### Overwrite some inherited functions
 
-# if __name__ == "__main__":
-#     env = (gym_make, dict(id="Acrobot-v1"))
-#     # env = gym_make(id="Acrobot-v1")
-#     ppo = PPOAgent(env)
-#     ppo.fit(100000)
+    def save(self, filename):
+        """
+        Overwrite the 'save' and 'load' functions to not store the env if it's a "vectorized env" (can't be managed with pickle)
+
+        ----- documentation from original save -----
+
+        Save agent object. By default, the agent is pickled.
+
+        If overridden, the load() method must also be overriden.
+
+        Before saving, consider setting writer to None if it can't be pickled (tensorboard writers
+        keep references to files and cannot be pickled).
+
+        Note: dill[1]_ is used when pickle fails
+        (see https://stackoverflow.com/a/25353243, for instance).
+        Pickle is tried first, since it is faster.
+
+        Parameters
+        ----------
+        filename: Path or str
+            File in which to save the Agent.
+
+        Returns
+        -------
+        pathlib.Path
+            If save() is successful, a Path object corresponding to the filename is returned.
+            Otherwise, None is returned.
+        .. warning:: The returned filename might differ from the input filename: For instance,
+        the method can append the correct suffix to the name before saving.
+
+        References
+        ----------
+        .. [1] https://github.com/uqfoundation/dill
+        """
+        # remove writer if not pickleable
+        if not dill.pickles(self.writer):
+            self.set_writer(None)
+        # save
+        filename = Path(filename).with_suffix(".pickle")
+        filename.parent.mkdir(parents=True, exist_ok=True)
+
+        dict_to_save = dict(self.__dict__)
+        del dict_to_save["env"]
+        del dict_to_save["eval_env"]
+
+        try:
+            if not self.compress_pickle:
+                with filename.open("wb") as ff:
+                    pickle.dump(dict_to_save, ff)
+            else:
+                with bz2.BZ2File(filename, "wb") as ff:
+                    cPickle.dump(dict_to_save, ff)
+        except Exception:
+            try:
+                if not self.compress_pickle:
+                    with filename.open("wb") as ff:
+                        dill.dump(dict_to_save, ff)
+                else:
+                    with bz2.BZ2File(filename, "wb") as ff:
+                        dill.dump(dict_to_save, ff)
+            except Exception as ex:
+                logger.warning("Agent instance cannot be pickled: " + str(ex))
+                return None
+
+        return filename
+
+    @classmethod
+    def load(cls, filename, **kwargs):
+        """
+        Overwrite the 'save' and 'load' functions to not store the env if it's a "vectorized env" (can't be managed with pickle)
+
+        ----- documentation from original load -----
+        Load agent object.
+        If overridden, save() method must also be overriden.
+
+        Parameters
+        ----------
+        **kwargs: dict
+            Arguments to required by the __init__ method of the Agent subclass.
+        """
+        filename = Path(filename).with_suffix(".pickle")
+        obj = cls(**kwargs)
+
+        try:
+            if not obj.compress_pickle:
+                with filename.open("rb") as ff:
+                    tmp_dict = pickle.load(ff)
+            else:
+                with bz2.BZ2File(filename, "rb") as ff:
+                    tmp_dict = cPickle.load(ff)
+        except Exception:
+            if not obj.compress_pickle:
+                with filename.open("rb") as ff:
+                    tmp_dict = dill.load(ff)
+            else:
+                with bz2.BZ2File(filename, "rb") as ff:
+                    tmp_dict = dill.load(ff)
+
+        temp_env = obj.__dict__["env"]
+        temp_eval_env = obj.__dict__["eval_env"]
+
+        obj.__dict__.clear()
+        obj.__dict__.update(tmp_dict)
+
+        obj.__dict__["env"] = temp_env
+        obj.__dict__["eval_env"] = temp_eval_env
+
+        return obj

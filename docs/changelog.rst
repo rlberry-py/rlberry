@@ -6,9 +6,38 @@ Changelog
 Dev version
 -----------
 
+Version 0.5.0
+-------------
 
-Version 0.4.0  (latest stable version)
---------------------------------------
+*PR #281, #323*
+
+ * Merge gymnasium branch into main, make gymnasium the default library for environments in rlberry.
+
+Version 0.4.1
+-------------
+
+*PR #318*
+
+* Update to allow the training on a computer with GPU, save the agents, then load it on a computer without GPU.
+
+*PR #308*
+
+* Update make_atari_env and PPO to be compatible together and use vectorized env (PPO manage the vector)
+
+*PR #298*
+
+* Move old scripts (jax agents, attention networks, old examples...) that we won't maintain from the main branch to an archive branch.
+
+*PR #277*
+
+* Add and update code to use "Atari games" env
+
+*PR #281*
+
+* New branch for code compatible with Gymnasium
+
+Version 0.4.0
+-------------
 
 *PR #273*
 

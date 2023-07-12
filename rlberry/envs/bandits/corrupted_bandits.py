@@ -14,6 +14,7 @@ class CorruptedLaws:
         Can either be a frozen scipy law or any class that
         has a method .rvs() to sample according to the given law.
 
+
     cor_prop: float in (0,1/2)
         Proportion of corruption
 
@@ -26,12 +27,11 @@ class CorruptedLaws:
         self.cor_prop = cor_prop
         self.cor_law = cor_law
 
-    def rvs(self, random_state):
-        is_corrupted = random_state.binomial(1, self.cor_prop)
-        if is_corrupted == 1:
-            return self.cor_law.rvs(random_state=random_state)
-        else:
-            return self.law.rvs(random_state=random_state)
+    def rvs(self, size, random_state):
+        is_corrupted = random_state.binomial(1, self.cor_prop, size=size)
+        cor_sample = self.cor_law.rvs(size=size, random_state=random_state)
+        noncor_sample = self.law.rvs(size=size, random_state=random_state)
+        return is_corrupted * cor_sample + (1 - is_corrupted) * noncor_sample
 
     def mean(self):
         return (

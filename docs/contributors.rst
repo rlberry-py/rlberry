@@ -15,7 +15,7 @@
     </div>
     <div>
     <a href='https://github.com/omardrwch'><img src='https://avatars.githubusercontent.com/u/10488512?v=4' class='avatar' /></a> <br />
-    <p>Omar D. Domingues</p>
+    <p>Omar D.</p>
     </div>
     <div>
     <a href='https://github.com/yfletberliac'><img src='https://avatars.githubusercontent.com/u/14262199?v=4' class='avatar' /></a> <br />
@@ -34,12 +34,20 @@
     <p>Pierre Ménard</p>
     </div>
     <div>
+    <a href='https://github.com/riiswa'><img src='https://avatars.githubusercontent.com/u/24685602?v=4' class='avatar' /></a> <br />
+    <p>Waris Radji</p>
+    </div>
+    <div>
     <a href='https://github.com/sauxpa'><img src='https://avatars.githubusercontent.com/u/46052865?v=4' class='avatar' /></a> <br />
     <p>sauxpa</p>
     </div>
     <div>
     <a href='https://github.com/xuedong'><img src='https://avatars.githubusercontent.com/u/1488899?v=4' class='avatar' /></a> <br />
     <p>Xuedong Shang</p>
+    </div>
+    <div>
+    <a href='https://github.com/JulienT01'><img src='https://avatars.githubusercontent.com/u/53004817?v=4' class='avatar' /></a> <br />
+    <p>Ju T</p>
     </div>
     <div>
     <a href='https://github.com/TimotheeMathieu'><img src='https://avatars.githubusercontent.com/u/30346931?v=4' class='avatar' /></a> <br />

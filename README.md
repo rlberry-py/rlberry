@@ -4,10 +4,12 @@
 </p>
 
 
+
 <!-- Short description -->
 <p align="center">
    A Reinforcement Learning Library for Research and Education
 </p>
+
 
 <!-- The badges -->
 <p align="center">
@@ -19,9 +21,6 @@
    </a>
    <a href="https://img.shields.io/github/contributors/rlberry-py/rlberry">
       <img alt="contributors" src="https://img.shields.io/github/contributors/rlberry-py/rlberry">
-   </a>
-   <a href="https://app.codacy.com/gh/rlberry-py/rlberry?utm_source=github.com&utm_medium=referral&utm_content=rlberry-py/rlberry&utm_campaign=Badge_Grade">
-      <img alt="Codacy" src="https://api.codacy.com/project/badge/Grade/27e91674d18a4ac49edf91c339af1502">
    </a>
    <a href="https://codecov.io/gh/rlberry-py/rlberry">
       <img alt="codecov" src="https://codecov.io/gh/rlberry-py/rlberry/branch/main/graph/badge.svg?token=TIFP7RUD75">
@@ -122,6 +121,11 @@ The modules listed below are experimental at the moment, that is, they are not t
 
 * `rlberry.network`: Allows communication between a server and client via sockets, and can be used to run agents remotely.
 * `rlberry.agents.experimental`: Experimental agents that are not thoroughly tested.
+
+* `rlberry.agents.torch`, `rlberry.agents.jax`, `rlberry.exploration_tools.torch`: Deep RL agents are currently not stable, and their main purpose now is to illustrate how to implement and run those algorithms with the `rlberry` interface
+(e.g., run several agents in parallel, optimize hyperparameters etc.).
+Other libraries, such as [Stable Baselines](https://stable-baselines3.readthedocs.io/en/master/) provide reliable implementations of deep RL algorithms, and **can be used with `rlberry`**, as shown by
+[this example](https://rlberry.readthedocs.io/en/latest/auto_examples/demo_examples/demo_from_stable_baselines.html#sphx-glr-auto-examples-demo-examples-demo-from-stable-baselines-py).
 
 
 ## Contributing

@@ -17,7 +17,13 @@ def test_bernoulli():
     safe_reseed(env, Seeder(TEST_SEED))
 
     sample = [env.step(1)[1] for f in range(1000)]
+
+    safe_reseed(env, Seeder(TEST_SEED))
+
+    sample2 = [env.step(1)[1] for f in range(1000)]
+
     assert np.abs(np.mean(sample) - 0.95) < 0.1
+    assert np.mean(sample) == np.mean(sample2), "Not reproducible"
 
 
 def test_normal():
@@ -25,7 +31,12 @@ def test_normal():
     safe_reseed(env, Seeder(TEST_SEED))
 
     sample = [env.step(1)[1] for f in range(1000)]
+    safe_reseed(env, Seeder(TEST_SEED))
+
+    sample2 = [env.step(1)[1] for f in range(1000)]
+
     assert np.abs(np.mean(sample) - 1) < 0.1
+    assert np.abs(sample[0] - sample2[0]) < 0.01, "Not reproducible"
 
 
 def test_cor_normal():

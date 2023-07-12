@@ -9,7 +9,6 @@ from rlberry.network.client import BerryClient
 from rlberry.network import interface
 from rlberry.network.interface import Message, ResourceRequest
 from rlberry.manager.remote_agent_manager import RemoteAgentManager
-
 from rlberry.manager.evaluation import evaluate_agents
 
 server_name = "berry"
@@ -25,14 +24,11 @@ def start_server(xprocess):
         args = [python_executable_full_path, python_server_script_full_path]
 
     xprocess.ensure(server_name, Starter)
-
     yield
-
     xprocess.getinfo(server_name).terminate()
 
 
 def test_client():
-
     port = 4242
     client = BerryClient(port=port)
     # Send params for AgentManager
@@ -71,7 +67,7 @@ def test_remote_manager():
     remote_manager = RemoteAgentManager(
         client,
         agent_class=ResourceRequest(name="REINFORCEAgent"),
-        train_env=ResourceRequest(name="gym_make", kwargs=dict(id="CartPole-v0")),
+        train_env=ResourceRequest(name="gym_make", kwargs=dict(id="CartPole-v1")),
         fit_budget=10,
         init_kwargs=dict(gamma=0.99),
         eval_kwargs=dict(eval_horizon=2, n_simulations=2),

@@ -19,7 +19,7 @@ OS dependency
 
 In order to render videos in rlberry, `ffmpeg <https://ffmpeg.org/>`_ must be installed.
 
-Latest version (0.4.0)
+Latest version (0.5.0)
 -------------------------------------
 
 Install the latest version for a stable release.
@@ -66,7 +66,7 @@ to install version 0.1.
 Deep RL agents
 --------------
 
-Deep RL agents require extra libraries, like PyTorch and JAX.
+Deep RL agents require extra libraries, like PyTorch.
 
 * PyTorch agents:
 
@@ -77,12 +77,10 @@ Deep RL agents require extra libraries, like PyTorch and JAX.
 
 * JAX agents (**Linux only, experimental**):
 
+
+* Stable-baselines3 agents with Gymnasium support:
+    (https://github.com/DLR-RM/stable-baselines3/pull/1327)
 .. code:: bash
 
-    $ pip install git+https://github.com/rlberry-py/rlberry.git#egg=rlberry[jax_agents]
-
-.. warning::
-    If you're using PyTorch agents *and* JAX agents, do not install tensorboard separately,
-    since :code:`pip install -e .[jax_agents]` installs tensorflow, which already contains
-    tensorboard. Otherwise, there might be a conflict between the two installations
-    and tensorboard will not work properly.
+    $ pip install git+https://github.com/DLR-RM/stable-baselines3@feat/gymnasium-support
+    $ pip install git+https://github.com/Stable-Baselines-Team/stable-baselines3-contrib@feat/gymnasium-support
