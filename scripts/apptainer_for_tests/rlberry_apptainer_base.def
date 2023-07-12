@@ -4,23 +4,23 @@ From: ubuntu:latest
 #script for the build
 %post -c /bin/bash
 
-    #get the last Ubuntu Update, 
+    #get the last Ubuntu Update,
     apt-get update \
     && apt-get upgrade -y
-    
+
     # Install python, and graphic and basic libs.
-    apt-get install -y software-properties-common python3-pip git ffmpeg libsm6 libxext6 libsdl2-dev xvfb x11-xkb-utils 
-    
+    apt-get install -y software-properties-common python3-pip git ffmpeg libsm6 libxext6 libsdl2-dev xvfb x11-xkb-utils
+
     #Remove the old tmp folder if it exist, then download rlberry
-    if [ -d /tmp/rlberry_test_dir ]; then /bin/rm -r /tmp/rlberry_test_dir; fi 
+    if [ -d /tmp/rlberry_test_dir ]; then /bin/rm -r /tmp/rlberry_test_dir; fi
     git clone https://github.com/rlberry-py/rlberry.git /tmp/rlberry_test_dir
 
     #Install all the lib we need to run rlberry and its tests
-    pip3 install rlberry[torch_agents] opencv-python pytest pytest-xvfb pytest-xprocess tensorboard #--break-system-packages 
+    pip3 install rlberry[torch_agents] opencv-python pytest pytest-xvfb pytest-xprocess tensorboard #--break-system-packages
     pip3 install gymnasium[other]
 
 %environment
-    export LC_ALL=C  
+    export LC_ALL=C
 
 #script that will be executed with the "run" command : run the tests in rlberry, the longtests, and then export the exit code inside a text file
 %runscript
@@ -33,4 +33,3 @@ From: ubuntu:latest
 
     #Run all the long test
     #pytest long_tests/**/*.py
-

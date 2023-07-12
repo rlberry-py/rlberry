@@ -15,19 +15,19 @@ From: ubuntu:latest
     DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y python[version] python[version]-dev python[version]-venv python3-pip git ffmpeg libsm6 libxext6 libsdl2-dev xvfb x11-xkb-utils --no-install-recommends
     update-alternatives --install /usr/bin/python3 python3 /usr/bin/python[version] 1
     pip3 install --upgrade pip
-    
-     
+
+
     #Remove the old tmp folder if it exist, then install rlberry
-    if [ -d /tmp/rlberry_test_dir[version] ]; then /bin/rm -r /tmp/rlberry_test_dir[version]; fi 
+    if [ -d /tmp/rlberry_test_dir[version] ]; then /bin/rm -r /tmp/rlberry_test_dir[version]; fi
     git clone https://github.com/rlberry-py/rlberry.git /tmp/rlberry_test_dir[version]
 
     #Install all the lib we need to run rlberry and its tests
-    pip3 install rlberry[torch_agents] opencv-python pytest pytest-xvfb pytest-xprocess tensorboard #--break-system-packages 
+    pip3 install rlberry[torch_agents] opencv-python pytest pytest-xvfb pytest-xprocess tensorboard #--break-system-packages
     pip3 install gymnasium[other]
 
 #Environmment variable, Don't forget to change [version]
 %environment
-    export LC_ALL=C  
+    export LC_ALL=C
     export PATH="/usr/bin/python[version]:$PATH"
 
 #script that will be executed with the "run" command : run the tests in rlberry, then export the exit code inside a text file
@@ -35,4 +35,3 @@ From: ubuntu:latest
     cd /tmp/rlberry_test_dir[version] && \
     pytest rlberry
     echo $? > [path]/exit_code.txt
-

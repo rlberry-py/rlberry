@@ -26,4 +26,3 @@ else
 fi
 
 echo "$core_message" | mail -s "$subject" -A "$attachment" "$recipient"  -aFrom:"Rlberry_Monthly_tests"
-
