@@ -157,7 +157,12 @@ def compare_agents(
         )
     elif method == "permutation":
         results_perm = _permutation_test(data, B, alpha) == 1
-        decisions = ["accept" if res else "reject" for res in results_perm]
+        decisions = [
+            "accept" if results_perm[i][j] else "reject"
+            for i in range(n_agents)
+            for j in range(n_agents)
+            if i < j
+        ]
         results = pd.DataFrame(
             {
                 "Agent1 vs Agent2": [

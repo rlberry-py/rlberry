@@ -55,7 +55,7 @@ def test_compare(method):
         agent_name="Dummy2",
         fit_budget=5,
         eval_kwargs=eval_kwargs,
-        init_kwargs={"eval_val": 1},
+        init_kwargs={"eval_val": 10},
         n_fit=4,
         seed=123,
     )
@@ -66,7 +66,7 @@ def test_compare(method):
     assert len(df) > 0
     if method == "tukey_hsd":
         assert df["p-val"].item() < 0.05
-    assert len(df["significance"]) > 0
+    assert df["decisions"].iloc[0] == "reject"
     agent1_pickle = agent1.save()
     agent2_pickle = agent2.save()
 
