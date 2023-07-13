@@ -5,6 +5,10 @@ Changelog
 
 Dev version
 -----------
+*PR #335*
+
+ * Upgrade from Python3.9 -> python3.10
+
 
 Version 0.5.0
 -------------
