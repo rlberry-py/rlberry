@@ -52,17 +52,6 @@ def compare_agents(
 
     [2]: Testing Statistical Hypotheses by E. L. Lehmann, Joseph P. Romano (Section 15.4.4), https://doi.org/10.1007/0-387-27605-X, Springer
 
-    Examples
-    --------
-    >>> for manager in managers :
-    >>> manager.fit()
-    >>>
-    >>> def eval_function(manager , eval_budget = None, agent_id=0):
-    >>>     # Compute the sum of regrets over training
-    >>>     df = manager.get_writer_data()[agent_id]
-    >>>     return T *np.max(means) - np.sum(df.loc[df['tag']=="reward", "value"])
-    >>> compare_agents(managers, method = "permutation", eval_function=eval_function, B = 10_000)
-
     """
     # Construction of the array of evaluations
     df = pd.DataFrame()
@@ -75,6 +64,7 @@ def compare_agents(
             agent_manager_list[i] = manager.load(agent_source[i])
     else:
         agent_manager_list = agent_source
+
     for manager in agent_manager_list:
         n_fit = len(manager.agent_handlers)
         for id_agent in range(n_fit):
@@ -98,7 +88,12 @@ def compare_agents(
             )
 
     agent_names = df["agent"].unique()
-    data = np.array([df.loc[df["agent"] == name, "mean_eval"] for name in agent_names])
+    assert len(agent_names) == len(
+        agent_manager_list
+    ), "Each agent must have unique name."
+    data = np.array(
+        [np.array(df.loc[df["agent"] == name, "mean_eval"]) for name in agent_names]
+    )
 
     n_agents = len(agent_names)
     vs = [
@@ -109,17 +104,23 @@ def compare_agents(
     ]
 
     mean_agent1 = [
-        "{0:.3F}".format(df.loc[df["agent"] == vs[i][0], "mean_eval"].iloc[0])
-        for i in range(len(vs))
+        np.mean(df.loc[df["agent"] == vs[i][0], "mean_eval"]) for i in range(len(vs))
     ]
+
     mean_agent2 = [
-        "{0:.3F}".format(df.loc[df["agent"] == vs[i][1], "mean_eval"].iloc[0])
-        for i in range(len(vs))
+        np.mean(df.loc[df["agent"] == vs[i][1], "mean_eval"]) for i in range(len(vs))
     ]
     mean_diff = [
-        "{0:.3F}".format(
-            df.loc[df["agent"] == vs[i][0], "mean_eval"].iloc[0]
-            - df.loc[df["agent"] == vs[i][1], "mean_eval"].iloc[0]
+        np.mean(
+            np.array(df.loc[df["agent"] == vs[i][0], "mean_eval"])
+            - np.array(df.loc[df["agent"] == vs[i][1], "mean_eval"])
+        )
+        for i in range(len(vs))
+    ]
+    std_diff = [
+        np.std(
+            np.array(df.loc[df["agent"] == vs[i][0], "mean_eval"])
+            - np.array(df.loc[df["agent"] == vs[i][1], "mean_eval"])
         )
         for i in range(len(vs))
     ]
@@ -128,21 +129,26 @@ def compare_agents(
     if method == "tukey_hsd":
         results_pval = tukey_hsd(*tuple(data)).pvalue
         p_vals = [
-            format_p_value(results_pval[i][j])[0]
+            results_pval[i][j]
             for i in range(n_agents)
             for j in range(n_agents)
             if i < j
         ]
         significance = [
-            format_p_value(results_pval[i][j])[1]
+            sig_p_value(results_pval[i][j])
             for i in range(n_agents)
             for j in range(n_agents)
             if i < j
         ]
     elif method == "permutation":
-        results_pval = _permutation_test(data, B, alpha)
-        p_vals = ["NaN" for i in range(len(vs))]
-        significance = ["" for i in range(len(vs))]
+        results = _permutation_test(data, B, alpha)
+        p_vals = [np.nan for i in range(len(vs))]
+        significance = [
+            "" if results[i][j] == 0 else "*"
+            for i in range(n_agents)
+            for j in range(n_agents)
+            if i < j
+        ]
     else:
         raise NotImplemented(f"method {method} not implemented")
 
@@ -154,6 +160,7 @@ def compare_agents(
             "mean Agent1": mean_agent1,
             "mean Agent2": mean_agent2,
             "mean diff": mean_diff,
+            "std diff": std_diff,
             "p-val": p_vals,
             "significance": significance,
         }
@@ -247,12 +254,12 @@ def _permutation_test(data, B, alpha):
     return results
 
 
-def format_p_value(p):
+def sig_p_value(p):
     if p < 0.001:
-        return "{:.3e}".format(p), "***"
+        return "***"
     elif p < 0.01:
-        return "{:.3e}".format(p), "**"
+        return "**"
     elif p <= 0.05:
-        return "{:.3e}".format(p), "*"
+        return "*"
     else:
-        return "{:.3e}".format(p), ""
+        return ""

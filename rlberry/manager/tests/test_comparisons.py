@@ -6,12 +6,11 @@ from rlberry.manager import compare_agents
 
 
 class DummyAgent(AgentWithSimplePolicy):
-    def __init__(self, env, hyperparameter1=0, hyperparameter2=0, **kwargs):
+    def __init__(self, env, eval_val=0, **kwargs):
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
         self.name = "DummyAgent"
         self.fitted = False
-        self.hyperparameter1 = hyperparameter1
-        self.hyperparameter2 = hyperparameter2
+        self.eval_val = eval_val
 
         self.total_budget = 0.0
 
@@ -24,6 +23,9 @@ class DummyAgent(AgentWithSimplePolicy):
     def policy(self, observation):
         return 0
 
+    def eval(self, eval_horizon=None):
+        return self.eval_val
+
 
 @pytest.mark.parametrize("method", ["tukey_hsd", "permutation"])
 def test_compare(method):
@@ -32,7 +34,6 @@ def test_compare(method):
     eval_env = (GridWorld, {})
 
     # Parameters
-    params = {}
     eval_kwargs = dict(eval_horizon=10)
 
     # Run AgentManager
@@ -43,7 +44,7 @@ def test_compare(method):
         eval_env=eval_env,
         fit_budget=5,
         eval_kwargs=eval_kwargs,
-        init_kwargs=params,
+        init_kwargs={"eval_val": 0},
         n_fit=4,
         seed=123,
     )
@@ -54,7 +55,7 @@ def test_compare(method):
         agent_name="Dummy2",
         fit_budget=5,
         eval_kwargs=eval_kwargs,
-        init_kwargs=params,
+        init_kwargs={"eval_val": 1},
         n_fit=4,
         seed=123,
     )
@@ -63,7 +64,9 @@ def test_compare(method):
 
     df = compare_agents([agent1, agent2], method=method, B=10, n_simulations=5)
     assert len(df) > 0
-
+    if method == "tukey_hsd":
+        assert df["p-val"].item() < 0.05
+    assert len(df["significance"]) > 0
     agent1_pickle = agent1.save()
     agent2_pickle = agent2.save()
 

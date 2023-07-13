@@ -19,7 +19,6 @@ from rlberry.envs.bandits import BernoulliBandit
 from rlberry.wrappers import WriterWrapper
 from rlberry.agents.bandits import (
     IndexAgent,
-    makeBoundedIMEDIndex,
     makeBoundedMOSSIndex,
     makeBoundedNPTSIndex,
     makeBoundedUCBIndex,
@@ -69,15 +68,6 @@ class MOSSAgent(IndexAgent):
         )
 
 
-class IMEDAgent(IndexAgent):
-    name = "IMED"
-
-    def __init__(self, env, **kwargs):
-        index, tracker_params = makeBoundedIMEDIndex()
-        IndexAgent.__init__(self, env, index, tracker_params=tracker_params, **kwargs)
-        self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
-
-
 class NPTSAgent(IndexAgent):
     name = "NPTS"
 
@@ -87,7 +77,7 @@ class NPTSAgent(IndexAgent):
         self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
 
 
-Agents_class = [MOSSAgent, IMEDAgent, NPTSAgent, UCBAgent, ETCAgent]
+Agents_class = [MOSSAgent, NPTSAgent, UCBAgent, ETCAgent]
 
 managers = [
     AgentManager(
