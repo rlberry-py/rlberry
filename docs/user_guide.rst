@@ -45,7 +45,6 @@ Agents, hyperparameter optimization and experiment setup
 
    basics/create_agent.rst
    basics/evaluate_agent.rst
-   basics/compare_agents.rst
    basics/experiment_setup.rst
    basics/seeding.rst
    basics/multiprocess.rst

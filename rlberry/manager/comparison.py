@@ -38,7 +38,7 @@ def compare_agents(
     n_simulations: int, default = 50
         Number of evaluations to use if eval_function is None.
     alpha: float, default = 0.05
-        Level of the test
+        Level of the test, control the Family-wise error.
     B: int, default = 10_000
         Number of random permutations used to approximate the permutation test if method = "permutation"
 
@@ -140,31 +140,39 @@ def compare_agents(
             for j in range(n_agents)
             if i < j
         ]
+        decisions = ["accept" if p_val >= alpha else "reject" for p_val in p_vals]
+        results = pd.DataFrame(
+            {
+                "Agent1 vs Agent2": [
+                    "{0} vs {1}".format(vs[i][0], vs[i][1]) for i in range(len(vs))
+                ],
+                "mean Agent1": mean_agent1,
+                "mean Agent2": mean_agent2,
+                "mean diff": mean_diff,
+                "std diff": std_diff,
+                "decisions": decisions,
+                "p-val": p_vals,
+                "significance": significance,
+            }
+        )
     elif method == "permutation":
-        results = _permutation_test(data, B, alpha)
-        p_vals = [np.nan for i in range(len(vs))]
-        significance = [
-            "" if results[i][j] == 0 else "*"
-            for i in range(n_agents)
-            for j in range(n_agents)
-            if i < j
-        ]
+        results_perm = _permutation_test(data, B, alpha) == 1
+        decisions = ["accept" if res else "reject" for res in results_perm]
+        results = pd.DataFrame(
+            {
+                "Agent1 vs Agent2": [
+                    "{0} vs {1}".format(vs[i][0], vs[i][1]) for i in range(len(vs))
+                ],
+                "mean Agent1": mean_agent1,
+                "mean Agent2": mean_agent2,
+                "mean diff": mean_diff,
+                "std diff": std_diff,
+                "decisions": decisions,
+            }
+        )
     else:
         raise NotImplemented(f"method {method} not implemented")
 
-    results = pd.DataFrame(
-        {
-            "Agent1 vs Agent2": [
-                "{0} vs {1}".format(vs[i][0], vs[i][1]) for i in range(len(vs))
-            ],
-            "mean Agent1": mean_agent1,
-            "mean Agent2": mean_agent2,
-            "mean diff": mean_diff,
-            "std diff": std_diff,
-            "p-val": p_vals,
-            "significance": significance,
-        }
-    )
     return results
 
 

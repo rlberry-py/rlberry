@@ -115,12 +115,12 @@ print(compare_agents(agents))
 ```
 
 ```
-       Agent1 vs Agent2  mean Agent1  mean Agent2   mean diff    std diff     p-val significance
-0  A2CAgent vs PPOAgent   212.673875   423.125500 -210.451625  143.458479  0.001939           **
-1  A2CAgent vs DQNAgent   212.673875   443.296625 -230.622750  152.642416  0.000790          ***
-2  PPOAgent vs DQNAgent   423.125500   443.296625  -20.171125  102.137556  0.923614
+       Agent1 vs Agent2  mean Agent1  mean Agent2   mean diff    std diff decisions     p-val significance
+0  A2CAgent vs PPOAgent   213.600875   423.431500 -209.830625  144.600160    reject  0.002048           **
+1  A2CAgent vs DQNAgent   213.600875   443.296625 -229.695750  152.368506    reject  0.000849          ***
+2  PPOAgent vs DQNAgent   423.431500   443.296625  -19.865125  104.279024    accept  0.926234
 ```
 
-The results of `compare_agents(agents)` show the p-values if the method is `tukey_hsd` and in all the cases it shows a significance level. If there is at least one "*" in the significance it means that the decision of the hypothesis test is "reject $H_0$". In our case, we see that A2C seems significantly worst than both PPO and DQN but the difference between PPO and DQN is not statistically significant. Remark that no significance (which is to say, decision to accept $H_0$) does not necessarily mean that the algorithms perform the same, it can be that there is not enough data.
+The results of `compare_agents(agents)` show the p-values and significance level if the method is `tukey_hsd` and in all the cases it shows the decision accept or reject of the test with Family-wise error controlled by $0.05$. In our case, we see that A2C seems significantly worst than both PPO and DQN but the difference between PPO and DQN is not statistically significant. Remark that no significance (which is to say, decision to accept $H_0$) does not necessarily mean that the algorithms perform the same, it can be that there is not enough data.
 
 *Remark*: the comparison we do here is a black-box comparison in the sense that we don't care how the algorithms were tuned or how many training steps are used, we suppose that the user already tuned these parameters adequately for a fair comparison.
