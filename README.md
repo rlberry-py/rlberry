@@ -125,11 +125,9 @@ The modules listed below are experimental at the moment, that is, they are not t
 * `rlberry.network`: Allows communication between a server and client via sockets, and can be used to run agents remotely.
 * `rlberry.agents.experimental`: Experimental agents that are not thoroughly tested.
 
-* `rlberry.agents.torch`, `rlberry.agents.jax`, `rlberry.exploration_tools.torch`: Deep RL agents are currently not stable, and their main purpose now is to illustrate how to implement and run those algorithms with the `rlberry` interface
-(e.g., run several agents in parallel, optimize hyperparameters etc.).
-Other libraries, such as [Stable Baselines](https://stable-baselines3.readthedocs.io/en/master/) provide reliable implementations of deep RL algorithms, and **can be used with `rlberry`**, as shown by
-[this example](https://rlberry.readthedocs.io/en/latest/auto_examples/demo_examples/demo_from_stable_baselines.html#sphx-glr-auto-examples-demo-examples-demo-from-stable-baselines-py).
-
+## About us
+This project was initiated and is actively maintained by [INRIA SCOOL team](https://team.inria.fr/scool/).
+More information [here](https://rlberry.readthedocs.io/en/latest/about.html#).
 
 ## Contributing
 
