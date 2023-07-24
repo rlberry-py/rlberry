@@ -94,6 +94,8 @@ Experimental torch agents
    :toctree: generated/
    :template: class.rst
 
+   agents.experimental.torch.SACAgent
+
 Environments
 ============
 
