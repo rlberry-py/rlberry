@@ -80,6 +80,7 @@ Torch Agents
 .. autosummary::
    :toctree: generated/
    :template: class.rst
+
    agents.torch.SACAgent
    agents.torch.A2CAgent
    agents.torch.PPOAgent
