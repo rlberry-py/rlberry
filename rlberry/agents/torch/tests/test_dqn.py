@@ -2,7 +2,7 @@ import pytest
 from rlberry.envs import gym_make
 from rlberry.agents.torch.dqn import DQNAgent
 from rlberry.agents.torch.utils.training import model_factory
-from rlberry.manager.agent_manager import ExperimentManager
+from rlberry.manager import ExperimentManager
 import os
 import pathlib
 
