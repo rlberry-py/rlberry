@@ -87,6 +87,13 @@ Torch Agents
    agents.torch.MunchausenDQNAgent
    agents.torch.REINFORCEAgent
 
+Experimental torch agents
+-------------------------
+
+.. autosummary::
+   :toctree: generated/
+   :template: class.rst
+
 Environments
 ============
 
