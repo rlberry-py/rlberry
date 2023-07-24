@@ -27,7 +27,9 @@ def optimizer_factory(params, optimizer_type="ADAM", **kwargs):
         raise ValueError("Unknown optimizer type: {}".format(optimizer_type))
 
 
-def model_factory_from_env(env, type = "MultiLayerPerceptron", net = None, filename = None, **net_kwargs):
+def model_factory_from_env(
+    env, type="MultiLayerPerceptron", net=None, filename=None, **net_kwargs
+):
     """Returns a torch module after setting up input/output dimensions according to an env.
 
     Parameters
@@ -42,7 +44,7 @@ def model_factory_from_env(env, type = "MultiLayerPerceptron", net = None, filen
     net: torch.nn.Module or None
         If not None, return this neural network. It can be used to pass user-defined neural network.
     filename: str or None
-        The path to a saved module or its 'state_dict'. If not None, it will load a net or a checkpoint. 
+        The path to a saved module or its 'state_dict'. If not None, it will load a net or a checkpoint.
     **kwargs: Dict
         Parameters to be updated, used to call :func:`~rlberry.agents.torch.utils.training.model_factory`.
     """
@@ -55,26 +57,23 @@ def model_factory_from_env(env, type = "MultiLayerPerceptron", net = None, filen
     else:
         checkpoint = None
 
-
     kwargs = size_model_config(env, type, **net_kwargs)
 
     if net is not None:
         check_network(env, net, **kwargs)
 
-
     return model_factory(type, net, checkpoint=checkpoint, **kwargs)
-
 
 
 def load_from_file(filename):
     """Load a module or a checkpoint.
-    
+
     Parameters
     ----------
     filename: str
         The path to a saved module or its 'state_dict'. It will load a net or a checkpoint.
     """
-    output_dict = dict(model = None, checkpoint = None)
+    output_dict = dict(model=None, checkpoint=None)
 
     loaded = torch.load(filename)
     if isinstance(loaded, torch.nn.Module):
@@ -82,12 +81,15 @@ def load_from_file(filename):
     elif isinstance(loaded, dict):
         output_dict["checkpoint"] = loaded
     else:
-        raise ValueError("Invalid 'load_from_file'. File is expected to store either an entire model or its 'state_dict'.")
+        raise ValueError(
+            "Invalid 'load_from_file'. File is expected to store either an entire model or its 'state_dict'."
+        )
     return output_dict
 
 
-
-def model_factory(type="MultiLayerPerceptron", net = None, filename = None, checkpoint = None, **net_kwargs) -> nn.Module:
+def model_factory(
+    type="MultiLayerPerceptron", net=None, filename=None, checkpoint=None, **net_kwargs
+) -> nn.Module:
     """Build a neural net of a given type.
 
     Parameters
@@ -100,9 +102,9 @@ def model_factory(type="MultiLayerPerceptron", net = None, filename = None, chec
     net: torch.nn.Module or None
         If not None, return this neural network. It can be used to pass user-defined neural network.
     filename: str or None
-        The path to a saved module or its 'state_dict'. If not None, it will load a net or a checkpoint. 
+        The path to a saved module or its 'state_dict'. If not None, it will load a net or a checkpoint.
     checkpoint: dict or None
-        If not None, then it is treated as a 'state_dict' that is assigned to a neural network model.    
+        If not None, then it is treated as a 'state_dict' that is assigned to a neural network model.
     **net_kwargs: dict
         Parameters that vary according to each neural net type, see
 
@@ -127,22 +129,21 @@ def model_factory(type="MultiLayerPerceptron", net = None, filename = None, chec
             return load_dict["model"]
         else:
             checkpoint = load_dict["checkpoint"]
- 
 
     if net is not None:
         model = net
     else:
         if type == "MultiLayerPerceptron":
-            model =  MultiLayerPerceptron(**net_kwargs)
+            model = MultiLayerPerceptron(**net_kwargs)
         elif type == "DuelingNetwork":
-            model =  DuelingNetwork(**net_kwargs)
+            model = DuelingNetwork(**net_kwargs)
         elif type == "ConvolutionalNetwork":
             model = ConvolutionalNetwork(**net_kwargs)
         elif type == "Table":
-            model =  Table(**net_kwargs)
+            model = Table(**net_kwargs)
         else:
             raise ValueError("Unknown model type")
-        
+
     if checkpoint is not None:
         model.load_state_dict(checkpoint)
 
@@ -169,22 +170,25 @@ def check_network(env, net, **model_config):
         obs_shape = env.observation_space.spaces[0].shape
     elif isinstance(env.observation_space, spaces.Discrete):
         return model_config
-    
 
     if net is not None:
-        #check that it is compliant with environment
-        #input check
+        # check that it is compliant with environment
+        # input check
         fake_input = torch.zeros(1, *obs_shape)
         try:
             output = net(fake_input)
         except Exception as err:
-            print(f"NN input is not compatible with the environment. Got an error {err=}, {type(err)=}")
+            print(
+                f"NN input is not compatible with the environment. Got an error {err=}, {type(err)=}"
+            )
             raise
-        #output check
+        # output check
         if "is_policy" in model_config:
             is_policy = model_config["is_policy"]
             if is_policy:
-                assert isinstance(output, torch.distributions.distribution.Distribution), "Policy should return distribution over actions"
+                assert isinstance(
+                    output, torch.distributions.distribution.Distribution
+                ), "Policy should return distribution over actions"
         else:
             if "out_size" in model_config:
                 out_size = [model_config["out_size"]]
@@ -195,15 +199,13 @@ def check_network(env, net, **model_config):
                     out_size = [env.action_space.spaces[0].n]
                 elif isinstance(env.action_space, spaces.Box):
                     out_size = env.action_space.shape
-            assert output.shape == (1, *out_size), f"Output should be of size {out_size}"
+            assert output.shape == (
+                1,
+                *out_size,
+            ), f"Output should be of size {out_size}"
 
 
-
-
-
-
-
-def size_model_config(env, type = None, **model_config):
+def size_model_config(env, type=None, **model_config):
     """
     Setup input/output dimensions for the configuration of
     a model depending on the environment observation/action spaces.
@@ -227,7 +229,6 @@ def size_model_config(env, type = None, **model_config):
         obs_shape = env.observation_space.spaces[0].shape
     elif isinstance(env.observation_space, spaces.Discrete):
         return model_config
-    
 
     # Assume CHW observation space
     if type == "ConvolutionalNetwork":

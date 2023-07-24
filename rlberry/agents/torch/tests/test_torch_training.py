@@ -1,9 +1,18 @@
 import torch
 
 import os
-from rlberry.agents.torch.utils.training import loss_function_factory, optimizer_factory, model_factory, model_factory_from_env
+from rlberry.agents.torch.utils.training import (
+    loss_function_factory,
+    optimizer_factory,
+    model_factory,
+    model_factory_from_env,
+)
 from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
-from rlberry.agents.torch.utils.models import default_policy_net_fn, Net, MultiLayerPerceptron
+from rlberry.agents.torch.utils.models import (
+    default_policy_net_fn,
+    Net,
+    MultiLayerPerceptron,
+)
 from rlberry.agents.torch.dqn import DQNAgent
 
 
@@ -36,28 +45,31 @@ assert (
 )
 
 
-#test model_factory
+# test model_factory
 
 obs_shape = env.observation_space.shape
 n_act = env.action_space.n
 
-test_net = Net(obs_size=obs_shape[0],hidden_size=10, n_actions=n_act)
+test_net = Net(obs_size=obs_shape[0], hidden_size=10, n_actions=n_act)
 
-test_net2 = MultiLayerPerceptron(in_size=obs_shape[0], layer_sizes=[10],out_size=1)
-
-
-test_net3 = MultiLayerPerceptron(in_size=obs_shape[0], layer_sizes=[10],out_size=n_act, is_policy=True)
+test_net2 = MultiLayerPerceptron(in_size=obs_shape[0], layer_sizes=[10], out_size=1)
 
 
-model_factory(net = test_net)
+test_net3 = MultiLayerPerceptron(
+    in_size=obs_shape[0], layer_sizes=[10], out_size=n_act, is_policy=True
+)
+
+
+model_factory(net=test_net)
 model_factory_from_env(env, net=test_net)
-model_factory_from_env(env, net=test_net2, out_size = 1)
-model_factory_from_env(env, net=test_net3, is_policy = True)
-
+model_factory_from_env(env, net=test_net2, out_size=1)
+model_factory_from_env(env, net=test_net3, is_policy=True)
 
 
 # test loading pretrained nn
-dqn_agent = DQNAgent(env, q_net_constructor=model_factory_from_env, q_net_kwargs=dict(net = test_net))
+dqn_agent = DQNAgent(
+    env, q_net_constructor=model_factory_from_env, q_net_kwargs=dict(net=test_net)
+)
 
 dqn_agent.fit(50)
 
@@ -68,15 +80,21 @@ parameters_to_save = dqn_agent._qnet_online.state_dict()
 torch.save(parameters_to_save, "test_dqn.pt")
 
 
-
 model_factory(filename="test_dqn.pickle")
-model_factory(net = test_net, filename="test_dqn.pt")
+model_factory(net=test_net, filename="test_dqn.pt")
 
 
+dqn_agent = DQNAgent(
+    env,
+    q_net_constructor=model_factory_from_env,
+    q_net_kwargs=dict(filename="test_dqn.pickle"),
+)
 
-dqn_agent = DQNAgent(env, q_net_constructor=model_factory_from_env, q_net_kwargs=dict(filename = "test_dqn.pickle"))
-
-dqn_agent = DQNAgent(env, q_net_constructor=model_factory_from_env, q_net_kwargs=dict(net = test_net, filename = "test_dqn.pt"))
+dqn_agent = DQNAgent(
+    env,
+    q_net_constructor=model_factory_from_env,
+    q_net_kwargs=dict(net=test_net, filename="test_dqn.pt"),
+)
 
 assert dqn_agent._qnet_online.state_dict().keys() == parameters_to_save.keys()
 
