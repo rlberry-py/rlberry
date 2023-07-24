@@ -15,9 +15,9 @@ def test_save_and_load():
         sys.argv.append("--parallelization=thread")
         sys.argv.append("--output_dir=" + tmpdirname)
         print(sys.argv)
-        for agent_manager in experiment_generator():
-            agent_manager.fit()
-            agent_manager.save()
+        for experiment_manager in experiment_generator():
+            experiment_manager.fit()
+            experiment_manager.save()
         data = load_experiment_results(tmpdirname, "params_experiment")
 
         assert len(data) > 0

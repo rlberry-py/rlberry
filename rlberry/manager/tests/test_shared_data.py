@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 from rlberry.agents import Agent
-from rlberry.manager import AgentManager
+from rlberry.manager import ExperimentManager
 
 
 class DummyAgent(Agent):
@@ -21,7 +21,7 @@ class DummyAgent(Agent):
 @pytest.mark.parametrize("paralellization", ["thread", "process"])
 def test_data_sharing(paralellization):
     shared_data = dict(X=np.arange(10))
-    manager = AgentManager(
+    manager = ExperimentManager(
         agent_class=DummyAgent,
         fit_budget=-1,
         n_fit=4,

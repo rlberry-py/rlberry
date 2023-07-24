@@ -96,10 +96,10 @@ class StableBaselinesAgent(AgentWithSimplePolicy):
         Directory that the agent can use to store data.
     _execution_metadata : ExecutionMetadata, optional
         Extra information about agent execution (e.g. about which is the process id where the agent is running).
-        Used by :class:`~rlberry.manager.AgentManager`.
+        Used by :class:`~rlberry.manager.ExperimentManager`.
     _default_writer_kwargs : dict, optional
         Parameters to initialize :class:`~rlberry.utils.writers.DefaultWriter` (attribute self.writer).
-        Used by :class:`~rlberry.manager.AgentManager`.
+        Used by :class:`~rlberry.manager.ExperimentManager`.
 
     Examples
     --------

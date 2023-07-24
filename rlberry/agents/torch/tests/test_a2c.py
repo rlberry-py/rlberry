@@ -1,6 +1,6 @@
 from rlberry.envs import Wrapper
 from rlberry.agents.torch import A2CAgent
-from rlberry.manager import AgentManager, evaluate_agents
+from rlberry.manager import ExperimentManager, evaluate_agents
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
 from gymnasium import make
 
@@ -11,7 +11,7 @@ def test_a2c():
     env_ctor = Wrapper
     env_kwargs = dict(env=mdp)
 
-    a2crlberry_stats = AgentManager(
+    a2crlberry_stats = ExperimentManager(
         A2CAgent,
         (env_ctor, env_kwargs),
         fit_budget=int(100),
@@ -30,7 +30,7 @@ def test_a2c():
     env_ctor = Wrapper
     env_kwargs = dict(env=mdp)
 
-    a2crlberry_stats = AgentManager(
+    a2crlberry_stats = ExperimentManager(
         A2CAgent,
         (env_ctor, env_kwargs),
         fit_budget=int(100),
@@ -50,7 +50,7 @@ def test_a2c():
     env_ctor = Wrapper
     env_kwargs = dict(env=mdp)
 
-    a2crlberry_stats = AgentManager(
+    a2crlberry_stats = ExperimentManager(
         A2CAgent,
         (env_ctor, env_kwargs),
         fit_budget=int(100),
@@ -68,7 +68,7 @@ def test_a2c():
     env_ctor = PBall2D
     env_kwargs = dict()
 
-    a2crlberry_stats = AgentManager(
+    a2crlberry_stats = ExperimentManager(
         A2CAgent,
         (env_ctor, env_kwargs),
         fit_budget=int(100),
@@ -89,7 +89,7 @@ def test_a2c():
     env_ctor = Wrapper
     env_kwargs = dict(env=mdp)
 
-    a2crlberry_stats = AgentManager(
+    a2crlberry_stats = ExperimentManager(
         A2CAgent,
         (env_ctor, env_kwargs),
         fit_budget=int(100),

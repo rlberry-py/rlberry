@@ -105,7 +105,7 @@ def parse_experiment_config(
     parallelization: str = "process",
 ) -> Generator[Tuple[int, dict], None, None]:
     """
-    Read .yaml files. set global seed and convert to AgentManager instances.
+    Read .yaml files. set global seed and convert to ExperimentManager instances.
 
     Exemple of experiment config:
 
@@ -128,18 +128,18 @@ def parse_experiment_config(
     n_fit : int
         Number of instances of each agent to fit
     max_workers : int or None
-        Maximum number of workers created in the fit() method of an instance of AgentManager.
+        Maximum number of workers created in the fit() method of an instance of ExperimentManager.
     output_base_dir : str
-        Directory where to save AgentManager results.
+        Directory where to save ExperimentManager results.
     parallelization : 'thread' or 'process', default : 'process'
-        Choose whether processes or threads are used in AgentManager parallelization.
+        Choose whether processes or threads are used in ExperimentManager parallelization.
 
     Returns
     -------
     seed: int
         global seed
-    agent_manager_kwargs:
-        parameters to create an AgentManager instance.
+    experiment_manager_kwargs:
+        parameters to create an ExperimentManager instance.
     """
     with path.open() as file:
         config = yaml.safe_load(file)
@@ -148,7 +148,7 @@ def parse_experiment_config(
         n_fit = n_fit
 
         for agent_path in config["agents"]:
-            # set seed before creating AgentManager
+            # set seed before creating ExperimentManager
             seed = config["seed"]
 
             agent_name = Path(agent_path).stem
@@ -210,5 +210,5 @@ def parse_experiment_config(
 
 if __name__ == "__main__":
     filename = "examples/demo_experiment/params_experiment.yaml"
-    for seed, agent_manager in parse_experiment_config(Path(filename)):
+    for seed, experiment_manager in parse_experiment_config(Path(filename)):
         print(seed)

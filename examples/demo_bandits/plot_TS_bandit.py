@@ -20,7 +20,7 @@ from rlberry.agents.bandits import (
     makeBetaPrior,
     makeGaussianPrior,
 )
-from rlberry.manager import AgentManager, plot_writer_data
+from rlberry.manager import ExperimentManager, plot_writer_data
 from rlberry.wrappers import WriterWrapper
 
 
@@ -63,7 +63,7 @@ env_ctor = BernoulliBandit
 env_kwargs = {"p": means}
 
 agents = [
-    AgentManager(
+    ExperimentManager(
         Agent,
         (env_ctor, env_kwargs),
         fit_budget=T,
@@ -129,7 +129,7 @@ env_ctor = NormalBandit
 env_kwargs = {"means": means, "stds": sigma * np.ones(A)}
 
 agents = [
-    AgentManager(
+    ExperimentManager(
         Agent,
         (env_ctor, env_kwargs),
         fit_budget=T,

@@ -1,5 +1,5 @@
 from pathlib import Path
-from rlberry.manager import AgentManager
+from rlberry.manager import ExperimentManager
 import pandas as pd
 
 
@@ -42,7 +42,7 @@ def load_experiment_results(output_dir, experiment_name):
 
         output_data['experiment_dirs'] = list of paths to experiment directory (output_dir/experiment_name)
         output_data['agent_list'] = list containing the names of the agents in the experiment
-        output_data['manager'][agent_name] = fitted AgentManager for agent_name
+        output_data['manager'][agent_name] = fitted ExperimentManager for agent_name
         output_data['dataframes'][agent_name] = dict of pandas data frames from the last run of the experiment
         output_data['data_dir'][agent_name] = directory from which the results were loaded
     """
@@ -91,13 +91,15 @@ def load_experiment_results(output_dir, experiment_name):
         # store data_dir
         output_data["data_dir"][agent_name] = data_dirs[agent_name]
 
-        # store AgentManager
+        # store ExperimentManager
         output_data["manager"][agent_name] = None
         fname = data_dirs[agent_name] / "manager_obj.pickle"
         try:
-            output_data["manager"][agent_name] = AgentManager.load(fname)
+            output_data["manager"][agent_name] = ExperimentManager.load(fname)
         except Exception:
-            logger.warning(f"Could not load AgentManager instance for {agent_name}.")
+            logger.warning(
+                f"Could not load ExperimentManager instance for {agent_name}."
+            )
         logger.info("... loaded " + str(fname))
 
         # store data frames

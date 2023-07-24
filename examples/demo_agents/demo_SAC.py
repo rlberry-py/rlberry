@@ -13,7 +13,7 @@ during the fit of the agent.
 from rlberry.envs.basewrapper import Wrapper
 
 # from rlberry.envs import gym_make
-from rlberry.manager import plot_writer_data, AgentManager
+from rlberry.manager import plot_writer_data, ExperimentManager
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
 from rlberry.agents.experimental.torch import SACAgent
 import gymnasium as gym
@@ -27,7 +27,7 @@ def env_ctor(env, wrap_spaces=True):
 env = PBall2D()
 env = gym.wrappers.TimeLimit(env, max_episode_steps=100)
 env_kwargs = dict(env=env)
-agent = AgentManager(
+agent = ExperimentManager(
     SACAgent,
     (env_ctor, env_kwargs),
     fit_budget=500,
@@ -37,11 +37,11 @@ agent = AgentManager(
 
 # basic version
 # env_kwargs = dict(id = "CartPole-v1")
-# agent = AgentManager(SACAgent, (gym_make, env_kwargs), fit_budget=200, n_fit=1)
+# agent = ExperimentManager(SACAgent, (gym_make, env_kwargs), fit_budget=200, n_fit=1)
 
 # # timothe's
 # env = gym_make("CartPole-v1")
-# agent = AgentManager(
+# agent = ExperimentManager(
 #     SACAgent, (env.__class__, dict()), fit_budget=200, n_fit=1, enable_tensorboard=True,
 # )
 
@@ -50,7 +50,7 @@ agent = AgentManager(
 # from copy import deepcopy
 # def env_constructor():
 #     return deepcopy(env)
-# agent = AgentManager(
+# agent = ExperimentManager(
 #     SACAgent, (env_constructor, dict()), fit_budget=200, n_fit=1, enable_tensorboard=True,
 # )
 

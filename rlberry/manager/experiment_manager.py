@@ -47,7 +47,7 @@ class AgentHandler:
     """
     Wraps an Agent so that it can be either loaded in memory
     or represented by a file storing the Agent data.
-    It is used by `class`:~rlberry.manager.AgentManager` to handle the fact that
+    It is used by `class`:~rlberry.manager.ExperimentManager` to handle the fact that
     not all agents can be pickled, when returning from the processes that
     train the agents.
 
@@ -157,7 +157,7 @@ class AgentHandler:
 #
 
 
-class AgentManager:
+class ExperimentManager:
     """
     Class to train, optimize hyperparameters, evaluate and gather
     statistics about an agent.
@@ -238,7 +238,7 @@ class AgentManager:
         Directory where the manager saves data.
 
     rlberry_version: str
-        Current version of rlberry. This is saved when calling agent_manager.save()
+        Current version of rlberry. This is saved when calling experiment_manager.save()
         and it is then used in load() to warn if the version of the agent is not a
         match with current rlberry version.
 
@@ -246,8 +246,8 @@ class AgentManager:
     --------
     >>> from rlberry.agents.torch import A2CAgent
     >>> from rlberry.envs import gym_make
-    >>> from rlberry.manager import AgentManager
-    >>> manager = AgentManager(
+    >>> from rlberry.manager import ExperimentManager
+    >>> manager = ExperimentManager(
     >>>      A2CAgent,
     >>>      (env_ctor, env_kwargs),
     >>>      fit_budget=100,
@@ -283,7 +283,7 @@ class AgentManager:
         thread_shared_data=None,
     ):
         # agent_class should only be None when the constructor is called
-        # by the class method AgentManager.load(), since the agent class
+        # by the class method ExperimentManager.load(), since the agent class
         # will be loaded.
 
         if agent_class is None:
@@ -299,11 +299,11 @@ class AgentManager:
         # Check train_env and eval_env
         assert isinstance(
             train_env, Tuple
-        ), "[AgentManager]train_env must be Tuple (constructor, kwargs)"
+        ), "[ExperimentManager]train_env must be Tuple (constructor, kwargs)"
         if eval_env is not None:
             assert isinstance(
                 eval_env, Tuple
-            ), "[AgentManager]train_env must be Tuple (constructor, kwargs)"
+            ), "[ExperimentManager]train_env must be Tuple (constructor, kwargs)"
 
         # check options
         assert outdir_id_style in [None, "unique", "timestamp"]
@@ -329,7 +329,7 @@ class AgentManager:
         if parallelization != "thread" and thread_shared_data is not None:
             logger.warning(
                 f"Using thread_shared_data and parallelization = {parallelization}"
-                " in AgentManager does *not* share data among Agent instances!"
+                " in ExperimentManager does *not* share data among Agent instances!"
                 " Each process will have its copy of thread_shared_data."
             )
 
@@ -357,7 +357,9 @@ class AgentManager:
             try:
                 self.fit_budget = self.fit_kwargs.pop("fit_budget")
             except KeyError:
-                raise ValueError("[AgentManager] fit_budget missing in __init__().")
+                raise ValueError(
+                    "[ExperimentManager] fit_budget missing in __init__()."
+                )
         # extra params per instance
         if init_kwargs_per_instance is not None:
             assert len(init_kwargs_per_instance) == n_fit
@@ -407,7 +409,7 @@ class AgentManager:
         # if default_writer_kwargs:
         #     logger.warning(
         #         "(Re)defining the following DefaultWriter"
-        #         f" parameters in AgentManager: {list(default_writer_kwargs.keys())}"
+        #         f" parameters in ExperimentManager: {list(default_writer_kwargs.keys())}"
         #     )
         for ii in range(n_fit):
             self.agent_default_writer_kwargs[ii].update(default_writer_kwargs)
@@ -567,7 +569,7 @@ class AgentManager:
             agent = self.agent_handlers[agent_idx]
             if agent.is_empty():
                 logger.error(
-                    "Calling eval() in an AgentManager instance contaning an empty AgentHandler."
+                    "Calling eval() in an ExperimentManager instance contaning an empty AgentHandler."
                     " Returning []."
                 )
                 return []
@@ -604,7 +606,7 @@ class AgentManager:
 
         Note
         -----
-        Must be called right after creating an instance of AgentManager.
+        Must be called right after creating an instance of ExperimentManager.
 
         Parameters
         ----------
@@ -617,12 +619,12 @@ class AgentManager:
             kwargs for writer_fn
         idx : int
             Index of the agent to set the writer (0 <= idx < `n_fit`).
-            AgentManager fits `n_fit` agents, the writer of each one of them
+            ExperimentManager fits `n_fit` agents, the writer of each one of them
             needs to be set separetely.
         """
         assert (
             idx >= 0 and idx < self.n_fit
-        ), "Invalid index sent to AgentManager.set_writer()"
+        ), "Invalid index sent to ExperimentManager.set_writer()"
         writer_kwargs = writer_kwargs or {}
         self.writers[idx] = (writer_fn, writer_kwargs)
 
@@ -676,12 +678,12 @@ class AgentManager:
                 _check_not_importing_main()
             except RuntimeError as exc:
                 raise RuntimeError(
-                    """Warning: in AgentManager, if mp_context='spawn' and
+                    """Warning: in ExperimentManager, if mp_context='spawn' and
                         parallelization="process" then the script must be run
                         outside a notebook and protected by a  if __name__ == '__main__':
                         For example:
                             if __name__ == '__main__':
-                                agent = AgentManager(UCBVIAgent,(Chain, {}),
+                                agent = ExperimentManager(UCBVIAgent,(Chain, {}),
                                                 mp_context="spawn",
                                                 parallelization="process")
 
@@ -690,7 +692,7 @@ class AgentManager:
                 ) from exc
 
         logger.info(
-            f"Running AgentManager fit() for {self.agent_name}"
+            f"Running ExperimentManager fit() for {self.agent_name}"
             f" with n_fit = {self.n_fit} and max_workers = {self.max_workers}."
         )
         seeders = self.seeder.spawn(self.n_fit)
@@ -763,14 +765,14 @@ class AgentManager:
                 self.default_writer_data[ii] = agent.writer.data
 
     def save(self):
-        """Save AgentManager data to :attr:`~rlberry.manager.agent_manager.AgentManager.output_dir`.
+        """Save ExperimentManager data to :attr:`~rlberry.manager.experiment_manager.ExperimentManager.output_dir`.
 
-        Saves object so that the data can be later loaded to recreate an AgentManager instance.
+        Saves object so that the data can be later loaded to recreate an ExperimentManager instance.
 
         Returns
         -------
         :class:`pathlib.Path`
-            Filename where the AgentManager object was saved.
+            Filename where the ExperimentManager object was saved.
         """
         # use self.output_dir
         output_dir = self.output_dir_
@@ -799,7 +801,7 @@ class AgentManager:
                     logger.warning("Could not save default_writer_data.")
 
         #
-        # Pickle AgentManager instance
+        # Pickle ExperimentManager instance
         #
 
         # clear agent handlers
@@ -813,22 +815,26 @@ class AgentManager:
         try:
             with filename.open("wb") as ff:
                 pickle.dump(self.__dict__, ff)
-            logger.info("Saved AgentManager({}) using pickle.".format(self.agent_name))
+            logger.info(
+                "Saved ExperimentManager({}) using pickle.".format(self.agent_name)
+            )
         except Exception:
             try:
                 with filename.open("wb") as ff:
                     dill.dump(self.__dict__, ff)
                 logger.info(
-                    "Saved AgentManager({}) using dill.".format(self.agent_name)
+                    "Saved ExperimentManager({}) using dill.".format(self.agent_name)
                 )
             except Exception as ex:
-                logger.warning("[AgentManager] Instance cannot be pickled: " + str(ex))
+                logger.warning(
+                    "[ExperimentManager] Instance cannot be pickled: " + str(ex)
+                )
 
         return filename
 
     @classmethod
     def load(cls, filename):
-        """Loads an AgentManager instance from a file.
+        """Loads an ExperimentManager instance from a file.
 
         Parameters
         ----------
@@ -836,14 +842,14 @@ class AgentManager:
 
         Returns
         -------
-        :class:`rlberry.manager.AgentManager`
-            Loaded instance of AgentManager.
+        :class:`rlberry.manager.ExperimentManager`
+            Loaded instance of ExperimentManager.
         """
         filename = Path(filename).with_suffix(".pickle")
 
         if filename.name != "manager_obj.pickle":
             raise ValueError(
-                "The agent_manager objects should be save in file named 'manager_obj.pickle'"
+                "The experiment_manager objects should be save in file named 'manager_obj.pickle'"
             )
 
         obj = cls(None, None, None)
@@ -1244,8 +1250,8 @@ def _optuna_objective(
     #
     # fit and evaluate agents
     #
-    # Create AgentManager with hyperparams
-    params_stats = AgentManager(
+    # Create ExperimentManager with hyperparams
+    params_stats = ExperimentManager(
         agent_class,
         train_env,
         fit_budget,
@@ -1346,14 +1352,14 @@ def preset_manager(*args, **kwds):
     >>>                                 seed=42,
     >>>                                 max_workers=6
     >>>                                 )
-    >>> ppo = manager_maker(PPOAgent, fit_budget = 100) # of type AgentManager
+    >>> ppo = manager_maker(PPOAgent, fit_budget = 100) # of type ExperimentManager
     >>> dqn = manager_maker(DQNAgent, fit_budget = 200)
     >>>
     >>> ppo.fit()
     >>> dqn.fit()
     """
 
-    class Manager(AgentManager):
-        __init__ = functools.partialmethod(AgentManager.__init__, *args, **kwds)
+    class Manager(ExperimentManager):
+        __init__ = functools.partialmethod(ExperimentManager.__init__, *args, **kwds)
 
     return Manager

@@ -1,7 +1,7 @@
 from rlberry.envs.tests.test_env_seeding import get_env_trajectory, compare_trajectories
 from rlberry.envs import gym_make
 from rlberry.envs.classic_control import MountainCar
-from rlberry.manager import AgentManager, MultipleManagers
+from rlberry.manager import ExperimentManager, MultipleManagers
 from rlberry.agents.torch import A2CAgent
 import gymnasium as gym
 import pytest
@@ -18,22 +18,22 @@ import pytest
         ),
     ],
 )
-def test_agent_manager_and_multiple_managers_seeding(env, agent_class):
-    agent_manager = AgentManager(
+def test_experiment_manager_and_multiple_managers_seeding(env, agent_class):
+    experiment_manager = ExperimentManager(
         agent_class, env, fit_budget=2, init_kwargs={}, n_fit=6, seed=3456
     )
-    agent_manager_test = AgentManager(
+    experiment_manager_test = ExperimentManager(
         agent_class, env, fit_budget=2, init_kwargs={}, n_fit=6, seed=3456
     )
 
     multimanagers = MultipleManagers()
-    multimanagers.append(agent_manager)
-    multimanagers.append(agent_manager_test)
+    multimanagers.append(experiment_manager)
+    multimanagers.append(experiment_manager_test)
     multimanagers.run()
 
     stats1, stats2 = multimanagers.managers
 
-    for ii in range(2, agent_manager.n_fit):
+    for ii in range(2, experiment_manager.n_fit):
         traj1 = get_env_trajectory(stats1.agent_handlers[ii - 2].env, horizon=10)
         traj2 = get_env_trajectory(stats1.agent_handlers[ii - 1].env, horizon=10)
         traj3 = get_env_trajectory(stats1.agent_handlers[ii].env, horizon=10)
@@ -49,7 +49,7 @@ def test_agent_manager_and_multiple_managers_seeding(env, agent_class):
         assert compare_trajectories(traj2, traj2_test)
         assert compare_trajectories(traj3, traj3_test)
 
-    for ii in range(2, agent_manager.n_fit):
+    for ii in range(2, experiment_manager.n_fit):
         rand1 = stats1.agent_handlers[ii - 2].seeder.rng.integers(2**32)
         rand2 = stats1.agent_handlers[ii - 1].seeder.rng.integers(2**32)
         rand3 = stats1.agent_handlers[ii].seeder.rng.integers(2**32)
