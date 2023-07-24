@@ -86,7 +86,9 @@ def evaluate_agents(
         else:
             outputs = []
             for idx in range(len(experiment_manager.agent_handlers)):
-                outputs += list(experiment_manager.eval_agents(n_simulations, agent_id=idx))
+                outputs += list(
+                    experiment_manager.eval_agents(n_simulations, agent_id=idx)
+                )
 
         if len(outputs) > 0:
             eval_outputs.append(outputs)
