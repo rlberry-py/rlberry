@@ -81,8 +81,8 @@ def makeSubgaussianUCBIndex(
 
 
 def makeBoundedUCBIndex(
-    upper_bound: float = 1.0,
     lower_bound: float = 0.0,
+    upper_bound: float = 1.0,
     delta: Callable = lambda t: 1 / (1 + (t + 1) * np.log(t + 1) ** 2),
 ):
     """
@@ -92,11 +92,11 @@ def makeBoundedUCBIndex(
 
     Parameters
     ----------
-    upper_bound: float, default: 1.0
-        Upper bound on the rewards.
-
     lower_bound: float, default: 0.0
         Lower bound on the rewards.
+
+    upper_bound: float, default: 1.0
+        Upper bound on the rewards.
 
     delta: Callable,
         Confidence level. Default is tuned to have asymptotically optimal
@@ -167,7 +167,7 @@ def makeSubgaussianMOSSIndex(T: int = 1, A: int = 2, sigma: float = 1.0):
 
 
 def makeBoundedMOSSIndex(
-    T: float = 1, A: float = 2, upper_bound: float = 1.0, lower_bound: float = 0.0
+    T: float = 1, A: float = 2, lower_bound: float = 0.0, upper_bound: float = 1.0
 ):
     """
     MOSS index for bounded distributions, see Chapters 9 in [1].
@@ -182,11 +182,11 @@ def makeBoundedMOSSIndex(
     A: int
         Number of arms.
 
-    upper_bound: float, default: 1.0
-        Upper bound on the rewards.
-
     lower_bound: float, default: 0.0
         Lower bound on the rewards.
+
+    upper_bound: float, default: 1.0
+        Upper bound on the rewards.
 
     Return
     ------

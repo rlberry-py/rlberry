@@ -42,7 +42,7 @@ class BernoulliUCBAgent(IndexAgent):
     name = "Bernoulli UCB Agent"
 
     def __init__(self, env, **kwargs):
-        index, _ = makeBoundedUCBIndex(1, 0)
+        index, _ = makeBoundedUCBIndex(0, 1)
         IndexAgent.__init__(self, env, index, **kwargs)
         self.env = WriterWrapper(self.env, self.writer, write_scalar="action")
 
