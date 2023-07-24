@@ -1,13 +1,11 @@
 .. _rlberry: https://github.com/rlberry-py/rlberry
-.. _`OpenAI Gym`: https://stable-baselines.readthedocs.io/en/master/
+.. _Gymnasium: https://gymnasium.farama.org/
+.. _Gymnasium_ancor:
 
-.. _gym:
-
-
-Using rlberry_ and `OpenAI Gym`_
+Using rlberry_ and Gymnasium_
 ================================
 
-If you want to use OpenAI Gym environments with rlberry_, simply do the following:
+If you want to use Gymnasium_ environments with rlberry_, simply do the following:
 
 .. code-block:: python
 

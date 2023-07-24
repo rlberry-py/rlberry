@@ -1,5 +1,5 @@
 """
-Mountain Car environment adapted from OpenAI gym [1].
+Mountain Car environment adapted from OpenAI gym [1]. (updated to gymnasium template [2])
 
 * default reward is 0       (instead of -1)
 * reward in goal state is 1 (instead of 0)
@@ -7,6 +7,7 @@ Mountain Car environment adapted from OpenAI gym [1].
 * render function follows the rlberry rendering interface.
 
 [1] https://github.com/openai/gym/blob/master/gym/envs/
+[2] https://gymnasium.farama.org/api/env/
 classic_control/mountain_car.py
 """
 

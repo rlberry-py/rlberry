@@ -7,11 +7,11 @@ ATARI Atlantis environment.
 
 Agent is slightly tuned, but not optimal. This is just for illustration purpose.
 
-.. video:: ../../example_atari_atlantis_vectorized_ppo.mp4
+.. video:: ../../example_plot_atari_atlantis_vectorized_ppo.mp4
    :width: 600
 
 """
-# sphinx_gallery_thumbnail_path = 'thumbnails/example_atari_atlantis_vectorized_ppo.jpg'
+# sphinx_gallery_thumbnail_path = 'thumbnails/example_plot_atari_atlantis_vectorized_ppo.jpg'
 
 
 from rlberry.manager.agent_manager import AgentManager
@@ -133,7 +133,7 @@ tuned_agent.save()
 # need to move the final result inside the folder used for documentation
 os.rename(
     "_video/temp/rl-video-episode-0.mp4",
-    "_video/example_atari_atlantis_vectorized_ppo.mp4",
+    "_video/example_plot_atari_atlantis_vectorized_ppo.mp4",
 )
 shutil.rmtree("_video/temp/")
 
