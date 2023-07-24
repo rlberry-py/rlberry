@@ -13,7 +13,7 @@ import bz2
 import _pickle as cPickle
 import shutil
 import threading
-import multiprocessing
+from torch import multiprocessing
 from multiprocessing.spawn import _check_not_importing_main
 from typing import List, Optional, Tuple, Union
 
@@ -308,7 +308,7 @@ class AgentManager:
         # check options
         assert outdir_id_style in [None, "unique", "timestamp"]
 
-        # create oject identifier
+        # create project identifier
         self.unique_id = metadata_utils.get_unique_id(self)
         self.timestamp_id = metadata_utils.get_readable_id(self)
 
