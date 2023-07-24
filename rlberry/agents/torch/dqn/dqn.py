@@ -128,7 +128,7 @@ class DQNAgent(AgentTorch, AgentWithSimplePolicy):
     eval_interval : int, default = None
         Interval (in number of transitions) between agent evaluations in fit().
         If None, never evaluate.
-    
+
     Attributes
     ----------
     gamma : float, default: 0.99

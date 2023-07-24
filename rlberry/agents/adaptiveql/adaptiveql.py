@@ -48,7 +48,7 @@ class AdaptiveQLAgent(AgentWithSimplePolicy):
         Tree structure to represent the MDP model of transition.
     episode : int
         Number of episodes done during training of the adaptiveql agent.
-        
+
     References
     ----------
     .. [1] Sinclair, Sean R., Siddhartha Banerjee, and Christina Lee Yu.
