@@ -185,6 +185,12 @@ class AgentManager:
         Extra arguments to call :meth:`rlberry.agents.agent.Agent.fit`.
     eval_kwargs : dict
         Arguments required to call :meth:`rlberry.agents.agent.Agent.eval`.
+        eval_horizon : int, default: 10**5
+            Horizon, maximum episode length.
+        n_simulations : int, default: 10
+            Number of Monte Carlo simulations.
+        gamma : double, default: 1.0
+            Discount factor.
     agent_name : str
         Name of the agent. If None, set to agent_class.name
     n_fit : int
@@ -523,25 +529,62 @@ class AgentManager:
         verbose: Optional[bool] = True,
     ) -> List[float]:
         """
-        Call :meth:`eval` method in the managed agents and returns a list with the results.
+        Evaluate managed agents using their 'eval' method and return a list with the results.
 
         Parameters
         ----------
         n_simulations : int, optional
-            Total number of agent evaluations. If None, set to 2*(number of agents)
+            The total number of agent evaluations ('eval' calls) to perform. If None, set to 2*(number of agents).
         eval_kwargs : dict, optional
-            Arguments to be sent to the .eval() method of each trained instance.
-            If None, set to self.eval_kwargs.
+            A dictionary containing arguments to be passed to the 'eval' method of each trained instance.
+            If None, the default set of evaluation arguments will be used (self.eval_kwargs).
+                eval_horizon : int, default: 10**5
+                    Horizon, maximum episode length.
+                n_simulations : int, default: 10
+                    Number of Monte Carlo simulations.
+                gamma : double, default: 1.0
+                    Discount factor.
         agent_id: int, optional
-            Index of the agent to be evaluated. If None, choose randomly.
+            The index of the agent to be evaluated. If None, an agent will be chosen randomly for evaluation.
         verbose: bool, optional
-            Whether to print a progress report.
+            Determines whether to print a progress report during the evaluation.
 
         Returns
         -------
-        list
-            list of length ``n_simulations`` containing the outputs
-            of :meth:`~rlberry.agents.agent.Agent.eval`.
+        list of float
+            A list of length 'n_simulations', containing the evaluation results
+            obtained from each call to the :meth:`~rlberry.agents.agent.Agent.eval` method.
+
+        Notes
+        -----
+        This method facilitates the evaluation of multiple managed agents by calling their 'eval'
+        method with the specified evaluation parameters.
+
+        The 'n_simulations' parameter specifies the total number of evaluations to perform. Each
+        evaluation will be conducted on one of the managed agents.
+
+        The 'eval_kwargs' parameter allows you to customize the evaluation by passing specific arguments
+        to the 'eval' method of each agent. If not provided, the default evaluation arguments
+        (self.eval_kwargs) will be used.
+
+        The 'agent_id' parameter is used to specify a particular agent for evaluation. If None, an agent
+        will be chosen randomly for evaluation.
+
+        The 'verbose' parameter determines whether a progress report will be printed during the
+        evaluation process.
+
+        Examples
+        --------
+        >>> from rlberry.agents import AgentManager
+        >>> eval_kwargs = {
+            'horizon': 1000,
+            'n_simulations': 10,
+            'gamma': 0.99
+        }
+        >>> agent_manager = AgentManager(..., eval_kwargs=eval_kwargs)
+        >>> # evaluation_results will return 5 values (n_simulations=5) where each value is the Monte-Carlo
+        >>> # evaluation over 10 simulations ((eval_kwargs["n_simulation"]))  
+        >>> evaluation_results = agent_manager.eval_agents(n_simulations=5, verbose=True)
         """
         eval_kwargs = eval_kwargs or self.eval_kwargs
         if not n_simulations:
