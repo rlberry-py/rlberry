@@ -14,6 +14,7 @@ import _pickle as cPickle
 import shutil
 import threading
 import multiprocessing
+import torch.multiprocessing as tmultiprocessing
 from multiprocessing.spawn import _check_not_importing_main
 from typing import List, Optional, Tuple, Union
 
@@ -191,8 +192,8 @@ class AgentManager:
         Number of agent instances to fit.
     output_dir : str or :class:`pathlib.Path`
         Directory where to store data.
-    parallelization: {'thread', 'process'}, default: 'thread'
-        Whether to parallelize  agent training using threads or processes.
+    parallelization: {'thread', 'process', 'torch'}, default: 'thread'
+        Whether to parallelize  agent training using threads or processes. `torch.multiprocessing` can be used with the parameter `torch`.
     max_workers: None or int, default: None
         Number of processes/threads used in a call to fit().
         If None and parallelization='process', it will default to the
@@ -711,6 +712,12 @@ class AgentManager:
                 mp_context=multiprocessing.get_context(self.mp_context),
             )
             lock = multiprocessing.Manager().Lock()
+        elif self.parallelization == "torch":
+            executor_class = functools.partial(
+                concurrent.futures.ProcessPoolExecutor,
+                mp_context=tmultiprocessing.get_context(self.mp_context),
+            )
+            lock = tmultiprocessing.Manager().Lock()
         else:
             raise ValueError(
                 f"Invalid backend for parallelization: {self.parallelization}"
@@ -1086,6 +1093,19 @@ class AgentManager:
             elif optuna_parallelization == "process":
                 with concurrent.futures.ProcessPoolExecutor(
                     mp_context=multiprocessing.get_context(self.mp_context)
+                ) as executor:
+                    for _ in range(n_optuna_workers):
+                        executor.submit(
+                            study.optimize,
+                            objective,
+                            n_trials=n_trials // n_optuna_workers,
+                            timeout=timeout,
+                            gc_after_trial=True,
+                        )
+                    executor.shutdown()
+            elif optuna_parallelization == "torch":
+                with concurrent.futures.ProcessPoolExecutor(
+                    mp_context=tmultiprocessing.get_context(self.mp_context)
                 ) as executor:
                     for _ in range(n_optuna_workers):
                         executor.submit(
