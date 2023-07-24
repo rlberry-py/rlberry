@@ -193,7 +193,8 @@ class AgentManager:
     output_dir : str or :class:`pathlib.Path`
         Directory where to store data.
     parallelization: {'thread', 'process', 'torch'}, default: 'thread'
-        Whether to parallelize  agent training using threads or processes. `torch.multiprocessing` can be used with the parameter `torch`.
+        Whether to parallelize  agent training using threads or processes.
+        `torch.multiprocessing` can be used, instead of the standard `multiprocessing`, with the parameter `torch`.
     max_workers: None or int, default: None
         Number of processes/threads used in a call to fit().
         If None and parallelization='process', it will default to the
@@ -962,6 +963,7 @@ class AgentManager:
             Number of workers used by optuna for optimization.
         optuna_parallelization : 'thread' or 'process'
             Whether to use threads or processes for optuna parallelization.
+            `torch.multiprocessing` can be used, instead of the standard `multiprocessing`, with the parameter `torch`.
         sampler_method : str
             Optuna sampling method.
         pruner_method : str
