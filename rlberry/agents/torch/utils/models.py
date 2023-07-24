@@ -284,6 +284,7 @@ class MultiLayerPerceptron(BaseModule):
         std0=1.0,
         reset_type="orthogonal",
         pred_init_scale="auto",
+        squashed_policy=False,
         **kwargs
     ):
         super().__init__(reset_type=reset_type, **kwargs)
@@ -296,6 +297,7 @@ class MultiLayerPerceptron(BaseModule):
         self.is_policy = is_policy
         self.ctns_actions = ctns_actions
         self.std0 = std0
+        self.squashed_policy = squashed_policy
 
         # Set pred_init_scale
         if pred_init_scale == "auto":
@@ -309,6 +311,9 @@ class MultiLayerPerceptron(BaseModule):
             [nn.Linear(sizes[i], sizes[i + 1]) for i in range(len(sizes) - 1)]
         )
         if out_size:
+            if squashed_policy:
+                self.fc_mean = nn.Linear(256, out_size)
+                self.fc_logstd = nn.Linear(256, out_size)
             if ctns_actions:
                 self.logstd = nn.Parameter(np.log(std0) * torch.ones(out_size))
             self.predict = nn.Linear(sizes[-1], out_size)
@@ -331,6 +336,14 @@ class MultiLayerPerceptron(BaseModule):
             x = x.reshape(x.shape[0], -1)  # We expect a batch of vectors
         for layer in self.layers:
             x = self.activation(layer(x.float()))
+        if self.squashed_policy:
+            mean = self.fc_mean(x)
+            log_std = self.fc_logstd(x)
+            log_std = torch.tanh(log_std)
+            LOG_STD_MAX = 2
+            LOG_STD_MIN = -5
+            log_std = LOG_STD_MIN + 0.5 * (LOG_STD_MAX - LOG_STD_MIN) * (log_std + 1)
+            return (mean, log_std)
         if self.out_size:
             x = self.predict(x)
         if self.is_policy:
