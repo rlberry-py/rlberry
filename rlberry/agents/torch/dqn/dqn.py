@@ -128,6 +128,84 @@ class DQNAgent(AgentTorch, AgentWithSimplePolicy):
     eval_interval : int, default = None
         Interval (in number of transitions) between agent evaluations in fit().
         If None, never evaluate.
+    
+    Attributes
+    ----------
+        gamma : float, default = 0.99
+            Discount factor used to discount future rewards in the Bellman equation.
+
+        batch_size : int, default=32
+            Batch size used during the training process.
+
+        chunk_size : int, default=8
+            Length of sub-trajectories sampled from the replay buffer.
+
+        lambda_ : float, default=0.5
+            Q(lambda) parameter used in Q(lambda) algorithm for computing targets.
+
+        target_update_parameter : int or float
+            The parameter that controls the update frequency of the target network.
+            If int: interval (in number of total online updates) between updates of the target network.
+            If float: soft update coefficient, which controls the rate at which the target network approaches
+            the online network.
+
+        device : str
+            Torch device on which the agent's neural networks are placed. Use "cuda:best" to choose the best
+            available GPU device.
+
+        learning_rate : float, default = 1e-3
+            Learning rate used by the optimizer during neural network training.
+
+        epsilon_init : float, default = 1.0
+            Initial epsilon value for epsilon-greedy exploration. Epsilon-greedy policy is used to balance
+            exploration and exploitation during training.
+
+        epsilon_final : float, default = 0.1
+            Final epsilon value for epsilon-greedy exploration. Epsilon will approach this value as the agent
+            gains more experience.
+
+        epsilon_decay_interval : int
+            The number of timesteps after which the epsilon value will approach `epsilon_final`.
+
+        loss_function : {"l1", "l2", "smooth_l1"}, default: "l2"
+            The loss function used to compute the Bellman error during training. The available options are
+            Mean Absolute Error ("l1"), Mean Squared Error ("l2"), and Smooth L1 Loss ("smooth_l1").
+
+        optimizer_type : {"ADAM", "RMS_PROP"}
+            The optimization algorithm used during neural network training. Choose between ADAM and RMS_PROP.
+
+        q_net_constructor : Callable, str or None
+            Function/constructor that returns a torch module for the Q-network.
+            Example: use `rlberry.agents.torch.utils.training.model_factory_from_env` and `q_net_kwargs`
+            parameter to modify the neural network.
+
+        q_net_kwargs : optional, dict
+            Parameters for `q_net_constructor`.
+
+        use_double_dqn : bool, default = False
+            If True, use Double DQN algorithm, which helps to reduce overestimation bias in Q-value estimates.
+
+        use_prioritized_replay : bool, default = False
+            If True, use Prioritized Experience Replay, which prioritizes transitions in the replay buffer
+            based on their TD-errors, to improve the learning process.
+
+        train_interval : int
+            The agent updates the model every `train_interval` steps. If -1, the agent only trains at the end
+            of each episode.
+
+        gradient_steps : int
+            The number of gradient steps to perform at each model update. If -1, the number of timesteps since
+            the last update will be used.
+
+        max_replay_size : int
+            The maximum number of transitions allowed in the replay buffer.
+
+        learning_starts : int
+            The number of steps of the model to collect transitions for before learning starts.
+
+        eval_interval : int, default = None
+            The interval (in number of transitions) between agent evaluations in the `fit()` method. If None,
+            the agent won't evaluate during training.
     """
 
     name = "DQN"
