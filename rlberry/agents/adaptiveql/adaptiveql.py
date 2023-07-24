@@ -45,8 +45,9 @@ class AdaptiveQLAgent(AgentWithSimplePolicy):
     v_max : ndarray
         Array of the maximum state value as a function of the Horizon.
     Qtree : MDPTreePartition
-        To be written.
-
+        Tree structure to represent the MDP model of transition.
+    episode : int
+        Number of episodes done during training of the adaptiveql agent.
         
     References
     ----------
