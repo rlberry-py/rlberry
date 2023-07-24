@@ -576,7 +576,15 @@ class AgentWithSimplePolicy(Agent):
 
 
 class AgentTorch(Agent):
-    """Class to inherite for torch agents
+    # Need a specific save and load to manage torch.
+    """
+    Class to inherite for torch agents.
+
+    .. note::
+
+        Classes that implement this interface can send ``**kwargs`` to initiate :code:`AgentTorch.__init__()`,
+        but the keys must match the parameters.
+
 
     Parameters
     ----------
@@ -601,9 +609,6 @@ class AgentTorch(Agent):
     _thread_shared_data : dict, optional
         Used by :class:`~rlberry.manager.AgentManager` to share data across Agent
         instances created in different threads.
-    **kwargs : dict
-        Classes that implement this interface must send ``**kwargs``
-        to :code:`Agent.__init__()`.
 
     Attributes
     ----------
