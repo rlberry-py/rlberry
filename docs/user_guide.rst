@@ -8,10 +8,10 @@ User guide
 
 Introduction
 ------------
-Welcome to rlberry. Use rlberry's ExperimentManager (add ref) to train, evaluate and compare rl agents. In addition to 
-the core ExperimentManager (add ref), rlberry provides the user with a set of bandit (add ref), tabular rl (add ref), and 
-deep rl agents (add ref) as well as a wrapper for stablebaselines3 (add link, and ref) agents. 
-Like other popular rl libraries, rlberry also provides basic tools for plotting, multiprocessing and logging (add refs). 
+Welcome to rlberry. Use rlberry's ExperimentManager (add ref) to train, evaluate and compare rl agents. In addition to
+the core ExperimentManager (add ref), rlberry provides the user with a set of bandit (add ref), tabular rl (add ref), and
+deep rl agents (add ref) as well as a wrapper for stablebaselines3 (add link, and ref) agents.
+Like other popular rl libraries, rlberry also provides basic tools for plotting, multiprocessing and logging (add refs).
 In this user guide, we take you through the core features of rlberry and illustrate them with examples (add ref) and API documentation (add ref).
 
 .. If you are new to rlberry, check the :ref:`Tutorials` below and the :ref:`the quickstart<quick_start>` documentation.
