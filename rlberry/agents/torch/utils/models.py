@@ -1,16 +1,18 @@
 #
 # Simple MLP and CNN models
 #
+from functools import partial
 
 
+from gymnasium import spaces
+from gymnasium.vector.sync_vector_env import SyncVectorEnv
+from gymnasium.vector.async_vector_env import AsyncVectorEnv
+import numpy as np
 import torch
 import torch.nn as nn
-from torch.distributions import Categorical
-from gym import spaces
+import torch.nn.functional as F
+from torch.distributions import Categorical, Normal
 
-#
-# Utility functions
-#
 from rlberry.agents.torch.utils.training import model_factory, activation_factory
 
 
@@ -50,8 +52,13 @@ def default_twinq_net_fn(env):
 
 def default_policy_net_fn(env):
     """
-    Returns a default value network.
+    Returns a default policy network.
     """
+
+    # remove potential wrappers
+    while type(env) in [SyncVectorEnv, AsyncVectorEnv]:
+        env = env.envs[0]
+
     if isinstance(env.observation_space, spaces.Box):
         obs_shape = env.observation_space.shape
     elif isinstance(env.observation_space, spaces.Tuple):
@@ -62,7 +69,7 @@ def default_policy_net_fn(env):
         )
 
     if len(obs_shape) == 3:
-        if obs_shape[0] < obs_shape[1] and obs_shape[0] < obs_shape[1]:
+        if obs_shape[0] < obs_shape[1] and obs_shape[0] < obs_shape[2]:
             # Assume CHW observation space
             model_config = {
                 "type": "ConvolutionalNetwork",
@@ -104,8 +111,13 @@ def default_policy_net_fn(env):
 
     if isinstance(env.action_space, spaces.Discrete):
         model_config["out_size"] = env.action_space.n
+        model_config["ctns_actions"] = False
     elif isinstance(env.action_space, spaces.Tuple):
         model_config["out_size"] = env.action_space.spaces[0].n
+        model_config["ctns_actions"] = False
+    elif isinstance(env.action_space, spaces.Box):
+        model_config["out_size"] = env.action_space.shape[0]
+        model_config["ctns_actions"] = True
 
     return model_factory(**model_config)
 
@@ -114,6 +126,11 @@ def default_value_net_fn(env):
     """
     Returns a default value network.
     """
+
+    # remove potential wrappers
+    while type(env) in [SyncVectorEnv, AsyncVectorEnv]:
+        env = env.envs[0]
+
     if isinstance(env.observation_space, spaces.Box):
         obs_shape = env.observation_space.shape
     elif isinstance(env.observation_space, spaces.Tuple):
@@ -173,21 +190,24 @@ class BaseModule(torch.nn.Module):
         - normalization parameters
     """
 
-    def __init__(self, activation_type="RELU", reset_type="XAVIER"):
+    def __init__(self, activation_type="RELU", reset_type="xavier"):
         super().__init__()
         self.activation = activation_factory(activation_type)
         self.reset_type = reset_type
 
-    def _init_weights(self, m):
+    def _init_weights(self, m, param=None, put_bias_to_zero=False):
         if hasattr(m, "weight"):
-            if self.reset_type == "XAVIER":
+            if self.reset_type == "xavier":
                 torch.nn.init.xavier_uniform_(m.weight.data)
-            elif self.reset_type == "ZEROS":
+            elif self.reset_type == "zeros":
                 torch.nn.init.constant_(m.weight.data, 0.0)
+            elif self.reset_type == "orthogonal":
+                torch.nn.init.orthogonal_(m.weight.data, gain=param)
             else:
                 raise ValueError("Unknown reset type")
-        if hasattr(m, "bias") and m.bias is not None:
-            torch.nn.init.constant_(m.bias.data, 0.0)
+        if put_bias_to_zero:
+            if hasattr(m, "bias") and m.bias is not None:
+                torch.nn.init.constant_(m.bias.data, 0.0)
 
     def reset(self):
         self.apply(self._init_weights)
@@ -236,33 +256,75 @@ class MultiLayerPerceptron(BaseModule):
     activation: {"RELU", "TANH", "ELU"}
         Activation function.
     is_policy: bool, default=False
-        If true, the :meth:`forward` method returns a categorical
-        distribution corresponding to the softmax of the output.
+        If true, the :meth:`forward` method returns a distribution over the
+        output.
+    ctns_actions: bool, default=False
+        If true, the :meth:`forward` method returns a normal distribution
+        corresponding to the output. Otherwise, a categorical distribution
+        is returned.
+    std0: float, default=1.0
+        Initial standard deviation for the normal distribution. Only used
+        if ctns_actions and is_policy are True.
+    reset_type: {"xavier", "orthogonal", "zeros"}, default="orthogonal"
+        Type of weight initialization.
+    pred_init_scale: float, default="auto"
+        Scale of the initial weights of the output layer. If "auto", the
+        scale is set to 0.01 for policy networks and 1.0 otherwise.
     """
 
     def __init__(
         self,
         in_size=None,
         layer_sizes=None,
-        reshape=True,
+        reshape=False,
         out_size=None,
         activation="RELU",
         is_policy=False,
+        ctns_actions=False,
+        std0=1.0,
+        reset_type="orthogonal",
+        pred_init_scale="auto",
         **kwargs
     ):
-        super().__init__(**kwargs)
+        super().__init__(reset_type=reset_type, **kwargs)
+
         self.reshape = reshape
         self.layer_sizes = layer_sizes or [64, 64]
         self.layer_sizes = list(self.layer_sizes)
         self.out_size = out_size
         self.activation = activation_factory(activation)
         self.is_policy = is_policy
-        self.softmax = nn.Softmax(dim=-1)
+        self.ctns_actions = ctns_actions
+        self.std0 = std0
+
+        # Set pred_init_scale
+        if pred_init_scale == "auto":
+            self.pred_init_scale = 0.01 if is_policy else 1.0
+        else:
+            self.pred_init_scale = pred_init_scale
+
+        # Instantiate parameters
         sizes = [in_size] + self.layer_sizes
-        layers_list = [nn.Linear(sizes[i], sizes[i + 1]) for i in range(len(sizes) - 1)]
-        self.layers = nn.ModuleList(layers_list)
+        self.layers = nn.ModuleList(
+            [nn.Linear(sizes[i], sizes[i + 1]) for i in range(len(sizes) - 1)]
+        )
         if out_size:
+            if ctns_actions:
+                self.logstd = nn.Parameter(np.log(std0) * torch.ones(out_size))
             self.predict = nn.Linear(sizes[-1], out_size)
+
+        # Initialize parameters
+        self.reset()
+
+    def reset(self):
+        self.apply(partial(self._init_weights, param=np.log(2)))
+        if self.out_size:
+            if self.ctns_actions:
+                self.logstd.data.fill_(np.log(self.std0))
+                self.apply(
+                    partial(self._init_weights, param=np.log(2), put_bias_to_zero=True)
+                )
+            self._init_weights(self.predict, param=self.pred_init_scale)
 
     def forward(self, x):
         if self.reshape:
@@ -272,8 +334,12 @@ class MultiLayerPerceptron(BaseModule):
         if self.out_size:
             x = self.predict(x)
         if self.is_policy:
-            action_probs = self.softmax(x)
-            dist = Categorical(action_probs)
+            if self.ctns_actions:
+                std = torch.exp(self.logstd.expand_as(x))
+                dist = Normal(x, std)
+            else:
+                action_probs = F.softmax(x, dim=-1)
+                dist = Categorical(action_probs)
             return dist
         return x
 
@@ -348,6 +414,8 @@ class ConvolutionalNetwork(nn.Module):
     H = height;
     W = width.
 
+    For the CNN forward, if the tensor has more than 4 dimensions (not BCHW), it keeps the 3 last dimension as CHW and merge all first ones into 1 (Batch). Go through the CNN + MLP, then split the first dimension as before.
+
     Parameters
     ----------
     activation: {"RELU", "TANH", "ELU"}
@@ -385,16 +453,10 @@ class ConvolutionalNetwork(nn.Module):
         self.conv3 = nn.Conv2d(32, 64, kernel_size=2, stride=2)
 
         # MLP Head
-        # Number of Linear input connections depends on output of conv2d layers
-        # and therefore the input image size, so compute it.
-        def conv2d_size_out(size, kernel_size=2, stride=2):
-            return (size - (kernel_size - 1) - 1) // stride + 1
-
-        convw = conv2d_size_out(conv2d_size_out(conv2d_size_out(in_width)))
-        convh = conv2d_size_out(conv2d_size_out(conv2d_size_out(in_height)))
-        assert convh > 0 and convw > 0
         self.head_mlp_kwargs = head_mlp_kwargs or {}
-        self.head_mlp_kwargs["in_size"] = convw * convh * 64
+        self.head_mlp_kwargs["in_size"] = self._get_conv_out_size(
+            [in_channels, in_height, in_width]
+        )  # Number of Linear input connections depends on output of conv layers
         self.head_mlp_kwargs["out_size"] = out_size
         self.head_mlp_kwargs["is_policy"] = is_policy
         self.head = model_factory(**self.head_mlp_kwargs)
@@ -402,8 +464,19 @@ class ConvolutionalNetwork(nn.Module):
         self.is_policy = is_policy
         self.transpose_obs = transpose_obs
 
+    def _get_conv_out_size(self, shape):
+        """
+        Computes the output dimensions of the convolution network.
+        Shape : dimension of the input of the CNN
+        """
+        conv_result = self.activation((self.conv1(torch.zeros(1, *shape))))
+        conv_result = self.activation((self.conv2(conv_result)))
+        conv_result = self.activation((self.conv3(conv_result)))
+        return int(np.prod(conv_result.size()))
+
     def convolutions(self, x):
         x = x.float()
+        # if there is no batch (CHW), add one dimension to specify batch of 1 (and get format BCHW)
         if len(x.shape) == 3:
             x = x.unsqueeze(0)
         if self.transpose_obs:
@@ -411,6 +484,7 @@ class ConvolutionalNetwork(nn.Module):
         x = self.activation((self.conv1(x)))
         x = self.activation((self.conv2(x)))
         x = self.activation((self.conv3(x)))
+        x = x.view(x.size(0), -1)  # flatten
         return x
 
     def forward(self, x):
@@ -420,9 +494,28 @@ class ConvolutionalNetwork(nn.Module):
         Parameters
         ----------
         x: torch.tensor
-            Tensor of shape BCHW
+            Tensor of shape BCHW (Batch,Chanel,Height,Width : if more than 4 dimensions, merge all the first in batch dimension)
         """
-        return self.head(self.convolutions(x))
+        flag_view_to_change = False
+
+        if len(x.shape) > 4:
+            flag_view_to_change = True
+            dim_to_retore = x.shape[:-3]
+            inputview_size = tuple((-1,)) + tuple(x.shape[-3:])
+            outputview_size = tuple(dim_to_retore) + tuple(
+                (self.head_mlp_kwargs["out_size"],)
+            )
+            x = x.view(inputview_size)
+
+        conv_result = self.convolutions(x)
+        output_result = self.head(
+            conv_result.view(conv_result.size()[0], -1)
+        )  # give the 'conv_result' flattenned in 2 dimensions (batch and other) to the MLP (head)
+
+        if flag_view_to_change:
+            output_result = output_result.view(outputview_size)
+
+        return output_result
 
     def action_scores(self, x):
         return self.head.action_scores(self.convolutions(x))

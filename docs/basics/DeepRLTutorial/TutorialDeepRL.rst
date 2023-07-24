@@ -2,7 +2,7 @@ Quickstart for Deep Reinforcement Learning in rlberry
 =====================================================
 
 .. highlight:: none
-               
+
 ..
   Authors: Riccardo Della Vecchia, Hector Kohler, Alena Shilova.
 
@@ -44,11 +44,11 @@ The goal is to maximize the cumulative sum of discount rewards:
 
 .. math::  J(\pi) = \mathbb{E}_{\tau \sim \pi}\big[R(\tau) \big]
 
-Gym Environment
+Gymnasium Environment
 ---------------
 
-In this tutorial we are going to use the `OpenAI’s Gym
-library <https://gym.openai.com/envs/>`__. This library provides a large
+In this tutorial we are going to use the `Gymnasium library (previously OpenAI’s Gym)
+<https://gymnasium.farama.org/api/env/>`__. This library provides a large
 number of environments to test RL algorithm.
 
 We will focus only on the **CartPole-v1** environment, although we recommend experimenting with other environments such as **Acrobot-v1**

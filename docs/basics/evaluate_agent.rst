@@ -20,7 +20,7 @@ as shown in the examples below.
 
 
     # Environment (constructor, kwargs)
-    env = (gym_make, dict(id='CartPole-v1'))
+    env = (gym_make, dict(id="CartPole-v1"))
 
     # Initial set of parameters
     params = dict(
@@ -41,14 +41,15 @@ as shown in the examples below.
         eval_kwargs=eval_kwargs,
         fit_budget=fit_budget,
         n_fit=4,
-        parallelization='thread')
+        parallelization="thread",
+    )
 
     # Fit the 4 instances
     stats.fit()
 
     # The fit() method of REINFORCEAgent logs data to a :class:`~rlberry.utils.writers.DefaultWriter`
     # object. The method below can be used to plot those data!
-    plot_writer_data(stats, tag='episode_rewards')
+    plot_writer_data(stats, tag="episode_rewards")
 
 
 
@@ -72,17 +73,17 @@ For :class:`~rlberry.agents.reinforce.reinforce.REINFORCEAgent`, this method loo
         ----------
         trial: optuna.trial
         """
-        batch_size = trial.suggest_categorical('batch_size', [1, 4, 8, 16, 32])
-        gamma = trial.suggest_categorical('gamma', [0.9, 0.95, 0.99])
-        learning_rate = trial.suggest_loguniform('learning_rate', 1e-5, 1)
-        entr_coef = trial.suggest_loguniform('entr_coef', 1e-8, 0.1)
+        batch_size = trial.suggest_categorical("batch_size", [1, 4, 8, 16, 32])
+        gamma = trial.suggest_categorical("gamma", [0.9, 0.95, 0.99])
+        learning_rate = trial.suggest_float("learning_rate", 1e-5, 1, log=True)
+        entr_coef = trial.suggest_float("entr_coef", 1e-8, 0.1, log=True)
 
         return {
-                'batch_size': batch_size,
-                'gamma': gamma,
-                'learning_rate': learning_rate,
-                'entr_coef': entr_coef,
-                }
+            "batch_size": batch_size,
+            "gamma": gamma,
+            "learning_rate": learning_rate,
+            "entr_coef": entr_coef,
+        }
 
 
 Now we can use the :meth:`optimize_hyperparams` method
@@ -93,13 +94,13 @@ of :class:`~rlberry.manager.agent_manager.AgentManager` to find good parameters 
     # Run optimization and print results
     stats.optimize_hyperparams(
         n_trials=100,
-        timeout=10,   # stop after 10 seconds
+        timeout=10,  # stop after 10 seconds
         n_fit=2,
-        sampler_method='optuna_default'
+        sampler_method="optuna_default",
     )
 
     print(stats.best_hyperparams)
 
     # Calling fit() again will train the agent with the optimized parameters
     stats.fit()
-    plot_writer_data(stats, tag='episode_rewards')
+    plot_writer_data(stats, tag="episode_rewards")

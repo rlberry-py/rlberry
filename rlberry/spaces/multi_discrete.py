@@ -1,4 +1,4 @@
-import gym
+import gymnasium as gym
 import numpy as np
 from rlberry.seeding import Seeder
 
@@ -6,7 +6,7 @@ from rlberry.seeding import Seeder
 class MultiDiscrete(gym.spaces.MultiDiscrete):
     """
 
-    Inherited from gym.spaces.MultiDiscrete for compatibility with gym.
+    Inherited from gymnasium.spaces.MultiDiscrete for compatibility with gym.
 
     rlberry wraps gym.spaces to make sure the seeding
     mechanism is unified in the library (rlberry.seeding)

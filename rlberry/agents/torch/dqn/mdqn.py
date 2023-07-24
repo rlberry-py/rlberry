@@ -2,9 +2,9 @@ import inspect
 
 import numpy as np
 import torch
-from gym import spaces
+from gymnasium import spaces
 from rlberry import types
-from rlberry.agents import AgentWithSimplePolicy
+from rlberry.agents import AgentWithSimplePolicy, AgentTorch
 from rlberry.agents.torch.utils.training import (
     loss_function_factory,
     model_factory,
@@ -12,6 +12,7 @@ from rlberry.agents.torch.utils.training import (
     size_model_config,
 )
 from rlberry.agents.torch.dqn.dqn_utils import (
+    lambda_returns,
     polynomial_schedule,
     stable_scaled_log_softmax,
     stable_softmax,
@@ -41,7 +42,7 @@ def default_q_net_fn(env, **kwargs):
     return model_factory(**model_config)
 
 
-class MunchausenDQNAgent(AgentWithSimplePolicy):
+class MunchausenDQNAgent(AgentTorch, AgentWithSimplePolicy):
     """Munchausen DQN Agent based on PyTorch.
 
     Notes
@@ -148,11 +149,11 @@ class MunchausenDQNAgent(AgentWithSimplePolicy):
         env: types.Env,
         gamma: float = 0.99,
         batch_size: int = 32,
-        chunk_size: int = 1,
+        chunk_size: int = 8,
         lambda_: float = 0.5,
         tau: float = 0.03,
         alpha: float = 0.9,
-        target_update_parameter: Union[int, float] = 8000,
+        target_update_parameter: Union[int, float] = 0.005,
         # tardet_update_freq: int = 8000,
         device: str = "cuda:best",
         learning_rate: float = 5e-5,
@@ -183,7 +184,7 @@ class MunchausenDQNAgent(AgentWithSimplePolicy):
         assert isinstance(env.observation_space, spaces.Box)
         assert isinstance(env.action_space, spaces.Discrete)
 
-        # DQN parameters
+        # M-DQN parameters
 
         # Online and target Q networks, torch device
         self._device = choose_device(device)
@@ -291,47 +292,48 @@ class MunchausenDQNAgent(AgentWithSimplePolicy):
             batch_info = sampled.info
             assert batch["rewards"].shape == (self.batch_size, self.chunk_size)
 
-            # Compute targets
+            # Get batched tensors
             batch_observations = torch.FloatTensor(batch["observations"]).to(
                 self._device
             )
-
             batch_rewards = torch.FloatTensor(batch["rewards"]).to(self._device)
-
             batch_next_observations = torch.FloatTensor(batch["next_observations"]).to(
                 self._device
             )
             batch_actions = torch.LongTensor(batch["actions"]).to(self._device)
             batch_dones = torch.LongTensor(batch["dones"]).to(self._device)
 
+            # Get target Q estimates
             target_q_values_tp1 = self._qnet_target(batch_next_observations).detach()
             target_q_values = self._qnet_target(batch_observations).detach()
 
-            log_softmax_pi = stable_scaled_log_softmax(target_q_values, self.tau, -1)
-            log_softmax_pi_next = stable_scaled_log_softmax(
-                target_q_values_tp1, self.tau, -1
-            )
-            softmax_pi_next = stable_softmax(target_q_values_tp1, self.tau, -1)
+            # Compute softmax policies for the current and next step
+            log_pi = stable_scaled_log_softmax(target_q_values, self.tau, -1)
+            log_pi_tp1 = stable_scaled_log_softmax(target_q_values_tp1, self.tau, -1)
+            pi_tp1 = stable_softmax(target_q_values_tp1, self.tau, -1)
 
-            next_qt_softmax = torch.sum(
-                (target_q_values_tp1 - log_softmax_pi_next) * softmax_pi_next, -1
+            # Compute the "next step" part of the target
+            target_v_tp1 = (
+                torch.sum((target_q_values_tp1 - log_pi_tp1) * pi_tp1, -1).cpu().numpy()
             )
 
+            # Compute the Munchausen term
             munchausen_term = torch.gather(
-                log_softmax_pi, dim=-1, index=batch_actions[:, :, None]
+                log_pi, dim=-1, index=batch_actions[:, :, None]
             )[:, :, 0]
-
             clipped_munchausen_term = torch.clip(
                 munchausen_term, self.clip_value_min, 0
             )
-
             final_munchausen_term = self.alpha * clipped_munchausen_term
 
-            targets = (
-                batch_rewards
-                + final_munchausen_term
-                + self.gamma * next_qt_softmax * (1.0 - batch_dones)
+            # Compute the final target
+            batch_lambda_returns = lambda_returns(
+                (batch_rewards + final_munchausen_term).cpu().numpy(),
+                self.gamma * (1.0 - np.array(batch["dones"], dtype=np.float32)),
+                target_v_tp1,
+                np.array(self.lambda_, dtype=np.float32),
             )
+            targets = torch.tensor(batch_lambda_returns, device=self._device)
 
             # Compute loss
             batch_q_values = self._qnet_online(batch_observations)
@@ -388,22 +390,20 @@ class MunchausenDQNAgent(AgentWithSimplePolicy):
             One step = one transition in the environment.
         """
         del kwargs
-        # started = False
         timesteps_counter = 0
         episode_rewards = 0.0
         episode_timesteps = 0
-        observation = self.env.reset()
+        observation, info = self.env.reset()
         while timesteps_counter < budget:
-            # if started:
-            #     print("M-DQN works")
-            # else:
-            #     started = True
             if self.total_timesteps < self._learning_starts:
                 action = self.env.action_space.sample()
             else:
                 self._timesteps_since_last_update += 1
                 action = self._policy(observation, evaluation=False)
-            next_obs, reward, done, _ = self.env.step(action)
+            next_observation, reward, terminated, truncated, info = self.env.step(
+                action
+            )
+            done = terminated or truncated
 
             # store data
             episode_rewards += reward
@@ -413,7 +413,7 @@ class MunchausenDQNAgent(AgentWithSimplePolicy):
                     "actions": action,
                     "rewards": reward,
                     "dones": done,
-                    "next_observations": next_obs,
+                    "next_observations": next_observation,
                 }
             )
 
@@ -421,7 +421,7 @@ class MunchausenDQNAgent(AgentWithSimplePolicy):
             self._total_timesteps += 1
             timesteps_counter += 1
             episode_timesteps += 1
-            observation = next_obs
+            observation = next_observation
 
             # update
             run_update, n_gradient_steps = self._must_update(done)
@@ -457,7 +457,7 @@ class MunchausenDQNAgent(AgentWithSimplePolicy):
                     )
                 episode_rewards = 0.0
                 episode_timesteps = 0
-                observation = self.env.reset()
+                observation, info = self.env.reset()
 
     def _policy(self, observation, evaluation=False):
         epsilon = self._epsilon_schedule(self.total_timesteps)

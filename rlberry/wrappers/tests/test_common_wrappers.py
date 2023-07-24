@@ -12,6 +12,34 @@ from rlberry.wrappers.discretize_state import DiscretizeStateWrapper
 from rlberry.wrappers.rescale_reward import RescaleRewardWrapper
 from rlberry.wrappers.uncertainty_estimator_wrapper import UncertaintyEstimatorWrapper
 from rlberry.wrappers.vis2d import Vis2dWrapper
+from rlberry.wrappers.gym_utils import OldGymCompatibilityWrapper
+
+
+from rlberry.wrappers.tests.old_env.old_acrobot import Old_Acrobot
+from rlberry.wrappers.tests.old_env.old_apple_gold import Old_AppleGold
+from rlberry.wrappers.tests.old_env.old_four_room import Old_FourRoom
+from rlberry.wrappers.tests.old_env.old_gridworld import Old_GridWorld
+from rlberry.wrappers.tests.old_env.old_mountain_car import Old_MountainCar
+from rlberry.wrappers.tests.old_env.old_nroom import Old_NRoom
+from rlberry.wrappers.tests.old_env.old_pendulum import Old_Pendulum
+from rlberry.wrappers.tests.old_env.old_pball import Old_PBall2D, Old_SimplePBallND
+from rlberry.wrappers.tests.old_env.old_six_room import Old_SixRoom
+from rlberry.wrappers.tests.old_env.old_twinrooms import Old_TwinRooms
+
+
+classes = [
+    Old_Acrobot,
+    Old_AppleGold,
+    Old_FourRoom,
+    Old_GridWorld,
+    Old_MountainCar,
+    Old_NRoom,
+    Old_PBall2D,
+    Old_Pendulum,
+    Old_SimplePBallND,
+    Old_SixRoom,
+    Old_TwinRooms,
+]
 
 
 @pytest.mark.parametrize("n_bins", list(range(1, 10)))
@@ -20,18 +48,17 @@ def test_discretizer(n_bins):
     assert env.observation_space.n == n_bins * n_bins
 
     for _ in range(2):
-        state = env.reset()
+        observation, info = env.reset()
         for _ in range(50):
-            assert env.observation_space.contains(state)
+            assert env.observation_space.contains(observation)
             action = env.action_space.sample()
-            next_s, _, _, _ = env.step(action)
-            state = next_s
+            observation, _, _, _, _ = env.step(action)
 
     for _ in range(100):
-        state = env.observation_space.sample()
+        observation = env.observation_space.sample()
         action = env.action_space.sample()
-        next_s, _, _, _ = env.sample(state, action)
-        assert env.observation_space.contains(next_s)
+        next_observation, _, _, _, _ = env.sample(observation, action)
+        assert env.observation_space.contains(next_observation)
 
     assert env.unwrapped.name == "MountainCar"
 
@@ -56,14 +83,14 @@ def test_rescale_reward():
         wrapped = RescaleRewardWrapper(env, (-10, 10))
         _ = wrapped.reset()
         for _ in range(100):
-            _, reward, _, _ = wrapped.sample(
+            _, reward, _, _, _ = wrapped.sample(
                 wrapped.observation_space.sample(), wrapped.action_space.sample()
             )
             assert reward <= 10 + tol and reward >= -10 - tol
 
         _ = wrapped.reset()
         for _ in range(100):
-            _, reward, _, _ = wrapped.step(wrapped.action_space.sample())
+            _, reward, _, _, _ = wrapped.step(wrapped.action_space.sample())
             assert reward <= 10 + tol and reward >= -10 - tol
 
 
@@ -130,9 +157,9 @@ def test_autoreset(horizon):
     env.reset()
     for tt in range(5 * horizon + 1):
         action = env.action_space.sample()
-        next_s, reward, done, info = env.step(action)
+        observation, reward, terminated, truncated, info = env.step(action)
         if (tt + 1) % horizon == 0:
-            assert next_s == 3
+            assert observation == 3
 
 
 def test_uncertainty_est_wrapper():
@@ -145,7 +172,7 @@ def test_uncertainty_est_wrapper():
 
     for ii in range(10):
         w_env.reset()
-        _, _, _, info = w_env.step(0)
+        _, _, _, _, info = w_env.step(0)
         nn = w_env.uncertainty_estimator.count(0, 0)
         assert nn == ii + 1
         assert info["exploration_bonus"] == pytest.approx(1 / np.sqrt(nn))
@@ -177,5 +204,38 @@ def test_discrete2onehot():
         initial_distr = np.zeros(env.unwrapped.observation_space.n)
         initial_distr[ii] = 1.0
         env.unwrapped.set_initial_state_distribution(initial_distr)
-        obs = env.reset()
+        action = env.action_space.sample()
+        observation, reward, terminated, truncated, info = env.step(action)
+        obs, info = env.reset()
         assert np.array_equal(obs, initial_distr)
+
+
+@pytest.mark.parametrize("ModelClass", classes)
+def test_OldGymCompatibilityWrapper(ModelClass):
+    # tester ancien environnement
+    env = ModelClass()
+    env.reseed(1)
+    result = env.reset()
+    assert not isinstance(result, tuple)
+    action = env.action_space.sample()
+    result = env.step(action)
+    assert isinstance(result, tuple)
+    assert len(result) == 4
+
+    # tester wrapper
+    env = ModelClass()
+    env = OldGymCompatibilityWrapper(env)
+    result = env.reset(seed=42)
+    assert isinstance(result, tuple)
+    observations, infos = result
+    assert isinstance(infos, dict)
+    for tt in range(5000):
+        action = env.action_space.sample()
+        result = env.step(action)
+        assert isinstance(result, tuple)
+        assert len(result) == 5
+        observation, reward, terminated, truncated, info = result
+        assert env.observation_space.contains(observation)
+        done = terminated or truncated
+        if done:
+            observation, info = env.reset(42**2)

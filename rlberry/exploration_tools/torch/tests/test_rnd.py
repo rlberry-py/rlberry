@@ -16,11 +16,12 @@ def test_rnd():
     )
 
     # Test
-    state = env.reset()
+    observation, info = env.reset()
     for ii in range(1000):
         action = env.action_space.sample()
-        next_s, reward, _, _ = env.step(action)
-        rnd.update(state, action, next_s, reward)
-        state = next_s
+        next_observation, reward, terminated, truncated, info = env.step(action)
+        done = terminated or truncated
+        rnd.update(observation, action, next_observation, reward)
+        observation = next_observation
         # measure uncertainty
-        _ = rnd.measure(state, action)
+        _ = rnd.measure(observation, action)

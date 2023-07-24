@@ -9,6 +9,7 @@ import bz2
 import _pickle as cPickle
 from itertools import cycle
 import dill
+from distutils.version import LooseVersion
 
 from rlberry.manager import AgentManager
 import rlberry
@@ -278,7 +279,6 @@ def read_writer_data(data_source, tag=None, preprocess_func=None, id_agent=None)
 
 
 def _get_last_xp(input_dir, name):
-
     dir_name = Path(input_dir) / "manager_data"
 
     # list all of the experiments for this particular agent
@@ -369,7 +369,8 @@ def plot_writer_data(
     Given a list of AgentManager or a folder, plot data (corresponding to info) obtained in each episode.
     The dictionary returned by agents' .fit() method must contain a key equal to `info`.
 
-    If there are several simulations, a confidence interval is plotted.
+    If there are several simulations, a confidence interval is plotted ( 90% percentile interval if seaborn version >= 0.12.0
+    otherwise standard deviation is used). This can be overridden using `sns_kwargs`.
     If there is only one simulation, a tensorboard-style smoothing is performed.
 
     Parameters
@@ -507,7 +508,21 @@ def plot_writer_data(
         sns.lineplot(**lineplot_kwargs)
         ax.legend(legends + ["smoothed " + str(n) for n in data["name"].unique()])
     else:
-        lineplot_kwargs = dict(x=xx, y="value", hue="name", data=data, ax=ax, ci="sd")
+        if LooseVersion(sns.__version__) >= LooseVersion("0.12.0"):
+            if "errorbar" in sns_kwargs.keys():
+                lineplot_kwargs = dict(x=xx, y="value", hue="name", data=data, ax=ax)
+            else:
+                # See https://seaborn.pydata.org/tutorial/error_bars
+                lineplot_kwargs = dict(
+                    x=xx, y="value", hue="name", data=data, ax=ax, errorbar=("pi", 90)
+                )
+        else:
+            if "ci" in sns_kwargs.keys():
+                lineplot_kwargs = dict(x=xx, y="value", hue="name", data=data, ax=ax)
+            else:
+                lineplot_kwargs = dict(
+                    x=xx, y="value", hue="name", data=data, ax=ax, ci="sd"
+                )
         lineplot_kwargs.update(sns_kwargs)
         sns.lineplot(**lineplot_kwargs)
     ax.set_title(title)

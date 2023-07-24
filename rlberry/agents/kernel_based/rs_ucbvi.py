@@ -1,7 +1,7 @@
 from rlberry.agents.agent import AgentWithSimplePolicy
 import numpy as np
 
-import gym.spaces as spaces
+import gymnasium.spaces as spaces
 from rlberry.agents.dynprog.utils import backward_induction
 from rlberry.agents.dynprog.utils import backward_induction_in_place
 from rlberry.agents.kernel_based.common import map_to_representative
@@ -293,18 +293,21 @@ class RSUCBVIAgent(AgentWithSimplePolicy):
     def _run_episode(self):
         # interact for H steps
         episode_rewards = 0
-        state = self.env.reset()
+        observation, info = self.env.reset()
         for hh in range(self.horizon):
-            action = self._get_action(state, hh)
-            next_state, reward, done, _ = self.env.step(action)
+            action = self._get_action(observation, hh)
+            next_observation, reward, terminated, truncated, info = self.env.step(
+                action
+            )
+            done = terminated or truncated
             episode_rewards += reward  # used for logging only
 
             if self.reward_free:
                 reward = 0.0  # set to zero before update if reward_free
 
-            self._update(state, action, next_state, reward)
+            self._update(observation, action, next_observation, reward)
 
-            state = next_state
+            observation = next_observation
             if done:
                 break
 

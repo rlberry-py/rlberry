@@ -13,7 +13,7 @@ A demo of A2C algorithm in PBall2D environment
 
 from rlberry.agents.torch import A2CAgent
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
-from gym.wrappers import TimeLimit
+from gymnasium.wrappers import TimeLimit
 
 
 env = PBall2D()
@@ -24,10 +24,10 @@ agent.fit(budget=n_timesteps)
 
 env.enable_rendering()
 
-state = env.reset()
+observation, info = env.reset()
 for tt in range(200):
-    action = agent.policy(state)
-    next_state, reward, done, _ = env.step(action)
-    state = next_state
+    action = agent.policy(observation)
+    observation, reward, terminated, truncated, info = env.step(action)
+    done = terminated or truncated
 
 video = env.save_video("_video/video_plot_a2c.mp4")

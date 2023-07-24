@@ -5,19 +5,84 @@ Changelog
 
 Dev version
 -----------
+*PR #335*
+
+ * Upgrade from Python3.9 -> python3.10
+
+
+Version 0.5.0
+-------------
+
+*PR #281, #323*
+
+ * Merge gymnasium branch into main, make gymnasium the default library for environments in rlberry.
+
+Version 0.4.1
+-------------
+
+*PR #318*
+
+* Update to allow the training on a computer with GPU, save the agents, then load it on a computer without GPU.
+
+*PR #308*
+
+* Update make_atari_env and PPO to be compatible together and use vectorized env (PPO manage the vector)
+
+*PR #298*
+
+* Move old scripts (jax agents, attention networks, old examples...) that we won't maintain from the main branch to an archive branch.
+
+*PR #277*
+
+* Add and update code to use "Atari games" env
+
+*PR #281*
+
+* New branch for code compatible with Gymnasium
+
+Version 0.4.0
+-------------
+
+*PR #273*
+
+* Change the default behavior of `plot_writer_data` so that if seaborn has version >= 0.12.0 then
+  a 90% percentile interval is used instead of sd.
+
+*PR #269*
+
+* Add :class:`rlberry.envs.PipelineEnv` a way to define pipeline of wrappers in a simple way.
+
+*PR #262*
+
+* PPO can now handle continuous actions.
+
+*PR #261, #264*
+
+* Implementation of Munchausen DQN in :class:`rlberry.agents.torch.MDQNAgent`.
+* Comparison of MDQN with DQN agent in the long tests.
+
+
+*PR #244, #250, #253*
+
+* Compress the pickles used to save the trained agents.
+
+*PR #235*
+
+* Implementation  of :class:`rlberry.envs.SpringCartPole` environment, an RL environment featuring two cartpoles linked by a spring.
 
 *PR #226, #227*
 
 * Improve logging, the logging level can now be changed with :py:func:`rlberry.utils.logging.set_level`.
 * Introduce smoothing in curves done with `plot_writer_data` when only one seed is used.
 
+
 *PR #223*
 
 * Moved PPO from experimental to torch agents. Tested and benchmarked.
 
 
-Version 0.3.0 (latest stable version)
--------------------------------------
+Version 0.3.0
+-------------
 
 
 *PR #206*

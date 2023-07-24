@@ -4,9 +4,7 @@ TODO: Test attention modules
 
 import torch
 from rlberry.agents.torch.utils.models import MultiLayerPerceptron
-from rlberry.agents.torch.utils.models import ConvolutionalNetwork
-from rlberry.agents.torch.utils.attention_models import EgoAttention
-from rlberry.agents.torch.utils.attention_models import SelfAttention
+from rlberry.agents.torch.utils.models import ConvolutionalNetwork, DuelingNetwork
 
 
 def test_mlp():
@@ -34,6 +32,12 @@ def test_cnn():
     assert y.shape[1] == 15
 
 
+def test_dueling_network():
+    model = DuelingNetwork(in_size=10, out_size=15)
+    x = torch.rand(1, 10)
+    y = model.forward(x)
+
+
 def test_cnn_policy():
     model = ConvolutionalNetwork(
         in_channels=10, in_height=20, in_width=30, out_size=15, is_policy=True
@@ -41,12 +45,3 @@ def test_cnn_policy():
     x = torch.rand(1, 10, 20, 30)
     scores = model.action_scores(x)
     assert scores.shape[1] == 15
-
-
-def test_ego_attention():
-    module = EgoAttention()
-    print(module)
-
-
-def test_self_attention():
-    _ = SelfAttention()

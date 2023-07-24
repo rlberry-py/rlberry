@@ -1,11 +1,11 @@
-import gym
+import gymnasium as gym
 from rlberry.seeding import Seeder
 
 
 class Dict(gym.spaces.Dict):
     """
 
-    Inherited from gym.spaces.Dict for compatibility with gym.
+    Inherited from gymnasium.spaces.Dict for compatibility with gym.
 
     rlberry wraps gym.spaces to make sure the seeding
     mechanism is unified in the library (rlberry.seeding)

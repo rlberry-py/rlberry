@@ -9,15 +9,15 @@ import rlberry
 logger = rlberry.logger
 
 
-def get_nroom_state_coord(state_index, nroom_env):
-    yy, xx = nroom_env.index2coord[state_index]
-    # centering
-    xx = xx + 0.5
-    yy = yy + 0.5
-    # map to [0, 1]
-    xx = xx / nroom_env.ncols
-    yy = yy / nroom_env.nrows
-    return np.array([xx, yy])
+# def get_nroom_state_coord(state_index, nroom_env):
+#     yy, xx = nroom_env.index2coord[state_index]
+#     # centering
+#     xx = xx + 0.5
+#     yy = yy + 0.5
+#     # map to [0, 1]
+#     xx = xx / nroom_env.ncols
+#     yy = yy / nroom_env.nrows
+#     return np.array([xx, yy])
 
 
 class NRoom(GridWorld):
@@ -70,7 +70,6 @@ class NRoom(GridWorld):
         initial_state_distribution="center",
         include_traps=False,
     ):
-
         assert nrooms > 0, "nrooms must be > 0"
         assert initial_state_distribution in ("center", "uniform")
 
@@ -232,12 +231,12 @@ class NRoom(GridWorld):
         yy = yy / self.nrows
         return np.array([xx, yy])
 
-    def reset(self):
-        self.state = GridWorld.reset(self)
+    def reset(self, seed=None, options=None):
+        self.state, info = GridWorld.reset(self, seed=seed, options=options)
         state_to_return = self.state
         if self.array_observation:
             state_to_return = self._convert_index_to_float_coord(self.state)
-        return state_to_return
+        return state_to_return, info
 
     def step(self, action):
         assert self.action_space.contains(action), "Invalid action!"
@@ -247,14 +246,16 @@ class NRoom(GridWorld):
             self.append_state_for_rendering(self.state)
 
         # take step
-        next_state, reward, done, info = self.sample(self.state, action)
+        next_state, reward, terminated, truncated, info = self.sample(
+            self.state, action
+        )
         self.state = next_state
 
         state_to_return = self.state
         if self.array_observation:
             state_to_return = self._convert_index_to_float_coord(self.state)
 
-        return state_to_return, reward, done, info
+        return state_to_return, reward, terminated, truncated, info
 
     def get_background(self):
         """
@@ -263,7 +264,7 @@ class NRoom(GridWorld):
         bg = Scene()
 
         # traps
-        for (y, x) in self.traps:
+        for y, x in self.traps:
             shape = GeometricPrimitive("POLYGON")
             shape.set_color((0.5, 0.0, 0.0))
             shape.add_vertex((x, y))
@@ -284,7 +285,7 @@ class NRoom(GridWorld):
             bg.add_shape(shape)
 
         # rewards
-        for (y, x) in self.reward_at:
+        for y, x in self.reward_at:
             flag = GeometricPrimitive("POLYGON")
             rwd = self.reward_at[(y, x)]
             if rwd == 1.0:

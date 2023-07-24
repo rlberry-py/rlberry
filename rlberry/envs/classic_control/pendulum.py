@@ -1,10 +1,11 @@
 """
-Pendulum environment adapted from OpenAI gym [1].
+Pendulum environment adapted from OpenAI gym [1]. (updated to gymnasium template [2])
 
 Modifications:
 * render function follows the rlberry rendering interface
 
 [1] https://github.com/openai/gym/blob/master/gym/
+[2] https://gymnasium.farama.org/api/env/
 envs/classic_control/pendulum.py
 """
 
@@ -53,12 +54,12 @@ class Pendulum(RenderInterface2D, Model):
         # initialize
         self.reset()
 
-    def reset(self):
+    def reset(self, seed=None, options=None):
         high = np.array([np.pi, 1])
         low = -high
         self.state = self.rng.uniform(low=low, high=high)
         self.last_action = None
-        return self._get_ob()
+        return self._get_ob(), {}
 
     def step(self, action):
         assert self.action_space.contains(action), "%r (%s) invalid" % (
@@ -95,7 +96,7 @@ class Pendulum(RenderInterface2D, Model):
         newthetadot = np.clip(newthetadot, -self.max_speed, self.max_speed)
 
         self.state = np.array([newtheta, newthetadot])
-        return self._get_ob(), -costs, False, {}
+        return self._get_ob(), -costs, False, False, {}
 
     def _get_ob(self):
         theta, thetadot = self.state

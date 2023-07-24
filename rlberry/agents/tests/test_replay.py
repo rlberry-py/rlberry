@@ -2,7 +2,7 @@ import pytest
 import numpy as np
 from rlberry.agents.utils import replay
 from rlberry.envs.finite import GridWorld
-from gym.wrappers import TimeLimit
+from gymnasium.wrappers import TimeLimit
 
 
 def _get_filled_replay(max_replay_size):
@@ -29,20 +29,21 @@ def _get_filled_replay(max_replay_size):
         if total_time > 2 * buffer._max_replay_size:
             break
         done = False
-        obs = env.reset()
+        observation, info = env.reset()
         while not done:
             total_time += 1
             action = env.action_space.sample()
-            next_obs, reward, done, _ = env.step(action)
+            next_observation, reward, terminated, truncated, info = env.step(action)
+            done = terminated or truncated
             buffer.append(
                 {
-                    "observations": obs,
+                    "observations": observation,
                     "actions": action,
                     "rewards": reward,
                     "dones": done,
                 }
             )
-            obs = next_obs
+            observation = next_observation
             if done:
                 buffer.end_episode()
     return buffer, env
@@ -113,11 +114,12 @@ def test_replay_samples_valid_indices(sampling_mode):
         if total_time > 1000:
             break
         done = False
-        obs = env.reset()
+        obs, info = env.reset()
         while not done:
             total_time += 1
             action = env.action_space.sample()
-            next_obs, reward, done, _ = env.step(action)
+            next_obs, reward, terminated, truncated, _ = env.step(action)
+            done = terminated or truncated
             buffer.append(
                 {
                     "observations": obs,

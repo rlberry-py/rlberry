@@ -1,5 +1,5 @@
 import numpy as np
-from gym.spaces import Box, Discrete
+from gymnasium.spaces import Box, Discrete
 from rlberry.utils.binsearch import binary_search_nd
 from rlberry.utils.binsearch import unravel_index_uniform_bin
 

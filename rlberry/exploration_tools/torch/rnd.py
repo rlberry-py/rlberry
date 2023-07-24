@@ -1,7 +1,7 @@
 from functools import partial
 
 import torch
-import gym.spaces as spaces
+import gymnasium.spaces as spaces
 from torch.nn import functional as F
 
 from rlberry.agents.utils.memories import ReplayMemory
@@ -146,7 +146,6 @@ class RandomNetworkDistillation(UncertaintyEstimator):
 
     @preprocess_args(expected_type="torch")
     def update(self, state, action=None, next_state=None, reward=None, **kwargs):
-
         batch = [(state, action)]
         if self.batch_size > 0 and not self.memory.is_empty():
             batch += self.memory.sample(self.batch_size)

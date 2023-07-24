@@ -4,7 +4,6 @@ from collections import deque
 from rlberry.envs.interface import Model
 import rlberry.spaces as spaces
 
-
 import rlberry
 
 logger = rlberry.logger
@@ -33,6 +32,13 @@ class Bandit(Model):
         self.n_arms = len(self.laws)
         self.action_space = spaces.Discrete(self.n_arms)
 
+        # Pre-sample 10 samples
+        self.rewards = [
+            deque(self.laws[action].rvs(size=10, random_state=self.rng))
+            for action in range(self.n_arms)
+        ]
+        self.n_rewards = [10] * self.n_arms
+
     def step(self, action):
         """
         Sample the reward associated to the action.
@@ -40,16 +46,17 @@ class Bandit(Model):
         # test that the action exists
         assert action < self.n_arms
 
-        reward = self.laws[action].rvs(random_state=self.rng)
-        done = True
+        reward = self.laws[action].rvs(random_state=self.rng, size=1)[0]
+        terminated = True
+        truncated = False
 
-        return 0, reward, done, {}
+        return 0, reward, terminated, truncated, {}
 
-    def reset(self):
+    def reset(self, seed=None, option=None):
         """
         Reset the environment to a default state.
         """
-        return 0
+        return 0, {}
 
 
 class AdversarialBandit(Model):
@@ -84,12 +91,12 @@ class AdversarialBandit(Model):
 
         rewards = self.rewards.popleft()
         reward = rewards[action]
-        done = True
+        terminated = True
+        truncated = False
+        return 0, reward, terminated, truncated, {}
 
-        return 0, reward, done, {}
-
-    def reset(self):
+    def reset(self, seed=None, option=None):
         """
         Reset the environment to a default state.
         """
-        return 0
+        return 0, {}

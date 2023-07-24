@@ -68,7 +68,6 @@ class TSAgent(BanditWithSimplePolicy):
     def __init__(self, env, prior_info=None, **kwargs):
         BanditWithSimplePolicy.__init__(self, env, **kwargs)
         if prior_info is None:
-
             # Beta-Bernoulli prior by default
             def prior_params(tr):
                 """
@@ -144,7 +143,7 @@ class TSAgent(BanditWithSimplePolicy):
                 # Play the best sampled mean
                 action = np.argmax(sample_mu)
 
-            _, reward, _, _ = self.env.step(action)
+            _, reward, _, _, _ = self.env.step(action)
 
             # Feed the played action and the resulting reward to the tracker
             self.tracker.update(action, reward)

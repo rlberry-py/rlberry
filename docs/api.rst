@@ -50,6 +50,8 @@ Basic Agents
    :toctree: generated/
    :template: class.rst
 
+   agents.QLAgent
+   agents.SARSAAgent
    agents.ValueIterationAgent
    agents.MBQVIAgent
    agents.UCBVIAgent
@@ -82,6 +84,7 @@ Torch Agents
    agents.torch.A2CAgent
    agents.torch.PPOAgent
    agents.torch.DQNAgent
+   agents.torch.MunchausenDQNAgent
    agents.torch.REINFORCEAgent
 
 Experimental torch agents
@@ -91,14 +94,7 @@ Experimental torch agents
    :toctree: generated/
    :template: class.rst
 
-   agents.experimental.torch.AVECPPOAgent
    agents.experimental.torch.SACAgent
-
-Experimental Jax Agents
--------------------------
-
-Still experimental. Look at the source of `rlberry.agents.experimental.jax` for more info.
-
 
 Environments
 ============
@@ -144,14 +140,16 @@ Benchmark Environments
     envs.finite.GridWorld
 
 
-Environment importation tools
------------------------------
+Environment tools
+-----------------
 
 .. autosummary::
    :toctree: generated/
    :template: function.rst
 
     envs.gym_make
+    envs.atari_make
+    envs.PipelineEnv
 
 
 Seeding
@@ -172,6 +170,15 @@ Seeding
 
 Utilities, Logging & Typing
 ===========================
+
+Manager Utilitis
+----------------
+
+.. autosummary::
+   :toctree: generated/
+   :template: function.rst
+   manager.preset_manager
+
 
 Writer Utilities
 ----------------
@@ -225,8 +232,8 @@ Environment Wrappers
   :template: class.rst
 
   wrappers.discretize_state.DiscretizeStateWrapper
+  wrappers.gym_utils.OldGymCompatibilityWrapper
   wrappers.RescaleRewardWrapper
-  wrappers.scalarize.ScalarizeEnvWrapper
   wrappers.vis2d.Vis2dWrapper
   wrappers.WriterWrapper
 
@@ -254,7 +261,6 @@ Torch
   agents.torch.utils.models.ConvolutionalNetwork
   agents.torch.utils.models.DuelingNetwork
   agents.torch.utils.models.Table
-  agents.torch.utils.attention_models.EgoAttentionNetwork
 
 
 Bandits

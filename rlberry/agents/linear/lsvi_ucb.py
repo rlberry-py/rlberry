@@ -1,6 +1,6 @@
 import numpy as np
 from rlberry.agents import AgentWithSimplePolicy
-from gym.spaces import Discrete
+from gymnasium.spaces import Discrete
 from rlberry.utils.jit_setup import numba_jit
 
 import rlberry
@@ -257,17 +257,20 @@ class LSVIUCBAgent(AgentWithSimplePolicy):
         return q_vec.argmax()
 
     def run_episode(self):
-        state = self.env.reset()
+        observation, info = self.env.reset()
         episode_rewards = 0
         for hh in range(self.horizon):
             if self.bonus_scale_factor == 0.0:
                 action = self.env.action_space.sample()
             else:
-                action = self._optimistic_policy(state, hh)
+                action = self._optimistic_policy(observation, hh)
 
-            next_state, reward, is_terminal, _ = self.env.step(action)
+            next_observation, reward, terminated, truncated, info = self.env.step(
+                action
+            )
+            done = terminated or truncated
 
-            feat = self.feature_map.map(state, action)
+            feat = self.feature_map.map(observation, action)
             outer_prod = np.outer(feat, feat)
             inv = self.lambda_mat_inv
 
@@ -278,16 +281,16 @@ class LSVIUCBAgent(AgentWithSimplePolicy):
 
             # update history
             self.reward_hist[self.total_time_steps] = reward
-            self.state_hist.append(state)
+            self.state_hist.append(observation)
             self.action_hist.append(action)
-            self.nstate_hist.append(next_state)
+            self.nstate_hist.append(next_observation)
 
             #
             tt = self.total_time_steps
-            self.feat_hist[tt, :] = self.feature_map.map(state, action)
+            self.feat_hist[tt, :] = self.feature_map.map(observation, action)
             for aa in range(self.env.action_space.n):
                 self.feat_ns_all_actions[tt, aa, :] = self.feature_map.map(
-                    next_state, aa
+                    next_observation, aa
                 )
 
             # increments
@@ -295,8 +298,8 @@ class LSVIUCBAgent(AgentWithSimplePolicy):
             episode_rewards += reward
 
             #
-            state = next_state
-            if is_terminal:
+            observation = next_observation
+            if done:
                 break
 
         # store data

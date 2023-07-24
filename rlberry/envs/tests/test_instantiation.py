@@ -1,6 +1,7 @@
 import numpy as np
 import pytest
 
+from rlberry.envs import gym_make, PipelineEnv
 from rlberry.envs.classic_control import MountainCar, Acrobot, Pendulum
 from rlberry.envs.finite import Chain
 from rlberry.envs.finite import GridWorld
@@ -33,18 +34,18 @@ def test_instantiation(ModelClass):
 
     if env.is_online():
         for _ in range(2):
-            state = env.reset()
+            state, info = env.reset()
             for _ in range(50):
                 assert env.observation_space.contains(state)
                 action = env.action_space.sample()
-                next_s, _, _, _ = env.step(action)
+                next_s, _, _, _, _ = env.step(action)
                 state = next_s
 
     if env.is_generative():
         for _ in range(100):
             state = env.observation_space.sample()
             action = env.action_space.sample()
-            next_s, _, _, _ = env.sample(state, action)
+            next_s, _, _, _, _ = env.sample(state, action)
             assert env.observation_space.contains(next_s)
 
 
@@ -87,7 +88,7 @@ def test_gridworld_from_layout():
 
 
 def test_ball2d_benchmark_instantiation():
-    for level in [1, 2, 3, 4, 5]:
+    for level in [0, 1, 2, 3, 4, 5]:
         env = get_benchmark_env(level)
         for aa in range(env.action_space.n):
             env.step(aa)
@@ -120,8 +121,8 @@ def test_four_room(reward_free, difficulty, array_observation):
         array_observation=array_observation,
     )
 
-    initial_state = env.reset()
-    next_state, reward, _, _ = env.step(1)
+    initial_state, info = env.reset()
+    next_state, reward, _, _, _ = env.step(1)
 
     assert env.observation_space.contains(initial_state)
     assert env.observation_space.contains(next_state)
@@ -149,8 +150,8 @@ def test_four_room(reward_free, difficulty, array_observation):
 def test_six_room(reward_free, array_observation):
     env = SixRoom(reward_free=reward_free, array_observation=array_observation)
 
-    initial_state = env.reset()
-    next_state, reward, _, _ = env.step(1)
+    initial_state, info = env.reset()
+    next_state, reward, _, _, _ = env.step(1)
 
     assert env.observation_space.contains(initial_state)
     assert env.observation_space.contains(next_state)
@@ -175,8 +176,8 @@ def test_six_room(reward_free, array_observation):
 def test_apple_gold(reward_free, array_observation):
     env = AppleGold(reward_free=reward_free, array_observation=array_observation)
 
-    initial_state = env.reset()
-    next_state, reward, _, _ = env.step(1)
+    initial_state, info = env.reset()
+    next_state, reward, _, _, _ = env.step(1)
     assert env.observation_space.contains(initial_state)
     assert env.observation_space.contains(next_state)
 
@@ -205,8 +206,8 @@ def test_n_room(reward_free, array_observation, initial_state_distribution):
         initial_state_distribution=initial_state_distribution,
     )
 
-    initial_state = env.reset()
-    next_state, reward, _, _ = env.step(1)
+    initial_state, info = env.reset()
+    next_state, reward, _, _, _ = env.step(1)
 
     if initial_state_distribution == "uniform":
         assert env.initial_state_distribution[0] == 1.0 / env.observation_space.n
@@ -220,3 +221,32 @@ def test_n_room(reward_free, array_observation, initial_state_distribution):
     if array_observation:
         assert isinstance(initial_state, np.ndarray)
         assert isinstance(next_state, np.ndarray)
+
+
+def test_pipeline():
+    from rlberry.wrappers import RescaleRewardWrapper
+    from rlberry.wrappers.discretize_state import DiscretizeStateWrapper
+
+    env_ctor, env_kwargs = PipelineEnv, {
+        "env_ctor": gym_make,
+        "env_kwargs": {"id": "Acrobot-v1"},
+        "wrappers": [(RescaleRewardWrapper, {"reward_range": (0, 1)})],
+    }
+    env = env_ctor(**env_kwargs)
+    _, reward, _, _, _ = env.step(0)
+    assert (reward <= 1) and (reward >= 0)
+
+    env_ctor, env_kwargs = PipelineEnv, {
+        "env_ctor": gym_make,
+        "env_kwargs": {"id": "Acrobot-v1"},
+        "wrappers": [
+            (RescaleRewardWrapper, {"reward_range": (0, 1)}),
+            (DiscretizeStateWrapper, {"n_bins": 10}),
+        ],
+    }
+    env = env_ctor(**env_kwargs)
+    # check that wrapped in the right order
+    assert isinstance(
+        env.env, RescaleRewardWrapper
+    ), "the environments in Pipeline env may not be wrapped in order"
+    assert isinstance(env.env.env, DiscretizeStateWrapper)

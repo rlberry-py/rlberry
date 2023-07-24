@@ -2,7 +2,7 @@
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v3.2.0
+    rev: v4.4.0
     hooks:
     -   id: trailing-whitespace
     -   id: end-of-file-fixer
@@ -10,20 +10,21 @@ repos:
     -   id: check-docstring-first
 
 -   repo: https://github.com/psf/black
-    rev: 22.3.0
+    rev: 23.3.0
     hooks:
     -   id: black
 
 -   repo: https://github.com/asottile/blacken-docs
-    rev: v1.12.0
+    rev: 1.15.0
     hooks:
     -   id: blacken-docs
-        additional_dependencies: [black==21.12b0]
+        additional_dependencies: [black==23.1.0]
 
--   repo: https://gitlab.com/pycqa/flake8
-    rev: 4.0.1
+-   repo: https://github.com/pycqa/flake8
+    rev: 6.0.0
     hooks:
     -   id: flake8
         additional_dependencies: [flake8-docstrings]
         types: [file, python]
+        exclude: (.*/__init__.py|rlberry/check_packages.py)
         args: ['--select=F401,F405,D410,D411,D412']

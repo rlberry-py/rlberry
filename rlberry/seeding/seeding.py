@@ -64,7 +64,11 @@ def safe_reseed(obj, seeder, reseed_spaces=True):
             obj.seed(seed_val)
             reseeded = True
         except AttributeError:
-            reseeded = False
+            try:
+                obj.reset(seed=seed_val)
+                reseeded = True
+            except AttributeError:
+                reseeded = False
 
     # check if the object has observation and action spaces to be reseeded.
     if reseed_spaces:

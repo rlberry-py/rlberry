@@ -1,7 +1,7 @@
 import logging
 import logging.config
 from pathlib import Path
-import gym
+import gymnasium as gym
 import rlberry
 
 

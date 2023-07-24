@@ -1,4 +1,4 @@
-import gym
+import gymnasium as gym
 from typing import Any, Callable, Mapping, Tuple, Union
 from rlberry.seeding import Seeder
 

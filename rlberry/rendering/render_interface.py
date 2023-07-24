@@ -140,7 +140,6 @@ class RenderInterface2D(RenderInterface):
             return 1
 
     def get_video(self, framerate=25, **kwargs):
-
         # background and data
         background, data = self._get_background_and_scenes()
 

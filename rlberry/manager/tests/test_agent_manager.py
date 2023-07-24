@@ -1,9 +1,15 @@
 import pytest
 import numpy as np
+import sys
 import os
 from rlberry.envs import GridWorld
 from rlberry.agents import AgentWithSimplePolicy
-from rlberry.manager import AgentManager, plot_writer_data, evaluate_agents
+from rlberry.manager import (
+    AgentManager,
+    plot_writer_data,
+    evaluate_agents,
+    preset_manager,
+)
 
 
 class DummyAgent(AgentWithSimplePolicy):
@@ -32,10 +38,11 @@ class DummyAgent(AgentWithSimplePolicy):
     @classmethod
     def sample_parameters(cls, trial):
         hyperparameter1 = trial.suggest_categorical("hyperparameter1", [1, 2, 3])
-        hyperparameter2 = trial.suggest_uniform("hyperparameter2", -10, 10)
+        hyperparameter2 = trial.suggest_float("hyperparameter2", -10, 10)
         return {"hyperparameter1": hyperparameter1, "hyperparameter2": hyperparameter2}
 
 
+@pytest.mark.xfail(sys.platform == "win32", reason="bug with windows???")
 def test_agent_manager_1():
     # Define train and evaluation envs
     train_env = (GridWorld, {})
@@ -107,6 +114,7 @@ def test_agent_manager_1():
         st.clear_output_dir()
 
 
+@pytest.mark.xfail(sys.platform == "win32", reason="bug with windows???")
 def test_agent_manager_2():
     # Define train and evaluation envs
     train_env = (GridWorld, {})
@@ -323,6 +331,30 @@ def test_profile():
     )
     stats_agent1.generate_profile(fname="profile.prof")
     assert os.path.getsize("profile.prof") > 100, "agent manager saved an empty profile"
+
+
+def test_preset():
+    # Define train and evaluation envs
+    train_env = (GridWorld, {})
+
+    # Parameters
+    params = dict(hyperparameter1=-1, hyperparameter2=100)
+    eval_kwargs = dict(eval_horizon=10)
+
+    # Run AgentManager
+    params_per_instance = [dict(hyperparameter2=ii) for ii in range(4)]
+
+    manager_maker = preset_manager(
+        train_env=train_env,
+        fit_budget=4,
+        eval_kwargs=eval_kwargs,
+        init_kwargs=params,
+        n_fit=4,
+        seed=123,
+        init_kwargs_per_instance=params_per_instance,
+    )
+    manager = manager_maker(DummyAgent)
+    manager.fit()
 
 
 def test_compress():

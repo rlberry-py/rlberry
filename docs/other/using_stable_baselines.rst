@@ -43,7 +43,7 @@ agent. In order to use it with AgentManagers, it must be included in the
 implementation of `Stable Baselines`_ and evaluate two hyperparameter configurations.
 
 .. code-block:: python
-		
+
     class A2CAgent(StableBaselinesAgent):
         """A2C with hyperparameter optimization."""
 
@@ -54,9 +54,9 @@ implementation of `Stable Baselines`_ and evaluate two hyperparameter configurat
 
         @classmethod
         def sample_parameters(cls, trial):
-            learning_rate = trial.suggest_loguniform("learning_rate", 1e-5, 1)
-            ent_coef = trial.suggest_loguniform("ent_coef", 0.00000001, 0.1)
-            vf_coef = trial.suggest_uniform("vf_coef", 0, 1)
+            learning_rate = trial.suggest_float("learning_rate", 1e-5, 1, log=True)
+            ent_coef = trial.suggest_float("ent_coef", 0.00000001, 0.1, log=True)
+            vf_coef = trial.suggest_float("vf_coef", 0, 1)
             normalize_advantage = trial.suggest_categorical(
                 "normalize_advantage", [False, True]
             )

@@ -3,8 +3,7 @@ from .utils import ReplayBuffer, get_qref, get_vref, alpha_sync
 import torch
 import torch.nn as nn
 from torch.nn.functional import one_hot
-
-import gym.spaces as spaces
+import gymnasium.spaces as spaces
 
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.agents.torch.utils.training import optimizer_factory
@@ -96,7 +95,6 @@ class SACAgent(AgentWithSimplePolicy):
         device="cuda:best",
         **kwargs
     ):
-
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
 
         self.use_bonus = use_bonus
@@ -250,13 +248,16 @@ class SACAgent(AgentWithSimplePolicy):
     def _run_episode(self):
         # interact for H steps
         episode_rewards = 0
-        state = self.env.reset()
+        observation, info = self.env.reset()
         done = False
 
         while not done:
             # running policy_old
-            action, action_logprob = self._select_action(state)
-            next_state, reward, done, info = self.env.step(action)
+            action, action_logprob = self._select_action(observation)
+            next_observation, reward, terminated, truncated, info = self.env.step(
+                action
+            )
+            done = terminated or truncated
             episode_rewards += reward
 
             # check whether to use bonus
@@ -267,11 +268,18 @@ class SACAgent(AgentWithSimplePolicy):
 
             # save in batch
             self.replay_buffer.push(
-                (state, next_state, action, action_logprob, reward + bonus, done)
+                (
+                    observation,
+                    next_observation,
+                    action,
+                    action_logprob,
+                    reward + bonus,
+                    done,
+                )
             )
 
-            # update state
-            state = next_state
+            # update observation
+            observation = next_observation
 
         # update; TODO this condition "self.episode % self.batch_size == 0:" seems to be  completely random to me
         # implement self.episode -> self.steps
@@ -364,8 +372,9 @@ class SACAgent(AgentWithSimplePolicy):
     def sample_parameters(cls, trial):
         batch_size = trial.suggest_categorical("batch_size", [1, 4, 8, 16, 32])
         gamma = trial.suggest_categorical("gamma", [0.9, 0.95, 0.99])
-        learning_rate = trial.suggest_loguniform("learning_rate", 1e-5, 1)
-        entr_coef = trial.suggest_loguniform("entr_coef", 1e-8, 0.1)
+        learning_rate = trial.suggest_float("learning_rate", 1e-5, 1, log=True)
+        entr_coef = trial.suggest_float("entr_coef", 1e-8, 0.1, log=True)
+
         k_epochs = trial.suggest_categorical("k_epochs", [1, 5, 10, 20])
 
         return {
