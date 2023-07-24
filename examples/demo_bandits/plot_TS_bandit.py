@@ -4,6 +4,10 @@ Comparison of Thompson sampling and UCB on Bernoulli and Gaussian bandits
 =========================================================================
 
 This script shows how to use Thompson sampling on two examples: Bernoulli and Gaussian bandits.
+
+In the Bernoulli case, we use Thompson sampling with a Beta prior. We compare it to a UCB for
+bounded rewards with support in [0,1].
+For the Gaussian case, we use a Gaussian prior and compare it to a sub-Gaussian UCB.
 """
 
 import numpy as np
@@ -16,7 +20,7 @@ from rlberry.agents.bandits import (
     makeBetaPrior,
     makeGaussianPrior,
 )
-from rlberry.manager import AgentManager, plot_writer_data
+from rlberry.manager import ExperimentManager, plot_writer_data
 from rlberry.wrappers import WriterWrapper
 
 
@@ -36,13 +40,13 @@ class BernoulliTSAgent(TSAgent):
         self.env = WriterWrapper(self.env, self.writer, write_scalar="action")
 
 
-class BernoulliUCBAgent(IndexAgent):
+class BoundedUCBAgent(IndexAgent):
     """UCB agent for bounded bandits"""
 
-    name = "Bernoulli UCB Agent"
+    name = "Bounded UCB Agent"
 
     def __init__(self, env, **kwargs):
-        index, _ = makeBoundedUCBIndex(1, 0)
+        index, _ = makeBoundedUCBIndex(0, 1)
         IndexAgent.__init__(self, env, index, **kwargs)
         self.env = WriterWrapper(self.env, self.writer, write_scalar="action")
 
@@ -59,13 +63,13 @@ env_ctor = BernoulliBandit
 env_kwargs = {"p": means}
 
 agents = [
-    AgentManager(
+    ExperimentManager(
         Agent,
         (env_ctor, env_kwargs),
         fit_budget=T,
         n_fit=M,
     )
-    for Agent in [BernoulliUCBAgent, BernoulliTSAgent]
+    for Agent in [BoundedUCBAgent, BernoulliTSAgent]
 ]
 
 # Agent training
@@ -125,7 +129,7 @@ env_ctor = NormalBandit
 env_kwargs = {"means": means, "stds": sigma * np.ones(A)}
 
 agents = [
-    AgentManager(
+    ExperimentManager(
         Agent,
         (env_ctor, env_kwargs),
         fit_budget=T,

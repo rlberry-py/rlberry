@@ -61,12 +61,12 @@ It works as follows:
 
 
 .. note::
-    The class :class:`~rlberry.manager.agent_manager.AgentManager` provides a :code:`seed` parameter in its constructor,
+    The class :class:`~rlberry.manager.experiment_manager.ExperimentManager` provides a :code:`seed` parameter in its constructor,
     and handles automatically the seeding of all environments and agents used by it.
 
 .. note::
 
    The :meth:`optimize_hyperparams` method of
-   :class:`~rlberry.manager.agent_manager.AgentManager` uses the `Optuna <https://optuna.org/>`_
+   :class:`~rlberry.manager.experiment_manager.ExperimentManager` uses the `Optuna <https://optuna.org/>`_
    library for hyperparameter optimization and is **inherently non-deterministic**
    (see `Optuna FAQ <https://optuna.readthedocs.io/en/stable/faq.html#how-can-i-obtain-reproducible-optimization-results>`_).
