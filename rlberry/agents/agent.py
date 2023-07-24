@@ -89,7 +89,7 @@ class Agent(ABC):
         output_dir: Optional[str] = None,
         _execution_metadata: Optional[metadata_utils.ExecutionMetadata] = None,
         _default_writer_kwargs: Optional[dict] = None,
-        _thread_shared_data: Optional[dict] = None
+        _thread_shared_data: Optional[dict] = None,
     ):
         self.seeder = Seeder(seeder)
         self.env = process_env(env, self.seeder, copy_env=copy_env)
@@ -122,7 +122,7 @@ class Agent(ABC):
 
     @property
     def writer(self):
-        """        
+        """
         Writer object to log the output (e.g. tensorboard SummaryWriter).
         """
         return self._writer
@@ -161,7 +161,7 @@ class Agent(ABC):
     def fit(self, budget: int, **kwargs):
         """
         Abstract method to be overwriten by the 'inherited agent' developer.
-        
+
         Train the agent with a fixed budget, using the provided environment.
 
         Parameters
@@ -327,7 +327,7 @@ class Agent(ABC):
 
     @classmethod
     def load(cls, filename, **kwargs):
-        #If overridden, save() method must also be overriden.
+        # If overridden, save() method must also be overriden.
         """Load agent object from filepath.
 
         Parameters
@@ -337,7 +337,7 @@ class Agent(ABC):
         **kwargs: dict
             Arguments required by the __init__ method of the Agent subclass to load.
         """
-        
+
         filename = Path(filename).with_suffix(".pickle")
         obj = cls(**kwargs)
 
@@ -543,13 +543,13 @@ class AgentWithSimplePolicy(Agent):
         policy by running multiple simulations (episodes) and averaging the total rewards obtained
         in each simulation. It is often used for reinforcement learning tasks.
 
-        The 'eval_horizon' parameter determines the maximum number of steps in each simulation, 
+        The 'eval_horizon' parameter determines the maximum number of steps in each simulation,
         acting as an episode length constraint.
 
         The 'n_simulations' parameter specifies how many simulations to run to obtain an average
         estimate of the value at the initial state.
 
-        The 'gamma' parameter is the discount factor used to weigh future rewards relative to 
+        The 'gamma' parameter is the discount factor used to weigh future rewards relative to
         immediate rewards in the evaluation process.
 
         References
@@ -557,7 +557,7 @@ class AgentWithSimplePolicy(Agent):
         .. [1] Sutton, R. S., & Barto, A. G. (2018). Reinforcement Learning: An Introduction.
             MIT Press.
         """
-        
+
         episode_rewards = np.zeros(n_simulations)
         for sim in range(n_simulations):
             observation, info = self.eval_env.reset()
@@ -700,7 +700,6 @@ class AgentTorch(Agent):
 
         return filename
 
-    
     @classmethod
     def load(cls, filename, **kwargs):
         # Overwrite 'load' method to manage CPU vs GPU with torch agent.
