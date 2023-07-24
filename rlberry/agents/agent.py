@@ -493,16 +493,9 @@ class AgentWithSimplePolicy(Agent):
         """
         Abstract method to be overwriten by the 'inherited agent' developer.
 
-        The policy function takes an observation from the environment and returns an action.
-
-        This function is a part of the agent's policy, which defines how the agent interacts with
-        the environment. It takes an observation as input and uses its internal knowledge or model
-        to determine the appropriate action to take in the current state of the environment.
-
-        The action returned by this function dictates the agent's behavior, influencing its
-        decision-making process in the given environment. The specific implementation of the policy
-        function depends on the agent's learning algorithm or strategy, which can be deterministic
-        or stochastic.
+        The policy function takes an observation from the environment and returns an action.        
+        The specific implementation of the policy function depends on the agent's learning algorithm
+        or strategy, which can be deterministic or stochastic.
 
         Parameters
         ----------
@@ -521,8 +514,9 @@ class AgentWithSimplePolicy(Agent):
 
     def eval(self, eval_horizon=10**5, n_simulations=10, gamma=1.0):
         """
-        Monte-Carlo policy evaluation [1]_ method to estimate the value at the initial state.
-
+        Monte-Carlo policy evaluation [1]_ method to estimate the mean discounted reward
+        using the current policy on the evaluation environment.
+        
         Parameters
         ----------
         eval_horizon : int, optional, default: 10**5
@@ -536,21 +530,6 @@ class AgentWithSimplePolicy(Agent):
         -------
         float
             The mean value over 'n_simulations' of the sum of rewards obtained in each simulation.
-
-        Notes
-        -----
-        Monte-Carlo policy evaluation is a method for estimating the value of a state under a given
-        policy by running multiple simulations (episodes) and averaging the total rewards obtained
-        in each simulation. It is often used for reinforcement learning tasks.
-
-        The 'eval_horizon' parameter determines the maximum number of steps in each simulation,
-        acting as an episode length constraint.
-
-        The 'n_simulations' parameter specifies how many simulations to run to obtain an average
-        estimate of the value at the initial state.
-
-        The 'gamma' parameter is the discount factor used to weigh future rewards relative to
-        immediate rewards in the evaluation process.
 
         References
         ----------
