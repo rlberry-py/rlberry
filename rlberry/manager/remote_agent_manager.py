@@ -194,14 +194,18 @@ class RemoteExperimentManager:
             with filename.open("wb") as ff:
                 pickle.dump(self.__dict__, ff)
             logger.info(
-                "Saved RemoteExperimentManager({}) using pickle.".format(self.agent_name)
+                "Saved RemoteExperimentManager({}) using pickle.".format(
+                    self.agent_name
+                )
             )
         except Exception:
             try:
                 with filename.open("wb") as ff:
                     dill.dump(self.__dict__, ff)
                 logger.info(
-                    "Saved RemoteExperimentManager({}) using dill.".format(self.agent_name)
+                    "Saved RemoteExperimentManager({}) using dill.".format(
+                        self.agent_name
+                    )
                 )
             except Exception as ex:
                 logger.warning(
