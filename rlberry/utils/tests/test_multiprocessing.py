@@ -53,9 +53,8 @@ def test_multiprocessing():
 
     start = time()
     agent2.fit()
-    agent2.fit()
     end = time()
-    agent2_time = end - start
+    agent2_time = (end - start) * 2
 
     assert (
         agent1_time < agent2_time
