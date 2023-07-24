@@ -1,15 +1,14 @@
+import gymnasium as gym
 import numpy as np
 import pytest
-from rlberry.envs import GridWorld, Chain
-from rlberry.utils.check_env import check_env
-from rlberry.utils.check_agent import (
-    check_rl_agent,
-    _fit_experiment_manager,
-    check_agents_almost_equal,
-)
+
+from rlberry.agents import UCBVIAgent, ValueIterationAgent
+from rlberry.envs import Chain, GridWorld
 from rlberry.spaces import Box, Dict, Discrete
-import gymnasium as gym
-from rlberry.agents import ValueIterationAgent, UCBVIAgent
+from rlberry.utils.check_agent import (_fit_experiment_manager,
+                                       check_agents_almost_equal,
+                                       check_rl_agent)
+from rlberry.utils.check_env import check_env
 
 
 class ActionDictTestEnv(gym.Env):

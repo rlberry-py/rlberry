@@ -1,9 +1,9 @@
 import gymnasium.spaces as spaces
 import numpy as np
-from rlberry.agents import AgentWithSimplePolicy
-from rlberry.agents.adaptiveql.tree import MDPTreePartition
 
 import rlberry
+from rlberry.agents import AgentWithSimplePolicy
+from rlberry.agents.adaptiveql.tree import MDPTreePartition
 
 logger = rlberry.logger
 

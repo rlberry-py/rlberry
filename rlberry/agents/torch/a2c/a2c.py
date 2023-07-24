@@ -1,18 +1,18 @@
-import torch
-import torch.nn as nn
+from typing import Optional
 
 import gymnasium.spaces as spaces
 import numpy as np
-from rlberry.agents import AgentWithSimplePolicy, AgentTorch
-from rlberry.agents.utils.replay import ReplayBuffer
-from rlberry.agents.torch.utils.training import optimizer_factory
-from rlberry.agents.torch.utils.models import default_policy_net_fn
-from rlberry.agents.torch.utils.models import default_value_net_fn
-from rlberry.utils.torch import choose_device
-from rlberry.utils.factory import load
-from typing import Optional
+import torch
+import torch.nn as nn
 
 import rlberry
+from rlberry.agents import AgentTorch, AgentWithSimplePolicy
+from rlberry.agents.torch.utils.models import (default_policy_net_fn,
+                                               default_value_net_fn)
+from rlberry.agents.torch.utils.training import optimizer_factory
+from rlberry.agents.utils.replay import ReplayBuffer
+from rlberry.utils.factory import load
+from rlberry.utils.torch import choose_device
 
 logger = rlberry.logger
 

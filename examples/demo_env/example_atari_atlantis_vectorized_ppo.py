@@ -14,15 +14,16 @@ Agent is slightly tuned, but not optimal. This is just for illustration purpose.
 # sphinx_gallery_thumbnail_path = 'thumbnails/example_plot_atari_atlantis_vectorized_ppo.jpg'
 
 
-from rlberry.manager import ExperimentManager
-from datetime import datetime
-from rlberry.agents.torch import PPOAgent
-from gymnasium.wrappers.record_video import RecordVideo
-import shutil
 import os
-from rlberry.envs.gym_make import atari_make
-from rlberry.agents.torch.utils.training import model_factory_from_env
+import shutil
+from datetime import datetime
 
+from gymnasium.wrappers.record_video import RecordVideo
+
+from rlberry.agents.torch import PPOAgent
+from rlberry.agents.torch.utils.training import model_factory_from_env
+from rlberry.envs.gym_make import atari_make
+from rlberry.manager import ExperimentManager
 
 initial_time = datetime.now()
 print("-------- init agent --------")

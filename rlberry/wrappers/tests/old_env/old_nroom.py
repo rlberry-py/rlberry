@@ -1,10 +1,11 @@
 import math
+
 import numpy as np
-import rlberry.spaces as spaces
-from rlberry.wrappers.tests.old_env.old_gridworld import Old_GridWorld
-from rlberry.rendering import Scene, GeometricPrimitive
 
 import rlberry
+import rlberry.spaces as spaces
+from rlberry.rendering import GeometricPrimitive, Scene
+from rlberry.wrappers.tests.old_env.old_gridworld import Old_GridWorld
 
 logger = rlberry.logger
 

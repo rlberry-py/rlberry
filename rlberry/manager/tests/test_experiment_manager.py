@@ -1,15 +1,13 @@
-import pytest
-import numpy as np
-import sys
 import os
-from rlberry.envs import GridWorld
+import sys
+
+import numpy as np
+import pytest
+
 from rlberry.agents import AgentWithSimplePolicy
-from rlberry.manager import (
-    ExperimentManager,
-    plot_writer_data,
-    evaluate_agents,
-    preset_manager,
-)
+from rlberry.envs import GridWorld
+from rlberry.manager import (ExperimentManager, evaluate_agents,
+                             plot_writer_data, preset_manager)
 
 
 class DummyAgent(AgentWithSimplePolicy):

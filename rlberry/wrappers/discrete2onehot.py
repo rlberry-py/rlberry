@@ -1,6 +1,7 @@
-from rlberry.spaces import Box, Discrete
-from rlberry.envs import Wrapper
 import numpy as np
+
+from rlberry.envs import Wrapper
+from rlberry.spaces import Box, Discrete
 
 
 class DiscreteToOneHotWrapper(Wrapper):

@@ -1,16 +1,12 @@
 import matplotlib
-import numpy as np
-
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib import cm
 
-from rlberry.envs.finite import FiniteMDP
-from rlberry.envs.finite import gridworld_utils
-from rlberry.rendering import Scene, GeometricPrimitive, RenderInterface2D
-from rlberry.rendering.common_shapes import circle_shape
-
-
 import rlberry
+from rlberry.envs.finite import FiniteMDP, gridworld_utils
+from rlberry.rendering import GeometricPrimitive, RenderInterface2D, Scene
+from rlberry.rendering.common_shapes import circle_shape
 
 logger = rlberry.logger
 

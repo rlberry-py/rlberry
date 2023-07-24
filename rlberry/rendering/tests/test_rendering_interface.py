@@ -1,23 +1,19 @@
 import os
-import pytest
 import sys
+import tempfile
 
+import pytest
 from pyvirtualdisplay import Display
-from rlberry.envs.classic_control import MountainCar
-from rlberry.envs.classic_control import Acrobot
-from rlberry.envs.classic_control import Pendulum
-from rlberry.envs.finite import Chain
-from rlberry.envs.finite import GridWorld
-from rlberry.envs.benchmarks.grid_exploration.four_room import FourRoom
-from rlberry.envs.benchmarks.grid_exploration.six_room import SixRoom
-from rlberry.envs.benchmarks.grid_exploration.apple_gold import AppleGold
+
+from rlberry.envs import Wrapper
 from rlberry.envs.benchmarks.ball_exploration import PBall2D, SimplePBallND
 from rlberry.envs.benchmarks.generalization.twinrooms import TwinRooms
-from rlberry.rendering import RenderInterface
-from rlberry.rendering import RenderInterface2D
-from rlberry.envs import Wrapper
-
-import tempfile
+from rlberry.envs.benchmarks.grid_exploration.apple_gold import AppleGold
+from rlberry.envs.benchmarks.grid_exploration.four_room import FourRoom
+from rlberry.envs.benchmarks.grid_exploration.six_room import SixRoom
+from rlberry.envs.classic_control import Acrobot, MountainCar, Pendulum
+from rlberry.envs.finite import Chain, GridWorld
+from rlberry.rendering import RenderInterface, RenderInterface2D
 
 try:
     display = Display(visible=0, size=(1400, 900))

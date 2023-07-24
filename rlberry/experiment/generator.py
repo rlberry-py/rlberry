@@ -13,13 +13,14 @@ Options:
     --max_workers=<workers>  Number of workers used by ExperimentManager.fit. Set to -1 for the maximum value. [default: -1]
 """
 
-from docopt import docopt
 from pathlib import Path
-from rlberry.experiment.yaml_utils import parse_experiment_config
-from rlberry.manager import ExperimentManager
-from rlberry import check_packages
+
+from docopt import docopt
 
 import rlberry
+from rlberry import check_packages
+from rlberry.experiment.yaml_utils import parse_experiment_config
+from rlberry.manager import ExperimentManager
 
 logger = rlberry.logger
 

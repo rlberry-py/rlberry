@@ -3,17 +3,17 @@
 #
 from functools import partial
 
-
-from gymnasium import spaces
-from gymnasium.vector.sync_vector_env import SyncVectorEnv
-from gymnasium.vector.async_vector_env import AsyncVectorEnv
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from gymnasium import spaces
+from gymnasium.vector.async_vector_env import AsyncVectorEnv
+from gymnasium.vector.sync_vector_env import SyncVectorEnv
 from torch.distributions import Categorical, Normal
 
-from rlberry.agents.torch.utils.training import model_factory, activation_factory
+from rlberry.agents.torch.utils.training import (activation_factory,
+                                                 model_factory)
 
 
 def default_twinq_net_fn(env):

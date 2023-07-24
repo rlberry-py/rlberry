@@ -20,16 +20,15 @@ using the following command:
 
 # sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_dqn.jpg'
 
-from rlberry.envs import gym_make
+import os
+import shutil
+
+from gymnasium.wrappers.record_video import RecordVideo
 from torch.utils.tensorboard import SummaryWriter
 
 from rlberry.agents.torch.dqn import MunchausenDQNAgent
+from rlberry.envs import gym_make
 from rlberry.utils.logging import configure_logging
-
-from gymnasium.wrappers.record_video import RecordVideo
-import shutil
-import os
-
 
 configure_logging(level="INFO")
 

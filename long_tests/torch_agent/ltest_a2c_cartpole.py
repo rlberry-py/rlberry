@@ -1,8 +1,9 @@
-from rlberry.envs import gym_make
-from rlberry.agents.torch import A2CAgent
-from rlberry.manager import ExperimentManager
-from rlberry.agents.torch.utils.training import model_factory_from_env
 import numpy as np
+
+from rlberry.agents.torch import A2CAgent
+from rlberry.agents.torch.utils.training import model_factory_from_env
+from rlberry.envs import gym_make
+from rlberry.manager import ExperimentManager
 
 # Using parameters from deeprl quick start
 policy_configs = {

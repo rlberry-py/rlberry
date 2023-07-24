@@ -1,5 +1,6 @@
-import pytest
 import numpy as np
+import pytest
+
 from rlberry.utils.metrics import metric_lp
 
 

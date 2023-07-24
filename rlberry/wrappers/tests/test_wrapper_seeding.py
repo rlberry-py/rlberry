@@ -1,13 +1,13 @@
+from copy import deepcopy
+
 import numpy as np
 import pytest
-from rlberry.seeding import Seeder
 
-from copy import deepcopy
-from rlberry.envs.classic_control import MountainCar, Acrobot
-from rlberry.envs.finite import Chain
-from rlberry.envs.finite import GridWorld
-from rlberry.envs.benchmarks.ball_exploration import PBall2D, SimplePBallND
 from rlberry.envs import Wrapper
+from rlberry.envs.benchmarks.ball_exploration import PBall2D, SimplePBallND
+from rlberry.envs.classic_control import Acrobot, MountainCar
+from rlberry.envs.finite import Chain, GridWorld
+from rlberry.seeding import Seeder
 from rlberry.wrappers import RescaleRewardWrapper
 
 _GYM_INSTALLED = True

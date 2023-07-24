@@ -11,10 +11,10 @@ Illustration of the wrapper for old environments (old Acrobot).
 # sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_old_gym_acrobot.jpg'
 
 
-from rlberry.wrappers.tests.old_env.old_acrobot import Old_Acrobot
 from rlberry.agents import RSUCBVIAgent
 from rlberry.wrappers import RescaleRewardWrapper
 from rlberry.wrappers.gym_utils import OldGymCompatibilityWrapper
+from rlberry.wrappers.tests.old_env.old_acrobot import Old_Acrobot
 
 env = Old_Acrobot()
 env = OldGymCompatibilityWrapper(env)

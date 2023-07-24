@@ -1,35 +1,33 @@
+import bz2
 import concurrent.futures
-from copy import deepcopy
-from pathlib import Path
-import cProfile, pstats
-from pstats import SortKey
+import cProfile
 import functools
+import gc
 import json
 import logging
-import dill
-import gc
+import multiprocessing
 import pickle
-import bz2
-import _pickle as cPickle
+import pstats
 import shutil
 import threading
-import multiprocessing
+from copy import deepcopy
 from multiprocessing.spawn import _check_not_importing_main
+from pathlib import Path
+from pstats import SortKey
 from typing import List, Optional, Tuple, Union
 
+import _pickle as cPickle
+import dill
 import numpy as np
 import pandas as pd
 
 import rlberry
-from rlberry.seeding import safe_reseed, set_external_seed
-from rlberry.seeding import Seeder
-from rlberry import metadata_utils
+from rlberry import metadata_utils, types
 from rlberry.envs.utils import process_env
+from rlberry.manager.utils import create_database
+from rlberry.seeding import Seeder, safe_reseed, set_external_seed
 from rlberry.utils.logging import configure_logging
 from rlberry.utils.writers import DefaultWriter
-from rlberry.manager.utils import create_database
-from rlberry import types
-
 
 _OPTUNA_INSTALLED = True
 try:

@@ -1,8 +1,7 @@
 import numpy as np
-from rlberry.agents.bandits import BanditWithSimplePolicy
-
 
 import rlberry
+from rlberry.agents.bandits import BanditWithSimplePolicy
 
 logger = rlberry.logger
 

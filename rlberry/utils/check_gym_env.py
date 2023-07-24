@@ -2,13 +2,12 @@
 Based on https://github.com/openai/gym and then modified for our purpose.
 """
 
-from typing import Union, Optional
 import inspect
+from typing import Optional, Union
 
 import gymnasium as gym
 import numpy as np
-from gymnasium import logger
-from gymnasium import spaces
+from gymnasium import logger, spaces
 
 
 def _is_numpy_array_space(space: spaces.Space) -> bool:

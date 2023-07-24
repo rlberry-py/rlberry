@@ -1,15 +1,14 @@
-import numpy as np
-from rlberry.utils.jit_setup import numba_jit
-
 import gymnasium.spaces as spaces
-from rlberry.agents import AgentWithSimplePolicy
-from rlberry.agents.dynprog.utils import backward_induction
-from rlberry.agents.dynprog.utils import backward_induction_in_place
-from rlberry.utils.metrics import metric_lp
-from rlberry.agents.kernel_based.kernels import kernel_func
-from rlberry.agents.kernel_based.common import map_to_representative
+import numpy as np
 
 import rlberry
+from rlberry.agents import AgentWithSimplePolicy
+from rlberry.agents.dynprog.utils import (backward_induction,
+                                          backward_induction_in_place)
+from rlberry.agents.kernel_based.common import map_to_representative
+from rlberry.agents.kernel_based.kernels import kernel_func
+from rlberry.utils.jit_setup import numba_jit
+from rlberry.utils.metrics import metric_lp
 
 logger = rlberry.logger
 

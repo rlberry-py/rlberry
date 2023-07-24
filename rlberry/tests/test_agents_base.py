@@ -7,17 +7,14 @@ tests based on test_agent.py and test_envs.py
 """
 
 
-import pytest
-import numpy as np
 import sys
+
+import numpy as np
+import pytest
 
 import rlberry.agents as agents
 from rlberry.agents.features import FeatureMap
-
-from rlberry.utils.check_agent import (
-    check_rl_agent,
-    check_rlberry_agent,
-)
+from rlberry.utils.check_agent import check_rl_agent, check_rlberry_agent
 
 
 class OneHotFeatureMap(FeatureMap):

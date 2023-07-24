@@ -1,7 +1,8 @@
 from rlberry.agents.torch import REINFORCEAgent
 from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
 from rlberry.exploration_tools.discrete_counter import DiscreteCounter
-from rlberry.wrappers.uncertainty_estimator_wrapper import UncertaintyEstimatorWrapper
+from rlberry.wrappers.uncertainty_estimator_wrapper import \
+    UncertaintyEstimatorWrapper
 
 
 def test_reinforce_agent():

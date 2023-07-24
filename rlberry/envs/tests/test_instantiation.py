@@ -1,16 +1,15 @@
 import numpy as np
 import pytest
 
-from rlberry.envs import gym_make, PipelineEnv
-from rlberry.envs.classic_control import MountainCar, Acrobot, Pendulum
-from rlberry.envs.finite import Chain
-from rlberry.envs.finite import GridWorld
+from rlberry.envs import PipelineEnv, gym_make
 from rlberry.envs.benchmarks.ball_exploration import PBall2D, SimplePBallND
 from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
-from rlberry.envs.benchmarks.grid_exploration.four_room import FourRoom
-from rlberry.envs.benchmarks.grid_exploration.six_room import SixRoom
-from rlberry.envs.benchmarks.grid_exploration.nroom import NRoom
 from rlberry.envs.benchmarks.grid_exploration.apple_gold import AppleGold
+from rlberry.envs.benchmarks.grid_exploration.four_room import FourRoom
+from rlberry.envs.benchmarks.grid_exploration.nroom import NRoom
+from rlberry.envs.benchmarks.grid_exploration.six_room import SixRoom
+from rlberry.envs.classic_control import Acrobot, MountainCar, Pendulum
+from rlberry.envs.finite import Chain, GridWorld
 from rlberry.rendering.render_interface import RenderInterface2D
 
 classes = [

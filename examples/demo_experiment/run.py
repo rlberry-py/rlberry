@@ -11,10 +11,8 @@ To see more options:
 $ python examples/demo_examples/demo_experiment/run.py
 """
 
-from rlberry.experiment import load_experiment_results
-from rlberry.experiment import experiment_generator
+from rlberry.experiment import experiment_generator, load_experiment_results
 from rlberry.manager.multiple_managers import MultipleManagers
-
 
 if __name__ == "__main__":
     multimanagers = MultipleManagers(parallelization="thread")

@@ -7,14 +7,16 @@
 # ppo = PPOAgent(env)
 # ppo.fit(4096)
 
-import pytest
-from rlberry.envs import Wrapper
-from rlberry.agents.torch import PPOAgent
-from rlberry.manager import ExperimentManager, evaluate_agents
-from rlberry.envs.benchmarks.ball_exploration import PBall2D
-from gymnasium import make
-from rlberry.agents.torch.utils.training import model_factory_from_env
 import sys
+
+import pytest
+from gymnasium import make
+
+from rlberry.agents.torch import PPOAgent
+from rlberry.agents.torch.utils.training import model_factory_from_env
+from rlberry.envs import Wrapper
+from rlberry.envs.benchmarks.ball_exploration import PBall2D
+from rlberry.manager import ExperimentManager, evaluate_agents
 
 
 @pytest.mark.timeout(300)

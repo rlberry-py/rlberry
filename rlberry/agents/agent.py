@@ -1,21 +1,21 @@
-from abc import ABC, abstractmethod
-import dill
-import pickle
 import bz2
-import _pickle as cPickle
-import numpy as np
+import inspect
+import pickle
+from abc import ABC, abstractmethod
 from inspect import signature
 from pathlib import Path
-from rlberry import metadata_utils
-from rlberry import types
-from rlberry.seeding.seeder import Seeder
-from rlberry.seeding import safe_reseed
-from rlberry.envs.utils import process_env
-from rlberry.utils.writers import DefaultWriter
 from typing import Optional
-import inspect
+
+import _pickle as cPickle
+import dill
+import numpy as np
 
 import rlberry
+from rlberry import metadata_utils, types
+from rlberry.envs.utils import process_env
+from rlberry.seeding import safe_reseed
+from rlberry.seeding.seeder import Seeder
+from rlberry.utils.writers import DefaultWriter
 
 logger = rlberry.logger
 
@@ -669,8 +669,9 @@ class AgentTorch(Agent):
             Arguments to required by the __init__ method of the Agent subclass.
         """
 
-        from rlberry.utils.torch import choose_device
         import torch
+
+        from rlberry.utils.torch import choose_device
 
         device_str = "cuda:best"
         if "device" in kwargs.keys():

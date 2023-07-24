@@ -1,5 +1,7 @@
-import gymnasium as gym
 from typing import Any, Callable, Mapping, Tuple, Union
+
+import gymnasium as gym
+
 from rlberry.seeding import Seeder
 
 # either a gym.Env or a tuple containing (constructor, kwargs) to build the env

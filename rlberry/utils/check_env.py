@@ -1,6 +1,6 @@
-from rlberry.seeding import safe_reseed
-from rlberry.seeding import Seeder
 import numpy as np
+
+from rlberry.seeding import Seeder, safe_reseed
 from rlberry.utils.check_gym_env import check_gym_env
 
 seeder = Seeder(42)

@@ -1,8 +1,9 @@
-import pytest
 import numpy as np
+import pytest
+from gymnasium.wrappers import TimeLimit
+
 from rlberry.agents.utils import replay
 from rlberry.envs.finite import GridWorld
-from gymnasium.wrappers import TimeLimit
 
 
 def _get_filled_replay(max_replay_size):

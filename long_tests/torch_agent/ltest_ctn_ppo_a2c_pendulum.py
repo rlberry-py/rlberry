@@ -1,8 +1,10 @@
-from rlberry.envs import gym_make
-from rlberry.agents.torch import A2CAgent, PPOAgent
-from rlberry.manager import ExperimentManager, plot_writer_data, evaluate_agents
-import seaborn as sns
 import matplotlib.pyplot as plt
+import seaborn as sns
+
+from rlberry.agents.torch import A2CAgent, PPOAgent
+from rlberry.envs import gym_make
+from rlberry.manager import (ExperimentManager, evaluate_agents,
+                             plot_writer_data)
 
 
 def test_a2c_vs_ppo_pendul():

@@ -1,7 +1,8 @@
 import gymnasium as gym
-from rlberry.seeding import Seeder, safe_reseed
 import numpy as np
+
 from rlberry.envs.interface import Model
+from rlberry.seeding import Seeder, safe_reseed
 from rlberry.spaces.from_gym import convert_space_from_gym
 
 

@@ -4,11 +4,11 @@ This script generates an html table of contributors, with names and avatars.
 The table should be updated for each new inclusion in the teams.
 Generating the table requires admin rights.
 """
-import requests
 import time
-from pathlib import Path
 from os import path
+from pathlib import Path
 
+import requests
 
 LOGO_URL = "https://avatars.githubusercontent.com/u/72948299?v=4"
 REPO_FOLDER = Path(path.abspath(__file__)).parent.parent

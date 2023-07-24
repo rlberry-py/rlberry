@@ -1,29 +1,24 @@
 import inspect
+from typing import Callable, Optional, Union
 
 import numpy as np
 import torch
 from gymnasium import spaces
-from rlberry import types
-from rlberry.agents import AgentWithSimplePolicy, AgentTorch
-from rlberry.agents.torch.utils.training import (
-    loss_function_factory,
-    model_factory,
-    optimizer_factory,
-    size_model_config,
-)
-from rlberry.agents.torch.dqn.dqn_utils import (
-    lambda_returns,
-    polynomial_schedule,
-    stable_scaled_log_softmax,
-    stable_softmax,
-)
-from rlberry.agents.utils import replay
-from rlberry.utils.torch import choose_device
-from rlberry.utils.factory import load
-from typing import Callable, Optional, Union
-
 
 import rlberry
+from rlberry import types
+from rlberry.agents import AgentTorch, AgentWithSimplePolicy
+from rlberry.agents.torch.dqn.dqn_utils import (lambda_returns,
+                                                polynomial_schedule,
+                                                stable_scaled_log_softmax,
+                                                stable_softmax)
+from rlberry.agents.torch.utils.training import (loss_function_factory,
+                                                 model_factory,
+                                                 optimizer_factory,
+                                                 size_model_config)
+from rlberry.agents.utils import replay
+from rlberry.utils.factory import load
+from rlberry.utils.torch import choose_device
 
 logger = rlberry.logger
 

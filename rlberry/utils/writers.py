@@ -1,15 +1,15 @@
+import shutil
+import sys
+from collections import deque
+from timeit import default_timer as timer
+from typing import Optional
+
 import numpy as np
 import pandas as pd
-from collections import deque
-from typing import Optional
-from timeit import default_timer as timer
-from rlberry import check_packages
-from rlberry import metadata_utils
-import shutil
 from tqdm import tqdm
 from tqdm.utils import _screen_shape_wrapper
-import sys
 
+from rlberry import check_packages, metadata_utils
 
 if check_packages.TENSORBOARD_INSTALLED:
     from torch.utils.tensorboard import SummaryWriter

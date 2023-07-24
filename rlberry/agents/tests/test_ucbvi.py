@@ -1,4 +1,5 @@
 import pytest
+
 from rlberry.agents.ucbvi import UCBVIAgent
 from rlberry.envs.finite import GridWorld
 

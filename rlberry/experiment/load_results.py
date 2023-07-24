@@ -1,9 +1,9 @@
 from pathlib import Path
-from rlberry.manager import ExperimentManager
+
 import pandas as pd
 
-
 import rlberry
+from rlberry.manager import ExperimentManager
 
 logger = rlberry.logger
 

@@ -1,5 +1,6 @@
-from rlberry.seeding.seeder import Seeder
 import concurrent.futures
+
+from rlberry.seeding.seeder import Seeder
 
 
 def get_random_number_setting_seed(seeder):

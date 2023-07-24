@@ -1,7 +1,6 @@
 import struct
 from typing import Any, Dict, Mapping, NamedTuple, Optional
 
-
 REQUEST_PREFIX = "ResourceRequest_"
 
 

@@ -1,11 +1,9 @@
 import numpy as np
-
-
-from rlberry.agents import AgentWithSimplePolicy
-from rlberry.agents.dynprog.utils import backward_induction, value_iteration
 from gymnasium.spaces import Discrete
 
 import rlberry
+from rlberry.agents import AgentWithSimplePolicy
+from rlberry.agents.dynprog.utils import backward_induction, value_iteration
 
 logger = rlberry.logger
 

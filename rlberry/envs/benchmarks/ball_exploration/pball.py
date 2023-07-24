@@ -1,11 +1,9 @@
 import numpy as np
 
-
+import rlberry
 import rlberry.spaces as spaces
 from rlberry.envs.interface import Model
-from rlberry.rendering import Scene, GeometricPrimitive, RenderInterface2D
-
-import rlberry
+from rlberry.rendering import GeometricPrimitive, RenderInterface2D, Scene
 
 logger = rlberry.logger
 

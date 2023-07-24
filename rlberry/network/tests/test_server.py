@@ -1,15 +1,15 @@
 import sys
 
+import numpy as np
 import py
 import pytest
 from xprocess import ProcessStarter
-import numpy as np
 
-from rlberry.network.client import BerryClient
-from rlberry.network import interface
-from rlberry.network.interface import Message, ResourceRequest
 from rlberry.manager import RemoteExperimentManager
 from rlberry.manager.evaluation import evaluate_agents
+from rlberry.network import interface
+from rlberry.network.client import BerryClient
+from rlberry.network.interface import Message, ResourceRequest
 
 server_name = "berry"
 

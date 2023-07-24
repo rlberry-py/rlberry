@@ -1,13 +1,9 @@
 import gymnasium as gym
 from gymnasium.utils.step_api_compatibility import step_api_compatibility
-from rlberry.spaces import Discrete
-from rlberry.spaces import Box
-from rlberry.spaces import Tuple
-from rlberry.spaces import MultiDiscrete
-from rlberry.spaces import MultiBinary
-from rlberry.spaces import Dict
 
 from rlberry.envs import Wrapper
+from rlberry.spaces import (Box, Dict, Discrete, MultiBinary, MultiDiscrete,
+                            Tuple)
 
 
 def convert_space_from_gym(gym_space):

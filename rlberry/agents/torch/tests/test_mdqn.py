@@ -1,7 +1,8 @@
 import pytest
-from rlberry.envs import gym_make
+
 from rlberry.agents.torch.dqn import MunchausenDQNAgent
 from rlberry.agents.torch.utils.training import model_factory
+from rlberry.envs import gym_make
 
 
 @pytest.mark.parametrize("use_prioritized_replay", [(False), (True)])

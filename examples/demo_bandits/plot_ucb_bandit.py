@@ -6,13 +6,13 @@ UCB Bandit cumulative regret
 This script shows how to define a bandit environment and an UCB Index-based algorithm.
 """
 
-import numpy as np
-from rlberry.envs.bandits import NormalBandit
-from rlberry.agents.bandits import IndexAgent, makeSubgaussianUCBIndex
-from rlberry.manager import ExperimentManager, plot_writer_data
 import matplotlib.pyplot as plt
-from rlberry.wrappers import WriterWrapper
+import numpy as np
 
+from rlberry.agents.bandits import IndexAgent, makeSubgaussianUCBIndex
+from rlberry.envs.bandits import NormalBandit
+from rlberry.manager import ExperimentManager, plot_writer_data
+from rlberry.wrappers import WriterWrapper
 
 # Agents definition
 

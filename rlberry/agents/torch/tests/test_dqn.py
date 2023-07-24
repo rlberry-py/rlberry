@@ -1,12 +1,13 @@
-import pytest
-from rlberry.envs import gym_make
-from rlberry.agents.torch.dqn import DQNAgent
-from rlberry.agents.torch.utils.training import model_factory
-from rlberry.manager import ExperimentManager
 import os
 import pathlib
-
 import tempfile
+
+import pytest
+
+from rlberry.agents.torch.dqn import DQNAgent
+from rlberry.agents.torch.utils.training import model_factory
+from rlberry.envs import gym_make
+from rlberry.manager import ExperimentManager
 
 
 @pytest.mark.parametrize(

@@ -11,8 +11,8 @@ Important:
 
 import numpy as np
 
-from rlberry.wrappers.autoreset import AutoResetWrapper
 from rlberry.envs.benchmarks.ball_exploration.pball import PBall2D
+from rlberry.wrappers.autoreset import AutoResetWrapper
 
 
 def get_benchmark_env(level=1):

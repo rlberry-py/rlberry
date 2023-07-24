@@ -1,6 +1,7 @@
 import time
-from rlberry.envs import GridWorld
+
 from rlberry.agents import AgentWithSimplePolicy
+from rlberry.envs import GridWorld
 from rlberry.manager import ExperimentManager
 
 

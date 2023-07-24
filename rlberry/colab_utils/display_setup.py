@@ -3,11 +3,11 @@
 #
 
 import base64
-from pyvirtualdisplay import Display
-from IPython import display as ipythondisplay
-
 # from IPython.display import clear_output
 from pathlib import Path
+
+from IPython import display as ipythondisplay
+from pyvirtualdisplay import Display
 
 
 def show_video(filename=None, directory="./videos"):

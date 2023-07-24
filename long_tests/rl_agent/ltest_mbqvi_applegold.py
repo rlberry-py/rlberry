@@ -1,7 +1,8 @@
-from rlberry.envs.benchmarks.grid_exploration.apple_gold import AppleGold
-from rlberry.agents.mbqvi import MBQVIAgent
-from rlberry.manager import ExperimentManager, evaluate_agents
 import numpy as np
+
+from rlberry.agents.mbqvi import MBQVIAgent
+from rlberry.envs.benchmarks.grid_exploration.apple_gold import AppleGold
+from rlberry.manager import ExperimentManager, evaluate_agents
 
 params = {}
 params["n_samples"] = 8  # samples per state-action pair

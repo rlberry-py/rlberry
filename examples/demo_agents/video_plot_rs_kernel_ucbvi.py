@@ -11,8 +11,8 @@ A demo of RSKernelUCBVIAgent algorithm in Acrobot environment
 """
 # sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_rs_kernel_ucbvi.jpg'
 
-from rlberry.envs import Acrobot
 from rlberry.agents import RSKernelUCBVIAgent
+from rlberry.envs import Acrobot
 from rlberry.wrappers import RescaleRewardWrapper
 
 env = Acrobot()

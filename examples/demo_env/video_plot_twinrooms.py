@@ -10,10 +10,10 @@ A demo of twinrooms environment
 """
 # sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_twinrooms.jpg'
 
-from rlberry.envs.benchmarks.generalization.twinrooms import TwinRooms
 from rlberry.agents.mbqvi import MBQVIAgent
-from rlberry.wrappers.discretize_state import DiscretizeStateWrapper
+from rlberry.envs.benchmarks.generalization.twinrooms import TwinRooms
 from rlberry.seeding import Seeder
+from rlberry.wrappers.discretize_state import DiscretizeStateWrapper
 
 seeder = Seeder(123)
 

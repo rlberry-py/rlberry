@@ -1,10 +1,10 @@
 import numpy as np
-import rlberry.spaces as spaces
-from rlberry.envs import Model
-from rlberry.rendering import Scene, GeometricPrimitive, RenderInterface2D
-from rlberry.rendering.common_shapes import circle_shape
 
 import rlberry
+import rlberry.spaces as spaces
+from rlberry.envs import Model
+from rlberry.rendering import GeometricPrimitive, RenderInterface2D, Scene
+from rlberry.rendering.common_shapes import circle_shape
 
 logger = rlberry.logger
 

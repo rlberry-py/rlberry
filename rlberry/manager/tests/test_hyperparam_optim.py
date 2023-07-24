@@ -1,12 +1,14 @@
-from rlberry.envs import GridWorld
-from rlberry.agents import AgentWithSimplePolicy
-from rlberry.agents.dynprog.value_iteration import ValueIterationAgent
-from rlberry.manager import ExperimentManager
-from optuna.samplers import TPESampler
-import numpy as np
-import pytest
 import sys
 import tempfile
+
+import numpy as np
+import pytest
+from optuna.samplers import TPESampler
+
+from rlberry.agents import AgentWithSimplePolicy
+from rlberry.agents.dynprog.value_iteration import ValueIterationAgent
+from rlberry.envs import GridWorld
+from rlberry.manager import ExperimentManager
 
 
 class DummyAgent(AgentWithSimplePolicy):

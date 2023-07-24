@@ -1,6 +1,6 @@
 import os
-import zipfile
 import pathlib
+import zipfile
 
 
 def zipdir(dir_path, ouput_fname):

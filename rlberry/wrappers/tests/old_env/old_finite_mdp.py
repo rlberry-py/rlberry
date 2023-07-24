@@ -1,10 +1,8 @@
 import numpy as np
 
-
+import rlberry
 import rlberry.spaces as spaces
 from rlberry.envs.interface import Model
-
-import rlberry
 
 logger = rlberry.logger
 

@@ -1,8 +1,8 @@
 import numpy as np
 
 import rlberry.spaces as spaces
-from rlberry.utils.binsearch import binary_search_nd, unravel_index_uniform_bin
 from rlberry.envs import Wrapper
+from rlberry.utils.binsearch import binary_search_nd, unravel_index_uniform_bin
 
 
 class DiscretizeStateWrapper(Wrapper):

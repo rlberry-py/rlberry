@@ -1,15 +1,15 @@
+from copy import deepcopy
+
 import numpy as np
 import pytest
-import rlberry.seeding as seeding
 
-from copy import deepcopy
-from rlberry.envs.classic_control import MountainCar, Acrobot, Pendulum
-from rlberry.envs.finite import Chain
-from rlberry.envs.finite import GridWorld
+import rlberry.seeding as seeding
+from rlberry.envs.benchmarks.ball_exploration import PBall2D, SimplePBallND
+from rlberry.envs.benchmarks.grid_exploration.apple_gold import AppleGold
 from rlberry.envs.benchmarks.grid_exploration.four_room import FourRoom
 from rlberry.envs.benchmarks.grid_exploration.six_room import SixRoom
-from rlberry.envs.benchmarks.grid_exploration.apple_gold import AppleGold
-from rlberry.envs.benchmarks.ball_exploration import PBall2D, SimplePBallND
+from rlberry.envs.classic_control import Acrobot, MountainCar, Pendulum
+from rlberry.envs.finite import Chain, GridWorld
 
 classes = [
     MountainCar,

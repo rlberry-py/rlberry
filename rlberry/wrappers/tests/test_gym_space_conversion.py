@@ -1,6 +1,7 @@
+import gymnasium as gym
 import numpy as np
 import pytest
-import gymnasium as gym
+
 import rlberry
 from rlberry.wrappers.gym_utils import convert_space_from_gym
 

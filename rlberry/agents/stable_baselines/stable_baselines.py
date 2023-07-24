@@ -2,17 +2,14 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Tuple, Type, Union
 
 import dill
-from stable_baselines3.common import utils
 import stable_baselines3.common.logger as sb_logging
+from stable_baselines3.common import utils
 from stable_baselines3.common.base_class import BaseAlgorithm as SB3Algorithm
 from stable_baselines3.common.policies import BasePolicy as SB3Policy
 
-from rlberry import metadata_utils
-from rlberry import types
-from rlberry.agents import AgentWithSimplePolicy
-
-
 import rlberry
+from rlberry import metadata_utils, types
+from rlberry.agents import AgentWithSimplePolicy
 
 logger = rlberry.logger
 

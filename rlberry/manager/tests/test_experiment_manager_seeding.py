@@ -1,10 +1,12 @@
-from rlberry.envs.tests.test_env_seeding import get_env_trajectory, compare_trajectories
-from rlberry.envs import gym_make
-from rlberry.envs.classic_control import MountainCar
-from rlberry.manager import ExperimentManager, MultipleManagers
-from rlberry.agents.torch import A2CAgent
 import gymnasium as gym
 import pytest
+
+from rlberry.agents.torch import A2CAgent
+from rlberry.envs import gym_make
+from rlberry.envs.classic_control import MountainCar
+from rlberry.envs.tests.test_env_seeding import (compare_trajectories,
+                                                 get_env_trajectory)
+from rlberry.manager import ExperimentManager, MultipleManagers
 
 
 @pytest.mark.parametrize(

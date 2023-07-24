@@ -1,9 +1,8 @@
-from typing import Tuple
 from copy import deepcopy
-from rlberry.seeding import safe_reseed
-
+from typing import Tuple
 
 import rlberry
+from rlberry.seeding import safe_reseed
 
 logger = rlberry.logger
 

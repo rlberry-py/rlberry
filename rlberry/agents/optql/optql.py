@@ -1,10 +1,9 @@
+import gymnasium.spaces as spaces
 import numpy as np
 
-import gymnasium.spaces as spaces
+import rlberry
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.exploration_tools.discrete_counter import DiscreteCounter
-
-import rlberry
 
 logger = rlberry.logger
 

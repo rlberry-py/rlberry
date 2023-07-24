@@ -1,4 +1,5 @@
-from typing import Optional, Literal
+from typing import Literal, Optional
+
 import numpy as np
 from gymnasium import spaces
 from scipy.special import softmax

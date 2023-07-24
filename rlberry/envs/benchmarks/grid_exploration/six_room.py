@@ -1,9 +1,9 @@
 import numpy as np
-import rlberry.spaces as spaces
-from rlberry.envs.finite import GridWorld
-from rlberry.rendering import Scene, GeometricPrimitive
 
 import rlberry
+import rlberry.spaces as spaces
+from rlberry.envs.finite import GridWorld
+from rlberry.rendering import GeometricPrimitive, Scene
 
 logger = rlberry.logger
 

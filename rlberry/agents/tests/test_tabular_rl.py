@@ -1,4 +1,5 @@
 import pytest
+
 from rlberry.agents import QLAgent, SARSAAgent
 from rlberry.envs import GridWorld
 

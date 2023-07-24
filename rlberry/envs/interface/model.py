@@ -1,10 +1,10 @@
+import inspect
+
 import gymnasium as gym
 import numpy as np
 
-import inspect
-from rlberry.seeding import Seeder
-
 import rlberry
+from rlberry.seeding import Seeder
 
 logger = rlberry.logger
 

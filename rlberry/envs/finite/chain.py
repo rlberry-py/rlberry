@@ -1,7 +1,7 @@
 import numpy as np
 
 from rlberry.envs.finite import FiniteMDP
-from rlberry.rendering import RenderInterface2D, Scene, GeometricPrimitive
+from rlberry.rendering import GeometricPrimitive, RenderInterface2D, Scene
 
 
 class Chain(RenderInterface2D, FiniteMDP):

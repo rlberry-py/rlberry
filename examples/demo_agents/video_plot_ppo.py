@@ -14,7 +14,6 @@ A demo of PPO algorithm in PBall2D environment
 from rlberry.agents.torch import PPOAgent
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
 
-
 env = PBall2D()
 n_steps = 3e3
 

@@ -1,9 +1,8 @@
 import gymnasium as gym
-
-from rlberry.envs.basewrapper import Wrapper
 import numpy as np
 from numpy import ndarray
 
+from rlberry.envs.basewrapper import Wrapper
 
 # VERSION_ORIGINE = True
 VERSION_ORIGINE = False
@@ -70,7 +69,6 @@ def atari_make(id, seed=None, **kwargs):
         NoopResetEnv,
         StickyActionEnv,
     )
-
     from stable_baselines3.common.monitor import Monitor
 
     # Default values for Atari_SB3_wrappers

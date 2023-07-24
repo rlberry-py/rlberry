@@ -1,14 +1,16 @@
-import pytest
-import tempfile
 import os
-import numpy as np
-from pathlib import Path
 import sys
+import tempfile
+from pathlib import Path
 
-from rlberry.wrappers import WriterWrapper
-from rlberry.envs import GridWorld
-from rlberry.manager import plot_writer_data, ExperimentManager, read_writer_data
+import numpy as np
+import pytest
+
 from rlberry.agents import UCBVIAgent
+from rlberry.envs import GridWorld
+from rlberry.manager import (ExperimentManager, plot_writer_data,
+                             read_writer_data)
+from rlberry.wrappers import WriterWrapper
 
 
 class VIAgent(UCBVIAgent):

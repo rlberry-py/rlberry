@@ -1,5 +1,5 @@
-from rlberry.exploration_tools.torch.rnd import RandomNetworkDistillation
 from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
+from rlberry.exploration_tools.torch.rnd import RandomNetworkDistillation
 
 
 def test_rnd():

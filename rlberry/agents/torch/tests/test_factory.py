@@ -1,4 +1,5 @@
 import pytest
+
 from rlberry.agents.torch.utils.training import model_factory
 
 

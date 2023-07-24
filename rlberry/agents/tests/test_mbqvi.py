@@ -1,9 +1,9 @@
 import numpy as np
 import pytest
 
-from rlberry.seeding import Seeder
 from rlberry.agents.mbqvi import MBQVIAgent
 from rlberry.envs.finite import FiniteMDP
+from rlberry.seeding import Seeder
 
 
 @pytest.mark.parametrize("S, A", [(5, 2), (10, 4)])

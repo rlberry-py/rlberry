@@ -1,23 +1,13 @@
-from rlberry.envs.bandits import NormalBandit, BernoulliBandit
-from rlberry.agents.bandits import (
-    IndexAgent,
-    RandomizedAgent,
-    TSAgent,
-    BanditWithSimplePolicy,
-    makeBetaPrior,
-    makeBoundedIMEDIndex,
-    makeBoundedMOSSIndex,
-    makeBoundedNPTSIndex,
-    makeBoundedUCBIndex,
-    makeETCIndex,
-    makeGaussianPrior,
-    makeEXP3Index,
-    makeSubgaussianMOSSIndex,
-    makeSubgaussianUCBIndex,
-    makeBoundedUCBVIndex,
-)
+from rlberry.agents.bandits import (BanditWithSimplePolicy, IndexAgent,
+                                    RandomizedAgent, TSAgent, makeBetaPrior,
+                                    makeBoundedIMEDIndex, makeBoundedMOSSIndex,
+                                    makeBoundedNPTSIndex, makeBoundedUCBIndex,
+                                    makeBoundedUCBVIndex, makeETCIndex,
+                                    makeEXP3Index, makeGaussianPrior,
+                                    makeSubgaussianMOSSIndex,
+                                    makeSubgaussianUCBIndex)
+from rlberry.envs.bandits import BernoulliBandit, NormalBandit
 from rlberry.utils import check_bandit_agent
-
 
 TEST_SEED = 42
 

@@ -1,15 +1,14 @@
+import sys
+
+import numpy as np
 import pytest
+
 import rlberry.agents as agents
 import rlberry.agents.torch as torch_agents
-from rlberry.utils.check_agent import (
-    check_rl_agent,
-    check_rlberry_agent,
-    check_vectorized_env_agent,
-    check_hyperparam_optimisation_agent,
-)
 from rlberry.agents.features import FeatureMap
-import numpy as np
-import sys
+from rlberry.utils.check_agent import (check_hyperparam_optimisation_agent,
+                                       check_rl_agent, check_rlberry_agent,
+                                       check_vectorized_env_agent)
 
 
 class OneHotFeatureMap(FeatureMap):

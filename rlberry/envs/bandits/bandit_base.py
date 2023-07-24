@@ -1,10 +1,8 @@
 from collections import deque
 
-
-from rlberry.envs.interface import Model
-import rlberry.spaces as spaces
-
 import rlberry
+import rlberry.spaces as spaces
+from rlberry.envs.interface import Model
 
 logger = rlberry.logger
 

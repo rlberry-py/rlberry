@@ -1,5 +1,6 @@
-import pytest
 import numpy as np
+import pytest
+
 from rlberry.agents import Agent
 from rlberry.manager import ExperimentManager
 

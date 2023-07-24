@@ -9,8 +9,7 @@ This is a minimal example of how to create checkpoints while training
 your agents, and how to restore from a previous checkpoint.
 """
 from rlberry.agents import Agent
-from rlberry.manager import ExperimentManager
-from rlberry.manager import plot_writer_data
+from rlberry.manager import ExperimentManager, plot_writer_data
 
 
 class MyAgent(Agent):
