@@ -112,6 +112,73 @@ class PPOAgent(AgentTorch, AgentWithSimplePolicy):
     device: str
         Device on which to put the tensors. 'cuda:best' by default.
 
+    Attributes
+    ----------
+    __value_losses__ : list
+        List of supported value loss types. ["clipped", "mse", "avec"]
+    __lr_schedule___ : list
+        List of supported learning rate schedule types. ["constant", "linear"]
+    copy_env : bool
+        If True, copy the environment to create multiple environments for parallel interaction.
+    n_envs : int
+        Number of environments used by the agent.
+    n_steps : int
+        Number of transitions to collect in each environment per update.
+    batch_size : int
+        Size of mini batches during each PPO update epoch.
+    gamma : float
+        Discount factor used to discount future rewards.
+    k_epochs : int
+        Number of PPO epochs per update.
+    clip_eps : float
+        PPO clipping range (epsilon).
+    target_kl: float
+        Target KL divergence for early stopping. If None, early stopping is disabled.
+    normalize_advantages : bool
+        Whether or not to normalize advantages.
+    gae_lambda : float
+        Lambda parameter for TD(lambda) and Generalized Advantage Estimation.
+    entr_coef : float
+        Entropy coefficient. Controls the contribution of entropy regularization to the policy's objective.
+    vf_coef : float
+        Value function loss coefficient. Controls the contribution of the value function loss to the total loss.
+    value_loss: str
+        Type of value loss used. Can be "mse", "clipped", or "avec".
+    max_grad_norm : float
+        Maximum norm of the gradient of both actor and critic networks. Used for gradient clipping.
+    learning_rate : float
+        Learning rate used by the optimizer during neural network training.
+    lr_schedule : str
+        Learning rate schedule used during training. Can be "constant" or "linear".
+    optimizer_type : str
+        Type of optimizer used during neural network training.
+    n_eval_episodes : int
+        Number of episodes used for evaluation.
+    eval_horizon : int
+        Maximum number of steps per episode during evaluation.
+    eval_freq : int
+        Number of updates between evaluations. If None, no evaluation is performed.
+    policy_net_fn : function(env, **kwargs)
+        Function that returns an instance of a policy network (PyTorch).
+    policy_net_kwargs : dict
+        Keyword arguments for `policy_net_fn`.
+    value_net_fn : function(env, **kwargs)
+        Function that returns an instance of a value network (PyTorch).
+    value_net_kwargs : dict
+        Keyword arguments for `value_net_fn`.
+    eval_env : rlberry.Env
+        The environment used for evaluation. If None, the same environment as env is used.
+    state_dim : int
+        Dimensionality of the continuous state space of the environment.
+    policy_net : torch.nn.Module
+        The policy network used by the agent.
+    value_net : torch.nn.Module
+        The value network used by the agent.
+    device : str
+        Torch device on which the agent's neural networks are placed.
+    optimizer_kwargs : dict
+        Keyword arguments for the optimizer used during neural network training.
+
     References
     ----------
     Schulman, J., Wolski, F., Dhariwal, P., Radford, A. & Klimov, O. (2017).

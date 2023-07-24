@@ -22,6 +22,19 @@ class Bandit(Model):
     **kwargs: keywords arguments
         additional arguments sent to :class:`~rlberry.envs.interface.Model`
 
+    Attributes
+    ----------
+    laws: list
+        laws of the arms. can either be a frozen scipy law or any class that
+        has a method .rvs().
+    n_arms: int
+        Number of arms.
+    action_space: spaces.Discrete
+        Action space when viewing the bandit as a single-state MDP.
+    rewards: list
+        For each arm, pre-sample 10 times.
+    n_rewards: list
+        Reward counter per arm.
     """
 
     name = ""

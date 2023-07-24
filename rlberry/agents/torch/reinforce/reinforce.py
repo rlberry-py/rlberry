@@ -22,10 +22,10 @@ class REINFORCEAgent(AgentTorch, AgentWithSimplePolicy):
     ----------
     env : Model
         Online model with continuous (Box) state space and discrete actions
-    batch_size : int
-        Number of episodes to wait before updating the policy.
-    horizon : int
-        Horizon.
+    batch_size : int, default: 8
+        Number of episodes used for the update of the policy netowrk.
+    horizon : int, default: 256
+        Episode length: one transition per episode steps. So total number of transitions used for one policy update is batch_size * horizon.
     gamma : double
         Discount factor in [0, 1].
     entr_coef : double
@@ -46,6 +46,35 @@ class REINFORCEAgent(AgentTorch, AgentWithSimplePolicy):
         and add it to the reward. See also UncertaintyEstimatorWrapper.
     device: str
         Device to put the tensors on
+
+    Attributes
+    ----------
+    device : str
+        Torch device on which the agent's neural networks are placed.
+    batch_size : int, default: 8
+        Number of episodes used for the update of the policy netowrk.
+    horizon : int, default: 256
+        Episode length: one transition per episode steps.
+    gamma : float, default: 0.99
+        Discount factor used to discount future rewards in the Bellman equation.
+    state_dim : int
+        Dimensionality of the continuous state space of the environment.
+    action_dim : int
+        Number of discrete actions available in the environment.
+    policy_net_fn : function(env, **kwargs)
+        Function that returns an instance of a policy network (PyTorch).
+    policy_net_kwargs : dict
+        Keyword arguments for `policy_net_fn`.
+    optimizer_kwargs : dict
+        Keyword arguments for the optimizer used during neural network training.
+    policy_net : torch.nn.Module
+        The policy network used by the agent.
+    policy_optimizer : torch.optim.Optimizer
+        The optimizer used for training the policy network.
+    memory : Memory
+        The memory buffer used to store the agent's experiences.
+    episode : int
+        A counter that keeps track of the number of episodes.
 
     References
     ----------
