@@ -56,8 +56,8 @@ def test_multiprocessing():
     agent2.fit()
     end = time()
     agent2_time = end - start
-    print(2*agent2_time)
+    print(2 * agent2_time)
 
     assert (
-        agent1_time < 2*agent2_time
+        agent1_time < 2 * agent2_time
     ), f"The execution time of agent 1 ({agent1_time}), should be lower than the execution time of the agent 2 ({agent2_time})"
