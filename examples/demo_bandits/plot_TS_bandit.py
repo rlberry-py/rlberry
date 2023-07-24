@@ -4,6 +4,10 @@ Comparison of Thompson sampling and UCB on Bernoulli and Gaussian bandits
 =========================================================================
 
 This script shows how to use Thompson sampling on two examples: Bernoulli and Gaussian bandits.
+
+In the Bernoulli case, we use Thompson sampling with a Beta prior. We compare it to a UCB for
+bounded rewards with support in [0,1].
+For the Gaussian case, we use a Gaussian prior and compare it to a sub-Gaussian UCB.
 """
 
 import numpy as np
@@ -36,10 +40,10 @@ class BernoulliTSAgent(TSAgent):
         self.env = WriterWrapper(self.env, self.writer, write_scalar="action")
 
 
-class BernoulliUCBAgent(IndexAgent):
+class BoundedUCBAgent(IndexAgent):
     """UCB agent for bounded bandits"""
 
-    name = "Bernoulli UCB Agent"
+    name = "Bounded UCB Agent"
 
     def __init__(self, env, **kwargs):
         index, _ = makeBoundedUCBIndex(1, 0)
@@ -65,7 +69,7 @@ agents = [
         fit_budget=T,
         n_fit=M,
     )
-    for Agent in [BernoulliUCBAgent, BernoulliTSAgent]
+    for Agent in [BoundedUCBAgent, BernoulliTSAgent]
 ]
 
 # Agent training
