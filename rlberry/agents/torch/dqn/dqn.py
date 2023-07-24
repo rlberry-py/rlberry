@@ -131,16 +131,16 @@ class DQNAgent(AgentTorch, AgentWithSimplePolicy):
     
     Attributes
     ----------
-        gamma : float, default = 0.99
+        gamma : float, default: 0.99
             Discount factor used to discount future rewards in the Bellman equation.
 
-        batch_size : int, default=32
+        batch_size : int, default: 32
             Batch size used during the training process.
 
-        chunk_size : int, default=8
+        chunk_size : int, default: 8
             Length of sub-trajectories sampled from the replay buffer.
 
-        lambda_ : float, default=0.5
+        lambda_ : float, default: 0.5
             Q(lambda) parameter used in Q(lambda) algorithm for computing targets.
 
         target_update_parameter : int or float
@@ -153,14 +153,14 @@ class DQNAgent(AgentTorch, AgentWithSimplePolicy):
             Torch device on which the agent's neural networks are placed. Use "cuda:best" to choose the best
             available GPU device.
 
-        learning_rate : float, default = 1e-3
+        learning_rate : float, default: 1e-3
             Learning rate used by the optimizer during neural network training.
 
-        epsilon_init : float, default = 1.0
+        epsilon_init : float, default: 1.0
             Initial epsilon value for epsilon-greedy exploration. Epsilon-greedy policy is used to balance
             exploration and exploitation during training.
 
-        epsilon_final : float, default = 0.1
+        epsilon_final : float, default: 0.1
             Final epsilon value for epsilon-greedy exploration. Epsilon will approach this value as the agent
             gains more experience.
 
@@ -182,10 +182,10 @@ class DQNAgent(AgentTorch, AgentWithSimplePolicy):
         q_net_kwargs : optional, dict
             Parameters for `q_net_constructor`.
 
-        use_double_dqn : bool, default = False
+        use_double_dqn : bool, default: False
             If True, use Double DQN algorithm, which helps to reduce overestimation bias in Q-value estimates.
 
-        use_prioritized_replay : bool, default = False
+        use_prioritized_replay : bool, default: False
             If True, use Prioritized Experience Replay, which prioritizes transitions in the replay buffer
             based on their TD-errors, to improve the learning process.
 
@@ -203,7 +203,7 @@ class DQNAgent(AgentTorch, AgentWithSimplePolicy):
         learning_starts : int
             The number of steps of the model to collect transitions for before learning starts.
 
-        eval_interval : int, default = None
+        eval_interval : int, default: None
             The interval (in number of transitions) between agent evaluations in the `fit()` method. If None,
             the agent won't evaluate during training.
     """
