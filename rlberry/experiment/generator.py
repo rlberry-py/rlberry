@@ -32,7 +32,7 @@ def experiment_generator():
     max_workers = int(args["--max_workers"])
     if max_workers == -1:
         max_workers = None
-    for _, agent_manager_kwargs in parse_experiment_config(
+    for _, experiment_manager_kwargs in parse_experiment_config(
         Path(args["<experiment_path>"]),
         n_fit=int(args["--n_fit"]),
         max_workers=max_workers,
@@ -41,10 +41,10 @@ def experiment_generator():
     ):
         if args["--enable_tensorboard"]:
             if check_packages.TENSORBOARD_INSTALLED:
-                agent_manager_kwargs.update(dict(enable_tensorboard=True))
+                experiment_manager_kwargs.update(dict(enable_tensorboard=True))
             else:
                 logger.warning(
                     "Option --enable_tensorboard is not available: tensorboard is not installed."
                 )
 
-        yield ExperimentManager(**agent_manager_kwargs)
+        yield ExperimentManager(**experiment_manager_kwargs)

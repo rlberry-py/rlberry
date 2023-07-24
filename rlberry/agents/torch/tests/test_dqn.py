@@ -83,13 +83,13 @@ def test_dqn_classic_env():
             observation = next_observation
 
 
-def test_dqn_agent_manager_classic_env():
+def test_dqn_experiment_manager_classic_env():
     # saving_path = "rlberry/agents/torch/tests/agentmanager_test_dqn_classic_env"
 
     with tempfile.TemporaryDirectory() as tmpdirname:
         saving_path = tmpdirname + "/agentmanager_test_dqn_classic_env"
 
-        test_agent_manager = ExperimentManager(
+        test_experiment_manager = ExperimentManager(
             DQNAgent,  # The Agent class.
             (
                 gym_make,
@@ -115,22 +115,22 @@ def test_dqn_agent_manager_classic_env():
             output_dir=saving_path,
         )
 
-        test_agent_manager.fit(budget=200)
+        test_experiment_manager.fit(budget=200)
 
         # test the save function
-        test_agent_manager.save()
+        test_experiment_manager.save()
         assert os.path.exists(saving_path)
 
         # test the loading function
         test_load_env = gym_make("CartPole-v1")
         path_to_load = next(pathlib.Path(saving_path).glob("**/*.pickle"))
-        loaded_agent_manager = ExperimentManager.load(path_to_load)
-        assert loaded_agent_manager
+        loaded_experiment_manager = ExperimentManager.load(path_to_load)
+        assert loaded_experiment_manager
 
         # test the agent
         state, info = test_load_env.reset()
         for tt in range(50):
-            action = loaded_agent_manager.get_agent_instances()[0].policy(state)
+            action = loaded_experiment_manager.get_agent_instances()[0].policy(state)
             next_s, _, terminated, truncated, test = test_load_env.step(action)
             done = terminated or truncated
             if done:

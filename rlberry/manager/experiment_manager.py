@@ -238,7 +238,7 @@ class ExperimentManager:
         Directory where the manager saves data.
 
     rlberry_version: str
-        Current version of rlberry. This is saved when calling agent_manager.save()
+        Current version of rlberry. This is saved when calling experiment_manager.save()
         and it is then used in load() to warn if the version of the agent is not a
         match with current rlberry version.
 
@@ -765,7 +765,7 @@ class ExperimentManager:
                 self.default_writer_data[ii] = agent.writer.data
 
     def save(self):
-        """Save ExperimentManager data to :attr:`~rlberry.manager.agent_manager.ExperimentManager.output_dir`.
+        """Save ExperimentManager data to :attr:`~rlberry.manager.experiment_manager.ExperimentManager.output_dir`.
 
         Saves object so that the data can be later loaded to recreate an ExperimentManager instance.
 
@@ -849,7 +849,7 @@ class ExperimentManager:
 
         if filename.name != "manager_obj.pickle":
             raise ValueError(
-                "The agent_manager objects should be save in file named 'manager_obj.pickle'"
+                "The experiment_manager objects should be save in file named 'manager_obj.pickle'"
             )
 
         obj = cls(None, None, None)

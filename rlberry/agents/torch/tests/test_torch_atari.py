@@ -196,7 +196,7 @@ def test_ppo_vectorized_atari_env(num_envs):
 
 
 @pytest.mark.parametrize("num_envs", [1, 3])
-def test_ppo_agent_manager_vectorized_atari_env(num_envs):
+def test_ppo_experiment_manager_vectorized_atari_env(num_envs):
     with tempfile.TemporaryDirectory() as tmpdirname:
         saving_path = tmpdirname + "/agentmanager_test_ppo_vectorized_env"
 
@@ -238,7 +238,7 @@ def test_ppo_agent_manager_vectorized_atari_env(num_envs):
             "out_size": 1,
         }
 
-        test_agent_manager = ExperimentManager(
+        test_experiment_manager = ExperimentManager(
             PPOAgent,  # The Agent class.
             (
                 atari_make,
@@ -264,23 +264,23 @@ def test_ppo_agent_manager_vectorized_atari_env(num_envs):
             output_dir=saving_path,
             # eval_env = (atari_make,dict(id="ALE/Atlantis-v5",n_envs=1))
         )
-        test_agent_manager.fit(budget=500)
+        test_experiment_manager.fit(budget=500)
 
         # test the save function
-        test_agent_manager.save()
+        test_experiment_manager.save()
         assert os.path.exists(saving_path)
 
         # test the loading function
         test_load_env = atari_make("ALE/Atlantis-v5")
         test_load_env.reset()
         path_to_load = next(pathlib.Path(saving_path).glob("**/*.pickle"))
-        loaded_agent_manager = ExperimentManager.load(path_to_load)
-        assert loaded_agent_manager
+        loaded_experiment_manager = ExperimentManager.load(path_to_load)
+        assert loaded_experiment_manager
 
         # test the agent
         obs, infos = test_load_env.reset()
         for tt in range(50):
-            actions = loaded_agent_manager.get_agent_instances()[0].policy(obs)
+            actions = loaded_experiment_manager.get_agent_instances()[0].policy(obs)
             obs, reward, terminated, truncated, info = test_load_env.step(actions)
             done = np.logical_or(terminated, truncated)
             if done:

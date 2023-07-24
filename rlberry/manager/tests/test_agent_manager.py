@@ -43,7 +43,7 @@ class DummyAgent(AgentWithSimplePolicy):
 
 
 @pytest.mark.xfail(sys.platform == "win32", reason="bug with windows???")
-def test_agent_manager_1():
+def test_experiment_manager_1():
     # Define train and evaluation envs
     train_env = (GridWorld, {})
 
@@ -77,8 +77,8 @@ def test_agent_manager_1():
         n_fit=2,
         seed=123,
     )
-    agent_manager_list = [stats_agent1, stats_agent2]
-    for st in agent_manager_list:
+    experiment_manager_list = [stats_agent1, stats_agent2]
+    for st in experiment_manager_list:
         st.fit()
 
     for ii, instance in enumerate(stats_agent1.agent_handlers):
@@ -90,15 +90,15 @@ def test_agent_manager_1():
         assert instance.hyperparameter2 == 100
 
     # learning curves
-    plot_writer_data(agent_manager_list, tag="episode_rewards", show=False)
+    plot_writer_data(experiment_manager_list, tag="episode_rewards", show=False)
 
     # compare final policies
-    evaluate_agents(agent_manager_list, show=False)
+    evaluate_agents(experiment_manager_list, show=False)
 
     # check if fitted
-    for agent_manager in agent_manager_list:
-        assert len(agent_manager.agent_handlers) == 2
-        for agent in agent_manager.agent_handlers:
+    for experiment_manager in experiment_manager_list:
+        assert len(experiment_manager.agent_handlers) == 2
+        for agent in experiment_manager.agent_handlers:
             assert agent.fitted
 
     # test saving/loading
@@ -110,12 +110,12 @@ def test_agent_manager_1():
     loaded_stats.optimize_hyperparams(n_trials=3)
     loaded_stats.optimize_hyperparams(n_trials=3, continue_previous=True)
 
-    for st in agent_manager_list:
+    for st in experiment_manager_list:
         st.clear_output_dir()
 
 
 @pytest.mark.xfail(sys.platform == "win32", reason="bug with windows???")
-def test_agent_manager_2():
+def test_experiment_manager_2():
     # Define train and evaluation envs
     train_env = (GridWorld, {})
     eval_env = (GridWorld, {})
@@ -145,24 +145,24 @@ def test_agent_manager_2():
         n_fit=4,
         seed=123,
     )
-    agent_manager_list = [stats_agent1, stats_agent2]
-    for st in agent_manager_list:
+    experiment_manager_list = [stats_agent1, stats_agent2]
+    for st in experiment_manager_list:
         st.fit()
 
     # compare final policies
-    outputs = evaluate_agents(agent_manager_list, n_simulations=5, show=False)
+    outputs = evaluate_agents(experiment_manager_list, n_simulations=5, show=False)
     assert len(outputs) == 5
     outputs = evaluate_agents(
-        agent_manager_list, n_simulations=5, show=False, choose_random_agents=False
+        experiment_manager_list, n_simulations=5, show=False, choose_random_agents=False
     )
     assert len(outputs) == 4 * 5
     # learning curves
-    plot_writer_data(agent_manager_list, tag="episode_rewards", show=False)
+    plot_writer_data(experiment_manager_list, tag="episode_rewards", show=False)
 
     # check if fitted
-    for agent_manager in agent_manager_list:
-        assert len(agent_manager.agent_handlers) == 4
-        for agent in agent_manager.agent_handlers:
+    for experiment_manager in experiment_manager_list:
+        assert len(experiment_manager.agent_handlers) == 4
+        for agent in experiment_manager.agent_handlers:
             assert agent.fitted
 
     # test saving/loading
@@ -182,7 +182,7 @@ def test_agent_manager_2():
 
 
 @pytest.mark.parametrize("train_env", [(GridWorld, None), (None, None)])
-def test_agent_manager_partial_fit_and_tuple_env(train_env):
+def test_experiment_manager_partial_fit_and_tuple_env(train_env):
     # Define train and evaluation envs
     train_env = (
         GridWorld,

@@ -19,7 +19,7 @@ class VIAgent(UCBVIAgent):
         self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
 
 
-def _create_and_fit_agent_manager(output_dir, outdir_id_style):
+def _create_and_fit_experiment_manager(output_dir, outdir_id_style):
     env_ctor = GridWorld
     env_kwargs = dict(nrows=2, ncols=2, reward_at={(1, 1): 0.1, (2, 2): 1.0})
 
@@ -44,7 +44,7 @@ def _compute_reward(rewards):
 def test_plot_writer_data_with_manager_input(outdir_id_style):
     with tempfile.TemporaryDirectory() as tmpdirname:
         output_dir = tmpdirname + "/rlberry_data"
-        manager = _create_and_fit_agent_manager(output_dir, outdir_id_style)
+        manager = _create_and_fit_experiment_manager(output_dir, outdir_id_style)
         os.system("ls " + tmpdirname + "/rlberry_data/manager_data")
 
         # Plot of the cumulative reward
@@ -67,7 +67,7 @@ def test_plot_writer_data_with_manager_input(outdir_id_style):
 def test_ci():
     with tempfile.TemporaryDirectory() as tmpdirname:
         output_dir = tmpdirname + "/rlberry_data"
-        manager = _create_and_fit_agent_manager(output_dir, None)
+        manager = _create_and_fit_experiment_manager(output_dir, None)
         os.system("ls " + tmpdirname + "/rlberry_data/manager_data")
 
         # Plot of the cumulative reward
@@ -92,7 +92,7 @@ def test_ci():
 def test_plot_writer_data_with_directory_input(outdir_id_style):
     with tempfile.TemporaryDirectory() as tmpdirname:
         output_dir = tmpdirname + "/rlberry_data"
-        manager = _create_and_fit_agent_manager(output_dir, outdir_id_style)
+        manager = _create_and_fit_experiment_manager(output_dir, outdir_id_style)
         del manager
 
         os.system("ls " + tmpdirname + "/rlberry_data/manager_data")

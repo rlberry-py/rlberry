@@ -153,7 +153,7 @@ One of the main feature of rlberry is its :class:`~rlberry.manager.ExperimentMan
 class. Here is a diagram to explain briefly what it does.
 
 
-.. figure:: agent_manager_diagram.png
+.. figure:: experiment_manager_diagram.png
     :align: center
 
 

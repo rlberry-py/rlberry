@@ -38,7 +38,7 @@ def _make_tuple_env(env):
     return env_ctor, env_kwargs
 
 
-def _fit_agent_manager(agent, env="continuous_state", init_kwargs=None):
+def _fit_experiment_manager(agent, env="continuous_state", init_kwargs=None):
     """
     Check that the agent is compatible with :class:`~rlberry.manager.ExperimentManager`.
 
@@ -96,7 +96,7 @@ def _fit_agent(agent, env="continuous_state", init_kwargs=None):
     return my_agent
 
 
-def check_agent_manager(agent, env="continuous_state", init_kwargs=None):
+def check_experiment_manager(agent, env="continuous_state", init_kwargs=None):
     """
     Check that the agent is compatible with :class:`~rlberry.manager.ExperimentManager`.
 
@@ -110,7 +110,7 @@ def check_agent_manager(agent, env="continuous_state", init_kwargs=None):
     init_kwargs : dict
         Arguments required by the agent's constructor.
     """
-    manager = _fit_agent_manager(agent, env, init_kwargs=init_kwargs)
+    manager = _fit_experiment_manager(agent, env, init_kwargs=init_kwargs)
     assert manager is not None
 
 
@@ -276,14 +276,14 @@ def _check_save_load_with_manager(agent, env="continuous_state", init_kwargs=Non
         assert os.path.exists(tmpdirname)
 
         path_to_load = next(pathlib.Path(tmpdirname).glob("**/manager_obj.pickle"))
-        loaded_agent_manager = ExperimentManager.load(path_to_load)
-        assert loaded_agent_manager
+        loaded_experiment_manager = ExperimentManager.load(path_to_load)
+        assert loaded_experiment_manager
 
         # test with first agent of the manager
         observation, info = test_env.reset()
 
         for tt in range(50):
-            action = loaded_agent_manager.get_agent_instances()[0].policy(observation)
+            action = loaded_experiment_manager.get_agent_instances()[0].policy(observation)
             next_observation, reward, terminated, truncated, info = test_env.step(
                 action
             )
@@ -360,8 +360,8 @@ def check_seeding_agent(agent, env=None, continuous_state=False, init_kwargs=Non
     init_kwargs : dict
         Arguments required by the agent's constructor.
     """
-    agent1 = _fit_agent_manager(agent, env, init_kwargs=init_kwargs)
-    agent2 = _fit_agent_manager(agent, env, init_kwargs=init_kwargs)
+    agent1 = _fit_experiment_manager(agent, env, init_kwargs=init_kwargs)
+    agent2 = _fit_experiment_manager(agent, env, init_kwargs=init_kwargs)
 
     result = check_agents_almost_equal(
         agent1.agent_handlers[0], agent2.agent_handlers[0]
@@ -487,7 +487,7 @@ def check_rl_agent(agent, env="continuous_state", init_kwargs=None):
     >>> from rlberry.utils import check_rl_agent
     >>> check_rl_agent(UCBVIAgent) # which does not return an error.
     """
-    check_agent_manager(
+    check_experiment_manager(
         agent, env, init_kwargs=init_kwargs
     )  # check manager compatible.
     check_agent_base(agent, env, init_kwargs=init_kwargs)  # check without manager
@@ -519,7 +519,7 @@ def check_rlberry_agent(agent, env="continuous_state", init_kwargs=None):
     >>> from rlberry.utils import check_rl_agent
     >>> check_rl_agent(UCBVIAgent) #
     """
-    manager = _fit_agent_manager(agent, env, init_kwargs=init_kwargs).agent_handlers[0]
+    manager = _fit_experiment_manager(agent, env, init_kwargs=init_kwargs).agent_handlers[0]
     try:
         params = manager.get_params()
     except Exception:

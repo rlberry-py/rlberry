@@ -18,7 +18,7 @@ logger = rlberry.logger
 
 
 def evaluate_agents(
-    agent_manager_list,
+    experiment_manager_list,
     n_simulations=5,
     choose_random_agents=True,
     fignum=None,
@@ -27,11 +27,11 @@ def evaluate_agents(
     sns_kwargs=None,
 ):
     """
-    Evaluate and compare each of the agents in agent_manager_list.
+    Evaluate and compare each of the agents in experiment_manager_list.
 
     Parameters
     ----------
-    agent_manager_list : list of ExperimentManager objects.
+    experiment_manager_list : list of ExperimentManager objects.
     n_simulations: int
         Number of calls to the eval() method of each ExperimentManager instance.
     choose_random_agents: bool
@@ -79,14 +79,14 @@ def evaluate_agents(
     #
 
     eval_outputs = []
-    for agent_manager in agent_manager_list:
-        logger.info(f"Evaluating {agent_manager.agent_name}...")
+    for experiment_manager in experiment_manager_list:
+        logger.info(f"Evaluating {experiment_manager.agent_name}...")
         if choose_random_agents:
-            outputs = agent_manager.eval_agents(n_simulations)
+            outputs = experiment_manager.eval_agents(n_simulations)
         else:
             outputs = []
-            for idx in range(len(agent_manager.agent_handlers)):
-                outputs += list(agent_manager.eval_agents(n_simulations, agent_id=idx))
+            for idx in range(len(experiment_manager.agent_handlers)):
+                outputs += list(experiment_manager.eval_agents(n_simulations, agent_id=idx))
 
         if len(outputs) > 0:
             eval_outputs.append(outputs)
@@ -104,8 +104,8 @@ def evaluate_agents(
     # build unique agent IDs (in case there are two agents with the same ID)
     unique_ids = []
     id_count = {}
-    for agent_manager in agent_manager_list:
-        name = agent_manager.agent_name
+    for experiment_manager in experiment_manager_list:
+        name = experiment_manager.agent_name
         if name not in id_count:
             id_count[name] = 1
         else:
@@ -211,7 +211,7 @@ def read_writer_data(data_source, tag=None, preprocess_func=None, id_agent=None)
                     )
 
     if isinstance(data_source[0], ExperimentManager):
-        agent_manager_list = data_source
+        experiment_manager_list = data_source
     else:
         input_dir = data_source
 
@@ -241,13 +241,13 @@ def read_writer_data(data_source, tag=None, preprocess_func=None, id_agent=None)
             for id_f, filename in enumerate(input_dir):
                 writer_datas.append(_load_data(filename, agent_dirs[id_f], id_agent))
     else:
-        for manager in agent_manager_list:
+        for manager in experiment_manager_list:
             # Important: since manager can be a RemoteExperimentManager,
             # it is important to avoid repeated accesses to its methods and properties.
             # That is why writer_data is taken from the manager instance only in
             # the line below.
             writer_datas.append(manager.get_writer_data())
-        agent_name_list = [manager.agent_name for manager in agent_manager_list]
+        agent_name_list = [manager.agent_name for manager in experiment_manager_list]
     # preprocess agent stats
     data_list = []
 

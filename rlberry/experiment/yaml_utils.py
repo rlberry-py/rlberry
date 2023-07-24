@@ -138,7 +138,7 @@ def parse_experiment_config(
     -------
     seed: int
         global seed
-    agent_manager_kwargs:
+    experiment_manager_kwargs:
         parameters to create an ExperimentManager instance.
     """
     with path.open() as file:
@@ -210,5 +210,5 @@ def parse_experiment_config(
 
 if __name__ == "__main__":
     filename = "examples/demo_experiment/params_experiment.yaml"
-    for seed, agent_manager in parse_experiment_config(Path(filename)):
+    for seed, experiment_manager in parse_experiment_config(Path(filename)):
         print(seed)

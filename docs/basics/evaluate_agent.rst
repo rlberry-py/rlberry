@@ -9,7 +9,7 @@ Evaluate an agent and optimize its hyperparameters
 With rlberry_, once you created your agent, it is very easy to train in parallel
 several instances of it, analyze the results and optimize hyperparameters.
 
-This is one of the purposes of the :class:`~rlberry.manager.agent_manager.ExperimentManager` class,
+This is one of the purposes of the :class:`~rlberry.manager.experiment_manager.ExperimentManager` class,
 as shown in the examples below.
 
 .. code-block:: python
@@ -87,7 +87,7 @@ For :class:`~rlberry.agents.reinforce.reinforce.REINFORCEAgent`, this method loo
 
 
 Now we can use the :meth:`optimize_hyperparams` method
-of :class:`~rlberry.manager.agent_manager.ExperimentManager` to find good parameters for our agent:
+of :class:`~rlberry.manager.experiment_manager.ExperimentManager` to find good parameters for our agent:
 
 .. code-block:: python
 

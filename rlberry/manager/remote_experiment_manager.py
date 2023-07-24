@@ -49,7 +49,7 @@ class RemoteExperimentManager:
             if msg.command == interface.Command.RAISE_EXCEPTION:
                 raise Exception(msg.message)
 
-            self._remote_agent_manager_filename = pathlib.Path(msg.info["filename"])
+            self._remote_experiment_manager_filename = pathlib.Path(msg.info["filename"])
 
             # get useful attributes
             self.agent_name = msg.info["agent_name"]
@@ -60,7 +60,7 @@ class RemoteExperimentManager:
 
     @property
     def remote_file(self):
-        return str(self._remote_agent_manager_filename)
+        return str(self._remote_experiment_manager_filename)
 
     def get_writer_data(self):
         """

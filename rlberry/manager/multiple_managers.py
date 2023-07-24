@@ -39,15 +39,15 @@ class MultipleManagers:
         self.parallelization = parallelization
         self.mp_context = mp_context
 
-    def append(self, agent_manager):
+    def append(self, experiment_manager):
         """
         Append new ExperimentManager instance.
 
         Parameters
         ----------
-        agent_manager : ExperimentManager
+        experiment_manager : ExperimentManager
         """
-        self.instances.append(agent_manager)
+        self.instances.append(experiment_manager)
 
     def run(self, save=True):
         """

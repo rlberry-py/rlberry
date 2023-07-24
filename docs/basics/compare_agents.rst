@@ -8,7 +8,7 @@ Compare different agents
 
 
 Two or more agents can be compared using the classes
-:class:`~rlberry.manager.agent_manager.ExperimentManager` and
+:class:`~rlberry.manager.experiment_manager.ExperimentManager` and
 :class:`~rlberry.manager.multiple_managers.MultipleManagers`, as in the example below.
 
 
