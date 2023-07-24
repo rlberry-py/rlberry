@@ -21,16 +21,33 @@ class AdaptiveQLAgent(AgentWithSimplePolicy):
         Environment with continuous states and discrete actions.
     gamma : double, default: 1.0
         Discount factor in [0, 1].
-    horizon : int
+    horizon : int, default: 50
         Horizon of the objective function.
     bonus_scale_factor : double, default: 1.0
         Constant by which to multiply the exploration bonus, controls
         the level of exploration.
-    bonus_type : {"simplified_bernstein"}
+    bonus_type : string, default: "simplified_bernstein"
         Type of exploration bonus. Currently, only "simplified_bernstein"
         is implemented.
 
+    Attributes
+    ----------
+    gamma : double, default: 1.0
+        Discount factor in [0, 1].
+    horizon : int, default: 50
+        Horizon of the objective function.
+    bonus_scale_factor : double, default: 1.0
+        Constant by which to multiply the exploration bonus, controls
+        the level of exploration.
+    bonus_type : string, default: "simplified_bernstein"
+        Type of exploration bonus. Currently, only "simplified_bernstein"
+        is implemented.
+    v_max : ndarray
+        Array of the maximum state value as a function of the Horizon.
+    Qtree : MDPTreePartition
+        To be written.
 
+        
     References
     ----------
     .. [1] Sinclair, Sean R., Siddhartha Banerjee, and Christina Lee Yu.
