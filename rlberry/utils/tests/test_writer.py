@@ -1,7 +1,7 @@
 import time
 from rlberry.envs import GridWorld
 from rlberry.agents import AgentWithSimplePolicy
-from rlberry.manager import AgentManager
+from rlberry.manager import ExperimentManager
 
 
 class DummyAgent(AgentWithSimplePolicy):
@@ -33,7 +33,7 @@ def test_myoutput(capsys):  # or use "capfd" for fd-level
     env_kwargs = dict()
 
     env = env_ctor(**env_kwargs)
-    agent = AgentManager(
+    agent = ExperimentManager(
         DummyAgent,
         (env_ctor, env_kwargs),
         fit_budget=3,

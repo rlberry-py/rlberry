@@ -1,6 +1,6 @@
 from rlberry.envs import Chain
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
-from rlberry.manager import AgentManager
+from rlberry.manager import ExperimentManager
 import numpy as np
 from rlberry.seeding import set_external_seed
 import tempfile
@@ -40,7 +40,7 @@ def _make_tuple_env(env):
 
 def _fit_agent_manager(agent, env="continuous_state", init_kwargs=None):
     """
-    Check that the agent is compatible with :class:`~rlberry.manager.AgentManager`.
+    Check that the agent is compatible with :class:`~rlberry.manager.ExperimentManager`.
 
     Parameters
     ----------
@@ -57,7 +57,7 @@ def _fit_agent_manager(agent, env="continuous_state", init_kwargs=None):
 
     train_env = _make_tuple_env(env)
     try:
-        agent = AgentManager(
+        agent = ExperimentManager(
             agent, train_env, fit_budget=5, n_fit=1, seed=SEED, init_kwargs=init_kwargs
         )
         agent.fit()
@@ -98,7 +98,7 @@ def _fit_agent(agent, env="continuous_state", init_kwargs=None):
 
 def check_agent_manager(agent, env="continuous_state", init_kwargs=None):
     """
-    Check that the agent is compatible with :class:`~rlberry.manager.AgentManager`.
+    Check that the agent is compatible with :class:`~rlberry.manager.ExperimentManager`.
 
     Parameters
     ----------
@@ -116,7 +116,7 @@ def check_agent_manager(agent, env="continuous_state", init_kwargs=None):
 
 def check_agent_base(agent, env="continuous_state", init_kwargs=None):
     """
-    Check that the agent is compatible with :class:`~rlberry.manager.AgentManager`.
+    Check that the agent is compatible with :class:`~rlberry.manager.ExperimentManager`.
 
     Parameters
     ----------
@@ -239,7 +239,7 @@ def _check_save_load_with_manager(agent, env="continuous_state", init_kwargs=Non
 
     train_env_tuple = _make_tuple_env(env)
     with tempfile.TemporaryDirectory() as tmpdirname:
-        manager = AgentManager(
+        manager = ExperimentManager(
             agent,
             train_env_tuple,
             fit_budget=5,
@@ -276,7 +276,7 @@ def _check_save_load_with_manager(agent, env="continuous_state", init_kwargs=Non
         assert os.path.exists(tmpdirname)
 
         path_to_load = next(pathlib.Path(tmpdirname).glob("**/manager_obj.pickle"))
-        loaded_agent_manager = AgentManager.load(path_to_load)
+        loaded_agent_manager = ExperimentManager.load(path_to_load)
         assert loaded_agent_manager
 
         # test with first agent of the manager
@@ -562,8 +562,8 @@ def _test_hyperparam_optim_tpe(agent, env="continuous_state", init_kwargs=None):
     init_kwargs["seeder"] = SEED
     train_env = _make_tuple_env(env)
 
-    # Run AgentManager
-    stats_agent = AgentManager(
+    # Run ExperimentManager
+    stats_agent = ExperimentManager(
         agent,
         train_env,
         fit_budget=1,
@@ -586,8 +586,8 @@ def _test_hyperparam_optim_grid(agent, env="continuous_state", init_kwargs=None)
     init_kwargs["seeder"] = SEED
     train_env = _make_tuple_env(env)
 
-    # Run AgentManager
-    stats_agent = AgentManager(
+    # Run ExperimentManager
+    stats_agent = ExperimentManager(
         agent,
         train_env,
         init_kwargs={},
@@ -612,8 +612,8 @@ def _test_hyperparam_optim_cmaes(agent, env="continuous_state", init_kwargs=None
     init_kwargs["seeder"] = SEED
     train_env = _make_tuple_env(env)
 
-    # Run AgentManager
-    stats_agent = AgentManager(
+    # Run ExperimentManager
+    stats_agent = ExperimentManager(
         agent,
         train_env,
         init_kwargs={},
@@ -636,7 +636,7 @@ def _test_discount_optimization(agent, env="continuous_state", init_kwargs=None)
 
     vi_params = {"gamma": 0.1, "epsilon": 1e-3}
 
-    vi_stats = AgentManager(
+    vi_stats = ExperimentManager(
         agent,
         train_env,
         fit_budget=0,
@@ -668,8 +668,8 @@ def _test_hyperparam_optim_random(
     init_kwargs["seeder"] = SEED
     train_env = _make_tuple_env(env)
 
-    # Run AgentManager
-    stats_agent = AgentManager(
+    # Run ExperimentManager
+    stats_agent = ExperimentManager(
         agent,
         train_env,
         init_kwargs={},

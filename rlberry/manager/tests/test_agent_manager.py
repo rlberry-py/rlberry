@@ -5,7 +5,7 @@ import os
 from rlberry.envs import GridWorld
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.manager import (
-    AgentManager,
+    ExperimentManager,
     plot_writer_data,
     evaluate_agents,
     preset_manager,
@@ -56,9 +56,9 @@ def test_agent_manager_1():
     agent.fit(10)
     agent.policy(None)
 
-    # Run AgentManager
+    # Run ExperimentManager
     params_per_instance = [dict(hyperparameter2=ii) for ii in range(2)]
-    stats_agent1 = AgentManager(
+    stats_agent1 = ExperimentManager(
         DummyAgent,
         train_env,
         fit_budget=5,
@@ -68,7 +68,7 @@ def test_agent_manager_1():
         seed=123,
         init_kwargs_per_instance=params_per_instance,
     )
-    stats_agent2 = AgentManager(
+    stats_agent2 = ExperimentManager(
         DummyAgent,
         train_env,
         fit_budget=5,
@@ -103,7 +103,7 @@ def test_agent_manager_1():
 
     # test saving/loading
     fname = stats_agent1.save()
-    loaded_stats = AgentManager.load(fname)
+    loaded_stats = ExperimentManager.load(fname)
     assert stats_agent1.unique_id == loaded_stats.unique_id
 
     # test hyperparameter optimization call
@@ -124,8 +124,8 @@ def test_agent_manager_2():
     params = {}
     eval_kwargs = dict(eval_horizon=10)
 
-    # Run AgentManager
-    stats_agent1 = AgentManager(
+    # Run ExperimentManager
+    stats_agent1 = ExperimentManager(
         DummyAgent,
         train_env,
         eval_env=eval_env,
@@ -135,7 +135,7 @@ def test_agent_manager_2():
         n_fit=4,
         seed=123,
     )
-    stats_agent2 = AgentManager(
+    stats_agent2 = ExperimentManager(
         DummyAgent,
         train_env,
         eval_env=eval_env,
@@ -167,7 +167,7 @@ def test_agent_manager_2():
 
     # test saving/loading
     fname = stats_agent1.save()
-    loaded_stats = AgentManager.load(fname)
+    loaded_stats = ExperimentManager.load(fname)
     assert stats_agent1.unique_id == loaded_stats.unique_id
 
     # test hyperparemeter optimization
@@ -187,14 +187,14 @@ def test_agent_manager_partial_fit_and_tuple_env(train_env):
     train_env = (
         GridWorld,
         None,
-    )  # tuple (constructor, kwargs) must also work in AgentManager
+    )  # tuple (constructor, kwargs) must also work in ExperimentManager
 
     # Parameters
     params = {}
     eval_kwargs = dict(eval_horizon=10)
 
-    # Run AgentManager
-    stats = AgentManager(
+    # Run ExperimentManager
+    stats = ExperimentManager(
         DummyAgent,
         train_env,
         init_kwargs=params,
@@ -203,7 +203,7 @@ def test_agent_manager_partial_fit_and_tuple_env(train_env):
         eval_kwargs=eval_kwargs,
         seed=123,
     )
-    stats2 = AgentManager(
+    stats2 = ExperimentManager(
         DummyAgent,
         train_env,
         init_kwargs=params,
@@ -246,9 +246,9 @@ def test_equality():
     params = dict(hyperparameter1=-1, hyperparameter2=100)
     eval_kwargs = dict(eval_horizon=10)
 
-    # Run AgentManager
+    # Run ExperimentManager
     params_per_instance = [dict(hyperparameter2=ii) for ii in range(4)]
-    stats_agent1 = AgentManager(
+    stats_agent1 = ExperimentManager(
         DummyAgent,
         train_env,
         fit_budget=5,
@@ -259,7 +259,7 @@ def test_equality():
         init_kwargs_per_instance=params_per_instance,
     )
 
-    stats_agent2 = AgentManager(
+    stats_agent2 = ExperimentManager(
         DummyAgent,
         train_env,
         fit_budget=5,
@@ -270,7 +270,7 @@ def test_equality():
         init_kwargs_per_instance=params_per_instance,
     )
 
-    stats_agent3 = AgentManager(
+    stats_agent3 = ExperimentManager(
         DummyAgent,
         train_env,
         fit_budget=42,
@@ -293,9 +293,9 @@ def test_version():
     params = dict(hyperparameter1=-1, hyperparameter2=100)
     eval_kwargs = dict(eval_horizon=10)
 
-    # Run AgentManager
+    # Run ExperimentManager
     params_per_instance = [dict(hyperparameter2=ii) for ii in range(4)]
-    stats_agent1 = AgentManager(
+    stats_agent1 = ExperimentManager(
         DummyAgent,
         train_env,
         fit_budget=5,
@@ -317,9 +317,9 @@ def test_profile():
     params = dict(hyperparameter1=-1, hyperparameter2=100)
     eval_kwargs = dict(eval_horizon=10)
 
-    # Run AgentManager
+    # Run ExperimentManager
     params_per_instance = [dict(hyperparameter2=ii) for ii in range(4)]
-    stats_agent1 = AgentManager(
+    stats_agent1 = ExperimentManager(
         DummyAgent,
         train_env,
         fit_budget=5,
@@ -341,7 +341,7 @@ def test_preset():
     params = dict(hyperparameter1=-1, hyperparameter2=100)
     eval_kwargs = dict(eval_horizon=10)
 
-    # Run AgentManager
+    # Run ExperimentManager
     params_per_instance = [dict(hyperparameter2=ii) for ii in range(4)]
 
     manager_maker = preset_manager(
@@ -367,8 +367,8 @@ def test_compress():
     )
     eval_kwargs = dict(eval_horizon=10)
 
-    # Run AgentManager
-    stats = AgentManager(
+    # Run ExperimentManager
+    stats = ExperimentManager(
         DummyAgent,
         train_env,
         fit_budget=5,

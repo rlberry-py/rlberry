@@ -38,6 +38,6 @@ def test_mock_args(monkeypatch):
         else:
             raise ValueError()
 
-    #  check that seeding is the same for each AgentManager instance
+    #  check that seeding is the same for each ExperimentManager instance
     for ii in range(1, len(random_numbers)):
         assert np.array_equal(random_numbers[ii - 1], random_numbers[ii])

@@ -14,7 +14,7 @@ Agent is slightly tuned, but not optimal. This is just for illustration purpose.
 # sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_atari_freeway.jpg'
 
 
-from rlberry.manager.agent_manager import AgentManager
+from rlberry.manager.agent_manager import ExperimentManager
 from datetime import datetime
 from rlberry.agents.torch.dqn.dqn import DQNAgent
 from gymnasium.wrappers.record_video import RecordVideo
@@ -45,7 +45,7 @@ cnn_configs = {
     "is_policy": False,  # The network should output a distribution
 }
 
-tuned_agent = AgentManager(
+tuned_agent = ExperimentManager(
     DQNAgent,  # The Agent class.
     (
         atari_make,

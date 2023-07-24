@@ -7,7 +7,7 @@ import sys
 
 from rlberry.wrappers import WriterWrapper
 from rlberry.envs import GridWorld
-from rlberry.manager import plot_writer_data, AgentManager, read_writer_data
+from rlberry.manager import plot_writer_data, ExperimentManager, read_writer_data
 from rlberry.agents import UCBVIAgent
 
 
@@ -23,7 +23,7 @@ def _create_and_fit_agent_manager(output_dir, outdir_id_style):
     env_ctor = GridWorld
     env_kwargs = dict(nrows=2, ncols=2, reward_at={(1, 1): 0.1, (2, 2): 1.0})
 
-    manager = AgentManager(
+    manager = ExperimentManager(
         VIAgent,
         (env_ctor, env_kwargs),
         fit_budget=10,

@@ -8,7 +8,7 @@ Compare different agents
 
 
 Two or more agents can be compared using the classes
-:class:`~rlberry.manager.agent_manager.AgentManager` and
+:class:`~rlberry.manager.agent_manager.ExperimentManager` and
 :class:`~rlberry.manager.multiple_managers.MultipleManagers`, as in the example below.
 
 
@@ -18,7 +18,7 @@ Two or more agents can be compared using the classes
         from rlberry.envs.classic_control import MountainCar
         from rlberry.agents.torch.reinforce import REINFORCEAgent
         from rlberry.agents.kernel_based.rs_kernel_ucbvi import RSKernelUCBVIAgent
-        from rlberry.manager import AgentManager, MultipleManagers, plot_writer_data
+        from rlberry.manager import ExperimentManager, MultipleManagers, plot_writer_data
 
 
         # Environment constructor and kwargs
@@ -38,10 +38,10 @@ Two or more agents can be compared using the classes
 
         eval_kwargs = dict(eval_horizon=200)
 
-        # Create AgentManager for REINFORCE and RSKernelUCBVI
+        # Create ExperimentManager for REINFORCE and RSKernelUCBVI
         multimanagers = MultipleManagers()
         multimanagers.append(
-            AgentManager(
+            ExperimentManager(
                 REINFORCEAgent,
                 env,
                 init_kwargs=params["reinforce"],
@@ -51,7 +51,7 @@ Two or more agents can be compared using the classes
             )
         )
         multimanagers.append(
-            AgentManager(
+            ExperimentManager(
                 RSKernelUCBVIAgent,
                 env,
                 init_kwargs=params["kernel"],

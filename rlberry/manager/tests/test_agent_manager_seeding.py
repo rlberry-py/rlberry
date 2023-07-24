@@ -1,7 +1,7 @@
 from rlberry.envs.tests.test_env_seeding import get_env_trajectory, compare_trajectories
 from rlberry.envs import gym_make
 from rlberry.envs.classic_control import MountainCar
-from rlberry.manager import AgentManager, MultipleManagers
+from rlberry.manager import ExperimentManager, MultipleManagers
 from rlberry.agents.torch import A2CAgent
 import gymnasium as gym
 import pytest
@@ -19,10 +19,10 @@ import pytest
     ],
 )
 def test_agent_manager_and_multiple_managers_seeding(env, agent_class):
-    agent_manager = AgentManager(
+    agent_manager = ExperimentManager(
         agent_class, env, fit_budget=2, init_kwargs={}, n_fit=6, seed=3456
     )
-    agent_manager_test = AgentManager(
+    agent_manager_test = ExperimentManager(
         agent_class, env, fit_budget=2, init_kwargs={}, n_fit=6, seed=3456
     )
 

@@ -15,7 +15,7 @@ Main classes
   :template: class.rst
 
 
-    manager.AgentManager
+    manager.ExperimentManager
     manager.MultipleManagers
 
 Evaluation and plot

@@ -1,8 +1,8 @@
-from rlberry.manager.agent_manager import AgentManager
+from rlberry.manager.agent_manager import ExperimentManager
 from rlberry.agents.torch.dqn.dqn import DQNAgent
 from rlberry.envs.gym_make import atari_make
 
-from rlberry.manager.agent_manager import AgentManager
+from rlberry.manager.agent_manager import ExperimentManager
 from rlberry.agents.torch import PPOAgent
 from rlberry.agents.torch.utils.training import model_factory_from_env
 import pathlib
@@ -33,7 +33,7 @@ def test_forward_dqn():
         "is_policy": False,  # The network should output a distribution
     }
 
-    tuned_agent = AgentManager(
+    tuned_agent = ExperimentManager(
         DQNAgent,  # The Agent class.
         (
             atari_make,
@@ -80,7 +80,7 @@ def test_forward_empty_input_dim():
         "is_policy": False,  # The network should output a distribution
     }
 
-    tuned_agent = AgentManager(
+    tuned_agent = ExperimentManager(
         DQNAgent,  # The Agent class.
         (
             atari_make,
@@ -239,7 +239,7 @@ def test_ppo_agent_manager_vectorized_atari_env(num_envs):
             "out_size": 1,
         }
 
-        test_agent_manager = AgentManager(
+        test_agent_manager = ExperimentManager(
             PPOAgent,  # The Agent class.
             (
                 atari_make,
@@ -275,7 +275,7 @@ def test_ppo_agent_manager_vectorized_atari_env(num_envs):
         test_load_env = atari_make("ALE/Atlantis-v5")
         test_load_env.reset()
         path_to_load = next(pathlib.Path(saving_path).glob("**/*.pickle"))
-        loaded_agent_manager = AgentManager.load(path_to_load)
+        loaded_agent_manager = ExperimentManager.load(path_to_load)
         assert loaded_agent_manager
 
         # test the agent

@@ -11,7 +11,7 @@ import numpy as np
 
 port = int(input("Select server port: "))
 client = BerryClient(port=port)
-# Send params for AgentManager
+# Send params for ExperimentManager
 client.send(
     Message.create(
         command=interface.Command.AGENT_MANAGER_CREATE_INSTANCE,

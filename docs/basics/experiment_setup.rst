@@ -13,7 +13,7 @@ To setup an experiment with rlberry, you can use yaml files. You'll need:
 
 * yaml files describing the environments and the agents
 
-* A main python script that reads the files and generates :class:`~rlberry.manager.agent_manager.AgentManager` instances to run each agent.
+* A main python script that reads the files and generates :class:`~rlberry.manager.agent_manager.ExperimentManager` instances to run each agent.
 
 
 This can be done very succinctly as in the example below:

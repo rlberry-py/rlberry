@@ -14,7 +14,7 @@ Agent is slightly tuned, but not optimal. This is just for illustration purpose.
 # sphinx_gallery_thumbnail_path = 'thumbnails/example_plot_atari_atlantis_vectorized_ppo.jpg'
 
 
-from rlberry.manager.agent_manager import AgentManager
+from rlberry.manager.agent_manager import ExperimentManager
 from datetime import datetime
 from rlberry.agents.torch import PPOAgent
 from gymnasium.wrappers.record_video import RecordVideo
@@ -67,7 +67,7 @@ critic_configs = {
 }
 
 
-tuned_agent = AgentManager(
+tuned_agent = ExperimentManager(
     PPOAgent,  # The Agent class.
     (
         atari_make,

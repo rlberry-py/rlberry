@@ -1,6 +1,6 @@
 from rlberry.envs import gym_make
 from rlberry.agents.torch import A2CAgent
-from rlberry.manager import AgentManager
+from rlberry.manager import ExperimentManager
 from rlberry.agents.torch.utils.training import model_factory_from_env
 import numpy as np
 
@@ -24,7 +24,7 @@ def test_a2c_cartpole():
     env_ctor = gym_make
     env_kwargs = dict(id="CartPole-v1")
 
-    rbagent = AgentManager(
+    rbagent = ExperimentManager(
         A2CAgent,
         (env_ctor, env_kwargs),
         agent_name="A2CAgent",

@@ -1,6 +1,6 @@
 import pathlib
 from rlberry.network import interface
-from rlberry.manager import AgentManager
+from rlberry.manager import ExperimentManager
 from rlberry import metadata_utils
 import rlberry.utils.io
 import base64
@@ -24,7 +24,7 @@ def execute_message(
             params["output_dir"] = base_dir / "server_data" / params["output_dir"]
         else:
             params["output_dir"] = base_dir / "server_data/"
-        agent_manager = AgentManager(**params)
+        agent_manager = ExperimentManager(**params)
         filename = str(agent_manager.save())
         response = interface.Message.create(
             info=dict(
@@ -41,7 +41,7 @@ def execute_message(
         filename = message.params["filename"]
         budget = message.params["budget"]
         extra_params = message.params["extra_params"]
-        agent_manager = AgentManager.load(filename)
+        agent_manager = ExperimentManager.load(filename)
         agent_manager.fit(budget, **extra_params)
         agent_manager.save()
         response = interface.Message.create(command=interface.Command.ECHO)
@@ -49,14 +49,14 @@ def execute_message(
     # AGENT_MANAGER_EVAL
     elif message.command == interface.Command.AGENT_MANAGER_EVAL:
         filename = message.params["filename"]
-        agent_manager = AgentManager.load(filename)
+        agent_manager = ExperimentManager.load(filename)
         eval_output = agent_manager.eval_agents(message.params["n_simulations"])
         response = interface.Message.create(data=dict(output=eval_output))
         del agent_manager
     # AGENT_MANAGER_CLEAR_OUTPUT_DIR
     elif message.command == interface.Command.AGENT_MANAGER_CLEAR_OUTPUT_DIR:
         filename = message.params["filename"]
-        agent_manager = AgentManager.load(filename)
+        agent_manager = ExperimentManager.load(filename)
         agent_manager.clear_output_dir()
         response = interface.Message.create(
             message=f"Cleared output dir: {agent_manager.output_dir}"
@@ -65,7 +65,7 @@ def execute_message(
     # AGENT_MANAGER_CLEAR_HANDLERS
     elif message.command == interface.Command.AGENT_MANAGER_CLEAR_HANDLERS:
         filename = message.params["filename"]
-        agent_manager = AgentManager.load(filename)
+        agent_manager = ExperimentManager.load(filename)
         agent_manager.clear_handlers()
         agent_manager.save()
         response = interface.Message.create(message=f"Cleared handlers: {filename}")
@@ -73,14 +73,14 @@ def execute_message(
     # AGENT_MANAGER_SET_WRITER
     elif message.command == interface.Command.AGENT_MANAGER_SET_WRITER:
         filename = message.params["filename"]
-        agent_manager = AgentManager.load(filename)
+        agent_manager = ExperimentManager.load(filename)
         agent_manager.set_writer(**message.params["kwargs"])
         agent_manager.save()
         del agent_manager
     # AGENT_MANAGER_OPTIMIZE_HYPERPARAMS
     elif message.command == interface.Command.AGENT_MANAGER_OPTIMIZE_HYPERPARAMS:
         filename = message.params["filename"]
-        agent_manager = AgentManager.load(filename)
+        agent_manager = ExperimentManager.load(filename)
         best_params_dict = agent_manager.optimize_hyperparams(
             **message.params["kwargs"]
         )
@@ -91,7 +91,7 @@ def execute_message(
     elif message.command == interface.Command.AGENT_MANAGER_GET_WRITER_DATA:
         # writer scalar data
         filename = message.params["filename"]
-        agent_manager = AgentManager.load(filename)
+        agent_manager = ExperimentManager.load(filename)
         writer_data = agent_manager.get_writer_data()
         writer_data = writer_data or dict()
         for idx in writer_data:

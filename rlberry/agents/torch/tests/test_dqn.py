@@ -2,7 +2,7 @@ import pytest
 from rlberry.envs import gym_make
 from rlberry.agents.torch.dqn import DQNAgent
 from rlberry.agents.torch.utils.training import model_factory
-from rlberry.manager.agent_manager import AgentManager
+from rlberry.manager.agent_manager import ExperimentManager
 import os
 import pathlib
 
@@ -89,7 +89,7 @@ def test_dqn_agent_manager_classic_env():
     with tempfile.TemporaryDirectory() as tmpdirname:
         saving_path = tmpdirname + "/agentmanager_test_dqn_classic_env"
 
-        test_agent_manager = AgentManager(
+        test_agent_manager = ExperimentManager(
             DQNAgent,  # The Agent class.
             (
                 gym_make,
@@ -124,7 +124,7 @@ def test_dqn_agent_manager_classic_env():
         # test the loading function
         test_load_env = gym_make("CartPole-v1")
         path_to_load = next(pathlib.Path(saving_path).glob("**/*.pickle"))
-        loaded_agent_manager = AgentManager.load(path_to_load)
+        loaded_agent_manager = ExperimentManager.load(path_to_load)
         assert loaded_agent_manager
 
         # test the agent

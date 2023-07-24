@@ -13,12 +13,12 @@ def fit_stats(stats, save):
 
 class MultipleManagers:
     """
-    Class to fit multiple AgentManager instances in parallel with multiple threads.
+    Class to fit multiple ExperimentManager instances in parallel with multiple threads.
 
     Parameters
     ----------
     max_workers: int, default=None
-        max number of workers (AgentManager instances) fitted at the same time.
+        max number of workers (ExperimentManager instances) fitted at the same time.
     parallelization: {'thread', 'process'}, default: 'process'
         Whether to parallelize  agent training using threads or processes.
     mp_context: {'spawn', 'fork', 'forkserver'}, default: 'spawn'.
@@ -41,23 +41,23 @@ class MultipleManagers:
 
     def append(self, agent_manager):
         """
-        Append new AgentManager instance.
+        Append new ExperimentManager instance.
 
         Parameters
         ----------
-        agent_manager : AgentManager
+        agent_manager : ExperimentManager
         """
         self.instances.append(agent_manager)
 
     def run(self, save=True):
         """
-        Fit AgentManager instances in parallel.
+        Fit ExperimentManager instances in parallel.
 
         Parameters
         ----------
         save: bool, default: True
-            If true, save AgentManager intances immediately after fitting.
-            AgentManager.save() is called.
+            If true, save ExperimentManager intances immediately after fitting.
+            ExperimentManager.save() is called.
         """
         if self.parallelization == "thread":
             executor_class = concurrent.futures.ThreadPoolExecutor
@@ -84,8 +84,8 @@ class MultipleManagers:
 
     def save(self):
         """
-        Pickle AgentManager instances and saves fit statistics in .csv files.
-        The output folder is defined in each of the AgentManager instances.
+        Pickle ExperimentManager instances and saves fit statistics in .csv files.
+        The output folder is defined in each of the ExperimentManager instances.
         """
         for stats in self.instances:
             stats.save()

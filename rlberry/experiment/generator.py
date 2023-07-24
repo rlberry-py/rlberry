@@ -6,17 +6,17 @@ Usage:
 
 Options:
     -h --help                Show this screen.
-    --enable_tensorboard     Enable tensorboard writer in AgentManager.
+    --enable_tensorboard     Enable tensorboard writer in ExperimentManager.
     --n_fit=<nf>             Number of times each agent is fit [default: 4].
     --output_dir=<dir>       Directory to save the results [default: results].
     --parallelization=<par>  Either 'thread' or 'process' [default: process].
-    --max_workers=<workers>  Number of workers used by AgentManager.fit. Set to -1 for the maximum value. [default: -1]
+    --max_workers=<workers>  Number of workers used by ExperimentManager.fit. Set to -1 for the maximum value. [default: -1]
 """
 
 from docopt import docopt
 from pathlib import Path
 from rlberry.experiment.yaml_utils import parse_experiment_config
-from rlberry.manager import AgentManager
+from rlberry.manager import ExperimentManager
 from rlberry import check_packages
 
 import rlberry
@@ -26,7 +26,7 @@ logger = rlberry.logger
 
 def experiment_generator():
     """
-    Parse command line arguments and yields AgentManager instances.
+    Parse command line arguments and yields ExperimentManager instances.
     """
     args = docopt(__doc__)
     max_workers = int(args["--max_workers"])
@@ -47,4 +47,4 @@ def experiment_generator():
                     "Option --enable_tensorboard is not available: tensorboard is not installed."
                 )
 
-        yield AgentManager(**agent_manager_kwargs)
+        yield ExperimentManager(**agent_manager_kwargs)

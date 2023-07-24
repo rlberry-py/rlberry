@@ -22,7 +22,7 @@ def test_atari_make():
 
 
 def test_rendering_with_atari_make():
-    from rlberry.manager.agent_manager import AgentManager
+    from rlberry.manager.agent_manager import ExperimentManager
     from rlberry.agents.torch import PPOAgent
     from gymnasium.wrappers.record_video import RecordVideo
     import os
@@ -69,7 +69,7 @@ def test_rendering_with_atari_make():
             "out_size": 1,
         }
 
-        tuned_agent = AgentManager(
+        tuned_agent = ExperimentManager(
             PPOAgent,  # The Agent class.
             (
                 atari_make,

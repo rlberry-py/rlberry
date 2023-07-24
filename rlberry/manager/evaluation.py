@@ -11,7 +11,7 @@ from itertools import cycle
 import dill
 from distutils.version import LooseVersion
 
-from rlberry.manager import AgentManager
+from rlberry.manager import ExperimentManager
 import rlberry
 
 logger = rlberry.logger
@@ -31,12 +31,12 @@ def evaluate_agents(
 
     Parameters
     ----------
-    agent_manager_list : list of AgentManager objects.
+    agent_manager_list : list of ExperimentManager objects.
     n_simulations: int
-        Number of calls to the eval() method of each AgentManager instance.
+        Number of calls to the eval() method of each ExperimentManager instance.
     choose_random_agents: bool
-        If true and n_fit>1, use a random fitted agent from each AgentManager at each evaluation.
-        Otherwise, each fitted agent of each AgentManager is evaluated n_simulations times.
+        If true and n_fit>1, use a random fitted agent from each ExperimentManager at each evaluation.
+        Otherwise, each fitted agent of each ExperimentManager is evaluated n_simulations times.
     fignum: string or int
         Identifier of plot figure.
     show: bool
@@ -53,11 +53,11 @@ def evaluate_agents(
     Examples
     --------
     >>> from rlberry.agents.torch import A2CAgent, DQNAgent
-    >>> from rlberry.manager import AgentManager, evaluate_agents
+    >>> from rlberry.manager import ExperimentManager, evaluate_agents
     >>> from rlberry.envs import gym_make
     >>>
     >>> if __name__=="__main__":
-    >>>     managers = [ AgentManager(
+    >>>     managers = [ ExperimentManager(
     >>>         agent_class,
     >>>         (gym_make, dict(id="CartPole-v1")),
     >>>         fit_budget=1e4,
@@ -93,7 +93,7 @@ def evaluate_agents(
 
     if len(eval_outputs) == 0:
         logger.error(
-            "[evaluate_agents]: No evaluation data. Make sure AgentManager.fit() has been called."
+            "[evaluate_agents]: No evaluation data. Make sure ExperimentManager.fit() has been called."
         )
         return
 
@@ -134,19 +134,19 @@ def evaluate_agents(
 
 def read_writer_data(data_source, tag=None, preprocess_func=None, id_agent=None):
     """
-    Given a list of AgentManager or a folder, read data (corresponding to info) obtained in each episode.
+    Given a list of ExperimentManager or a folder, read data (corresponding to info) obtained in each episode.
     The dictionary returned by agents' .fit() method must contain a key equal to `info`.
 
     Parameters
     ----------
-    data_source : :class:`~rlberry.manager.AgentManager`, or list of :class:`~rlberry.manager.AgentManager` or str or list of str
-        - If AgentManager or list of AgentManager, load data from it (the agents must be fitted).
+    data_source : :class:`~rlberry.manager.ExperimentManager`, or list of :class:`~rlberry.manager.ExperimentManager` or str or list of str
+        - If ExperimentManager or list of ExperimentManager, load data from it (the agents must be fitted).
 
         - If str, the string must be the string path of a directory,  each
         subdirectory of this directory must contain pickle files.
         Load the data from the directory of the latest experiment in date.
         This str should be equal to the value of the `output_dir` parameter in
-        :class:`~rlberry.manager.AgentManager`.
+        :class:`~rlberry.manager.ExperimentManager`.
 
         - If list of str, each string must be a directory containing pickle files.
         Load the data from these pickle files.
@@ -175,11 +175,11 @@ def read_writer_data(data_source, tag=None, preprocess_func=None, id_agent=None)
     Examples
     --------
     >>> from rlberry.agents.torch import A2CAgent, DQNAgent
-    >>> from rlberry.manager import AgentManager, read_writer_data
+    >>> from rlberry.manager import ExperimentManager, read_writer_data
     >>> from rlberry.envs import gym_make
     >>>
     >>> if __name__=="__main__":
-    >>>     managers = [ AgentManager(
+    >>>     managers = [ ExperimentManager(
     >>>         agent_class,
     >>>         (gym_make, dict(id="CartPole-v1")),
     >>>         fit_budget=1e4,
@@ -196,12 +196,12 @@ def read_writer_data(data_source, tag=None, preprocess_func=None, id_agent=None)
     input_dir = None
 
     if not isinstance(data_source, list):
-        if isinstance(data_source, AgentManager):
+        if isinstance(data_source, ExperimentManager):
             data_source = [data_source]
         else:
             take_last_date = True
     else:
-        if not isinstance(data_source[0], AgentManager):
+        if not isinstance(data_source[0], ExperimentManager):
             take_last_date = False
             for dir in data_source:
                 files = list(Path(dir).iterdir())
@@ -210,7 +210,7 @@ def read_writer_data(data_source, tag=None, preprocess_func=None, id_agent=None)
                         "One of the files in data_source does not contain pickle files"
                     )
 
-    if isinstance(data_source[0], AgentManager):
+    if isinstance(data_source[0], ExperimentManager):
         agent_manager_list = data_source
     else:
         input_dir = data_source
@@ -242,7 +242,7 @@ def read_writer_data(data_source, tag=None, preprocess_func=None, id_agent=None)
                 writer_datas.append(_load_data(filename, agent_dirs[id_f], id_agent))
     else:
         for manager in agent_manager_list:
-            # Important: since manager can be a RemoteAgentManager,
+            # Important: since manager can be a RemoteExperimentManager,
             # it is important to avoid repeated accesses to its methods and properties.
             # That is why writer_data is taken from the manager instance only in
             # the line below.
@@ -264,7 +264,7 @@ def read_writer_data(data_source, tag=None, preprocess_func=None, id_agent=None)
                     processed_df["value"] = preprocess_funcs[id_tag](
                         processed_df["value"].values
                     )
-                    # update name according to AgentManager name and
+                    # update name according to ExperimentManager name and
                     # n_simulation
                     processed_df["name"] = agent_name
                     processed_df["n_simu"] = idx
@@ -296,7 +296,7 @@ def _get_last_xp(input_dir, name):
     if len(datetimes) == 0:
         raise ValueError(
             "input dir not found, verify that the agent are trained "
-            'and that AgentManager.outdir_id_style="timestamp"'
+            'and that ExperimentManager.outdir_id_style="timestamp"'
         )
 
     # get the date of last experiment
@@ -366,7 +366,7 @@ def plot_writer_data(
     plot_raw_curves=True,
 ):
     """
-    Given a list of AgentManager or a folder, plot data (corresponding to info) obtained in each episode.
+    Given a list of ExperimentManager or a folder, plot data (corresponding to info) obtained in each episode.
     The dictionary returned by agents' .fit() method must contain a key equal to `info`.
 
     If there are several simulations, a confidence interval is plotted ( 90% percentile interval if seaborn version >= 0.12.0
@@ -375,14 +375,14 @@ def plot_writer_data(
 
     Parameters
     ----------
-    data_source : :class:`~rlberry.manager.AgentManager`, or list of :class:`~rlberry.manager.AgentManager` or str or list of str
-        - If AgentManager or list of AgentManager, load data from it (the agents must be fitted).
+    data_source : :class:`~rlberry.manager.ExperimentManager`, or list of :class:`~rlberry.manager.ExperimentManager` or str or list of str
+        - If ExperimentManager or list of ExperimentManager, load data from it (the agents must be fitted).
 
         - If str, the string must be the string path of a directory,  each
         subdirectory of this directory must contain pickle files.
         load the data from the directory of the latest experiment in date.
         This str should be equal to the value of the `output_dir` parameter in
-        :class:`~rlberry.manager.AgentManager`.
+        :class:`~rlberry.manager.ExperimentManager`.
 
         - If list of str, each string must be a directory containing pickle files
         load the data from these pickle files.
@@ -425,11 +425,11 @@ def plot_writer_data(
     Examples
     --------
     >>> from rlberry.agents.torch import A2CAgent, DQNAgent
-    >>> from rlberry.manager import AgentManager, plot_writer_data
+    >>> from rlberry.manager import ExperimentManager, plot_writer_data
     >>> from rlberry.envs import gym_make
     >>>
     >>> if __name__=="__main__":
-    >>>     managers = [ AgentManager(
+    >>>     managers = [ ExperimentManager(
     >>>         agent_class,
     >>>         (gym_make, dict(id="CartPole-v1")),
     >>>         fit_budget=4e4,
