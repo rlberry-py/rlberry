@@ -191,7 +191,7 @@ class AgentManager:
         Number of agent instances to fit.
     output_dir : str or :class:`pathlib.Path`
         Directory where to store data.
-    parallelization: {'thread', 'process'}, default: 'thread'
+    parallelization: {'thread', 'process', 'torch'}, default: 'thread'
         Whether to parallelize  agent training using threads or processes.
     max_workers: None or int, default: None
         Number of processes/threads used in a call to fit().
@@ -308,7 +308,7 @@ class AgentManager:
         # check options
         assert outdir_id_style in [None, "unique", "timestamp"]
 
-        # create oject identifier
+        # create project identifier
         self.unique_id = metadata_utils.get_unique_id(self)
         self.timestamp_id = metadata_utils.get_readable_id(self)
 
