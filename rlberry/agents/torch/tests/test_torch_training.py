@@ -6,8 +6,11 @@ from rlberry.agents.torch.utils.training import (
     optimizer_factory,
     model_factory,
     model_factory_from_env,
+    check_network
 )
 from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
+from rlberry.envs.finite import Chain
+from rlberry.envs import gym_make
 from rlberry.agents.torch.utils.models import (
     default_policy_net_fn,
     Net,
@@ -24,6 +27,10 @@ assert isinstance(loss_function_factory("bce"), torch.nn.BCELoss)
 
 # optimizer_factory
 env = get_benchmark_env(level=1)
+
+finite_env = Chain()
+
+cont_act_env = gym_make("Pendulum-v1")
 assert (
     optimizer_factory(default_policy_net_fn(env).parameters(), "ADAM").defaults["lr"]
     == 0.001
@@ -59,11 +66,18 @@ test_net3 = MultiLayerPerceptron(
     in_size=obs_shape[0], layer_sizes=[10], out_size=n_act, is_policy=True
 )
 
+test_net4 = MultiLayerPerceptron(
+    in_size=100, layer_sizes=[10], out_size=n_act
+)
+
+test_net5 = MultiLayerPerceptron(in_size = cont_act_env.observation_space.shape[0], layer_sizes=[10], out_size=cont_act_env.action_space.shape[0])
+
 
 model_factory(net=test_net)
 model_factory_from_env(env, net=test_net)
 model_factory_from_env(env, net=test_net2, out_size=1)
 model_factory_from_env(env, net=test_net3, is_policy=True)
+model_factory_from_env(cont_act_env, net=test_net5)
 
 
 # test loading pretrained nn
@@ -78,6 +92,25 @@ torch.save(dqn_agent._qnet_online, "test_dqn.pickle")
 
 parameters_to_save = dqn_agent._qnet_online.state_dict()
 torch.save(parameters_to_save, "test_dqn.pt")
+torch.save((parameters_to_save, parameters_to_save), "test_dqn2.pt")
+
+try:
+    model_factory(filename="test_dqn2.pt")
+except Exception as err:
+    os.remove("test_dqn2.pt")
+    print(err, "Bad file was removed.")
+
+try:
+    model_factory(type = "dummy")
+except Exception as err:
+    print(err)
+
+
+# This test should fail as 
+# try:
+#     check_network(cont_act_env, test_net)
+# except Exception as err:
+#     print(err)
 
 
 model_factory(filename="test_dqn.pickle")

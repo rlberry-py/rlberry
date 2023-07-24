@@ -166,10 +166,12 @@ def check_network(env, net, **model_config):
 
     if isinstance(env.observation_space, spaces.Box):
         obs_shape = env.observation_space.shape
-    elif isinstance(env.observation_space, spaces.Tuple):
-        obs_shape = env.observation_space.spaces[0].shape
-    elif isinstance(env.observation_space, spaces.Discrete):
-        return model_config
+    else:
+        raise NotImplementedError
+    # elif isinstance(env.observation_space, spaces.Tuple):
+    #     obs_shape = env.observation_space.spaces[0].shape
+    # elif isinstance(env.observation_space, spaces.Discrete):
+    #     return model_config
 
     if net is not None:
         # check that it is compliant with environment
