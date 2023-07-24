@@ -6,7 +6,6 @@ from rlberry.agents.torch.utils.training import (
     optimizer_factory,
     model_factory,
     model_factory_from_env,
-    check_network,
 )
 from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
 from rlberry.envs.finite import Chain
