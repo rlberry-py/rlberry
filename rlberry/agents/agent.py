@@ -25,7 +25,8 @@ class Agent(ABC):
 
     .. note::
 
-        Classes that implement this interface must send ``**kwargs`` to :code:`Agent.__init__()`
+        Classes that implement this interface can send ``**kwargs`` to initiate :code:`Agent.__init__()`,
+        but the keys must match the parameters.
 
     Parameters
     ----------
@@ -50,9 +51,6 @@ class Agent(ABC):
     _thread_shared_data : dict, optional
         Used by :class:`~rlberry.manager.AgentManager` to share data across Agent
         instances created in different threads.
-    **kwargs : dict
-        Classes that implement this interface must send ``**kwargs``
-        to :code:`Agent.__init__()`.
 
     Attributes
     ----------
@@ -63,7 +61,7 @@ class Agent(ABC):
     eval_env : :class:`gym.Env` or tuple (constructor, kwargs)
         Environment on which to evaluate the agent. If None, copied from env.
     writer : object, default: None
-        Writer object (e.g. tensorboard SummaryWriter).
+        Writer object to log the output (e.g. tensorboard SummaryWriter).
     seeder : :class:`~rlberry.seeding.seeder.Seeder`, int, or None
         Seeder/seed for random number generation.
     rng : :class:`numpy.random._generator.Generator`
@@ -91,12 +89,8 @@ class Agent(ABC):
         output_dir: Optional[str] = None,
         _execution_metadata: Optional[metadata_utils.ExecutionMetadata] = None,
         _default_writer_kwargs: Optional[dict] = None,
-        _thread_shared_data: Optional[dict] = None,
-        **kwargs,
+        _thread_shared_data: Optional[dict] = None
     ):
-        # Check if wrong parameters have been sent to an agent.
-        assert kwargs == {}, "Unknown parameters sent to agent:" + str(kwargs.keys())
-
         self.seeder = Seeder(seeder)
         self.env = process_env(env, self.seeder, copy_env=copy_env)
 
@@ -128,8 +122,8 @@ class Agent(ABC):
 
     @property
     def writer(self):
-        """
-        Writer object.
+        """        
+        Writer object to log the output (e.g. tensorboard SummaryWriter).
         """
         return self._writer
 
@@ -166,8 +160,9 @@ class Agent(ABC):
     @abstractmethod
     def fit(self, budget: int, **kwargs):
         """
-
-        Train the agent using the provided environment.
+        Abstract method to be overwriten by the 'inherited agent' developer.
+        
+        Train the agent with a fixed budget, using the provided environment.
 
         Parameters
         ----------
@@ -209,6 +204,7 @@ class Agent(ABC):
     @abstractmethod
     def eval(self, **kwargs):
         """
+        Abstract method to be overwriten by the 'inherited agent' developer.
 
         Returns a float measuring the quality of the agent (e.g. MC policy evaluation).
 
@@ -331,15 +327,17 @@ class Agent(ABC):
 
     @classmethod
     def load(cls, filename, **kwargs):
-        """Load agent object.
-
-        If overridden, save() method must also be overriden.
+        #If overridden, save() method must also be overriden.
+        """Load agent object from filepath.
 
         Parameters
         ----------
+        filename: str
+            Path to the object (pickle) to load.
         **kwargs: dict
-            Arguments to required by the __init__ method of the Agent subclass.
+            Arguments required by the __init__ method of the Agent subclass to load.
         """
+        
         filename = Path(filename).with_suffix(".pickle")
         obj = cls(**kwargs)
 
@@ -365,7 +363,7 @@ class Agent(ABC):
 
     @classmethod
     def _get_param_names(cls):
-        """Get parameter names for the Model"""
+        """Get parameter names for the Agent"""
         # fetch the constructor or the original constructor before
         # deprecation wrapping if any
         init = getattr(cls.__init__, "deprecated_original", cls.__init__)
@@ -373,7 +371,7 @@ class Agent(ABC):
             # No explicit constructor to introspect
             return []
 
-        # introspect the constructor arguments to find the model parameters
+        # introspect the constructor arguments to find the Agent parameters
         # to represent
         init_signature = inspect.signature(init)
         # Consider the constructor parameters excluding 'self'
@@ -418,8 +416,11 @@ class AgentWithSimplePolicy(Agent):
 
     The :meth:`policy` method takes an observation as input and returns an action.
 
-    Classes that implement this interface must send ``**kwargs``
-    to :code:`AgentWithSimplePolicy.__init__()`
+    .. note::
+
+        Classes that implement this interface can send ``**kwargs`` to initiate :code:`AgentWithSimplePolicy.__init__()`,
+        but the keys must match the parameters.
+
 
     Parameters
     ----------
@@ -429,6 +430,8 @@ class AgentWithSimplePolicy(Agent):
         Environment on which to evaluate the agent. If None, copied from env.
     copy_env : bool
         If true, makes a deep copy of the environment.
+    compress_pickle : bool
+        If true, compress the save files using bz2.
     seeder : :class:`~rlberry.seeding.seeder.Seeder`, int, or None
         Seeder/seed for random number generation.
     output_dir : str or Path
@@ -439,9 +442,9 @@ class AgentWithSimplePolicy(Agent):
     _default_writer_kwargs : dict, optional
         Parameters to initialize :class:`~rlberry.utils.writers.DefaultWriter` (attribute self.writer).
         Used by :class:`~rlberry.manager.AgentManager`.
-    **kwargs : dict
-        Classes that implement this interface must send ``**kwargs``
-        to :code:`AgentWithSimplePolicy.__init__()`.
+    _thread_shared_data : dict, optional
+        Used by :class:`~rlberry.manager.AgentManager` to share data across Agent
+        instances created in different threads.
 
     Attributes
     ----------
@@ -452,7 +455,7 @@ class AgentWithSimplePolicy(Agent):
     eval_env : :class:`gym.Env` or tuple (constructor, kwargs)
         Environment on which to evaluate the agent. If None, copied from env.
     writer : object, default: None
-        Writer object (e.g. tensorboard SummaryWriter).
+        Writer object to log the output (e.g. tensorboard SummaryWriter).
     seeder : :class:`~rlberry.seeding.seeder.Seeder`, int, or None
         Seeder/seed for random number generation.
     rng : :class:`numpy.random._generator.Generator`
@@ -464,6 +467,8 @@ class AgentWithSimplePolicy(Agent):
     unique_id : str
         Unique identifier for the agent instance. Can be used, for example,
         to create files/directories for the agent to log data safely.
+    thread_shared_data : dict
+        Data shared by agent instances among different threads.
 
     Examples
     --------
@@ -486,6 +491,8 @@ class AgentWithSimplePolicy(Agent):
     @abstractmethod
     def policy(self, observation):
         """
+        Abstract method to be overwriten by the 'inherited agent' developer.
+
         The policy function takes an observation from the environment and returns an action.
 
         This function is a part of the agent's policy, which defines how the agent interacts with
@@ -512,7 +519,7 @@ class AgentWithSimplePolicy(Agent):
         """
         pass
 
-    def eval(self, eval_horizon=10**5, n_simulations=10, gamma=1.0, **kwargs):
+    def eval(self, eval_horizon=10**5, n_simulations=10, gamma=1.0):
         """
         Monte-Carlo policy evaluation [1]_ method to estimate the value at the initial state.
 
@@ -550,7 +557,7 @@ class AgentWithSimplePolicy(Agent):
         .. [1] Sutton, R. S., & Barto, A. G. (2018). Reinforcement Learning: An Introduction.
             MIT Press.
         """
-        del kwargs  # unused
+        
         episode_rewards = np.zeros(n_simulations)
         for sim in range(n_simulations):
             observation, info = self.eval_env.reset()
@@ -569,7 +576,7 @@ class AgentWithSimplePolicy(Agent):
 
 
 class AgentTorch(Agent):
-    """Interface for torch agent agents to specify the save and load.
+    """Class to inherite for torch agents
 
     Parameters
     ----------
@@ -624,11 +631,8 @@ class AgentTorch(Agent):
     """
 
     def save(self, filename):
+        # Overwrite the 'save' method to manage CPU and GPU with torch agent
         """
-        Overwrite the 'save' function to manage CPU vs GPU  save/load in torch agent
-
-        ----- documentation from original save -----
-
         Save agent object. By default, the agent is pickled.
 
         If overridden, the load() method must also be overriden.
@@ -650,6 +654,7 @@ class AgentTorch(Agent):
         pathlib.Path
             If save() is successful, a Path object corresponding to the filename is returned.
             Otherwise, None is returned.
+
         .. warning:: The returned filename might differ from the input filename: For instance,
         the method can append the correct suffix to the name before saving.
 
@@ -672,21 +677,17 @@ class AgentTorch(Agent):
         try:
             if not self.compress_pickle:
                 with filename.open("wb") as ff:
-                    # pickle.dump(dict_to_save, ff)
                     torch.save(dict_to_save, ff, pickle)
             else:
                 with bz2.BZ2File(filename, "wb") as ff:
-                    # cPickle.dump(dict_to_save, ff)
                     torch.save(dict_to_save, ff, cPickle)
         except Exception as ex:
             try:
                 if not self.compress_pickle:
                     with filename.open("wb") as ff:
-                        # dill.dump(dict_to_save, ff)
                         torch.save(dict_to_save, ff, dill)
                 else:
                     with bz2.BZ2File(filename, "wb") as ff:
-                        # dill.dump(dict_to_save, ff)
                         torch.save(dict_to_save, ff, dill)
             except Exception as ex:
                 logger.warning("Agent instance cannot be pickled: " + str(ex))
@@ -694,19 +695,19 @@ class AgentTorch(Agent):
 
         return filename
 
+    
     @classmethod
     def load(cls, filename, **kwargs):
-        """
-        Overwrite the 'save' and 'load' functions to manage CPU vs GPU  save/load in torch agent.
-
-        ----- documentation from original load -----
-        Load agent object.
-        If overridden, save() method must also be overriden.
+        # Overwrite 'load' method to manage CPU vs GPU with torch agent.
+        # If overridden, save() method must also be overriden.
+        """Load agent object from filepath.
 
         Parameters
         ----------
+        filename: str
+            Path to the object (pickle) to load.
         **kwargs: dict
-            Arguments to required by the __init__ method of the Agent subclass.
+            Arguments required by the __init__ method of the Agent subclass to load.
         """
 
         from rlberry.utils.torch import choose_device
