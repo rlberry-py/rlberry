@@ -33,6 +33,7 @@ def test_multiprocessing():
         fit_budget=10000,
         eval_kwargs=dict(eval_horizon=500),
         n_fit=4,
+        parallelization="process",
     )
 
     agent2 = AgentManager(
@@ -43,20 +44,20 @@ def test_multiprocessing():
         eval_kwargs=dict(eval_horizon=500),
         n_fit=2,
         parallelization="process",
-        mp_context="fork",
     )
 
     start = time()
     agent1.fit()
     end = time()
     agent1_time = end - start
+    print(agent1_time)
 
     start = time()
     agent2.fit()
-    agent2.fit()
     end = time()
     agent2_time = end - start
+    print(2*agent2_time)
 
     assert (
-        agent1_time > agent2_time
-    ), f"The execution time of agent 1 ({agent1_time}), should be greater than the execution time of the agent 2 ({agent2_time})"
+        agent1_time < 2*agent2_time
+    ), f"The execution time of agent 1 ({agent1_time}), should be lower than the execution time of the agent 2 ({agent2_time})"

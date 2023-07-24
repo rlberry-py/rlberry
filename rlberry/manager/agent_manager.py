@@ -13,7 +13,7 @@ import bz2
 import _pickle as cPickle
 import shutil
 import threading
-from torch import multiprocessing
+import multiprocessing
 from multiprocessing.spawn import _check_not_importing_main
 from typing import List, Optional, Tuple, Union
 
