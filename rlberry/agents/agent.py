@@ -485,30 +485,70 @@ class AgentWithSimplePolicy(Agent):
 
     @abstractmethod
     def policy(self, observation):
-        """Returns an action, given an observation."""
+        """
+        The policy function takes an observation from the environment and returns an action.
+
+        This function is a part of the agent's policy, which defines how the agent interacts with
+        the environment. It takes an observation as input and uses its internal knowledge or model
+        to determine the appropriate action to take in the current state of the environment.
+
+        The action returned by this function dictates the agent's behavior, influencing its
+        decision-making process in the given environment. The specific implementation of the policy
+        function depends on the agent's learning algorithm or strategy, which can be deterministic
+        or stochastic.
+
+        Parameters
+        ----------
+        observation (any): An observation from the environment.
+
+        Returns
+        -------
+        action (any): The action to be taken based on the provided observation.
+
+        Notes
+        -----
+        The data type of 'observation' and 'action' can vary depending on the specific agent
+        and the environment it interacts with.
+        """
         pass
 
     def eval(self, eval_horizon=10**5, n_simulations=10, gamma=1.0, **kwargs):
         """
-        Monte-Carlo policy evaluation [1]_ of an agent to estimate the value at the initial state.
+        Monte-Carlo policy evaluation [1]_ method to estimate the value at the initial state.
 
         Parameters
         ----------
-        eval_horizon : int, default: 10**5
-            Horizon, maximum episode length.
-        n_simulations : int, default: 10
-            Number of Monte Carlo simulations.
-        gamma : double, default: 1.0
-            Discount factor.
+        eval_horizon : int, optional, default: 10**5
+            Maximum episode length, representing the horizon for each simulation.
+        n_simulations : int, optional, default: 10
+            Number of Monte Carlo simulations to perform for the evaluation.
+        gamma : float, optional, default: 1.0
+            Discount factor for future rewards.
 
         Returns
         -------
         float
-            Mean over the n simulations of the sum of rewards in each simulation.
+            The mean value over 'n_simulations' of the sum of rewards obtained in each simulation.
+
+        Notes
+        -----
+        Monte-Carlo policy evaluation is a method for estimating the value of a state under a given
+        policy by running multiple simulations (episodes) and averaging the total rewards obtained
+        in each simulation. It is often used for reinforcement learning tasks.
+
+        The 'eval_horizon' parameter determines the maximum number of steps in each simulation, 
+        acting as an episode length constraint.
+
+        The 'n_simulations' parameter specifies how many simulations to run to obtain an average
+        estimate of the value at the initial state.
+
+        The 'gamma' parameter is the discount factor used to weigh future rewards relative to 
+        immediate rewards in the evaluation process.
 
         References
         ----------
-        .. [1] http://incompleteideas.net/book/first/ebook/node50.html
+        .. [1] Sutton, R. S., & Barto, A. G. (2018). Reinforcement Learning: An Introduction.
+            MIT Press.
         """
         del kwargs  # unused
         episode_rewards = np.zeros(n_simulations)
