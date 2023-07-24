@@ -6,7 +6,7 @@ from rlberry.agents.torch.utils.training import (
     optimizer_factory,
     model_factory,
     model_factory_from_env,
-    check_network
+    check_network,
 )
 from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
 from rlberry.envs.finite import Chain
@@ -66,11 +66,13 @@ test_net3 = MultiLayerPerceptron(
     in_size=obs_shape[0], layer_sizes=[10], out_size=n_act, is_policy=True
 )
 
-test_net4 = MultiLayerPerceptron(
-    in_size=100, layer_sizes=[10], out_size=n_act
-)
+test_net4 = MultiLayerPerceptron(in_size=100, layer_sizes=[10], out_size=n_act)
 
-test_net5 = MultiLayerPerceptron(in_size = cont_act_env.observation_space.shape[0], layer_sizes=[10], out_size=cont_act_env.action_space.shape[0])
+test_net5 = MultiLayerPerceptron(
+    in_size=cont_act_env.observation_space.shape[0],
+    layer_sizes=[10],
+    out_size=cont_act_env.action_space.shape[0],
+)
 
 
 model_factory(net=test_net)
@@ -101,12 +103,12 @@ except Exception as err:
     print(err, "Bad file was removed.")
 
 try:
-    model_factory(type = "dummy")
+    model_factory(type="dummy")
 except Exception as err:
     print(err)
 
 
-# This test should fail as 
+# This test should fail as
 # try:
 #     check_network(cont_act_env, test_net)
 # except Exception as err:
