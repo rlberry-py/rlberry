@@ -97,7 +97,9 @@ def load_experiment_results(output_dir, experiment_name):
         try:
             output_data["manager"][agent_name] = ExperimentManager.load(fname)
         except Exception:
-            logger.warning(f"Could not load ExperimentManager instance for {agent_name}.")
+            logger.warning(
+                f"Could not load ExperimentManager instance for {agent_name}."
+            )
         logger.info("... loaded " + str(fname))
 
         # store data frames

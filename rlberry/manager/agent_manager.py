@@ -357,7 +357,9 @@ class ExperimentManager:
             try:
                 self.fit_budget = self.fit_kwargs.pop("fit_budget")
             except KeyError:
-                raise ValueError("[ExperimentManager] fit_budget missing in __init__().")
+                raise ValueError(
+                    "[ExperimentManager] fit_budget missing in __init__()."
+                )
         # extra params per instance
         if init_kwargs_per_instance is not None:
             assert len(init_kwargs_per_instance) == n_fit
@@ -813,7 +815,9 @@ class ExperimentManager:
         try:
             with filename.open("wb") as ff:
                 pickle.dump(self.__dict__, ff)
-            logger.info("Saved ExperimentManager({}) using pickle.".format(self.agent_name))
+            logger.info(
+                "Saved ExperimentManager({}) using pickle.".format(self.agent_name)
+            )
         except Exception:
             try:
                 with filename.open("wb") as ff:
@@ -822,7 +826,9 @@ class ExperimentManager:
                     "Saved ExperimentManager({}) using dill.".format(self.agent_name)
                 )
             except Exception as ex:
-                logger.warning("[ExperimentManager] Instance cannot be pickled: " + str(ex))
+                logger.warning(
+                    "[ExperimentManager] Instance cannot be pickled: " + str(ex)
+                )
 
         return filename
 
