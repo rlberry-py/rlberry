@@ -9,8 +9,7 @@ from rlberry.network.interface import ResourceRequest
 
 from rlberry.agents.torch import REINFORCEAgent
 
-from rlberry.manager import ExperimentManager, MultipleManagers
-from rlberry.manager.remote_agent_manager import RemoteExperimentManager
+from rlberry.manager import ExperimentManager, MultipleManagers, RemoteExperimentManager
 from rlberry.manager.evaluation import evaluate_agents, plot_writer_data
 
 
