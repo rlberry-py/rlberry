@@ -16,16 +16,16 @@ import rlberry
 logger = rlberry.logger
 
 
-class RemoteAgentManager:
+class RemoteExperimentManager:
     """
-    Class to define a client that handles an AgentManager instance in a remote BerryServer.
+    Class to define a client that handles an ExperimentManager instance in a remote BerryServer.
 
     Parameters
     ----------
     client: BerryClient
         Client instance, to communicate with a BerryServer.
     **kwargs:
-        Parameters for AgentManager instance.
+        Parameters for ExperimentManager instance.
         Some parameters (as agent_class, train_env, eval_env) can be defined using a ResourceRequest.
     """
 
@@ -37,7 +37,7 @@ class RemoteAgentManager:
         if client:
             self._client = client
 
-            # Create a remote AgentManager object and keep reference to the filename
+            # Create a remote ExperimentManager object and keep reference to the filename
             # in the server where the object was saved.
             msg = self._client.send(
                 interface.Message.create(
@@ -49,7 +49,9 @@ class RemoteAgentManager:
             if msg.command == interface.Command.RAISE_EXCEPTION:
                 raise Exception(msg.message)
 
-            self._remote_agent_manager_filename = pathlib.Path(msg.info["filename"])
+            self._remote_experiment_manager_filename = pathlib.Path(
+                msg.info["filename"]
+            )
 
             # get useful attributes
             self.agent_name = msg.info["agent_name"]
@@ -60,12 +62,12 @@ class RemoteAgentManager:
 
     @property
     def remote_file(self):
-        return str(self._remote_agent_manager_filename)
+        return str(self._remote_experiment_manager_filename)
 
     def get_writer_data(self):
         """
-        * Calls get_writer_data() in the remote AgentManager and returns the result locally.
-        * If tensorboard data is available in the remote AgentManager, the data is zipped,
+        * Calls get_writer_data() in the remote ExperimentManager and returns the result locally.
+        * If tensorboard data is available in the remote ExperimentManager, the data is zipped,
         received locally and unzipped.
         """
         msg = self._client.send(
@@ -174,11 +176,11 @@ class RemoteAgentManager:
 
     def save(self):
         """
-        Save RemoteAgentManager data to self.output_dir.
+        Save RemoteExperimentManager data to self.output_dir.
 
         Returns
         -------
-        filename where the AgentManager object was saved.
+        filename where the ExperimentManager object was saved.
         """
         # use self.output_dir
         output_dir = self.output_dir
@@ -194,18 +196,22 @@ class RemoteAgentManager:
             with filename.open("wb") as ff:
                 pickle.dump(self.__dict__, ff)
             logger.info(
-                "Saved RemoteAgentManager({}) using pickle.".format(self.agent_name)
+                "Saved RemoteExperimentManager({}) using pickle.".format(
+                    self.agent_name
+                )
             )
         except Exception:
             try:
                 with filename.open("wb") as ff:
                     dill.dump(self.__dict__, ff)
                 logger.info(
-                    "Saved RemoteAgentManager({}) using dill.".format(self.agent_name)
+                    "Saved RemoteExperimentManager({}) using dill.".format(
+                        self.agent_name
+                    )
                 )
             except Exception as ex:
                 logger.warning(
-                    "[RemoteAgentManager] Instance cannot be pickled: " + str(ex)
+                    "[RemoteExperimentManager] Instance cannot be pickled: " + str(ex)
                 )
 
         return filename
@@ -218,11 +224,11 @@ class RemoteAgentManager:
         try:
             with filename.open("rb") as ff:
                 tmp_dict = pickle.load(ff)
-            logger.info("Loaded RemoteAgentManager using pickle.")
+            logger.info("Loaded RemoteExperimentManager using pickle.")
         except Exception:
             with filename.open("rb") as ff:
                 tmp_dict = dill.load(ff)
-            logger.info("Loaded RemoteAgentManager using dill.")
+            logger.info("Loaded RemoteExperimentManager using dill.")
 
         obj.__dict__.clear()
         obj.__dict__.update(tmp_dict)

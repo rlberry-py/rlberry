@@ -1,6 +1,6 @@
 from rlberry.envs.benchmarks.grid_exploration.apple_gold import AppleGold
 from rlberry.agents.mbqvi import MBQVIAgent
-from rlberry.manager import AgentManager, evaluate_agents
+from rlberry.manager import ExperimentManager, evaluate_agents
 import numpy as np
 
 params = {}
@@ -11,7 +11,7 @@ params["horizon"] = None
 
 # hyperparameters from https://github.com/DLR-RM/rl-baselines3-zoo
 def test_mbqvi_applegold():
-    rbagent = AgentManager(
+    rbagent = ExperimentManager(
         MBQVIAgent,
         (AppleGold, None),
         init_kwargs=params,

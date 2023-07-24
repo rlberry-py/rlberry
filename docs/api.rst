@@ -15,7 +15,7 @@ Main classes
   :template: class.rst
 
 
-    manager.AgentManager
+    manager.ExperimentManager
     manager.MultipleManagers
 
 Evaluation and plot
@@ -195,7 +195,7 @@ Check Utilities
    utils.check_save_load
    utils.check_fit_additive
    utils.check_seeding_agent
-   utils.check_agent_manager
+   utils.check_experiment_manager
 
 Logging Utilities
 -----------------
