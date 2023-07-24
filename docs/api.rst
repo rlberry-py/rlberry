@@ -80,21 +80,12 @@ Torch Agents
 .. autosummary::
    :toctree: generated/
    :template: class.rst
-
+   agents.torch.SACAgent
    agents.torch.A2CAgent
    agents.torch.PPOAgent
    agents.torch.DQNAgent
    agents.torch.MunchausenDQNAgent
    agents.torch.REINFORCEAgent
-
-Experimental torch agents
--------------------------
-
-.. autosummary::
-   :toctree: generated/
-   :template: class.rst
-
-   agents.experimental.torch.SACAgent
 
 Environments
 ============
