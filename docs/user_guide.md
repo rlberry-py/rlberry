@@ -8,7 +8,7 @@ In this user guide, we take you through the core features of rlberry and illustr
 ## Set up an experiment
 Some text about an experiment: a comparison of 2 rl agents on a given environment.
 ### Environment
-Some text about MDPs.
+Some text about MDPs. 
 ### Agent
 Some text about what an agent is.
 ### ExperimentManager
