@@ -75,8 +75,12 @@ def test_check_agent():
 def test_check_experiment_manager_almost_equal():
     env = GridWorld
     env_kwargs = {}
-    agent1 = _fit_experiment_manager(ReferenceAgent, (env, env_kwargs)).agent_handlers[0]
-    agent2 = _fit_experiment_manager(ReferenceAgent, (env, env_kwargs)).agent_handlers[0]
+    agent1 = _fit_experiment_manager(ReferenceAgent, (env, env_kwargs)).agent_handlers[
+        0
+    ]
+    agent2 = _fit_experiment_manager(ReferenceAgent, (env, env_kwargs)).agent_handlers[
+        0
+    ]
     agent3 = _fit_experiment_manager(UCBVIAgent, (env, env_kwargs)).agent_handlers[0]
     assert check_agents_almost_equal(agent1, agent2, compare_using="eval")
     assert not check_agents_almost_equal(agent1, agent3)

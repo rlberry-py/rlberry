@@ -49,7 +49,9 @@ class RemoteExperimentManager:
             if msg.command == interface.Command.RAISE_EXCEPTION:
                 raise Exception(msg.message)
 
-            self._remote_experiment_manager_filename = pathlib.Path(msg.info["filename"])
+            self._remote_experiment_manager_filename = pathlib.Path(
+                msg.info["filename"]
+            )
 
             # get useful attributes
             self.agent_name = msg.info["agent_name"]

@@ -283,7 +283,9 @@ def _check_save_load_with_manager(agent, env="continuous_state", init_kwargs=Non
         observation, info = test_env.reset()
 
         for tt in range(50):
-            action = loaded_experiment_manager.get_agent_instances()[0].policy(observation)
+            action = loaded_experiment_manager.get_agent_instances()[0].policy(
+                observation
+            )
             next_observation, reward, terminated, truncated, info = test_env.step(
                 action
             )
@@ -519,7 +521,9 @@ def check_rlberry_agent(agent, env="continuous_state", init_kwargs=None):
     >>> from rlberry.utils import check_rl_agent
     >>> check_rl_agent(UCBVIAgent) #
     """
-    manager = _fit_experiment_manager(agent, env, init_kwargs=init_kwargs).agent_handlers[0]
+    manager = _fit_experiment_manager(
+        agent, env, init_kwargs=init_kwargs
+    ).agent_handlers[0]
     try:
         params = manager.get_params()
     except Exception:
