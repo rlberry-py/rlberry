@@ -11,10 +11,15 @@ import torch.nn as nn
 
 import rlberry
 from rlberry.agents import AgentTorch, AgentWithSimplePolicy
-from rlberry.agents.torch.ppo.ppo_utils import (RolloutBuffer, lambda_returns,
-                                                process_ppo_env)
-from rlberry.agents.torch.utils.models import (default_policy_net_fn,
-                                               default_value_net_fn)
+from rlberry.agents.torch.ppo.ppo_utils import (
+    RolloutBuffer,
+    lambda_returns,
+    process_ppo_env,
+)
+from rlberry.agents.torch.utils.models import (
+    default_policy_net_fn,
+    default_value_net_fn,
+)
 from rlberry.agents.torch.utils.training import optimizer_factory
 from rlberry.envs.utils import process_env
 from rlberry.utils.factory import load

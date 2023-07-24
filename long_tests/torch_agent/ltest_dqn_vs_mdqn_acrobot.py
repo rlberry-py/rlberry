@@ -4,8 +4,7 @@ import seaborn as sns
 from rlberry.agents.torch import DQNAgent
 from rlberry.agents.torch import MunchausenDQNAgent as MDQNAgent
 from rlberry.envs import gym_make
-from rlberry.manager import (ExperimentManager, evaluate_agents,
-                             plot_writer_data)
+from rlberry.manager import ExperimentManager, evaluate_agents, plot_writer_data
 
 
 def test_dqn_vs_mdqn_acro():

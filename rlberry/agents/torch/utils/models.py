@@ -12,8 +12,7 @@ from gymnasium.vector.async_vector_env import AsyncVectorEnv
 from gymnasium.vector.sync_vector_env import SyncVectorEnv
 from torch.distributions import Categorical, Normal
 
-from rlberry.agents.torch.utils.training import (activation_factory,
-                                                 model_factory)
+from rlberry.agents.torch.utils.training import activation_factory, model_factory
 
 
 def default_twinq_net_fn(env):

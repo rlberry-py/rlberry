@@ -4,8 +4,7 @@ from pybullet_envs.env_bases import MJCFBaseBulletEnv
 from pybullet_envs.gym_pendulum_envs import InvertedPendulumBulletEnv
 from pybullet_envs.scene_abstract import SingleRobotEmptyScene
 
-from rlberry.envs.bullet3.pybullet_envs.robot_pendula import (Pendulum,
-                                                              PendulumSwingup)
+from rlberry.envs.bullet3.pybullet_envs.robot_pendula import Pendulum, PendulumSwingup
 
 
 class PendulumBulletEnv(InvertedPendulumBulletEnv):

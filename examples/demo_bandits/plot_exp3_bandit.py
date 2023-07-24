@@ -9,8 +9,12 @@ randomized algorithm.
 
 import numpy as np
 
-from rlberry.agents.bandits import (RandomizedAgent, TSAgent, makeBetaPrior,
-                                    makeEXP3Index)
+from rlberry.agents.bandits import (
+    RandomizedAgent,
+    TSAgent,
+    makeBetaPrior,
+    makeEXP3Index,
+)
 from rlberry.envs.bandits import AdversarialBandit
 from rlberry.manager import ExperimentManager, plot_writer_data
 from rlberry.wrappers import WriterWrapper

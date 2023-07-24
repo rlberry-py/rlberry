@@ -7,8 +7,10 @@ import torch.nn as nn
 
 import rlberry
 from rlberry.agents import AgentTorch, AgentWithSimplePolicy
-from rlberry.agents.torch.utils.models import (default_policy_net_fn,
-                                               default_value_net_fn)
+from rlberry.agents.torch.utils.models import (
+    default_policy_net_fn,
+    default_value_net_fn,
+)
 from rlberry.agents.torch.utils.training import optimizer_factory
 from rlberry.agents.utils.replay import ReplayBuffer
 from rlberry.utils.factory import load

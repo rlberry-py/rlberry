@@ -3,8 +3,7 @@ import seaborn as sns
 
 from rlberry.agents.torch import A2CAgent, PPOAgent
 from rlberry.envs import gym_make
-from rlberry.manager import (ExperimentManager, evaluate_agents,
-                             plot_writer_data)
+from rlberry.manager import ExperimentManager, evaluate_agents, plot_writer_data
 
 
 def test_a2c_vs_ppo_pendul():

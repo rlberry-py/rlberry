@@ -3,9 +3,11 @@ import numpy as np
 
 import rlberry
 from rlberry.agents import AgentWithSimplePolicy
-from rlberry.agents.dynprog.utils import (backward_induction_in_place,
-                                          backward_induction_reward_sd,
-                                          backward_induction_sd)
+from rlberry.agents.dynprog.utils import (
+    backward_induction_in_place,
+    backward_induction_reward_sd,
+    backward_induction_sd,
+)
 from rlberry.exploration_tools.discrete_counter import DiscreteCounter
 
 logger = rlberry.logger

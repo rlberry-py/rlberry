@@ -3,8 +3,7 @@ from gymnasium.spaces import Box, Discrete
 
 import rlberry
 from rlberry.exploration_tools.typing import preprocess_args
-from rlberry.exploration_tools.uncertainty_estimator import \
-    UncertaintyEstimator
+from rlberry.exploration_tools.uncertainty_estimator import UncertaintyEstimator
 from rlberry.utils.jit_setup import numba_jit
 from rlberry.utils.metrics import metric_lp
 

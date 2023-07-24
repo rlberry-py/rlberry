@@ -3,8 +3,7 @@ import numpy as np
 
 import rlberry
 from rlberry.agents.agent import AgentWithSimplePolicy
-from rlberry.agents.dynprog.utils import (backward_induction,
-                                          backward_induction_in_place)
+from rlberry.agents.dynprog.utils import backward_induction, backward_induction_in_place
 from rlberry.agents.kernel_based.common import map_to_representative
 
 logger = rlberry.logger

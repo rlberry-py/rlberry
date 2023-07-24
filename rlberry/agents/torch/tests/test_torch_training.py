@@ -1,8 +1,7 @@
 import torch
 
 from rlberry.agents.torch.utils.models import default_policy_net_fn
-from rlberry.agents.torch.utils.training import (loss_function_factory,
-                                                 optimizer_factory)
+from rlberry.agents.torch.utils.training import loss_function_factory, optimizer_factory
 from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
 
 # loss_function_factory

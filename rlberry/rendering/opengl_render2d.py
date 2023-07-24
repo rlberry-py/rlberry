@@ -16,14 +16,34 @@ _IMPORT_SUCESSFUL = True
 _IMPORT_ERROR_MSG = ""
 try:
     import pygame as pg
-    from OpenGL.GL import (GL_COLOR_BUFFER_BIT, GL_FRONT, GL_LINE_LOOP,
-                           GL_LINE_STRIP, GL_LINES, GL_POINTS, GL_POLYGON,
-                           GL_PROJECTION, GL_QUAD_STRIP, GL_QUADS, GL_RGB,
-                           GL_TRIANGLE_FAN, GL_TRIANGLE_STRIP, GL_TRIANGLES,
-                           GL_UNSIGNED_BYTE, glBegin, glClear, glClearColor,
-                           glColor3f, glEnd, glFlush, glLoadIdentity,
-                           glMatrixMode, glReadBuffer, glReadPixels,
-                           glVertex2f)
+    from OpenGL.GL import (
+        GL_COLOR_BUFFER_BIT,
+        GL_FRONT,
+        GL_LINE_LOOP,
+        GL_LINE_STRIP,
+        GL_LINES,
+        GL_POINTS,
+        GL_POLYGON,
+        GL_PROJECTION,
+        GL_QUAD_STRIP,
+        GL_QUADS,
+        GL_RGB,
+        GL_TRIANGLE_FAN,
+        GL_TRIANGLE_STRIP,
+        GL_TRIANGLES,
+        GL_UNSIGNED_BYTE,
+        glBegin,
+        glClear,
+        glClearColor,
+        glColor3f,
+        glEnd,
+        glFlush,
+        glLoadIdentity,
+        glMatrixMode,
+        glReadBuffer,
+        glReadPixels,
+        glVertex2f,
+    )
     from OpenGL.GLU import gluOrtho2D
     from pygame.locals import DOUBLEBUF, OPENGL
 

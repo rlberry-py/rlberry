@@ -1,8 +1,7 @@
 import numpy as np
 import pytest
 
-from rlberry.spaces import (Box, Dict, Discrete, MultiBinary, MultiDiscrete,
-                            Tuple)
+from rlberry.spaces import Box, Dict, Discrete, MultiBinary, MultiDiscrete, Tuple
 
 
 @pytest.mark.parametrize("n", list(range(1, 10)))

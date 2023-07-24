@@ -8,12 +8,13 @@ from gymnasium import spaces
 import rlberry
 from rlberry import types
 from rlberry.agents import AgentTorch, AgentWithSimplePolicy
-from rlberry.agents.torch.dqn.dqn_utils import (lambda_returns,
-                                                polynomial_schedule)
-from rlberry.agents.torch.utils.training import (loss_function_factory,
-                                                 model_factory,
-                                                 optimizer_factory,
-                                                 size_model_config)
+from rlberry.agents.torch.dqn.dqn_utils import lambda_returns, polynomial_schedule
+from rlberry.agents.torch.utils.training import (
+    loss_function_factory,
+    model_factory,
+    optimizer_factory,
+    size_model_config,
+)
 from rlberry.agents.utils import replay
 from rlberry.utils.factory import load
 from rlberry.utils.torch import choose_device

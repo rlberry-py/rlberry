@@ -9,8 +9,11 @@ import rlberry
 import rlberry.network.server_utils as server_utils
 from rlberry.envs import gym_make
 from rlberry.network import interface
-from rlberry.network.utils import (apply_fn_to_tree, map_request_to_obj,
-                                   serialize_message)
+from rlberry.network.utils import (
+    apply_fn_to_tree,
+    map_request_to_obj,
+    serialize_message,
+)
 
 logger = rlberry.logger
 

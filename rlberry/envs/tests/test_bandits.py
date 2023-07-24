@@ -1,7 +1,11 @@
 import numpy as np
 
-from rlberry.envs.bandits import (AdversarialBandit, BernoulliBandit,
-                                  CorruptedNormalBandit, NormalBandit)
+from rlberry.envs.bandits import (
+    AdversarialBandit,
+    BernoulliBandit,
+    CorruptedNormalBandit,
+    NormalBandit,
+)
 from rlberry.seeding import Seeder, safe_reseed
 
 TEST_SEED = 42

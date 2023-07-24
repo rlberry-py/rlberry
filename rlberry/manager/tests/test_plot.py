@@ -8,8 +8,7 @@ import pytest
 
 from rlberry.agents import UCBVIAgent
 from rlberry.envs import GridWorld
-from rlberry.manager import (ExperimentManager, plot_writer_data,
-                             read_writer_data)
+from rlberry.manager import ExperimentManager, plot_writer_data, read_writer_data
 from rlberry.wrappers import WriterWrapper
 
 

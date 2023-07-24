@@ -5,9 +5,11 @@ import pytest
 from rlberry.agents import UCBVIAgent, ValueIterationAgent
 from rlberry.envs import Chain, GridWorld
 from rlberry.spaces import Box, Dict, Discrete
-from rlberry.utils.check_agent import (_fit_experiment_manager,
-                                       check_agents_almost_equal,
-                                       check_rl_agent)
+from rlberry.utils.check_agent import (
+    _fit_experiment_manager,
+    check_agents_almost_equal,
+    check_rl_agent,
+)
 from rlberry.utils.check_env import check_env
 
 

@@ -9,11 +9,17 @@ how to use subplots in with `plot_writer_data`
 import matplotlib.pyplot as plt
 import numpy as np
 
-from rlberry.agents.bandits import (IndexAgent, RandomizedAgent,
-                                    makeBoundedIMEDIndex, makeBoundedMOSSIndex,
-                                    makeBoundedNPTSIndex, makeBoundedUCBIndex,
-                                    makeBoundedUCBVIndex, makeETCIndex,
-                                    makeEXP3Index)
+from rlberry.agents.bandits import (
+    IndexAgent,
+    RandomizedAgent,
+    makeBoundedIMEDIndex,
+    makeBoundedMOSSIndex,
+    makeBoundedNPTSIndex,
+    makeBoundedUCBIndex,
+    makeBoundedUCBVIndex,
+    makeETCIndex,
+    makeEXP3Index,
+)
 from rlberry.envs.bandits import BernoulliBandit
 from rlberry.manager import ExperimentManager, plot_writer_data
 from rlberry.wrappers import WriterWrapper

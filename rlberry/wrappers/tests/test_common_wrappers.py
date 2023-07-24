@@ -18,13 +18,11 @@ from rlberry.wrappers.tests.old_env.old_four_room import Old_FourRoom
 from rlberry.wrappers.tests.old_env.old_gridworld import Old_GridWorld
 from rlberry.wrappers.tests.old_env.old_mountain_car import Old_MountainCar
 from rlberry.wrappers.tests.old_env.old_nroom import Old_NRoom
-from rlberry.wrappers.tests.old_env.old_pball import (Old_PBall2D,
-                                                      Old_SimplePBallND)
+from rlberry.wrappers.tests.old_env.old_pball import Old_PBall2D, Old_SimplePBallND
 from rlberry.wrappers.tests.old_env.old_pendulum import Old_Pendulum
 from rlberry.wrappers.tests.old_env.old_six_room import Old_SixRoom
 from rlberry.wrappers.tests.old_env.old_twinrooms import Old_TwinRooms
-from rlberry.wrappers.uncertainty_estimator_wrapper import \
-    UncertaintyEstimatorWrapper
+from rlberry.wrappers.uncertainty_estimator_wrapper import UncertaintyEstimatorWrapper
 from rlberry.wrappers.vis2d import Vis2dWrapper
 
 classes = [

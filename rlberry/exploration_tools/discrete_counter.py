@@ -1,8 +1,7 @@
 import numpy as np
 
 from rlberry.exploration_tools.typing import preprocess_args
-from rlberry.exploration_tools.uncertainty_estimator import \
-    UncertaintyEstimator
+from rlberry.exploration_tools.uncertainty_estimator import UncertaintyEstimator
 from rlberry.spaces import Discrete
 from rlberry.utils.space_discretizer import Discretizer
 

@@ -8,8 +8,7 @@ import torch.optim as optim
 
 import rlberry
 from rlberry.agents import AgentTorch, AgentWithSimplePolicy
-from rlberry.agents.torch.sac.sac_utils import (default_policy_net_fn,
-                                                default_q_net_fn)
+from rlberry.agents.torch.sac.sac_utils import default_policy_net_fn, default_q_net_fn
 from rlberry.agents.torch.utils.training import optimizer_factory
 from rlberry.agents.utils.replay import ReplayBuffer
 from rlberry.utils.factory import load

@@ -6,8 +6,12 @@ import pytest
 
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.envs import GridWorld
-from rlberry.manager import (ExperimentManager, evaluate_agents,
-                             plot_writer_data, preset_manager)
+from rlberry.manager import (
+    ExperimentManager,
+    evaluate_agents,
+    plot_writer_data,
+    preset_manager,
+)
 
 
 class DummyAgent(AgentWithSimplePolicy):

@@ -5,8 +5,7 @@
 """
 from rlberry.agents.torch import REINFORCEAgent
 from rlberry.envs.gym_make import gym_make
-from rlberry.manager import (ExperimentManager, MultipleManagers,
-                             RemoteExperimentManager)
+from rlberry.manager import ExperimentManager, MultipleManagers, RemoteExperimentManager
 from rlberry.manager.evaluation import evaluate_agents, plot_writer_data
 from rlberry.network.client import BerryClient
 from rlberry.network.interface import ResourceRequest

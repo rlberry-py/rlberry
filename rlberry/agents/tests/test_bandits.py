@@ -1,11 +1,20 @@
-from rlberry.agents.bandits import (BanditWithSimplePolicy, IndexAgent,
-                                    RandomizedAgent, TSAgent, makeBetaPrior,
-                                    makeBoundedIMEDIndex, makeBoundedMOSSIndex,
-                                    makeBoundedNPTSIndex, makeBoundedUCBIndex,
-                                    makeBoundedUCBVIndex, makeETCIndex,
-                                    makeEXP3Index, makeGaussianPrior,
-                                    makeSubgaussianMOSSIndex,
-                                    makeSubgaussianUCBIndex)
+from rlberry.agents.bandits import (
+    BanditWithSimplePolicy,
+    IndexAgent,
+    RandomizedAgent,
+    TSAgent,
+    makeBetaPrior,
+    makeBoundedIMEDIndex,
+    makeBoundedMOSSIndex,
+    makeBoundedNPTSIndex,
+    makeBoundedUCBIndex,
+    makeBoundedUCBVIndex,
+    makeETCIndex,
+    makeEXP3Index,
+    makeGaussianPrior,
+    makeSubgaussianMOSSIndex,
+    makeSubgaussianUCBIndex,
+)
 from rlberry.envs.bandits import BernoulliBandit, NormalBandit
 from rlberry.utils import check_bandit_agent
 
