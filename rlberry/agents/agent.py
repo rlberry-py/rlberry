@@ -418,7 +418,7 @@ class AgentWithSimplePolicy(Agent):
 
     .. note::
 
-        Classes that implement this interface can send ``**kwargs`` to initiate :code:`AgentWithSimplePolicy.__init__()`,
+        Classes that implements this interface can send `**kwargs` to initiate :code:`AgentWithSimplePolicy.__init__()`,
         but the keys must match the parameters.
 
 
