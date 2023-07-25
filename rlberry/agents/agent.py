@@ -25,7 +25,7 @@ class Agent(ABC):
 
     .. note::
 
-        Classes that implement this interface can send ``**kwargs`` to initiate :code:`Agent.__init__()`,
+        Classes that implements this interface can send `**kwargs` to initiate :code:`Agent.__init__()`,
         but the keys must match the parameters.
 
     Parameters
