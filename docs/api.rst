@@ -51,6 +51,7 @@ Basic Agents
    :toctree: generated/
    :template: class.rst
 
+   agents.AdaptiveQLAgent
    agents.QLAgent
    agents.SARSAAgent
    agents.ValueIterationAgent
