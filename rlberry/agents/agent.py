@@ -417,7 +417,7 @@ class AgentWithSimplePolicy(Agent):
 
     .. notes::
 
-        | 1 - Abstract Class : can't be cannot be instantiated. The abstract methods have to be overwriten by the 'inherited class' agent.  
+        | 1 - Abstract Class : can't be cannot be instantiated. The abstract methods have to be overwriten by the 'inherited class' agent.
         | 2 - Classes that implements this interface can send `**kwargs` to initiate :code:`Agent.__init__()`, but the keys must match the parameters.
 
     Parameters
@@ -490,7 +490,7 @@ class AgentWithSimplePolicy(Agent):
         """
         Abstract method.
 
-        The policy function takes an observation from the environment and returns an action.        
+        The policy function takes an observation from the environment and returns an action.
         The specific implementation of the policy function depends on the agent's learning algorithm
         or strategy, which can be deterministic or stochastic.
 
@@ -513,7 +513,7 @@ class AgentWithSimplePolicy(Agent):
         """
         Monte-Carlo policy evaluation [1]_ method to estimate the mean discounted reward
         using the current policy on the evaluation environment.
-        
+
         Parameters
         ----------
         eval_horizon : int, optional, default: 10**5
