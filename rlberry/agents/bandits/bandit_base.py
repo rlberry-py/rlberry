@@ -21,9 +21,10 @@ class BanditWithSimplePolicy(AgentWithSimplePolicy):
     -----------
     env: rlberry bandit environment
         See :class:`~rlberry.envs.bandits.Bandit`.
-
     tracker_params: dict
         Parameters for the tracker object, typically to decide what to store.
+    **kwargs : Keyword Arguments
+        Can be the above parameters, and/or extraparameters that will be sent to,`AgentWithSimplePolicy.__init__(self, env, **kwargs)` (:class:`~rlberry.agents.AgentWithSimplePolicy`).
 
     """
 
@@ -47,6 +48,8 @@ class BanditWithSimplePolicy(AgentWithSimplePolicy):
         ----------
         budget: int
             Total number of iterations, also called horizon.
+        **kwargs : Keyword Arguments
+            No use here, this parameter come from the parent abstract class (:class:`~rlberry.agents.AgentWithSimplePolicy`).
         """
         horizon = budget
         rewards = np.zeros(horizon)
@@ -64,9 +67,19 @@ class BanditWithSimplePolicy(AgentWithSimplePolicy):
         return info
 
     def policy(self, observation):
+        #This is a basic policy. Should be overwritten by your own implementation.
+        """
+        This is a more basic policy, return the optimal action.
+
+        Parameter
+        ----------
+        observation :
+            No use here, this parameter come from the parent abstract class (:class:`~rlberry.agents.AgentWithSimplePolicy`).
+        """
         return self.optimal_action
 
     def save(self, filename):
+        # If overridden, load() method must also be overriden.
         """
         Save agent object.
 
@@ -103,9 +116,9 @@ class BanditWithSimplePolicy(AgentWithSimplePolicy):
 
     @classmethod
     def load(cls, filename, **kwargs):
+        # If overridden, save() method must also be overriden.
         """Load agent object.
 
-        If overridden, save() method must also be overriden.
 
         Parameters
         ----------
