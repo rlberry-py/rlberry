@@ -15,7 +15,7 @@ from rlberry.agents.bandits import (
     makeEXP3Index,
     makeBetaPrior,
 )
-from rlberry.manager import AgentManager, plot_writer_data
+from rlberry.manager import ExperimentManager, plot_writer_data
 from rlberry.wrappers import WriterWrapper
 
 
@@ -81,7 +81,7 @@ env_kwargs = {"rewards": rewards}
 Agents_class = [EXP3Agent, BernoulliTSAgent]
 
 agents = [
-    AgentManager(
+    ExperimentManager(
         Agent,
         (env_ctor, env_kwargs),
         init_kwargs={},

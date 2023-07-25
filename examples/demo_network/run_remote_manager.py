@@ -9,9 +9,7 @@ from rlberry.network.interface import ResourceRequest
 
 from rlberry.agents.torch import REINFORCEAgent
 
-from rlberry.manager.agent_manager import AgentManager
-from rlberry.manager.multiple_managers import MultipleManagers
-from rlberry.manager.remote_agent_manager import RemoteAgentManager
+from rlberry.manager import ExperimentManager, MultipleManagers, RemoteExperimentManager
 from rlberry.manager.evaluation import evaluate_agents, plot_writer_data
 
 
@@ -21,7 +19,7 @@ if __name__ == "__main__":
 
     FIT_BUDGET = 500
 
-    local_manager = AgentManager(
+    local_manager = ExperimentManager(
         agent_class=REINFORCEAgent,
         train_env=(gym_make, dict(id="CartPole-v1")),
         fit_budget=FIT_BUDGET,
@@ -33,7 +31,7 @@ if __name__ == "__main__":
         parallelization="process",
     )
 
-    remote_manager = RemoteAgentManager(
+    remote_manager = RemoteExperimentManager(
         client,
         agent_class=ResourceRequest(name="REINFORCEAgent"),
         train_env=ResourceRequest(name="gym_make", kwargs=dict(id="CartPole-v1")),
@@ -62,7 +60,7 @@ if __name__ == "__main__":
     # Test save/load
     fname1 = remote_manager.save()
     del remote_manager
-    remote_manager = RemoteAgentManager.load(fname1)
+    remote_manager = RemoteExperimentManager.load(fname1)
 
     # Fit everything in parallel
     mmanagers = MultipleManagers(parallelization="thread")

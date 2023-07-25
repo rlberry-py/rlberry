@@ -26,7 +26,7 @@ Importing required libraries
     from rlberry.agents import UCBVIAgent, AgentWithSimplePolicy
     from rlberry.envs import Chain
     from rlberry.manager import (
-        AgentManager,
+        ExperimentManager,
         evaluate_agents,
         plot_writer_data,
         read_writer_data,
@@ -149,11 +149,11 @@ module :class:`~rlberry.agents.Agent` for more informations.
 Agent Manager
 -------------
 
-One of the main feature of rlberry is its :class:`~rlberry.manager.AgentManager`
+One of the main feature of rlberry is its :class:`~rlberry.manager.ExperimentManager`
 class. Here is a diagram to explain briefly what it does.
 
 
-.. figure:: agent_manager_diagram.png
+.. figure:: experiment_manager_diagram.png
     :align: center
 
 
@@ -183,8 +183,8 @@ then spawn agents as desired during the experiment.
 
 .. code:: python
 
-    # Create AgentManager to fit 1 agent
-    ucbvi_stats = AgentManager(
+    # Create ExperimentManager to fit 1 agent
+    ucbvi_stats = ExperimentManager(
         UCBVIAgent,
         (env_ctor, env_kwargs),
         fit_budget=100,
@@ -194,8 +194,8 @@ then spawn agents as desired during the experiment.
     )
     ucbvi_stats.fit()
 
-    # Create AgentManager for baseline
-    baseline_stats = AgentManager(
+    # Create ExperimentManager for baseline
+    baseline_stats = ExperimentManager(
         RandomAgent,
         (env_ctor, env_kwargs),
         fit_budget=100,
@@ -207,9 +207,9 @@ then spawn agents as desired during the experiment.
 
 .. parsed-literal::
 
-    [INFO] Running AgentManager fit() for UCBVI with n_fit = 1 and max_workers = None.
+    [INFO] Running ExperimentManager fit() for UCBVI with n_fit = 1 and max_workers = None.
     [INFO] ... trained!
-    [INFO] Running AgentManager fit() for RandomAgent with n_fit = 1 and max_workers = None.
+    [INFO] Running ExperimentManager fit() for RandomAgent with n_fit = 1 and max_workers = None.
     [INFO] ... trained!
 
 
@@ -307,8 +307,8 @@ Then, we fit the two agents and plot the data in the writer.
 
 .. code:: python
 
-    # Create AgentManager to fit 4 agents using 1 job
-    ucbvi_stats = AgentManager(
+    # Create ExperimentManager to fit 4 agents using 1 job
+    ucbvi_stats = ExperimentManager(
         UCBVIAgent2,
         (env_ctor, env_kwargs),
         fit_budget=50,
@@ -319,8 +319,8 @@ Then, we fit the two agents and plot the data in the writer.
     )  # mp_context is needed to have parallel computing in notebooks.
     ucbvi_stats.fit()
 
-    # Create AgentManager for baseline
-    baseline_stats = AgentManager(
+    # Create ExperimentManager for baseline
+    baseline_stats = ExperimentManager(
         RandomAgent2,
         (env_ctor, env_kwargs),
         fit_budget=5000,
@@ -330,8 +330,8 @@ Then, we fit the two agents and plot the data in the writer.
     )
     baseline_stats.fit()
 
-    # Create AgentManager for baseline
-    opti_stats = AgentManager(
+    # Create ExperimentManager for baseline
+    opti_stats = ExperimentManager(
         OptimalAgent,
         (env_ctor, env_kwargs),
         fit_budget=5000,
@@ -344,11 +344,11 @@ Then, we fit the two agents and plot the data in the writer.
 
 .. parsed-literal::
 
-    [INFO] Running AgentManager fit() for UCBVIAgent2 with n_fit = 10 and max_workers = None.
+    [INFO] Running ExperimentManager fit() for UCBVIAgent2 with n_fit = 10 and max_workers = None.
     [INFO] ... trained!
-    [INFO] Running AgentManager fit() for RandomAgent2 with n_fit = 10 and max_workers = None.
+    [INFO] Running ExperimentManager fit() for RandomAgent2 with n_fit = 10 and max_workers = None.
     [INFO] ... trained!
-    [INFO] Running AgentManager fit() for OptimalAgent with n_fit = 10 and max_workers = None.
+    [INFO] Running ExperimentManager fit() for OptimalAgent with n_fit = 10 and max_workers = None.
     [INFO] ... trained!
 
 Remark that ``fit_budget`` may not mean the same thing among agents. For

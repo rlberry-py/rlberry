@@ -7,7 +7,7 @@ Libraries
     import pandas as pd
     from rlberry.agents import ValueIterationAgent, AgentWithSimplePolicy
     from rlberry.envs import GridWorld
-    from rlberry.manager import AgentManager, evaluate_agents
+    from rlberry.manager import ExperimentManager, evaluate_agents
 
 
 .. parsed-literal::
@@ -86,8 +86,8 @@ our estimation.
 
 .. code:: ipython3
 
-    # Create AgentManager to fit 4 agents using 1 job
-    vi_stats = AgentManager(
+    # Create ExperimentManager to fit 4 agents using 1 job
+    vi_stats = ExperimentManager(
         ValueIterationAgent,
         (env_ctor, env_kwargs),
         fit_budget=0,
@@ -96,8 +96,8 @@ our estimation.
         n_fit=1)
     vi_stats.fit()
 
-    # Create AgentManager for baseline
-    baseline_stats = AgentManager(
+    # Create ExperimentManager for baseline
+    baseline_stats = ExperimentManager(
         RandomAgent,
         (env_ctor, env_kwargs),
         fit_budget=0,
@@ -108,9 +108,9 @@ our estimation.
 
 .. parsed-literal::
 
-    [INFO] Running AgentManager fit() for ValueIteration...
+    [INFO] Running ExperimentManager fit() for ValueIteration...
     [INFO] ... trained!
-    [INFO] Running AgentManager fit() for RandomAgent...
+    [INFO] Running ExperimentManager fit() for RandomAgent...
     [INFO] ... trained!
 
 
@@ -205,8 +205,8 @@ the variability of our estimation).
 
 .. code:: ipython3
 
-    # Create AgentManager to fit 4 agents using 1 job
-    vi_stats = AgentManager(
+    # Create ExperimentManager to fit 4 agents using 1 job
+    vi_stats = ExperimentManager(
         ValueIterationAgent2,
         (env_ctor, env_kwargs),
         fit_budget=1,
@@ -215,8 +215,8 @@ the variability of our estimation).
         n_fit=4)
     vi_stats.fit()
 
-    # Create AgentManager for baseline
-    baseline_stats = AgentManager(
+    # Create ExperimentManager for baseline
+    baseline_stats = ExperimentManager(
         RandomAgent2,
         (env_ctor, env_kwargs),
         fit_budget=1,
@@ -227,9 +227,9 @@ the variability of our estimation).
 
 .. parsed-literal::
 
-    [INFO] Running AgentManager fit() for ValueIterationAgent2...
+    [INFO] Running ExperimentManager fit() for ValueIterationAgent2...
     [INFO] ... trained!
-    [INFO] Running AgentManager fit() for RandomAgent2...
+    [INFO] Running ExperimentManager fit() for RandomAgent2...
     [INFO] ... trained!
 
 

@@ -15,7 +15,7 @@ Imports
 .. code:: python
 
     from rlberry.envs import gym_make
-    from rlberry.manager import plot_writer_data, AgentManager, evaluate_agents
+    from rlberry.manager import plot_writer_data, ExperimentManager, evaluate_agents
     from rlberry.agents.torch import A2CAgent
     from rlberry.agents.torch.utils.training import model_factory_from_env
 
@@ -149,9 +149,9 @@ default networks are:
 .. code:: python
 
     """
-    The AgentManager class is compact way of experimenting with a deepRL agent.
+    The ExperimentManager class is compact way of experimenting with a deepRL agent.
     """
-    default_agent = AgentManager(
+    default_agent = ExperimentManager(
         A2CAgent,  # The Agent class.
         (gym_make, dict(id="CartPole-v1")),  # The Environment to solve.
         fit_budget=3e5,  # The number of interactions
@@ -182,7 +182,7 @@ default networks are:
 
 .. parsed-literal::
 
-    [INFO] Running AgentManager fit() for A2C default with n_fit = 1 and max_workers = None.
+    [INFO] Running ExperimentManager fit() for A2C default with n_fit = 1 and max_workers = None.
     INFO: Making new env: CartPole-v1
     INFO: Making new env: CartPole-v1
     [INFO] Could not find least used device (nvidia-smi might be missing), use cuda:0 instead
@@ -353,7 +353,7 @@ and bigger batch size to have more stable training.
 
 .. code:: python
 
-    tuned_agent = AgentManager(
+    tuned_agent = ExperimentManager(
         A2CAgent,  # The Agent class.
         (gym_make, dict(id="CartPole-v1")),  # The Environment to solve.
         init_kwargs=dict(  # Where to put the agent's hyperparameters
@@ -399,7 +399,7 @@ and bigger batch size to have more stable training.
 
 .. parsed-literal::
 
-    [INFO] Running AgentManager fit() for A2C tuned with n_fit = 1 and max_workers = None.
+    [INFO] Running ExperimentManager fit() for A2C tuned with n_fit = 1 and max_workers = None.
     INFO: Making new env: CartPole-v1
     INFO: Making new env: CartPole-v1
     [INFO] Could not find least used device (nvidia-smi might be missing), use cuda:0 instead

@@ -5,10 +5,13 @@ Changelog
 
 Dev version
 -----------
+*PR #326*
+
+ * Moved SAC from experimental to torch agents. Tested and benchmarked.
+
 *PR #335*
 
  * Upgrade from Python3.9 -> python3.10
-
 
 Version 0.5.0
 -------------
@@ -95,7 +98,7 @@ Version 0.3.0
 
 *PR #191*
 
-* Possibility to generate a profile with :class:`rlberry.agents.manager.AgentManager`.
+* Possibility to generate a profile with :class:`rlberry.agents.manager.ExperimentManager`.
 
 *PR #148, #161, #180*
 
@@ -113,8 +116,8 @@ Version 0.3.0
 *Feb 22, 2022 (PR #126)*
 
 * Setup :code:`rlberry.__version__` (currently 0.3.0dev0)
-* Record rlberry version in a AgentManager attribute equality of AgentManagers
-* Override :code:`__eq__` method of the AgentManager class.
+* Record rlberry version in a ExperimentManager attribute equality of ExperimentManagers
+* Override :code:`__eq__` method of the ExperimentManager class.
 
 *Feb 14-15, 2022 (PR #97, #118)*
 
@@ -126,10 +129,10 @@ Version 0.3.0
 *Feb 11, 2022 (#83, #95)*
 
 * (fix) Fixed bug in :meth:`FiniteMDP.sample()`: terminal state was being checked with `self.state` instead of given `state`
-* (feat) Option to use 'fork' or 'spawn' in :class:`~rlberry.manager.AgentManager`
-* (feat) AgentManager output_dir now has a timestamp and a short ID by default.
+* (feat) Option to use 'fork' or 'spawn' in :class:`~rlberry.manager.ExperimentManager`
+* (feat) ExperimentManager output_dir now has a timestamp and a short ID by default.
 * (feat) Gridworld can be constructed from string layout
-* (feat) `max_workers` argument for :class:`~rlberry.manager.AgentManager` to control the maximum number of processes/threads created by the :meth:`fit` method.
+* (feat) `max_workers` argument for :class:`~rlberry.manager.ExperimentManager` to control the maximum number of processes/threads created by the :meth:`fit` method.
 
 
 *Feb 04, 2022*
@@ -145,12 +148,12 @@ Version 0.2.1
 -------------
 
 
-* :class:`~rlberry.agents.Agent` and :class:`~rlberry.manager.AgentManager` both have a unique_id attribute (useful for creating unique output files/directories).
+* :class:`~rlberry.agents.Agent` and :class:`~rlberry.manager.ExperimentManager` both have a unique_id attribute (useful for creating unique output files/directories).
 * `DefaultWriter` is now initialized in base class `Agent` and (optionally) wraps a tensorboard `SummaryWriter`.
-* :class:`~rlberry.manager.AgentManager` has an option enable_tensorboard that activates tensorboard logging in each of its Agents (with their writer attribute). The log_dirs of tensorboard are automatically assigned by :class:`~rlberry.manager.AgentManager`.
-* `RemoteAgentManager` receives tensorboard data created in the server, when the method `get_writer_data()` is called. This is done by a zip file transfer with :class:`~rlberry.network`.
+* :class:`~rlberry.manager.ExperimentManager` has an option enable_tensorboard that activates tensorboard logging in each of its Agents (with their writer attribute). The log_dirs of tensorboard are automatically assigned by :class:`~rlberry.manager.ExperimentManager`.
+* `RemoteExperimentManager` receives tensorboard data created in the server, when the method `get_writer_data()` is called. This is done by a zip file transfer with :class:`~rlberry.network`.
 * `BaseWrapper` and `gym_make` now have an option `wrap_spaces`. If set to `True`, this option converts `gym.spaces` to `rlberry.spaces`, which provides classes with better seeding (using numpy's default_rng instead of `RandomState`)
-* :class:`~rlberry.manager.AgentManager`: new method `get_agent_instances()` that returns trained instances
+* :class:`~rlberry.manager.ExperimentManager`: new method `get_agent_instances()` that returns trained instances
 * `plot_writer_data`: possibility to set `xtag` (tag used for x-axis)
 * Fixed agent initialization bug in `AgentHandler` (`eval_env` missing in `kwargs` for agent_class).
 
@@ -158,11 +161,11 @@ Version 0.2.1
 Version 0.2
 -----------
 
-* `AgentStats` renamed to :class:`~rlberry.manager.AgentManager`.
-* :class:`~rlberry.manager.AgentManager` can handle agents that cannot be pickled.
+* `AgentStats` renamed to :class:`~rlberry.manager.ExperimentManager`.
+* :class:`~rlberry.manager.ExperimentManager` can handle agents that cannot be pickled.
 * Agent interface requires `eval()` method instead of `policy()` to handle more general agents (e.g. reward-free, POMDPs etc).
 * Multi-processing and multi-threading are now done with `ProcessPoolExecutor` and `ThreadPoolExecutor` (allowing nested processes for example). Processes are created with spawn (jax does not work with fork, see #51).
 * JAX implementation of DQN and replay buffer using reverb (experimental).
 * :class:`~rlberry.network`: server and client interfaces to exchange messages via sockets (experimental).
-* `RemoteAgentManager` to train agents in a remote server and gather the results locally (experimental).
+* `RemoteExperimentManager` to train agents in a remote server and gather the results locally (experimental).
 * Fix rendering bug with OpenGL

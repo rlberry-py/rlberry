@@ -98,13 +98,13 @@ class RandomAgent(AgentWithSimplePolicy):
         return self.env.action_space.sample()
 
 
-from rlberry.manager import AgentManager, evaluate_agents
+from rlberry.manager import ExperimentManager, evaluate_agents
 
 # Define parameters
 vi_params = {"gamma": 0.1, "epsilon": 1e-3}
 
-# Create AgentManager to fit 4 agents using 1 job
-vi_stats = AgentManager(
+# Create ExperimentManager to fit 4 agents using 1 job
+vi_stats = ExperimentManager(
     ValueIterationAgent,
     (env_ctor, env_kwargs),
     fit_budget=0,
@@ -114,8 +114,8 @@ vi_stats = AgentManager(
 )
 vi_stats.fit()
 
-# Create AgentManager for baseline
-baseline_stats = AgentManager(
+# Create ExperimentManager for baseline
+baseline_stats = ExperimentManager(
     RandomAgent,
     (env_ctor, env_kwargs),
     fit_budget=0,

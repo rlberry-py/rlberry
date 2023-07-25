@@ -1,5 +1,5 @@
 from rlberry.envs.bandits import BernoulliBandit
-from rlberry.manager import AgentManager
+from rlberry.manager import ExperimentManager
 
 
 def check_bandit_agent(Agent, environment=BernoulliBandit, seed=42):
@@ -40,10 +40,10 @@ def check_bandit_agent(Agent, environment=BernoulliBandit, seed=42):
     env_ctor = environment
     env_kwargs = {}
 
-    agent1 = AgentManager(
+    agent1 = ExperimentManager(
         Agent, (env_ctor, env_kwargs), fit_budget=10, n_fit=1, seed=seed
     )
-    agent2 = AgentManager(
+    agent2 = ExperimentManager(
         Agent, (env_ctor, env_kwargs), fit_budget=10, n_fit=1, seed=seed
     )
 

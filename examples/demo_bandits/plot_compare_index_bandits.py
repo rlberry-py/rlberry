@@ -9,7 +9,7 @@ how to use subplots in with `plot_writer_data`
 import numpy as np
 import matplotlib.pyplot as plt
 from rlberry.envs.bandits import BernoulliBandit
-from rlberry.manager import AgentManager, plot_writer_data
+from rlberry.manager import ExperimentManager, plot_writer_data
 from rlberry.wrappers import WriterWrapper
 from rlberry.agents.bandits import (
     IndexAgent,
@@ -129,7 +129,7 @@ Agents_class = [
 ]
 
 agents = [
-    AgentManager(
+    ExperimentManager(
         Agent,
         (env_ctor, env_kwargs),
         fit_budget=T,
