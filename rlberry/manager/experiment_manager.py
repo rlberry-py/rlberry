@@ -577,13 +577,13 @@ class ExperimentManager:
 
         Examples
         --------
-        >>> from rlberry.agents import AgentManager
+        >>> from rlberry.agents import ExperimentManager
         >>> eval_kwargs = {
             'horizon': 1000,
             'n_simulations': 10,
             'gamma': 0.99
         }
-        >>> agent_manager = AgentManager(..., eval_kwargs=eval_kwargs)
+        >>> agent_manager = ExperimentManager(..., eval_kwargs=eval_kwargs)
         >>> # evaluation_results will return 5 values (n_simulations=5) where each value is the Monte-Carlo
         >>> # evaluation over 10 simulations ((eval_kwargs["n_simulation"]))
         >>> evaluation_results = agent_manager.eval_agents(n_simulations=5, verbose=True)
