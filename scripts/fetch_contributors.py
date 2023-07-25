@@ -29,7 +29,7 @@ MEMBERS = [
     "JulienT01",
     "riiswa",
     "brahimdriss",
-    "RemyDegenne"
+    "RemyDegenne",
 ]
 
 
