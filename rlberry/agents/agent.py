@@ -557,7 +557,7 @@ class AgentTorch(Agent):
     # Need a specific save and load to manage torch.
     """
     Abstract Class to inherit for torch agents.
-    
+
     This class use the 'torch' functions to save/load agents.
 
     .. note::
