@@ -9,7 +9,7 @@ This script shows how to define a bandit environment and an UCB Index-based algo
 import numpy as np
 from rlberry.envs.bandits import NormalBandit
 from rlberry.agents.bandits import IndexAgent, makeSubgaussianUCBIndex
-from rlberry.manager import AgentManager, plot_writer_data
+from rlberry.manager import ExperimentManager, plot_writer_data
 import matplotlib.pyplot as plt
 from rlberry.wrappers import WriterWrapper
 
@@ -38,7 +38,7 @@ M = 20  # number of MC simu
 env_ctor = NormalBandit
 env_kwargs = {"means": means, "stds": 2 * np.ones(len(means))}
 
-agent = AgentManager(
+agent = ExperimentManager(
     UCBAgent,
     (env_ctor, env_kwargs),
     fit_budget=T,

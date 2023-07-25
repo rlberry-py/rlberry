@@ -24,7 +24,7 @@ class DefaultWriter:
     Default writer to be used by the agents, optionally wraps an instance of tensorboard.SummaryWriter.
 
     Can be used in the fit() method of the agents, so
-    that training data can be handled by AgentManager and RemoteAgentManager.
+    that training data can be handled by ExperimentManager and RemoteExperimentManager.
 
     Parameters
     ----------

@@ -10,7 +10,7 @@
 import pytest
 from rlberry.envs import Wrapper
 from rlberry.agents.torch import PPOAgent
-from rlberry.manager import AgentManager, evaluate_agents
+from rlberry.manager import ExperimentManager, evaluate_agents
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
 from gymnasium import make
 from rlberry.agents.torch.utils.training import model_factory_from_env
@@ -25,7 +25,7 @@ def test_ppo():
     env_ctor = Wrapper
     env_kwargs = dict(env=mdp)
 
-    pporlberry_stats = AgentManager(
+    pporlberry_stats = ExperimentManager(
         PPOAgent,
         (env_ctor, env_kwargs),
         fit_budget=int(132),
@@ -45,7 +45,7 @@ def test_ppo():
     env_ctor = Wrapper
     env_kwargs = dict(env=mdp)
 
-    pporlberry_stats = AgentManager(
+    pporlberry_stats = ExperimentManager(
         PPOAgent,
         (env_ctor, env_kwargs),
         fit_budget=int(132),
@@ -65,7 +65,7 @@ def test_ppo():
     env_ctor = Wrapper
     env_kwargs = dict(env=mdp)
 
-    pporlberry_stats = AgentManager(
+    pporlberry_stats = ExperimentManager(
         PPOAgent,
         (env_ctor, env_kwargs),
         fit_budget=int(132),
@@ -82,7 +82,7 @@ def test_ppo():
 
     env_ctor = PBall2D
     env_kwargs = dict()
-    pporlberry_stats = AgentManager(
+    pporlberry_stats = ExperimentManager(
         PPOAgent,
         (env_ctor, env_kwargs),
         fit_budget=int(132),
@@ -103,7 +103,7 @@ def test_ppo():
     env_ctor = Wrapper
     env_kwargs = dict(env=mdp)
 
-    pporlberry_stats = AgentManager(
+    pporlberry_stats = ExperimentManager(
         PPOAgent,
         (env_ctor, env_kwargs),
         fit_budget=int(132),
@@ -133,7 +133,7 @@ def test_ppo():
     )
     pporlberry_stats.fit()
 
-    pporlberry_stats = AgentManager(
+    pporlberry_stats = ExperimentManager(
         PPOAgent,
         (env_ctor, env_kwargs),
         fit_budget=int(132),
@@ -168,7 +168,7 @@ def test_ppo():
 
     env_ctor = PBall2D
     env_kwargs = dict()
-    pporlberry_stats = AgentManager(
+    pporlberry_stats = ExperimentManager(
         PPOAgent,
         (env_ctor, env_kwargs),
         fit_budget=int(132),
@@ -183,7 +183,7 @@ def test_ppo():
     output = evaluate_agents([pporlberry_stats], n_simulations=2, plot=False)
     pporlberry_stats.clear_output_dir()
 
-    pporlberry_stats = AgentManager(
+    pporlberry_stats = ExperimentManager(
         PPOAgent,
         (env_ctor, env_kwargs),
         fit_budget=int(132),

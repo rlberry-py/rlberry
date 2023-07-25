@@ -14,7 +14,7 @@ and finally definition of the experiment.
 """
 import numpy as np
 
-from rlberry.manager import AgentManager, read_writer_data
+from rlberry.manager import ExperimentManager, read_writer_data
 from rlberry.envs.interface import Model
 from rlberry.agents.bandits import BanditWithSimplePolicy
 from rlberry.wrappers import WriterWrapper
@@ -158,7 +158,7 @@ class SeqHalvAgent(BanditWithSimplePolicy):
 
 # Experiment
 
-agent = AgentManager(
+agent = ExperimentManager(
     SeqHalvAgent,
     (env_ctor, env_kwargs),
     fit_budget=100,  # we use only 100 iterations for faster example run in doc.

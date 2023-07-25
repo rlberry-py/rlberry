@@ -1,6 +1,6 @@
 from rlberry.envs import gym_make
 from rlberry.agents.torch import DQNAgent
-from rlberry.manager import AgentManager, evaluate_agents
+from rlberry.manager import ExperimentManager, evaluate_agents
 import numpy as np
 
 model_configs = {
@@ -15,7 +15,7 @@ def test_dqn_montaincar():
     env_ctor = gym_make
     env_kwargs = dict(id="MountainCar-v0")
 
-    rbagent = AgentManager(
+    rbagent = ExperimentManager(
         DQNAgent,
         (env_ctor, env_kwargs),
         init_kwargs=dict(

@@ -4,7 +4,7 @@ Parallelization in rlberry
 ==========================
 
 rlberry use python's standard multiprocessing library to execute the fit of agents in parallel on cpus. The parallelization is done via
-:class:`~rlberry.manager.AgentManager` and via :class:`~rlberry.manager.MultipleManagers`.
+:class:`~rlberry.manager.ExperimentManager` and via :class:`~rlberry.manager.MultipleManagers`.
 
 If a user wants to use a third-party parallelization library like joblib, the user must be aware of where the seeding is done so as not to bias the results. rlberry automatically handles seeding when the native parallelization scheme are used.
 
@@ -19,9 +19,9 @@ having practically no parallelization except if the code executed in each thread
 Process: spawn or forkserver
 ----------------------------
 
-To have an efficient parallelization, it is often better to use processes (see the doc on `python's website <https://docs.python.org/3/library/multiprocessing.html#module-multiprocessing>`_) using the parameter :code:`parallelization="process"` in :class:`~rlberry.manager.AgentManager` or :class:`~rlberry.manager.MultipleManagers`.
+To have an efficient parallelization, it is often better to use processes (see the doc on `python's website <https://docs.python.org/3/library/multiprocessing.html#module-multiprocessing>`_) using the parameter :code:`parallelization="process"` in :class:`~rlberry.manager.ExperimentManager` or :class:`~rlberry.manager.MultipleManagers`.
 
-This implies that a new process will be launched for each fit of the AgentManager.
+This implies that a new process will be launched for each fit of the ExperimentManager.
 
 The advised method of parallelization is spawn (parameter :code:`mp_context="spawn"`), however spawn method has several drawbacks:
 
@@ -30,14 +30,14 @@ The advised method of parallelization is spawn (parameter :code:`mp_context="spa
 .. code:: python
 
     from rlberry.agents.torch import A2CAgent
-    from rlberry.manager import AgentManager
+    from rlberry.manager import ExperimentManager
     from rlberry.envs.benchmarks.ball_exploration import PBall2D
 
     n_steps = 1e5
     batch_size = 256
 
     if __name__ == "__main__":
-        manager = AgentManager(
+        manager = ExperimentManager(
             A2CAgent,
             (PBall2D, {}),
             init_kwargs=dict(batch_size=batch_size, gamma=0.99, learning_rate=0.001),
