@@ -28,6 +28,8 @@ MEMBERS = [
     "KohlerHECTOR",
     "JulienT01",
     "riiswa",
+    "brahimdriss",
+    "RemyDegenne"
 ]
 
 

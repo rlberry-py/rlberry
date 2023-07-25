@@ -10,12 +10,20 @@
     <p>AleShi94</p>
     </div>
     <div>
+    <a href='https://github.com/brahimdriss'><img src='https://avatars.githubusercontent.com/u/59141044?v=4' class='avatar' /></a> <br />
+    <p>brahimdriss</p>
+    </div>
+    <div>
     <a href='https://github.com/mmcenta'><img src='https://avatars.githubusercontent.com/u/55272933?v=4' class='avatar' /></a> <br />
     <p>Matheus M. Centa</p>
     </div>
     <div>
     <a href='https://github.com/omardrwch'><img src='https://avatars.githubusercontent.com/u/10488512?v=4' class='avatar' /></a> <br />
     <p>Omar D.</p>
+    </div>
+    <div>
+    <a href='https://github.com/RemyDegenne'><img src='https://avatars.githubusercontent.com/u/4094732?v=4' class='avatar' /></a> <br />
+    <p>Rémy Degenne</p>
     </div>
     <div>
     <a href='https://github.com/yfletberliac'><img src='https://avatars.githubusercontent.com/u/14262199?v=4' class='avatar' /></a> <br />
