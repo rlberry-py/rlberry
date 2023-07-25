@@ -24,7 +24,7 @@ import numpy as np
 
 from rlberry.wrappers import WriterWrapper
 from rlberry.envs import GridWorld
-from rlberry.manager import plot_writer_data, AgentManager
+from rlberry.manager import plot_writer_data, ExperimentManager
 from rlberry.agents import UCBVIAgent
 import matplotlib.pyplot as plt
 
@@ -53,7 +53,7 @@ env_kwargs = dict(
 )
 
 env = env_ctor(**env_kwargs)
-agent = AgentManager(VIAgent, (env_ctor, env_kwargs), fit_budget=10, n_fit=3)
+agent = ExperimentManager(VIAgent, (env_ctor, env_kwargs), fit_budget=10, n_fit=3)
 
 agent.fit(budget=10)
 # comment the line above if you only want to load data from rlberry_data.

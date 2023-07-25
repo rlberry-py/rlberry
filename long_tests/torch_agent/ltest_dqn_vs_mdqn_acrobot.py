@@ -1,7 +1,7 @@
 from rlberry.envs import gym_make
 from rlberry.agents.torch import DQNAgent
 from rlberry.agents.torch import MunchausenDQNAgent as MDQNAgent
-from rlberry.manager import AgentManager, evaluate_agents, plot_writer_data
+from rlberry.manager import ExperimentManager, evaluate_agents, plot_writer_data
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -49,7 +49,7 @@ def test_dqn_vs_mdqn_acro():
         learning_starts=5_000,
     )
 
-    dqnagent = AgentManager(
+    dqnagent = ExperimentManager(
         DQNAgent,
         (env_ctor, env_kwargs),
         init_kwargs=dqn_init_kwargs,
@@ -60,7 +60,7 @@ def test_dqn_vs_mdqn_acro():
         # mp_context="fork",
     )
 
-    mdqnagent = AgentManager(
+    mdqnagent = ExperimentManager(
         MDQNAgent,
         (env_ctor, env_kwargs),
         init_kwargs=mdqn_init_kwargs,

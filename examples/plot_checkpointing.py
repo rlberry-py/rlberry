@@ -9,7 +9,7 @@ This is a minimal example of how to create checkpoints while training
 your agents, and how to restore from a previous checkpoint.
 """
 from rlberry.agents import Agent
-from rlberry.manager import AgentManager
+from rlberry.manager import ExperimentManager
 from rlberry.manager import plot_writer_data
 
 
@@ -55,19 +55,19 @@ class MyAgent(Agent):
 
 
 if __name__ == "__main__":
-    manager = AgentManager(
+    manager = ExperimentManager(
         MyAgent,
         fit_budget=-1,
         n_fit=2,
         seed=123,
     )
     # Save manager **before** fit for several timesteps! So that we can see why checkpoints are useful:
-    # even if AgentManager is interrupted, it can be loaded and continue training
+    # even if ExperimentManager is interrupted, it can be loaded and continue training
     # from last checkpoint.
-    # But first, we need an initial call to AgentManager.fit() (for zero or a small number of timesteps),
-    # so that AgentManager can instantiate MyAgent and it can start checkpointing itself.
+    # But first, we need an initial call to ExperimentManager.fit() (for zero or a small number of timesteps),
+    # so that ExperimentManager can instantiate MyAgent and it can start checkpointing itself.
     # This is because the __init__ method of MyAgent is only executed
-    # after the first call to AgentManager.fit().
+    # after the first call to ExperimentManager.fit().
     manager.fit(0)
     manager_file = manager.save()
     print(f"\n Saved manager at {manager_file}.\n")
@@ -82,7 +82,7 @@ if __name__ == "__main__":
 
     # Load manager and continue training from last checkpoint
     print(f"\n Loading manager from {manager_file}.\n")
-    loaded_manager = AgentManager.load(manager_file)
+    loaded_manager = ExperimentManager.load(manager_file)
     # Fit for 500 more timesteps
     loaded_manager.fit(500)
 

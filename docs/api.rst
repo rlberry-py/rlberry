@@ -15,7 +15,7 @@ Main classes
   :template: class.rst
 
 
-    manager.AgentManager
+    manager.ExperimentManager
     manager.MultipleManagers
 
 Evaluation and plot
@@ -82,20 +82,13 @@ Torch Agents
    :toctree: generated/
    :template: class.rst
 
+   agents.torch.SACAgent
    agents.torch.A2CAgent
    agents.torch.PPOAgent
    agents.torch.DQNAgent
    agents.torch.MunchausenDQNAgent
    agents.torch.REINFORCEAgent
 
-Experimental torch agents
--------------------------
-
-.. autosummary::
-   :toctree: generated/
-   :template: class.rst
-
-   agents.experimental.torch.SACAgent
 
 Environments
 ============
@@ -203,7 +196,7 @@ Check Utilities
    utils.check_save_load
    utils.check_fit_additive
    utils.check_seeding_agent
-   utils.check_agent_manager
+   utils.check_experiment_manager
 
 Logging Utilities
 -----------------
