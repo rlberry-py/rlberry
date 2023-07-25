@@ -1,7 +1,7 @@
-import pytest
 import numpy as np
-from rlberry.envs import GridWorld
-from rlberry.envs import MountainCar
+import pytest
+
+from rlberry.envs import GridWorld, MountainCar
 from rlberry.envs.benchmarks.grid_exploration.nroom import NRoom
 from rlberry.exploration_tools.discrete_counter import DiscreteCounter
 from rlberry.exploration_tools.online_discretization_counter import (

@@ -13,9 +13,10 @@ Agent is slightly tuned, but not optimal. This is just for illustration purpose.
 """
 # sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_springcartpole.jpg'
 
-from rlberry.envs.classic_control import SpringCartPole
-from rlberry.agents.torch import DQNAgent
 from gymnasium.wrappers.time_limit import TimeLimit
+
+from rlberry.agents.torch import DQNAgent
+from rlberry.envs.classic_control import SpringCartPole
 
 model_configs = {
     "type": "MultiLayerPerceptron",

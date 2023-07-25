@@ -1,18 +1,19 @@
+import bz2
+import pickle
+from datetime import datetime
+from distutils.version import LooseVersion
+from itertools import cycle
+from pathlib import Path
+
+import _pickle as cPickle
+import dill
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from pathlib import Path
-from datetime import datetime
-import pickle
-import bz2
-import _pickle as cPickle
-from itertools import cycle
-import dill
-from distutils.version import LooseVersion
 
-from rlberry.manager import ExperimentManager
 import rlberry
+from rlberry.manager import ExperimentManager
 
 logger = rlberry.logger
 

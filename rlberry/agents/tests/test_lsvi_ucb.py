@@ -1,8 +1,9 @@
 import numpy as np
 import pytest
+
+from rlberry.agents.dynprog import ValueIterationAgent
 from rlberry.agents.features import FeatureMap
 from rlberry.agents.linear.lsvi_ucb import LSVIUCBAgent
-from rlberry.agents.dynprog import ValueIterationAgent
 from rlberry.envs.finite import GridWorld
 
 

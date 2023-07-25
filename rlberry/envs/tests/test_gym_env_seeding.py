@@ -1,11 +1,12 @@
-from rlberry.seeding.seeding import safe_reseed
+from copy import deepcopy
+
 import gymnasium as gym
 import numpy as np
 import pytest
-from rlberry.seeding import Seeder
-from rlberry.envs import gym_make
 
-from copy import deepcopy
+from rlberry.envs import gym_make
+from rlberry.seeding import Seeder
+from rlberry.seeding.seeding import safe_reseed
 
 gym_envs = [
     "Acrobot-v1",

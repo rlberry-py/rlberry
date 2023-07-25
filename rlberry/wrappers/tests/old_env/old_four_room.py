@@ -1,8 +1,8 @@
 import numpy as np
-import rlberry.spaces as spaces
-from rlberry.wrappers.tests.old_env.old_gridworld import Old_GridWorld
 
 import rlberry
+import rlberry.spaces as spaces
+from rlberry.wrappers.tests.old_env.old_gridworld import Old_GridWorld
 
 logger = rlberry.logger
 

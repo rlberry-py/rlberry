@@ -7,7 +7,6 @@ import numpy as np
 from rlberry.envs.utils import process_env
 from rlberry.utils.jit_setup import numba_jit
 
-
 logger = logging.getLogger(__name__)
 
 

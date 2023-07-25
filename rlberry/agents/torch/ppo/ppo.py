@@ -1,29 +1,29 @@
+import bz2
+import pickle
+from pathlib import Path
+
+import _pickle as cPickle
+import dill
+import gymnasium.spaces as spaces
 import numpy as np
 import torch
 import torch.nn as nn
 
-import gymnasium.spaces as spaces
 import rlberry
-from rlberry.agents import AgentWithSimplePolicy
-from rlberry.agents import AgentTorch
-from rlberry.envs.utils import process_env
-from rlberry.agents.torch.utils.training import optimizer_factory
-from rlberry.agents.torch.utils.models import default_policy_net_fn
-from rlberry.agents.torch.utils.models import default_value_net_fn
-from rlberry.utils.torch import choose_device
-from rlberry.utils.factory import load
+from rlberry.agents import AgentTorch, AgentWithSimplePolicy
 from rlberry.agents.torch.ppo.ppo_utils import (
-    process_ppo_env,
-    lambda_returns,
     RolloutBuffer,
+    lambda_returns,
+    process_ppo_env,
 )
-
-import dill
-import pickle
-import bz2
-import _pickle as cPickle
-from pathlib import Path
-
+from rlberry.agents.torch.utils.models import (
+    default_policy_net_fn,
+    default_value_net_fn,
+)
+from rlberry.agents.torch.utils.training import optimizer_factory
+from rlberry.envs.utils import process_env
+from rlberry.utils.factory import load
+from rlberry.utils.torch import choose_device
 
 logger = rlberry.logger
 

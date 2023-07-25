@@ -1,6 +1,5 @@
 import numpy as np
 
-
 _FFMPEG_INSTALLED = True
 try:
     import ffmpeg

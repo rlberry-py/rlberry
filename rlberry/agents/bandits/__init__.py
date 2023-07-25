@@ -11,9 +11,6 @@ from .indices import (
     makeSubgaussianMOSSIndex,
     makeSubgaussianUCBIndex,
 )
-from .priors import (
-    makeBetaPrior,
-    makeGaussianPrior,
-)
+from .priors import makeBetaPrior, makeGaussianPrior
 from .randomized_agents import RandomizedAgent
 from .ts_agents import TSAgent

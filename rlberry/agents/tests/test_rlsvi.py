@@ -1,4 +1,5 @@
 import pytest
+
 from rlberry.agents.rlsvi import RLSVIAgent
 from rlberry.envs.finite import GridWorld
 

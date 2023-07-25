@@ -1,8 +1,8 @@
 import json
 from copy import deepcopy
-from rlberry.network import interface
 from typing import Any, Callable, Mapping, Optional, Tuple, Union
 
+from rlberry.network import interface
 
 Tree = Union[Any, Tuple, Mapping[Any, "Tree"]]
 

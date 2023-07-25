@@ -1,5 +1,6 @@
-import numpy as np
 from typing import Callable
+
+import numpy as np
 
 
 def makeETCIndex(A: int = 2, m: int = 1):

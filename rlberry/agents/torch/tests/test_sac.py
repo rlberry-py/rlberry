@@ -2,6 +2,7 @@ import sys
 
 import pytest
 from gymnasium import make
+
 from rlberry.agents.torch.sac import SACAgent
 from rlberry.envs import Wrapper
 from rlberry.manager import AgentManager, evaluate_agents

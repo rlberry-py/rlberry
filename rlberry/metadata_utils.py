@@ -1,8 +1,7 @@
-from datetime import datetime
-import uuid
 import hashlib
-from typing import Optional, NamedTuple
-
+import uuid
+from datetime import datetime
+from typing import NamedTuple, Optional
 
 # Default output directory used by the library.
 RLBERRY_DEFAULT_DATA_DIR = "rlberry_data/"

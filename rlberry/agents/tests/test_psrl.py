@@ -1,4 +1,5 @@
 import pytest
+
 from rlberry.agents.psrl import PSRLAgent
 from rlberry.envs.finite import GridWorld
 

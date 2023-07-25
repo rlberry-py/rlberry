@@ -6,11 +6,9 @@ Comparison subplots of various index based bandits algorithms
 This script Compare several bandits agents and as a sub-product also shows
 how to use subplots in with `plot_writer_data`
 """
-import numpy as np
 import matplotlib.pyplot as plt
-from rlberry.envs.bandits import BernoulliBandit
-from rlberry.manager import ExperimentManager, plot_writer_data
-from rlberry.wrappers import WriterWrapper
+import numpy as np
+
 from rlberry.agents.bandits import (
     IndexAgent,
     RandomizedAgent,
@@ -22,6 +20,9 @@ from rlberry.agents.bandits import (
     makeETCIndex,
     makeEXP3Index,
 )
+from rlberry.envs.bandits import BernoulliBandit
+from rlberry.manager import ExperimentManager, plot_writer_data
+from rlberry.wrappers import WriterWrapper
 
 # Agents definition
 # sphinx_gallery_thumbnail_number = 2

@@ -1,9 +1,9 @@
 import numpy as np
-from rlberry.agents import AgentWithSimplePolicy
 from gymnasium.spaces import Discrete
-from rlberry.utils.jit_setup import numba_jit
 
 import rlberry
+from rlberry.agents import AgentWithSimplePolicy
+from rlberry.utils.jit_setup import numba_jit
 
 logger = rlberry.logger
 

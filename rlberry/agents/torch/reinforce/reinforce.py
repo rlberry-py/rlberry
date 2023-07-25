@@ -1,15 +1,15 @@
-import torch
 import inspect
-import numpy as np
 
 import gymnasium.spaces as spaces
-from rlberry.agents import AgentWithSimplePolicy, AgentTorch
-from rlberry.agents.utils.memories import Memory
-from rlberry.agents.torch.utils.training import optimizer_factory
-from rlberry.agents.torch.utils.models import default_policy_net_fn
-from rlberry.utils.torch import choose_device
+import numpy as np
+import torch
 
 import rlberry
+from rlberry.agents import AgentTorch, AgentWithSimplePolicy
+from rlberry.agents.torch.utils.models import default_policy_net_fn
+from rlberry.agents.torch.utils.training import optimizer_factory
+from rlberry.agents.utils.memories import Memory
+from rlberry.utils.torch import choose_device
 
 logger = rlberry.logger
 

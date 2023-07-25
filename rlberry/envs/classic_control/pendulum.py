@@ -10,9 +10,10 @@ envs/classic_control/pendulum.py
 """
 
 import numpy as np
+
 import rlberry.spaces as spaces
 from rlberry.envs.interface import Model
-from rlberry.rendering import Scene, RenderInterface2D
+from rlberry.rendering import RenderInterface2D, Scene
 from rlberry.rendering.common_shapes import bar_shape, circle_shape
 
 

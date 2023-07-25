@@ -1,11 +1,12 @@
-import numpy as np
-from rlberry.agents import AgentWithSimplePolicy
-from .tools import BanditTracker
 import pickle
-
 from pathlib import Path
 
+import numpy as np
+
 import rlberry
+from rlberry.agents import AgentWithSimplePolicy
+
+from .tools import BanditTracker
 
 logger = rlberry.logger
 

@@ -1,5 +1,5 @@
 import gymnasium as gym
-from gym.envs.registration import registry, make, spec
+from gym.envs.registration import make, registry, spec
 
 
 def register(id, *args, **kvargs):

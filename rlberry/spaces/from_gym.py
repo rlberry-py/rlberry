@@ -1,5 +1,6 @@
-import rlberry.spaces
 import gymnasium.spaces
+
+import rlberry.spaces
 
 
 def convert_space_from_gym(space):

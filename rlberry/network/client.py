@@ -1,7 +1,8 @@
+import json
 import pprint
 import socket
-import json
 from typing import List, Union
+
 from rlberry.network import interface
 from rlberry.network.utils import serialize_message
 

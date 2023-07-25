@@ -2,11 +2,8 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
-
-from rlberry.utils.jit_setup import numba_jit
-
-
 import rlberry
+from rlberry.utils.jit_setup import numba_jit
 
 logger = rlberry.logger
 

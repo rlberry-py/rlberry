@@ -3,8 +3,12 @@ TODO: Test attention modules
 """
 
 import torch
-from rlberry.agents.torch.utils.models import MultiLayerPerceptron
-from rlberry.agents.torch.utils.models import ConvolutionalNetwork, DuelingNetwork
+
+from rlberry.agents.torch.utils.models import (
+    ConvolutionalNetwork,
+    DuelingNetwork,
+    MultiLayerPerceptron,
+)
 
 
 def test_mlp():

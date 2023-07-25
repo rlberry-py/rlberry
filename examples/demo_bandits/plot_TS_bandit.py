@@ -11,18 +11,18 @@ For the Gaussian case, we use a Gaussian prior and compare it to a sub-Gaussian 
 """
 
 import numpy as np
-from rlberry.envs.bandits import BernoulliBandit, NormalBandit
+
 from rlberry.agents.bandits import (
     IndexAgent,
     TSAgent,
-    makeBoundedUCBIndex,
-    makeSubgaussianUCBIndex,
     makeBetaPrior,
+    makeBoundedUCBIndex,
     makeGaussianPrior,
+    makeSubgaussianUCBIndex,
 )
+from rlberry.envs.bandits import BernoulliBandit, NormalBandit
 from rlberry.manager import ExperimentManager, plot_writer_data
 from rlberry.wrappers import WriterWrapper
-
 
 # Bernoulli
 

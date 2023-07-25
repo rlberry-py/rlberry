@@ -1,8 +1,7 @@
 import numpy as np
 import pytest
 
-from rlberry.utils.binsearch import binary_search_nd
-from rlberry.utils.binsearch import unravel_index_uniform_bin
+from rlberry.utils.binsearch import binary_search_nd, unravel_index_uniform_bin
 
 
 def test_binary_search_nd():

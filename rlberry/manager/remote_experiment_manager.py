@@ -1,17 +1,16 @@
 import base64
-import dill
 import io
-
-import pandas as pd
 import pathlib
 import pickle
 import zipfile
 from typing import Any, Mapping, Optional
-from rlberry.network import interface
-from rlberry.network.client import BerryClient
 
+import dill
+import pandas as pd
 
 import rlberry
+from rlberry.network import interface
+from rlberry.network.client import BerryClient
 
 logger = rlberry.logger
 

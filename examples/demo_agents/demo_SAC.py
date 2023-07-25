@@ -9,6 +9,7 @@ This script shows how to train a SAC agent on a Pendulum environment.
 import time
 
 import gymnasium as gym
+
 from rlberry.agents.torch.sac import SACAgent
 from rlberry.envs import Pendulum
 from rlberry.manager import AgentManager

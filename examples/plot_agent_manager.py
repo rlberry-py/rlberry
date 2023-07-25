@@ -31,6 +31,7 @@ env_kwargs = dict(
 env = env_ctor(**env_kwargs)
 
 import numpy as np
+
 from rlberry.agents import AgentWithSimplePolicy
 
 

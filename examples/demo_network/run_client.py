@@ -3,11 +3,11 @@
  Demo: run_client
  =====================
 """
-from rlberry.network.client import BerryClient
-from rlberry.network import interface
-from rlberry.network.interface import Message, ResourceRequest
 import numpy as np
 
+from rlberry.network import interface
+from rlberry.network.client import BerryClient
+from rlberry.network.interface import Message, ResourceRequest
 
 port = int(input("Select server port: "))
 client = BerryClient(port=port)

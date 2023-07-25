@@ -1,6 +1,6 @@
-from setuptools import setup, find_packages
 import os
 
+from setuptools import find_packages, setup
 
 ver_file = os.path.join("rlberry", "_version.py")
 with open(ver_file) as f:

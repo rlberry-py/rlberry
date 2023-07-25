@@ -1,4 +1,5 @@
 import numpy as np
+
 from rlberry.utils.jit_setup import numba_jit
 from rlberry.utils.metrics import metric_lp
 

@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
-from rlberry.exploration_tools.typing import _get_type
+
 import numpy as np
+
+from rlberry.exploration_tools.typing import _get_type
 
 
 class UncertaintyEstimator(ABC):

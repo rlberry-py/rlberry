@@ -12,19 +12,16 @@ halving's objective.
 The code is in three parts: definition of environment, definition of agent,
 and finally definition of the experiment.
 """
-import numpy as np
-
-from rlberry.manager import ExperimentManager, read_writer_data
-from rlberry.envs.interface import Model
-from rlberry.agents.bandits import BanditWithSimplePolicy
-from rlberry.wrappers import WriterWrapper
-import rlberry.spaces as spaces
-
-import requests
 import matplotlib.pyplot as plt
-
+import numpy as np
+import requests
 
 import rlberry
+import rlberry.spaces as spaces
+from rlberry.agents.bandits import BanditWithSimplePolicy
+from rlberry.envs.interface import Model
+from rlberry.manager import ExperimentManager, read_writer_data
+from rlberry.wrappers import WriterWrapper
 
 logger = rlberry.logger
 

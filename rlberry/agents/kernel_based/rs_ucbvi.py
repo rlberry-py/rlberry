@@ -1,12 +1,10 @@
-from rlberry.agents.agent import AgentWithSimplePolicy
+import gymnasium.spaces as spaces
 import numpy as np
 
-import gymnasium.spaces as spaces
-from rlberry.agents.dynprog.utils import backward_induction
-from rlberry.agents.dynprog.utils import backward_induction_in_place
-from rlberry.agents.kernel_based.common import map_to_representative
-
 import rlberry
+from rlberry.agents.agent import AgentWithSimplePolicy
+from rlberry.agents.dynprog.utils import backward_induction, backward_induction_in_place
+from rlberry.agents.kernel_based.common import map_to_representative
 
 logger = rlberry.logger
 

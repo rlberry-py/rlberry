@@ -1,15 +1,15 @@
-from rlberry.manager import ExperimentManager
-from rlberry.agents.torch.dqn.dqn import DQNAgent
-from rlberry.envs.gym_make import atari_make
-
-from rlberry.agents.torch import PPOAgent
-from rlberry.agents.torch.utils.training import model_factory_from_env
+import os
 import pathlib
+import tempfile
+
 import numpy as np
 import pytest
-import os
 
-import tempfile
+from rlberry.agents.torch import PPOAgent
+from rlberry.agents.torch.dqn.dqn import DQNAgent
+from rlberry.agents.torch.utils.training import model_factory_from_env
+from rlberry.envs.gym_make import atari_make
+from rlberry.manager import ExperimentManager
 
 
 def test_forward_dqn():

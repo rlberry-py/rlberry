@@ -1,4 +1,5 @@
 import numpy as np
+
 import rlberry.check_packages as check_packages
 from rlberry.seeding.seeder import Seeder
 

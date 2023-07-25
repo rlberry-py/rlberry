@@ -1,7 +1,8 @@
-from rlberry.envs import gym_make
-from rlberry.agents.torch import DQNAgent
-from rlberry.manager import ExperimentManager, evaluate_agents
 import numpy as np
+
+from rlberry.agents.torch import DQNAgent
+from rlberry.envs import gym_make
+from rlberry.manager import ExperimentManager, evaluate_agents
 
 model_configs = {
     "type": "MultiLayerPerceptron",

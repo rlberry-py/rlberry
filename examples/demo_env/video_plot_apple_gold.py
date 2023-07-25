@@ -9,9 +9,10 @@ A demo of AppleGold environment
    :width: 600
 
 """
+from rlberry.agents.dynprog import ValueIterationAgent
+
 # sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_apple_gold.jpg'
 from rlberry.envs.benchmarks.grid_exploration.apple_gold import AppleGold
-from rlberry.agents.dynprog import ValueIterationAgent
 
 env = AppleGold(reward_free=False, array_observation=False)
 

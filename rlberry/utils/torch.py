@@ -1,10 +1,10 @@
 import os
 import re
 import shutil
-from subprocess import check_output, run, PIPE
+from subprocess import PIPE, check_output, run
+
 import numpy as np
 import torch
-
 
 import rlberry
 

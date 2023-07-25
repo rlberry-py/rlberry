@@ -1,8 +1,9 @@
-from rlberry.envs import Wrapper
-from rlberry.agents.torch import A2CAgent
-from rlberry.manager import ExperimentManager, evaluate_agents
-from rlberry.envs.benchmarks.ball_exploration import PBall2D
 from gymnasium import make
+
+from rlberry.agents.torch import A2CAgent
+from rlberry.envs import Wrapper
+from rlberry.envs.benchmarks.ball_exploration import PBall2D
+from rlberry.manager import ExperimentManager, evaluate_agents
 
 
 def test_a2c():

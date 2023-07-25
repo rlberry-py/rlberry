@@ -20,13 +20,13 @@ during the fit of the agent and then use the plot utils.
 """
 
 
+import matplotlib.pyplot as plt
 import numpy as np
 
-from rlberry.wrappers import WriterWrapper
-from rlberry.envs import GridWorld
-from rlberry.manager import plot_writer_data, ExperimentManager
 from rlberry.agents import UCBVIAgent
-import matplotlib.pyplot as plt
+from rlberry.envs import GridWorld
+from rlberry.manager import ExperimentManager, plot_writer_data
+from rlberry.wrappers import WriterWrapper
 
 # We wrape the default writer of the agent in a WriterWrapper
 # to record rewards.

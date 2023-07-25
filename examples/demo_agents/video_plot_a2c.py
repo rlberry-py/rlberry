@@ -11,10 +11,10 @@ A demo of A2C algorithm in PBall2D environment
 """
 # sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_a2c.jpg'
 
-from rlberry.agents.torch import A2CAgent
-from rlberry.envs.benchmarks.ball_exploration import PBall2D
 from gymnasium.wrappers import TimeLimit
 
+from rlberry.agents.torch import A2CAgent
+from rlberry.envs.benchmarks.ball_exploration import PBall2D
 
 env = PBall2D()
 env = TimeLimit(env, max_episode_steps=256)

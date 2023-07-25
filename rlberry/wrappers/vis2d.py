@@ -1,13 +1,12 @@
-from rlberry.envs import Wrapper
-from rlberry.exploration_tools.discrete_counter import DiscreteCounter
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-from rlberry.rendering.utils import video_write
 import gymnasium.spaces as spaces
-
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 
 import rlberry
+from rlberry.envs import Wrapper
+from rlberry.exploration_tools.discrete_counter import DiscreteCounter
+from rlberry.rendering.utils import video_write
 
 logger = rlberry.logger
 

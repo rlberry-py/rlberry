@@ -1,7 +1,7 @@
-from rlberry.experiment import experiment_generator
-from rlberry.agents.kernel_based.rs_ucbvi import RSUCBVIAgent
-
 import numpy as np
+
+from rlberry.agents.kernel_based.rs_ucbvi import RSUCBVIAgent
+from rlberry.experiment import experiment_generator
 
 
 def test_mock_args(monkeypatch):

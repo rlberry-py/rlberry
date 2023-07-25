@@ -2,15 +2,14 @@
 # This file is used to spawn a server to connect to in the tests from test_server.py
 
 import multiprocessing
+import sys
 
-from rlberry.network.interface import ResourceItem
-from rlberry.network.server import BerryServer
 from rlberry.agents import ValueIterationAgent
 from rlberry.agents.torch import REINFORCEAgent
 from rlberry.envs import GridWorld, gym_make
+from rlberry.network.interface import ResourceItem
+from rlberry.network.server import BerryServer
 from rlberry.utils.writers import DefaultWriter
-
-import sys
 
 
 def print_err(s):

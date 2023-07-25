@@ -8,6 +8,7 @@ This script requires matplotlib
 
 import matplotlib.pyplot as plt
 import numpy as np
+
 from rlberry.agents.kernel_based.kernels import kernel_func
 
 kernel_types = [

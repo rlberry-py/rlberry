@@ -1,8 +1,8 @@
-from rlberry.experiment import load_experiment_results
-import tempfile
-from rlberry.experiment import experiment_generator
 import os
 import sys
+import tempfile
+
+from rlberry.experiment import experiment_generator, load_experiment_results
 
 TEST_DIR = os.path.dirname(os.path.abspath(__file__))
 

@@ -5,11 +5,10 @@ Interface that allows 2D rendering.
 
 from abc import ABC, abstractmethod
 
+import rlberry
 from rlberry.rendering.opengl_render2d import OpenGLRender2D
 from rlberry.rendering.pygame_render2d import PyGameRender2D
 from rlberry.rendering.utils import video_write
-
-import rlberry
 
 logger = rlberry.logger
 

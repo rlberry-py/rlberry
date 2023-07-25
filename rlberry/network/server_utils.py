@@ -1,9 +1,10 @@
-import pathlib
-from rlberry.network import interface
-from rlberry.manager import ExperimentManager
-from rlberry import metadata_utils
-import rlberry.utils.io
 import base64
+import pathlib
+
+import rlberry.utils.io
+from rlberry import metadata_utils
+from rlberry.manager import ExperimentManager
+from rlberry.network import interface
 
 
 def execute_message(

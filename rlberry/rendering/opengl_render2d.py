@@ -2,12 +2,12 @@
 OpenGL code for 2D rendering, using pygame.
 """
 
-import numpy as np
 from os import environ
 
-from rlberry.rendering import Scene
+import numpy as np
 
 import rlberry
+from rlberry.rendering import Scene
 
 logger = rlberry.logger
 environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "1"
@@ -16,18 +16,36 @@ _IMPORT_SUCESSFUL = True
 _IMPORT_ERROR_MSG = ""
 try:
     import pygame as pg
-    from pygame.locals import DOUBLEBUF, OPENGL
-
+    from OpenGL.GL import (
+        GL_COLOR_BUFFER_BIT,
+        GL_FRONT,
+        GL_LINE_LOOP,
+        GL_LINE_STRIP,
+        GL_LINES,
+        GL_POINTS,
+        GL_POLYGON,
+        GL_PROJECTION,
+        GL_QUAD_STRIP,
+        GL_QUADS,
+        GL_RGB,
+        GL_TRIANGLE_FAN,
+        GL_TRIANGLE_STRIP,
+        GL_TRIANGLES,
+        GL_UNSIGNED_BYTE,
+        glBegin,
+        glClear,
+        glClearColor,
+        glColor3f,
+        glEnd,
+        glFlush,
+        glLoadIdentity,
+        glMatrixMode,
+        glReadBuffer,
+        glReadPixels,
+        glVertex2f,
+    )
     from OpenGL.GLU import gluOrtho2D
-    from OpenGL.GL import glMatrixMode, glLoadIdentity, glClearColor
-    from OpenGL.GL import glClear, glFlush, glBegin, glEnd
-    from OpenGL.GL import glColor3f, glVertex2f
-    from OpenGL.GL import glReadBuffer, glReadPixels
-    from OpenGL.GL import GL_PROJECTION, GL_COLOR_BUFFER_BIT
-    from OpenGL.GL import GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_LINE_LOOP
-    from OpenGL.GL import GL_POLYGON, GL_TRIANGLES, GL_TRIANGLE_STRIP
-    from OpenGL.GL import GL_TRIANGLE_FAN, GL_QUADS, GL_QUAD_STRIP
-    from OpenGL.GL import GL_FRONT, GL_RGB, GL_UNSIGNED_BYTE
+    from pygame.locals import DOUBLEBUF, OPENGL
 
 except Exception as ex:
     _IMPORT_SUCESSFUL = False

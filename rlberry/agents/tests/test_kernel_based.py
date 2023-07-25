@@ -1,6 +1,6 @@
 import pytest
-from rlberry.agents.kernel_based import RSKernelUCBVIAgent
-from rlberry.agents.kernel_based import RSUCBVIAgent
+
+from rlberry.agents.kernel_based import RSKernelUCBVIAgent, RSUCBVIAgent
 from rlberry.agents.kernel_based.kernels import _str_to_int
 from rlberry.envs.benchmarks.ball_exploration.ball2d import get_benchmark_env
 

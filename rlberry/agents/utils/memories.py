@@ -1,5 +1,6 @@
-import numpy as np
 from collections import namedtuple
+
+import numpy as np
 
 Transition = namedtuple(
     "Transition", ("state", "action", "reward", "next_state", "terminal", "info")

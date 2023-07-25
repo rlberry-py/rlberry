@@ -1,13 +1,14 @@
+import os
+import pathlib
+import tempfile
+
+import numpy as np
+
 from rlberry.envs import Chain, Pendulum
 from rlberry.envs.benchmarks.ball_exploration import PBall2D
-from rlberry.manager import ExperimentManager
-import numpy as np
-from rlberry.seeding import set_external_seed
-import tempfile
-import os
 from rlberry.envs.gym_make import gym_make
-import pathlib
-
+from rlberry.manager import ExperimentManager
+from rlberry.seeding import set_external_seed
 
 SEED = 42
 

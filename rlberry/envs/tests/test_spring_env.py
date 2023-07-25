@@ -1,7 +1,7 @@
 import numpy as np
+
 from rlberry.envs import SpringCartPole
 from rlberry.envs.classic_control.SpringCartPole import rk4
-
 
 # # actions
 # LL = 0

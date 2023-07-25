@@ -2,13 +2,12 @@
 New module aiming to replace memories.py
 """
 
+from typing import NamedTuple
+
 import numpy as np
 
-from typing import NamedTuple
-from rlberry.agents.utils import replay_utils
-
-
 import rlberry
+from rlberry.agents.utils import replay_utils
 
 logger = rlberry.logger
 

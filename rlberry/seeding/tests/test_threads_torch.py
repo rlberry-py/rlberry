@@ -1,6 +1,7 @@
-from rlberry.seeding.seeder import Seeder
-from rlberry.seeding import set_external_seed
 import concurrent.futures
+
+from rlberry.seeding import set_external_seed
+from rlberry.seeding.seeder import Seeder
 
 _TORCH_INSTALLED = True
 try:

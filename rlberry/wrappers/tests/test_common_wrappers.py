@@ -1,5 +1,6 @@
 import numpy as np
 import pytest
+
 from rlberry import spaces
 from rlberry.agents import RSUCBVIAgent
 from rlberry.envs.classic_control import MountainCar
@@ -9,23 +10,20 @@ from rlberry.seeding import Seeder
 from rlberry.wrappers.autoreset import AutoResetWrapper
 from rlberry.wrappers.discrete2onehot import DiscreteToOneHotWrapper
 from rlberry.wrappers.discretize_state import DiscretizeStateWrapper
-from rlberry.wrappers.rescale_reward import RescaleRewardWrapper
-from rlberry.wrappers.uncertainty_estimator_wrapper import UncertaintyEstimatorWrapper
-from rlberry.wrappers.vis2d import Vis2dWrapper
 from rlberry.wrappers.gym_utils import OldGymCompatibilityWrapper
-
-
+from rlberry.wrappers.rescale_reward import RescaleRewardWrapper
 from rlberry.wrappers.tests.old_env.old_acrobot import Old_Acrobot
 from rlberry.wrappers.tests.old_env.old_apple_gold import Old_AppleGold
 from rlberry.wrappers.tests.old_env.old_four_room import Old_FourRoom
 from rlberry.wrappers.tests.old_env.old_gridworld import Old_GridWorld
 from rlberry.wrappers.tests.old_env.old_mountain_car import Old_MountainCar
 from rlberry.wrappers.tests.old_env.old_nroom import Old_NRoom
-from rlberry.wrappers.tests.old_env.old_pendulum import Old_Pendulum
 from rlberry.wrappers.tests.old_env.old_pball import Old_PBall2D, Old_SimplePBallND
+from rlberry.wrappers.tests.old_env.old_pendulum import Old_Pendulum
 from rlberry.wrappers.tests.old_env.old_six_room import Old_SixRoom
 from rlberry.wrappers.tests.old_env.old_twinrooms import Old_TwinRooms
-
+from rlberry.wrappers.uncertainty_estimator_wrapper import UncertaintyEstimatorWrapper
+from rlberry.wrappers.vis2d import Vis2dWrapper
 
 classes = [
     Old_Acrobot,

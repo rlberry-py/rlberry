@@ -1,7 +1,5 @@
 from .old_env import (
     old_acrobot,
-    old_twinrooms,
-    old_six_room,
     old_apple_gold,
     old_ball2d,
     old_finite_mdp,
@@ -11,4 +9,6 @@ from .old_env import (
     old_nroom,
     old_pball,
     old_pendulum,
+    old_six_room,
+    old_twinrooms,
 )

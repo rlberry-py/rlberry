@@ -63,9 +63,9 @@ def model_factory(type="MultiLayerPerceptron", **kwargs) -> nn.Module:
         * :class:`~rlberry.agents.torch.utils.models.Table`
     """
     from rlberry.agents.torch.utils.models import (
-        MultiLayerPerceptron,
-        DuelingNetwork,
         ConvolutionalNetwork,
+        DuelingNetwork,
+        MultiLayerPerceptron,
         Table,
     )
 

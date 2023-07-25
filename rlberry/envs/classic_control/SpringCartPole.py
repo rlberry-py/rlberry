@@ -3,9 +3,10 @@ SpringCartPole environment introduced in J-F. Hren PhD thesis.
 """
 
 import numpy as np
+
 import rlberry.spaces as spaces
 from rlberry.envs.interface import Model
-from rlberry.rendering import Scene, GeometricPrimitive, RenderInterface2D
+from rlberry.rendering import GeometricPrimitive, RenderInterface2D, Scene
 from rlberry.rendering.common_shapes import bar_shape, circle_shape
 
 
