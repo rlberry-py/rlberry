@@ -23,7 +23,9 @@ logger = rlberry.logger
 class Agent(ABC):
     """Basic interface for agents.
 
-    .. notes::
+    If the 'inherited class' from Agent use the torch lib, that is higly recommanded to inherit :class:`~rlberry.agents.AgentTorch` instead.
+
+    .. note::
         | 1 - Abstract Class : can't be cannot be instantiated. The abstract methods have to be overwriten by the 'inherited class' agent.
         | 2 - Classes that implements this interface can send `**kwargs` to initiate :code:`Agent.__init__()`, but the keys must match the parameters.
 
@@ -415,7 +417,7 @@ class AgentWithSimplePolicy(Agent):
 
     The :meth:`policy` method takes an observation as input and returns an action.
 
-    .. notes::
+    .. note::
 
         | 1 - Abstract Class : can't be cannot be instantiated. The abstract methods have to be overwriten by the 'inherited class' agent.
         | 2 - Classes that implements this interface can send `**kwargs` to initiate :code:`Agent.__init__()`, but the keys must match the parameters.
@@ -554,9 +556,11 @@ class AgentWithSimplePolicy(Agent):
 class AgentTorch(Agent):
     # Need a specific save and load to manage torch.
     """
-    Class to inherit for torch agents.
+    Abstract Class to inherit for torch agents.
+    
+    This class use the 'torch' functions to save/load agents.
 
-    .. notes::
+    .. note::
 
         | 1 - Abstract Class : can't be cannot be instantiated. The abstract methods (from Agent) have to be overwriten by the 'inherited class' agent.
         | 2 - Classes that implements this interface can send `**kwargs` to initiate :code:`Agent.__init__()`, but the keys must match the parameters.
