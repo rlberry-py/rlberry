@@ -75,7 +75,7 @@ class A2CAgent(AgentTorch, AgentWithSimplePolicy):
     _max_episode_steps : int
         Maximum number of steps per episode.
     total_episodes : int
-        Total number of episodes collected by the agent.    
+        Total number of episodes collected by the agent.
     entr_coef : float
         Entropy coefficient. Controls the contribution of entropy regularization to the policy's objective.
     _policy_optimizer : torch.optim.Optimizer
