@@ -66,7 +66,7 @@ class BanditWithSimplePolicy(AgentWithSimplePolicy):
         return info
 
     def policy(self, observation):
-        #This is a basic policy. Should be overwritten by your own implementation.
+        # This is a basic policy. Should be overwritten by your own implementation.
         """
         This is a more basic policy, return the optimal action.
 
