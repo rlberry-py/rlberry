@@ -28,8 +28,8 @@ class RandomizedAgent(BanditWithSimplePolicy):
         performance of the EXP3 algorithm in stochastic environments.".
         European Workshop on Reinforcement Learning. PMLR, 2013.
 
-    **kwargs: arguments
-        Arguments to be passed to BanditWithSimplePolicy. In particular,
+    **kwargs : Keyword Arguments
+        Arguments to be passed to :class:`~rlberry.agents.BanditWithSimplePolicy`. In particular,
         one may want to pass the following parameter:
         tracker_params: dict
             Parameters for the tracker object, typically to decide what to store.
@@ -86,6 +86,8 @@ class RandomizedAgent(BanditWithSimplePolicy):
         ----------
         budget: int
             Total number of iterations, also called horizon.
+        **kwargs : Keyword Arguments
+            Extra arguments. Not used for this agent.
         """
         horizon = budget
         total_reward = 0.0

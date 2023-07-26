@@ -111,6 +111,8 @@ class PPOAgent(AgentTorch, AgentWithSimplePolicy):
         performed.
     device: str
         Device on which to put the tensors. 'cuda:best' by default.
+    **kwargs : Keyword Arguments
+         Arguments to be passed to `AgentWithSimplePolicy.__init__(self, env, **kwargs)` (:class:`~rlberry.agents.AgentWithSimplePolicy`).
 
     Attributes
     ----------
@@ -360,6 +362,8 @@ class PPOAgent(AgentTorch, AgentWithSimplePolicy):
         lr_scheduler: callable
             A function that takes the current step and returns the current learning
             rate. If None, a default scheduler is used.
+        **kwargs : Keyword Arguments
+            Extra arguments. Not used for this agent.
         """
         del kwargs
 
@@ -734,11 +738,9 @@ class PPOAgent(AgentTorch, AgentWithSimplePolicy):
     ##### Overwrite some inherited functions
 
     def save(self, filename):
+        # Overwrite the 'save' and 'load' functions to not store the env if it's a "vectorized env" (can't be managed with pickle)
+        # If overridden, the load() method must also be overriden.
         """
-        Overwrite the 'save' and 'load' functions to not store the env if it's a "vectorized env" (can't be managed with pickle)
-
-        ----- documentation from original save -----
-
         Save agent object. By default, the agent is pickled.
 
         If overridden, the load() method must also be overriden.

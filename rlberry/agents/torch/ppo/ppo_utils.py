@@ -26,6 +26,8 @@ def process_ppo_env(env, seeder, num_envs=1, asynchronous=False, copy_env=True):
         Number of environments to be used.
     asynchronous : bool
         If True, the environments are run asynchronously.
+    copy_env : bool
+        If True, the returned environments will be a deepcopies of the 'env' parameter. 
 
     Returns
     -------

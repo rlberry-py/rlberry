@@ -24,6 +24,8 @@ class QLAgent(AgentWithSimplePolicy):
         If None: No exploration.
     exploration_rate: float, default: None
         epsilon parameter for Epsilon-Greedy exploration or tau parameter for Boltzmann exploration.
+    **kwargs : Keyword Arguments
+         Arguments to be passed to `AgentWithSimplePolicy.__init__(self, env, **kwargs)` (:class:`~rlberry.agents.AgentWithSimplePolicy`).
 
     Attributes
     ----------
@@ -98,6 +100,8 @@ class QLAgent(AgentWithSimplePolicy):
         ----------
         budget: int
             number of Q updates.
+        **kwargs : Keyword Arguments
+            Extra arguments. Not used for this agent.
         """
         del kwargs
         observation, info = self.env.reset()

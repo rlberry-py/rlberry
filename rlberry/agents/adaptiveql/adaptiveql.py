@@ -30,7 +30,7 @@ class AdaptiveQLAgent(AgentWithSimplePolicy):
         Type of exploration bonus. Currently, only "simplified_bernstein"
         is implemented.
     **kwargs : Keyword Arguments
-        Can be the above parameters, and/or extraparameters that will be sent to,`AgentWithSimplePolicy.__init__(self, env, **kwargs)` (:class:`~rlberry.agents.AgentWithSimplePolicy`).
+         Arguments to be passed to `AgentWithSimplePolicy.__init__(self, env, **kwargs)` (:class:`~rlberry.agents.AgentWithSimplePolicy`).
 
     Attributes
     ----------
@@ -189,7 +189,7 @@ class AdaptiveQLAgent(AgentWithSimplePolicy):
             number of episodes. Each episode runs for self.horizon unless it
             enconters a terminal state in which case it stops early.
         **kwargs : Keyword Arguments
-            No use here, this parameter come from the parent abstract class (:class:`~rlberry.agents.AgentWithSimplePolicy`).
+            Extra arguments. Not used for this agent.
         """
         del kwargs
         n_episodes_to_run = budget

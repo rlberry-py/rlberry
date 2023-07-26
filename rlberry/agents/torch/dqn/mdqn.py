@@ -31,6 +31,13 @@ logger = rlberry.logger
 def default_q_net_fn(env, **kwargs):
     """
     Returns a default Q value network.
+
+    Parameters
+    ----------
+    env : gym.Env
+        An environment.
+    **kwargs : Keyword Arguments
+        Extra arguments. Not used for this agent.
     """
     del kwargs
     model_config = {
@@ -140,6 +147,8 @@ class MunchausenDQNAgent(AgentTorch, AgentWithSimplePolicy):
     eval_interval : int, default = None
         Interval (in number of transitions) between agent evaluations in fit().
         If None, never evaluate.
+    **kwargs : Keyword Arguments
+         Arguments to be passed to `AgentWithSimplePolicy.__init__(self, env, **kwargs)` (:class:`~rlberry.agents.AgentWithSimplePolicy`).
     """
 
     name = "Munchausen DQN"
@@ -388,6 +397,8 @@ class MunchausenDQNAgent(AgentTorch, AgentWithSimplePolicy):
         budget: int
             Number of timesteps to train the agent for.
             One step = one transition in the environment.
+        **kwargs : Keyword Arguments
+            Extra arguments. Not used for this agent.
         """
         del kwargs
         timesteps_counter = 0

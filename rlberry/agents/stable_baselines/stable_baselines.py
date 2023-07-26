@@ -100,6 +100,8 @@ class StableBaselinesAgent(AgentWithSimplePolicy):
     _default_writer_kwargs : dict, optional
         Parameters to initialize :class:`~rlberry.utils.writers.DefaultWriter` (attribute self.writer).
         Used by :class:`~rlberry.manager.ExperimentManager`.
+    **kwargs : Keyword Arguments
+        Arguments to be passed to the `algo_cls` constructor. (Class of algorithm to wrap)
 
     Examples
     --------
@@ -135,6 +137,7 @@ class StableBaselinesAgent(AgentWithSimplePolicy):
         output_dir: Optional[str] = None,
         _execution_metadata: Optional[metadata_utils.ExecutionMetadata] = None,
         _default_writer_kwargs: Optional[dict] = None,
+        _thread_shared_data: Optional[dict] = None,
         **kwargs,
     ):
         super(StableBaselinesAgent, self).__init__(
@@ -145,6 +148,7 @@ class StableBaselinesAgent(AgentWithSimplePolicy):
             output_dir=output_dir,
             _execution_metadata=_execution_metadata,
             _default_writer_kwargs=_default_writer_kwargs,
+            _thread_shared_data=_thread_shared_data,
         )
         self._verbose = verbose
         self._tb_log = tensorboard_log
@@ -184,7 +188,19 @@ class StableBaselinesAgent(AgentWithSimplePolicy):
         self.wrapped.set_random_seed(seed)
 
     def save(self, filename):
-        """Save the agent to a file."""
+        """Save the agent to a file.
+        
+        Parameters
+        ----------
+        filename: Path or str
+            File in which to save the Agent.
+
+        Returns
+        -------
+        pathlib.Path
+            If save() is successful, a Path object corresponding to the filename is returned.
+            Otherwise, None is returned.
+        """
         # Save wrappped RL algorithm
         sb3_file = Path(filename).with_suffix(".zip")
         sb3_file.parent.mkdir(parents=True, exist_ok=True)
@@ -197,7 +213,15 @@ class StableBaselinesAgent(AgentWithSimplePolicy):
 
     @classmethod
     def load(cls, filename, **kwargs):
-        """Load agent object."""
+        """Load agent object.
+        
+        Parameters
+        ----------
+        filename: str
+            Path to the object (pickle) to load.
+        **kwargs: Keyword Arguments
+            Arguments required by the __init__ method of the Agent subclass to load.
+        """
         agent = super(StableBaselinesAgent, cls).load(filename, **kwargs)
 
         # Load the wrapped RL algorithm if necessary
@@ -229,6 +253,8 @@ class StableBaselinesAgent(AgentWithSimplePolicy):
             Name of the log to use in tensorboard.
         reset_num_timesteps: bool
             Whether to reset or not the :code: `num_timesteps` attribute
+        **kwargs: Keyword Arguments
+            Extra arguments required by the 'learn' method of the Wrapped Agent.
         """
         # If a logger is not provided, use StableBaselines3's default logger
         if not self._custom_logger:

@@ -62,6 +62,8 @@ class SACAgent(AgentTorch, AgentWithSimplePolicy):
         Device to put the tensors on
     writer_frequency : int
         Frequency of tensorboard logging
+    **kwargs : Keyword Arguments
+         Arguments to be passed to `AgentWithSimplePolicy.__init__(self, env, **kwargs)` (:class:`~rlberry.agents.AgentWithSimplePolicy`).
 
     References
     ----------
@@ -253,6 +255,8 @@ class SACAgent(AgentTorch, AgentWithSimplePolicy):
         budget: int
             number of episodes. Each episode runs for self.horizon unless it
             enconters a terminal state in which case it stops early.
+        **kwargs : Keyword Arguments
+            Extra arguments. Not used for this agent.
         """
 
         # Intialize environment and get first observation

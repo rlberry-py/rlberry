@@ -30,6 +30,8 @@ class OptQLAgent(AgentWithSimplePolicy):
     add_bonus_after_update : bool, default: False
         If True, add bonus to the Q function after performing the update,
         instead of adding it to the update target.
+    **kwargs : Keyword Arguments
+         Arguments to be passed to `AgentWithSimplePolicy.__init__(self, env, **kwargs)` (:class:`~rlberry.agents.AgentWithSimplePolicy`).
 
     References
     ----------
@@ -197,6 +199,8 @@ class OptQLAgent(AgentWithSimplePolicy):
         budget: int
             number of episodes. Each episode runs for self.horizon unless it
             enconters a terminal state in which case it stops early.
+        **kwargs : Keyword Arguments
+            Extra arguments. Not used for this agent.
         """
         del kwargs
         n_episodes_to_run = budget

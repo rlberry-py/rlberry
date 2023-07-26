@@ -24,8 +24,7 @@ class BanditWithSimplePolicy(AgentWithSimplePolicy):
     tracker_params: dict
         Parameters for the tracker object, typically to decide what to store.
     **kwargs : Keyword Arguments
-        Can be the above parameters, and/or extraparameters that will be sent to,`AgentWithSimplePolicy.__init__(self, env, **kwargs)` (:class:`~rlberry.agents.AgentWithSimplePolicy`).
-
+        Arguments to be passed to `AgentWithSimplePolicy.__init__(self, env, **kwargs)` (:class:`~rlberry.agents.AgentWithSimplePolicy`).
     """
 
     name = ""
@@ -49,7 +48,7 @@ class BanditWithSimplePolicy(AgentWithSimplePolicy):
         budget: int
             Total number of iterations, also called horizon.
         **kwargs : Keyword Arguments
-            No use here, this parameter come from the parent abstract class (:class:`~rlberry.agents.AgentWithSimplePolicy`).
+            Extra arguments. Not used for this agent.
         """
         horizon = budget
         rewards = np.zeros(horizon)
@@ -119,10 +118,9 @@ class BanditWithSimplePolicy(AgentWithSimplePolicy):
         # If overridden, save() method must also be overriden.
         """Load agent object.
 
-
         Parameters
         ----------
-        **kwargs: dict
+        **kwargs: Keyword Arguments
             Arguments to required by the __init__ method of the Agent subclass.
         """
         filename = Path(filename).with_suffix(".pickle")

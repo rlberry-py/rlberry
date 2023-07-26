@@ -24,7 +24,8 @@ class ValueIterationAgent(AgentWithSimplePolicy):
     epsilon : double
         Precision of value iteration, only used in discounted problems
         (when horizon is None).
-
+    **kwargs : Keyword Arguments
+         Arguments to be passed to `AgentWithSimplePolicy.__init__(self, env, **kwargs)` (:class:`~rlberry.agents.AgentWithSimplePolicy`).
     """
 
     name = "ValueIteration"
@@ -56,6 +57,8 @@ class ValueIterationAgent(AgentWithSimplePolicy):
         budget: None
             Not used. Only defined for compatibility purpose with rlberry.
             Changing `budget` value has no effect.
+        **kwargs : Keyword Arguments
+            Extra arguments. Not used for this agent.
         """
         del kwargs
         info = {}

@@ -73,6 +73,8 @@ class IndexAgent(BanditWithSimplePolicy):
         ----------
         budget: int
             Total number of iterations, also called horizon.
+        **kwargs : Keyword Arguments
+            Extra arguments. Not used for this agent.
         """
         horizon = budget
         total_reward = 0.0

@@ -23,6 +23,12 @@ class TSAgent(BanditWithSimplePolicy):
         Only used if prior = "gaussian", means and std of the gaussian prior distributions.
         If None, use an array of all 0 and an array of all 1.
 
+    **kwargs : Keyword Arguments
+        Arguments to be passed to :class:`~rlberry.agents.BanditWithSimplePolicy`. In particular,
+        one may want to pass the following parameter:
+        tracker_params: dict
+            Parameters for the tracker object, typically to decide what to store.
+
 
     Examples
     --------
@@ -128,6 +134,8 @@ class TSAgent(BanditWithSimplePolicy):
         ----------
         budget: int
             Total number of iterations, also called horizon.
+        **kwargs : Keyword Arguments
+            Extra arguments. Not used for this agent.
         """
         horizon = budget
 

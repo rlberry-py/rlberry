@@ -197,8 +197,8 @@ class Agent(ABC):
             elsewhere in the library.
 
             If the agent does not require a budget, set it to -1.
-        **kwargs
-            Extra arguments.
+        **kwargs: Keyword Arguments
+            Extra parameters specific to the implemented fit.
         """
         pass
 
@@ -213,8 +213,8 @@ class Agent(ABC):
         ----------
         eval_env: object
             Environment for evaluation.
-        **kwargs: dict
-            Extra parameters.
+        **kwargs: Keyword Arguments
+            Extra parameters specific to the implemented evaluation.
         """
         pass
 
@@ -276,10 +276,9 @@ class Agent(ABC):
 
         Note: dill[1]_ is used when pickle fails
         (see https://stackoverflow.com/a/25353243, for instance).
-        Pickle is tried first, since it is faster.
-
-        Parameters
-        ----------
+        Pickle is tried first, since it is f
+        **kwargs : Keyword Arguments
+            No use here, this parameter come from the parent abstract class (:class:`~rlberry.agents.AgentWithSimplePolicy`).
         filename: Path or str
             File in which to save the Agent.
 
@@ -335,7 +334,7 @@ class Agent(ABC):
         ----------
         filename: str
             Path to the object (pickle) to load.
-        **kwargs: dict
+        **kwargs: Keyword Arguments
             Arguments required by the __init__ method of the Agent subclass to load.
         """
 
@@ -688,7 +687,7 @@ class AgentTorch(Agent):
         ----------
         filename: str
             Path to the object (pickle) to load.
-        **kwargs: dict
+        **kwargs: Keyword Arguments
             Arguments required by the __init__ method of the Agent subclass to load.
         """
 

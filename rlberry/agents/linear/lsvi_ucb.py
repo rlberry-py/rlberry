@@ -113,6 +113,8 @@ class LSVIUCBAgent(AgentWithSimplePolicy):
         Constant by which to multiply the exploration bonus.
     reg_factor : double
         Linear regression regularization factor.
+    **kwargs : Keyword Arguments
+         Arguments to be passed to `AgentWithSimplePolicy.__init__(self, env, **kwargs)` (:class:`~rlberry.agents.AgentWithSimplePolicy`).
 
     References
     ----------
@@ -223,6 +225,8 @@ class LSVIUCBAgent(AgentWithSimplePolicy):
             enconters a terminal state in which case it stops early.
             Warning: Calling fit() more than once will reset the algorithm
             (to realocate memory according to the number of episodes)
+        **kwargs : Keyword Arguments
+            Extra arguments. Not used for this agent.
         """
         del kwargs
 

@@ -51,6 +51,8 @@ class UCBVIAgent(AgentWithSimplePolicy):
     real_time_dp : bool, default: False
         If true, uses real-time dynamic programming [2]_ instead of full backward induction
         for the sampling policy.
+    **kwargs : Keyword Arguments
+         Arguments to be passed to `AgentWithSimplePolicy.__init__(self, env, **kwargs)` (:class:`~rlberry.agents.AgentWithSimplePolicy`).
 
     References
     ----------
