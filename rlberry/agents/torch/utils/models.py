@@ -459,7 +459,7 @@ class ConvolutionalNetwork(nn.Module):
         out_size=None,
         is_policy=False,
         transpose_obs=False,
-        ctns_actions=False
+        ctns_actions=False,
     ):
         super().__init__()
         self.activation = activation_factory(activation)
