@@ -29,6 +29,9 @@ def video_write(fn, images, framerate=60, vcodec="libx264"):
     images : list or np.array
         list of images to save to a video.
     framerate : int
+        framerate : number of images by second
+    vcodec : string
+        codec for the video
     """
     global _FFMPEG_INSTALLED
 

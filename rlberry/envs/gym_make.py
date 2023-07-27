@@ -4,11 +4,6 @@ from rlberry.envs.basewrapper import Wrapper
 import numpy as np
 from numpy import ndarray
 
-
-# VERSION_ORIGINE = True
-VERSION_ORIGINE = False
-
-
 def gym_make(id, wrap_spaces=False, **kwargs):
     """
     Same as gym.make, but wraps the environment
@@ -21,8 +16,8 @@ def gym_make(id, wrap_spaces=False, **kwargs):
     wrap_spaces : bool, default = False
         If true, also wraps observation_space and action_space using classes in rlberry.spaces,
         that define a reseed() method.
-    **kwargs
-        Optional arguments to configure the environment.
+    **kwargs : keywords arguments
+        Additional arguments to pass to the gymnasium environment constructor.
 
     Examples
     --------
@@ -47,7 +42,10 @@ def atari_make(id, seed=None, **kwargs):
     ----------
     id : str
         Environment id.
-    **kwargs
+
+    seed : int
+        seed for the environment
+    **kwargs : keywords arguments
         Optional arguments to configure the environment.
         (render_mode, n_frame_stack, and other arguments for StableBaselines's make_atari_env : https://stable-baselines3.readthedocs.io/en/master/common/env_util.html#stable_baselines3.common.env_util.make_atari_env )
     Returns

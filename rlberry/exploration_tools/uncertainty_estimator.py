@@ -4,20 +4,39 @@ import numpy as np
 
 
 class UncertaintyEstimator(ABC):
-    def __init__(self, observation_space, action_space, **kwargs):
+    def __init__(self, observation_space, action_space):
         super().__init__()
         self.observation_space = observation_space
         self.action_space = action_space
 
+    @abstractmethod
     def reset(self, **kwargs):
+        """
+        Parameters
+        ----------
+        **kwargs : Keyword Arguments
+            Extra argument (if necessary by inherited class)
+        """
         pass
 
     @abstractmethod
     def update(self, state, action, next_state, reward, **kwargs):
+        """
+        Parameters
+        ----------
+        **kwargs : Keyword Arguments
+            Extra argument (if necessary by inherited class)
+        """
         pass
 
     @abstractmethod
     def measure(self, state, action, **kwargs):
+        """
+        Parameters
+        ----------
+        **kwargs : Keyword Arguments
+            Extra argument (if necessary by inherited class)
+        """
         pass
 
     def measure_batch(self, states, actions, **kwargs):

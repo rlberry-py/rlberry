@@ -71,6 +71,8 @@ class OnlineDiscretizationCounter(UncertaintyEstimator):
         is the dimension of the state space
     rate_power : float
         returns bonuses in n^power.
+    **kwargs : Keyword Arguments
+        Extra arguments. Not used here.
     """
 
     def __init__(
@@ -147,11 +149,19 @@ the maximum number of representative states."
 
     @preprocess_args(expected_type="numpy")
     def update(self, state, action, next_state=None, reward=None, **kwargs):
+        """
+        **kwargs : Keyword Arguments
+            Extra arguments. Not used here.
+        """
         state_idx, _ = self._get_representative_state(state)
         self.N_sa[state_idx, action] += 1
 
     @preprocess_args(expected_type="numpy")
     def measure(self, state, action, **kwargs):
+        """
+        **kwargs : Keyword Arguments
+            Extra arguments. Not used here.
+        """
         n = np.maximum(1.0, self.count(state, action))
         return np.power(1 / n, self.rate_power)
 

@@ -34,12 +34,24 @@ class RenderInterface(ABC):
     def save_video(self, filename, **kwargs):
         """
         Save video file.
+
+        Parameters
+        ----------
+        filename: Path or str
+            File in which to save the video.
+        **kwargs : Keyword Arguments
+            Extra argument (if necessary by inherited class)
         """
         pass
 
     def get_video(self, **kwargs):
         """
         Get video data.
+
+        Parameters
+        ----------
+        **kwargs : Keyword Arguments
+            Extra argument (if necessary by inherited class)
         """
         pass
 
@@ -47,6 +59,11 @@ class RenderInterface(ABC):
     def render(self, **kwargs):
         """
         Display on screen.
+
+        Parameters
+        ----------
+        **kwargs : Keyword Arguments
+            Extra argument (if necessary by inherited class)
         """
         pass
 
@@ -115,6 +132,11 @@ class RenderInterface2D(RenderInterface):
     def render(self, loop=True, **kwargs):
         """
         Function to render an environment that implements the interface.
+
+        Parameters
+        ----------
+        **kwargs : Keyword Arguments
+            Extra arguments. Not used here.
         """
 
         if self.is_render_enabled():
@@ -140,6 +162,14 @@ class RenderInterface2D(RenderInterface):
             return 1
 
     def get_video(self, framerate=25, **kwargs):
+        """
+        Parameters
+        ----------
+        framerate : int
+            framerate : number of images by second
+        **kwargs : Keyword Arguments
+            Extra arguments. Not used here.
+        """
         # background and data
         background, data = self._get_background_and_scenes()
 
@@ -158,5 +188,15 @@ class RenderInterface2D(RenderInterface):
         return renderer.get_video_data()
 
     def save_video(self, filename, framerate=25, **kwargs):
+        """
+        Parameters
+        ----------
+        filename: Path or str
+            File in which to save the video.
+        framerate : int
+            framerate : number of images by second
+        **kwargs : Keyword Arguments
+            Extra arguments for the get_video function
+        """
         video_data = self.get_video(framerate=framerate, **kwargs)
         video_write(filename, video_data, framerate=framerate)

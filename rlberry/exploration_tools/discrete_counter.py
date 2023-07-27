@@ -17,6 +17,8 @@ class DiscreteCounter(UncertaintyEstimator):
         number of bins to discretize action space
     rate_power : float
         Returns bonuses in 1/n ** rate_power.
+    **kwargs : Keyword Arguments
+        Extra arguments. Not used here.
     """
 
     def __init__(
@@ -63,11 +65,19 @@ class DiscreteCounter(UncertaintyEstimator):
 
     @preprocess_args(expected_type="numpy")
     def update(self, state, action, next_state=None, reward=None, **kwargs):
+        """
+        **kwargs : Keyword Arguments
+            Extra arguments. Not used here.
+        """
         state, action = self._preprocess(state, action)
         self.N_sa[state, action] += 1
 
     @preprocess_args(expected_type="numpy")
     def measure(self, state, action, **kwargs):
+        """
+        **kwargs : Keyword Arguments
+            Extra arguments. Not used here.
+        """
         state, action = self._preprocess(state, action)
         n = np.maximum(1.0, self.N_sa[state, action])
         return np.power(1.0 / n, self.rate_power)
