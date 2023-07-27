@@ -4,6 +4,7 @@ from rlberry.envs.basewrapper import Wrapper
 import numpy as np
 from numpy import ndarray
 
+
 def gym_make(id, wrap_spaces=False, **kwargs):
     """
     Same as gym.make, but wraps the environment
