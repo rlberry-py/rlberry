@@ -14,31 +14,35 @@ In the first few steps, we explain how to locally install rlberry, and how to se
     git clone https://github.com/YOUR_LOGIN/rlberry  # add --depth 1 if your connection is slow
     cd rlberry
     ```
-4. Install the package locally with pip
+4. Install the full dependencies
+    ```bash
+    pip install -r requirement.txt
+    ```
+5. Install the package locally with pip
     ```bash
     pip install -e . --user
     ```
-5. Install the development dependencies
+6. Install the development dependencies
     ```bash
     pip install pytest pytest-cov flake8 black
     ```
-6. Add the upstream remote. This saves a reference to the main rlberry repository, which you can use to keep your repository synchronized with the latest changes:
+7. Add the upstream remote. This saves a reference to the main rlberry repository, which you can use to keep your repository synchronized with the latest changes:
     ```bash
     git remote add upstream https://github.com/rlberry-py/rlberry
     ```
     You should now have a working installation of rlberry, and your git repository properly configured. The next steps now describe the process of modifying code and submitting a PR:
-7. Synchronize your main branch with the upstream/main branch, more details on [GitHub Docs](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/syncing-a-fork):
+8. Synchronize your main branch with the upstream/main branch, more details on [GitHub Docs](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/syncing-a-fork):
     ```bash
     git checkout main
     git fetch upstream
     git merge upstream/main
     ```
-8. Create a feature branch to hold your development changes:
+9. Create a feature branch to hold your development changes:
     ```bash
     git checkout -b my_feature
     ```
     and start making changes. Always use a feature branch. It’s good practice to never work on the main branch!
-9. Develop the feature on your feature branch on your computer, using Git to do the version control. When you’re done editing, add changed files using git add and then git commit:
+10. Develop the feature on your feature branch on your computer, using Git to do the version control. When you’re done editing, add changed files using git add and then git commit:
     ```bash
     git add modified_files
     git commit
@@ -47,7 +51,7 @@ In the first few steps, we explain how to locally install rlberry, and how to se
     ```bash
     git push -u origin my_feature
     ```
-10. Follow [these](https://help.github.com/articles/creating-a-pull-request-from-a-fork) instructions to create a pull request from your fork. This will send an email to the committers.
+11. Follow [these](https://help.github.com/articles/creating-a-pull-request-from-a-fork) instructions to create a pull request from your fork. This will send an email to the committers.
 
 
 ````{admonition} Note
