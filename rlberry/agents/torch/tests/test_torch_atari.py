@@ -140,7 +140,7 @@ def test_ppo_vectorized_atari_env(num_envs):
 
     critic_configs = {
         "type": "ConvolutionalNetwork",
-        "layer_sizes": "RELU",
+        "activation": "RELU",
         "in_channels": 4,
         "in_height": 84,
         "in_width": 84,
@@ -229,7 +229,7 @@ def test_ppo_experiment_manager_vectorized_atari_env(num_envs):
 
         critic_configs = {
             "type": "ConvolutionalNetwork",
-            "layer_sizes": "RELU",
+            "activation": "RELU",
             "in_channels": 4,
             "in_height": 84,
             "in_width": 84,

@@ -60,7 +60,7 @@ def test_rendering_with_atari_make():
 
         critic_configs = {
             "type": "ConvolutionalNetwork",
-            "layer_sizes": "RELU",
+            "activation": "RELU",
             "in_channels": 4,
             "in_height": 84,
             "in_width": 84,
