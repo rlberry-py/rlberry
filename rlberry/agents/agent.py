@@ -276,9 +276,10 @@ class Agent(ABC):
 
         Note: dill[1]_ is used when pickle fails
         (see https://stackoverflow.com/a/25353243, for instance).
-        Pickle is tried first, since it is f
-        **kwargs : Keyword Arguments
-            No use here, this parameter come from the parent abstract class (:class:`~rlberry.agents.AgentWithSimplePolicy`).
+        Pickle is tried first, since it is faster.
+
+        Parameters
+        ----------
         filename: Path or str
             File in which to save the Agent.
 
