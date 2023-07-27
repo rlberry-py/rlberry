@@ -76,7 +76,7 @@ class StableBaselinesAgent(AgentWithSimplePolicy):
 
     Parameters
     -----------
-    env: gym.Env
+    env: gymnasium.Env
         Environment
     algo_cls: stable_baselines3 Algorithm class
         Class of the algorithm to wrap (e.g. A2C)
@@ -86,7 +86,7 @@ class StableBaselinesAgent(AgentWithSimplePolicy):
         Verbosity level: 0 none, 1 training information, 2 tensorflow debug
     tensorboard_log: str
         Path to the directory where to save the tensorboard logs (if None, no logging)
-    eval_env : gym.Env or tuple (constructor, kwargs)
+    eval_env : gymnasium.Env or tuple (constructor, kwargs)
         Environment on which to evaluate the agent. If None, copied from env.
     copy_env : bool
         If true, makes a deep copy of the environment.

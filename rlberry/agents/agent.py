@@ -31,9 +31,9 @@ class Agent(ABC):
 
     Parameters
     ----------
-    env : :class:`gym.Env` or tuple (constructor, kwargs)
+    env : :class:`gymnasium.Env` or tuple (constructor, kwargs)
         Environment on which to train the agent.
-    eval_env : :class:`gym.Env` or tuple (constructor, kwargs)
+    eval_env : :class:`gymnasium.Env` or tuple (constructor, kwargs)
         Environment on which to evaluate the agent. If None, copied from env.
     copy_env : bool
         If true, makes a deep copy of the environment.
@@ -57,9 +57,9 @@ class Agent(ABC):
     ----------
     name : string
         Agent identifier (not necessarily unique).
-    env : :class:`gym.Env` or tuple (constructor, kwargs)
+    env : :class:`gymnasium.Env` or tuple (constructor, kwargs)
         Environment on which to train the agent.
-    eval_env : :class:`gym.Env` or tuple (constructor, kwargs)
+    eval_env : :class:`gymnasium.Env` or tuple (constructor, kwargs)
         Environment on which to evaluate the agent. If None, copied from env.
     writer : object, default: None
         Writer object to log the output (e.g. tensorboard SummaryWriter).
@@ -423,9 +423,9 @@ class AgentWithSimplePolicy(Agent):
 
     Parameters
     ----------
-    env : gym.Env or tuple (constructor, kwargs)
+    env : gymnasium.Env or tuple (constructor, kwargs)
         Environment used to fit the agent.
-    eval_env : gym.Env or tuple (constructor, kwargs)
+    eval_env : gymnasium.Env or tuple (constructor, kwargs)
         Environment on which to evaluate the agent. If None, copied from env.
     copy_env : bool
         If true, makes a deep copy of the environment.
@@ -448,9 +448,9 @@ class AgentWithSimplePolicy(Agent):
     ----------
     name : string
         Agent identifier (not necessarily unique).
-    env : :class:`gym.Env` or tuple (constructor, kwargs)
+    env : :class:`gymnasium.Env` or tuple (constructor, kwargs)
         Environment on which to train the agent.
-    eval_env : :class:`gym.Env` or tuple (constructor, kwargs)
+    eval_env : :class:`gymnasium.Env` or tuple (constructor, kwargs)
         Environment on which to evaluate the agent. If None, copied from env.
     writer : object, default: None
         Writer object to log the output (e.g. tensorboard SummaryWriter).
@@ -566,9 +566,9 @@ class AgentTorch(Agent):
 
     Parameters
     ----------
-    env : gym.Env or tuple (constructor, kwargs)
+    env : gymnasium.Env or tuple (constructor, kwargs)
         Environment used to fit the agent.
-    eval_env : gym.Env or tuple (constructor, kwargs)
+    eval_env : gymnasium.Env or tuple (constructor, kwargs)
         Environment on which to evaluate the agent. If None, copied from env.
     copy_env : bool
         If true, makes a deep copy of the environment.
@@ -592,9 +592,9 @@ class AgentTorch(Agent):
     ----------
     name : string
         Agent identifier (not necessarily unique).
-    env : :class:`gym.Env` or tuple (constructor, kwargs)
+    env : :class:`gymnasium.Env` or tuple (constructor, kwargs)
         Environment on which to train the agent.
-    eval_env : :class:`gym.Env` or tuple (constructor, kwargs)
+    eval_env : :class:`gymnasium.Env` or tuple (constructor, kwargs)
         Environment on which to evaluate the agent. If None, copied from env.
     writer : object, default: None
         Writer object (e.g. tensorboard SummaryWriter).

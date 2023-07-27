@@ -7,7 +7,7 @@ def default_q_net_fn(env, **kwargs):
 
     Parameters
     ----------
-    env : gym.Env
+    env : gymnasium.Env
         An environment.
     **kwargs : Keyword Arguments
         Extra arguments used to call :func:`~rlberry.agents.torch.utils.training.model_factory`.
@@ -31,7 +31,7 @@ def default_policy_net_fn(env, **kwargs):
 
     Parameters
     ----------
-    env : gym.Env
+    env : gymnasium.Env
         An environment.
     **kwargs : Keyword Arguments
         Extra arguments used to call :func:`~rlberry.agents.torch.utils.training.model_factory`.

@@ -49,7 +49,7 @@ def model_factory_from_env(env, **kwargs):
 
     Parameters
     ----------
-    env: gym.Env
+    env: gymnasium.Env
         Environment
     **kwargs: Keyword Arguments
         Parameters to be updated, used to call :func:`~rlberry.agents.torch.utils.training.model_factory`.
@@ -105,7 +105,7 @@ def size_model_config(env, **model_config):
 
     Parameters
     ----------
-    env : gym.Env
+    env : gymnasium.Env
         An environment.
     model_config : dict
         Parameters to be updated, used to call :func:`~rlberry.agents.torch.utils.training.model_factory`.

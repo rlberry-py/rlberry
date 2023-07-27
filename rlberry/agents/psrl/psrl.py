@@ -25,7 +25,7 @@ class PSRLAgent(AgentWithSimplePolicy):
 
     Parameters
     ----------
-    env : gym.Env
+    env : gymnasium.Env
         Environment with discrete states and actions.
     gamma : double, default: 1.0
         Discount factor in [0, 1]. If gamma is 1.0, the problem is set to

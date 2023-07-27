@@ -16,14 +16,14 @@ class Wrapper(Model):
 
     Parameters
     ----------
-    env: gym.Env
+    env: gymnasium.Env
         Environment to be wrapped.
     wrap_spaces: bool, default = False
         If True, gym.spaces are converted to rlberry.spaces, which defined a reseed() method.
 
     Attributes
     ----------
-    env : gym.Env
+    env : gymnasium.Env
         The wrapped environment
     metadata : dict
         InitiallThe meatadata of the wrapped environment

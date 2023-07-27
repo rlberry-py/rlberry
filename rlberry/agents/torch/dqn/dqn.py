@@ -30,7 +30,7 @@ def default_q_net_fn(env, **kwargs):
 
     Parameters
     ----------
-    env : gym.Env
+    env : gymnasium.Env
         An environment.
     **kwargs : Keyword Arguments
         Extra arguments. Not used for this agent.

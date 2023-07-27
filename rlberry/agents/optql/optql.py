@@ -15,7 +15,7 @@ class OptQLAgent(AgentWithSimplePolicy):
 
     Parameters
     ----------
-    env : gym.Env
+    env : gymnasium.Env
         Environment with discrete states and actions.
     gamma : double, default: 1.0
         Discount factor in [0, 1].

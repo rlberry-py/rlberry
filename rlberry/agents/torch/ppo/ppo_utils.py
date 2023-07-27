@@ -18,7 +18,7 @@ def process_ppo_env(env, seeder, num_envs=1, asynchronous=False, copy_env=True):
 
     Parameters
     ----------
-    env : gym.Env
+    env : gymnasium.Env
         Environment to be processed.
     seeder : rlberry.Seeder
         Seeder object.

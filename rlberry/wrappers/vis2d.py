@@ -70,7 +70,7 @@ class Vis2dWrapper(Wrapper):
 
     Parameters
     ----------
-    env: gym.Env
+    env: gymnasium.Env
     n_bins_obs : int, default = 10
         Number of intervals to discretize each dimension of the observation space.
         Used to count number of visits.
