@@ -459,6 +459,7 @@ class ConvolutionalNetwork(nn.Module):
         out_size=None,
         is_policy=False,
         transpose_obs=False,
+        ctns_actions=False
     ):
         super().__init__()
         self.activation = activation_factory(activation)
@@ -473,6 +474,7 @@ class ConvolutionalNetwork(nn.Module):
         )  # Number of Linear input connections depends on output of conv layers
         self.head_mlp_kwargs["out_size"] = out_size
         self.head_mlp_kwargs["is_policy"] = is_policy
+        self.head_mlp_kwargs["ctns_actions"] = ctns_actions
         self.head = model_factory(**self.head_mlp_kwargs)
 
         self.is_policy = is_policy
