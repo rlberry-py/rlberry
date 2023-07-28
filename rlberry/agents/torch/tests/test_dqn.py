@@ -84,10 +84,10 @@ def test_dqn_classic_env():
 
 
 def test_dqn_experiment_manager_classic_env():
-    # saving_path = "rlberry/agents/torch/tests/agentmanager_test_dqn_classic_env"
+    # saving_path = "rlberry/agents/torch/tests/ExperimentManager_test_dqn_classic_env"
 
     with tempfile.TemporaryDirectory() as tmpdirname:
-        saving_path = tmpdirname + "/agentmanager_test_dqn_classic_env"
+        saving_path = tmpdirname + "/ExperimentManager_test_dqn_classic_env"
 
         test_experiment_manager = ExperimentManager(
             DQNAgent,  # The Agent class.

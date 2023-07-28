@@ -92,6 +92,6 @@ def test_error_message_check_agent():
         check_rl_agent(ValueIterationAgent, "not_implemented")
     with pytest.raises(ValueError, match=msg):
         check_rl_agent(ValueIterationAgent, 42)
-    msg = "Agent not compatible with Agent Manager"
+    msg = "Agent not compatible with ExperimentManager"
     with pytest.raises(RuntimeError, match=msg):
         check_rl_agent(DummyAgent)

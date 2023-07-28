@@ -330,7 +330,7 @@ def test_profile():
         init_kwargs_per_instance=params_per_instance,
     )
     stats_agent1.generate_profile(fname="profile.prof")
-    assert os.path.getsize("profile.prof") > 100, "agent manager saved an empty profile"
+    assert os.path.getsize("profile.prof") > 100, "experiment manager saved an empty profile"
 
 
 def test_preset():

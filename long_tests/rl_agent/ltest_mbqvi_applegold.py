@@ -11,7 +11,7 @@ params["horizon"] = None
 
 # hyperparameters from https://github.com/DLR-RM/rl-baselines3-zoo
 def test_mbqvi_applegold():
-    rbagent = ExperimentManager(
+    rb_xp = ExperimentManager(
         MBQVIAgent,
         (AppleGold, None),
         init_kwargs=params,
@@ -23,6 +23,6 @@ def test_mbqvi_applegold():
         eval_kwargs=dict(eval_horizon=1000),
     )
 
-    rbagent.fit()
-    evaluation = evaluate_agents([rbagent], n_simulations=16, show=False).values
+    rb_xp.fit()
+    evaluation = evaluate_agents([rb_xp], n_simulations=16, show=False).values
     assert np.mean(evaluation) > 470

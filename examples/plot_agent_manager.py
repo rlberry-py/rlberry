@@ -1,8 +1,8 @@
 """
 =======================
-A demo of Agent Manager
+A demo of Experiment Manager
 =======================
-In this example, we use the agent manager.
+In this example, we use the ExperimentManager.
 
 First, we initialize a grid world environment with finite state space and actions.
 A grid world is a simple environment with finite states and actions, on which
@@ -14,7 +14,7 @@ Then, we implement a value iteration algorithm for the action values:
 
     Q(s, a) \\leftarrow \sum_{s^{\prime}} p(s'|a, s)\\left( R(s, a)+\gamma \max _{a^{\prime}} Q(s^{\prime}, a^{\prime}) \\right).
 
-Finally, we compare with a baseline provided by a random policy using the Agent Manager class which trains, evaluates and gathers statistics about the two agents.
+Finally, we compare with a baseline provided by a random policy using the ExperimentManager class which trains, evaluates and gathers statistics about the two agents.
 """
 
 from rlberry.envs import GridWorld

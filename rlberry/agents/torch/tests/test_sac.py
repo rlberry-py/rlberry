@@ -4,7 +4,7 @@ import pytest
 from gymnasium import make
 from rlberry.agents.torch.sac import SACAgent
 from rlberry.envs import Wrapper
-from rlberry.manager import AgentManager, evaluate_agents
+from rlberry.manager import ExperimentManager, evaluate_agents
 
 
 @pytest.mark.timeout(300)
@@ -15,7 +15,7 @@ def test_sac():
     env_ctor = Wrapper
     env_kwargs = dict(env=mdp)
 
-    sacrlberry_stats = AgentManager(
+    sacrlberry_stats = ExperimentManager(
         SACAgent,
         (env_ctor, env_kwargs),
         fit_budget=int(132),
@@ -36,7 +36,7 @@ def test_sac():
     env_ctor = Wrapper
     env_kwargs = dict(env=mdp)
 
-    sacrlberry_stats = AgentManager(
+    sacrlberry_stats = ExperimentManager(
         SACAgent,
         (env_ctor, env_kwargs),
         fit_budget=int(1024),

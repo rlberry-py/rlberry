@@ -40,22 +40,22 @@ def check_bandit_agent(Agent, environment=BernoulliBandit, seed=42):
     env_ctor = environment
     env_kwargs = {}
 
-    agent1 = ExperimentManager(
+    xp_manager1 = ExperimentManager(
         Agent, (env_ctor, env_kwargs), fit_budget=10, n_fit=1, seed=seed
     )
-    agent2 = ExperimentManager(
+    xp_manager2 = ExperimentManager(
         Agent, (env_ctor, env_kwargs), fit_budget=10, n_fit=1, seed=seed
     )
 
-    agent1.fit()
-    agent2.fit()
+    xp_manager1.fit()
+    xp_manager2.fit()
     env = env_ctor(**env_kwargs)
     state, info = env.reset()
     result = True
     for _ in range(5):
         # test reproducibility on 5 actions
-        action1 = agent1.agent_handlers[0].policy(state)
-        action2 = agent2.agent_handlers[0].policy(state)
+        action1 = xp_manager1.agent_handlers[0].policy(state)
+        action2 = xp_manager2.agent_handlers[0].policy(state)
         if action1 != action2:
             result = False
 

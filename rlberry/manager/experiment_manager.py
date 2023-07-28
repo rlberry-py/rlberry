@@ -727,11 +727,11 @@ class ExperimentManager:
                         outside a notebook and protected by a  if __name__ == '__main__':
                         For example:
                             if __name__ == '__main__':
-                                agent = ExperimentManager(UCBVIAgent,(Chain, {}),
+                                xp_manager = ExperimentManager(UCBVIAgent,(Chain, {}),
                                                 mp_context="spawn",
                                                 parallelization="process")
 
-                                agent.fit(10)
+                                xp_manager.fit(10)
                                    """
                 ) from exc
 
@@ -922,7 +922,7 @@ class ExperimentManager:
         if "rlberry_version" in obj.__dict__.keys():
             if rlberry.__version__ != obj.__dict__["rlberry_version"]:
                 logger.warn(
-                    "Loaded an agent manager that was created with an old version of rlberry."
+                    "Loaded an ExperimentManager that was created with an old version of rlberry."
                 )
                 logger.warn(
                     "Current is "
@@ -1378,7 +1378,7 @@ def is_bz_file(filepath):
 
 
 def preset_manager(*args, **kwds):
-    """Preset an Agent Manager to some fixed keywords.
+    """Preset an ExperimentManager to some fixed keywords.
 
     Examples
     --------

@@ -33,14 +33,14 @@ def test_myoutput(capsys):  # or use "capfd" for fd-level
     env_kwargs = dict()
 
     env = env_ctor(**env_kwargs)
-    agent = ExperimentManager(
+    xp_manager = ExperimentManager(
         DummyAgent,
         (env_ctor, env_kwargs),
         fit_budget=3,
         n_fit=1,
         default_writer_kwargs={"log_interval": 1},
     )
-    agent.fit(budget=3)
+    xp_manager.fit(budget=3)
 
     captured = capsys.readouterr()
     # test that what is written to stderr is longer than 50 char,

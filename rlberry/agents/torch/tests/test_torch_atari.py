@@ -32,7 +32,7 @@ def test_forward_dqn():
         "is_policy": False,  # The network should output a distribution
     }
 
-    tuned_agent = ExperimentManager(
+    tuned_xp = ExperimentManager(
         DQNAgent,  # The Agent class.
         (
             atari_make,
@@ -59,7 +59,7 @@ def test_forward_dqn():
         agent_name="DQN_test",  # The agent's name.
     )
 
-    tuned_agent.fit()
+    tuned_xp.fit()
 
 
 def test_forward_empty_input_dim():
@@ -79,7 +79,7 @@ def test_forward_empty_input_dim():
         "is_policy": False,  # The network should output a distribution
     }
 
-    tuned_agent = ExperimentManager(
+    tuned_xp = ExperimentManager(
         DQNAgent,  # The Agent class.
         (
             atari_make,
@@ -106,7 +106,7 @@ def test_forward_empty_input_dim():
         agent_name="DQN_test",  # The agent's name.
     )
 
-    tuned_agent.fit()
+    tuned_xp.fit()
 
 
 @pytest.mark.parametrize("num_envs", [1, 3])
@@ -198,7 +198,7 @@ def test_ppo_vectorized_atari_env(num_envs):
 @pytest.mark.parametrize("num_envs", [1, 3])
 def test_ppo_experiment_manager_vectorized_atari_env(num_envs):
     with tempfile.TemporaryDirectory() as tmpdirname:
-        saving_path = tmpdirname + "/agentmanager_test_ppo_vectorized_env"
+        saving_path = tmpdirname + "/ExperimentManagerr_test_ppo_vectorized_env"
 
         policy_mlp_configs = {
             "type": "MultiLayerPerceptron",  # A network architecture

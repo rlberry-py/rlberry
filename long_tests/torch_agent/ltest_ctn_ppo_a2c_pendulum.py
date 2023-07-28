@@ -15,7 +15,7 @@ def test_a2c_vs_ppo_pendul():
     env_ctor = gym_make
     env_kwargs = dict(id="Pendulum-v1")
 
-    a2cagent = ExperimentManager(
+    a2c_xp_manager = ExperimentManager(
         A2CAgent,
         (env_ctor, env_kwargs),
         agent_name="A2CAgent",
@@ -31,7 +31,7 @@ def test_a2c_vs_ppo_pendul():
         learning_rate=0.001,
         k_epochs=10,
     )
-    ppoagent = ExperimentManager(
+    ppo_xp_manager = ExperimentManager(
         PPOAgent,
         (env_ctor, env_kwargs),
         init_kwargs=ppo_init_kwargs,
@@ -41,10 +41,10 @@ def test_a2c_vs_ppo_pendul():
         n_fit=1,
         seed=42,
     )
-    a2cagent.fit()
-    ppoagent.fit()
+    a2c_xp_manager.fit()
+    ppo_xp_manager.fit()
     plot_writer_data(
-        [a2cagent, ppoagent],
+        [a2c_xp_manager, ppo_xp_manager],
         tag="episode_rewards",
         # ylabel_="Cumulative Reward",
         title=" Rewards during training",
@@ -52,7 +52,7 @@ def test_a2c_vs_ppo_pendul():
         savefig_fname="a2c_ppo_pendul_rewards.pdf",
     )
     plt.clf()
-    evaluation = evaluate_agents([a2cagent, ppoagent], n_simulations=100, show=False)
+    evaluation = evaluate_agents([a2c_xp_manager, ppo_xp_manager], n_simulations=100, show=False)
     with sns.axes_style("whitegrid"):
         ax = sns.boxplot(data=evaluation)
         ax.set_xlabel("agent")

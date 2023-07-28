@@ -60,19 +60,19 @@ def _fit_experiment_manager(agent, env="continuous_state", init_kwargs=None):
 
     train_env = _make_tuple_env(env)
     try:
-        agent = ExperimentManager(
+        xp_manager = ExperimentManager(
             agent, train_env, fit_budget=5, n_fit=1, seed=SEED, init_kwargs=init_kwargs
         )
-        agent.fit()
+        xp_manager.fit()
     except Exception as exc:
-        raise RuntimeError("Agent not compatible with Agent Manager") from exc
+        raise RuntimeError("Agent not compatible with ExperimentManager") from exc
 
-    return agent
+    return xp_manager
 
 
 def _fit_agent(agent, env="continuous_state", init_kwargs=None):
     """
-    Check that the agent can fit without agentManager.
+    Check that the agent can fit without ExperimentManager.
 
     Parameters
     ----------
@@ -94,7 +94,7 @@ def _fit_agent(agent, env="continuous_state", init_kwargs=None):
         my_agent = agent(env, **init_kwargs)
         my_agent.fit(10)
     except Exception as exc:
-        raise RuntimeError("Agent can not fit without Agent Manager") from exc
+        raise RuntimeError("Agent can not fit without ExperimentManager") from exc
 
     return my_agent
 
@@ -274,7 +274,7 @@ def _check_save_load_with_manager(agent, env="continuous_state", init_kwargs=Non
         except Exception as ex:
             raise RuntimeError("Failed to load the agent file.")
 
-        # test agentManager save and load
+        # test ExperimentManager save and load
         manager.save()
         assert os.path.exists(tmpdirname)
 
@@ -325,7 +325,7 @@ def _check_save_load_without_manager(agent, env="continuous_state", init_kwargs=
 
         saving_path = tmpdirname + "/agent_test.pickle"
 
-        # test agentManager save and load
+        # test agent save and load
         my_agent.save(saving_path)
         assert os.path.exists(tmpdirname)
 
@@ -473,7 +473,7 @@ def check_vectorized_env_agent(
 
 def check_rl_agent(agent, env="continuous_state", init_kwargs=None):
     """
-    Check agent manager compatibility  and check reproducibility/seeding.
+    Check ExperimentManager compatibility and check reproducibility/seeding.
     Raises an exception if a check fails.
 
     Parameters

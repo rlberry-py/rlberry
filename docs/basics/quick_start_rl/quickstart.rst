@@ -146,7 +146,7 @@ Our goal is then to assess the performance of the two algorithms.
 There are a number of agents that are already coded in rlberry. See the
 module :class:`~rlberry.agents.Agent` for more informations.
 
-Agent Manager
+Experiment Manager
 -------------
 
 One of the main feature of rlberry is its :class:`~rlberry.manager.ExperimentManager`
@@ -157,7 +157,7 @@ class. Here is a diagram to explain briefly what it does.
     :align: center
 
 
-In a few words, agent manager spawns agents and environments for training and
+In a few words, experiment manager spawns agents and environments for training and
 then once the agents are trained, it uses these agents and new environments
 to evaluate how well the agent perform. All of these steps can be
 done several times to assess stochasticity of agents and/or environment.
@@ -177,7 +177,7 @@ This gives us 1 value per agent. We do this 10 times (so 10 times 10
 equal 100 simulations) in order to have an idea of the variability of
 our estimation.
 
-In order to manage the agents, we use an Agent Manager. The manager will
+In order to manage the agents, we use an ExperimentManager. The manager will
 then spawn agents as desired during the experiment.
 
 
