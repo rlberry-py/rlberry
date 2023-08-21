@@ -3,7 +3,7 @@ import numpy as np
 from scipy.stats import tukey_hsd
 import pandas as pd
 import rlberry
-from rlberry.manager import AgentManager
+from rlberry.manager import ExperimentManager
 import pathlib
 
 logger = rlberry.logger
@@ -24,16 +24,16 @@ def compare_agents(
 
     Parameters
     ----------
-    agent_source : list of :class:`~rlberry.manager.AgentManager`, list of str
+    agent_source : list of :class:`~rlberry.manager.ExperimentManager`, list of str
 
-        - If list of AgentManager, load data from it (the agents must be fitted).
+        - If list of ExperimentManager, load data from it (the agents must be fitted).
 
         - If str, each string must be the path of a agent_manager.obj.
 
     method: str in {"tukey_hsd", "permutation"}, default="tukey_hsd"
         Method used in the test. "tukey_hsd" use scipy implementation [1] and "permutation" use permutation test with Step-Down method for multiple testing [2]. Tukey HSD method suppose Gaussian model on the aggregated evaluations and permutation test is non-parametric and does not make assumption on the distribution. permutation is the safe choice when the reward is likely to be heavy-tailed or multimodal.
     eval_function: callable or None, default = None
-        Function used the evaluate the agents. lambda manager : AgentManager, eval_budget : int or None, agent_id: int -> eval:float
+        Function used the evaluate the agents. lambda manager : ExperimentManager, eval_budget : int or None, agent_id: int -> eval:float
         If None, the mean of the eval function of the agent is used over n_simulations evaluations.
     n_simulations: int, default = 50
         Number of evaluations to use if eval_function is None.
@@ -59,7 +59,7 @@ def compare_agents(
     if isinstance(agent_source[0], str) or isinstance(
         agent_source[0], pathlib.PurePath
     ):
-        agent_manager_list = [AgentManager(None) for _ in agent_source]
+        agent_manager_list = [ExperimentManager(None) for _ in agent_source]
         for i, manager in enumerate(agent_manager_list):
             agent_manager_list[i] = manager.load(agent_source[i])
     else:
