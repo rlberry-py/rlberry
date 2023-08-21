@@ -28,6 +28,7 @@ Evaluation and plot
    manager.evaluate_agents
    manager.read_writer_data
    manager.plot_writer_data
+   manager.compare_agents
 
 
 Agents
