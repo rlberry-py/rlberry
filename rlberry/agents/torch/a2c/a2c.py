@@ -148,7 +148,7 @@ class A2CAgent(AgentTorch, AgentWithSimplePolicy):
         )
         self._policy_old.load_state_dict(self._policy.state_dict())
 
-        self.MseLoss = nn.MSELoss()
+        self.mse_loss = nn.MSELoss()
 
         self.memory = ReplayBuffer(max_replay_size=self.batch_size, rng=self.rng)
         self.memory.setup_entry("states", dtype=np.float32)
@@ -303,7 +303,7 @@ class A2CAgent(AgentTorch, AgentWithSimplePolicy):
         pg_loss = -logprobs * advantages
         loss = (
             pg_loss
-            + 0.5 * self.MseLoss(state_values, rewards)
+            + 0.5 * self.mse_loss(state_values, rewards)
             - self.entr_coef * dist_entropy
         )
 

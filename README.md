@@ -4,12 +4,10 @@
 </p>
 
 
-
 <!-- Short description -->
 <p align="center">
    A Reinforcement Learning Library for Research and Education
 </p>
-
 
 <!-- The badges -->
 <p align="center">
@@ -117,6 +115,7 @@ If you use `rlberry` in scientific publications, we would appreciate citations u
     year = {2021}
 }
 ```
+
 
 ## Development notes
 

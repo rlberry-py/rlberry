@@ -19,8 +19,8 @@ from rlberry.manager.multiple_managers import MultipleManagers
 if __name__ == "__main__":
     multimanagers = MultipleManagers(parallelization="thread")
 
-    for agent_manager in experiment_generator():
-        multimanagers.append(agent_manager)
+    for experiment_manager in experiment_generator():
+        multimanagers.append(experiment_manager)
 
     multimanagers.run()
     multimanagers.save()

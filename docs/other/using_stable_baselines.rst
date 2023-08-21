@@ -38,7 +38,7 @@ There are two important implementation details to note:
     model.
 
 The `Stable Baselines`_ algorithm class is a **required** parameter of the
-agent. In order to use it with AgentManagers, it must be included in the
+agent. In order to use it with ExperimentManagers, it must be included in the
 `init_kwargs` parameter. For example, below we use rlberry_ to train several instances of the A2C
 implementation of `Stable Baselines`_ and evaluate two hyperparameter configurations.
 
@@ -69,10 +69,10 @@ implementation of `Stable Baselines`_ and evaluate two hyperparameter configurat
 
 
     # Training several agents and comparing different hyperparams
-    from rlberry.manager import AgentManager, MultipleManagers, evaluate_agents
+    from rlberry.manager import ExperimentManager, MultipleManagers, evaluate_agents
 
     # Pass the wrapper directly with init_kwargs
-    stats = AgentManager(
+    stats = ExperimentManager(
         StableBaselinesAgent,
         (env_ctor, env_kwargs),
         agent_name="A2C baseline",
@@ -87,7 +87,7 @@ implementation of `Stable Baselines`_ and evaluate two hyperparameter configurat
     )
 
     # Pass a subclass for hyperparameter optimization
-    stats_alternative = AgentManager(
+    stats_alternative = ExperimentManager(
         A2CAgent,
         (env_ctor, env_kwargs),
         agent_name="A2C optimized",

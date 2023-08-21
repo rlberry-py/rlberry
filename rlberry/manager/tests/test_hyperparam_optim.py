@@ -1,7 +1,7 @@
 from rlberry.envs import GridWorld
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.agents.dynprog.value_iteration import ValueIterationAgent
-from rlberry.manager import AgentManager
+from rlberry.manager import ExperimentManager
 from optuna.samplers import TPESampler
 import numpy as np
 import pytest
@@ -49,8 +49,8 @@ def test_hyperparam_optim_tpe():
     # Define trainenv
     train_env = (GridWorld, {})
     with tempfile.TemporaryDirectory() as tmpdirname:
-        # Run AgentManager
-        stats_agent = AgentManager(
+        # Run ExperimentManager
+        stats_agent = ExperimentManager(
             DummyAgent,
             train_env,
             fit_budget=1,
@@ -81,8 +81,8 @@ def test_hyperparam_optim_random(parallelization, custom_eval_function, fit_frac
     # Define train env
     train_env = (GridWorld, {})
     with tempfile.TemporaryDirectory() as tmpdirname:
-        # Run AgentManager
-        stats_agent = AgentManager(
+        # Run ExperimentManager
+        stats_agent = ExperimentManager(
             DummyAgent,
             train_env,
             init_kwargs={},
@@ -108,8 +108,8 @@ def test_hyperparam_optim_grid():
     # Define train env
     train_env = (GridWorld, {})
     with tempfile.TemporaryDirectory() as tmpdirname:
-        # Run AgentManager
-        stats_agent = AgentManager(
+        # Run ExperimentManager
+        stats_agent = ExperimentManager(
             DummyAgent,
             train_env,
             init_kwargs={},
@@ -132,8 +132,8 @@ def test_hyperparam_optim_cmaes():
     # Define train env
     train_env = (GridWorld, {})
     with tempfile.TemporaryDirectory() as tmpdirname:
-        # Run AgentManager
-        stats_agent = AgentManager(
+        # Run ExperimentManager
+        stats_agent = ExperimentManager(
             DummyAgent,
             train_env,
             init_kwargs={},
@@ -172,7 +172,7 @@ def test_discount_optimization():
 
     vi_params = {"gamma": 0.1, "epsilon": 1e-3}
 
-    vi_stats = AgentManager(
+    vi_stats = ExperimentManager(
         ValueIterationAgentToOptimize,
         env,
         fit_budget=0,

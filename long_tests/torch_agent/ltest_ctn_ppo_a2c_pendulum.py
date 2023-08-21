@@ -1,6 +1,6 @@
 from rlberry.envs import gym_make
 from rlberry.agents.torch import A2CAgent, PPOAgent
-from rlberry.manager import AgentManager, plot_writer_data, evaluate_agents
+from rlberry.manager import ExperimentManager, plot_writer_data, evaluate_agents
 import seaborn as sns
 import matplotlib.pyplot as plt
 
@@ -15,7 +15,7 @@ def test_a2c_vs_ppo_pendul():
     env_ctor = gym_make
     env_kwargs = dict(id="Pendulum-v1")
 
-    a2cagent = AgentManager(
+    a2cagent = ExperimentManager(
         A2CAgent,
         (env_ctor, env_kwargs),
         agent_name="A2CAgent",
@@ -31,7 +31,7 @@ def test_a2c_vs_ppo_pendul():
         learning_rate=0.001,
         k_epochs=10,
     )
-    ppoagent = AgentManager(
+    ppoagent = ExperimentManager(
         PPOAgent,
         (env_ctor, env_kwargs),
         init_kwargs=ppo_init_kwargs,

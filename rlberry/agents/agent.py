@@ -29,9 +29,9 @@ class Agent(ABC):
 
     Parameters
     ----------
-    env : gym.Env or tuple (constructor, kwargs)
-        Environment used to fit the agent.
-    eval_env : gym.Env or tuple (constructor, kwargs)
+    env : :class:`gym.Env` or tuple (constructor, kwargs)
+        Environment on which to train the agent.
+    eval_env : :class:`gym.Env` or tuple (constructor, kwargs)
         Environment on which to evaluate the agent. If None, copied from env.
     copy_env : bool
         If true, makes a deep copy of the environment.
@@ -43,12 +43,12 @@ class Agent(ABC):
         Directory that the agent can use to store data.
     _execution_metadata : ExecutionMetadata, optional
         Extra information about agent execution (e.g. about which is the process id where the agent is running).
-        Used by :class:`~rlberry.manager.AgentManager`.
+        Used by :class:`~rlberry.manager.ExperimentManager`.
     _default_writer_kwargs : dict, optional
         Parameters to initialize :class:`~rlberry.utils.writers.DefaultWriter` (attribute self.writer).
-        Used by :class:`~rlberry.manager.AgentManager`.
+        Used by :class:`~rlberry.manager.ExperimentManager`.
     _thread_shared_data : dict, optional
-        Used by :class:`~rlberry.manager.AgentManager` to share data across Agent
+        Used by :class:`~rlberry.manager.ExperimentManager` to share data across Agent
         instances created in different threads.
     **kwargs : dict
         Classes that implement this interface must send ``**kwargs``
@@ -435,10 +435,10 @@ class AgentWithSimplePolicy(Agent):
         Directory that the agent can use to store data.
     _execution_metadata : ExecutionMetadata, optional
         Extra information about agent execution (e.g. about which is the process id where the agent is running).
-        Used by :class:`~rlberry.manager.AgentManager`.
+        Used by :class:`~rlberry.manager.ExperimentManager`.
     _default_writer_kwargs : dict, optional
         Parameters to initialize :class:`~rlberry.utils.writers.DefaultWriter` (attribute self.writer).
-        Used by :class:`~rlberry.manager.AgentManager`.
+        Used by :class:`~rlberry.manager.ExperimentManager`.
     **kwargs : dict
         Classes that implement this interface must send ``**kwargs``
         to :code:`AgentWithSimplePolicy.__init__()`.
@@ -547,12 +547,12 @@ class AgentTorch(Agent):
         Directory that the agent can use to store data.
     _execution_metadata : ExecutionMetadata, optional
         Extra information about agent execution (e.g. about which is the process id where the agent is running).
-        Used by :class:`~rlberry.manager.AgentManager`.
+        Used by :class:`~rlberry.manager.ExperimentManager`.
     _default_writer_kwargs : dict, optional
         Parameters to initialize :class:`~rlberry.utils.writers.DefaultWriter` (attribute self.writer).
-        Used by :class:`~rlberry.manager.AgentManager`.
+        Used by :class:`~rlberry.manager.ExperimentManager`.
     _thread_shared_data : dict, optional
-        Used by :class:`~rlberry.manager.AgentManager` to share data across Agent
+        Used by :class:`~rlberry.manager.ExperimentManager` to share data across Agent
         instances created in different threads.
     **kwargs : dict
         Classes that implement this interface must send ``**kwargs``
