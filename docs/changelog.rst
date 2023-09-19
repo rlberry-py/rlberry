@@ -5,6 +5,11 @@ Changelog
 
 Dev version
 -----------
+
+*PR #365*
+
+ * Fix Sphinx version to <7 
+
 *PR #326*
 
  * Moved SAC from experimental to torch agents. Tested and benchmarked.
