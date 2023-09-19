@@ -5,6 +5,12 @@ Changelog
 
 Dev version
 -----------
+
+
+*PR #355*
+
+ * Improve docstring and code documentation
+
 *PR #326*
 
  * Moved SAC from experimental to torch agents. Tested and benchmarked.
