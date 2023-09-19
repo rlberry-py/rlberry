@@ -1,3 +1,4 @@
+sphinx<7
 sphinx-gallery
 sphinx-math-dollar
 numpydoc
