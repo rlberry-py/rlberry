@@ -8,7 +8,7 @@ Dev version
 
 *PR #365*
 
- * Fix Sphinx version to <7 
+ * Fix Sphinx version to <7
 
 *PR #326*
 
