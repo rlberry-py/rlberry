@@ -42,6 +42,7 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
     "sphinx.ext.mathjax",
+    "sphinx_math_dollar",
     "sphinx.ext.autosectionlabel",
     "sphinxcontrib.video",
     "numpydoc",
@@ -49,6 +50,20 @@ extensions = [
     "myst_parser",
 ]
 
+myst_enable_extensions = ["amsmath"]
+# myst_enable_extensions = [
+#     "amsmath",
+#     "colon_fence",
+#     "deflist",
+#     "dollarmath",
+#     "fieldlist",
+#     "html_admonition",
+#     "html_image",
+#     "replacements",
+#     "smartquotes",
+#     "substitution",
+#     "tasklist",
+# ]
 
 autodoc_default_options = {
     "members": True,

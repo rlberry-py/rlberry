@@ -1,4 +1,6 @@
+sphinx<7
 sphinx-gallery
+sphinx-math-dollar
 numpydoc
 myst-parser
 git+https://github.com/sphinx-contrib/video

@@ -67,6 +67,7 @@ Deep RL agents require extra libraries, like PyTorch.
     $ pip install git+https://github.com/rlberry-py/rlberry.git#egg=rlberry[torch_agents]
     $ pip install tensorboard
 
+* JAX agents (**Linux only, experimental**):
 
 
 * Stable-baselines3 agents with Gymnasium support:

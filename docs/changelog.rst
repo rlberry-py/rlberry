@@ -6,6 +6,11 @@ Changelog
 Dev version
 -----------
 
+*PR #365*
+
+ * Fix Sphinx version to <7
+
+
 
 *PR #355*
 
@@ -51,6 +56,7 @@ Version 0.4.1
 
 Version 0.4.0
 -------------
+
 
 *PR #273*
 
