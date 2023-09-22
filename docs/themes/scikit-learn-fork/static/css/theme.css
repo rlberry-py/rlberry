@@ -92,7 +92,11 @@ div.highlight-none{
     overflow-y: auto;
     background-color: #ddd; 
 }
-
+div.highlight-default{
+  max-height: 300px;
+  overflow-y: auto;
+  background-color: #ddd; 
+}
 div.highlight-python{
   background-color: #f8f8f8;
   }
