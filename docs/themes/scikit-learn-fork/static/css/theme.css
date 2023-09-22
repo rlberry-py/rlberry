@@ -90,8 +90,12 @@ div.highlight {
 div.highlight-none{
     max-height: 300px;
     overflow-y: auto;
+    background-color: #ddd; 
 }
 
+div.highlight-python{
+  background-color: #f8f8f8;
+  }
 
 div.highlight pre {
   padding: 0.2rem 0.5rem;
@@ -1252,7 +1256,7 @@ table.sk-sponsor-table td {
 /* pygments - highlighting */
 
 .highlight .hll { background-color: #ffffcc }
-.highlight  { background: #f8f8f8; }
+.highlight  { background: none; }
 .highlight .c { color: #408090; font-style: italic } /* Comment */
 .highlight .err { border: 1px solid #FF0000 } /* Error */
 .highlight .k { color: #007020; font-weight: bold } /* Keyword */
