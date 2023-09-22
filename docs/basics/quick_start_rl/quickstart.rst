@@ -40,12 +40,18 @@ In this tutorial, we will use the :class:`~rlberry.envs.finite.chain.Chain`
 environment, which is a very simple environment where the agent has to go from one
 end of a chain to the other end.
 
+
 .. code:: python
 
     env_ctor = Chain
     env_kwargs = dict(L=10, fail_prob=0.1)
-    # chain of length 10. With proba 0.2, the agent will not be able to take the action it wants to take/
+    # chain of length 10. With proba 0.1, the agent will not be able to take the action it wants to take/
     env = env_ctor(**env_kwargs)
+
+
+The agent has two actions, go to the left of to the right, but it might
+move to a random direction according to a failure probability
+``fail_prob=0.1``.
 
 Let us see a graphical representation
 
@@ -103,15 +109,12 @@ Let us see a graphical representation
     [libx264 @ 0x564b9e570340] Weighted P-Frames: Y:0.0% UV:0.0%
     [libx264 @ 0x564b9e570340] kb/s:13.85
 
-
-The agent has two actions, go to the left of to the right, but it might
-move to a random direction according to a failure probability
-``fail_prob=0.1``.
+|
 
 .. video:: ../../video_chain_quickstart.mp4
    :width: 600
-   :align: center
 
+|
 
 Defining an agent and a baseline
 --------------------------------
@@ -120,6 +123,11 @@ We will compare a RandomAgent (which plays random action) to the
 :class:`~rlberry.agents.ucbvi.ucbvi.UCBVIAgent`, which
 is a algorithm that is designed to perform an efficient exploration.
 Our goal is then to assess the performance of the two algorithms.
+
+There are a number of agents that are already coded in rlberry. See the
+module :class:`~rlberry.agents.Agent` for more informations.
+
+Or, as we want for the RandomAgent, you can code your own agent :
 
 .. code:: python
 
@@ -134,19 +142,15 @@ Our goal is then to assess the performance of the two algorithms.
             observation, info = self.env.reset()
             for ep in range(budget):
                 action = self.policy(observation)
-                observation, reward, done, _ = self.env.step(action)
+                observation, reward, terminated, truncated, info = self.env.step(action)
 
         def policy(self, observation):
             return self.env.action_space.sample()  # choose an action at random
 
 
-    # Define parameters
-    ucbvi_params = {"gamma": 0.9, "horizon": 100}
 
-There are a number of agents that are already coded in rlberry. See the
-module :class:`~rlberry.agents.Agent` for more informations.
 
-Agent Manager
+Experiment Manager
 -------------
 
 One of the main feature of rlberry is its :class:`~rlberry.manager.ExperimentManager`
@@ -157,7 +161,7 @@ class. Here is a diagram to explain briefly what it does.
     :align: center
 
 
-In a few words, agent manager spawns agents and environments for training and
+In a few words, ExperimentManager spawns agents and environments for training and
 then once the agents are trained, it uses these agents and new environments
 to evaluate how well the agent perform. All of these steps can be
 done several times to assess stochasticity of agents and/or environment.
@@ -170,18 +174,20 @@ We want to assess the expected reward of the policy learned by our agents
 for a time horizon of (say) :math:`T=20`.
 
 To do that we use 10 Monte-Carlo simulations, i.e., we do the experiment
-10 times for each agent and at the end we take the mean of the 10
-obtained reward.
+10 times for each agent and at the end we take the mean of the obtained reward.
 
-This gives us 1 value per agent. We do this 10 times (so 10 times 10
-equal 100 simulations) in order to have an idea of the variability of
-our estimation.
+To check variability, we can train many instance of the same agent with ``n_fit`` (here 1)
+Each instance of agent will train with a specific budget ``fit_budget`` (here 100).
+Remark that ``fit_budget`` may not mean the same thing among agents.
 
-In order to manage the agents, we use an Agent Manager. The manager will
+In order to manage the agents, we use an Experiment Manager. The manager will
 then spawn agents as desired during the experiment.
 
 
 .. code:: python
+
+    # Define parameters
+    ucbvi_params = {"gamma": 0.9, "horizon": 100}
 
     # Create ExperimentManager to fit 1 agent
     ucbvi_stats = ExperimentManager(
@@ -205,6 +211,7 @@ then spawn agents as desired during the experiment.
     baseline_stats.fit()
 
 
+
 .. parsed-literal::
 
     [INFO] Running ExperimentManager fit() for UCBVI with n_fit = 1 and max_workers = None.
@@ -212,6 +219,7 @@ then spawn agents as desired during the experiment.
     [INFO] Running ExperimentManager fit() for RandomAgent with n_fit = 1 and max_workers = None.
     [INFO] ... trained!
 
+| Evaluating and comparing the agents :
 
 .. code:: python
 
@@ -307,37 +315,31 @@ Then, we fit the two agents and plot the data in the writer.
 
 .. code:: python
 
-    # Create ExperimentManager to fit 4 agents using 1 job
+    # Create ExperimentManager for UCBI to fit 10 agents
     ucbvi_stats = ExperimentManager(
         UCBVIAgent2,
         (env_ctor, env_kwargs),
         fit_budget=50,
         init_kwargs=ucbvi_params,
         n_fit=10,
-        parallelization="process",
-        mp_context="fork",
-    )  # mp_context is needed to have parallel computing in notebooks.
+    ) 
     ucbvi_stats.fit()
 
-    # Create ExperimentManager for baseline
+    # Create ExperimentManager for baseline to fit 10 agents
     baseline_stats = ExperimentManager(
         RandomAgent2,
         (env_ctor, env_kwargs),
         fit_budget=5000,
         n_fit=10,
-        parallelization="process",
-        mp_context="fork",
     )
     baseline_stats.fit()
 
-    # Create ExperimentManager for baseline
+    # Create ExperimentManager for OptimalAgent to fit 10 agents
     opti_stats = ExperimentManager(
         OptimalAgent,
         (env_ctor, env_kwargs),
         fit_budget=5000,
-        n_fit=10,
-        parallelization="process",
-        mp_context="fork",
+        n_fit=1,
     )
     opti_stats.fit()
 
