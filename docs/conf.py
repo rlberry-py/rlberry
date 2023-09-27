@@ -50,7 +50,7 @@ extensions = [
     "myst_parser",
 ]
 
-myst_enable_extensions = ["amsmath"]
+myst_enable_extensions = ["amsmath","attrs_inline"]
 # myst_enable_extensions = [
 #     "amsmath",
 #     "colon_fence",
