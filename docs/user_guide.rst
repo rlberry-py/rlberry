@@ -6,8 +6,8 @@
 User guide
 ==========
 
-Introduction
-------------
+.. Introduction
+.. ============
 .. Welcome to rlberry. Use rlberry's ExperimentManager (add ref) to train, evaluate and compare rl agents. In addition to
 .. the core ExperimentManager (add ref), rlberry provides the user with a set of bandit (add ref), tabular rl (add ref), and
 .. deep rl agents (add ref) as well as a wrapper for stablebaselines3 (add link, and ref) agents.
@@ -42,7 +42,7 @@ Quick start: setup an experiment and evaluate different agents
    :maxdepth: 2
 
    basics/quick_start_rl/quickstart.md
-   basics/DeepRLTutorial/TutorialDeepRL.rst
+   basics/DeepRLTutorial/TutorialDeepRL.md
 
 
 Agents, hyperparameter optimization and experiment setup
