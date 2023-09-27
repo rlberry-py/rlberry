@@ -167,10 +167,10 @@ class RandomAgent(AgentWithSimplePolicy):
         return self.env.action_space.sample()  # choose an action at random
 ```
 
-Experiment Manager 
+Experiment Manager
 ------------------
 
-One of the main feature of rlberry is its 
+One of the main feature of rlberry is its
 [ExperimentManager](rlberry.manager.ExperimentManager)
 class. Here is a diagram to explain briefly what it does.
 
@@ -275,7 +275,7 @@ cannot compute the optimal policy, we could simply compare the rewards
 gathered during learning, instead of the regret.
 
 First, we have to record the reward during the fit as this is not done
-automatically. To do this, we can use the 
+automatically. To do this, we can use the
 [WriterWrapper](rlberry.wrappers.writer_utils.WriterWrapper)
 module, or simply the [writer](rlberry.agents.Agent.writer) attribute.
 
@@ -328,7 +328,7 @@ ucbvi_stats = ExperimentManager(
     fit_budget=50,
     init_kwargs=ucbvi_params,
     n_fit=10,
-) 
+)
 ucbvi_stats.fit()
 
 # Create ExperimentManager for baseline to fit 10 agents
