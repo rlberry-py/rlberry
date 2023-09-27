@@ -41,7 +41,7 @@ The goal is to maximize the cumulative sum of discount rewards:
 
 $$J(\pi) = \mathbb{E}_{\tau \sim \pi}\big[R(\tau) \big]$$
 
-Gymnasium Environment 
+Gymnasium Environment
 ---------------------
 
 In this tutorial we are going to use the [Gymnasium library (previously
@@ -160,9 +160,9 @@ _ = plot_writer_data(
 ```
 
 ```none
-[INFO] Running ExperimentManager fit() for A2C default with n_fit = 1 and max_workers = None. 
-INFO: Making new env: CartPole-v1 
-INFO: Making new env: CartPole-v1 
+[INFO] Running ExperimentManager fit() for A2C default with n_fit = 1 and max_workers = None.
+INFO: Making new env: CartPole-v1
+INFO: Making new env: CartPole-v1
 [INFO] Could not find least used device (nvidia-smi might be missing), use cuda:0 instead
 ```
 
@@ -205,7 +205,7 @@ Training ...
 [INFO] [A2C default[worker: 0]] | max_global_step = 181462 | episode_rewards = 500.0 | total_episodes = 905 |
 [INFO] [A2C default[worker: 0]] | max_global_step = 188462 | episode_rewards = 500.0 | total_episodes = 919 |
 [INFO] [A2C default[worker: 0]] | max_global_step = 195462 | episode_rewards = 500.0 | total_episodes = 933 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 202520 | episode_rewards = 206.0 | total_episodes = 957 | 
+[INFO] [A2C default[worker: 0]] | max_global_step = 202520 | episode_rewards = 206.0 | total_episodes = 957 |
 [INFO] [A2C default[worker: 0]] | max_global_step = 209932 | episode_rewards = 500.0 | total_episodes = 978 |
 [INFO] [A2C default[worker: 0]] | max_global_step = 216932 | episode_rewards = 500.0 | total_episodes = 992 |
 [INFO] [A2C default[worker: 0]] | max_global_step = 223932 | episode_rewards = 500.0 | total_episodes = 1006 |
@@ -221,7 +221,7 @@ Training ...
 [INFO] [A2C default[worker: 0]] | max_global_step = 291609 | episode_rewards = 117.0 | total_episodes = 1413 |
 [INFO] [A2C default[worker: 0]] | max_global_step = 298530 | episode_rewards = 147.0 | total_episodes = 1466 |
 [INFO] ... trained!
-INFO: Making new env: CartPole-v1 INFO: Making new env: CartPole-v1 
+INFO: Making new env: CartPole-v1 INFO: Making new env: CartPole-v1
 [INFO] Could not find least used device (nvidia-smi might be missing), use cuda:0 instead
 ```
 
@@ -275,28 +275,28 @@ Evaluating ...
 [INFO][eval]... simulation 23/50
 [INFO][eval]... simulation 24/50
 [INFO][eval]... simulation 25/50
-[INFO][eval]... simulation 26/50 
+[INFO][eval]... simulation 26/50
 [INFO][eval]... simulation 27/50
 [INFO][eval]... simulation 28/50
 [INFO][eval]... simulation 29/50
 [INFO][eval]... simulation 30/50
 [INFO][eval]... simulation 31/50
 [INFO][eval]... simulation 32/50
-[INFO][eval]... simulation 33/50 
+[INFO][eval]... simulation 33/50
 [INFO][eval]... simulation 34/50
 [INFO][eval]... simulation 35/50
 [INFO][eval]... simulation 36/50
 [INFO][eval]... simulation 37/50
 [INFO][eval]... simulation 38/50
 [INFO][eval]... simulation 39/50
-[INFO][eval]... simulation 40/50 
+[INFO][eval]... simulation 40/50
 [INFO][eval]... simulation 41/50
 [INFO][eval]... simulation 42/50
 [INFO][eval]... simulation 43/50
 [INFO][eval]... simulation 44/50
 [INFO][eval]... simulation 45/50
 [INFO][eval]... simulation 46/50
-[INFO][eval]... simulation 47/50 
+[INFO][eval]... simulation 47/50
 [INFO][eval]... simulation 48/50
 [INFO][eval]... simulation 49/50
 [INFO][eval]... simulation 50/50
@@ -375,9 +375,9 @@ _ = plot_writer_data(
 
 ```none
 [INFO] Running ExperimentManager fit() for A2C tuned with n_fit = 1
-and max_workers = None. 
-INFO: Making new env: CartPole-v1 
-INFO: Making new env: CartPole-v1 
+and max_workers = None.
+INFO: Making new env: CartPole-v1
+INFO: Making new env: CartPole-v1
 [INFO] Could not find least used device (nvidia-smi might be missing), use cuda:0 instead
 ```
 
@@ -433,8 +433,8 @@ Training ...
 [INFO] [A2C tuned[worker: 0]] | max_global_step = 291189 | episode_rewards = 500.0 | total_episodes = 2334 |
 [INFO] [A2C tuned[worker: 0]] | max_global_step = 298619 | episode_rewards = 500.0 | total_episodes = 2350 |
 [INFO] ... trained!
-INFO: Making new env: CartPole-v1 
-INFO: Making new env: CartPole-v1 
+INFO: Making new env: CartPole-v1
+INFO: Making new env: CartPole-v1
 [INFO] Could not find least used device (nvidia-smi might be missing), use cuda:0 instead
 ```
 
@@ -488,7 +488,7 @@ Evaluating ...
 [INFO] [eval]... simulation 27/50
 [INFO] [eval]... simulation 28/50
 [INFO] [eval]... simulation 29/50
-[INFO] [eval]... simulation 30/50 
+[INFO] [eval]... simulation 30/50
 [INFO] [eval]... simulation 31/50
 [INFO] [eval]... simulation 32/50
 [INFO] [eval]... simulation 33/50
@@ -518,7 +518,7 @@ Evaluating ...
 [INFO] [eval]... simulation 6/50
 [INFO] [eval]... simulation 7/50
 [INFO] [eval]... simulation 8/50
-[INFO] [eval]... simulation 9/50 
+[INFO] [eval]... simulation 9/50
 [INFO] [eval]... simulation 10/50
 [INFO] [eval]... simulation 11/50
 [INFO] [eval]... simulation 12/50
