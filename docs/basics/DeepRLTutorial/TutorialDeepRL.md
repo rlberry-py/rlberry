@@ -112,6 +112,8 @@ $$\theta \leftarrow \theta+\eta d \theta \quad \varphi \leftarrow \varphi+\eta d
 Running A2C on CartPole
 -----------------------
 
+<span>&#9888;</span> **warning :** depending on the seed, you may get different results, and if you're (un)lucky, your default agent may learn and be better than the tuned agent. <span>&#9888;</span>
+
 In the next example we use default parameters for both the Actor and the
 Critic and we use rlberry to train and evaluate our A2C agent. The
 default networks are:
