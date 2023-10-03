@@ -2,7 +2,7 @@
 
 # How to use an environment
 
-This is the world with which the agent interacts. The agent can observe this environment, and can perform actions to modify it (but cannot change its rules). With rlberry, you can load an existing environment, or create your own.
+This is the world with which the agent interacts. The agent can observe this environment, and can perform actions to modify it (but cannot change its rules). With rlberry, you can load an existing environment, or create your own custom environment.
 
 
 ## Load rlberry environment
@@ -18,6 +18,8 @@ for tt in range(20):
     else:
         env.step(env.action_space.sample())
 env.render(loop=False)
+
+#env.save_video is only available for rlberry envs and custom env (with 'RenderInterface' as parent class)
 video = env.save_video("_env_page_chain.mp4")
 env.close()
 ```
@@ -78,11 +80,13 @@ video:10kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing ov
 
 
 ## Load Gymnasium environment
+Gymnasium can give you some classic environment. You can load theme with [gym_make](rlberry.envs.gym_make). More information [here](https://www.gymlibrary.dev/environments/classic_control/).
+
 ```python
 from rlberry.envs import gym_make
 from gymnasium.wrappers.record_video import RecordVideo
 
-# If you want an output video of your env, you have to :
+# If you want an output video of your Gymnasium env, you have to :
 # - add a 'render_mode' parameter at your gym_make
 # - add a 'RecordVideo' wrapper around the gymnasium environment.
 env = gym_make("MountainCar-v0", render_mode="rgb_array")
@@ -117,13 +121,16 @@ Moviepy - video ready [your path]/MountainCar-episode-0.mp4
 
 
 ## Load Atari environment
+A set of Atari 2600 environment simulated through Stella and the Arcade Learning Environment. More information [here](https://www.gymlibrary.dev/environments/atari/index.html#atari).
+
+[atari_make](rlberry.envs.atari_make) add wrappers on gym.make, to make it easier to use on Atari games.
 
 ```python
 from rlberry.envs import atari_make
 from gymnasium.wrappers.record_video import RecordVideo
 
 
-# If you want an output video of your env, you have to :
+# If you want an output video of your Atari env, you have to :
 # - add a 'render_mode' parameter at your atari_make
 # - add a 'RecordVideo' wrapper around the gymnasium environment.
 env = atari_make("ALE/Breakout-v5", render_mode="rgb_array")
@@ -168,6 +175,6 @@ Moviepy - video ready [your path]/Breakout-episode-0.mp4
 
 You need to create a new class that inherits from [gymnasium.Env](https://gymnasium.farama.org/api/env/) or one of it child class like [Model](rlberry.envs.interface.Model) (and RenderInterface/one of it child class, if you want an environment with rendering).
 
-Then you need to make the specific functions that respect gymnasium template (as step, reset, sample, ...).
+Then you need to make the specific functions that respect gymnasium template (as step, reset, ...). More information [here](https://www.gymlibrary.dev/content/environment_creation/)
 
 You can find examples in "sources" of [Acrobot](rlberry.envs.Acrobot), [MountainCar](rlberry.envs.classic_control.MountainCar) or [Chain](rlberry.envs.finite.Chain) (and their parent classes).
