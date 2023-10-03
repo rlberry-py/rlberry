@@ -9,6 +9,8 @@
 An RL Library for Research and Education
 ========================================
 
+ 
+:ref:`new user guide<user_guide2>`
 
 **Writing reinforcement learning algorithms is fun!** *But after the fun, we have
 lots of boring things to implement*: run our agents in parallel, average and plot results,
