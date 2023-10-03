@@ -19,7 +19,7 @@ for tt in range(20):
         env.step(env.action_space.sample())
 env.render(loop=False)
 
-#env.save_video is only available for rlberry envs and custom env (with 'RenderInterface' as parent class)
+# env.save_video is only available for rlberry envs and custom env (with 'RenderInterface' as parent class)
 video = env.save_video("_env_page_chain.mp4")
 env.close()
 ```
