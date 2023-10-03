@@ -12,17 +12,17 @@ from rlberry.envs.finite import Chain
 env = Chain(10, 0.1)
 env.enable_rendering()
 for tt in range(20):
-    #Force to go right every 4 steps to have a better video render.
-    if(tt%4==0):    
+    # Force to go right every 4 steps to have a better video render.
+    if tt % 4 == 0:
         env.step(1)
-    else: 
+    else:
         env.step(env.action_space.sample())
 env.render(loop=False)
 video = env.save_video("_env_page_chain.mp4")
 env.close()
 ```
 
-```none 
+```none
 ffmpeg version 4.4.2-0ubuntu0.22.04.1 Copyright (c) 2000-2021 the FFmpeg developers
   built with gcc 11 (Ubuntu 11.2.0-19ubuntu1)
   configuration: --prefix=/usr --extra-version=0ubuntu0.22.04.1 --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --arch=amd64 --enable-gpl --disable-stripping --enable-gnutls --enable-ladspa --enable-libaom --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libcodec2 --enable-libdav1d --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libjack --enable-libmp3lame --enable-libmysofa --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librabbitmq --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libsrt --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvidstab --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx265 --enable-libxml2 --enable-libxvid --enable-libzimg --enable-libzmq --enable-libzvbi --enable-lv2 --enable-omx --enable-openal --enable-opencl --enable-opengl --enable-sdl2 --enable-pocketsphinx --enable-librsvg --enable-libmfx --enable-libdc1394 --enable-libdrm --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-libx264 --enable-shared
@@ -50,7 +50,7 @@ Output #0, mp4, to '_env_page_chain.mp4':
       encoder         : Lavc58.134.100 libx264
     Side data:
       cpb: bitrate max/min/avg: 0/0/0 buffer size: 0 vbv_delay: N/A
-frame=   21 fps=0.0 q=-1.0 Lsize=      11kB time=00:00:00.72 bitrate= 128.4kbits/s speed=29.6x    
+frame=   21 fps=0.0 q=-1.0 Lsize=      11kB time=00:00:00.72 bitrate= 128.4kbits/s speed=29.6x
 video:10kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 10.128633%
 [libx264 @ 0x5644b31f07c0] frame I:1     Avg QP:29.04  size:  6175
 [libx264 @ 0x5644b31f07c0] frame P:12    Avg QP:24.07  size:   220
@@ -82,11 +82,11 @@ video:10kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing ov
 from rlberry.envs import gym_make
 from gymnasium.wrappers.record_video import RecordVideo
 
-#If you want an output video of your env, you have to :
+# If you want an output video of your env, you have to :
 # - add a 'render_mode' parameter at your gym_make
 # - add a 'RecordVideo' wrapper around the gymnasium environment.
 env = gym_make("MountainCar-v0", render_mode="rgb_array")
-env = RecordVideo(env,video_folder= "./", name_prefix="MountainCar")
+env = RecordVideo(env, video_folder="./", name_prefix="MountainCar")
 # else, this line is enough:
 # env = gym_make("MountainCar-v0")
 
@@ -96,7 +96,7 @@ for tt in range(50):
 env.close()
 ```
 
-```none 
+```none
 [your path]/.conda/lib/python3.10/site-packages/gymnasium/wrappers/record_video.py:94: UserWarning: WARN: Overwriting existing videos at [your path] folder (try specifying a different `video_folder` for the `RecordVideo` wrapper if this is not desired)
   logger.warn(
 [your path]/.conda/lib/python3.10/site-packages/gymnasium/core.py:311: UserWarning: WARN: env.is_vector_env to get variables from other wrappers is deprecated and will be removed in v1.0, to get this variable you can do `env.unwrapped.is_vector_env` for environment variables or `env.get_wrapper_attr('is_vector_env')` that will search the reminding wrappers.
@@ -104,7 +104,7 @@ env.close()
 Moviepy - Building video [your path]/MountainCar-episode-0.mp4.
 Moviepy - Writing video [your path]/MountainCar-episode-0.mp4
 
-Moviepy - Done !                                                                                                            
+Moviepy - Done !
 Moviepy - video ready [your path]/MountainCar-episode-0.mp4
 ```
 
@@ -123,24 +123,26 @@ from rlberry.envs import atari_make
 from gymnasium.wrappers.record_video import RecordVideo
 
 
-#If you want an output video of your env, you have to :
+# If you want an output video of your env, you have to :
 # - add a 'render_mode' parameter at your atari_make
 # - add a 'RecordVideo' wrapper around the gymnasium environment.
 env = atari_make("ALE/Breakout-v5", render_mode="rgb_array")
-env = RecordVideo(env,video_folder= "./", name_prefix="Breakout")
+env = RecordVideo(env, video_folder="./", name_prefix="Breakout")
 # else, this line is enough:
 # env = atari_make("ALE/Breakout-v5")
 
 observation, info = env.reset()
 for tt in range(50):
-    observation, reward, terminated, truncated, info = env.step(env.action_space.sample())
+    observation, reward, terminated, truncated, info = env.step(
+        env.action_space.sample()
+    )
     # if the environment is terminated or truncated (no more life), it need to be reset
     if terminated or truncated:
         observation, info = env.reset()
 env.close()
 ```
 
-```none 
+```none
 A.L.E: Arcade Learning Environment (version 0.8.1+53f58b7)
 [Powered by Stella]
 [your path]/.conda/lib/python3.10/site-packages/gymnasium/core.py:311: UserWarning: WARN: env.is_vector_env to get variables from other wrappers is deprecated and will be removed in v1.0, to get this variable you can do `env.unwrapped.is_vector_env` for environment variables or `env.get_wrapper_attr('is_vector_env')` that will search the reminding wrappers.
@@ -150,7 +152,7 @@ A.L.E: Arcade Learning Environment (version 0.8.1+53f58b7)
 Moviepy - Building video [your path]/Breakout-episode-0.mp4.
 Moviepy - Writing video [your path]/Breakout-episode-0.mp4
 
-Moviepy - Done !                                                                                                            
+Moviepy - Done !
 Moviepy - video ready [your path]/Breakout-episode-0.mp4
 ```
 
