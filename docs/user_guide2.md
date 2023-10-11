@@ -23,7 +23,7 @@ Some text about the goal of experimentManager. [here](experimentManager_page).
 ## Experimenting with Deep agents
 ### Torch Agents   <!-- TOCHECK :plus tard -->
 ### Policy and Value Networks<!-- TOCHECK :plus tard -->
-### Stable Baselines 3  
+### Stable Baselines 3
 ## Experimenting with Bandits. <!-- TOCHECK :plus tard -->
 ## Reproducibility
 ### Seeding
