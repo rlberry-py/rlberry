@@ -14,22 +14,22 @@ Some text about an experiment: a comparison of 2 rl agents on a given environmen
 This is the world with which the agent interacts. The agent can observe this environment, and can perform actions to modify it (but cannot change its rules). [(Wikipedia)](https://en.wikipedia.org/wiki/Reinforcement_learning) The environment is typically stated in the form of a Markov decision process (MDP).
 You can find the guide for environment [here](environment_page).
 Some text about MDPs.
-### Agent
+### Agent <!-- TOCHECK :plus tard -->
 Some text about what an agent is.
 ### ExperimentManager
-Some text about the goal of experiment.
+Some text about the goal of experimentManager. [here](experimentManager_page).
 ### Logging
 ### Analyse the results
 ## Experimenting with Deep agents
-### Torch Agents
-### Policy and Value Networks
-### Stable Baselines 3
-## Experimenting with Bandits.
+### Torch Agents   <!-- TOCHECK :plus tard -->
+### Policy and Value Networks<!-- TOCHECK :plus tard -->
+### Stable Baselines 3  
+## Experimenting with Bandits. <!-- TOCHECK :plus tard -->
 ## Reproducibility
 ### Seeding
 ### Saving and Loading Agents
 ### Saving and Loading Data
-## Advanced Usage
-### Custom Agents
-### Custom Environments
-### Transfer Learning
+## Advanced Usage<!-- TOCHECK :plus tard -->
+### Custom Agents <!-- TOCHECK :plus tard -->
+### Custom Environments<!-- TOCHECK :plus tard -->
+### Transfer Learning<!-- TOCHECK :plus tard -->
