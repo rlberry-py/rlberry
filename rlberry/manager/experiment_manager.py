@@ -573,7 +573,11 @@ class ExperimentManager:
                     " Returning []."
                 )
                 return []
-            values.append(agent.eval(**eval_kwargs))
+            # Update eval_kwargs with n_simulation parameter
+            eval_kwargs_with_n_simulation = eval_kwargs.copy()
+            eval_kwargs_with_n_simulation["n_simulation"] = 1
+
+            values.append(agent.eval(**eval_kwargs_with_n_simulation))
             if verbose:
                 if logger.getEffectiveLevel() <= 10:  # If debug
                     logger.debug(f"[eval]... simulation {ii + 1}/{n_simulations}")
