@@ -14,25 +14,29 @@ from rlberry.agents.torch import PPOAgent
 from rlberry.manager import ExperimentManager, evaluate_agents
 
 
-env_id = "CartPole-v1"        #Id of the environment
+env_id = "CartPole-v1"  # Id of the environment
 
-env_ctor = gym_make           #constructor for the env
-env_kwargs = dict(id=env_id)  #give the id of the env inside the kwargs
+env_ctor = gym_make  # constructor for the env
+env_kwargs = dict(id=env_id)  # give the id of the env inside the kwargs
 
 
 first_experiment = ExperimentManager(
-    PPOAgent,     #Agent Class
-    (env_ctor, env_kwargs),   #Environment as Tuple(constructor,kwargs)
-    fit_budget=int(100),    #Budget used to call our agent "fit()"
-    eval_kwargs=dict(eval_horizon=1000),  #Arguments required to call rlberry.agents.agent.Agent.eval().
-    n_fit=1,  #Number of agent instances to fit.
-    agent_name="PPO_first_experiment" + env_id,   #Name of the agent
+    PPOAgent,  # Agent Class
+    (env_ctor, env_kwargs),  # Environment as Tuple(constructor,kwargs)
+    fit_budget=int(100),  # Budget used to call our agent "fit()"
+    eval_kwargs=dict(
+        eval_horizon=1000
+    ),  # Arguments required to call rlberry.agents.agent.Agent.eval().
+    n_fit=1,  # Number of agent instances to fit.
+    agent_name="PPO_first_experiment" + env_id,  # Name of the agent
     seed=42,
 )
 
 first_experiment.fit()
 
-output = evaluate_agents([first_experiment], n_simulations=5, plot=False)    #evaluate the experiment on 5 simulations
+output = evaluate_agents(
+    [first_experiment], n_simulations=5, plot=False
+)  # evaluate the experiment on 5 simulations
 print(output)
 ```
 
@@ -60,19 +64,26 @@ Now you can compare this agent with another one. Here, we gonna compare it with 
 <span>&#9888;</span> **warning :** add this code after the previous one. <span>&#9888;</span>
 ```python
 second_experiment = ExperimentManager(
-    PPOAgent,     #Agent Class
-    (env_ctor, env_kwargs),   #Environment as Tuple(constructor,kwargs)
-    fit_budget=int(10000),    #Budget used to call our agent "fit()"
-    init_kwargs=dict(batch_size=24, n_steps=96, device="cpu"),  #Arguments for the Agent’s constructor.
-    eval_kwargs=dict(eval_horizon=1000),  #Arguments required to call rlberry.agents.agent.Agent.eval().
-    n_fit=1,  #Number of agent instances to fit.
-    agent_name="PPO_second_experiment" + env_id,   #Name of our agent (for saving/printing)
+    PPOAgent,  # Agent Class
+    (env_ctor, env_kwargs),  # Environment as Tuple(constructor,kwargs)
+    fit_budget=int(10000),  # Budget used to call our agent "fit()"
+    init_kwargs=dict(
+        batch_size=24, n_steps=96, device="cpu"
+    ),  # Arguments for the Agent’s constructor.
+    eval_kwargs=dict(
+        eval_horizon=1000
+    ),  # Arguments required to call rlberry.agents.agent.Agent.eval().
+    n_fit=1,  # Number of agent instances to fit.
+    agent_name="PPO_second_experiment"
+    + env_id,  # Name of our agent (for saving/printing)
     seed=42,
 )
 
 second_experiment.fit()
 
-output = evaluate_agents([first_experiment,second_experiment], n_simulations=5, plot=True)    #evaluate the 2 experiments on 5 simulations
+output = evaluate_agents(
+    [first_experiment, second_experiment], n_simulations=5, plot=True
+)  # evaluate the 2 experiments on 5 simulations
 print(output)
 ```
 
@@ -107,33 +118,38 @@ If you want to see the output video of the trained Agent, you need to use the Re
 
 ```python
 env_id = "CartPole-v1"
-env_ctor = gym_make             #constructor for training env
-env_kwargs = dict(id=env_id)    #kwars for training env
+env_ctor = gym_make  # constructor for training env
+env_kwargs = dict(id=env_id)  # kwars for training env
 
-eval_env_ctor = PipelineEnv   #constructor for eval env
-eval_env_kwargs = {           #kwars for eval env (with wrapper)
+eval_env_ctor = PipelineEnv  # constructor for eval env
+eval_env_kwargs = {  # kwars for eval env (with wrapper)
     "env_ctor": gym_make,
-    "env_kwargs": {"id": env_id, "render_mode":"rgb_array"},
-    "wrappers": [(RecordVideo,{"video_folder":"./","name_prefix":env_id})]   #list of tuple (class,kwargs)
+    "env_kwargs": {"id": env_id, "render_mode": "rgb_array"},
+    "wrappers": [
+        (RecordVideo, {"video_folder": "./", "name_prefix": env_id})
+    ],  # list of tuple (class,kwargs)
 }
 
 third_experiment = ExperimentManager(
-    PPOAgent,     #Agent Class
-    (env_ctor, env_kwargs),   #Environment as Tuple(constructor,kwargs)
-    fit_budget=int(10000),    #Budget used to call our agent "fit()"
-    eval_env = (eval_env_ctor, eval_env_kwargs),    #Evaluation environment as tuple
-    init_kwargs=dict(batch_size=24, n_steps=96, device="cpu"),  #settings for the Agent
-    eval_kwargs=dict(eval_horizon=1000),  #Arguments required to call rlberry.agents.agent.Agent.eval().
-    n_fit=1,  #Number of agent instances to fit.
-    agent_name="PPO_third_experiment" + env_id,   #Name of the agent
+    PPOAgent,  # Agent Class
+    (env_ctor, env_kwargs),  # Environment as Tuple(constructor,kwargs)
+    fit_budget=int(10000),  # Budget used to call our agent "fit()"
+    eval_env=(eval_env_ctor, eval_env_kwargs),  # Evaluation environment as tuple
+    init_kwargs=dict(batch_size=24, n_steps=96, device="cpu"),  # settings for the Agent
+    eval_kwargs=dict(
+        eval_horizon=1000
+    ),  # Arguments required to call rlberry.agents.agent.Agent.eval().
+    n_fit=1,  # Number of agent instances to fit.
+    agent_name="PPO_third_experiment" + env_id,  # Name of the agent
     seed=42,
 )
 
 third_experiment.fit()
 
-output3 = evaluate_agents([third_experiment], n_simulations=15, plot=False)    #evaluate the experiment on 5 simulations
+output3 = evaluate_agents(
+    [third_experiment], n_simulations=15, plot=False
+)  # evaluate the experiment on 5 simulations
 print(output3)
-
 ```
 
 
@@ -185,25 +201,31 @@ env_ctor = gym_make
 env_kwargs = dict(id=env_id)
 
 fourth_experiment = ExperimentManager(
-    PPOAgent,     #Agent Class
-    train_env=(env_ctor, env_kwargs),   #Environment to train the Agent
-    fit_budget=int(15000),    #Budget used to call our agent "fit()"
-    eval_env=(env_ctor, env_kwargs),   #Environment to eval the Agent (here, same as training env)
-    init_kwargs=dict(batch_size=24, n_steps=96, device="cpu"),  #Agent setting
-    eval_kwargs=dict(eval_horizon=1000),  #Arguments required to call rlberry.agents.agent.Agent.eval().
-    agent_name="PPO_second_experiment" + env_id,   #Name of the agent
-    n_fit=4,  #Number of agent instances to fit.
-    output_dir="./fourth_experiment_results/",  #Directory where to store data.
-    parallelization="thread",   #parallelize agent training using threads
-    max_workers=2,  #max 2 threads with parallelization
-    enable_tensorboard=True,    #enable tensorboard logging
+    PPOAgent,  # Agent Class
+    train_env=(env_ctor, env_kwargs),  # Environment to train the Agent
+    fit_budget=int(15000),  # Budget used to call our agent "fit()"
+    eval_env=(
+        env_ctor,
+        env_kwargs,
+    ),  # Environment to eval the Agent (here, same as training env)
+    init_kwargs=dict(batch_size=24, n_steps=96, device="cpu"),  # Agent setting
+    eval_kwargs=dict(
+        eval_horizon=1000
+    ),  # Arguments required to call rlberry.agents.agent.Agent.eval().
+    agent_name="PPO_second_experiment" + env_id,  # Name of the agent
+    n_fit=4,  # Number of agent instances to fit.
+    output_dir="./fourth_experiment_results/",  # Directory where to store data.
+    parallelization="thread",  # parallelize agent training using threads
+    max_workers=2,  # max 2 threads with parallelization
+    enable_tensorboard=True,  # enable tensorboard logging
 )
 
 fourth_experiment.fit()
 
-output = evaluate_agents([fourth_experiment], n_simulations=5, plot=False)    #evaluate the experiment on 5 simulations
+output = evaluate_agents(
+    [fourth_experiment], n_simulations=5, plot=False
+)  # evaluate the experiment on 5 simulations
 print(output)
-
 ```
 
 ```none
