@@ -23,7 +23,7 @@ class DummyAgent(AgentWithSimplePolicy):
     def policy(self, observation):
         return 0
 
-    def eval(self, eval_horizon=None):
+    def eval(self, eval_horizon=None, **kwargs):
         return self.eval_val
 
 
