@@ -17,7 +17,8 @@ Some text about MDPs.
 ### Agent <!-- TOCHECK :plus tard -->
 Some text about what an agent is.
 ### ExperimentManager
-Some text about the goal of experimentManager. [here](experimentManager_page).
+This is one of the core element in rlberry. The ExperimentManager allow you to easily make an experiment between an Agent and an Environment. It's use to train, optimize hyperparameters, evaluate and gather statistics about an agent.
+You can find the guide for ExperimentManager [here](experimentManager_page).
 ### Logging
 ### Analyse the results
 ## Experimenting with Deep agents
