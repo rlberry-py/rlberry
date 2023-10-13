@@ -175,7 +175,7 @@ Moviepy - video ready <yourPath>/CartPole-v1-episode-1.mp4
 Now an example with some more settings. (check the [API](rlberry.manager.ExperimentManager) to see all of them)
 
 ```python
-sfrom rlberry.envs import gym_make
+from rlberry.envs import gym_make
 from rlberry.agents.torch import PPOAgent
 from rlberry.manager import ExperimentManager, evaluate_agents
 
