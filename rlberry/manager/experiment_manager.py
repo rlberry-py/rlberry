@@ -30,7 +30,6 @@ from rlberry.utils.writers import DefaultWriter
 from rlberry.manager.utils import create_database
 from rlberry import types
 
-
 _OPTUNA_INSTALLED = True
 try:
     import optuna
@@ -38,6 +37,7 @@ except Exception:
     _OPTUNA_INSTALLED = False
 
 logger = rlberry.logger
+
 
 # Aux
 #
@@ -68,13 +68,13 @@ class AgentHandler:
     """
 
     def __init__(
-        self,
-        id: int,
-        filename: Union[str, Path],
-        seeder: Seeder,
-        agent_class,
-        agent_instance=None,
-        agent_kwargs=None,
+            self,
+            id: int,
+            filename: Union[str, Path],
+            seeder: Seeder,
+            agent_class,
+            agent_instance=None,
+            agent_kwargs=None,
     ) -> None:
         self._id = id
         self._fname = Path(filename)
@@ -260,27 +260,27 @@ class ExperimentManager:
     """
 
     def __init__(
-        self,
-        agent_class,
-        train_env=(None, None),
-        fit_budget=None,
-        eval_env=None,
-        init_kwargs=None,
-        fit_kwargs=None,
-        eval_kwargs=None,
-        agent_name=None,
-        n_fit=4,
-        output_dir=None,
-        parallelization="thread",
-        max_workers=None,
-        mp_context="spawn",
-        worker_logging_level=None,
-        seed=None,
-        enable_tensorboard=False,
-        outdir_id_style="timestamp",
-        default_writer_kwargs=None,
-        init_kwargs_per_instance=None,
-        thread_shared_data=None,
+            self,
+            agent_class,
+            train_env=(None, None),
+            fit_budget=None,
+            eval_env=None,
+            init_kwargs=None,
+            fit_kwargs=None,
+            eval_kwargs=None,
+            agent_name=None,
+            n_fit=4,
+            output_dir=None,
+            parallelization="thread",
+            max_workers=None,
+            mp_context="spawn",
+            worker_logging_level=None,
+            seed=None,
+            enable_tensorboard=False,
+            outdir_id_style="timestamp",
+            default_writer_kwargs=None,
+            init_kwargs_per_instance=None,
+            thread_shared_data=None,
     ):
         # agent_class should only be None when the constructor is called
         # by the class method ExperimentManager.load(), since the agent class
@@ -376,11 +376,11 @@ class ExperimentManager:
         self.output_dir_ = Path(output_dir_) / "manager_data"
         if outdir_id_style == "unique":
             self.output_dir_ = self.output_dir_ / (
-                self.agent_name + "_" + self.unique_id
+                    self.agent_name + "_" + self.unique_id
             )
         elif outdir_id_style == "timestamp":
             self.output_dir_ = self.output_dir_ / (
-                self.agent_name + "_" + self.timestamp_id
+                    self.agent_name + "_" + self.timestamp_id
             )
 
         # Create list of writers for each agent that will be trained
@@ -518,11 +518,11 @@ class ExperimentManager:
         return []
 
     def eval_agents(
-        self,
-        n_simulations: Optional[int] = None,
-        eval_kwargs: Optional[dict] = None,
-        agent_id: Optional[int] = None,
-        verbose: Optional[bool] = True,
+            self,
+            n_simulations: Optional[int] = None,
+            eval_kwargs: Optional[dict] = None,
+            agent_id: Optional[int] = None,
+            verbose: Optional[bool] = True,
     ) -> List[float]:
         """
         Call :meth:`eval` method in the managed agents and returns a list with the results.
@@ -575,8 +575,10 @@ class ExperimentManager:
                 return []
             # Update eval_kwargs with n_simulation parameter
             eval_kwargs_with_n_simulation = eval_kwargs.copy()
+            if "n_simulation" in eval_kwargs:
+                # Issue a warning that n_simulation is overwritten
+                logger.info("Warning: n_simulation parameter in eval_kwargs is being overwritten with 1.")
             eval_kwargs_with_n_simulation["n_simulation"] = 1
-
             values.append(agent.eval(**eval_kwargs_with_n_simulation))
             if verbose:
                 if logger.getEffectiveLevel() <= 10:  # If debug
@@ -627,7 +629,7 @@ class ExperimentManager:
             needs to be set separetely.
         """
         assert (
-            idx >= 0 and idx < self.n_fit
+                idx >= 0 and idx < self.n_fit
         ), "Invalid index sent to ExperimentManager.set_writer()"
         writer_kwargs = writer_kwargs or {}
         self.writers[idx] = (writer_fn, writer_kwargs)
@@ -918,19 +920,19 @@ class ExperimentManager:
         return result
 
     def optimize_hyperparams(
-        self,
-        n_trials=256,
-        timeout=60,
-        n_fit=2,
-        n_optuna_workers=2,
-        optuna_parallelization="thread",
-        sampler_method="optuna_default",
-        pruner_method="halving",
-        continue_previous=False,
-        fit_fraction=1.0,
-        sampler_kwargs=None,
-        disable_evaluation_writers=True,
-        custom_eval_function=None,
+            self,
+            n_trials=256,
+            timeout=60,
+            n_fit=2,
+            n_optuna_workers=2,
+            optuna_parallelization="thread",
+            sampler_method="optuna_default",
+            pruner_method="halving",
+            continue_previous=False,
+            fit_fraction=1.0,
+            sampler_kwargs=None,
+            disable_evaluation_writers=True,
+            custom_eval_function=None,
     ):
         """Run hyperparameter optimization and updates init_kwargs with the best hyperparameters found.
 
@@ -1023,7 +1025,7 @@ class ExperimentManager:
                 sampler = optuna.samplers.RandomSampler()
             elif sampler_method == "grid":
                 assert (
-                    sampler_kwargs is not None
+                        sampler_kwargs is not None
                 ), "To use GridSampler, a search_space dictionary must be provided."
                 sampler = optuna.samplers.GridSampler(**sampler_kwargs)
             elif sampler_method == "cmaes":
@@ -1075,8 +1077,8 @@ class ExperimentManager:
             disable_evaluation_writers=disable_evaluation_writers,
             fit_fraction=fit_fraction,
             init_kwargs_per_instance=self.init_kwargs_per_instance[
-                :n_fit
-            ],  # init_kwargs_per_instance only for the first n_fit instances
+                                     :n_fit
+                                     ],  # init_kwargs_per_instance only for the first n_fit instances
             custom_eval_function=custom_eval_function,
             thread_shared_data=self.thread_shared_data,
         )
@@ -1095,7 +1097,7 @@ class ExperimentManager:
                     executor.shutdown()
             elif optuna_parallelization == "process":
                 with concurrent.futures.ProcessPoolExecutor(
-                    mp_context=multiprocessing.get_context(self.mp_context)
+                        mp_context=multiprocessing.get_context(self.mp_context)
                 ) as executor:
                     for _ in range(n_optuna_workers):
                         executor.submit(
@@ -1188,7 +1190,7 @@ def _fit_worker(args):
     if writer[0] is None:
         agent_handler.set_writer(None)
     elif (
-        writer[0] != "default"
+            writer[0] != "default"
     ):  # 'default' corresponds to DefaultWriter created by Agent.__init__()
         writer_fn = writer[0]
         writer_kwargs = writer[1]
@@ -1230,20 +1232,20 @@ def _safe_serialize_json(obj, filename):
 
 
 def _optuna_objective(
-    trial,
-    base_init_kwargs,  # self._base_init_kwargs
-    agent_class,  # self.agent_class
-    train_env,  # self.train_env
-    eval_env,
-    fit_budget,  # self.fit_budget
-    eval_kwargs,  # self.eval_kwargs
-    n_fit,
-    temp_dir,  # TEMP_DIR
-    disable_evaluation_writers,
-    fit_fraction,
-    init_kwargs_per_instance,
-    custom_eval_function,
-    thread_shared_data,
+        trial,
+        base_init_kwargs,  # self._base_init_kwargs
+        agent_class,  # self.agent_class
+        train_env,  # self.train_env
+        eval_env,
+        fit_budget,  # self.fit_budget
+        eval_kwargs,  # self.eval_kwargs
+        n_fit,
+        temp_dir,  # TEMP_DIR
+        disable_evaluation_writers,
+        fit_fraction,
+        init_kwargs_per_instance,
+        custom_eval_function,
+        thread_shared_data,
 ):
     kwargs = deepcopy(base_init_kwargs)
 
