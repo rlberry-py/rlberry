@@ -38,20 +38,22 @@ With the same environment, we will use an Agent to choose the actions instead of
 from rlberry.envs.finite import Chain
 from rlberry.agents.dynprog import ValueIterationAgent
 
-env = Chain(10, 0.1)    #same env
-agent = ValueIterationAgent(env, gamma=0.95)    #creation of the agent
-info = agent.fit()  #Agent's training   (ValueIteration don't use budget)
+env = Chain(10, 0.1)  # same env
+agent = ValueIterationAgent(env, gamma=0.95)  # creation of the agent
+info = agent.fit()  # Agent's training   (ValueIteration don't use budget)
 print(info)
 
-#test the trained agent
+# test the trained agent
 env.enable_rendering()
 observation, info = env.reset()
 for tt in range(50):
-    action = agent.policy(observation)  #use the agent's policy to choose the next action
-    observation, reward, terminated, truncated, info = env.step(action) #do the action
+    action = agent.policy(
+        observation
+    )  # use the agent's policy to choose the next action
+    observation, reward, terminated, truncated, info = env.step(action)  # do the action
     done = terminated or truncated
     if done:
-        break   #stop if the environement is done
+        break  # stop if the environement is done
 env.render(loop=False)
 
 # env.save_video is only available for rlberry envs and custom env (with 'RenderInterface' as parent class)
@@ -90,7 +92,7 @@ Output #0, mp4, to '_agent_page_chain.mp4':
       encoder         : Lavc58.134.100 libx264
     Side data:
       cpb: bitrate max/min/avg: 0/0/0 buffer size: 0 vbv_delay: N/A
-frame=   51 fps=0.0 q=-1.0 Lsize=      12kB time=00:00:01.92 bitrate=  51.9kbits/s speed=48.8x    
+frame=   51 fps=0.0 q=-1.0 Lsize=      12kB time=00:00:01.92 bitrate=  51.9kbits/s speed=48.8x
 video:11kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 12.817029%
 [libx264 @ 0x5570932967c0] frame I:1     Avg QP:29.06  size:  6089
 [libx264 @ 0x5570932967c0] frame P:18    Avg QP:18.13  size:   172
@@ -135,18 +137,24 @@ from stable_baselines3 import PPO
 from rlberry.agents.stable_baselines import StableBaselinesAgent
 
 env = gym_make("CartPole-v1", render_mode="rgb_array")
-agent = StableBaselinesAgent(env, PPO, "MlpPolicy", verbose=1)  #wrap StableBaseline3's PPO inside rlberry Agent
-info = agent.fit(10000)  #Agent's training 
+agent = StableBaselinesAgent(
+    env, PPO, "MlpPolicy", verbose=1
+)  # wrap StableBaseline3's PPO inside rlberry Agent
+info = agent.fit(10000)  # Agent's training
 print(info)
 
-env = RecordVideo(env, video_folder="./", name_prefix="CartPole")   #wrap the env to save the video output
-observation, info = env.reset() #initialize the environment
+env = RecordVideo(
+    env, video_folder="./", name_prefix="CartPole"
+)  # wrap the env to save the video output
+observation, info = env.reset()  # initialize the environment
 for tt in range(3000):
-    action = agent.policy(observation)  #use the agent's policy to choose the next action
-    observation, reward, terminated, truncated, info = env.step(action) #do the action
+    action = agent.policy(
+        observation
+    )  # use the agent's policy to choose the next action
+    observation, reward, terminated, truncated, info = env.step(action)  # do the action
     done = terminated or truncated
     if done:
-        break   #stop if the environement is done
+        break  # stop if the environement is done
 env.close()
 ```
 
@@ -206,7 +214,7 @@ Wrapping the env in a DummyVecEnv.
 |    policy_gradient_loss | -0.0195     |
 |    value_loss           | 38.7        |
 -----------------------------------------
-[INFO] 16:36: [[worker: -1]] | max_global_step = 6144 | time/iterations = 2 | rollout/ep_rew_mean = 28.13 | rollout/ep_len_mean = 28.13 | time/fps = 1842 | time/time_elapsed = 2 | time/total_timesteps = 4096 | train/learning_rate = 0.0003 | train/entropy_loss = -0.6860913151875139 | train/policy_gradient_loss = -0.015838009686558508 | train/value_loss = 51.528612112998964 | train/approx_kl = 0.009214947000145912 | train/clip_fraction = 0.10205078125 | train/loss = 8.420166969299316 | train/explained_variance = -0.001785874366760254 | train/n_updates = 10 | train/clip_range = 0.2 |  
+[INFO] 16:36: [[worker: -1]] | max_global_step = 6144 | time/iterations = 2 | rollout/ep_rew_mean = 28.13 | rollout/ep_len_mean = 28.13 | time/fps = 1842 | time/time_elapsed = 2 | time/total_timesteps = 4096 | train/learning_rate = 0.0003 | train/entropy_loss = -0.6860913151875139 | train/policy_gradient_loss = -0.015838009686558508 | train/value_loss = 51.528612112998964 | train/approx_kl = 0.009214947000145912 | train/clip_fraction = 0.10205078125 | train/loss = 8.420166969299316 | train/explained_variance = -0.001785874366760254 | train/n_updates = 10 | train/clip_range = 0.2 |
 ------------------------------------------
 | rollout/                |              |
 |    ep_len_mean          | 50.2         |
@@ -254,8 +262,8 @@ None
 Moviepy - Building video <yourPath>/CartPole-episode-0.mp4.
 Moviepy - Writing video <yourPath>/CartPole-episode-0.mp4
 
-Moviepy - Done !                                                                                                                                
-Moviepy - video ready <yourPath>/CartPole-episode-0.mp4                                                
+Moviepy - Done !
+Moviepy - video ready <yourPath>/CartPole-episode-0.mp4
 ```
 
 </br>
@@ -282,12 +290,17 @@ import numpy as np
 from rlberry.agents import AgentWithSimplePolicy
 
 
-class MyAgentQLearning (AgentWithSimplePolicy):
+class MyAgentQLearning(AgentWithSimplePolicy):
     name = "QLearning"
     # create an agent with q-table
 
     def __init__(
-        self, env, exploration_rate=0.01, learning_rate=0.8,discount_factor=0.95, **kwargs
+        self,
+        env,
+        exploration_rate=0.01,
+        learning_rate=0.8,
+        discount_factor=0.95,
+        **kwargs
     ):  # it's important to put **kwargs to ensure compatibility with the base class
         # self.env is initialized in the base class
         super().__init__(env=env, **kwargs)
@@ -295,13 +308,12 @@ class MyAgentQLearning (AgentWithSimplePolicy):
         state_space_size = env.observation_space.n
         action_space_size = env.action_space.n
 
-        self.exploration_rate = exploration_rate  #percentage to select random action
-        self.q_table = np.zeros((state_space_size, action_space_size))  #q_table to store result and choose actions
+        self.exploration_rate = exploration_rate  # percentage to select random action
+        self.q_table = np.zeros(
+            (state_space_size, action_space_size)
+        )  # q_table to store result and choose actions
         self.learning_rate = learning_rate
-        self.discount_factor=discount_factor    #gamma
-
-
-
+        self.discount_factor = discount_factor  # gamma
 
     def fit(self, budget, **kwargs):
         """
@@ -318,10 +330,14 @@ class MyAgentQLearning (AgentWithSimplePolicy):
             observation, info = self.env.reset()
             done = False
             while not done:
-                action = self.policy(observation) 
+                action = self.policy(observation)
                 next_step, reward, terminated, truncated, info = self.env.step(action)
-                #update the q_table
-                self.q_table[observation, action] = (1 - self.learning_rate) * self.q_table[observation, action] + self.learning_rate * (reward + self.discount_factor * np.max(self.q_table[next_step, :]))
+                # update the q_table
+                self.q_table[observation, action] = (
+                    1 - self.learning_rate
+                ) * self.q_table[observation, action] + self.learning_rate * (
+                    reward + self.discount_factor * np.max(self.q_table[next_step, :])
+                )
                 observation = next_step
                 done = terminated or truncated
                 rewards[ep] += reward
@@ -337,7 +353,7 @@ class MyAgentQLearning (AgentWithSimplePolicy):
         For instance, it can be a Monte-Carlo evaluation of the policy learned in fit().
         """
 
-        return super().eval()  #use the eval() from AgentWithSimplePolicy
+        return super().eval()  # use the eval() from AgentWithSimplePolicy
 
     def policy(self, observation, explo=True):
         state = observation
@@ -347,7 +363,6 @@ class MyAgentQLearning (AgentWithSimplePolicy):
             action = np.argmax(self.q_table[state, :])  # Exploit
 
         return action
-
 ```
 
 
@@ -356,25 +371,32 @@ class MyAgentQLearning (AgentWithSimplePolicy):
 You can use it like this :
 
 ```python
-
 from gymnasium.wrappers.record_video import RecordVideo
 from rlberry.envs import gym_make
 
-env = gym_make("FrozenLake-v1", render_mode="rgb_array",is_slippery=False)   #remove the slippery from the env
-agent = MyAgentQLearning(env, exploration_rate=0.25,learning_rate = 0.8,discount_factor = 0.95)  
-info = agent.fit(100000)  #Agent's training 
+env = gym_make(
+    "FrozenLake-v1", render_mode="rgb_array", is_slippery=False
+)  # remove the slippery from the env
+agent = MyAgentQLearning(
+    env, exploration_rate=0.25, learning_rate=0.8, discount_factor=0.95
+)
+info = agent.fit(100000)  # Agent's training
 print("----------")
-print(agent.q_table)       #display the q_table content
+print(agent.q_table)  # display the q_table content
 print("----------")
 
-env = RecordVideo(env, video_folder="./", name_prefix="FrozenLake_no_slippery")   #wrap the env to save the video output
-observation, info = env.reset() #initialize the environment
+env = RecordVideo(
+    env, video_folder="./", name_prefix="FrozenLake_no_slippery"
+)  # wrap the env to save the video output
+observation, info = env.reset()  # initialize the environment
 for tt in range(3000):
-    action = agent.policy(observation,explo=False)  #use the agent's policy to choose the next action (without exploration)
-    observation, reward, terminated, truncated, info = env.step(action) #do the action
+    action = agent.policy(
+        observation, explo=False
+    )  # use the agent's policy to choose the next action (without exploration)
+    observation, reward, terminated, truncated, info = env.step(action)  # do the action
     done = terminated or truncated
     if done:
-        break   #stop if the environement is done
+        break  # stop if the environement is done
 env.close()
 ```
 
@@ -402,7 +424,7 @@ env.close()
 Moviepy - Building video <yourPath>/FrozenLake_no_slippery-episode-0.mp4.
 Moviepy - Writing video <yourPath>/FrozenLake_no_slippery-episode-0.mp4
 
-Moviepy - Done !                                                                                                                                
+Moviepy - Done !
 Moviepy - video ready <yourPath>/FrozenLake_no_slippery-episode-0.mp4
 0.7
 
