@@ -73,7 +73,7 @@ that you can spend most of your time developing agents.
 Install the latest version for a stable release.
 
 ```bash
-pip install rlberry
+pip install -U git+https://github.com/rlberry-py/rlberry.git@v0.3.0#egg=rlberry[default]
 ```
 
 The documentation includes more [installation instructions](https://rlberry-py.github.io/rlberry/installation.html).
