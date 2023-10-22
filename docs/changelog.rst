@@ -51,7 +51,6 @@ Version 0.4.1
 Version 0.4.0
 -------------
 
-
 *PR #273*
 
 * Change the default behavior of `plot_writer_data` so that if seaborn has version >= 0.12.0 then
