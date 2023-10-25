@@ -22,5 +22,6 @@ ale-py>=0.8.0
 pytest
 pytest-xprocess
 moviepy>=1.0.3
-# stable-baselines3   uncomment when v2.0
+scikit-fda
+# stable-baselines3 # uncomment when v2.0
 git+https://github.com/DLR-RM/stable-baselines3
