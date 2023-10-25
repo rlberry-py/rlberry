@@ -163,7 +163,7 @@ output = plot_writer_data(
     tag="action",
     preprocess_func=compute_pseudo_regret,
     title="Cumulative Pseudo-Regret",
-    sns_kwargs={"style": "name"},  # to have varying linestyles
+    linestyles=True,
 )
 
 output = plot_writer_data(
@@ -171,7 +171,7 @@ output = plot_writer_data(
     tag="reward",
     preprocess_func=compute_regret,
     title="Cumulative Regret",
-    sns_kwargs={"style": "name"},  # to have varying linestyles
+    linestyles=True,
 )
 
 
@@ -190,7 +190,7 @@ for arm in range(A):
         title="Na for arm " + str(arm) + ", mean=" + str(means[arm]),
         ax=axes[arm],
         show=False,
-        sns_kwargs={"style": "name"},  # to have varying linestyles
+        linestyles=True,
     )
 fig.tight_layout()
 plt.show()

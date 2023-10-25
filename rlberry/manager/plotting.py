@@ -155,24 +155,24 @@ def plot_writer_data(
         for name in data["name"].unique():
             n_simu_tot = int(data.loc[data["name"] == name, "n_simu"].max())
             for simu in range(n_simu_tot):
-                if len(data) > 1000:
-                    df_name_simu = data.loc[
-                        (data["n_simu"] == simu) & (data["name"] == name)
-                    ]
-                    step = len(df_name_simu) // 1000
+                df_name_simu = data.loc[
+                    (data["n_simu"] == simu) & (data["name"] == name)
+                ]
+                step = len(df_name_simu) // 1000
+                if step > 1:
                     df_sub = df_name_simu.sort_values(by=xx).iloc[
                         ::step
                     ]  # do the sub-sampling
                     new_df = pd.concat([new_df, df_sub], ignore_index=True)
-
+                else:
+                    new_df = pd.concat([new_df, df_name_simu], ignore_index=True)
     data = new_df
     if ax is None:
         figure, ax = plt.subplots(1, 1)
-
     plot_smoothed_curve(
-        data[["name", xx, ylabel, "n_simu"]],
+        data[["name", xx, "value", "n_simu"]],
         xx,
-        ylabel,
+        "value",
         smooth,
         smoothing_bandwidth,
         ax,

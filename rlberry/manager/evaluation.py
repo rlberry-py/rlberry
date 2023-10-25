@@ -117,9 +117,9 @@ def evaluate_agents(
     # plot
     if plot:
         plt.figure(fignum)
-        ax = plt.boxplot(data=output)
-        ax.set_xlabel("agent")
-        ax.set_ylabel("evaluation output")
+        plt.boxplot(output.values, labels=output.columns)
+        plt.xlabel("agent")
+        plt.ylabel("evaluation output")
         if show:
             plt.show()
 
