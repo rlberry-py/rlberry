@@ -2,6 +2,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from itertools import cycle
 import numbers
+from scipy.stats import norm
+import pandas as pd
 
 from rlberry.manager import read_writer_data
 
@@ -9,7 +11,6 @@ from skfda.representation.grid import FDataGrid
 from skfda.misc.hat_matrix import NadarayaWatsonHatMatrix
 from skfda.preprocessing.smoothing import KernelSmoother
 from skfda.preprocessing.smoothing.validation import SmoothingParameterSearch
-
 
 import rlberry
 
@@ -26,7 +27,8 @@ def plot_writer_data(
     ax=None,
     error_representation="ci",
     n_boot=500,
-    level=0.95,
+    level=0.9,
+    sub_sample=True,
     show=True,
     preprocess_func=None,
     title=None,
@@ -71,16 +73,21 @@ def plot_writer_data(
     ax: matplotlib axis or None, default=None
         Matplotlib axis on which we plot. If None, create one. Can be used to
         customize the plot.
-    error_representation: str in {"ci", "raw_curves"}
-        How to represent multiple simulations, with a confidence interval on the mean
-        curve using functional data analysis or just by plotting the raw curves.
+    error_representation: str in {"cb", "raw_curves", "ci",  "pi"}
+        How to represent multiple simulations. The "ci" and "pi" do not take into account the need for simultaneous inference, it is then harder to draw conclusion from them than with "cb" and "pb" but they are the most widely used.
+        - "cb" is a confidence band on the mean curve using functional data analysis (band in which the curve is with probability larger than 1-level).
+        - "raw curves" is a plot of the raw curves.
+        - "pi" is a plot of a non-simultaneous prediction interval with gaussian model around the mean smoothed curve (e.g. we do curve plus/minus gaussian quantile times std).
+        - "ci" is a confidence interval on the prediction interval with gaussian model around the mean smoothed curve (e.g. we do curve plus/minus gaussian quantile times std divided by sqrt of number of seeds).
     n_boot: int, default=500,
         Number of bootstrap evaluations used for confidence interval estimation.
         Only used if error_representation = "ci".
     level: float, default=0.95,
         Level of the confidence interval. Only used if error_representation = "ci"
+    sub_sample, boolean, default = True,
+        If True, use up to 1000 points for one given seed of one agent to reduce computational cost.
     show: bool, default=True
-        If true, calls plt.show().
+        If True, calls plt.show().
     preprocess_func: Callable, default=None
         Function to apply to 'tag' column before plot. For instance, if tag=episode_rewards,
         setting preprocess_func=np.cumsum will plot cumulative rewards. If None, do nothing.
@@ -143,15 +150,31 @@ def plot_writer_data(
             )
     else:
         xx = data.index
+    if sub_sample:
+        new_df = pd.DataFrame()
+        for name in data["name"].unique():
+            n_simu_tot = int(data.loc[data["name"] == name, "n_simu"].max())
+            for simu in range(n_simu_tot):
+                if len(data) > 1000:
+                    df_name_simu = data.loc[
+                        (data["n_simu"] == simu) & (data["name"] == name)
+                    ]
+                    step = len(df_name_simu) // 1000
+                    df_sub = df_name_simu.sort_values(by=xx).iloc[
+                        ::step
+                    ]  # do the sub-sampling
+                    new_df = pd.concat([new_df, df_sub], ignore_index=True)
 
+    data = new_df
     if ax is None:
         figure, ax = plt.subplots(1, 1)
 
     plot_smoothed_curve(
-        data,
-        xtag,
+        data[["name", xx, ylabel, "n_simu"]],
+        xx,
         ylabel,
         smooth,
+        smoothing_bandwidth,
         ax,
         error_representation,
         n_boot,
@@ -182,7 +205,7 @@ def plot_smoothed_curve(
     ax=None,
     error_representation="ci",
     n_boot=2500,
-    level=0.95,
+    level=0.9,
     show=True,
     title=None,
     savefig_fname=None,
@@ -213,9 +236,12 @@ def plot_smoothed_curve(
     ax: matplotlib axis or None, default=None
         Matplotlib axis on which we plot. If None, create one. Can be used to
         customize the plot.
-    error_representation: str in {"ci", "raw_curves"}
-        How to represent multiple simulations, with a confidence interval on the mean
-        curve using functional data analysis or just by plotting the raw curves.
+    error_representation: str in {"cb", "raw_curves", "ci",  "pi"}
+        How to represent multiple simulations. The "ci" and "pi" do not take into account the need for simultaneous inference, it is then harder to draw conclusion from them than with "cb" and "pb" but they are the most widely used.
+        - "cb" is a confidence band on the mean curve using functional data analysis (band in which the curve is with probability larger than 1-level).
+        - "raw curves" is a plot of the raw curves.
+        - "pi" is a plot of a non-simultaneous prediction interval with gaussian model around the mean smoothed curve (e.g. we do curve plus/minus gaussian quantile times std).
+        - "ci" is a confidence interval on the prediction interval with gaussian model around the mean smoothed curve (e.g. we do curve plus/minus gaussian quantile times std divided by sqrt of number of seeds).
     n_boot: int, default=2500,
         Number of bootstrap evaluations used for confidence interval estimation.
         Only used if error_representation = "ci".
@@ -241,8 +267,9 @@ def plot_smoothed_curve(
     xlabel = x
     ylabel = y
     x_values = data[xlabel].values
-    if isinstance(smoothing_bandwidth, numbers.Number):
-        min_x, max_x = x_values.min(), x_values.max()
+    min_x, max_x = x_values.min(), x_values.max()
+
+    if not isinstance(smoothing_bandwidth, numbers.Number):
         sorted_x = np.sort(np.unique(x_values))
         if len(sorted_x) > 200:
             # second percentile minus minimum
@@ -266,7 +293,7 @@ def plot_smoothed_curve(
 
     n_tot_simu = int(data["n_simu"].max())
     if n_tot_simu < 10:
-        print(
+        logger.warning(
             "Warning: less than 10 repetition used, the estimation of the confidence interval will be poor"
         )
     names = data["name"].unique()
@@ -283,7 +310,7 @@ def plot_smoothed_curve(
         # with cross validation bandwidth selection
         if not isinstance(smoothing_bandwidth, numbers.Number):
             if smoothing_bandwidth is None:
-                bandwidth = np.linspace(min_bandwidth_x, (max_x - min_x) / 100, 20)
+                bandwidth = np.linspace(min_bandwidth_x, (max_x - min_x) / 100, 10)
             else:
                 bandwidth = smoothing_bandwidth
             nw = SmoothingParameterSearch(
@@ -300,15 +327,22 @@ def plot_smoothed_curve(
             )
 
         Xhat = np.zeros([n_tot_simu, len(xplot)])
+        bw = False
         for f in range(n_tot_simu):
             X = df_name.loc[df["n_simu"] == f, ylabel].values
-            if smooth:
+            if smooth and (bw is False):
                 X_grid = df_name.loc[df["n_simu"] == f, xlabel].values.astype(float)
                 fd = FDataGrid([X], X_grid, domain_range=((min_x, max_x),))
-                nw.fit(fd)  # Find the smoothing bandwidth
+                nw.fit(fd)  # Find the smoothing bandwidth once
+                bw = True  # don't search for bandwidth in futur run, reuse
+                Xhat[f] = nw.transform(fd).data_matrix.ravel()  # apply smoothing
+            elif smooth:
+                X_grid = df_name.loc[df["n_simu"] == f, xlabel].values.astype(float)
+                fd = FDataGrid([X], X_grid, domain_range=((min_x, max_x),))
                 Xhat[f] = nw.transform(fd).data_matrix.ravel()  # apply smoothing
             else:
                 Xhat[f] = X
+
         return Xhat
 
     for id_c, name in enumerate(names):
@@ -336,32 +370,53 @@ def plot_smoothed_curve(
                     ax.plot(x_simu, y, alpha=0.2, label="raw " + name, color=cmap[id_c])
                 else:
                     ax.plot(x_simu, y, alpha=0.25, color=cmap[id_c])
-        elif error_representation == "ci":
+        else:
             if smooth == False:
                 raise ValueError(
-                    "In order to use errorbar = 'ci' you need smooth = True"
+                    "In order to use errorbar = {} you need smooth = True".format(
+                        error_representation
+                    )
                 )
-            if n_tot_simu < 10:
-                logger.warn(
-                    "Computing a ci on less than 10 seed is not very accurate. Consider computing more seeds to have a more accurate confidence interval around you reward curve."
-                )
+
             Xhat = process(df_name)
             mu = np.mean(Xhat, axis=0)
             sigma = np.sqrt(np.sum((Xhat - mu) ** 2, axis=0) / (len(Xhat) - 1))
 
-            res = []
-            # Bootstrap estimation of confidence interval
-            for b in range(n_boot):
-                id_b = np.random.choice(n_tot_simu, size=n_tot_simu, replace=True)
-                mustar = np.mean(Xhat[id_b], axis=0)
-                residus = np.sqrt(len(xplot)) / sigma * np.abs(mustar - mu)
-                res.append(np.max(residus))
+            if error_representation == "ci":
+                quantile = norm.ppf(1 - (1 - level) / 2)
+                y_err = quantile * sigma / np.sqrt(n_tot_simu)
 
-            y_err = (
-                sigma.ravel()
-                / np.sqrt(len(xplot))
-                * np.quantile(res, 1 - (1 - level) / 2)
-            )
+            elif error_representation == "pi":
+                quantile = norm.ppf(1 - (1 - level) / 2)
+                y_err = quantile * sigma
+
+            elif error_representation == "cb":
+                if n_tot_simu < 1 / (1 - level):
+                    logger.warn(
+                        "Computing a cb that cannot achieve the level prescribed because there are not enough seeds."
+                    )
+
+                res = []
+                # Bootstrap estimation of confidence interval
+
+                for b in range(n_boot):
+                    id_b = np.random.choice(n_tot_simu, size=n_tot_simu, replace=True)
+                    mustar = np.mean(Xhat[id_b], axis=0)
+                    residus = (
+                        np.sqrt(len(xplot[sigma != 0]))
+                        / sigma[sigma != 0]
+                        * np.abs(mustar[sigma != 0] - mu[sigma != 0])
+                    )
+                    res.append(np.max(residus))
+
+                y_err = (
+                    sigma.ravel()
+                    / np.sqrt(len(xplot))
+                    * np.quantile(res, 1 - (1 - level) / 2)
+                )
+            else:
+                raise ValueError("error_representation not implemented")
+
             ax.fill_between(
                 xplot[id_plot],
                 mu.ravel()[id_plot] - y_err[id_plot],
