@@ -238,7 +238,7 @@ def plot_smoothed_curve(
         customize the plot.
     error_representation: str in {"cb", "raw_curves", "ci",  "pi"}
         How to represent multiple simulations. The "ci" and "pi" do not take into account the need for simultaneous inference, it is then harder to draw conclusion from them than with "cb" and "pb" but they are the most widely used.
-        - "cb" is a confidence band on the mean curve using functional data analysis (band in which the curve is with probability larger than 1-level).
+        - "cb" is a confidence band on the mean curve using functional data analysis (band in which the curve is with probability larger than 1-level). Method from [1], using scikit-fda [2] library.
         - "raw curves" is a plot of the raw curves.
         - "pi" is a plot of a non-simultaneous prediction interval with gaussian model around the mean smoothed curve (e.g. we do curve plus/minus gaussian quantile times std).
         - "ci" is a confidence interval on the prediction interval with gaussian model around the mean smoothed curve (e.g. we do curve plus/minus gaussian quantile times std divided by sqrt of number of seeds).
@@ -255,13 +255,10 @@ def plot_smoothed_curve(
     linestyles: boolean, default=False
         Whether to use different linestyles for each curve.
 
-    Examples
-    --------
-        TODO
-
     References
     ----------
-        TODO
+        [1] Degras, D. (2017). Simultaneous confidence bands for the mean of functional data. Wiley Interdisciplinary Reviews: Computational Statistics, 9(3), e1397.
+        [2] scikit-fda, Carlos Ramos Carreño, hzzhyj, mellamansanchez, Pablo Marcos, pedrorponga, David del Val, Pablo, David García Fernández, Martín, Miguel Carbajo Berrocal, ElenaPetrunina, Pablo Cuesta Sierra, Rafa Hidalgo, Clément Lejeune, amandaher, dSerna4, ego-thales, pedrog99, Jorge Duque, … Álvaro Castillo. (2023). GAA-UAM/scikit-fda: Version 0.9 (0.9). Zenodo. https://doi.org/10.5281/zenodo.10016930
 
     """
     xlabel = x
