@@ -160,7 +160,7 @@ def plot_writer_data(
                 ]
                 step = len(df_name_simu) // 1000
                 if step > 1:
-                    df_sub = df_name_simu.sort_values(by=xx).iloc[
+                    df_sub = df_name_simu.sort_values(by=xtag).iloc[
                         ::step
                     ]  # do the sub-sampling
                     new_df = pd.concat([new_df, df_sub], ignore_index=True)
@@ -185,7 +185,7 @@ def plot_writer_data(
         linestyles,
     )
 
-    ax.set_xlabel(xx)
+    ax.set_xlabel(xtag)
     ax.set_ylabel(ylabel)
     if title is not None:
         ax.set_title(title)
