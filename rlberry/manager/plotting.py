@@ -133,23 +133,23 @@ def plot_writer_data(
         data_source, tag, preprocess_func, id_agent=id_agent
     )
 
-    if len(processed_df) == 0:
+    data = processed_df[processed_df["tag"] == tag]
+
+    if len(data) == 0:
         logger.error("[plot_writer_data]: No data to be plotted.")
         return
-
-    data = processed_df[processed_df["tag"] == tag]
 
     if xtag is None:
         xtag = "global_step"
 
     if data[xtag].notnull().sum() > 0:
-        xx = xtag
-        if data["global_step"].isna().sum() > 0:
+        if data[xtag].isna().sum() > 0:
             logger.warning(
                 f"Plotting {tag} vs {xtag}, but {xtag} might be missing for some agents."
             )
     else:
-        xx = data.index
+        data[xtag] = data.index
+
     if sub_sample:
         new_df = pd.DataFrame()
         for name in data["name"].unique():
@@ -170,8 +170,8 @@ def plot_writer_data(
     if ax is None:
         figure, ax = plt.subplots(1, 1)
     plot_smoothed_curve(
-        data[["name", xx, "value", "n_simu"]],
-        xx,
+        data[["name", xtag, "value", "n_simu"]],
+        xtag,
         "value",
         smooth,
         smoothing_bandwidth,
@@ -289,10 +289,6 @@ def plot_smoothed_curve(
         styles = [() for _ in range(data["name"].unique().size)]
 
     n_tot_simu = int(data["n_simu"].max())
-    if n_tot_simu < 10:
-        logger.warning(
-            "Warning: less than 10 repetition used, the estimation of the confidence interval will be poor"
-        )
     names = data["name"].unique()
     if len(names) <= 10:
         cmap = plt.cm.tab10.colors[: len(names)]
