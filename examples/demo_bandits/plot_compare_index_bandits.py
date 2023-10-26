@@ -136,6 +136,7 @@ agents = [
         n_fit=M,
         parallelization="process",
         mp_context="fork",
+        seed=42,
     )
     for Agent in Agents_class
 ]
