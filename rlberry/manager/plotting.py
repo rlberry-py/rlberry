@@ -323,31 +323,36 @@ def plot_smoothed_curve(
         bw = False
         for f in range(n_tot_simu):
             X = df_name.loc[df["n_simu"] == f, ylabel].values
-            if smooth and (bw is False):
-                X_grid = df_name.loc[df["n_simu"] == f, xlabel].values.astype(float)
-                fd = FDataGrid([X], X_grid, domain_range=((min_x, max_x),))
-                nw.fit(fd)  # Find the smoothing bandwidth once
-                bw = True  # don't search for bandwidth in futur run, reuse
-                Xhat[f] = nw.transform(fd).data_matrix.ravel()  # apply smoothing
-            elif smooth:
-                X_grid = df_name.loc[df["n_simu"] == f, xlabel].values.astype(float)
-                fd = FDataGrid([X], X_grid, domain_range=((min_x, max_x),))
-                Xhat[f] = nw.transform(fd).data_matrix.ravel()  # apply smoothing
+            if not np.all(np.isfinite(X)):
+                logger.warn(
+                    "Some of the values are not finite. Not plotting the associated curves."
+                )
+                Xhat[f] = np.nan
             else:
-                Xhat[f] = X
+                if smooth and (bw is False):
+                    X_grid = df_name.loc[df["n_simu"] == f, xlabel].values.astype(float)
+                    fd = FDataGrid([X], X_grid, domain_range=((min_x, max_x),))
+                    nw.fit(fd)  # Find the smoothing bandwidth once
+                    bw = True  # don't search for bandwidth in futur run, reuse
+                    Xhat[f] = nw.transform(fd).data_matrix.ravel()  # apply smoothing
+                elif smooth:
+                    X_grid = df_name.loc[df["n_simu"] == f, xlabel].values.astype(float)
+                    fd = FDataGrid([X], X_grid, domain_range=((min_x, max_x),))
+                    Xhat[f] = nw.transform(fd).data_matrix.ravel()  # apply smoothing
+                else:
+                    Xhat[f] = X
 
         return Xhat
 
     for id_c, name in enumerate(names):
         df_name = data.loc[data["name"] == name]
-
-        processed = process(df_name).mean(axis=0)
-
+        Xhat = process(df_name)
+        mu = np.mean(Xhat, axis=0)
         id_plot = xplot <= np.max(df_name[xlabel])
 
         ax.plot(
             xplot[id_plot],
-            processed[id_plot],
+            mu[id_plot],
             label=name,
             color=cmap[id_c],
             linestyle=(0, styles[id_c]),
@@ -371,8 +376,6 @@ def plot_smoothed_curve(
                     )
                 )
 
-            Xhat = process(df_name)
-            mu = np.mean(Xhat, axis=0)
             sigma = np.sqrt(np.sum((Xhat - mu) ** 2, axis=0) / (len(Xhat) - 1))
 
             if error_representation == "ci":
