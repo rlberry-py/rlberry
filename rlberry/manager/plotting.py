@@ -323,6 +323,10 @@ def plot_smoothed_curve(
         bw = False
         for f in range(n_tot_simu):
             X = df_name.loc[df["n_simu"] == f, ylabel].values
+            try:
+                np.isfinite(X)
+            except:
+                raise ValueError("type is " + str(type(X[0])))
             if not np.all(np.isfinite(X)):
                 logger.warn(
                     "Some of the values are not finite. Not plotting the associated curves."
