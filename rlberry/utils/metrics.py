@@ -3,7 +3,7 @@ from rlberry.utils.jit_setup import numba_jit
 
 
 @numba_jit
-def metric_lp(x: np.ndarray, y: np.ndarray, p: int, scaling: np.ndarray) -> np.ndarray:
+def metric_lp(x, y, p, scaling):
     """
     Returns the p-norm:  || (x-y)/scaling||_p
 
