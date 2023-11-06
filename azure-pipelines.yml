@@ -120,15 +120,8 @@ jobs:
 
   - script: |
       curl -sSL install.python-poetry.org | python3 -
-    displayName: 'Install poetry'
-
-  - script: set PATH=%PATH%;%USERPROFILE%\AppData\Roaming\pypoetry\venv\Scripts
-    displayName: 'Add poetry to PATH'
-
-  - script: poetry install --with dev,doc,torch,extras --sync
-    displayName: 'Install dependencies'
-
-  - script: |
+      set PATH=%PATH%;%USERPROFILE%\AppData\Roaming\pypoetry\venv\Scripts
+      poetry install --with dev,doc,torch,extras --sync
       poetry add pytest-azurepipelines pytest-xvfb
       poetry run pytest --ignore=rlberry/network
     displayName: 'pytest'
