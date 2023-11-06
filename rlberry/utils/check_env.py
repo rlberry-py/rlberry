@@ -1,14 +1,12 @@
 from rlberry.seeding import safe_reseed
 from rlberry.seeding import Seeder
 import numpy as np
-
-from rlberry.types import Env
 from rlberry.utils.check_gym_env import check_gym_env
 
 seeder = Seeder(42)
 
 
-def check_env(env: Env):
+def check_env(env):
     """
     Check that the environment is (almost) gym-compatible and that it is reproducible
     in the sense that it returns the same states when given the same seed.
@@ -38,7 +36,7 @@ def check_env(env: Env):
     check_gym_env(env)
 
 
-def check_rlberry_env(env: Env):
+def check_rlberry_env(env):
     """
     Companion to check_env, contains additional tests. It is not mandatory
     for an environment to satisfy this check but satisfying this check give access to
