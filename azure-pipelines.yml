@@ -122,7 +122,7 @@ jobs:
       curl -sSL install.python-poetry.org | python3 -
     displayName: 'Install poetry'
 
-  - script: echo "##vso[task.prependpath]$HOME/.poetry/bin"
+  - script: set PATH=%PATH%;%USERPROFILE%\AppData\Roaming\pypoetry\venv\Scripts
     displayName: 'Add poetry to PATH'
 
   - script: poetry install --with dev,doc,torch,extras --sync
