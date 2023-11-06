@@ -1,5 +1,3 @@
-from typing import Optional
-
 from numpy.random import SeedSequence, default_rng
 
 
@@ -44,11 +42,7 @@ class Seeder:
 
     """
 
-    def __init__(
-        self,
-        seed_seq: Optional[SeedSequence | "Seeder" | int] = None,
-        spawn_seed_seq: bool = True,
-    ):
+    def __init__(self, seed_seq=None, spawn_seed_seq=True):
         super().__init__()
         if seed_seq is None:
             seed_seq = SeedSequence()
@@ -65,7 +59,7 @@ class Seeder:
         self.seed_seq = seed_seq
         self.rng = default_rng(self.seed_seq)
 
-    def reseed(self, seed_seq: Optional[SeedSequence | "Seeder" | int] = None):
+    def reseed(self, seed_seq=None):
         """
         Get new random number generator.
 
@@ -96,7 +90,7 @@ class Seeder:
         self.seed_seq = seed_seq
         self.rng = default_rng(self.seed_seq)
 
-    def spawn(self, n: int = 1, squeeze: bool = True):
+    def spawn(self, n=1, squeeze=True):
         """
         Spawn a list of Seeder from the seed sequence of the object (self.seed_seq).
 
@@ -118,7 +112,7 @@ class Seeder:
             spawned_seeders = spawned_seeders[0]
         return spawned_seeders
 
-    def generate_state(self, n: int):
+    def generate_state(self, n):
         return self.seed_seq.generate_state(n)
 
     def __str__(self):
