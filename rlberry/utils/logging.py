@@ -1,11 +1,13 @@
 import logging
 import logging.config
 from pathlib import Path
+from typing import Optional
+
 import gymnasium as gym
 import rlberry
 
 
-def set_level(level="INFO"):
+def set_level(level: str = "INFO"):
     """
     Set rlberry's logger level.
 
@@ -31,7 +33,7 @@ class ColoredFormatter(logging.Formatter):
     bold_red = "\x1b[31;1m"
     reset = "\x1b[0m"
 
-    def __init__(self, fmt):
+    def __init__(self, fmt: str):
         super().__init__()
         self.fmt = fmt
         self.FORMATS = {
@@ -42,7 +44,7 @@ class ColoredFormatter(logging.Formatter):
             logging.CRITICAL: self.bold_red + self.fmt + self.reset,
         }
 
-    def format(self, record):
+    def format(self, record: logging.LogRecord) -> str:
         log_fmt = self.FORMATS.get(record.levelno)
         formatter = logging.Formatter(log_fmt, datefmt="%H:%M")
         return formatter.format(record)
@@ -50,7 +52,7 @@ class ColoredFormatter(logging.Formatter):
 
 def configure_logging(
     level: str = "INFO",
-    file_path: Path = None,
+    file_path: Optional[Path] = None,
     file_level: str = "DEBUG",
     default_msg: str = "",
 ) -> None:
