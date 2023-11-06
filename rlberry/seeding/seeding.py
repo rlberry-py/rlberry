@@ -1,6 +1,4 @@
 import numpy as np
-from numpy.random import SeedSequence
-
 import rlberry.check_packages as check_packages
 from rlberry.seeding.seeder import Seeder
 
@@ -8,7 +6,7 @@ if check_packages.TORCH_INSTALLED:
     import torch
 
 
-def set_external_seed(seeder: SeedSequence | "Seeder" | int):
+def set_external_seed(seeder):
     """
     Set seeds of external libraries.
 
@@ -34,7 +32,7 @@ def set_external_seed(seeder: SeedSequence | "Seeder" | int):
         torch.manual_seed(seeder.seed_seq.generate_state(1, dtype=np.uint32)[0])
 
 
-def safe_reseed(obj, seeder: SeedSequence | "Seeder" | int, reseed_spaces: bool = True):
+def safe_reseed(obj, seeder, reseed_spaces=True):
     """
     Calls obj.reseed(seed_seq) method if available;
     If a obj.seed() method is available, call obj.seed(seed_val),
