@@ -1,9 +1,7 @@
-from typing import List, Tuple
-
 import numpy as np
 
 
-def binary_search_nd(x_vec: np.ndarray, bins: List[np.ndarray]) -> int:
+def binary_search_nd(x_vec, bins):
     """n-dimensional binary search
 
     Parameters
@@ -31,9 +29,7 @@ def binary_search_nd(x_vec: np.ndarray, bins: List[np.ndarray]) -> int:
     return flat_index
 
 
-def unravel_index_uniform_bin(
-    flat_index: int, dim: int, n_per_dim: int
-) -> Tuple[int, ...]:
+def unravel_index_uniform_bin(flat_index, dim, n_per_dim):
     index = []
     aux_index = flat_index
     for _ in range(dim):
