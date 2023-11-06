@@ -167,4 +167,4 @@ dmypy.json
 .pydevproject
 
 
-profile.prof
+*.prof
