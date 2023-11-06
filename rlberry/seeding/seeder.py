@@ -44,7 +44,11 @@ class Seeder:
 
     """
 
-    def __init__(self, seed_seq: Optional[SeedSequence | "Seeder" | int] = None, spawn_seed_seq: bool = True):
+    def __init__(
+        self,
+        seed_seq: Optional[SeedSequence | "Seeder" | int] = None,
+        spawn_seed_seq: bool = True,
+    ):
         super().__init__()
         if seed_seq is None:
             seed_seq = SeedSequence()
