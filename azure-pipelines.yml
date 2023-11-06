@@ -50,12 +50,14 @@ jobs:
   - script: |
       curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
       export PATH=$PATH:$HOME/.poetry/bin
-      poetry install --with --with dev,doc,torch,extras --sync
       sudo apt install libglu1-mesa
-    displayName: 'Install dependencies'
+    displayName: 'Install poetry'
 
   - script: echo "##vso[task.prependpath]$HOME/.poetry/bin"
-    displayName: Add poetry to PATH
+    displayName: 'Add poetry to PATH'
+
+  - script: poetry install --with --with dev,doc,torch,extras --sync
+    displayName: 'Install dependencies'
 
   - script: |
       set -xe
@@ -89,11 +91,13 @@ jobs:
   - script: |
       curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
       export PATH=$PATH:$HOME/.poetry/bin
-      poetry install --with --with dev,doc,torch,extras --sync
-    displayName: 'Install dependencies'
+    displayName: 'Install poetry'
 
   - script: echo "##vso[task.prependpath]$HOME/.poetry/bin"
-    displayName: Add poetry to PATH
+    displayName: 'Add poetry to PATH'
+
+  - script: poetry install --with --with dev,doc,torch,extras --sync
+    displayName: 'Install dependencies'
 
   - script: |
       poetry add pytest-azurepipelines pytest-xvfb
@@ -119,11 +123,13 @@ jobs:
   - script: |
       curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
       export PATH=$PATH:$HOME/.poetry/bin
-      poetry install --with --with dev,doc,torch,extras --sync
-    displayName: 'Install dependencies'
+    displayName: 'Install poetry'
 
   - script: echo "##vso[task.prependpath]$HOME/.poetry/bin"
-    displayName: Add poetry to PATH
+    displayName: 'Add poetry to PATH'
+
+  - script: poetry install --with --with dev,doc,torch,extras --sync
+    displayName: 'Install dependencies'
 
   - script: |
       poetry add pytest-azurepipelines pytest-xvfb
