@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from collections import deque
-from typing import Optional, SupportsInt
+from typing import Optional
 from timeit import default_timer as timer
 from rlberry import check_packages
 from rlberry import metadata_utils
@@ -98,22 +98,22 @@ class DefaultWriter:
         self._time_last_log = timer()
 
     @property
-    def summary_writer(self) -> SummaryWriter:
+    def summary_writer(self):
         return self._summary_writer
 
     @property
-    def data(self) -> pd.DataFrame:
+    def data(self):
         df = pd.DataFrame(columns=("name", "tag", "value", "global_step"))
         for tag in self._data:
             df = pd.concat([df, pd.DataFrame(self._data[tag])], ignore_index=True)
         return df
 
-    def set_max_global_step(self, max_global_step: SupportsInt):
+    def set_max_global_step(self, max_global_step):
         self._max_global_step = max_global_step
         self.pbar = extending_tqdm(total=int(max_global_step), desc=" ", leave=False)
         self.progressbar_current_step = 0
 
-    def read_tag_value(self, tag: str, main_tag: str = "") -> pd.Series:
+    def read_tag_value(self, tag, main_tag: str = ""):
         """
         Reads the values for the tag `tag`.
         If a `main_tag` is given, the tag will be a concatenation of
@@ -133,7 +133,7 @@ class DefaultWriter:
         full_tag = str(main_tag) + "_" + str(tag) if str(main_tag) else str(tag)
         return self._data[full_tag]["value"]
 
-    def read_first_tag_value(self, tag: str, main_tag: str = "") -> float:
+    def read_first_tag_value(self, tag, main_tag: str = ""):
         """
         Reads the first value for the tag `tag`.
         If a `main_tag` is given, the tag will be a concatenation of `main_tag`, underscore and `tag`.
@@ -152,7 +152,7 @@ class DefaultWriter:
         full_tag = str(main_tag) + "_" + str(tag) if str(main_tag) else str(tag)
         return self._data[full_tag]["value"][0]
 
-    def read_last_tag_value(self, tag: str, main_tag: str = "") -> float:
+    def read_last_tag_value(self, tag, main_tag: str = ""):
         """
         Reads the last value for the tag `tag`.
         If a `main_tag` is given, the tag will be a concatenation of `main_tag`, underscore and `tag`.
