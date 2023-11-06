@@ -13,11 +13,8 @@ build:
   tools: {python: "3.10"}
   jobs:
     pre_create_environment:
-      - asdf plugin add poetry
-      - asdf install poetry latest
-      - asdf global poetry latest
+      - curl -sSL https://install.python-poetry.org | python3 -
       - poetry config virtualenvs.create false
-    post_install:
       - poetry install --with dev,doc,torch,extras --sync
 # Build documentation in the docs/ directory with Sphinx
 sphinx:
