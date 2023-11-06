@@ -18,17 +18,17 @@ class QLAgent(AgentWithSimplePolicy):
         Discount factor.
     alpha: float, default = 0.1
         Learning rate.
-    exploration_type: {"epsilon", "boltzmann"}, default: None
+    exploration_type: {"epsilon", "boltzmann"}, default: "epsilon"
         If "epsilon": Epsilon-Greedy exploration.
         If "boltzmann": Boltzmann exploration.
         If None: No exploration.
-    exploration_rate: float, default: None
+    exploration_rate: float, default: 0.3
         epsilon parameter for Epsilon-Greedy exploration or tau parameter for Boltzmann exploration.
 
     Attributes
     ----------
     Q : ndarray
-        2D array that stores the estimation ofexpected rewards for state-action pairs.
+        2D array that stores the estimation of expected rewards for state-action pairs.
 
     Examples
     --------
@@ -48,8 +48,8 @@ class QLAgent(AgentWithSimplePolicy):
         env: types.Env,
         gamma: float = 0.99,
         alpha: float = 0.1,
-        exploration_type: Optional[Literal["epsilon", "boltzmann"]] = None,
-        exploration_rate: Optional[float] = None,
+        exploration_type: Optional[Literal["epsilon", "boltzmann"]] = "epsilon",
+        exploration_rate: Optional[float] = 0.3,
         **kwargs
     ):
         # init base class
@@ -67,7 +67,7 @@ class QLAgent(AgentWithSimplePolicy):
         if self.exploration_type is not None:
             assert (
                 exploration_type == "epsilon" or "boltzmann"
-            ) and exploration_rate is not None
+            ) and exploration_rate is not None, "exploration_rate argument should be set, for exploration_type epsilon or boltzmann"
 
         self.Q = np.zeros((self.env.observation_space.n, self.env.action_space.n))
 
