@@ -48,26 +48,19 @@ jobs:
     displayName: 'Use Python $(python.version)'
 
   - script: |
-      python -m pip install --upgrade pip
-      pip install -r requirements.txt
+      curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+      export PATH=$PATH:$HOME/.poetry/bin
+      poetry install --with --with dev,doc,torch,extras --sync
       sudo apt install libglu1-mesa
     displayName: 'Install dependencies'
-  - script: |
-      set -xe
-      pip install -e .
-    displayName: 'Install rlberry'
-  - script: |
-      pip install git+https://github.com/DLR-RM/stable-baselines3@feat/gymnasium-support
-      pip install git+https://github.com/Stable-Baselines-Team/stable-baselines3-contrib@feat/gymnasium-support
-    displayName: 'Install stable-baselines3 for Gymnasium'
+
+  - script: echo "##vso[task.prependpath]$HOME/.poetry/bin"
+    displayName: Add poetry to PATH
 
   - script: |
       set -xe
-      pip install pytest==7.0.1 pytest-azurepipelines pytest-cov pytest-xvfb pytest-xprocess
-      # run doctests in the documentation
-      # TODO: use following line for doctest ?
-      pytest docs/*rst || echo "Ignoring exit status"
-      pytest --import-mode=importlib --cov=rlberry --cov-report xml rlberry
+      poetry add pytest-azurepipelines pytest-cov pytest-xvfb
+      poetry run pytest --import-mode=importlib --cov=rlberry --cov-report xml rlberry
     displayName: 'Test and coverage'
   - script: |
       curl -Os https://uploader.codecov.io/latest/linux/codecov
@@ -94,22 +87,17 @@ jobs:
     displayName: 'Use Python $(python.version)'
 
   - script: |
-      python -m pip install --upgrade pip
-      pip install -r requirements.txt
+      curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+      export PATH=$PATH:$HOME/.poetry/bin
+      poetry install --with --with dev,doc,torch,extras --sync
     displayName: 'Install dependencies'
 
-  - script: |
-      set -xe
-      pip install -e .
-    displayName: 'Install rlberry'
-  - script: |
-      pip install git+https://github.com/DLR-RM/stable-baselines3@feat/gymnasium-support
-      pip install git+https://github.com/Stable-Baselines-Team/stable-baselines3-contrib@feat/gymnasium-support
-    displayName: 'Install stable-baselines3 for Gymnasium'
+  - script: echo "##vso[task.prependpath]$HOME/.poetry/bin"
+    displayName: Add poetry to PATH
 
   - script: |
-      pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
-      pytest --ignore=rlberry/network
+      poetry add pytest-azurepipelines pytest-xvfb
+      poetry run pytest --ignore=rlberry/network
     displayName: 'pytest'
 
 - job: 'windows'
@@ -129,22 +117,17 @@ jobs:
     displayName: 'Use Python $(python.version)'
 
   - script: |
-      python -m pip install --upgrade pip
-      pip install -r requirements.txt
+      curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+      export PATH=$PATH:$HOME/.poetry/bin
+      poetry install --with --with dev,doc,torch,extras --sync
     displayName: 'Install dependencies'
 
-  - script: |
-      pip wheel . -w dist\
-      pip install --pre --no-index --find-links dist\ rlberry
-    displayName: 'Install rlberry'
-  - script: |
-      pip install git+https://github.com/DLR-RM/stable-baselines3@feat/gymnasium-support
-      pip install git+https://github.com/Stable-Baselines-Team/stable-baselines3-contrib@feat/gymnasium-support
-    displayName: 'Install stable-baselines3 for Gymnasium'
+  - script: echo "##vso[task.prependpath]$HOME/.poetry/bin"
+    displayName: Add poetry to PATH
 
   - script: |
-      pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
-      pytest --ignore=rlberry/network
+      poetry add pytest-azurepipelines pytest-xvfb
+      poetry run pytest --ignore=rlberry/network
     displayName: 'pytest'
 
 
