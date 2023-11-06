@@ -77,11 +77,11 @@ class SARSAAgent(AgentWithSimplePolicy):
     def get_action(self, observation):
         if (
             self.exploration_type == "epsilon"
-            and np.random.random() <= self.exploration_rate
+            and self.rng.random() <= self.exploration_rate
         ):
-            return np.random.choice(self.env.action_space.n)
+            return self.rng.choice(self.env.action_space.n)
         elif self.exploration_type == "boltzmann":
-            return np.random.choice(
+            return self.rng.choice(
                 self.env.action_space.n,
                 p=softmax(self.exploration_rate * self.Q[observation]),
             )
