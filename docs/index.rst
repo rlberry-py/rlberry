@@ -44,7 +44,6 @@ Contributing to rlberry
 If you want to contribute to rlberry, check out :ref:`the contribution guidelines<contributing>`.
 
 
-
 Documentation Contents
 ======================
 
