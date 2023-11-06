@@ -1,9 +1,10 @@
 import os
 import zipfile
 import pathlib
+from typing import Optional
 
 
-def zipdir(dir_path, ouput_fname):
+def zipdir(dir_path: str, output_fname: str) -> Optional[str]:
     """
     Zip a directory.
 
@@ -21,8 +22,8 @@ def zipdir(dir_path, ouput_fname):
     dir_path = pathlib.Path(dir_path)
     if not dir_path.exists():
         return None
-    ouput_fname = pathlib.Path(ouput_fname).with_suffix(".zip")
-    zipf = zipfile.ZipFile(ouput_fname, "w", zipfile.ZIP_DEFLATED)
+    output_fname = pathlib.Path(output_fname).with_suffix(".zip")
+    zipf = zipfile.ZipFile(output_fname, "w", zipfile.ZIP_DEFLATED)
     for root, _, files in os.walk(dir_path):
         for file in files:
             zipf.write(
@@ -30,4 +31,4 @@ def zipdir(dir_path, ouput_fname):
                 os.path.relpath(os.path.join(root, file), os.path.join(dir_path, "..")),
             )
     zipf.close()
-    return ouput_fname
+    return output_fname

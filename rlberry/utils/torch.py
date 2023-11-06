@@ -2,6 +2,8 @@ import os
 import re
 import shutil
 from subprocess import check_output, run, PIPE
+from typing import List, Optional
+
 import numpy as np
 import torch
 
@@ -11,14 +13,14 @@ import rlberry
 logger = rlberry.logger
 
 
-def get_gpu_memory_map():
+def get_gpu_memory_map() -> List[int]:
     result = check_output(
         ["nvidia-smi", "--query-gpu=memory.used", "--format=csv,nounits,noheader"]
     )
     return [int(x) for x in result.split()]
 
 
-def least_used_device():
+def least_used_device() -> torch._C.device:
     """Get the  GPU device with most available memory."""
     if not torch.cuda.is_available():
         raise RuntimeError("cuda unavailable")
@@ -37,7 +39,7 @@ cannot select device with most least memory used."
     return torch.device("cuda:{}".format(device_id))
 
 
-def choose_device(preferred_device, default_device="cpu"):
+def choose_device(preferred_device: str, default_device: str = "cpu") -> str:
     """Choose torch device, use default if choice is not available.
 
     Parameters
@@ -70,7 +72,7 @@ def choose_device(preferred_device, default_device="cpu"):
     return preferred_device
 
 
-def get_memory(pid=None):
+def get_memory(pid: Optional[int] = None) -> List[int]:
     if not pid:
         pid = os.getpid()
     command = "nvidia-smi"
