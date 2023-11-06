@@ -2,7 +2,7 @@ tqdm
 numpy>=1.17
 scipy>=1.6
 pygame-ce
-matplotlib<3.8
+matplotlib==3.7.3
 seaborn
 pandas
 gymnasium[atari,accept-rom-license]
