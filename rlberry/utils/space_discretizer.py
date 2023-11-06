@@ -1,12 +1,11 @@
 import numpy as np
-from gymnasium import Space
 from gymnasium.spaces import Box, Discrete
 from rlberry.utils.binsearch import binary_search_nd
 from rlberry.utils.binsearch import unravel_index_uniform_bin
 
 
 class Discretizer:
-    def __init__(self, space: Space, n_bins: int):
+    def __init__(self, space, n_bins):
         assert isinstance(
             space, Box
         ), "Discretization is only implemented for Box spaces."
@@ -41,10 +40,10 @@ class Discretizer:
         for ii in range(n_elements):
             self.discretized_elements[:, ii] = self.get_coordinates(ii, False)
 
-    def discretize(self, coordinates: np.ndarray):
+    def discretize(self, coordinates):
         return binary_search_nd(coordinates, self._bins)
 
-    def get_coordinates(self, flat_index: int, randomize: bool = False):
+    def get_coordinates(self, flat_index, randomize=False):
         assert self.discrete_space.contains(flat_index), "invalid flat_index"
         # get multi-index
         index = unravel_index_uniform_bin(flat_index, self.dim, self.n_bins)
