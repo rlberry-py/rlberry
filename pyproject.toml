@@ -1,0 +1,52 @@
+[tool.poetry]
+name = "rlberry"
+version = "v0.5.0.post29.dev0+2b871b8"
+description = "An easy-to-use reinforcement learning library for research and education"
+authors = ["Omar Darwiche Domingues, Yannis Flet-Berliac, Edouard Leurent, Pierre Menard, Xuedong Shang"]
+readme = "README.md"
+license="LICENSE"
+
+[tool.poetry.dependencies]
+python = "^3.9, <3.13"
+numpy = "^1.26.1"
+scipy = "^1.11.3"
+pygame-ce = "^2.3.2"
+matplotlib = "^3.8.1"
+seaborn = "^0.13.0"
+pandas = "^2.1.2"
+gymnasium = {version="^0.29.1", extras=["atari", "accept-rom-license"]}
+dill = "^0.3.7"
+docopt = "^0.6.2"
+pyyaml = "^6.0.1"
+tqdm = "^4.66.1"
+moviepy = "^1.0.3"
+
+[tool.poetry.group.extras]
+optional = true
+
+[tool.poetry.group.extras.dependencies]
+optuna = "^3.4.0"
+numba = "^0.58.1"
+ffmpeg-python = "^0.2.0"
+pyopengl = "^3.1.7"
+pyvirtualdisplay = "^3.0"
+
+[tool.poetry.group.torch]
+optional = true
+
+[tool.poetry.group.torch.dependencies]
+opencv-python = "^4.8.1.78"
+ale-py = "^0.8.1"
+stable-baselines3 = "^2.1.0"
+tensorboard = "^2.15.1"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.3"
+pytest-xprocess = "^0.23.0"
+codecov = "^2.1.13"
+black = "23.9.1"
+pre-commit = "^3.5.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
