@@ -17,12 +17,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Install and Build
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
         run: |
-          npm install
-          npm run build
+          pip install -r docs/requirements.txt
+          pip install -r requirements.txt
+      - name: Sphinx build
+        run: |
+          sphinx-build docs _build
 
       - name: Deploy preview
         uses: rossjrw/pr-preview-action@v1
         with:
-          source-dir: ./build/
+          source-dir: ./_build/
