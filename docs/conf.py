@@ -13,6 +13,7 @@
 import os
 import sys
 
+
 import sphinx_gallery  # noqa
 from sphinx_gallery.sorting import ExplicitOrder
 
