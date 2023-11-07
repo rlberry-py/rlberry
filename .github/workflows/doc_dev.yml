@@ -23,11 +23,11 @@ jobs:
           python-version: '3.10'
       - name: Install dependencies
         run: |
-          pip install -r main/docs/requirements.txt
-          pip install -r main/requirements.txt
+          pip install -r docs/requirements.txt
+          pip install -r requirements.txt
       - name: Sphinx build
         run: |
-          sphinx-build main/docs _build
+          sphinx-build docs _build
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
