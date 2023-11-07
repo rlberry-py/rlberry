@@ -51,19 +51,7 @@ extensions = [
 ]
 
 myst_enable_extensions = ["amsmath"]
-# myst_enable_extensions = [
-#     "amsmath",
-#     "colon_fence",
-#     "deflist",
-#     "dollarmath",
-#     "fieldlist",
-#     "html_admonition",
-#     "html_image",
-#     "replacements",
-#     "smartquotes",
-#     "substitution",
-#     "tasklist",
-# ]
+
 
 autodoc_default_options = {
     "members": True,

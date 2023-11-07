@@ -59,10 +59,16 @@
         {%- if pagename != "install" %}
 	<br>
         <div class="alert alert-warning p-1 mb-2" role="alert">
+
           <p class="text-center mb-0">
-          rlberry {{ release }}<br/>
-          <a href="https://rlberry.readthedocs.io/en/stable/">Old version of doc</a>
+          <strong>rlberry {{ release }}</strong><br/>
+          <a href="{{ pathto('versions')}}">Other versions</a>
           </p>
+
+          <!-- <p class="text-center mb-0"> -->
+          <!-- rlberry {{ release }}<br/> -->
+          <!-- <a href="https://rlberry.readthedocs.io/en/stable/">Old version of doc</a> -->
+          <!-- </p> -->
         </div>
         {%- endif %}
             {%- if meta and meta['parenttoc']|tobool %}
