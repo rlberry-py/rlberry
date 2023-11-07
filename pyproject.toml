@@ -63,6 +63,9 @@ myst-parser = "^2.0.0"
 sphinxcontrib-video = {git = "https://github.com/sphinx-contrib/video"}
 matplotlib = "^3.8.1"
 
+[tool.poetry.extras]
+docs = ["sphinx", "sphinx-autodoc-typehints", "sphinx-issues", "sphinx-gallery"]
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
