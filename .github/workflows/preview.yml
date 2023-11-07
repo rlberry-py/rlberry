@@ -31,7 +31,7 @@ jobs:
         run: |
           rm -r preview_pr || echo "Ignoring exit status"
           mkdir preview_pr
-          cp -r docs/_build/* preview_pr
+          cp -r _build/* preview_pr
       - uses: EndBug/add-and-commit@v8
         with:
           add: 'preview_pr'
