@@ -1,9 +1,10 @@
 name: documentation_dev
+
 on:
-  pull_request_target:
-    branches:
-      - main
-    types: [closed]
+  workflow_run:
+    workflows: ["documentation_stable"]
+    types:
+      - completed
 
 permissions:
   contents: write
