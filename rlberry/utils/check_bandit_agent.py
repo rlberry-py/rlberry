@@ -1,4 +1,4 @@
-from rlberry.envs.bandits import BernoulliBandit
+from rlberry_research.envs.bandits import BernoulliBandit
 from rlberry.manager import ExperimentManager
 
 
