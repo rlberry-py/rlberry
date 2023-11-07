@@ -1,12 +1,9 @@
 name: documentation_stable
 on:
-  pull_request_target:
-    branches:
-      - main
-    types: [closed]
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: ["documentation_dev"]
+    types:
+      - completed
 
 permissions:
   contents: write
@@ -19,23 +16,36 @@ jobs:
         with:
           fetch-depth: 0
           fetch-tags: true
+          path: main
       - name: checkout latest
-        run: git checkout $(git describe --tags $(git rev-list --tags --max-count=1))
+        run: |
+          cd main
+          git checkout $(git describe --tags $(git rev-list --tags --max-count=1))
+          cd ..
       - uses: actions/setup-python@v4
         with:
           python-version: '3.10'
       - name: Install dependencies
         run: |
-          pip install -r docs/requirements.txt
-          pip install -r requirements.txt
+          pip install -r /docs/requirements.txt
+          pip install -r main/requirements.txt
       - name: Sphinx build
         run: |
-          sphinx-build docs _build
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+          sphinx-build main/docs _build
+      - uses: actions/checkout@v4
         with:
-          publish_branch: gh-pages
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: _build/
-          force_orphan: true
+          # This is necessary so that we have the tags.
+          fetch-depth: 0
+          ref: gh-pages
+          path: gh_pages
+      - name: Commit documentation changes
+        run: |
+          cd gh_pages
+          rm -r stable || echo "Ignoring exit status"
+          mkdir stable
+          cp -rv  ../_build/* stable
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m "Preview documentation"
+          git push
