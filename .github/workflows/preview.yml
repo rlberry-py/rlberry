@@ -6,8 +6,6 @@ on:
     types:
       - completed
 
-concurrency: preview-${{ github.ref }}
-
 jobs:
   docs:
     runs-on: ubuntu-latest
