@@ -3,7 +3,7 @@ numpy>=1.17
 scipy>=1.6
 pygame-ce
 matplotlib
-seaborn
+seaborn==0.12.2
 pandas
 gymnasium[atari,accept-rom-license]
 dill
