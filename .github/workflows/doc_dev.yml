@@ -34,7 +34,7 @@ jobs:
           path: gh_pages
       - name: Commit documentation changes
         run: |
-          cd gh_pages 
+          cd gh_pages
           rm -r dev || echo "Ignoring exit status"
           mkdir dev
           cp -rv  ../_build/* dev

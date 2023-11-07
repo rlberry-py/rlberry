@@ -32,7 +32,7 @@ jobs:
           path: gh_pages
       - name: Commit documentation changes
         run: |
-          cd gh_pages 
+          cd gh_pages
           rm -r preview_pr || echo "Ignoring exit status"
           mkdir preview_pr
           cp -rv  ../_build/* preview_pr
