@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    if: ${{ github.event.label.name == 'ready for review' }}
+    if: contains( github.event.pull_request.labels.*.name, 'ready for review')
     runs-on: ubuntu-latest
 
     steps:
