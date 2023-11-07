@@ -1,4 +1,4 @@
-name: Deploy PR previews
+name: "Pull Request Docs Check"
 
 on:
   workflow_run:
@@ -9,9 +9,9 @@ on:
 concurrency: preview-${{ github.ref }}
 
 jobs:
-  deploy-preview:
-    runs-on: ubuntu-20.04
+  docs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -23,11 +23,20 @@ jobs:
         run: |
           pip install -r docs/requirements.txt
           pip install -r requirements.txt
-      - name: Sphinx build
-        run: |
           sphinx-build docs _build
 
-      - name: Deploy preview
-        uses: rossjrw/pr-preview-action@v1
+      - uses: actions/checkout@v3
         with:
-          source-dir: ./_build/
+          # This is necessary so that we have the tags.
+          fetch-depth: 0
+          ref: gh-pages
+      - name: Commit documentation changes
+        run: |
+          rm -r preview_pr || echo "Ignoring exit status"
+          mkdir preview_pr
+          cp -r docs/_build/* preview_pr
+      - uses: EndBug/add-and-commit@v8
+        with:
+          add: 'preview_pr'
+          default_author: github_actor
+          message: 'make preview of page'
