@@ -3,12 +3,23 @@
 Changelog
 =========
 
+
 Dev version
 -----------
 
+Version 0.6.0
+-------------
+
+*PR #276*
+ * Non adaptive multiple tests for agent comparison.
+
 *PR #365*
 
- * Fix Sphinx version to <7
+ * Fix Sphinx version to <7.
+
+*PR #350*
+
+ * Rename AgentManager to ExperimentManager.
 
 *PR #326*
 
@@ -17,6 +28,7 @@ Dev version
 *PR #335*
 
  * Upgrade from Python3.9 -> python3.10
+
 
 Version 0.5.0
 -------------
