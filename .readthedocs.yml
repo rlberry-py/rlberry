@@ -16,6 +16,7 @@ build:
       - poetry install --all-extras --sync
       - poetry self add poetry-plugin-export
       - poetry export -f requirements.txt --output requirements.txt
+      - pip install virtualenv
 # Build documentation in the docs/ directory with Sphinx
 sphinx:
    configuration: docs/conf.py
