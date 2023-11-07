@@ -4,10 +4,10 @@ name: documentation
 on:
   push:
       paths:
-        - "docs"
+        - "docs/*"
   pull_request:
       paths:
-        - "docs"
+        - "docs/*"
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
