@@ -1,0 +1,26 @@
+name: ready_for_review
+
+on:
+  pull_request:
+    types: [labeled, opened, reopened, synchronize]
+
+jobs:
+  build:
+    if: contains( github.event.pull_request.labels.*.name, 'ready for review')
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Run a one-line script
+      run: echo ready for review!
+    - name: Save the PR number in an artifact
+      shell: bash
+      env:
+        PR_NUM: ${{ github.event.number }}
+      run: echo $PR_NUM > pr_num.txt
+
+    - name: Upload the PR number
+      uses: actions/upload-artifact@v2
+      with:
+        name: pr_num
+        path: ./pr_num.txt

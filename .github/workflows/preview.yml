@@ -1,0 +1,110 @@
+name: "preview"
+
+on:
+  workflow_run:
+    workflows: ["ready_for_review"]
+    types:
+      - completed
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Download workflow artifact
+        uses: dawidd6/action-download-artifact@v2.11.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          workflow: peek_icons.yml
+          run_id: ${{ github.event.workflow_run.id }}
+
+      - name: Read the pr_num file
+        id: pr_num_reader
+        uses: juliangruber/read-file-action@v1.0.0
+        with:
+          path: ./pr_num/pr_num.txt
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          path: main
+      - name: Checkout Pull Request
+        env:
+          GITHUB_USER: ${{ secrets.GITHUB_USER }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd main
+          gh pr checkout ${{ steps.pr_num_reader.outputs.content }}
+          cd ..
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: |
+          set +e
+          pip install -r main/docs/requirements.txt
+          pip install -r main/requirements.txt
+          sphinx-build main/docs _build
+          echo "exitcode=$?" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v4
+        with:
+          # This is necessary so that we have the tags.
+          fetch-depth: 0
+          ref: gh-pages
+          path: gh_pages
+
+      - name: Commit documentation changes
+        if: ${{ env.exitcode == 0 }}
+        run: |
+          cd gh_pages
+          rm -r preview_pr || echo "Ignoring exit status"
+          mkdir preview_pr
+          cp -rv  ../_build/* preview_pr
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m "Preview documentation"
+          git push
+      - name: Comment on the PR about the result
+        uses: jungwinter/comment@v1 # let us comment on a specific PR
+        if:  ${{ env.exitcode == 0 }}
+        env:
+          MESSAGE: |
+            Hello,
+            The build of the doc succeeded. The documentation preview is available here:
+            https://rlberry-py.github.io/rlberry/preview_pr
+
+        with:
+          type: create
+          issue_number: ${{ steps.pr_num_reader.outputs.content }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          body: >
+            ${{ format(env.MESSAGE,
+            fromJSON(steps.icons_overview_img_step.outputs.markdown_urls)[0],
+            join(fromJSON(steps.icons_detailed_img_step.outputs.markdown_urls), '')) }}
+
+      - name: Comment on the PR about the result, fail
+        uses: jungwinter/comment@v1 # let us comment on a specific PR
+        if: ${{ env.exitcode != 0 }}
+        env:
+          MESSAGE: |
+            Hello,
+            The build of the doc failed. Look up the reason here:
+            https://github.com/rlberry-py/rlberry/actions/workflows/preview.yml
+
+        with:
+          type: create
+          issue_number: ${{ steps.pr_num_reader.outputs.content }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          body: >
+            ${{ format(env.MESSAGE,
+            fromJSON(steps.icons_overview_img_step.outputs.markdown_urls)[0],
+            join(fromJSON(steps.icons_detailed_img_step.outputs.markdown_urls), '')) }}
+      - name: Exit
+        run: exit "$exitcode"

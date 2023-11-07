@@ -1,6 +1,15 @@
-name: documentation
+name: documentation_dev
+on:
+  pull_request_target:
+    branches:
+      - main
+    types: [closed]
+  push:
+    branches:
+      - main
+    paths:
+      - docs/*
 
-on: [push, pull_request, workflow_dispatch]
 
 permissions:
   contents: write
@@ -9,7 +18,8 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
       - uses: actions/setup-python@v4
         with:
           python-version: '3.10'
