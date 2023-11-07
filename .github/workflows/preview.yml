@@ -1,4 +1,4 @@
-name: "Pull Request Docs Check"
+name: "preview"
 
 on:
   workflow_run:
