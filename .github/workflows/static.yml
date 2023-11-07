@@ -2,12 +2,13 @@ name: documentation
 
 
 on:
-  push:
-      paths:
+  pull_request_target:
+    branches:
+      - main
+    types: [closed]
+    paths:
         - "docs/*"
-  pull_request:
-      paths:
-        - "docs/*"
+
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
