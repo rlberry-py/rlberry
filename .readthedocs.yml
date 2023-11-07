@@ -19,7 +19,7 @@ python:
     - method: pip
       path: .
       extra_requirements:
-        - docs
+        - doc
 # If using Sphinx, optionally build your docs in additional formats such as PDF
 # formats:
 #    - pdf
