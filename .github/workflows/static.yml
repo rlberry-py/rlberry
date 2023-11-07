@@ -1,5 +1,6 @@
 name: documentation
 
+
 on:
   push:
       paths:
@@ -38,7 +39,7 @@ jobs:
           pip install -r requirements.txt
       - name: Sphinx build
         run: |
-          sphinx-build docs _build       
+          sphinx-build docs _build
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
