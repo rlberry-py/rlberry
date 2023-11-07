@@ -1,12 +1,10 @@
 name: Deploy PR previews
 
 on:
-  pull_request:
+  workflow_run:
+    workflows: ["ready_for_review"]
     types:
-      - opened
-      - reopened
-      - synchronize
-      - closed
+      - completed
 
 concurrency: preview-${{ github.ref }}
 
