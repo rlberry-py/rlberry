@@ -24,7 +24,7 @@ numpy = "^1.26.1"
 scipy = "^1.11.3"
 pygame-ce = "^2.3.2"
 matplotlib = "^3.8.1"
-seaborn = "^0.13.0"
+seaborn = "0.12.2"
 pandas = "^2.1.2"
 gymnasium = {version="^0.29.1"}
 Gymnasium = {version="^0.29.1", extras=["atari", "accept-rom-license"], optional=true}
