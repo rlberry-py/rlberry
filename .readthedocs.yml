@@ -6,17 +6,10 @@ version: 2
 # Set the version of Python and other tools you might need
 build:
   os: ubuntu-22.04
-  tools:
-    python: "3.10"
-# build:
-#   os: ubuntu-22.04
-#   tools: {python: "3.10"}
-#   jobs:
-#     pre_create_environment:
-#       - pip install poetry
-#       - poetry config virtualenvs.create false
-#     post_install:
-#       - poetry install --with doc,dev,torch,extras --sync
+  tools: {python: "3.10"}
+  jobs:
+    post_install:
+      - pip install ".[docs]"
 # Build documentation in the docs/ directory with Sphinx
 sphinx:
    configuration: docs/conf.py
@@ -26,6 +19,3 @@ sphinx:
 #    - pdf
 
 # Optionally declare the Python requirements required to build your docs
-python:
-  extra_requirements:
-    - [doc]
