@@ -6,23 +6,47 @@ on:
     types:
       - completed
 
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   docs:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
+      - name: Download workflow artifact
+        uses: dawidd6/action-download-artifact@v2.11.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          workflow: peek_icons.yml
+          run_id: ${{ github.event.workflow_run.id }}
+
+      - name: Read the pr_num file
+        id: pr_num_reader
+        uses: juliangruber/read-file-action@v1.0.0
+        with:
+          path: ./pr_num/pr_num.txt
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
+          ref: refs/pull/${{ steps.pr_num_reader.outputs.content }}/head
           path: main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
       - uses: actions/setup-python@v4
         with:
           python-version: '3.10'
       - name: Install dependencies
         run: |
+          set +e
           pip install -r main/docs/requirements.txt
           pip install -r main/requirements.txt
           sphinx-build main/docs _build
+          echo "exitcode=$?" >> $GITHUB_OUTPUT
 
       - uses: actions/checkout@v4
         with:
@@ -30,7 +54,9 @@ jobs:
           fetch-depth: 0
           ref: gh-pages
           path: gh_pages
+
       - name: Commit documentation changes
+        if: $GITHUB_OUTPUT == 0
         run: |
           cd gh_pages
           rm -r preview_pr || echo "Ignoring exit status"
@@ -41,3 +67,40 @@ jobs:
           git add .
           git commit -m "Preview documentation"
           git push
+      - name: Comment on the PR about the result
+        uses: jungwinter/comment@v1 # let us comment on a specific PR
+        if: $GITHUB_OUTPUT == 0
+        env:
+          MESSAGE: |
+            Hello,
+            The build of the doc succeeded. The documentation preview is available here:
+            https://rlberry-py.github.io/rlberry/preview_pr
+
+          with:
+            type: create
+            issue_number: ${{ steps.pr_num_reader.outputs.content }}
+            token: ${{ secrets.GITHUB_TOKEN }}
+            body: >
+              ${{ format(env.MESSAGE,
+              fromJSON(steps.icons_overview_img_step.outputs.markdown_urls)[0],
+              join(fromJSON(steps.icons_detailed_img_step.outputs.markdown_urls), '')) }}
+
+      - name: Comment on the PR about the result, fail
+        uses: jungwinter/comment@v1 # let us comment on a specific PR
+        if: $GITHUB_OUTPUT == 0
+        env:
+          MESSAGE: |
+            Hello,
+            The build of the doc failed. Look up the reason here:
+            https://github.com/rlberry-py/rlberry/actions/workflows/preview.yml
+
+          with:
+            type: create
+            issue_number: ${{ steps.pr_num_reader.outputs.content }}
+            token: ${{ secrets.GITHUB_TOKEN }}
+            body: >
+              ${{ format(env.MESSAGE,
+              fromJSON(steps.icons_overview_img_step.outputs.markdown_urls)[0],
+              join(fromJSON(steps.icons_detailed_img_step.outputs.markdown_urls), '')) }}
+      - name: Exit
+        run: exit "$exitcode"
