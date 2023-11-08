@@ -19,7 +19,7 @@
   {% block htmltitle %}
   <title>{{ title|striptags|e }}{{ titlesuffix }}</title>
   {% endblock %}
-  <link rel="canonical" href="https://rlberry.readthedocs.io/en/stable/{{pagename}}.html" />
+  <link rel="canonical" href="https://rlberry-py.github.io/rlberry/{{pagename}}.html" />
 
   {% if favicon %}
   <link rel="shortcut icon" href="{{ pathto('_static/' + favicon, 1) }}"/>
@@ -65,10 +65,6 @@
           <a href="{{ pathto('versions')}}">Other versions</a>
           </p>
 
-          <!-- <p class="text-center mb-0"> -->
-          <!-- rlberry {{ release }}<br/> -->
-          <!-- <a href="https://rlberry.readthedocs.io/en/stable/">Old version of doc</a> -->
-          <!-- </p> -->
         </div>
         {%- endif %}
             {%- if meta and meta['parenttoc']|tobool %}
