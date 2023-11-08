@@ -31,7 +31,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
+          ref: refs/pull/${{ steps.pr_num_reader.outputs.content }}/head
           path: main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
       - uses: actions/setup-python@v4
         with:
@@ -50,6 +54,7 @@ jobs:
           fetch-depth: 0
           ref: gh-pages
           path: gh_pages
+
       - name: Commit documentation changes
         if: $GITHUB_OUTPUT == 0
         run: |
