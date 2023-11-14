@@ -1,4 +1,7 @@
-from ._version import __version__
+from importlib import metadata
+
+__version__ = metadata.version("rlberry")
+
 import logging
 
 logger = logging.getLogger("rlberry_logger")
