@@ -30,7 +30,6 @@ from rlberry.utils.writers import DefaultWriter
 from rlberry.manager.utils import create_database
 from rlberry import types
 
-
 _OPTUNA_INSTALLED = True
 try:
     import optuna
@@ -38,6 +37,7 @@ except Exception:
     _OPTUNA_INSTALLED = False
 
 logger = rlberry.logger
+
 
 # Aux
 #
@@ -573,7 +573,15 @@ class ExperimentManager:
                     " Returning []."
                 )
                 return []
-            values.append(agent.eval(**eval_kwargs))
+            # Update eval_kwargs with n_simulation parameter
+            eval_kwargs_with_n_simulation = eval_kwargs.copy()
+            if "n_simulation" in eval_kwargs:
+                # Issue a warning that n_simulation is overwritten
+                logger.info(
+                    "Warning: n_simulation parameter in eval_kwargs is being overwritten with 1."
+                )
+            eval_kwargs_with_n_simulation["n_simulation"] = 1
+            values.append(agent.eval(**eval_kwargs_with_n_simulation))
             if verbose:
                 if logger.getEffectiveLevel() <= 10:  # If debug
                     logger.debug(f"[eval]... simulation {ii + 1}/{n_simulations}")

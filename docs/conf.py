@@ -13,6 +13,7 @@
 import os
 import sys
 
+
 import sphinx_gallery  # noqa
 from sphinx_gallery.sorting import ExplicitOrder
 
@@ -22,9 +23,8 @@ sys.path.insert(0, os.path.abspath("../"))
 # -- Project information -----------------------------------------------------
 
 project = "rlberry"
-copyright = "2022, rlberry team"
+copyright = "2023, rlberry team"
 author = "rlberry team"
-
 
 ver_file = os.path.join("../rlberry", "_version.py")
 with open(ver_file) as f:
@@ -50,20 +50,8 @@ extensions = [
     "myst_parser",
 ]
 
-myst_enable_extensions = ["amsmath", "attrs_inline"]
-# myst_enable_extensions = [
-#     "amsmath",
-#     "colon_fence",
-#     "deflist",
-#     "dollarmath",
-#     "fieldlist",
-#     "html_admonition",
-#     "html_image",
-#     "replacements",
-#     "smartquotes",
-#     "substitution",
-#     "tasklist",
-# ]
+myst_enable_extensions = ["amsmath"]
+
 
 autodoc_default_options = {
     "members": True,

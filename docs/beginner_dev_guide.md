@@ -111,7 +111,7 @@ Before a PR can be merged, it needs to be approved. Please prefix the title of y
 
 
 * Azure pipelines are used for testing rlberry on Linux, Mac and Windows, with different dependencies and settings.
-* Readthedocs is used to build the docs for viewing.
+* github page are used to build the docs for viewing.
 
 Please note that if you want to skip the CI (azure pipeline is long to run), use `[ci skip]` in the description of the commit.
 
