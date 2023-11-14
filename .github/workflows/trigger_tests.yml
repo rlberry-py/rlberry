@@ -1,0 +1,24 @@
+name: Trigger tests
+
+on:
+  pull_request:
+    types:
+      - labeled
+
+permissions:
+  pull-requests: write
+
+jobs:
+  add-comment:
+    if: github.event.label.name == 'ready for review'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
+      - uses: EndBug/add-and-commit@v9
+        with:
+          commit: --allow-empty
+          default_author: github_actor
+          message: 'Trigger ci'
