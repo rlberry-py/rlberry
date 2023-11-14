@@ -1,7 +1,7 @@
 (dev_guide)=
 
 ## How to contribute
-### git crash-course
+### Forking and installing rl-berry
 
 The preferred way to contribute to rlberry is to fork the main repository on GitHub, then submit a “pull request” (PR).
 
@@ -26,7 +26,7 @@ In the first few steps, we explain how to locally install rlberry, and how to se
     alternatively you can also use
     ```bash
     poetry install --with dev,doc,torch,extras --sync
-    poetry run yourcommandhere
+    poetry run yourcommandhere #e.g. poetry run python script.py
     ```
 6. Add the upstream remote. This saves a reference to the main rlberry repository, which you can use to keep your repository synchronized with the latest changes:
     ```bash
