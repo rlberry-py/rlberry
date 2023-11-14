@@ -57,6 +57,56 @@ class A2CAgent(AgentTorch, AgentWithSimplePolicy):
         Interval (in number of transitions) between agent evaluations in fit().
         If None, never evaluate.
 
+    Attributes
+    ----------
+    optimizer_type: str
+        Type of optimizer. 'ADAM' by defaut.
+    value_net_fn : function(env, **kwargs)
+        Function that returns an instance of a value network (pytorch).
+        If None, a default net is used.
+    batch_size : int
+        Size of mini batches during each A2C update epoch.
+    gamma : float
+        Discount factor used to discount future rewards.
+    episode_timesteps : int
+        Number of steps in the current episode.
+    total_timesteps : int
+        Total number of timesteps collected by the agent.
+    _max_episode_steps : int
+        Maximum number of steps per episode.
+    total_episodes : int
+        Total number of episodes collected by the agent.
+    entr_coef : float
+        Entropy coefficient. Controls the contribution of entropy regularization to the policy's objective.
+    _policy_optimizer : torch.optim.Optimizer
+        Optimizer used to update the policy network.
+    value_optimizer : torch.optim.Optimizer
+        Optimizer used to update the value network.
+    learning_rate : float
+        Learning rate used by the optimizer during neural network training.
+    eval_interval : int, default = None
+        Interval (in number of transitions) between agent evaluations in fit().
+        If None, never evaluate.
+    optimizer_type : str
+        Type of optimizer used during neural network training.
+    eval_interval : int
+        Number of updates between evaluations. If None, no evaluation is performed.
+    policy_net_fn : function(env, **kwargs)
+        Function that returns an instance of a policy network (PyTorch).
+    policy_net_kwargs : dict
+        Keyword arguments for `policy_net_fn`.
+    value_net_fn : function(env, **kwargs)
+        Function that returns an instance of a value network (PyTorch).
+    value_net_kwargs : dict
+        Keyword arguments for `value_net_fn`.
+    value_net : torch.nn.Module
+        The value network used by the agent.
+    device : str
+        Torch device on which the agent's neural networks are placed.
+    optimizer_kwargs : dict
+        Keyword arguments for the optimizer used during neural network training.
+
+
     References
     ----------
     Mnih, V., Badia, A.P., Mirza, M., Graves, A., Lillicrap, T., Harley, T.,
@@ -122,7 +172,7 @@ class A2CAgent(AgentTorch, AgentWithSimplePolicy):
             max_episode_steps = np.inf
         self._max_episode_steps = max_episode_steps
 
-        self._policy = None  # categorical policy function
+        self._policy = None
 
         # initialize
         self.reset()
