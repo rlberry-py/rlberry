@@ -38,11 +38,11 @@ output = evaluate_agents(
 print(output)
 ```
 
-```none 
-[INFO] 15:50: Running ExperimentManager fit() for PPO_first_experimentCartPole-v1 with n_fit = 1 and max_workers = None. 
-[INFO] 15:51: ... trained! 
-[INFO] 15:51: Evaluating PPO_first_experimentCartPole-v1... 
-[INFO] Evaluation:.....  Evaluation finished 
+```none
+[INFO] 15:50: Running ExperimentManager fit() for PPO_first_experimentCartPole-v1 with n_fit = 1 and max_workers = None.
+[INFO] 15:51: ... trained!
+[INFO] 15:51: Evaluating PPO_first_experimentCartPole-v1...
+[INFO] Evaluation:.....  Evaluation finished
    PPO_first_experimentCartPole-v1
 0                             15.0
 1                             16.0
@@ -54,13 +54,14 @@ print(output)
 As you can see, on the previous output, you have the "[INFO]" output (from [ExperimentManager](rlberry.manager.ExperimentManager))
 
 
-You can choose the verbosity of your logger 
+You can choose the verbosity of your logger
 
 But, with [rlberry.logging.set_level(level='...')](rlberry.utils.logging.set_level), you can select the level of your logger to choose what type of information you want.
 For examle, you can have only the "CRITICAL" information, for this add this lines on top of the previous code, then run it again :
-```python 
+```python
 import rlberry
-rlberry.utils.logging.set_level(level='CRITICAL')
+
+rlberry.utils.logging.set_level(level="CRITICAL")
 ```
 
 ```none
@@ -83,11 +84,8 @@ By default (with the [Agent interface](agent_page)), the writer is [DefaultWrite
 To keep informations about the environment inside the writer, you can wrap the environment inside [WriterWrapper](rlberry.wrappers.WriterWrapper).
 
 
-To get the data, saved during an experiment, in a Pandas DataFrame, you can use [plot_writer_data](rlberry.manager.plot_writer_data) on the [ExperimentManager](rlberry.manager.ExperimentManager) (or a list of them).  
+To get the data, saved during an experiment, in a Pandas DataFrame, you can use [plot_writer_data](rlberry.manager.plot_writer_data) on the [ExperimentManager](rlberry.manager.ExperimentManager) (or a list of them).
 Example [here](../../auto_examples/demo_bandits/plot_mirror_bandit).
 
-To plot the data, saved during an experiment, you can use [plot_writer_data](rlberry.manager.plot_writer_data) on the [ExperimentManager](rlberry.manager.ExperimentManager) (or a list of them).  
+To plot the data, saved during an experiment, you can use [plot_writer_data](rlberry.manager.plot_writer_data) on the [ExperimentManager](rlberry.manager.ExperimentManager) (or a list of them).
 Example [here](../../auto_examples/plot_writer_wrapper).
-
-
-

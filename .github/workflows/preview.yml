@@ -47,7 +47,7 @@ jobs:
 
       - name: Install and configure Poetry
         uses: snok/install-poetry@v1
-         
+
       - name: Install dependencies and build doc
         run: |
           set +e
@@ -56,7 +56,7 @@ jobs:
           poetry run sphinx-build docs ../_build
           echo "exitcode=$?" >> $GITHUB_ENV
           cd ..
-          
+
       - uses: actions/checkout@v4
         with:
           # This is necessary so that we have the tags.
