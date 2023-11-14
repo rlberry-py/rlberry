@@ -1,9 +1,10 @@
 name: documentation_stable
 on:
-  workflow_run:
-    workflows: ["documentation_dev"]
-    types:
-      - completed
+  push:
+    # Pattern matched against refs/tags
+    tags:        
+      - '*'           # Push events to every tag not containing /
+
 
 permissions:
   contents: write
