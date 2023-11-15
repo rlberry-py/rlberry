@@ -1,13 +1,13 @@
 import pytest
-import rlberry_scool.agents as agents_scool
-import rlberry_research.agents.torch as torch_agents
+import rlberry-scool.agents as agents_scool
+import rlberry-research.agents.torch as torch_agents
 from rlberry.utils.check_agent import (
     check_rl_agent,
     check_rlberry_agent,
     check_vectorized_env_agent,
     check_hyperparam_optimisation_agent,
 )
-from rlberry_scool.agents.features import FeatureMap
+from rlberry-scool.agents.features import FeatureMap
 import numpy as np
 import sys
 

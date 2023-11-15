@@ -10,8 +10,8 @@ A demo of twinrooms environment
 """
 # sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_twinrooms.jpg'
 
-from rlberry_research.envs.benchmarks.generalization.twinrooms import TwinRooms
-from rlberry_scool.agents.mbqvi import MBQVIAgent
+from rlberry-research.envs.benchmarks.generalization.twinrooms import TwinRooms
+from rlberry-scool.agents.mbqvi import MBQVIAgent
 from rlberry.wrappers.discretize_state import DiscretizeStateWrapper
 from rlberry.seeding import Seeder
 

@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 from rlberry.agents.utils import replay
-from rlberry_research.envs.finite import GridWorld
+from rlberry-research.envs.finite import GridWorld
 from gymnasium.wrappers import TimeLimit
 
 

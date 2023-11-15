@@ -3,13 +3,13 @@ import pytest
 import rlberry.seeding as seeding
 
 from copy import deepcopy
-from rlberry_research.envs.classic_control import MountainCar, Acrobot, Pendulum
-from rlberry_research.envs.finite import Chain
-from rlberry_research.envs.finite import GridWorld
-from rlberry_research.envs.benchmarks.grid_exploration.four_room import FourRoom
-from rlberry_research.envs.benchmarks.grid_exploration.six_room import SixRoom
-from rlberry_research.envs.benchmarks.grid_exploration.apple_gold import AppleGold
-from rlberry_research.envs.benchmarks.ball_exploration import PBall2D, SimplePBallND
+from rlberry-research.envs.classic_control import MountainCar, Acrobot, Pendulum
+from rlberry-research.envs.finite import Chain
+from rlberry-research.envs.finite import GridWorld
+from rlberry-research.envs.benchmarks.grid_exploration.four_room import FourRoom
+from rlberry-research.envs.benchmarks.grid_exploration.six_room import SixRoom
+from rlberry-research.envs.benchmarks.grid_exploration.apple_gold import AppleGold
+from rlberry-research.envs.benchmarks.ball_exploration import PBall2D, SimplePBallND
 
 classes = [
     MountainCar,

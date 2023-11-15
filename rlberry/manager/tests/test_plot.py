@@ -6,9 +6,9 @@ from pathlib import Path
 import sys
 
 from rlberry.wrappers import WriterWrapper
-from rlberry_research.envs import GridWorld
+from rlberry-research.envs import GridWorld
 from rlberry.manager import plot_writer_data, ExperimentManager, read_writer_data
-from rlberry_scool.agents import UCBVIAgent
+from rlberry-scool.agents import UCBVIAgent
 
 
 class VIAgent(UCBVIAgent):

@@ -1,8 +1,8 @@
 import numpy as np
 import rlberry.spaces as spaces
 from rlberry.envs import Model
-from rlberry_research.rendering import Scene, GeometricPrimitive, RenderInterface2D
-from rlberry_research.rendering.common_shapes import circle_shape
+from rlberry-research.rendering import Scene, GeometricPrimitive, RenderInterface2D
+from rlberry-research.rendering.common_shapes import circle_shape
 
 import rlberry
 

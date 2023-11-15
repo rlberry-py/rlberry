@@ -2,7 +2,7 @@ import pytest
 import numpy as np
 import sys
 import os
-from rlberry_research.envs import GridWorld
+from rlberry-research.envs import GridWorld
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.manager import (
     ExperimentManager,

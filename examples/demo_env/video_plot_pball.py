@@ -11,7 +11,7 @@ A demo of PBALL2D environment
 # sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_pball.jpg'
 
 import numpy as np
-from rlberry_research.envs.benchmarks.ball_exploration import PBall2D
+from rlberry-research.envs.benchmarks.ball_exploration import PBall2D
 
 p = 5
 A = np.array([[1.0, 0.1], [-0.1, 1.0]])

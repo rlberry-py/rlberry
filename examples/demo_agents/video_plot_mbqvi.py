@@ -10,8 +10,8 @@ A demo of MBQVI algorithm in Gridworld environment
 
 """
 # sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_mbqvi.jpg'
-from rlberry_scool.agents.mbqvi import MBQVIAgent
-from rlberry_research.envs.finite import GridWorld
+from rlberry-scool.agents.mbqvi import MBQVIAgent
+from rlberry-research.envs.finite import GridWorld
 
 params = {}
 params["n_samples"] = 100  # samples per state-action pair

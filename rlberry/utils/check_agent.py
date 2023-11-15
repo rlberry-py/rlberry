@@ -1,5 +1,5 @@
-from rlberry_research.envs import Chain, Pendulum
-from rlberry_research.envs.benchmarks.ball_exploration import PBall2D
+from rlberry-research.envs import Chain, Pendulum
+from rlberry-research.envs.benchmarks.ball_exploration import PBall2D
 from rlberry.manager import ExperimentManager
 import numpy as np
 from rlberry.seeding import set_external_seed

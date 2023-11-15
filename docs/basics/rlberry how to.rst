@@ -6,7 +6,7 @@ Libraries
     import numpy as np
     import pandas as pd
     from rlberry.agents import ValueIterationAgent, AgentWithSimplePolicy
-    from rlberry_research.envs import GridWorld
+    from rlberry-research.envs import GridWorld
     from rlberry.manager import ExperimentManager, evaluate_agents
 
 

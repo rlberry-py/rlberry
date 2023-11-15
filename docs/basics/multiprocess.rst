@@ -29,9 +29,9 @@ The advised method of parallelization is spawn (parameter :code:`mp_context="spa
 
 .. code:: python
 
-    from rlberry_research.agents.torch import A2CAgent
+    from rlberry-research.agents.torch import A2CAgent
     from rlberry.manager import ExperimentManager
-    from rlberry_research.envs.benchmarks.ball_exploration import PBall2D
+    from rlberry-research.envs.benchmarks.ball_exploration import PBall2D
 
     n_steps = 1e5
     batch_size = 256

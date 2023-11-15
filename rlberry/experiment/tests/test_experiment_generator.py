@@ -1,5 +1,5 @@
 from rlberry.experiment import experiment_generator
-from rlberry_research.agents.kernel_based.rs_ucbvi import RSUCBVIAgent
+from rlberry-research.agents.kernel_based.rs_ucbvi import RSUCBVIAgent
 
 import numpy as np
 
