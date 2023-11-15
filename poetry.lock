@@ -2474,7 +2474,7 @@ develop = false
 rlberry = {git = "https://github.com/rlberry-py/rlberry"}
 
 [package.extras]
-deploy = ["sphinx", "sphinx-rtd-theme"]
+deploy = ["sphinx", "sphinx_rtd_theme"]
 torch-agents = ["torch (>=1.6.0)"]
 
 [package.source]
@@ -2499,7 +2499,7 @@ rlberry = "*"
 type = "git"
 url = "https://github.com/rlberry-py/rlberry-scool.git"
 reference = "HEAD"
-resolved_reference = "7f61c7182785ca987abc63c83315b2a5a9574f3b"
+resolved_reference = "b534a999289909c6c1b589658a71d22490452de7"
 
 [[package]]
 name = "rsa"
