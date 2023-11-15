@@ -13,7 +13,6 @@ import sys
 
 import rlberry_research.agents as agents_research
 import rlberry_scool.agents as agents_scool
-import rlberry.agents as agents
 from rlberry_scool.agents.features import FeatureMap
 
 from rlberry.utils.check_agent import (

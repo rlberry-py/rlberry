@@ -1,5 +1,4 @@
 import pytest
-import rlberry.agents as agents
 import rlberry_scool.agents as agents_scool
 import rlberry_research.agents.torch as torch_agents
 from rlberry.utils.check_agent import (
