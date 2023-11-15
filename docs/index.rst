@@ -4,7 +4,9 @@
     :align: center
 
 .. _rlberry: https://github.com/rlberry-py/rlberry
+../
 
+.. _index:
 
 An RL Library for Research and Education
 ========================================
