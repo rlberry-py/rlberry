@@ -1,11 +1,11 @@
 import numpy as np
 import pytest
 from rlberry import spaces
-from rlberry-research.agents import RSUCBVIAgent
-from rlberry-research.envs.classic_control import MountainCar
-from rlberry-research.envs.finite import GridWorld
+from rlberry_research.agents import RSUCBVIAgent
+from rlberry_research.envs.classic_control import MountainCar
+from rlberry_research.envs.finite import GridWorld
 from rlberry.envs.finite_mdp import FiniteMDP
-from rlberry-research.exploration_tools.discrete_counter import DiscreteCounter
+from rlberry_research.exploration_tools.discrete_counter import DiscreteCounter
 from rlberry.seeding import Seeder
 from rlberry.wrappers.autoreset import AutoResetWrapper
 from rlberry.wrappers.discrete2onehot import DiscreteToOneHotWrapper

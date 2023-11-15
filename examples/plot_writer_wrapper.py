@@ -23,9 +23,9 @@ during the fit of the agent and then use the plot utils.
 import numpy as np
 
 from rlberry.wrappers import WriterWrapper
-from rlberry-research.envs import GridWorld
+from rlberry_research.envs import GridWorld
 from rlberry.manager import plot_writer_data, ExperimentManager
-from rlberry-scool.agents import UCBVIAgent
+from rlberry_scool.agents import UCBVIAgent
 import matplotlib.pyplot as plt
 
 # We wrape the default writer of the agent in a WriterWrapper

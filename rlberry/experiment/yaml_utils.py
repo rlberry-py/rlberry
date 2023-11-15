@@ -30,7 +30,7 @@ def read_agent_config(config_path):
     Example:
 
     ``` myagent.yaml
-        agent_class: 'rlberry-research.agents.kernel_based.rs_ucbvi.RSUCBVIAgent'
+        agent_class: 'rlberry_research.agents.kernel_based.rs_ucbvi.RSUCBVIAgent'
         gamma: 1.0
         lp_metric: 2
         min_dist: 0.0
@@ -76,7 +76,7 @@ def read_env_config(config_path):
     Example:
 
     ``` env.yaml
-        constructor: 'rlberry-research.envs.benchmarks.grid_exploration.nroom.NRoom'
+        constructor: 'rlberry_research.envs.benchmarks.grid_exploration.nroom.NRoom'
         params:
             reward_free: false
             array_observation: true

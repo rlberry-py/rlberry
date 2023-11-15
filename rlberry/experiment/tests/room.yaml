@@ -1,4 +1,4 @@
-constructor: 'rlberry-research.envs.benchmarks.grid_exploration.nroom.NRoom'
+constructor: 'rlberry_research.envs.benchmarks.grid_exploration.nroom.NRoom'
 params:
   reward_free: false
   array_observation: true

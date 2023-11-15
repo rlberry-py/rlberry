@@ -8,7 +8,7 @@ This script requires matplotlib
 
 import matplotlib.pyplot as plt
 import numpy as np
-from rlberry-research.agents.kernel_based.kernels import kernel_func
+from rlberry_research.agents.kernel_based.kernels import kernel_func
 
 kernel_types = [
     "uniform",

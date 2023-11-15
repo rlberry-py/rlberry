@@ -3,7 +3,7 @@
 #  Demo: rsucbvi.yaml
 #  =====================
 # """
-agent_class: 'rlberry-research.agents.kernel_based.rs_ucbvi.RSUCBVIAgent'
+agent_class: 'rlberry_research.agents.kernel_based.rs_ucbvi.RSUCBVIAgent'
 init_kwargs:
   gamma: 1.0
   lp_metric: 2

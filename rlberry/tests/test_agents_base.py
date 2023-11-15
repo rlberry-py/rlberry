@@ -11,9 +11,9 @@ import pytest
 import numpy as np
 import sys
 
-import rlberry-research.agents as agents_research
-import rlberry-scool.agents as agents_scool
-from rlberry-scool.agents.features import FeatureMap
+import rlberry_research.agents as agents_research
+import rlberry_scool.agents as agents_scool
+from rlberry_scool.agents.features import FeatureMap
 
 from rlberry.utils.check_agent import (
     check_rl_agent,

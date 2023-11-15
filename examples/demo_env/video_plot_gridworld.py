@@ -12,8 +12,8 @@ Gridworld environment.
 """
 # sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_gridworld.jpg'
 
-from rlberry-research.agents.dynprog import ValueIterationAgent
-from rlberry-research.envs.finite import GridWorld
+from rlberry_research.agents.dynprog import ValueIterationAgent
+from rlberry_research.envs.finite import GridWorld
 
 
 env = GridWorld(7, 10, walls=((2, 2), (3, 3)))

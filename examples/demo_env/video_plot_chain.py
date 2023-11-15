@@ -11,7 +11,7 @@ A demo of Chain environment
 # sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_chain.jpg'
 
 
-from rlberry-research.envs.finite import Chain
+from rlberry_research.envs.finite import Chain
 
 env = Chain(10, 0.1)
 env.enable_rendering()

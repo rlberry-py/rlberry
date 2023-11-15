@@ -3,11 +3,11 @@
  Demo: run_server
  =====================
 """
-from rlberry-research.network.interface import ResourceItem
-from rlberry-research.network.server import BerryServer
+from rlberry_research.network.interface import ResourceItem
+from rlberry_research.network.server import BerryServer
 from rlberry.agents import ValueIterationAgent
-from rlberry-research.agents.torch import REINFORCEAgent, A2CAgent
-from rlberry-research.envs import GridWorld, gym_make
+from rlberry_research.agents.torch import REINFORCEAgent, A2CAgent
+from rlberry_research.envs import GridWorld, gym_make
 from rlberry.utils.writers import DefaultWriter
 
 if __name__ == "__main__":

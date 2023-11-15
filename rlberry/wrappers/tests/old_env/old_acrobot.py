@@ -12,8 +12,8 @@ envs/classic_control/acrobot.py
 import numpy as np
 import rlberry.spaces as spaces
 from rlberry.envs.interface import Model
-from rlberry-research.rendering import Scene, GeometricPrimitive, RenderInterface2D
-from rlberry-research.rendering.common_shapes import bar_shape, circle_shape
+from rlberry_research.rendering import Scene, GeometricPrimitive, RenderInterface2D
+from rlberry_research.rendering.common_shapes import bar_shape, circle_shape
 
 __copyright__ = "Copyright 2013, RLPy http://acl.mit.edu/RLPy"
 __credits__ = [
