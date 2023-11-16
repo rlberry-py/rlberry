@@ -19,7 +19,7 @@ def compare_agents(
     n_simulations=50,
     alpha=0.05,
     B=10_000,
-    seed=None
+    seed=None,
 ):
     """
     Compare several trained agents using the mean over n_simulations evaluations for each agent.
@@ -57,7 +57,7 @@ def compare_agents(
     [2]: Testing Statistical Hypotheses by E. L. Lehmann, Joseph P. Romano (Section 15.4.4), https://doi.org/10.1007/0-387-27605-X, Springer
 
     """
-        
+
     # Construction of the array of evaluations
     df = pd.DataFrame()
     assert isinstance(agent_source, list)
@@ -161,7 +161,7 @@ def compare_agents(
             }
         )
     elif method == "permutation":
-        results_perm = _permutation_test(data, B, alpha,seed) == 1
+        results_perm = _permutation_test(data, B, alpha, seed) == 1
         decisions = [
             "accept" if results_perm[i][j] else "reject"
             for i in range(n_agents)
