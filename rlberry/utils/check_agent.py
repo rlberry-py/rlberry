@@ -61,7 +61,13 @@ def _fit_experiment_manager(agent, env="continuous_state", init_kwargs=None):
     train_env = _make_tuple_env(env)
     try:
         agent = ExperimentManager(
-            agent, train_env, fit_budget=5, n_fit=1, seed=SEED, init_kwargs=init_kwargs
+            agent,
+            train_env,
+            agent_name="test_agent",
+            fit_budget=5,
+            n_fit=1,
+            seed=SEED,
+            init_kwargs=init_kwargs,
         )
         agent.fit()
     except Exception as exc:
