@@ -67,7 +67,7 @@ default_guix_packages = [
     "python-toolchain",
     "poetry",
     "cuda-toolkit",
-    "cudnn",
+    # "cudnn",
 ]
 
 
@@ -174,14 +174,13 @@ def with_guix(
         script += "\npoetry config virtualenvs.create false --local"
         script += "\npoetry add " + " ".join(import_libs)
     script += "\npoetry install --no-interaction"
-    with open(os.path.join(temp_dir, "guix_script.sh"), "w") as fscript:
-        fscript.write(script)
 
-    # todo: change the guix_script which get ecrasé à chaque fois.
     def wrap(func):
         filename = __func_to_script(func)
-        with open(os.path.join(temp_dir, "guix_script.sh"), "a") as fscript:
-            fscript.write("\n python " + filename)
+        basename = os.path.splitext(filename)[0]
+
+        with open(os.path.join(temp_dir, basename + "_xp.sh"), "w") as fscript:
+            fscript.write(script + "\n python " + filename)
 
         def myscript():
             pass
@@ -208,14 +207,10 @@ def run_guix_xp(env_dir=None, verbose=False, keep_build_dir=False):
             subprocess.run(["cp", "-r", filename, temp_dir], check=True)
 
     os.chdir(temp_dir)
-    subprocess.run(
-        ["chmod", "+x", os.path.join(temp_dir, "guix_script.sh")], check=True
-    )
+    for filename in glob.glob(temp_dir + "/*_xp.sh"):
+        subprocess.run(["chmod", "+x", filename], check=True)
+        subprocess.run(filename, check=True)
 
-    subprocess.run(os.path.join(temp_dir, "guix_script.sh"), check=True)
-
-    # copy back environment
-    subprocess.run(["rm", "guix_script.sh"], check=True)
     for filename in glob.glob(temp_dir + "/*"):
         subprocess.run(["cp", "-r", filename, env_dir], check=True)
     if keep_build_dir:
