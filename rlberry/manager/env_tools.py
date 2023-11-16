@@ -4,6 +4,8 @@ from textwrap import dedent
 import os
 import subprocess
 import tempfile
+import shutil
+import glob
 
 try:
     import nox
@@ -13,8 +15,7 @@ except:
     NOX_INSTALLED = False
 
 
-temp_dir = tempfile.TemporaryDirectory()
-src_path = os.path.dirname(os.path.realpath(__file__))
+temp_dir = tempfile.mkdtemp()
 
 template_script_guix = """#!/usr/bin/env -S guix time-machine --channels=channels.scm -- shell -CFN --preserve='(^DISPLAY$|^XAUTHORITY$)' --expose=${HOME}/.Xauthority -m manifest.scm -- bash
 
@@ -44,8 +45,15 @@ science_channel = """
         (openpgp-fingerprint
          "CA4F 8CF4 37D7 478F DA05  5FD4 4213 7701 1A37 8446"))))
          %default-channels)
+
 """
 
+hpc_channel = """
+(cons (channel
+        (name 'guix-hpc-non-free)
+        (url "https://gitlab.inria.fr/guix-hpc/guix-hpc-non-free.git"))
+      %default-channels)
+"""
 
 default_guix_packages = [
     "python",
@@ -57,7 +65,9 @@ default_guix_packages = [
     "make",
     "zlib",
     "python-toolchain",
-    "python-pip",
+    "poetry",
+    "cuda-toolkit",
+    "cudnn",
 ]
 
 
@@ -71,7 +81,7 @@ def __func_to_script(func):
 
     source = "\n" + dedent("\n".join(fun_source.split("\n")[2:]))
 
-    filename = os.path.join(temp_dir.name, m.group(0) + ".py")
+    filename = os.path.join(temp_dir, m.group(0) + ".py")
 
     with open(filename, "w") as f:
         f.write(dedent(source))
@@ -124,9 +134,9 @@ def with_guix(
     channels=None,
     python_ver=None,
 ):
-    os.chdir(temp_dir.name)
+    os.chdir(temp_dir)
     if channels is None:
-        channels = os.path.join(temp_dir.name, "channels.scm")
+        channels = os.path.join(temp_dir, "channels.scm")
 
     if not (os.path.isfile(channels)):
         with open(channels, "w") as ch_file:
@@ -134,6 +144,9 @@ def with_guix(
                 ["guix", "describe", "-f", "channels"], stdout=subprocess.PIPE
             ) as proc:
                 channel_str = proc.stdout.read().decode()
+                channel_str += (
+                    "\n" + hpc_channel
+                )  # always add the hpc channel for nvidia drivers
                 if with_guix_torch:
                     channel_str += "\n" + nonguix_channel
                 if with_guix_jax:
@@ -145,7 +158,7 @@ def with_guix(
             packages.append("python-pytorch")
         if with_guix_jax:
             packages.append("python-jax")
-        manifest = os.path.join(temp_dir.name, "manifest.scm")
+        manifest = os.path.join(temp_dir, "manifest.scm")
         with open(manifest, "w") as mfile:
             mfile.write(
                 "(specifications->manifest '(\n\"" + '"\n "'.join(packages) + '"))'
@@ -154,20 +167,20 @@ def with_guix(
     assert os.path.isfile(manifest), "manifest file not found"
 
     script = template_script_guix
-    script += "export PIP_CACHE_DIR=" + os.path.join(temp_dir.name, "pip_cache")
-    requirements = os.path.join(temp_dir.name, "requirements.txt")
-    if not (os.path.isfile(requirements)):
-        script += "\npython -m pip install " + " ".join(import_libs)
-        script += "\npython -m pip freeze >  " + requirements
-    else:
-        script += "\npython -m pip install -r " + requirements
-    with open(os.path.join(temp_dir.name, "guix_script.sh"), "w") as fscript:
+    script += "export POETRY_CACHE_DIR=" + os.path.join(temp_dir, "poetry_cache")
+    poetry_lock = os.path.join(temp_dir, "poetry.lock")
+    if not (os.path.isfile(poetry_lock)):
+        script += "\npoetry init -n --name my-experiment 1> /dev/null"
+        script += "\npoetry config virtualenvs.create false --local"
+        script += "\npoetry add " + " ".join(import_libs)
+    script += "\npoetry install --no-interaction"
+    with open(os.path.join(temp_dir, "guix_script.sh"), "w") as fscript:
         fscript.write(script)
 
+    # todo: change the guix_script which get ecrasé à chaque fois.
     def wrap(func):
         filename = __func_to_script(func)
-
-        with open(os.path.join(temp_dir.name, "guix_script.sh"), "a") as fscript:
+        with open(os.path.join(temp_dir, "guix_script.sh"), "a") as fscript:
             fscript.write("\n python " + filename)
 
         def myscript():
@@ -191,20 +204,21 @@ def run_guix_xp(env_dir=None, verbose=False, keep_build_dir=False):
 
     # copy environment into temp directory
     if len(os.listdir(env_dir)) > 0:
-        subprocess.run(["cp", "-r", env_dir + "/*", temp_dir.name], check=True)
+        for filename in glob.glob(env_dir + "/*"):
+            subprocess.run(["cp", "-r", filename, temp_dir], check=True)
 
-    os.chdir(temp_dir.name)
-    subprocess.run(["pwd"], check=True)
+    os.chdir(temp_dir)
     subprocess.run(
-        ["chmod", "+x", os.path.join(temp_dir.name, "guix_script.sh")], check=True
+        ["chmod", "+x", os.path.join(temp_dir, "guix_script.sh")], check=True
     )
 
-    subprocess.run(os.path.join(temp_dir.name, "guix_script.sh"), check=True)
+    subprocess.run(os.path.join(temp_dir, "guix_script.sh"), check=True)
 
     # copy back environment
     subprocess.run(["rm", "guix_script.sh"], check=True)
-    subprocess.run(["cp", "-r", "./*", env_dir], check=True)
+    for filename in glob.glob(temp_dir + "/*"):
+        subprocess.run(["cp", "-r", filename, env_dir], check=True)
     if keep_build_dir:
-        print("The build directory has been kept and is located at " + temp_dir.name)
+        print("The build directory has been kept and is located at " + temp_dir)
     else:
-        temp_dir.cleanup()
+        shutil.rmtree(dirpath)

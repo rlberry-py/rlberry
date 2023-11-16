@@ -1,7 +1,7 @@
-from rlberry.manager import with_venv, run_venv_xp
+from rlberry.manager import with_guix, run_guix_xp
 
 
-@with_venv(import_libs=["numpy", "mushroom_rl"])
+@with_guix(import_libs=["numpy", "mushroom_rl"])
 def run_mushroom():
     """
     Simple script to solve a simple chain with Q-Learning.
@@ -52,7 +52,7 @@ def run_mushroom():
     logger.info(f"J final: {J}")
 
 
-@with_venv(import_libs=["stable-baselines3"], python_ver="3.9")
+@with_guix(import_libs=["stable-baselines3"])
 def run_sb():
     import gymnasium as gym
 
@@ -74,4 +74,4 @@ def run_sb():
 
 
 if __name__ == "__main__":
-    run_venv_xp()
+    run_guix_xp(keep_build_dir=True)
