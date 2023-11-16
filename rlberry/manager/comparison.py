@@ -4,6 +4,7 @@ from scipy.stats import tukey_hsd
 import pandas as pd
 import rlberry
 from rlberry.manager import ExperimentManager
+from rlberry.seeding import Seeder
 import pathlib
 
 logger = rlberry.logger
@@ -18,6 +19,7 @@ def compare_agents(
     n_simulations=50,
     alpha=0.05,
     B=10_000,
+    seed=None
 ):
     """
     Compare several trained agents using the mean over n_simulations evaluations for each agent.
@@ -41,6 +43,8 @@ def compare_agents(
         Level of the test, control the Family-wise error.
     B: int, default = 10_000
         Number of random permutations used to approximate the permutation test if method = "permutation"
+    seed: int or None,
+        The seed of the random number generator from which we sample permutations. If None, create one.
 
     Returns
     -------
@@ -53,6 +57,7 @@ def compare_agents(
     [2]: Testing Statistical Hypotheses by E. L. Lehmann, Joseph P. Romano (Section 15.4.4), https://doi.org/10.1007/0-387-27605-X, Springer
 
     """
+        
     # Construction of the array of evaluations
     df = pd.DataFrame()
     assert isinstance(agent_source, list)
@@ -156,7 +161,7 @@ def compare_agents(
             }
         )
     elif method == "permutation":
-        results_perm = _permutation_test(data, B, alpha) == 1
+        results_perm = _permutation_test(data, B, alpha,seed) == 1
         decisions = [
             "accept" if results_perm[i][j] else "reject"
             for i in range(n_agents)
@@ -181,7 +186,7 @@ def compare_agents(
     return results
 
 
-def _permutation_test(data, B, alpha):
+def _permutation_test(data, B, alpha, seed):
     """
     Permutation test with Step-Down method
     """
@@ -195,6 +200,7 @@ def _permutation_test(data, B, alpha):
 
     decisions = np.array(["accept" for i in range(len(comparisons))])
     comparisons_alive = np.arange(len(comparisons))
+    seeder = Seeder(seed)
 
     logger.info("Beginning permutationt test")
     while True:
@@ -205,7 +211,7 @@ def _permutation_test(data, B, alpha):
         if B is None:
             permutations = combinations(2 * n_fit, n_fit)
         else:
-            permutations = (np.random.permutation(2 * n_fit) for _ in range(B))
+            permutations = (seeder.rng.permutation(2 * n_fit) for _ in range(B))
 
         # Test statistics
         T0_max = 0
