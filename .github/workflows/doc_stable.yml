@@ -2,9 +2,8 @@ name: documentation_stable
 on:
   push:
     # Pattern matched against refs/tags
-    tags:        
+    tags:
       - '*'           # Push events to every tag not containing /
-
 
 permissions:
   contents: write
