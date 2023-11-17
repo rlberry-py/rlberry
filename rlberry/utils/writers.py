@@ -35,7 +35,7 @@ class DefaultWriter:
     log_interval : int
         Minimum number of seconds between consecutive logs (with logging module).
     style_log: str
-        Possible values are "multi_line" and "one_line". Define the style of the logs.
+        Possible values are "multi_line", "one_line" and "progressbar". Define the style of the logs.
     tensorboard_kwargs : Optional[dict]
         Parameters for tensorboard SummaryWriter. If provided, DefaultWriter
         will behave as tensorboard.SummaryWriter, and will keep utilities to handle
