@@ -56,27 +56,31 @@ def test_replay_size():
 
 
 @pytest.mark.parametrize("sampling_mode", ["uniform", "prioritized"])
-def test_replay_sampling(sampling_mode):
+@pytest.mark.parametrize("max_replay_size", [128, 500])
+def test_replay_sampling(sampling_mode, max_replay_size):
     batch_size = 128
     chunk_size = 256
 
     # get replay buffer
-    buffer, _ = _get_filled_replay(max_replay_size=500)
+    buffer, _ = _get_filled_replay(max_replay_size=max_replay_size)
 
     # Sample batches, check shape and dtype
     for _ in range(10):
         batch = buffer.sample(
             batch_size=batch_size, chunk_size=chunk_size, sampling_mode=sampling_mode
         )
-        for tag in buffer.tags:
-            assert batch.data[tag].shape[:2] == (batch_size, chunk_size)
-            assert batch.data[tag].dtype == buffer.dtypes[tag]
-            assert np.array_equal(
-                np.array(buffer.data[tag], dtype=buffer.dtypes[tag])[
-                    batch.info["indices"]
-                ],
-                batch.data[tag],
-            )
+        if chunk_size > max_replay_size:
+            assert batch is None
+        else:
+            for tag in buffer.tags:
+                assert batch.data[tag].shape[:2] == (batch_size, chunk_size)
+                assert batch.data[tag].dtype == buffer.dtypes[tag]
+                assert np.array_equal(
+                    np.array(buffer.data[tag], dtype=buffer.dtypes[tag])[
+                        batch.info["indices"]
+                    ],
+                    batch.data[tag],
+                )
 
 
 def test_replay_priority_update():
