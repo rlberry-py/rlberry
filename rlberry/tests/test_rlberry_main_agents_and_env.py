@@ -28,14 +28,18 @@ class CustomDummyEnv(gym.Env):
         )
         self.observation_space = gym.spaces.Dict(obs_dict)
         self.action_space = gym.spaces.MultiDiscrete([8, 8])
+        self.has_reset_before_step_dummy = False
 
     def reset(self):
+        self.has_reset_before_step_dummy = True
         return self._obs(), {}
 
     def _obs(self):
         return {"board": np.zeros(shape=(8, 8), dtype=bool).flatten(), "player": 1}
 
     def step(self, action: Tuple[int, int]):
+        if not self.has_reset_before_step_dummy:
+            raise AssertionError("Cannot call env.step() before calling reset()")
         reward = 0.2
         terminated = False
         truncated = False
@@ -49,6 +53,18 @@ class CustomDummyEnv(gym.Env):
         print("reseed")
 
 
+class CustomDummyEnvBox1(CustomDummyEnv):
+    def __init__(self):
+        CustomDummyEnv.__init__(self)
+        self.action_space = gym.spaces.Box(-np.inf, np.inf)
+
+
+class CustomDummyEnvBox2(CustomDummyEnv):
+    def __init__(self):
+        CustomDummyEnv.__init__(self)
+        self.action_space = gym.spaces.Box(5, 5)
+
+
 FROZEN_LAKE_CONSTR = (
     gym_make,
     dict(id="FrozenLake-v1", wrap_spaces=True, is_slippery=False),
@@ -59,7 +75,7 @@ ASTEROIDS_CONSTR = (atari_make, dict(id="ALE/Asteroids-v5", wrap_spaces=True))
 CUSTOM_CONSTR = (CustomDummyEnv, {})
 
 
-ALL_ENVS = [
+TEST_ENV_SUCCES = [
     FROZEN_LAKE_CONSTR,
     CART_POLE_CONSTR,
     PENDULUM_CONSTR,
@@ -68,12 +84,34 @@ ALL_ENVS = [
 ]
 
 
-@pytest.mark.parametrize("Env", ALL_ENVS)
+@pytest.mark.parametrize("Env", TEST_ENV_SUCCES)
 def test_env(Env):
     current_env = Env[0](**Env[1])
     if not isinstance(current_env, CustomDummyEnv):
         check_env(current_env)
     check_gym_env(current_env)
+
+
+CUSTOM_BOX_CONSTR1 = (CustomDummyEnvBox1, {})
+CUSTOM_BOX_CONSTR2 = (CustomDummyEnvBox2, {})
+
+TEST_ENV_FAIL = [
+    CUSTOM_CONSTR,
+    CUSTOM_BOX_CONSTR1,
+    CUSTOM_BOX_CONSTR2,
+]
+
+
+@pytest.mark.parametrize("Env", TEST_ENV_FAIL)
+def test_errors_env(Env):
+    current_env = Env[0](**Env[1])
+    had_exception_step_before_reset = False
+    try:
+        current_env.step(0)
+    except Exception as ex:
+        had_exception_step_before_reset = True
+
+    assert had_exception_step_before_reset
 
 
 A2C_INIT_KWARGS = {"algo_cls": A2C, "policy": "MlpPolicy", "verbose": 1}
