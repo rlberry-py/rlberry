@@ -8,8 +8,8 @@ randomized algorithm.
 """
 
 import numpy as np
-from rlberry.envs.bandits import AdversarialBandit
-from rlberry.agents.bandits import (
+from rlberry_research.envs.bandits import AdversarialBandit
+from rlberry_research.agents.bandits import (
     RandomizedAgent,
     TSAgent,
     makeEXP3Index,
