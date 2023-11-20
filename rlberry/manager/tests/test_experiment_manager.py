@@ -394,10 +394,10 @@ def test_logs(style_log):
     stats = ExperimentManager(
         DummyAgent,
         train_env,
-        fit_budget=5,
+        fit_budget=15,
         eval_kwargs=eval_kwargs,
         init_kwargs=params,
-        default_writer_kwargs={"style_log": style_log},
+        default_writer_kwargs={"style_log": style_log, "log_interval": 0},
         n_fit=3,
         seed=123,
     )
