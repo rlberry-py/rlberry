@@ -16,7 +16,7 @@ import numpy as np
 
 from rlberry.manager import ExperimentManager, read_writer_data
 from rlberry.envs.interface import Model
-from rlberry.agents.bandits import BanditWithSimplePolicy
+from rlberry_research.agents.bandits import BanditWithSimplePolicy
 from rlberry.wrappers import WriterWrapper
 import rlberry.spaces as spaces
 
