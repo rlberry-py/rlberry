@@ -51,8 +51,8 @@ Basic Agents
    :toctree: generated/
    :template: class.rst
 
-   agents.QLAgent
-   agents.ValueIterationAgent
+   .. agents.QLAgent
+   .. agents.ValueIterationAgent
 
 
 Agent importation tools
