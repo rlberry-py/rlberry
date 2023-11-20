@@ -430,6 +430,8 @@ class extending_tqdm(tqdm):
 
     def set_description(self, desc=None, refresh=True):
         screen_width, _ = _screen_shape_wrapper()(sys.stdout)
+        if screen_width is None:
+            screen_width = 600
         max_len = screen_width
         if len(desc) > 1:
             if not self.subbar:
