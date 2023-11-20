@@ -25,4 +25,3 @@ ignore:
   - "./rlberry/wrappers/tests/old_env/*.py"
   - "./rlberry/rendering/pygame_render2d.py"
   - "./rlberry/colab_utils/display_setup.py"
-  - "./rlberry/**/test*"
