@@ -86,7 +86,7 @@ def test_hyperparam_optim_random(parallelization, custom_eval_function, fit_frac
             DummyAgent,
             train_env,
             init_kwargs={},
-            fit_budget=1,
+            fit_budget=50,
             eval_kwargs={"eval_horizon": 5},
             n_fit=3,
             parallelization=parallelization,
@@ -97,6 +97,7 @@ def test_hyperparam_optim_random(parallelization, custom_eval_function, fit_frac
         stats_agent.optimize_hyperparams(
             sampler_method="random",
             n_trials=3,
+            timeout=0.5,
             optuna_parallelization=parallelization,
             custom_eval_function=custom_eval_function,
             fit_fraction=fit_fraction,
