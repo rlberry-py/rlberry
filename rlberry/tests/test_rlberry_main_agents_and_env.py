@@ -112,6 +112,7 @@ def test_errors_env(Env):
         had_exception_step_before_reset = True
 
     assert had_exception_step_before_reset
+    check_gym_env(current_env)
 
 
 A2C_INIT_KWARGS = {"algo_cls": A2C, "policy": "MlpPolicy", "verbose": 1}
