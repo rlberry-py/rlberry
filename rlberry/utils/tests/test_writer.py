@@ -22,6 +22,10 @@ class DummyAgent(AgentWithSimplePolicy):
             if self.writer is not None:
                 self.writer.add_scalar("a", 42, ii)
             time.sleep(1)
+        print(self.writer.summary_writer)
+        print(self.writer.read_tag_value("a"))
+        print(self.writer.read_first_tag_value("a"))
+        print(self.writer.read_last_tag_value("a"))
         return None
 
     def policy(self, observation):
