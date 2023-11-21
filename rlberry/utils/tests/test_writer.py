@@ -20,12 +20,9 @@ class DummyAgent(AgentWithSimplePolicy):
         self.total_budget += budget
         for ii in range(budget):
             if self.writer is not None:
-                self.writer.add_scalar("a", 42, ii)
+                self.writer.add_scalar("a", ii, ii)
             time.sleep(1)
-        print(self.writer.summary_writer)
-        print(self.writer.read_tag_value("a"))
-        print(self.writer.read_first_tag_value("a"))
-        print(self.writer.read_last_tag_value("a"))
+
         return None
 
     def policy(self, observation):
@@ -45,6 +42,11 @@ def test_myoutput(capsys):  # or use "capfd" for fd-level
         default_writer_kwargs={"log_interval": 1},
     )
     agent.fit(budget=3)
+
+    assert agent.agent_handlers[0].writer.summary_writer == None
+    assert list(agent.agent_handlers[0].writer.read_tag_value("a")) == [0, 1, 2]
+    assert agent.agent_handlers[0].writer.read_first_tag_value("a") == 0
+    assert agent.agent_handlers[0].writer.read_last_tag_value("a") == 2
 
     captured = capsys.readouterr()
     # test that what is written to stderr is longer than 50 char,
