@@ -2481,7 +2481,7 @@ torch-agents = ["torch (>=1.6.0)"]
 type = "git"
 url = "https://github.com/rlberry-py/rlberry-research.git"
 reference = "HEAD"
-resolved_reference = "38c056eb9cfa130d855c51d1934e377182e76b54"
+resolved_reference = "973358e77d4e931361b4bb955e295b1537f5e7e9"
 
 [[package]]
 name = "rlberry-scool"
