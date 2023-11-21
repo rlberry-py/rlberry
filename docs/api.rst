@@ -44,16 +44,6 @@ Base classes
     agents.Agent
     agents.AgentWithSimplePolicy
 
-Basic Agents
---------------------
-
-.. autosummary::
-   :toctree: generated/
-   :template: class.rst
-
-   .. agents.QLAgent
-   .. agents.ValueIterationAgent
-
 
 Agent importation tools
 -----------------------
@@ -90,17 +80,6 @@ Spaces
     spaces.MultiDiscrete
     spaces.MultiBinary
     spaces.Dict
-
-Benchmark Environments
-----------------------
-
-.. autosummary::
-   :toctree: generated/
-   :template: class.rst
-
-
-   ..  envs.finite.Chain
-   ..  envs.finite.GridWorld
 
 
 Environment tools
@@ -140,6 +119,7 @@ Manager Utilitis
 .. autosummary::
    :toctree: generated/
    :template: function.rst
+
    manager.preset_manager
 
 
@@ -175,16 +155,6 @@ Logging Utilities
    :template: function.rst
 
    utils.logging.set_level
-
-
-Typing
-------
-
-.. autosummary::
-  :toctree: generated/
-  :template: class.rst
-
-   types.Env
 
 
 Environment Wrappers
