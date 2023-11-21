@@ -153,6 +153,12 @@ jobs:
       set -xe
       pip install .
     displayName: 'Install rlberry'
+
+  - script: |
+      pip install git+https://github.com/rlberry-py/rlberry-scool.git
+      pip install git+https://github.com/rlberry-py/rlberry-research.git
+    displayName: 'Install rlberry-scool and rlberry-research'
+
   #ignore les tests qui viennent des extras : torch, experimental, stablebaselines, optuna
   - script: |
       pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
@@ -187,6 +193,11 @@ jobs:
     displayName: 'Install rlberry'
 
   - script: |
+      pip install git+https://github.com/rlberry-py/rlberry-scool.git
+      pip install git+https://github.com/rlberry-py/rlberry-research.git
+    displayName: 'Install rlberry-scool and rlberry-research'
+
+  - script: |
       pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
       pytest rlberry/tests/test_agents_base.py rlberry/tests/test_envs.py
     displayName: 'pytest'
@@ -214,6 +225,11 @@ jobs:
   - script: |
       pip install .
     displayName: 'Install rlberry'
+
+  - script: |
+      pip install git+https://github.com/rlberry-py/rlberry-scool.git
+      pip install git+https://github.com/rlberry-py/rlberry-research.git
+    displayName: 'Install rlberry-scool and rlberry-research'
 
   - script: |
       pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb

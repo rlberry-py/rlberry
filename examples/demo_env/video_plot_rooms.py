@@ -10,8 +10,8 @@ A demo of rooms environment
 """
 # sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_rooms.jpg'
 
-from rlberry.envs.benchmarks.grid_exploration.nroom import NRoom
-from rlberry.agents.dynprog import ValueIterationAgent
+from rlberry_research.envs.benchmarks.grid_exploration.nroom import NRoom
+from rlberry_scool.agents.dynprog import ValueIterationAgent
 
 env = NRoom(
     nrooms=9,

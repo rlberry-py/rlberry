@@ -36,7 +36,7 @@ This can be done very succinctly as in the example below:
 
 .. code-block:: yaml
 
-    constructor: 'rlberry.envs.benchmarks.grid_exploration.nroom.NRoom'
+    constructor: 'rlberry_research.envs.benchmarks.grid_exploration.nroom.NRoom'
     params:
         reward_free: false
         array_observation: true
@@ -46,7 +46,7 @@ This can be done very succinctly as in the example below:
 
 .. code-block:: yaml
 
-    agent_class: 'rlberry.agents.kernel_based.rs_ucbvi.RSUCBVIAgent'
+    agent_class: 'rlberry_research.agents.kernel_based.rs_ucbvi.RSUCBVIAgent'
     init_kwargs:
         gamma: 1.0
         lp_metric: 2

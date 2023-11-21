@@ -1,7 +1,7 @@
 from rlberry.envs import Wrapper
-from rlberry.exploration_tools.discrete_counter import DiscreteCounter
+from rlberry_research.exploration_tools.discrete_counter import DiscreteCounter
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-from rlberry.rendering.utils import video_write
+from rlberry_research.rendering.utils import video_write
 import gymnasium.spaces as spaces
 
 import matplotlib.pyplot as plt
