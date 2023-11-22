@@ -16,7 +16,7 @@ import numpy as np
 
 import rlberry.spaces as spaces
 from rlberry.envs.interface import Model
-from rlberry.rendering import Scene, GeometricPrimitive, RenderInterface2D
+from rlberry_research.rendering import Scene, GeometricPrimitive, RenderInterface2D
 
 
 class Old_MountainCar(RenderInterface2D, Model):

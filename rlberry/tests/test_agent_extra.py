@@ -1,13 +1,13 @@
 import pytest
-import rlberry.agents as agents
-import rlberry.agents.torch as torch_agents
+import rlberry_scool.agents as agents_scool
+import rlberry_research.agents.torch as torch_agents
 from rlberry.utils.check_agent import (
     check_rl_agent,
     check_rlberry_agent,
     check_vectorized_env_agent,
     check_hyperparam_optimisation_agent,
 )
-from rlberry.agents.features import FeatureMap
+from rlberry_scool.agents.features import FeatureMap
 import numpy as np
 import sys
 
@@ -25,12 +25,12 @@ class OneHotFeatureMap(FeatureMap):
 
 
 # LSVIUCBAgent needs a feature map function to work.
-class OneHotLSVI(agents.LSVIUCBAgent):
+class OneHotLSVI(agents_scool.LSVIUCBAgent):
     def __init__(self, env, **kwargs):
         def feature_map_fn(_env):
             return OneHotFeatureMap(5, 2)  # values for Chain
 
-        agents.LSVIUCBAgent.__init__(
+        agents_scool.LSVIUCBAgent.__init__(
             self, env, feature_map_fn=feature_map_fn, horizon=10, **kwargs
         )
 

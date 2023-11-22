@@ -1,5 +1,5 @@
 import pytest
-from rlberry.envs import GridWorld
+from rlberry_research.envs import GridWorld
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.manager import AgentManager
 from rlberry.manager import compare_agents
@@ -62,7 +62,7 @@ def test_compare(method):
     agent1.fit()
     agent2.fit()
 
-    df = compare_agents([agent1, agent2], method=method, B=10, n_simulations=5)
+    df = compare_agents([agent1, agent2], method=method, B=20, n_simulations=5, seed=42)
     assert len(df) > 0
     if method == "tukey_hsd":
         assert df["p-val"].item() < 0.05
@@ -74,6 +74,3 @@ def test_compare(method):
         [agent1_pickle, agent2_pickle], method=method, B=10, n_simulations=5
     )
     assert len(df) > 0
-
-
-test_compare("tukey_hsd")

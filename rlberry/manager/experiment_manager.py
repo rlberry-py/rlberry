@@ -219,7 +219,9 @@ class ExperimentManager:
         If 'unique', data is saved to ``output_dir/manager_data/<AGENT_NAME_UNIQUE_ID>``
         If 'timestamp', data is saved to ``output_dir/manager_data/<AGENT_NAME_TIMESTAMP_SHORT_ID>``
     default_writer_kwargs : dict
-        Optional arguments for :class:`~rlberry.utils.writers.DefaultWriter`.
+        Optional arguments for :class:`~rlberry.utils.writers.DefaultWriter`. Typically one may
+        want to change the log style with default_writer_kwargs set to {"style_log":"progressbar"} or
+         {"style_log":"one_line"}
     init_kwargs_per_instance : List[dict] (optional)
         List of length ``n_fit`` containing the params to initialize each of
         the ``n_fit`` agent instances. It can be useful if different instances

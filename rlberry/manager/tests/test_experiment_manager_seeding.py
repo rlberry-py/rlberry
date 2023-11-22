@@ -1,8 +1,8 @@
 from rlberry.envs.tests.test_env_seeding import get_env_trajectory, compare_trajectories
 from rlberry.envs import gym_make
-from rlberry.envs.classic_control import MountainCar
+from rlberry_research.envs.classic_control import MountainCar
 from rlberry.manager import ExperimentManager, MultipleManagers
-from rlberry.agents.torch import A2CAgent
+from rlberry_research.agents.torch import A2CAgent
 import gymnasium as gym
 import pytest
 

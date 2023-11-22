@@ -3,10 +3,10 @@ import pytest
 from rlberry.seeding import Seeder
 
 from copy import deepcopy
-from rlberry.envs.classic_control import MountainCar, Acrobot
-from rlberry.envs.finite import Chain
-from rlberry.envs.finite import GridWorld
-from rlberry.envs.benchmarks.ball_exploration import PBall2D, SimplePBallND
+from rlberry_research.envs.classic_control import MountainCar, Acrobot
+from rlberry_research.envs.finite import Chain
+from rlberry_research.envs.finite import GridWorld
+from rlberry_research.envs.benchmarks.ball_exploration import PBall2D, SimplePBallND
 from rlberry.envs import Wrapper
 from rlberry.wrappers import RescaleRewardWrapper
 
