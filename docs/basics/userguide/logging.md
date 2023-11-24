@@ -2,7 +2,7 @@
 
 # How to logging your experiment
 
-To get informations and readable result about the training of your algorithm, you can use different logger.  
+To get informations and readable result about the training of your algorithm, you can use different logger.
 ## Set rlberry's logger level
 For this examples, you will use the "PPO" torch agent from "[rlberry-research](https://github.com/rlberry-py/rlberry-research)"
 

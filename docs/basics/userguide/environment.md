@@ -6,7 +6,7 @@ This is the world with which the agent interacts. The agent can observe this env
 
 
 ## Load rlberry environment
-You can find some environments in our other projects "[rlberry-research](https://github.com/rlberry-py/rlberry-research)" and "[rlberry-scool](https://github.com/rlberry-py/rlberry-scool)".  
+You can find some environments in our other projects "[rlberry-research](https://github.com/rlberry-py/rlberry-research)" and "[rlberry-scool](https://github.com/rlberry-py/rlberry-scool)".
 For this example, you can load "Chain" environment from "[rlberry-research](https://github.com/rlberry-py/rlberry-research)"
 ```python
 from rlberry_research.envs.finite import Chain

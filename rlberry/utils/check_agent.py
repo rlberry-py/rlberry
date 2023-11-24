@@ -19,10 +19,12 @@ def _make_tuple_env(env):
     ):  # If env param is a str, we use the corresponding "by default" env, and return it as tuple
         if env == "continuous_state":
             from rlberry_research.envs.benchmarks.ball_exploration import PBall2D
+
             env_ctor = PBall2D
             env_kwargs = {}
         elif env == "discrete_state":
             from rlberry_research.envs import Chain
+
             env_ctor = Chain
             env_kwargs = {}
         elif env == "vectorized_env_continuous":
@@ -30,6 +32,7 @@ def _make_tuple_env(env):
             env_kwargs = dict(id="CartPole-v1")
         elif env == "continuous_action":
             from rlberry_research.envs import Pendulum
+
             env_ctor = Pendulum
             env_kwargs = {}
         else:

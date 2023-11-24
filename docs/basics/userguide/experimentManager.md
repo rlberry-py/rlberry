@@ -4,7 +4,7 @@
 
 It's the element that allow you to make your experiments on [Agent](agent_page) and [Environment](environment_page).
 You can use it to train, optimize hyperparameters, evaluate, compare, and gather statistics about your agent on a specific environment. You can find the API doc [here](rlberry.manager.ExperimentManager).
-It's not the only solution, but it's the compact (and recommended) way of experiment with an agent.  
+It's not the only solution, but it's the compact (and recommended) way of experiment with an agent.
 
 For these examples, you will use the "PPO" torch agent from "[rlberry-research](https://github.com/rlberry-py/rlberry-research)"
 
