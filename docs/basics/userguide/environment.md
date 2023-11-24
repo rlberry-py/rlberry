@@ -6,8 +6,10 @@ This is the world with which the agent interacts. The agent can observe this env
 
 
 ## Load rlberry environment
+You can find some environments in our other projects "[rlberry-research](https://github.com/rlberry-py/rlberry-research)" and "[rlberry-scool](https://github.com/rlberry-py/rlberry-scool)".  
+For this example, you can load "Chain" environment from "[rlberry-research](https://github.com/rlberry-py/rlberry-research)"
 ```python
-from rlberry.envs.finite import Chain
+from rlberry_research.envs.finite import Chain
 
 env = Chain(10, 0.1)
 env.enable_rendering()
@@ -80,7 +82,7 @@ video:10kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing ov
 
 
 ## Load Gymnasium environment
-Gymnasium can give you some classic environment. You can load theme with [gym_make](rlberry.envs.gym_make). More information [here](https://www.gymlibrary.dev/environments/classic_control/).
+Gymnasium can give you some classic environment. You can load theme with [gym_make](rlberry.envs.gym_make). More information [here](https://gymnasium.farama.org/environments/classic_control/).
 
 ```python
 from rlberry.envs import gym_make
@@ -121,9 +123,9 @@ Moviepy - video ready [your path]/MountainCar-episode-0.mp4
 
 
 ## Load Atari environment
-A set of Atari 2600 environment simulated through Stella and the Arcade Learning Environment. More information [here](https://www.gymlibrary.dev/environments/atari/index.html#atari).
+A set of Atari 2600 environment simulated through Stella and the Arcade Learning Environment. More information [here](https://gymnasium.farama.org/environments/atari/).
 
-[atari_make](rlberry.envs.atari_make) add wrappers on gym.make, to make it easier to use on Atari games.
+The function "[atari_make()](rlberry.envs.atari_make)" add wrappers on gym.make, to make it easier to use on Atari games.
 
 ```python
 from rlberry.envs import atari_make
@@ -175,6 +177,6 @@ Moviepy - video ready [your path]/Breakout-episode-0.mp4
 
 You need to create a new class that inherits from [gymnasium.Env](https://gymnasium.farama.org/api/env/) or one of it child class like [Model](rlberry.envs.interface.Model) (and RenderInterface/one of it child class, if you want an environment with rendering).
 
-Then you need to make the specific functions that respect gymnasium template (as step, reset, ...). More information [here](https://www.gymlibrary.dev/content/environment_creation/)
+Then you need to make the specific functions that respect gymnasium template (as step, reset, ...). More information [here](https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/)
 
-You can find examples in "sources" of [Acrobot](rlberry.envs.Acrobot), [MountainCar](rlberry.envs.classic_control.MountainCar) or [Chain](rlberry.envs.finite.Chain) (and their parent classes).
+You can find examples in our other github project "[rlberry-research](https://github.com/rlberry-py/rlberry-research)" with [Acrobot](https://github.com/rlberry-py/rlberry-research/blob/main/rlberry_research/envs/classic_control/acrobot.py), [MountainCar](https://github.com/rlberry-py/rlberry-research/blob/main/rlberry_research/envs/classic_control/mountain_car.py) or [Chain](https://github.com/rlberry-py/rlberry-research/blob/main/rlberry_research/envs/finite/chain.py) (and their parent classes).

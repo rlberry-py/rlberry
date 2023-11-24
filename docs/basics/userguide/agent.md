@@ -6,11 +6,12 @@ In rlberry, you can use existing Agent, or create your own custom Agent. You can
 
 
 ## Load rlberry Agent
-An agent need an environment to train. We'll use the same environment as in the [environment](environment_page) section of the user guide.
+An agent need an environment to train. We'll use the same environment as in the [environment](environment_page) section of the user guide.  
+("Chain" environment from "[rlberry-research](https://github.com/rlberry-py/rlberry-research)")
 
 ### without agent
 ```python
-from rlberry.envs.finite import Chain
+from rlberry_research.envs.finite import Chain
 
 env = Chain(10, 0.1)
 env.enable_rendering()
@@ -33,10 +34,11 @@ If we use random actions on this environment, we don't have good results (the cr
 ### With agent
 
 With the same environment, we will use an Agent to choose the actions instead of random actions.
+For this example, you can use "ValueIterationAgent" Agent from "[rlberry-scool](https://github.com/rlberry-py/rlberry-scool)"
 
 ```python
-from rlberry.envs.finite import Chain
-from rlberry.agents.dynprog import ValueIterationAgent
+from rlberry_research.envs.finite import Chain
+from rlberry_scool.agents.dynprog import ValueIterationAgent
 
 env = Chain(10, 0.1)  # same env
 agent = ValueIterationAgent(env, gamma=0.95)  # creation of the agent

@@ -8,6 +8,10 @@ the core ExperimentManager (add ref), rlberry provides the user with a set of ba
 deep rl agents (add ref) as well as a wrapper for stablebaselines3 (add link, and ref) agents.
 Like other popular rl libraries, rlberry also provides basic tools for plotting, multiprocessing and logging (add refs).
 In this user guide, we take you through the core features of rlberry and illustrate them with examples (add ref) and API documentation (add ref).
+
+To run all the examples, you will need to install "[rlberry-research](https://github.com/rlberry-py/rlberry-research)" and "[rlberry-scool](https://github.com/rlberry-py/rlberry-scool)" too. (Add some code with the best solution poetry?, pip?, git link ??? )
+
+
 ## Set up an experiment
 Some text about an experiment: a comparison of 2 rl agents on a given environment.  <!-- TOCHECK : it is the same as quickstart.md -->
 ### Environment

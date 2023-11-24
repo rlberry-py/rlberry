@@ -2,13 +2,13 @@
 
 # How to logging your experiment
 
-To get informations and readable result about the training of your algorithm, you can use different logger.
-
+To get informations and readable result about the training of your algorithm, you can use different logger.  
 ## Set rlberry's logger level
+For this examples, you will use the "PPO" torch agent from "[rlberry-research](https://github.com/rlberry-py/rlberry-research)"
 
 ```python
 from rlberry.envs import gym_make
-from rlberry.agents.torch import PPOAgent
+from rlberry_research.agents.torch import PPOAgent
 from rlberry.manager import ExperimentManager, evaluate_agents
 
 
@@ -79,7 +79,7 @@ As you can see, on the previous output, you don't have the "INFO" output anymore
 ## Writer
 To keep informations during and after the experiment, rlberry use a 'writer'. The writer is stored inside the [Agent](agent_page), and is updated in its fit() function.
 
-By default (with the [Agent interface](agent_page)), the writer is [DefaultWriter](rlberry.utils.writers.DefaultWriter).
+By default (with the [Agent interface](rlberry.agents.Agent)), the writer is [DefaultWriter](rlberry.utils.writers.DefaultWriter).
 
 To keep informations about the environment inside the writer, you can wrap the environment inside [WriterWrapper](rlberry.wrappers.WriterWrapper).
 
