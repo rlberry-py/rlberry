@@ -12,8 +12,8 @@ Imports
 ```python
 from rlberry.envs import gym_make
 from rlberry.manager import plot_writer_data, ExperimentManager, evaluate_agents
-from rlberry.agents.torch import A2CAgent
-from rlberry.agents.torch.utils.training import model_factory_from_env
+from rlberry_research.agents.torch import A2CAgent
+from rlberry_research.agents.torch.utils.training import model_factory_from_env
 ```
 
 Reminder of the RL setting
