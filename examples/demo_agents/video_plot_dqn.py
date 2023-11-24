@@ -23,7 +23,7 @@ using the following command:
 from rlberry.envs import gym_make
 from torch.utils.tensorboard import SummaryWriter
 
-from rlberry.agents.torch.dqn import DQNAgent
+from rlberry_research.agents.torch.dqn import DQNAgent
 from rlberry.utils.logging import configure_logging
 
 from gymnasium.wrappers.record_video import RecordVideo

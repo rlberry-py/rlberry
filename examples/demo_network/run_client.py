@@ -3,9 +3,9 @@
  Demo: run_client
  =====================
 """
-from rlberry.network.client import BerryClient
-from rlberry.network import interface
-from rlberry.network.interface import Message, ResourceRequest
+from rlberry_research.network.client import BerryClient
+from rlberry_research.network import interface
+from rlberry_research.network.interface import Message, ResourceRequest
 import numpy as np
 
 

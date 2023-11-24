@@ -4,10 +4,10 @@
  =====================
 """
 from rlberry.envs.gym_make import gym_make
-from rlberry.network.client import BerryClient
-from rlberry.network.interface import ResourceRequest
+from rlberry_research.network.client import BerryClient
+from rlberry_research.network.interface import ResourceRequest
 
-from rlberry.agents.torch import REINFORCEAgent
+from rlberry_research.agents.torch import REINFORCEAgent
 
 from rlberry.manager import ExperimentManager, MultipleManagers, RemoteExperimentManager
 from rlberry.manager.evaluation import evaluate_agents, plot_writer_data

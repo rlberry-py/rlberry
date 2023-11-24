@@ -16,12 +16,12 @@ Agent is slightly tuned, but not optimal. This is just for illustration purpose.
 
 from rlberry.manager import ExperimentManager
 from datetime import datetime
-from rlberry.agents.torch import PPOAgent
+from rlberry_research.agents.torch import PPOAgent
 from gymnasium.wrappers.record_video import RecordVideo
 import shutil
 import os
 from rlberry.envs.gym_make import atari_make
-from rlberry.agents.torch.utils.training import model_factory_from_env
+from rlberry_research.agents.torch.utils.training import model_factory_from_env
 
 
 initial_time = datetime.now()

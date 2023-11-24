@@ -1,5 +1,5 @@
 from rlberry.envs import gym_make
-from rlberry.agents.torch import DQNAgent
+from rlberry_research.agents.torch import DQNAgent
 from rlberry.manager import ExperimentManager, evaluate_agents
 import numpy as np
 

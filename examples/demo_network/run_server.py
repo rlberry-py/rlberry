@@ -5,9 +5,10 @@
 """
 from rlberry_research.network.interface import ResourceItem
 from rlberry_research.network.server import BerryServer
-from rlberry.agents import ValueIterationAgent
+from rlberry_scool.agents import ValueIterationAgent
 from rlberry_research.agents.torch import REINFORCEAgent, A2CAgent
-from rlberry_research.envs import GridWorld, gym_make
+from rlberry_research.envs import GridWorld
+from rlberry.envs import gym_make
 from rlberry.utils.writers import DefaultWriter
 
 if __name__ == "__main__":

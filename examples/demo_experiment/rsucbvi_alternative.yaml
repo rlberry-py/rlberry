@@ -3,6 +3,6 @@
 #  Demo: rsucbvi_alternative.yaml
 #  =====================
 # """
-base_config: 'examples/demo_examples/demo_experiment/rsucbvi.yaml'
+base_config: 'examples/demo_experiment/rsucbvi.yaml'
 init_kwargs:
   gamma: 0.9

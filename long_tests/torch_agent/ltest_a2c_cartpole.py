@@ -1,7 +1,7 @@
 from rlberry.envs import gym_make
-from rlberry.agents.torch import A2CAgent
+from rlberry_research.agents.torch import A2CAgent
 from rlberry.manager import ExperimentManager
-from rlberry.agents.torch.utils.training import model_factory_from_env
+from rlberry_research.agents.torch.utils.training import model_factory_from_env
 import numpy as np
 
 # Using parameters from deeprl quick start
