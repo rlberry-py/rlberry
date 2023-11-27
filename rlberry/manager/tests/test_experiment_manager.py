@@ -2,7 +2,7 @@ import pytest
 import numpy as np
 import sys
 import os
-from rlberry.envs import GridWorld
+from rlberry_research.envs import GridWorld
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.manager import (
     ExperimentManager,
@@ -374,6 +374,30 @@ def test_compress():
         fit_budget=5,
         eval_kwargs=eval_kwargs,
         init_kwargs=params,
+        n_fit=3,
+        seed=123,
+    )
+    stats.fit()
+    evaluate_agents([stats], show=False)
+
+
+@pytest.mark.parametrize("style_log", ["multi_line", "one_line", "progressbar"])
+def test_logs(style_log):
+    # Define train and evaluation envs
+    train_env = (GridWorld, {})
+
+    # Parameters
+    params = dict(hyperparameter1=-1, hyperparameter2=lambda x: 42)
+    eval_kwargs = dict(eval_horizon=10)
+
+    # Run ExperimentManager
+    stats = ExperimentManager(
+        DummyAgent,
+        train_env,
+        fit_budget=15,
+        eval_kwargs=eval_kwargs,
+        init_kwargs=params,
+        default_writer_kwargs={"style_log": style_log, "log_interval": 0},
         n_fit=3,
         seed=123,
     )

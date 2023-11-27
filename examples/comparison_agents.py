@@ -15,9 +15,9 @@ import numpy as np
 
 from rlberry.manager.comparison import compare_agents
 from rlberry.manager import AgentManager
-from rlberry.envs.bandits import BernoulliBandit
+from rlberry_research.envs.bandits import BernoulliBandit
 from rlberry.wrappers import WriterWrapper
-from rlberry.agents.bandits import (
+from rlberry_research.agents.bandits import (
     IndexAgent,
     makeBoundedMOSSIndex,
     makeBoundedNPTSIndex,

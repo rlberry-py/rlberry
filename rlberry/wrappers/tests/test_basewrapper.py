@@ -1,6 +1,6 @@
 from rlberry.envs.interface import Model
 from rlberry.envs import Wrapper
-from rlberry.envs import GridWorld
+from rlberry_research.envs import GridWorld
 import gymnasium as gym
 
 
