@@ -26,7 +26,7 @@ def _create_and_fit_experiment_manager(output_dir, outdir_id_style):
     manager = ExperimentManager(
         VIAgent,
         (env_ctor, env_kwargs),
-        fit_budget=10,
+        fit_budget=50,
         n_fit=3,
         output_dir=output_dir,
         outdir_id_style=outdir_id_style,
@@ -80,6 +80,7 @@ def test_smooth_ci(error_representation):
             preprocess_func=_compute_reward,
             title="Cumulative Reward",
             show=False,
+            linestyles=True,
             savefig_fname=tmpdirname + "/test.png",
         )
         assert (
@@ -105,6 +106,7 @@ def test_non_smooth_ci(error_representation):
             preprocess_func=_compute_reward,
             title="Cumulative Reward",
             show=False,
+            linestyles=True,
             savefig_fname=tmpdirname + "/test.png",
         )
         assert (
