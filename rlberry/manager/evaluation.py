@@ -262,11 +262,11 @@ def read_writer_data(data_source, tag=None, preprocess_func=None, id_agent=None)
                     # n_simulation
                     processed_df["name"] = agent_name
                     processed_df["n_simu"] = idx
-
-                    processed_df = pd.concat(
-                        [processed_df, df[df["tag"] != tag]], ignore_index=True
-                    )
-                    # add column
+                    if len(df[df["tag"] != tag]) > 0:
+                        processed_df = pd.concat(
+                            [processed_df, df[df["tag"] != tag]], ignore_index=True
+                        )
+                        # add column
                     data_list.append(processed_df)
     all_writer_data = pd.concat(data_list, ignore_index=True)
     return all_writer_data

@@ -7,8 +7,8 @@ This script shows how to define a bandit environment and an UCB Index-based algo
 """
 
 import numpy as np
-from rlberry.envs.bandits import NormalBandit
-from rlberry.agents.bandits import (
+from rlberry_research.envs.bandits import NormalBandit
+from rlberry_research.agents.bandits import (
     IndexAgent,
     makeSubgaussianUCBIndex,
     makeSubgaussianMOSSIndex,
@@ -90,6 +90,25 @@ axes = axes.ravel()
 fig.tight_layout(pad=5.0)  # give some space for titles
 
 plt.suptitle("Cumulative Pseudo-Regret")
+
+for i, error in enumerate(["raw_curves", "ci", "pi"]):
+    output = plot_writer_data(
+        [agent1, agent2],
+        tag="action",
+        preprocess_func=compute_pseudo_regret,
+        title=error,
+        smooth=False,
+        error_representation=error,
+        ax=axes[i],
+        show=False,
+    )
+
+
+fig, axes = plt.subplots(2, 2, figsize=(9, 5))
+axes = axes.ravel()
+fig.tight_layout(pad=5.0)  # give some space for titles
+
+plt.suptitle("Cumulative Pseudo-Regret --- smoothed")
 
 for i, error in enumerate(["cb", "raw_curves", "ci", "pi"]):
     output = plot_writer_data(

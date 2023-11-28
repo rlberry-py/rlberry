@@ -169,22 +169,32 @@ def plot_writer_data(
     data = new_df
     if ax is None:
         figure, ax = plt.subplots(1, 1)
-    plot_smoothed_curve(
-        data[["name", xtag, "value", "n_simu"]],
-        xtag,
-        "value",
-        smooth,
-        smoothing_bandwidth,
-        ax,
-        error_representation,
-        n_boot,
-        level,
-        False,
-        title,
-        None,
-        linestyles,
-    )
-
+    if smooth:
+        plot_smoothed_curve(
+            data[["name", xtag, "value", "n_simu"]],
+            xtag,
+            "value",
+            smoothing_bandwidth,
+            ax,
+            error_representation,
+            n_boot,
+            level,
+            False,
+            None,
+            linestyles,
+        )
+    else:
+        plot_synchronized_curves(
+            data[["name", xtag, "value", "n_simu"]],
+            xtag,
+            "value",
+            ax,
+            error_representation,
+            level,
+            False,
+            None,
+            linestyles,
+        )
     ax.set_xlabel(xtag)
     ax.set_ylabel(ylabel)
     if title is not None:
@@ -200,14 +210,12 @@ def plot_smoothed_curve(
     data,
     x,
     y,
-    smooth=True,
     smoothing_bandwidth=None,
     ax=None,
     error_representation="ci",
     n_boot=2500,
     level=0.9,
     show=True,
-    title=None,
     savefig_fname=None,
     linestyles=False,
 ):
@@ -227,8 +235,6 @@ def plot_smoothed_curve(
         - x column is named according to x parameter and contain values to have in x axis
         - y column is named according to y parameter and contain values to have in y axis
 
-    smooth : boolean, default=True
-        Whether to smooth the curve with a Nadaraya-Watson Kernel smoothing.
     smoothing_bandwidth: float or array of floats or None
         How to choose the bandwidth parameter. If float, then smoothing_bandwidth is used
         directly as a bandwidth and if is an array, a parameter search using smoothing_bandwidth is
@@ -237,7 +243,7 @@ def plot_smoothed_curve(
         Matplotlib axis on which we plot. If None, create one. Can be used to
         customize the plot.
     error_representation: str in {"cb", "raw_curves", "ci",  "pi"}
-        How to represent multiple simulations. The "ci" and "pi" do not take into account the need for simultaneous inference, it is then harder to draw conclusion from them than with "cb" and "pb" but they are the most widely used.
+        How to represent multiple simulations. The "ci" and "pi" do not take into account the need for simultaneous inference, it is then harder to draw conclusion from them than with "cb" but they are the most widely used.
         - "cb" is a confidence band on the mean curve using functional data analysis (band in which the curve is with probability larger than 1-level). Method from [1], using scikit-fda [2] library.
         - "raw curves" is a plot of the raw curves.
         - "pi" is a plot of a non-simultaneous prediction interval with gaussian model around the mean smoothed curve (e.g. we do curve plus/minus gaussian quantile times std).
@@ -246,7 +252,7 @@ def plot_smoothed_curve(
         Number of bootstrap evaluations used for confidence interval estimation.
         Only used if error_representation = "ci".
     level: float, default=0.95,
-        Level of the confidence interval. Only used if error_representation = "ci"
+        Level of the confidence (or prediction) interval. Only used if error_representation is not "raw_curves".
     show: bool, default=True
         If true, calls plt.show().
     savefig_fname: str (Optional)
@@ -265,6 +271,7 @@ def plot_smoothed_curve(
     ylabel = y
     x_values = data[xlabel].values
     min_x, max_x = x_values.min(), x_values.max()
+    n_tot_simu = int(data["n_simu"].max())
 
     if not isinstance(smoothing_bandwidth, numbers.Number):
         sorted_x = np.sort(np.unique(x_values))
@@ -275,25 +282,7 @@ def plot_smoothed_curve(
             min_bandwidth_x = sorted_x[1] - sorted_x[0]
     xplot = np.linspace(min_x, max_x, 500, endpoint=True)
 
-    if ax is None:
-        figure, ax = plt.subplots(1, 1)
-
-    # Customizing linestyle
-    if linestyles:
-        # Number of unique dash styles. Default: 4 styles max.
-        linestyles = ["", (1, 1), (5, 5), (1, 5, 3, 5)]
-        # Cycle through default linestyles.
-        dash_cycler = cycle(linestyles)
-        styles = [next(dash_cycler) for _ in range(data["name"].unique().size)]
-    else:
-        styles = [() for _ in range(data["name"].unique().size)]
-
-    n_tot_simu = int(data["n_simu"].max())
-    names = data["name"].unique()
-    if len(names) <= 10:
-        cmap = plt.cm.tab10.colors[: len(names)]
-    else:
-        cmap = [plt.cm.gist_rainbow(i / len(names)) for i in range(len(names))]
+    ax, styles, cmap = _prepare_ax(data, ax, linestyles)
 
     def process(df):
         """
@@ -333,20 +322,19 @@ def plot_smoothed_curve(
                 )
                 Xhat[f] = np.nan
             else:
-                if smooth and (bw is False):
+                if bw is False:
                     X_grid = df_name.loc[df["n_simu"] == f, xlabel].values.astype(float)
                     fd = FDataGrid([X], X_grid, domain_range=((min_x, max_x),))
                     nw.fit(fd)  # Find the smoothing bandwidth once
                     bw = True  # don't search for bandwidth in futur run, reuse
                     Xhat[f] = nw.transform(fd).data_matrix.ravel()  # apply smoothing
-                elif smooth:
+                else:
                     X_grid = df_name.loc[df["n_simu"] == f, xlabel].values.astype(float)
                     fd = FDataGrid([X], X_grid, domain_range=((min_x, max_x),))
                     Xhat[f] = nw.transform(fd).data_matrix.ravel()  # apply smoothing
-                else:
-                    Xhat[f] = X
-
         return Xhat
+
+    names = np.unique(data["name"])
 
     for id_c, name in enumerate(names):
         df_name = data.loc[data["name"] == name]
@@ -373,13 +361,6 @@ def plot_smoothed_curve(
                 else:
                     ax.plot(x_simu, y, alpha=0.25, color=cmap[id_c])
         else:
-            if smooth == False:
-                raise ValueError(
-                    "In order to use errorbar = {} you need smooth = True".format(
-                        error_representation
-                    )
-                )
-
             sigma = np.sqrt(np.sum((Xhat - mu) ** 2, axis=0) / (len(Xhat) - 1))
 
             if error_representation == "ci":
@@ -431,8 +412,172 @@ def plot_smoothed_curve(
 
     if show:
         plt.show()
+    if savefig_fname is not None:
+        plt.gcf().savefig(savefig_fname)
+
+    return data
+
+
+def plot_synchronized_curves(
+    data,
+    x,
+    y,
+    ax=None,
+    error_representation="pi",
+    level=0.9,
+    show=True,
+    savefig_fname=None,
+    linestyles=False,
+    sub_sample=None,
+):
+    """
+    Plot the performances contained in the data (see data parameter to learn what format it should be).
+
+    If there are several simulations, a confidence interval is plotted.
+
+    In all cases a smoothing is performed
+
+    Parameters
+    ----------
+    data: a pandas dataframe
+        data must contain the columns "name", "n_simu", an x column and a y column.
+        - "n_simu" contain the simulation number (e.g. the seed) for which the raw is computed.
+        - "name" is the name of the algorithm for which the raw is computed.
+        - x column is named according to x parameter and contain values to have in x axis
+        - y column is named according to y parameter and contain values to have in y axis
+
+    ax: matplotlib axis or None, default=None
+        Matplotlib axis on which we plot. If None, create one. Can be used to
+        customize the plot.
+    error_representation: str in {"raw_curves", "ci",  "pi"}, default="pi"
+        How to represent multiple simulations.
+        - "raw curves" is a plot of the raw curves.
+        - "pi" is a plot of a non-simultaneous prediction interval with gaussian model around the mean curve (e.g. we do curve plus/minus gaussian quantile times std).
+        - "ci" is a confidence interval on the prediction interval with gaussian model around the mean curve (e.g. we do curve plus/minus gaussian quantile times std divided by sqrt of number of seeds).
+    level: float, default=0.95,
+        Level of the confidence (or prediction) interval. Only used if error_representation is not "raw_curves".
+    show: bool, default=True
+        If true, calls plt.show().
+    savefig_fname: str (Optional)
+        Name of the figure in which the plot is saved with figure.savefig. If None,
+        the figure is not saved.
+    linestyles: boolean, default=False
+        Whether to use different linestyles for each curve.
+    sub_sample: int or None, default=None
+        if int, sub-sample regularly the x values to plot on a reduced number of points.
+
+    References
+    ----------
+        [1] Degras, D. (2017). Simultaneous confidence bands for the mean of functional data. Wiley Interdisciplinary Reviews: Computational Statistics, 9(3), e1397.
+        [2] scikit-fda, Carlos Ramos Carreño, hzzhyj, mellamansanchez, Pablo Marcos, pedrorponga, David del Val, Pablo, David García Fernández, Martín, Miguel Carbajo Berrocal, ElenaPetrunina, Pablo Cuesta Sierra, Rafa Hidalgo, Clément Lejeune, amandaher, dSerna4, ego-thales, pedrog99, Jorge Duque, … Álvaro Castillo. (2023). GAA-UAM/scikit-fda: Version 0.9 (0.9). Zenodo. https://doi.org/10.5281/zenodo.10016930
+
+    """
+    xlabel = x
+    ylabel = y
+    n_tot_simu = int(data["n_simu"].max())
+    # check that every simulation have the same xs
+    for name in np.unique(data["name"]):
+        df_name = data.loc[data["name"] == name]
+        x_simu_0 = df_name.loc[df_name["n_simu"] == 0, xlabel].values.astype(float)
+        for n_simu in range(1, int(n_tot_simu)):
+            x_simu = df_name.loc[df_name["n_simu"] == n_simu, xlabel].values.astype(
+                float
+            )
+            assert np.all(x_simu == x_simu_0)
+
+    ax, styles, cmap = _prepare_ax(data, ax, linestyles)
+
+    names = np.unique(data["name"])
+    for id_c, name in enumerate(names):
+        df_name = data.loc[data["name"] == name, [xlabel, ylabel, "n_simu"]]
+        x_plot = df_name.loc[df_name["n_simu"] == 0, xlabel].values.astype(float)
+
+        y_mean = (
+            df_name[[xlabel, ylabel]]
+            .groupby([xlabel])
+            .mean()
+            .values.astype(float)
+            .ravel()
+        )
+        y_std = (
+            df_name[[xlabel, ylabel]]
+            .groupby([xlabel])
+            .std()
+            .values.astype(float)
+            .ravel()
+        )
+        if sub_sample is not None:
+            idx = np.round(np.linspace(0, len(x_plot) - 1, sub_sample)).astype(int)
+            x_plot = x_plot[idx]
+            y_mean = y_mean[idx]
+            y_std = y_std[idx]
+        quantile = norm.ppf(1 - (1 - level) / 2)
+
+        ax.plot(x_plot, y_mean, color=cmap[id_c])
+
+        if error_representation in ["ci", "pi"]:
+            if error_representation == "pi":
+                y_err = quantile * y_std
+            else:
+                y_err = quantile * y_std / np.sqrt(n_tot_simu)
+
+            ax.fill_between(
+                x_plot,
+                y_mean - y_err,
+                y_mean + y_err,
+                alpha=0.25,
+                color=cmap[id_c],
+            )
+        else:
+            for n_simu in range(n_tot_simu):
+                x_simu = df_name.loc[df_name["n_simu"] == n_simu, xlabel].values.astype(
+                    float
+                )
+                y = df_name.loc[df_name["n_simu"] == n_simu, ylabel].values
+                if sub_sample is not None:
+                    idx = np.round(np.linspace(0, len(x_plot) - 1, sub_sample)).astype(
+                        int
+                    )
+                    x_simu = x_simu[idx]
+                    y = y[idx]
+
+                if n_simu == 0:
+                    ax.plot(x_simu, y, alpha=0.2, label="raw " + name, color=cmap[id_c])
+                else:
+                    ax.plot(x_simu, y, alpha=0.25, color=cmap[id_c])
+
+    ax.set_ylabel(ylabel)
+    ax.set_xlabel(xlabel)
+    plt.legend()
+
+    if show:
+        plt.show()
 
     if savefig_fname is not None:
         plt.gcf().savefig(savefig_fname)
 
     return data
+
+
+def _prepare_ax(data, ax, linestyles):
+    if ax is None:
+        figure, ax = plt.subplots(1, 1)
+
+    # Customizing linestyle
+    if linestyles:
+        # Number of unique dash styles. Default: 4 styles max.
+        linestyles = ["", (1, 1), (5, 5), (1, 5, 3, 5)]
+        # Cycle through default linestyles.
+        dash_cycler = cycle(linestyles)
+        styles = [next(dash_cycler) for _ in range(data["name"].unique().size)]
+    else:
+        styles = [() for _ in range(data["name"].unique().size)]
+
+    n_tot_simu = int(data["n_simu"].max())
+    names = data["name"].unique()
+    if len(names) <= 10:
+        cmap = plt.cm.tab10.colors[: len(names)]
+    else:
+        cmap = [plt.cm.gist_rainbow(i / len(names)) for i in range(len(names))]
+
+    return ax, styles, cmap
