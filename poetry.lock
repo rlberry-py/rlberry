@@ -204,7 +204,7 @@ files = [
 name = "cffi"
 version = "1.16.0"
 description = "Foreign Function Interface for Python calling C code."
-optional = false
+optional = true
 python-versions = ">=3.8"
 files = [
     {file = "cffi-1.16.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:6b3d6606d369fc1da4fd8c357d026317fbb9c9b75d36dc16e90e84c26854b088"},
@@ -588,7 +588,7 @@ tests = ["pytest", "pytest-cov", "pytest-xdist"]
 name = "cython"
 version = "3.0.6"
 description = "The Cython compiler for writing C extensions in the Python language."
-optional = false
+optional = true
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 files = [
     {file = "Cython-3.0.6-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:0fcdfbf6fc7d0bd683d55e617c3d5a5f25b28ce8b405bc1e89054fc7c52a97e5"},
@@ -655,7 +655,7 @@ files = [
 name = "dcor"
 version = "0.6"
 description = "dcor: distance correlation and energy statistics in Python."
-optional = false
+optional = true
 python-versions = ">=3.8"
 files = [
     {file = "dcor-0.6-py3-none-any.whl", hash = "sha256:de306fc666668188749730fc803fc1d4d804d9886c92b622ba57b434fed395a2"},
@@ -757,7 +757,7 @@ files = [
 name = "fdasrsf"
 version = "2.5.2"
 description = "functional data analysis using the square root slope framework"
-optional = false
+optional = true
 python-versions = ">=3.6"
 files = [
     {file = "fdasrsf-2.5.2-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:ec15dc8fb6ff97e88ff5003245b5c8cba04564c140eb5e6ac0c128adad11179e"},
@@ -834,7 +834,7 @@ typing = ["typing-extensions (>=4.8)"]
 name = "findiff"
 version = "0.10.0"
 description = "A Python package for finite difference derivatives in any number of dimensions."
-optional = false
+optional = true
 python-versions = ">=3.6"
 files = [
     {file = "findiff-0.10.0-py3-none-any.whl", hash = "sha256:c91180d349ab1a7d3dc2d40ea7af613efe9c9a443e397c3bd2c364a81ecbd12c"},
@@ -1321,7 +1321,7 @@ i18n = ["Babel (>=2.7)"]
 name = "joblib"
 version = "1.3.2"
 description = "Lightweight pipelining with Python functions"
-optional = false
+optional = true
 python-versions = ">=3.7"
 files = [
     {file = "joblib-1.3.2-py3-none-any.whl", hash = "sha256:ef4331c65f239985f3f2220ecc87db222f08fd22097a3dd5698f693875f8cbb9"},
@@ -1445,7 +1445,7 @@ files = [
 name = "lazy-loader"
 version = "0.3"
 description = "lazy_loader"
-optional = false
+optional = true
 python-versions = ">=3.7"
 files = [
     {file = "lazy_loader-0.3-py3-none-any.whl", hash = "sha256:1e9e76ee8631e264c62ce10006718e80b2cfc74340d17d1031e0f84af7478554"},
@@ -1726,7 +1726,7 @@ test = ["coverage (<5.0)", "coveralls (>=1.1,<2.0)", "pytest (>=3.0.0,<4.0)", "p
 name = "mpmath"
 version = "1.3.0"
 description = "Python library for arbitrary-precision floating-point arithmetic"
-optional = false
+optional = true
 python-versions = "*"
 files = [
     {file = "mpmath-1.3.0-py3-none-any.whl", hash = "sha256:a0b2b9fe80bbcd81a6647ff13108738cfb482d481d826cc0e02f5b35e5c88d2c"},
@@ -1743,7 +1743,7 @@ tests = ["pytest (>=4.6)"]
 name = "multimethod"
 version = "1.10"
 description = "Multiple argument dispatching."
-optional = false
+optional = true
 python-versions = ">=3.8"
 files = [
     {file = "multimethod-1.10-py3-none-any.whl", hash = "sha256:afd84da9c3d0445c84f827e4d63ad42d17c6d29b122427c6dee9032ac2d2a0d4"},
@@ -2217,7 +2217,7 @@ files = [
 name = "patsy"
 version = "0.5.3"
 description = "A Python package for describing statistical models and for building design matrices."
-optional = false
+optional = true
 python-versions = "*"
 files = [
     {file = "patsy-0.5.3-py2.py3-none-any.whl", hash = "sha256:7eb5349754ed6aa982af81f636479b1b8db9d5b1a6e957a6016ec0534b5c86b7"},
@@ -2439,7 +2439,7 @@ pyasn1 = ">=0.4.6,<0.6.0"
 name = "pycparser"
 version = "2.21"
 description = "C parser in Python"
-optional = false
+optional = true
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 files = [
     {file = "pycparser-2.21-py2.py3-none-any.whl", hash = "sha256:8ee45429555515e1f6b185e78100aea234072576aa43ab53aefcae078162fca9"},
@@ -2688,7 +2688,7 @@ files = [
 name = "rdata"
 version = "0.10.0"
 description = "Read R datasets from Python."
-optional = false
+optional = true
 python-versions = ">=3.9"
 files = [
     {file = "rdata-0.10.0-py3-none-any.whl", hash = "sha256:f6c8ae03b779c1449c0ff6f9fb36aaa6b17542f54b1aa2b28cfa0b5f7c679e1e"},
@@ -2801,7 +2801,7 @@ pyasn1 = ">=0.1.3"
 name = "scikit-datasets"
 version = "0.2.4"
 description = "Scikit-learn-compatible datasets"
-optional = false
+optional = true
 python-versions = ">=3.8"
 files = [
     {file = "scikit-datasets-0.2.4.tar.gz", hash = "sha256:5ea60852d22a8b244ce7b35ad34bc7f9a0a78fe1db44dc27b7c1436bb065f2cc"},
@@ -2830,7 +2830,7 @@ utils-scores = ["jinja2", "statsmodels"]
 name = "scikit-fda"
 version = "0.9"
 description = "Functional Data Analysis Python package."
-optional = false
+optional = true
 python-versions = ">=3.8"
 files = [
     {file = "scikit-fda-0.9.tar.gz", hash = "sha256:dccb7b2dd8f324849fcfde1a17e35801f621d9cb05d7d0247c731a9561f33305"},
@@ -2859,7 +2859,7 @@ test = ["pytest", "pytest-env", "pytest-subtests", "scipy (<1.11.0)"]
 name = "scikit-learn"
 version = "1.2.2"
 description = "A set of python modules for machine learning and data mining"
-optional = false
+optional = true
 python-versions = ">=3.8"
 files = [
     {file = "scikit-learn-1.2.2.tar.gz", hash = "sha256:8429aea30ec24e7a8c7ed8a3fa6213adf3814a6efbea09e16e0a0c71e1a1a3d7"},
@@ -3329,7 +3329,7 @@ tests = ["black (>=23.9.1,<24)", "mypy", "pytest", "pytest-cov", "pytest-env", "
 name = "sympy"
 version = "1.12"
 description = "Computer algebra system (CAS) in Python"
-optional = false
+optional = true
 python-versions = ">=3.8"
 files = [
     {file = "sympy-1.12-py3-none-any.whl", hash = "sha256:c3588cd4295d0c0f603d0f2ae780587e64e2efeedb3521e46b9bb1d08d184fa5"},
@@ -3393,7 +3393,7 @@ files = [
 name = "threadpoolctl"
 version = "3.2.0"
 description = "threadpoolctl"
-optional = false
+optional = true
 python-versions = ">=3.8"
 files = [
     {file = "threadpoolctl-3.2.0-py3-none-any.whl", hash = "sha256:2b7818516e423bdaebb97c723f86a7c6b0a83d3f3b0970328d66f4d9104dc032"},
@@ -3588,7 +3588,7 @@ watchdog = ["watchdog (>=2.3)"]
 name = "xarray"
 version = "2023.11.0"
 description = "N-D labeled arrays and datasets in Python"
-optional = false
+optional = true
 python-versions = ">=3.9"
 files = [
     {file = "xarray-2023.11.0-py3-none-any.whl", hash = "sha256:933b5101e965120ed58e29525667ab34aafcea1886c236ade72a34d7bb465d9c"},
@@ -3624,10 +3624,10 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 
 [extras]
 doc = ["matplotlib", "myst-parser", "numpydoc", "sphinx", "sphinx-gallery", "sphinx-math-dollar", "sphinxcontrib-video"]
-extras = ["ffmpeg-python", "numba", "optuna", "pyopengl", "pyvirtualdisplay"]
+extras = ["ffmpeg-python", "numba", "optuna", "pyopengl", "pyvirtualdisplay", "scikit-fda", "scikit-learn"]
 torch = ["ale-py", "opencv-python", "stable-baselines3", "tensorboard", "torch"]
 
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9, <3.13"
-content-hash = "8349b7d5244c7e7fa321ca5d81d37d0d3663a85a9e099d4b48567feb35a355b9"
+content-hash = "362fde3f26bf7c0c9e002bf797985cb6fc80ded360af97177cfb0c62501b3c58"
