@@ -6,7 +6,7 @@ from pathlib import Path
 import sys
 
 from rlberry.wrappers import WriterWrapper
-from rlberry_research.envs import GridWorld
+from rlberry_research.envs import Chain
 from rlberry.manager import plot_writer_data, ExperimentManager, read_writer_data
 from rlberry.agents import AgentWithSimplePolicy
 
@@ -29,13 +29,13 @@ class RandomAgent(AgentWithSimplePolicy):
 
 
 def _create_and_fit_experiment_manager(output_dir, outdir_id_style):
-    env_ctor = GridWorld
-    env_kwargs = dict(nrows=2, ncols=2, reward_at={(1, 1): 0.1, (2, 2): 1.0})
+    env_ctor = Chain
+    env_kwargs = dict(L=3, fail_prob=0.5)
 
     manager = ExperimentManager(
         RandomAgent,
         (env_ctor, env_kwargs),
-        fit_budget=10,
+        fit_budget=15,
         n_fit=3,
         output_dir=output_dir,
         outdir_id_style=outdir_id_style,
