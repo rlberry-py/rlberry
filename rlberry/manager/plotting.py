@@ -7,10 +7,15 @@ import pandas as pd
 
 from rlberry.manager import read_writer_data
 
-from skfda.representation.grid import FDataGrid
-from skfda.misc.hat_matrix import NadarayaWatsonHatMatrix
-from skfda.preprocessing.smoothing import KernelSmoother
-from skfda.preprocessing.smoothing.validation import SmoothingParameterSearch
+try:
+    from skfda.representation.grid import FDataGrid
+    from skfda.misc.hat_matrix import NadarayaWatsonHatMatrix
+    from skfda.preprocessing.smoothing import KernelSmoother
+    from skfda.preprocessing.smoothing.validation import SmoothingParameterSearch
+
+    SKFDA_INSTALLED = True
+except:
+    SKFDA_INSTALLED = False
 
 import rlberry
 
@@ -270,6 +275,9 @@ def plot_smoothed_curve(
         [2] scikit-fda, Carlos Ramos Carreño, hzzhyj, mellamansanchez, Pablo Marcos, pedrorponga, David del Val, Pablo, David García Fernández, Martín, Miguel Carbajo Berrocal, ElenaPetrunina, Pablo Cuesta Sierra, Rafa Hidalgo, Clément Lejeune, amandaher, dSerna4, ego-thales, pedrog99, Jorge Duque, … Álvaro Castillo. (2023). GAA-UAM/scikit-fda: Version 0.9 (0.9). Zenodo. https://doi.org/10.5281/zenodo.10016930
 
     """
+    assert (
+        SKFDA_INSTALLED
+    ), "please install scikit-fda to use the smoothing functionality in rlberry"
     xlabel = x
     ylabel = y
     x_values = data[xlabel].values
