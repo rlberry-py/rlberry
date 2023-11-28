@@ -63,7 +63,8 @@ def test_plot_writer_data_with_manager_input(outdir_id_style):
         assert len(output) > 1
 
 
-def test_ci():
+@pytest.mark.parametrize("error_representation", ["ci", "pi", "cb", "raw_curves"])
+def test_smooth_ci(error_representation):
     with tempfile.TemporaryDirectory() as tmpdirname:
         output_dir = tmpdirname + "/rlberry_data"
         manager = _create_and_fit_experiment_manager(output_dir, None)
@@ -74,6 +75,33 @@ def test_ci():
         output = plot_writer_data(
             data_source,
             tag="reward",
+            smooth=True,
+            error_representation=error_representation,
+            preprocess_func=_compute_reward,
+            title="Cumulative Reward",
+            show=False,
+            savefig_fname=tmpdirname + "/test.png",
+        )
+        assert (
+            os.path.getsize(tmpdirname + "/test.png") > 1000
+        ), "plot_writer_data saved an empty image"
+        assert len(output) > 1
+
+
+@pytest.mark.parametrize("error_representation", ["ci", "pi", "raw_curves"])
+def test_non_smooth_ci(error_representation):
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        output_dir = tmpdirname + "/rlberry_data"
+        manager = _create_and_fit_experiment_manager(output_dir, None)
+        os.system("ls " + tmpdirname + "/rlberry_data/manager_data")
+
+        # Plot of the cumulative reward
+        data_source = manager
+        output = plot_writer_data(
+            data_source,
+            tag="reward",
+            smooth=False,
+            error_representation=error_representation,
             preprocess_func=_compute_reward,
             title="Cumulative Reward",
             show=False,

@@ -387,22 +387,29 @@ def plot_smoothed_curve(
 
                 res = []
                 # Bootstrap estimation of confidence interval
-
-                for b in range(n_boot):
-                    id_b = np.random.choice(n_tot_simu, size=n_tot_simu, replace=True)
-                    mustar = np.mean(Xhat[id_b], axis=0)
-                    residus = (
-                        np.sqrt(len(xplot[sigma != 0]))
-                        / sigma[sigma != 0]
-                        * np.abs(mustar[sigma != 0] - mu[sigma != 0])
+                if not (np.all(sigma == 0)):
+                    for b in range(n_boot):
+                        id_b = np.random.choice(
+                            n_tot_simu, size=n_tot_simu, replace=True
+                        )
+                        mustar = np.mean(Xhat[id_b], axis=0)
+                        residus = (
+                            np.sqrt(len(xplot[sigma != 0]))
+                            / sigma[sigma != 0]
+                            * np.abs(mustar[sigma != 0] - mu[sigma != 0])
+                        )
+                        res.append(np.max(residus))
+                    y_err = (
+                        sigma.ravel()
+                        / np.sqrt(len(xplot))
+                        * np.quantile(res, 1 - (1 - level) / 2)
                     )
-                    res.append(np.max(residus))
+                else:
+                    y_err = np.zeros(len(xplot))
+                    logger.warn(
+                        "The variance of the curve was 0, the confidence bound is very biased"
+                    )
 
-                y_err = (
-                    sigma.ravel()
-                    / np.sqrt(len(xplot))
-                    * np.quantile(res, 1 - (1 - level) / 2)
-                )
             else:
                 raise ValueError("error_representation not implemented")
 
