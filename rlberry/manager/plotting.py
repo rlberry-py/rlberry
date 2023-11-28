@@ -21,7 +21,7 @@ def plot_writer_data(
     data_source,
     tag,
     xtag=None,
-    smooth=True,
+    smooth=False,
     smoothing_bandwidth=None,
     id_agent=None,
     ax=None,
@@ -315,7 +315,7 @@ def plot_smoothed_curve(
             try:
                 np.isfinite(X)
             except:
-                raise ValueError("type is " + str(type(X[0])))
+                raise ValueError("non-finite (or non float) data detected.")
             if not np.all(np.isfinite(X)):
                 logger.warn(
                     "Some of the values are not finite. Not plotting the associated curves."
