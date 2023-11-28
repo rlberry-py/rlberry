@@ -56,7 +56,6 @@ def test_plot_writer_data_with_manager_input(outdir_id_style):
             title="Cumulative Reward",
             show=False,
             savefig_fname=tmpdirname + "/test.png",
-            sns_kwargs={"style": "name"},
         )
         assert (
             os.path.getsize(tmpdirname + "/test.png") > 1000
@@ -79,7 +78,6 @@ def test_ci():
             title="Cumulative Reward",
             show=False,
             savefig_fname=tmpdirname + "/test.png",
-            sns_kwargs={"errorbar": "sd"},
         )
         assert (
             os.path.getsize(tmpdirname + "/test.png") > 1000
@@ -136,6 +134,7 @@ def test_plot_writer_data_with_directory_input(outdir_id_style):
             data_source,
             tag="reward",
             xtag="dw_time_elapsed",
+            smooth=True,
             preprocess_func=_compute_reward,
             title="Cumulative Reward",
             show=False,

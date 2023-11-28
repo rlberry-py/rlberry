@@ -61,9 +61,10 @@ def plot_writer_data(
         Tag of data to plot on y-axis.
     xtag : str or None, default=None
         Tag of data to plot on x-axis. If None, use 'global_step'. Another often-used x-axis is
-        the time elapsed `dw_time_elapsed`.
+        the time elapsed `dw_time_elapsed`, in which case smooth needs to be set to True or there must be only one run.
     smooth : boolean, default=True
         Whether to smooth the curve with a Nadaraya-Watson Kernel smoothing.
+        Remark that this also allow for an xtag which is not synchronized on all the simulations (e.g. time for instance).
     smoothing_bandwidth: float or array of floats or None
         How to choose the bandwidth parameter. If float, then smoothing_bandwidth is used
         directly as a bandwidth and if is an array, a parameter search using smoothing_bandwidth is
@@ -149,24 +150,26 @@ def plot_writer_data(
             )
     else:
         data[xtag] = data.index
-
+    data["n_simu"] = data["n_simu"].astype(int)
     if sub_sample:
         new_df = pd.DataFrame()
         for name in data["name"].unique():
-            n_simu_tot = int(data.loc[data["name"] == name, "n_simu"].max())
+            n_simu_tot = int(data.loc[data["name"] == name, "n_simu"].max()) + 1
             for simu in range(n_simu_tot):
                 df_name_simu = data.loc[
                     (data["n_simu"] == simu) & (data["name"] == name)
                 ]
                 step = len(df_name_simu) // 1000
-                if step > 1:
-                    df_sub = df_name_simu.sort_values(by=xtag).iloc[
-                        ::step
-                    ]  # do the sub-sampling
-                    new_df = pd.concat([new_df, df_sub], ignore_index=True)
-                else:
-                    new_df = pd.concat([new_df, df_name_simu], ignore_index=True)
-    data = new_df
+                if len(df_name_simu) > 0:
+                    if step > 1:
+                        df_sub = df_name_simu.sort_values(by=xtag).iloc[
+                            ::step
+                        ]  # do the sub-sampling
+                        new_df = pd.concat([new_df, df_sub], ignore_index=True)
+                    else:
+                        new_df = pd.concat([new_df, df_name_simu], ignore_index=True)
+        data = new_df
+
     if ax is None:
         figure, ax = plt.subplots(1, 1)
     if smooth:
@@ -200,7 +203,7 @@ def plot_writer_data(
     if title is not None:
         ax.set_title(title)
     if savefig_fname is not None:
-        fig.savefig(savefig_fname)
+        plt.gcf().savefig(savefig_fname)
     if show:
         plt.show()
     return data
@@ -322,16 +325,21 @@ def plot_smoothed_curve(
                 )
                 Xhat[f] = np.nan
             else:
-                if bw is False:
-                    X_grid = df_name.loc[df["n_simu"] == f, xlabel].values.astype(float)
-                    fd = FDataGrid([X], X_grid, domain_range=((min_x, max_x),))
-                    nw.fit(fd)  # Find the smoothing bandwidth once
-                    bw = True  # don't search for bandwidth in futur run, reuse
-                    Xhat[f] = nw.transform(fd).data_matrix.ravel()  # apply smoothing
-                else:
-                    X_grid = df_name.loc[df["n_simu"] == f, xlabel].values.astype(float)
-                    fd = FDataGrid([X], X_grid, domain_range=((min_x, max_x),))
-                    Xhat[f] = nw.transform(fd).data_matrix.ravel()  # apply smoothing
+                X_grid = df_name.loc[df["n_simu"] == f, xlabel].values.astype(float)
+                fd = FDataGrid([X], X_grid, domain_range=((min_x, max_x),))
+
+                if bw is False:  # Find the smoothing bandwidth once
+                    nw.fit(fd)
+                    bw = nw.best_params_[
+                        "kernel_estimator__bandwidth"
+                    ]  # don't search for bandwidth in futur run, reuse
+                else:  # after the first one, just apply smoothing with the given smoothing
+                    nw = KernelSmoother(
+                        kernel_estimator=NadarayaWatsonHatMatrix(bandwidth=bw),
+                        output_points=xplot,
+                    )
+                    nw.fit(fd)
+                Xhat[f] = nw.transform(fd).data_matrix.ravel()  # apply smoothing
         return Xhat
 
     names = np.unique(data["name"])
@@ -428,7 +436,6 @@ def plot_synchronized_curves(
     show=True,
     savefig_fname=None,
     linestyles=False,
-    sub_sample=None,
 ):
     """
     Plot the performances contained in the data (see data parameter to learn what format it should be).
@@ -463,8 +470,6 @@ def plot_synchronized_curves(
         the figure is not saved.
     linestyles: boolean, default=False
         Whether to use different linestyles for each curve.
-    sub_sample: int or None, default=None
-        if int, sub-sample regularly the x values to plot on a reduced number of points.
 
     References
     ----------
@@ -474,6 +479,7 @@ def plot_synchronized_curves(
     """
     xlabel = x
     ylabel = y
+    assert len(data) > 0, "dataset is empty"
     n_tot_simu = int(data["n_simu"].max())
     # check that every simulation have the same xs
     for name in np.unique(data["name"]):
@@ -506,13 +512,8 @@ def plot_synchronized_curves(
             .values.astype(float)
             .ravel()
         )
-        if sub_sample is not None:
-            idx = np.round(np.linspace(0, len(x_plot) - 1, sub_sample)).astype(int)
-            x_plot = x_plot[idx]
-            y_mean = y_mean[idx]
-            y_std = y_std[idx]
-        quantile = norm.ppf(1 - (1 - level) / 2)
 
+        quantile = norm.ppf(1 - (1 - level) / 2)
         ax.plot(x_plot, y_mean, color=cmap[id_c])
 
         if error_representation in ["ci", "pi"]:
@@ -534,12 +535,6 @@ def plot_synchronized_curves(
                     float
                 )
                 y = df_name.loc[df_name["n_simu"] == n_simu, ylabel].values
-                if sub_sample is not None:
-                    idx = np.round(np.linspace(0, len(x_plot) - 1, sub_sample)).astype(
-                        int
-                    )
-                    x_simu = x_simu[idx]
-                    y = y[idx]
 
                 if n_simu == 0:
                     ax.plot(x_simu, y, alpha=0.2, label="raw " + name, color=cmap[id_c])
