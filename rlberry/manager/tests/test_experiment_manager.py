@@ -190,7 +190,7 @@ def test_experiment_manager_partial_fit_and_tuple_env(train_env):
     )  # tuple (constructor, kwargs) must also work in ExperimentManager
 
     # Parameters
-    params = {}
+    params = {"compress_pickle": False}
     eval_kwargs = dict(eval_horizon=10)
 
     # Run ExperimentManager
