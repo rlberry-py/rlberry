@@ -8,15 +8,24 @@ import sys
 from rlberry.wrappers import WriterWrapper
 from rlberry_research.envs import GridWorld
 from rlberry.manager import plot_writer_data, ExperimentManager, read_writer_data
-from rlberry_scool.agents import UCBVIAgent
+from rlberry.agents import AgentWithSimplePolicy
 
 
-class VIAgent(UCBVIAgent):
-    name = "UCBVIAgent"
+class RandomAgent(AgentWithSimplePolicy):
+    name = "RandomAgent"
 
     def __init__(self, env, **kwargs):
-        UCBVIAgent.__init__(self, env, horizon=50, **kwargs)
+        AgentWithSimplePolicy.__init__(self, env, **kwargs)
         self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
+
+    def fit(self, budget=100, **kwargs):
+        observation, info = self.env.reset()
+        for ep in range(budget):
+            action = self.policy(observation)
+            observation, reward, done, _, _ = self.env.step(action)
+
+    def policy(self, observation):
+        return self.env.action_space.sample()  # choose an action at random
 
 
 def _create_and_fit_experiment_manager(output_dir, outdir_id_style):
@@ -24,9 +33,9 @@ def _create_and_fit_experiment_manager(output_dir, outdir_id_style):
     env_kwargs = dict(nrows=2, ncols=2, reward_at={(1, 1): 0.1, (2, 2): 1.0})
 
     manager = ExperimentManager(
-        VIAgent,
+        RandomAgent,
         (env_ctor, env_kwargs),
-        fit_budget=50,
+        fit_budget=10,
         n_fit=3,
         output_dir=output_dir,
         outdir_id_style=outdir_id_style,
