@@ -98,6 +98,26 @@ def test_smooth_ci(error_representation):
         assert len(output) > 1
 
 
+def test_warning_error_rep():
+    msg = "error_representation not implemented"
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        with pytest.raises(ValueError, match=msg):
+            output_dir = tmpdirname + "/rlberry_data"
+            manager = _create_and_fit_experiment_manager(output_dir, None)
+            data_source = manager
+            output = plot_writer_data(
+                data_source,
+                tag="reward",
+                smooth=True,
+                error_representation="does_not_exist",
+                preprocess_func=_compute_reward,
+                title="Cumulative Reward",
+                show=False,
+                linestyles=True,
+                savefig_fname=tmpdirname + "/test.png",
+            )
+
+
 @pytest.mark.parametrize("error_representation", ["ci", "pi", "raw_curves"])
 def test_non_smooth_ci(error_representation):
     with tempfile.TemporaryDirectory() as tmpdirname:
