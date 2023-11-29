@@ -112,10 +112,10 @@ def test_smooth_ci(error_representation):
             title="Cumulative Reward",
             show=False,
             linestyles=True,
-            savefig_fname=tmpdirname + "/test.png",
+            savefig_fname=tmpdirname + "/test2.png",
         )
         assert (
-            os.path.getsize(tmpdirname + "/test.png") > 1000
+            os.path.getsize(tmpdirname + "/test2.png") > 1000
         ), "plot_writer_data saved an empty image"
         assert len(output) > 1
 

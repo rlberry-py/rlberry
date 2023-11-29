@@ -71,9 +71,10 @@ def plot_writer_data(
         Whether to smooth the curve with a Nadaraya-Watson Kernel smoothing.
         Remark that this also allow for an xtag which is not synchronized on all the simulations (e.g. time for instance).
     smoothing_bandwidth: float or array of floats or None
-        How to choose the bandwidth parameter. If float, then smoothing_bandwidth is used
-        directly as a bandwidth and if is an array, a parameter search using smoothing_bandwidth is
-        used if None, a parameter search from a range of 20 possible values choosen by heuristics is performed.
+        How to choose the bandwidth parameter.
+        If float, then smoothing_bandwidth is used directly as a bandwidth.
+        If is an array, a parameter search using smoothing_bandwidth is used.
+        If None, a parameter search from a range of 20 possible values choosen by heuristics is performed.
     id_agent : int or None, default=None
         id of the agent to plot, if not None plot only the results for the agent whose id is id_agent.
     ax: matplotlib axis or None, default=None
@@ -81,11 +82,16 @@ def plot_writer_data(
         customize the plot.
     error_representation: str in {"cb", "raw_curves", "ci",  "pi"}
         How to represent multiple simulations. The "ci" and "pi" do not take into account the need for simultaneous inference, it is then harder to draw conclusion from them than with "cb" and "pb" but they are the most widely used.
+
         - "cb" is a confidence band on the mean curve using functional data analysis (band in which the curve is with probability larger than 1-level).
+
         - "raw curves" is a plot of the raw curves.
+
         - "pi" is a plot of a non-simultaneous prediction interval with gaussian model around the mean smoothed curve (e.g. we do curve plus/minus gaussian quantile times std).
+
         - "ci" is a confidence interval on the prediction interval with gaussian model around the mean smoothed curve (e.g. we do curve plus/minus gaussian quantile times std divided by sqrt of number of seeds).
     n_boot: int, default=500,
+
         Number of bootstrap evaluations used for confidence interval estimation.
         Only used if error_representation = "ci".
     level: float, default=0.95,
@@ -110,7 +116,7 @@ def plot_writer_data(
 
     Examples
     --------
-    >>> from rlberry.agents.torch import A2CAgent, DQNAgent
+    >>> from rlberry_research.agents.torch import A2CAgent, DQNAgent
     >>> from rlberry.manager import ExperimentManager, plot_writer_data
     >>> from rlberry.envs import gym_make
     >>>
@@ -238,10 +244,15 @@ def plot_smoothed_curve(
     ----------
     data: a pandas dataframe
         data must contain the columns "name", "n_simu", an x column and a y column.
+
         - "n_simu" contain the simulation number (e.g. the seed) for which the raw is computed (beginning at 0 until the total number of seeds).
+
         - "name" is the name of the algorithm for which the raw is computed.
-        - x column is named according to x parameter and contain values to have in x axis
-        - y column is named according to y parameter and contain values to have in y axis
+
+        - x column is named according to x parameter and contain values to have in x axis.
+
+        - y column is named according to y parameter and contain values to have in y axis.
+
 
     smoothing_bandwidth: float or array of floats or None
         How to choose the bandwidth parameter. If float, then smoothing_bandwidth is used
@@ -252,10 +263,15 @@ def plot_smoothed_curve(
         customize the plot.
     error_representation: str in {"cb", "raw_curves", "ci",  "pi"}
         How to represent multiple simulations. The "ci" and "pi" do not take into account the need for simultaneous inference, it is then harder to draw conclusion from them than with "cb" but they are the most widely used.
+
         - "cb" is a confidence band on the mean curve using functional data analysis (band in which the curve is with probability larger than 1-level). Method from [1], using scikit-fda [2] library.
+
         - "raw curves" is a plot of the raw curves.
+
         - "pi" is a plot of a non-simultaneous prediction interval with gaussian model around the mean smoothed curve (e.g. we do curve plus/minus gaussian quantile times std).
+
         - "ci" is a confidence interval on the prediction interval with gaussian model around the mean smoothed curve (e.g. we do curve plus/minus gaussian quantile times std divided by sqrt of number of seeds).
+
     n_boot: int, default=2500,
         Number of bootstrap evaluations used for confidence interval estimation.
         Only used if error_representation = "ci".
@@ -268,6 +284,15 @@ def plot_smoothed_curve(
         the figure is not saved.
     linestyles: boolean, default=False
         Whether to use different linestyles for each curve.
+
+    Examples
+    --------
+    >>> import pandas as pd
+    >>> from rlberry.manager import plot_smoothed_curve
+    >>>  df = pd.DataFrame(
+        {"name": ["a", "a", "a"], "x": [1, 2, 3], "y": [3, 4, 5], "n_simu": [0, 0, 0]}
+    )
+    >>> plot_smoothed_curve(df, "x", "y")
 
     References
     ----------
@@ -464,19 +489,27 @@ def plot_synchronized_curves(
     ----------
     data: a pandas dataframe
         data must contain the columns "name", "n_simu", an x column and a y column.
+
         - "n_simu" contain the simulation number (e.g. the seed) for which the raw is computed.
+
         - "name" is the name of the algorithm for which the raw is computed.
-        - x column is named according to x parameter and contain values to have in x axis
-        - y column is named according to y parameter and contain values to have in y axis
+
+        - x column is named according to x parameter and contain values to have in x axis.
+
+        - y column is named according to y parameter and contain values to have in y axis.
 
     ax: matplotlib axis or None, default=None
         Matplotlib axis on which we plot. If None, create one. Can be used to
         customize the plot.
     error_representation: str in {"raw_curves", "ci",  "pi"}, default="pi"
         How to represent multiple simulations.
+
         - "raw curves" is a plot of the raw curves.
+
         - "pi" is a plot of a non-simultaneous prediction interval with gaussian model around the mean curve (e.g. we do curve plus/minus gaussian quantile times std).
+
         - "ci" is a confidence interval on the prediction interval with gaussian model around the mean curve (e.g. we do curve plus/minus gaussian quantile times std divided by sqrt of number of seeds).
+
     level: float, default=0.95,
         Level of the confidence (or prediction) interval. Only used if error_representation is not "raw_curves".
     show: bool, default=True
