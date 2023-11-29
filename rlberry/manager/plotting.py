@@ -312,14 +312,16 @@ def plot_smoothed_curve(
                 bandwidth,
                 param_name="kernel_estimator__bandwidth",
             )
+            bw = False
         else:
             nw = KernelSmoother(
                 kernel_estimator=NadarayaWatsonHatMatrix(bandwidth=smoothing_bandwidth),
                 output_points=xplot,
             )
+            bw = smoothing_bandwidth
 
         Xhat = np.zeros([n_tot_simu, len(xplot)])
-        bw = False
+
         for f in range(n_tot_simu):
             X = df_name.loc[df["n_simu"] == f, ylabel].values
             try:
