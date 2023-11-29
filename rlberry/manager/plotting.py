@@ -287,7 +287,6 @@ def plot_smoothed_curve(
     if not isinstance(smoothing_bandwidth, numbers.Number):
         sorted_x = np.sort(np.unique(x_values))
         if len(sorted_x) > 200:
-            # second percentile minus minimum
             min_bandwidth_x = (sorted_x[1] - sorted_x[0]) * 3
         else:
             min_bandwidth_x = sorted_x[1] - sorted_x[0]

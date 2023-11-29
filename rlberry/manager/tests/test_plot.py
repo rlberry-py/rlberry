@@ -3,11 +3,13 @@ import tempfile
 import os
 import numpy as np
 from pathlib import Path
+import pandas as pd
 import sys
 
 from rlberry.wrappers import WriterWrapper
 from rlberry_research.envs import Chain
 from rlberry.manager import plot_writer_data, ExperimentManager, read_writer_data
+from rlberry.manager.plotting import plot_smoothed_curve, plot_synchronized_curves
 from rlberry.agents import AgentWithSimplePolicy
 
 
@@ -97,25 +99,24 @@ def test_smooth_ci(error_representation):
         ), "plot_writer_data saved an empty image"
         assert len(output) > 1
 
-
-def test_warning_error_rep():
-    msg = "error_representation not implemented"
-    with tempfile.TemporaryDirectory() as tmpdirname:
-        with pytest.raises(ValueError, match=msg):
-            output_dir = tmpdirname + "/rlberry_data"
-            manager = _create_and_fit_experiment_manager(output_dir, None)
-            data_source = manager
-            output = plot_writer_data(
-                data_source,
-                tag="reward",
-                smooth=True,
-                error_representation="does_not_exist",
-                preprocess_func=_compute_reward,
-                title="Cumulative Reward",
-                show=False,
-                linestyles=True,
-                savefig_fname=tmpdirname + "/test.png",
-            )
+        # Plot of the cumulative reward
+        data_source = manager
+        output = plot_writer_data(
+            data_source,
+            smoothing_bandwidth=5,
+            tag="reward",
+            smooth=True,
+            error_representation=error_representation,
+            preprocess_func=_compute_reward,
+            title="Cumulative Reward",
+            show=False,
+            linestyles=True,
+            savefig_fname=tmpdirname + "/test.png",
+        )
+        assert (
+            os.path.getsize(tmpdirname + "/test.png") > 1000
+        ), "plot_writer_data saved an empty image"
+        assert len(output) > 1
 
 
 @pytest.mark.parametrize("error_representation", ["ci", "pi", "raw_curves"])
@@ -142,6 +143,35 @@ def test_non_smooth_ci(error_representation):
             os.path.getsize(tmpdirname + "/test.png") > 1000
         ), "plot_writer_data saved an empty image"
         assert len(output) > 1
+
+
+def test_without_rlberry():
+    df = pd.DataFrame(
+        {"name": ["a", "a", "a"], "x": [1, 2, 3], "y": [3, 4, 5], "n_simu": [1, 1, 1]}
+    )
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        plot_smoothed_curve(df, "x", "y", savefig_fname=tmpdirname + "/test.png")
+        plot_synchronized_curves(df, "x", "y", savefig_fname=tmpdirname + "/test.png")
+
+
+def test_warning_error_rep():
+    msg = "error_representation not implemented"
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        with pytest.raises(ValueError, match=msg):
+            output_dir = tmpdirname + "/rlberry_data"
+            manager = _create_and_fit_experiment_manager(output_dir, None)
+            data_source = manager
+            output = plot_writer_data(
+                data_source,
+                tag="reward",
+                smooth=True,
+                error_representation="does_not_exist",
+                preprocess_func=_compute_reward,
+                title="Cumulative Reward",
+                show=False,
+                linestyles=True,
+                savefig_fname=tmpdirname + "/test.png",
+            )
 
 
 @pytest.mark.xfail(sys.platform == "win32", reason="bug with windows???")
