@@ -232,13 +232,13 @@ def plot_smoothed_curve(
 
     If there are several simulations, a confidence interval is plotted.
 
-    In all cases a smoothing is performed
+    In all cases a smoothing is performed.
 
     Parameters
     ----------
     data: a pandas dataframe
         data must contain the columns "name", "n_simu", an x column and a y column.
-        - "n_simu" contain the simulation number (e.g. the seed) for which the raw is computed.
+        - "n_simu" contain the simulation number (e.g. the seed) for which the raw is computed (beginning at 0 until the total number of seeds).
         - "name" is the name of the algorithm for which the raw is computed.
         - x column is named according to x parameter and contain values to have in x axis
         - y column is named according to y parameter and contain values to have in y axis
