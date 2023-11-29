@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from rlberry.wrappers import WriterWrapper
 from rlberry_research.envs import Chain
 from rlberry.manager import plot_writer_data, ExperimentManager, read_writer_data
-from rlberry.manager.plotting import plot_smoothed_curve, plot_synchronized_curves
+from rlberry.manager.plotting import plot_smoothed_curves, plot_synchronized_curves
 from rlberry.agents import AgentWithSimplePolicy
 
 
@@ -152,7 +152,7 @@ def test_without_rlberry():
     )
     with tempfile.TemporaryDirectory() as tmpdirname:
         with plt.ion():  # do not block on plt.show
-            plot_smoothed_curve(df, "x", "y", savefig_fname=tmpdirname + "/test.png")
+            plot_smoothed_curves(df, "x", "y", savefig_fname=tmpdirname + "/test.png")
             plot_synchronized_curves(
                 df, "x", "y", savefig_fname=tmpdirname + "/test.png"
             )

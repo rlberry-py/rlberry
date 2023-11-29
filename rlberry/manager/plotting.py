@@ -184,7 +184,7 @@ def plot_writer_data(
     if ax is None:
         figure, ax = plt.subplots(1, 1)
     if smooth:
-        plot_smoothed_curve(
+        plot_smoothed_curves(
             data[["name", xtag, "value", "n_simu"]],
             xtag,
             "value",
@@ -220,7 +220,7 @@ def plot_writer_data(
     return data
 
 
-def plot_smoothed_curve(
+def plot_smoothed_curves(
     data,
     x,
     y,
