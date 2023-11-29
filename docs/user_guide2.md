@@ -38,7 +38,7 @@ You can find the guide for Logging [here](logging_page).
 ## Experimenting with Deep agents
 ### Torch Agents   <!-- TOCHECK :plus tard -->
 ### Policy and Value Networks<!-- TOCHECK :plus tard -->
-### Stable Baselines 3
+<!--already in Agent_page ### Stable Baselines 3 -->
 ## Experimenting with Bandits. <!-- TOCHECK :plus tard -->
 ## Reproducibility
 ### Seeding

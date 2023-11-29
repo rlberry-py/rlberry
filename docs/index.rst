@@ -29,7 +29,7 @@ In addition, rlberry_:
 * Provides **implementations of several RL agents** for you to use as a starting point or as baselines;
 * Provides a set of **benchmark environments**, very useful to debug and challenge your algorithms;
 * Handles all random seeds for you, ensuring **reproducibility** of your results;
-* Is **fully compatible with** several commonly used RL libraries like `Gymnasium <https://gymnasium.farama.org/>`_ and `Stable Baselines <https://stable-baselines.readthedocs.io/en/master/>`_.
+* Is **fully compatible with** several commonly used RL libraries like `Gymnasium <https://gymnasium.farama.org/>`_ and `Stable Baselines <https://stable-baselines.readthedocs.io/en/master/>`_ (see :ref:`userguide/agents<agent_page>`).
 
 
 
