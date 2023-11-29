@@ -5,6 +5,7 @@ import numpy as np
 from pathlib import Path
 import pandas as pd
 import sys
+import matplotlib.pyplot as plt
 
 from rlberry.wrappers import WriterWrapper
 from rlberry_research.envs import Chain
@@ -147,11 +148,14 @@ def test_non_smooth_ci(error_representation):
 
 def test_without_rlberry():
     df = pd.DataFrame(
-        {"name": ["a", "a", "a"], "x": [1, 2, 3], "y": [3, 4, 5], "n_simu": [1, 1, 1]}
+        {"name": ["a", "a", "a"], "x": [1, 2, 3], "y": [3, 4, 5], "n_simu": [0, 0, 0]}
     )
     with tempfile.TemporaryDirectory() as tmpdirname:
-        plot_smoothed_curve(df, "x", "y", savefig_fname=tmpdirname + "/test.png")
-        plot_synchronized_curves(df, "x", "y", savefig_fname=tmpdirname + "/test.png")
+        with plt.ion():  # do not block on plt.show
+            plot_smoothed_curve(df, "x", "y", savefig_fname=tmpdirname + "/test.png")
+            plot_synchronized_curves(
+                df, "x", "y", savefig_fname=tmpdirname + "/test.png"
+            )
 
 
 def test_warning_error_rep():
