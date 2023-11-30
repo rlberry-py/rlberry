@@ -5,7 +5,7 @@ In Reinforcement learning, the Agent is the entity to train to solve an environm
 In rlberry, you can use existing Agent, or create your own custom Agent. You can find the API [here](/api) and [here](rlberry.agents.Agent) .
 
 
-## Load rlberry Agent
+## Use rlberry Agent
 An agent need an environment to train. We'll use the same environment as in the [environment](environment_page) section of the user guide.
 ("Chain" environment from "[rlberry-research](https://github.com/rlberry-py/rlberry-research)")
 
@@ -128,8 +128,8 @@ The agent has learned how to obtain good results (the cross go to the right).
 
 
 
-## Load StableBaselines3 as rlberry Agent
-With rlberry, you can load algorithm from [StableBaselines3](https://stable-baselines3.readthedocs.io/en/master/guide/algos.html) and wrap it in rlberry Agent. To do that, you need to use [StableBaselinesAgent](rlberry.agents.stable_baselines.StableBaselinesAgent).
+## Use StableBaselines3 as rlberry Agent
+With rlberry, you can use algorithm from [StableBaselines3](https://stable-baselines3.readthedocs.io/en/master/guide/algos.html) and wrap it in rlberry Agent. To do that, you need to use [StableBaselinesAgent](rlberry.agents.stable_baselines.StableBaselinesAgent).
 
 
 ```python
