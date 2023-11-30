@@ -42,6 +42,9 @@ You can find the guide for Logging [here](logging_page).
 ## Experimenting with Bandits. <!-- TOCHECK :plus tard -->
 ## Reproducibility
 ### Seeding
+In rlberry you can use a seed to generate pseudo-"random number". Most of the time, it allow you to re-run the same algorithm with the same pseudo-"random number", and make your experiment reproducible.
+You can find the guide for Seeding [here](seeding_page).
+
 ### Saving and Loading Agents
 ### Saving and Loading Data
 ## Advanced Usage<!-- TOCHECK :plus tard -->
