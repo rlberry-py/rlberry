@@ -2,12 +2,12 @@
 
 # How to use an environment
 
-This is the world with which the agent interacts. The agent can observe this environment, and can perform actions to modify it (but cannot change its rules). With rlberry, you can load an existing environment, or create your own custom environment.
+This is the world with which the agent interacts. The agent can observe this environment, and can perform actions to modify it (but cannot change its rules). With rlberry, you can use an existing environment, or create your own custom environment.
 
 
-## Load rlberry environment
+## Use rlberry environment
 You can find some environments in our other projects "[rlberry-research](https://github.com/rlberry-py/rlberry-research)" and "[rlberry-scool](https://github.com/rlberry-py/rlberry-scool)".
-For this example, you can load "Chain" environment from "[rlberry-research](https://github.com/rlberry-py/rlberry-research)"
+For this example, you can use "Chain" environment from "[rlberry-research](https://github.com/rlberry-py/rlberry-research)"
 ```python
 from rlberry_research.envs.finite import Chain
 
@@ -81,8 +81,8 @@ video:10kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing ov
 </video>
 
 
-## Load Gymnasium environment
-Gymnasium can give you some classic environment. You can load theme with [gym_make](rlberry.envs.gym_make). More information [here](https://gymnasium.farama.org/environments/classic_control/).
+## Use Gymnasium environment
+Gymnasium can give you some classic environment. You can use theme with [gym_make](rlberry.envs.gym_make). More information [here](https://gymnasium.farama.org/environments/classic_control/).
 
 ```python
 from rlberry.envs import gym_make
@@ -122,7 +122,7 @@ Moviepy - video ready [your path]/MountainCar-episode-0.mp4
 
 
 
-## Load Atari environment
+## Use Atari environment
 A set of Atari 2600 environment simulated through Stella and the Arcade Learning Environment. More information [here](https://gymnasium.farama.org/environments/atari/).
 
 The function "[atari_make()](rlberry.envs.atari_make)" add wrappers on gym.make, to make it easier to use on Atari games.
