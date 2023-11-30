@@ -58,6 +58,8 @@ run 3 :
 [9, 1, 0, 7, 4]
 ```
 
+</br>
+
 ## In rlberry
 
 ### classic usage
@@ -109,6 +111,184 @@ random sample 2 from agent rng:  0.8402527193117317
 
 ```
 
+</br>
+
+### With ExperimentManager
+For this part we will use the same code from the [ExperimentManager](ExperimentManager_page) part.
+3 runs without the seeder :
+
+```python
+from rlberry.envs import gym_make
+from rlberry_research.agents.torch import PPOAgent
+from rlberry.manager import ExperimentManager, evaluate_agents
+
+
+env_id = "CartPole-v1"  # Id of the environment
+
+env_ctor = gym_make  # constructor for the env
+env_kwargs = dict(id=env_id)  # give the id of the env inside the kwargs
+
+
+first_experiment = ExperimentManager(
+    PPOAgent,  # Agent Class
+    (env_ctor, env_kwargs),  # Environment as Tuple(constructor,kwargs)
+    fit_budget=int(100),  # Budget used to call our agent "fit()"
+    eval_kwargs=dict(
+        eval_horizon=1000
+    ),  # Arguments required to call rlberry.agents.agent.Agent.eval().
+    n_fit=1,  # Number of agent instances to fit.
+    agent_name="PPO_first_experiment" + env_id,  # Name of the agent
+)
+
+first_experiment.fit()
+
+output = evaluate_agents(
+    [first_experiment], n_simulations=5, plot=False
+)  # evaluate the experiment on 5 simulations
+print(output)
+```
+
+
+Run 1:
+```none
+[INFO] 14:47: Running ExperimentManager fit() for PPO_first_experimentCartPole-v1 with n_fit = 1 and max_workers = None.
+[INFO] 14:47: ... trained!
+[INFO] 14:47: Evaluating PPO_first_experimentCartPole-v1...
+[INFO] Evaluation:.....  Evaluation finished
+   PPO_first_experimentCartPole-v1
+0                             20.8
+1                             20.8
+2                             21.4
+3                             24.3
+4                             28.8
+```
+
+Run 2 :
+```none
+[INFO] 14:47: Running ExperimentManager fit() for PPO_first_experimentCartPole-v1 with n_fit = 1 and max_workers = None.
+[INFO] 14:47: ... trained!
+[INFO] 14:47: Evaluating PPO_first_experimentCartPole-v1...
+[INFO] Evaluation:.....  Evaluation finished
+   PPO_first_experimentCartPole-v1
+0                             25.0
+1                             19.3
+2                             28.5
+3                             26.1
+4                             19.0
+```
+
+Run 3 :
+```none
+[INFO] 14:47: Running ExperimentManager fit() for PPO_first_experimentCartPole-v1 with n_fit = 1 and max_workers = None.
+[INFO] 14:47: ... trained!
+[INFO] 14:47: Evaluating PPO_first_experimentCartPole-v1...
+[INFO] Evaluation:.....  Evaluation finished
+   PPO_first_experimentCartPole-v1
+0                             23.6
+1                             19.2
+2                             20.5
+3                             19.8
+4                             16.5
+```
+
+
+</br>
+
+**Without the seeder, the outputs are different (non-reproducible).**
+
+</br>
+
+3 runs with the seeder :
+
+```python
+from rlberry.envs import gym_make
+from rlberry_research.agents.torch import PPOAgent
+from rlberry.manager import ExperimentManager, evaluate_agents
+
+from rlberry.seeding import Seeder
+
+seeder = Seeder(42)
+
+env_id = "CartPole-v1"  # Id of the environment
+
+env_ctor = gym_make  # constructor for the env
+env_kwargs = dict(id=env_id)  # give the id of the env inside the kwargs
+
+
+first_experiment = ExperimentManager(
+    PPOAgent,  # Agent Class
+    (env_ctor, env_kwargs),  # Environment as Tuple(constructor,kwargs)
+    fit_budget=int(100),  # Budget used to call our agent "fit()"
+    eval_kwargs=dict(
+        eval_horizon=1000
+    ),  # Arguments required to call rlberry.agents.agent.Agent.eval().
+    n_fit=1,  # Number of agent instances to fit.
+    agent_name="PPO_first_experiment" + env_id,  # Name of the agent
+    seed=seeder,
+)
+
+first_experiment.fit()
+
+output = evaluate_agents(
+    [first_experiment], n_simulations=5, plot=False
+)  # evaluate the experiment on 5 simulations
+print(output)
+```
+
+Run 1:
+```none
+[INFO] 14:46: Running ExperimentManager fit() for PPO_first_experimentCartPole-v1 with n_fit = 1 and max_workers = None.
+[INFO] 14:46: ... trained!
+[INFO] 14:46: Evaluating PPO_first_experimentCartPole-v1...
+[INFO] Evaluation:.....  Evaluation finished
+   PPO_first_experimentCartPole-v1
+0                             23.3
+1                             19.7
+2                             23.0
+3                             18.8
+4                             19.7
+```
+
+Run 2 :
+```none
+[INFO] 14:46: Running ExperimentManager fit() for PPO_first_experimentCartPole-v1 with n_fit = 1 and max_workers = None.
+[INFO] 14:46: ... trained!
+[INFO] 14:46: Evaluating PPO_first_experimentCartPole-v1...
+[INFO] Evaluation:.....  Evaluation finished
+   PPO_first_experimentCartPole-v1
+0                             23.3
+1                             19.7
+2                             23.0
+3                             18.8
+4                             19.7
+```
+
+
+Run 3 :
+```none
+[INFO] 14:46: Running ExperimentManager fit() for PPO_first_experimentCartPole-v1 with n_fit = 1 and max_workers = None.
+[INFO] 14:46: ... trained!
+[INFO] 14:46: Evaluating PPO_first_experimentCartPole-v1...
+[INFO] Evaluation:.....  Evaluation finished
+   PPO_first_experimentCartPole-v1
+0                             23.3
+1                             19.7
+2                             23.0
+3                             18.8
+4                             19.7
+```
+
+
+</br>
+
+
+**With the seeder, the outputs are the same (reproducible).**
+
+
+</br>
+
+
+
 
 ### multi-threading
 If you want use multi-threading, a seeder can spawn other seeders that are independent from it.
@@ -133,7 +313,7 @@ random sample 1 from seeder2 rng:  -0.1722486099076424
 random sample 2 from seeder2 rng:  -0.1930990650226178
 ```
 
-
+</br>
 
 ## External libraries
 You can also use a seeder to seed external libraries (such as torch) using the method `set_external_seed`.
