@@ -42,11 +42,26 @@ You can find the guide for Logging [here](logging_page).
 ## Experimenting with Bandits. <!-- TOCHECK :plus tard -->
 ## Reproducibility
 ### Seeding
-In rlberry you can use a seed to generate pseudo-"random number". Most of the time, it allow you to re-run the same algorithm with the same pseudo-"random number", and make your experiment reproducible.
-You can find the guide for Seeding [here](seeding_page).
+In rlberry you can use a seed to generate pseudo-"random number". Most of the time, it allow you to re-run the same algorithm with the same pseudo-"random number", and make your experiment reproducible.You can find the guide for Seeding [here](seeding_page).
 
-### Saving and Loading Agents
-### Saving and Loading Data
+### Saving and Loading Experiment
+You can save and load your experiments.
+It could be useful in many way :
+- don't repeat the training part every time.
+- continue a previous training (or doing checkpoint).
+
+You can find the guide for Saving and Loading [here](save_load_page).
+### Saving and Loading Agents <!-- TOCHECK :plus tard -->
+### Saving and Loading Data <!-- TOCHECK :plus tard -->
+
+<!--
+---------------------------------------
+
+regarder/expliquer les LoadResults.py  (dans rlberry/experiment et ..../test
+
+----------------------------------------)
+ -->
+
 ## Advanced Usage<!-- TOCHECK :plus tard -->
 ### Custom Agents <!-- TOCHECK :plus tard -->
 ### Custom Environments<!-- TOCHECK :plus tard -->
