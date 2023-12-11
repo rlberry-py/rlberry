@@ -575,15 +575,15 @@ class ExperimentManager:
                     " Returning []."
                 )
                 return []
-            # Update eval_kwargs with n_simulation parameter
-            eval_kwargs_with_n_simulation = eval_kwargs.copy()
-            if "n_simulation" in eval_kwargs:
-                # Issue a warning that n_simulation is overwritten
+            # Update eval_kwargs with n_simulations parameter
+            eval_kwargs_with_n_simulations = eval_kwargs.copy()
+            if "n_simulations" in eval_kwargs:
+                # Issue a warning that n_simulations is overwritten
                 logger.info(
-                    "Warning: n_simulation parameter in eval_kwargs is being overwritten with 1."
+                    "Warning: n_simulations parameter in eval_kwargs is being overwritten with 1."
                 )
-            eval_kwargs_with_n_simulation["n_simulation"] = 1
-            values.append(agent.eval(**eval_kwargs_with_n_simulation))
+            eval_kwargs_with_n_simulations["n_simulations"] = 1
+            values.append(agent.eval(**eval_kwargs_with_n_simulations))
             if verbose:
                 if logger.getEffectiveLevel() <= 10:  # If debug
                     logger.debug(f"[eval]... simulation {ii + 1}/{n_simulations}")
