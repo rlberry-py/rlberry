@@ -403,3 +403,60 @@ def test_logs(style_log):
     )
     stats.fit()
     evaluate_agents([stats], show=False)
+
+
+class DummyAgentNotPickleable(AgentWithSimplePolicy):
+    def __init__(self, env, **kwargs):
+        AgentWithSimplePolicy.__init__(self, env, **kwargs)
+        self.name = "DummyAgent"
+        self.fitted = False
+        file = open("profile.prof", "w")
+        self.not_pickleable = file
+        self.total_budget = 0.0
+
+    def fit(self, budget, **kwargs):
+        del kwargs
+        self.fitted = True
+        self.total_budget += budget
+        return
+
+    def policy(self, observation):
+        return 0
+
+
+@pytest.mark.parametrize("compress", [True, False])
+def test_not_pickle(compress):
+    train_env = (GridWorld, None)
+    # Define train and evaluation envs
+    train_env = (
+        GridWorld,
+        None,
+    )  # tuple (constructor, kwargs) must also work in ExperimentManager
+
+    # Parameters
+    params = {"compress_pickle": compress}
+    eval_kwargs = dict(eval_horizon=10)
+
+    # Run ExperimentManager
+    stats = ExperimentManager(
+        DummyAgentNotPickleable,
+        train_env,
+        init_kwargs=params,
+        n_fit=4,
+        fit_budget=5,
+        eval_kwargs=eval_kwargs,
+        seed=123,
+    )
+
+    # Run partial fit
+    stats.fit(10)
+    stats.load(stats.save())
+
+    # learning curves
+    plot_writer_data(
+        [stats], tag="episode_rewards", show=False, preprocess_func=np.cumsum
+    )
+    # compare final policies
+    evaluate_agents([stats], show=False)
+
+    stats.clear_output_dir()
