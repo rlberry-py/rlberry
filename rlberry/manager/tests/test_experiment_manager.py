@@ -3,13 +3,14 @@ import numpy as np
 import sys
 import os
 from rlberry_research.envs import GridWorld
-from rlberry.agents import AgentWithSimplePolicy
+from rlberry.agents import AgentWithSimplePolicy, AgentTorch
 from rlberry.manager import (
     ExperimentManager,
     plot_writer_data,
     evaluate_agents,
     preset_manager,
 )
+from rlberry.utils.check_agent import check_save_load
 
 
 class DummyAgent(AgentWithSimplePolicy):
@@ -424,8 +425,34 @@ class DummyAgentNotPickleable(AgentWithSimplePolicy):
         return 0
 
 
+class DummyAgentNotPickleableTorch(AgentTorch):
+    def __init__(self, env, **kwargs):
+        AgentWithSimplePolicy.__init__(self, env, **kwargs)
+        self.name = "DummyAgent"
+        self.fitted = False
+        file = open("profile.prof", "w")
+        self.not_pickleable = file
+        self.total_budget = 0.0
+
+    def fit(self, budget, **kwargs):
+        del kwargs
+        self.fitted = True
+        self.total_budget += budget
+        return
+
+    def policy(self, observation):
+        return 0
+
+    def eval(self, eval_horizon=10**5, n_simulations=10, gamma=1.0, **kwargs):
+        return 0
+
+
 @pytest.mark.parametrize("compress", [True, False])
-def test_not_pickle(compress):
+@pytest.mark.parametrize(
+    "agent", [DummyAgentNotPickleable, DummyAgentNotPickleableTorch]
+)
+def test_not_pickle(compress, agent):
+    check_save_load(agent)
     train_env = (GridWorld, None)
     # Define train and evaluation envs
     train_env = (
@@ -439,7 +466,7 @@ def test_not_pickle(compress):
 
     # Run ExperimentManager
     stats = ExperimentManager(
-        DummyAgentNotPickleable,
+        agent,
         train_env,
         init_kwargs=params,
         n_fit=4,
