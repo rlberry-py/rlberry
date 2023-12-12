@@ -7,6 +7,11 @@ Changelog
 Dev version
 -----------
 
+
+*PR #397*
+
+ * Automatic save after fit() in ExperienceManager
+
 *PR #376*
 
  * New plot_writer_data function that does not depend on seaborn and that can plot smoothed function and confidence band if scikit-fda is installed.
