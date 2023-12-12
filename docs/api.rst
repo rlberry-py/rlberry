@@ -28,6 +28,8 @@ Evaluation and plot
    manager.evaluate_agents
    manager.read_writer_data
    manager.plot_writer_data
+   manager.plot_smoothed_curves
+   manager.plot_synchronized_curves
    manager.compare_agents
 
 

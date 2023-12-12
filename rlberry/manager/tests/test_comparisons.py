@@ -45,7 +45,7 @@ def test_compare(method):
         fit_budget=5,
         eval_kwargs=eval_kwargs,
         init_kwargs={"eval_val": 0},
-        n_fit=4,
+        n_fit=10,
         seed=123,
     )
     agent2 = AgentManager(
@@ -56,7 +56,7 @@ def test_compare(method):
         fit_budget=5,
         eval_kwargs=eval_kwargs,
         init_kwargs={"eval_val": 10},
-        n_fit=4,
+        n_fit=10,
         seed=123,
     )
     agent1.fit()

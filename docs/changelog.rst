@@ -7,10 +7,15 @@ Changelog
 Dev version
 -----------
 
+*PR #376*
+
+ * New plot_writer_data function that does not depend on seaborn and that can plot smoothed function and confidence band if scikit-fda is installed.
+
 Version 0.6.0
 -------------
 
 *PR #276*
+
  * Non adaptive multiple tests for agent comparison.
 
 *PR #365*
