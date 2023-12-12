@@ -1,5 +1,7 @@
 import concurrent.futures
 from copy import deepcopy
+import errno
+import os
 from pathlib import Path
 import cProfile, pstats
 from pstats import SortKey
@@ -384,6 +386,10 @@ class ExperimentManager:
             self.output_dir_ = self.output_dir_ / (
                 self.agent_name + "_" + self.timestamp_id
             )
+        if os.path.exists(self.output_dir_):
+            logger.warning(
+                "This output directory already exists, the save may change the symbolic link or overwrite the previous Experiment."
+            )
 
         # Create list of writers for each agent that will be trained
         # 'default' will keep Agent's use of DefaultWriter.
@@ -766,6 +772,7 @@ class ExperimentManager:
 
         # gather all stats in a dictionary
         self._gather_default_writer_data()
+        self.save()
 
     def _gather_default_writer_data(self):
         """Gather DefaultWriter data in a dictionary"""
@@ -819,7 +826,8 @@ class ExperimentManager:
             handler.dump()
 
         # save
-        filename = Path("manager_obj").with_suffix(".pickle")
+        filename_symlink = output_dir / Path("manager_obj").with_suffix(".pickle")
+        filename = Path("manager_obj_" + str(self.timestamp_id)).with_suffix(".pickle")
         filename = output_dir / filename
         filename.parent.mkdir(parents=True, exist_ok=True)
         try:
@@ -839,8 +847,18 @@ class ExperimentManager:
                 logger.warning(
                     "[ExperimentManager] Instance cannot be pickled: " + str(ex)
                 )
+        logger.info("The ExperimentManager was saved in : '" + str(filename) + "'")
 
-        return filename
+        try:
+            os.symlink(filename, filename_symlink)
+        except OSError as e:
+            if e.errno == errno.EEXIST:
+                os.remove(filename_symlink)
+                os.symlink(filename, filename_symlink)
+            else:
+                raise e
+
+        return filename_symlink
 
     @classmethod
     def load(cls, filename):
@@ -861,6 +879,9 @@ class ExperimentManager:
             raise ValueError(
                 "The experiment_manager objects should be save in file named 'manager_obj.pickle'"
             )
+
+        if filename.is_symlink():
+            filename = Path(os.readlink(filename)).with_suffix(".pickle")
 
         obj = cls(None, None, None)
 
