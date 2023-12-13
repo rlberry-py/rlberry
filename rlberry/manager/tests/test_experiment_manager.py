@@ -1,3 +1,5 @@
+import shutil
+import tempfile
 import pytest
 import numpy as np
 import sys
@@ -403,3 +405,51 @@ def test_logs(style_log):
     )
     stats.fit()
     evaluate_agents([stats], show=False)
+
+
+def test_save_logger_and_warning(caplog):
+    with tempfile.TemporaryDirectory() as tmpdir:
+        agent_test_name = "test_agent"
+
+        path_to_save = tmpdir + "/" + agent_test_name
+        if os.path.isdir(path_to_save):
+            shutil.rmtree(path_to_save)
+
+        # Define train and evaluation envs
+        train_env = (GridWorld, {})
+
+        # Run ExperimentManager
+        stats_agent1 = ExperimentManager(
+            DummyAgent,
+            train_env,
+            fit_budget=5,
+            n_fit=4,
+            seed=123,
+            agent_name=agent_test_name,
+            output_dir=path_to_save,
+            outdir_id_style=None,
+        )
+
+        ExperimentManager_message_begin = "The ExperimentManager was saved in : '"
+        assert not ExperimentManager_message_begin in caplog.text
+        stats_agent1.fit()
+        assert ExperimentManager_message_begin in caplog.text
+
+        path = stats_agent1.save()
+        assert str(ExperimentManager_message_begin + str(path) + "'") in caplog.text
+
+        warning_overwrite_message = "This output directory already exists, the save may change the symbolic link or overwrite the previous Experiment."
+        assert not warning_overwrite_message in caplog.text
+        stats_agent2 = ExperimentManager(
+            DummyAgent,
+            train_env,
+            fit_budget=5,
+            n_fit=4,
+            seed=456,
+            agent_name=agent_test_name,
+            output_dir=path_to_save,
+            outdir_id_style=None,
+        )
+
+        stats_agent2.fit()
+        assert warning_overwrite_message in caplog.text
