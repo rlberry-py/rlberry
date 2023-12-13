@@ -1,6 +1,5 @@
 import concurrent.futures
 from copy import deepcopy
-import errno
 import os
 from pathlib import Path
 import cProfile, pstats
@@ -377,7 +376,7 @@ class ExperimentManager:
             output_dir_ = metadata_utils.RLBERRY_TEMP_DATA_DIR
         else:
             output_dir_ = output_dir
-        self.output_dir_ = Path(output_dir_) / "manager_data"
+        self.output_dir_ = Path(output_dir_) / "manager_data" / self.agent_name
         if outdir_id_style == "unique":
             self.output_dir_ = self.output_dir_ / (
                 self.agent_name + "_" + self.unique_id
@@ -826,8 +825,7 @@ class ExperimentManager:
             handler.dump()
 
         # save
-        filename_symlink = output_dir / Path("manager_obj").with_suffix(".pickle")
-        filename = Path("manager_obj_" + str(self.timestamp_id)).with_suffix(".pickle")
+        filename = Path("manager_obj").with_suffix(".pickle")
         filename = output_dir / filename
         filename.parent.mkdir(parents=True, exist_ok=True)
         try:
@@ -849,16 +847,7 @@ class ExperimentManager:
                 )
         logger.info("The ExperimentManager was saved in : '" + str(filename) + "'")
 
-        try:
-            os.symlink(filename, filename_symlink)
-        except OSError as e:
-            if e.errno == errno.EEXIST:
-                os.remove(filename_symlink)
-                os.symlink(filename, filename_symlink)
-            else:
-                raise e
-
-        return filename_symlink
+        return filename
 
     @classmethod
     def load(cls, filename):
@@ -879,9 +868,6 @@ class ExperimentManager:
             raise ValueError(
                 "The experiment_manager objects should be save in file named 'manager_obj.pickle'"
             )
-
-        if filename.is_symlink():
-            filename = Path(os.readlink(filename)).with_suffix(".pickle")
 
         obj = cls(None, None, None)
 
