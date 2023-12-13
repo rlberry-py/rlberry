@@ -387,7 +387,7 @@ class ExperimentManager:
             )
         if os.path.exists(self.output_dir_):
             logger.warning(
-                "This output directory already exists, the save may change the symbolic link or overwrite the previous Experiment."
+                "This output directory already exists, the save may overwrite the previous Experiment."
             )
 
         # Create list of writers for each agent that will be trained

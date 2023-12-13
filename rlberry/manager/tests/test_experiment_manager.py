@@ -438,7 +438,7 @@ def test_save_logger_and_warning(caplog):
         path = stats_agent1.save()
         assert str(ExperimentManager_message_begin + str(path) + "'") in caplog.text
 
-        warning_overwrite_message = "This output directory already exists, the save may change the symbolic link or overwrite the previous Experiment."
+        warning_overwrite_message = "This output directory already exists, the save may overwrite the previous Experiment."
         assert not warning_overwrite_message in caplog.text
         stats_agent2 = ExperimentManager(
             DummyAgent,
