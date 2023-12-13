@@ -376,7 +376,7 @@ class ExperimentManager:
             output_dir_ = metadata_utils.RLBERRY_TEMP_DATA_DIR
         else:
             output_dir_ = output_dir
-        self.output_dir_ = Path(output_dir_) / "manager_data" / self.agent_name
+        self.output_dir_ = Path(output_dir_) / "manager_data"
         if outdir_id_style == "unique":
             self.output_dir_ = self.output_dir_ / (
                 self.agent_name + "_" + self.unique_id
