@@ -11,6 +11,7 @@ from rlberry.manager import (
     preset_manager,
     read_writer_data,
 )
+from rlberry.wrappers import WriterWrapper
 from rlberry.utils.check_agent import check_save_load
 
 
@@ -410,6 +411,8 @@ def test_logs(style_log):
 class DummyAgentNotPickleable(AgentWithSimplePolicy):
     def __init__(self, env, **kwargs):
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
+        self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
+
         self.name = "DummyAgent"
         self.fitted = False
         file = open("profile.prof", "w")
@@ -420,6 +423,8 @@ class DummyAgentNotPickleable(AgentWithSimplePolicy):
         del kwargs
         self.fitted = True
         self.total_budget += budget
+        self.env.step(0)
+
         return
 
     def policy(self, observation):
@@ -429,6 +434,8 @@ class DummyAgentNotPickleable(AgentWithSimplePolicy):
 class DummyAgentNotPickleableTorch(AgentTorch):
     def __init__(self, env, **kwargs):
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
+        self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
+
         self.name = "DummyAgent"
         self.fitted = False
         file = open("profile.prof", "w")
@@ -439,6 +446,7 @@ class DummyAgentNotPickleableTorch(AgentTorch):
         del kwargs
         self.fitted = True
         self.total_budget += budget
+        self.env.step(0)
         return
 
     def policy(self, observation):
