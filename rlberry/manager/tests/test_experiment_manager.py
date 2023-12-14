@@ -487,3 +487,21 @@ def test_not_pickle(compress, agent):
     evaluate_agents([stats], show=False)
 
     stats.clear_output_dir()
+
+
+def test_fitbudget_exception():
+    msg = "\[ExperimentManager\] fit_budget missing in __init__\(\)\."  # /!\ regex : need to escape some char.
+    with pytest.raises(ValueError, match=msg):
+        # Define train and evaluation envs
+        train_env = (GridWorld, {})
+
+        # Run ExperimentManager
+        stats = ExperimentManager(
+            DummyAgent,
+            train_env,
+            n_fit=3,
+            seed=123,
+        )
+
+        stats.fit()
+        evaluate_agents([stats], show=False)
