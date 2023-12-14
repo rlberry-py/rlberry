@@ -245,5 +245,5 @@ jobs:
     displayName: 'Install rlberry-scool and rlberry-research'
 
   - script: |
-      pytest rlberry/tests/test_agents_base.py rlberry/tests/test_envs.pyv
+      pytest rlberry/tests/test_agents_base.py rlberry/tests/test_envs.py
     displayName: 'pytest agents and envs'
