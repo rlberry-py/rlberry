@@ -9,6 +9,7 @@ from rlberry.manager import (
     plot_writer_data,
     evaluate_agents,
     preset_manager,
+    read_writer_data,
 )
 from rlberry.utils.check_agent import check_save_load
 
@@ -485,6 +486,7 @@ def test_not_pickle(compress, agent):
     )
     # compare final policies
     evaluate_agents([stats], show=False)
+    data = read_writer_data(stats)
 
     stats.clear_output_dir()
 
