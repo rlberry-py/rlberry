@@ -36,7 +36,7 @@ def compare_trajectories(traj1, traj2):
 @pytest.mark.parametrize("env_name", gym_envs)
 def test_env_seeding(env_name):
     seeder1 = Seeder(123)
-    env1 = gym_make(env_name)
+    env1 = gym_make(env_name, module_import="numpy")
     env1.reseed(seeder1)
 
     seeder2 = Seeder(456)

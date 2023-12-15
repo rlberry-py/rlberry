@@ -498,7 +498,7 @@ def check_rl_agent(agent, env="continuous_state", init_kwargs=None):
 
     Examples
     --------
-    >>> from rlberry.agents import UCBVIAgent
+    >>> from rlberry_research.agents import UCBVIAgent
     >>> from rlberry.utils import check_rl_agent
     >>> check_rl_agent(UCBVIAgent) # which does not return an error.
     """

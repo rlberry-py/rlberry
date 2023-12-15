@@ -3,17 +3,17 @@
 TORCH_INSTALLED = True
 try:
     import torch
-except ModuleNotFoundError:
-    TORCH_INSTALLED = False
+except ModuleNotFoundError:  # pragma: no cover
+    TORCH_INSTALLED = False  # pragma: no cover
 
 TENSORBOARD_INSTALLED = True
 try:
     import torch.utils.tensorboard
-except ModuleNotFoundError:
-    TENSORBOARD_INSTALLED = False
+except ModuleNotFoundError:  # pragma: no cover
+    TENSORBOARD_INSTALLED = False  # pragma: no cover
 
 NUMBA_INSTALLED = True
 try:
     import numba
-except ModuleNotFoundError:
-    NUMBA_INSTALLED = False
+except ModuleNotFoundError:  # pragma: no cover
+    NUMBA_INSTALLED = False  # pragma: no cover

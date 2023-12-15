@@ -1,15 +1,20 @@
+import shutil
+import tempfile
 import pytest
 import numpy as np
 import sys
 import os
 from rlberry_research.envs import GridWorld
-from rlberry.agents import AgentWithSimplePolicy
+from rlberry.agents import AgentWithSimplePolicy, AgentTorch
 from rlberry.manager import (
     ExperimentManager,
     plot_writer_data,
     evaluate_agents,
     preset_manager,
+    read_writer_data,
 )
+from rlberry.wrappers import WriterWrapper
+from rlberry.utils.check_agent import check_save_load
 
 
 class DummyAgent(AgentWithSimplePolicy):
@@ -403,3 +408,157 @@ def test_logs(style_log):
     )
     stats.fit()
     evaluate_agents([stats], show=False)
+
+
+class DummyAgentNotPickleable(AgentWithSimplePolicy):
+    def __init__(self, env, **kwargs):
+        AgentWithSimplePolicy.__init__(self, env, **kwargs)
+        self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
+
+        self.name = "DummyAgent"
+        self.fitted = False
+        file = open("profile.prof", "w")
+        self.not_pickleable = file
+        self.total_budget = 0.0
+
+    def fit(self, budget, **kwargs):
+        del kwargs
+        self.fitted = True
+        self.total_budget += budget
+        self.env.step(0)
+
+        return
+
+    def policy(self, observation):
+        return 0
+
+
+class DummyAgentNotPickleableTorch(AgentTorch):
+    def __init__(self, env, **kwargs):
+        AgentWithSimplePolicy.__init__(self, env, **kwargs)
+        self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
+
+        self.name = "DummyAgent"
+        self.fitted = False
+        file = open("profile.prof", "w")
+        self.not_pickleable = file
+        self.total_budget = 0.0
+
+    def fit(self, budget, **kwargs):
+        del kwargs
+        self.fitted = True
+        self.total_budget += budget
+        self.env.step(0)
+        return
+
+    def policy(self, observation):
+        return 0
+
+    def eval(self, eval_horizon=10**5, n_simulations=10, gamma=1.0, **kwargs):
+        return 0
+
+
+@pytest.mark.parametrize("compress", [True, False])
+@pytest.mark.parametrize(
+    "agent", [DummyAgentNotPickleable, DummyAgentNotPickleableTorch]
+)
+def test_not_pickle(compress, agent):
+    check_save_load(agent)
+    train_env = (GridWorld, None)
+    # Define train and evaluation envs
+    train_env = (
+        GridWorld,
+        None,
+    )  # tuple (constructor, kwargs) must also work in ExperimentManager
+
+    # Parameters
+    params = {"compress_pickle": compress}
+    eval_kwargs = dict(eval_horizon=10)
+
+    # Run ExperimentManager
+    stats = ExperimentManager(
+        agent,
+        train_env,
+        init_kwargs=params,
+        n_fit=4,
+        fit_budget=5,
+        eval_kwargs=eval_kwargs,
+        seed=123,
+    )
+
+    # Run partial fit
+    stats.fit(10)
+    stats.load(stats.save())
+
+    # learning curves
+    plot_writer_data(
+        [stats], tag="episode_rewards", show=False, preprocess_func=np.cumsum
+    )
+    # compare final policies
+    evaluate_agents([stats], show=False)
+    data = read_writer_data(stats)
+
+    stats.clear_output_dir()
+
+
+def test_fitbudget_exception():
+    msg = "\[ExperimentManager\] fit_budget missing in __init__\(\)\."  # /!\ regex : need to escape some char.
+    with pytest.raises(ValueError, match=msg):
+        # Define train and evaluation envs
+        train_env = (GridWorld, {})
+
+        # Run ExperimentManager
+        stats = ExperimentManager(
+            DummyAgent,
+            train_env,
+            n_fit=3,
+            seed=123,
+        )
+
+
+def test_save_logger_and_warning(caplog):
+    with tempfile.TemporaryDirectory() as tmpdir:
+        agent_test_name = "test_agent"
+
+        path_to_save = tmpdir + "/" + agent_test_name
+        if os.path.isdir(path_to_save):  # pragma: no cover
+            shutil.rmtree(path_to_save)  # pragma: no cover
+
+        # Define train and evaluation envs
+        train_env = (GridWorld, {})
+
+        # Run ExperimentManager
+        stats_agent1 = ExperimentManager(
+            DummyAgent,
+            train_env,
+            fit_budget=5,
+            n_fit=4,
+            seed=123,
+            agent_name=agent_test_name,
+            output_dir=path_to_save,
+            outdir_id_style=None,
+        )
+
+        ExperimentManager_message_begin = "The ExperimentManager was saved in : '"
+        assert not ExperimentManager_message_begin in caplog.text
+        stats_agent1.fit()
+        assert ExperimentManager_message_begin in caplog.text
+
+        path = stats_agent1.save()
+        assert str(ExperimentManager_message_begin + str(path) + "'") in caplog.text
+
+        warning_overwrite_message = "This output directory already exists, the save may overwrite the previous Experiment."
+        assert not warning_overwrite_message in caplog.text
+        stats_agent2 = ExperimentManager(
+            DummyAgent,
+            train_env,
+            fit_budget=5,
+            n_fit=4,
+            seed=456,
+            agent_name=agent_test_name,
+            output_dir=path_to_save,
+            outdir_id_style=None,
+        )
+
+        stats_agent2.fit()
+        assert warning_overwrite_message in caplog.text

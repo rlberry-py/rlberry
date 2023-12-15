@@ -26,10 +26,9 @@ project = "rlberry"
 copyright = "2023, rlberry team"
 author = "rlberry team"
 
-ver_file = os.path.join("../rlberry", "_version.py")
-with open(ver_file) as f:
-    exec(f.read())
-release = __version__
+import rlberry
+
+release = rlberry.__version__
 # -- General configuration ---------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be

@@ -1,5 +1,6 @@
 import concurrent.futures
 from copy import deepcopy
+import os
 from pathlib import Path
 import cProfile, pstats
 from pstats import SortKey
@@ -33,8 +34,8 @@ from rlberry import types
 _OPTUNA_INSTALLED = True
 try:
     import optuna
-except Exception:
-    _OPTUNA_INSTALLED = False
+except Exception:  # pragma: no cover
+    _OPTUNA_INSTALLED = False  # pragma: no cover
 
 logger = rlberry.logger
 
@@ -383,6 +384,10 @@ class ExperimentManager:
         elif outdir_id_style == "timestamp":
             self.output_dir_ = self.output_dir_ / (
                 self.agent_name + "_" + self.timestamp_id
+            )
+        if os.path.exists(self.output_dir_):
+            logger.warning(
+                "This output directory already exists, the save may overwrite the previous Experiment."
             )
 
         # Create list of writers for each agent that will be trained
@@ -766,6 +771,7 @@ class ExperimentManager:
 
         # gather all stats in a dictionary
         self._gather_default_writer_data()
+        self.save()
 
     def _gather_default_writer_data(self):
         """Gather DefaultWriter data in a dictionary"""
@@ -839,6 +845,7 @@ class ExperimentManager:
                 logger.warning(
                     "[ExperimentManager] Instance cannot be pickled: " + str(ex)
                 )
+        logger.info("The ExperimentManager was saved in : '" + str(filename) + "'")
 
         return filename
 
@@ -1009,8 +1016,8 @@ class ExperimentManager:
 
         global _OPTUNA_INSTALLED
         if not _OPTUNA_INSTALLED:
-            logging.error("Optuna not installed.")
-            return
+            logging.error("Optuna not installed.")  # pragma: no cover
+            return  # pragma: no cover
 
         assert fit_fraction > 0.0 and fit_fraction <= 1.0
 

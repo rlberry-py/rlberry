@@ -25,7 +25,7 @@ import numpy as np
 from rlberry.wrappers import WriterWrapper
 from rlberry_research.envs import GridWorld
 from rlberry.manager import plot_writer_data, ExperimentManager
-from rlberry_scool.agents import UCBVIAgent
+from rlberry_research.agents import UCBVIAgent
 import matplotlib.pyplot as plt
 
 # We wrape the default writer of the agent in a WriterWrapper
