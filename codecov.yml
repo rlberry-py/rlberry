@@ -23,4 +23,3 @@ parsers:
 ignore:
   - "./rlberry/wrappers/tests/old_env/*.py"
   - "./rlberry/utils/torch.py"
-  - "**/test*.py"

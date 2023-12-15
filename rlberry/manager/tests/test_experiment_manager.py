@@ -524,8 +524,8 @@ def test_save_logger_and_warning(caplog):
         agent_test_name = "test_agent"
 
         path_to_save = tmpdir + "/" + agent_test_name
-        if os.path.isdir(path_to_save):  # noqa
-            shutil.rmtree(path_to_save)  # noqa
+        if os.path.isdir(path_to_save):  # pragma: no cover
+            shutil.rmtree(path_to_save)  # pragma: no cover
 
         # Define train and evaluation envs
         train_env = (GridWorld, {})
