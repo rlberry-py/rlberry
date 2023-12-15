@@ -1,5 +1,6 @@
 import concurrent.futures
 from copy import deepcopy
+import os
 from pathlib import Path
 import cProfile, pstats
 from pstats import SortKey
@@ -384,6 +385,10 @@ class ExperimentManager:
             self.output_dir_ = self.output_dir_ / (
                 self.agent_name + "_" + self.timestamp_id
             )
+        if os.path.exists(self.output_dir_):
+            logger.warning(
+                "This output directory already exists, the save may overwrite the previous Experiment."
+            )
 
         # Create list of writers for each agent that will be trained
         # 'default' will keep Agent's use of DefaultWriter.
@@ -766,6 +771,7 @@ class ExperimentManager:
 
         # gather all stats in a dictionary
         self._gather_default_writer_data()
+        self.save()
 
     def _gather_default_writer_data(self):
         """Gather DefaultWriter data in a dictionary"""
@@ -839,6 +845,7 @@ class ExperimentManager:
                 logger.warning(
                     "[ExperimentManager] Instance cannot be pickled: " + str(ex)
                 )
+        logger.info("The ExperimentManager was saved in : '" + str(filename) + "'")
 
         return filename
 
