@@ -515,9 +515,6 @@ def test_fitbudget_exception():
             seed=123,
         )
 
-        stats.fit()
-        evaluate_agents([stats], show=False)
-
 
 def test_save_logger_and_warning(caplog):
     with tempfile.TemporaryDirectory() as tmpdir:
