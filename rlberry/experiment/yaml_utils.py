@@ -206,9 +206,3 @@ def parse_experiment_config(
                 seed=seed,
                 outdir_id_style=None,
             )  # output_dir is already made unique above
-
-
-if __name__ == "__main__":
-    filename = "examples/demo_experiment/params_experiment.yaml"
-    for seed, experiment_manager in parse_experiment_config(Path(filename)):
-        print(seed)

@@ -34,8 +34,8 @@ from rlberry import types
 _OPTUNA_INSTALLED = True
 try:
     import optuna
-except Exception:
-    _OPTUNA_INSTALLED = False
+except Exception:  # pragma: no cover
+    _OPTUNA_INSTALLED = False  # pragma: no cover
 
 logger = rlberry.logger
 
@@ -1016,8 +1016,8 @@ class ExperimentManager:
 
         global _OPTUNA_INSTALLED
         if not _OPTUNA_INSTALLED:
-            logging.error("Optuna not installed.")
-            return
+            logging.error("Optuna not installed.")  # pragma: no cover
+            return  # pragma: no cover
 
         assert fit_fraction > 0.0 and fit_fraction <= 1.0
 
