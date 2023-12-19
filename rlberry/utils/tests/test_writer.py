@@ -43,10 +43,10 @@ def test_myoutput(capsys):  # or use "capfd" for fd-level
     )
     xp_manager.fit(budget=3)
 
-    assert agent.agent_handlers[0].writer.summary_writer == None
-    assert list(agent.agent_handlers[0].writer.read_tag_value("a")) == [0, 1, 2]
-    assert agent.agent_handlers[0].writer.read_first_tag_value("a") == 0
-    assert agent.agent_handlers[0].writer.read_last_tag_value("a") == 2
+    assert xp_manager.agent_handlers[0].writer.summary_writer == None
+    assert list(xp_manager.agent_handlers[0].writer.read_tag_value("a")) == [0, 1, 2]
+    assert xp_manager.agent_handlers[0].writer.read_first_tag_value("a") == 0
+    assert xp_manager.agent_handlers[0].writer.read_last_tag_value("a") == 2
 
     captured = capsys.readouterr()
     # test that what is written to stderr is longer than 50 char,
