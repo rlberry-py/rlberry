@@ -14,12 +14,6 @@
    <a href="https://pypi.org/project/rlberry/">
       <img alt="Python Version" src="https://img.shields.io/badge/python-3.10-blue">
    </a>
-   <a href="https://github.com/rlberry-py/rlberry/workflows/test/badge.svg">
-      <img alt="pytest" src="https://github.com/rlberry-py/rlberry/workflows/test/badge.svg">
-   </a>
-   <a href='https://rlberry.readthedocs.io/en/latest/?badge=latest'>
-      <img alt="Documentation Status" src="https://readthedocs.org/projects/rlberry/badge/?version=latest">
-   </a>
    <a href="https://img.shields.io/github/contributors/rlberry-py/rlberry">
       <img alt="contributors" src="https://img.shields.io/github/contributors/rlberry-py/rlberry">
    </a>
@@ -82,12 +76,12 @@ Install the latest version for a stable release.
 pip install rlberry
 ```
 
-The documentation includes more [installation instructions](https://rlberry.readthedocs.io/en/latest/installation.html) in particular for users that work with Jax.
+The documentation includes more [installation instructions](https://rlberry-py.github.io/rlberry/installation.html).
 
 
 ## Getting started
 
-In our [documentation](https://rlberry.readthedocs.io/en/latest/), you will find [quick starts](https://rlberry.readthedocs.io/en/latest/user_guide.html#quick-start-setup-an-experiment-and-evaluate-different-agents) to the library and a [user guide](https://rlberry.readthedocs.io/en/latest/user_guide.html) with a few tutorials on using rlberry.
+In our [documentation](https://rlberry-py.github.io/rlberry/), you will find [quick starts](https://rlberry-py.github.io/rlberry/basics/quick_start_rl/quickstart.html#quick-start) to the library and a [user guide](https://rlberry-py.github.io/rlberry/user_guide.html) with a few tutorials on using rlberry. See also the [stable documentation](https://rlberry-py.github.io/rlberry/stable/) for the documentation corresponding to the last release.
 
 Also, we provide a handful of notebooks on [Google colab](https://colab.research.google.com/) as examples to show you
 how to use `rlberry`:
@@ -99,7 +93,7 @@ how to use `rlberry`:
 
 ## Changelog
 
-See the [changelog](https://rlberry.readthedocs.io/en/latest/changelog.html) for a history of the chages made to rlberry.
+See the [changelog](https://rlberry-py.github.io/rlberry/changelog.html) for a history of the chages made to rlberry.
 
 ## Citing rlberry
 
@@ -126,9 +120,9 @@ The modules listed below are experimental at the moment, that is, they are not t
 
 ## About us
 This project was initiated and is actively maintained by [INRIA SCOOL team](https://team.inria.fr/scool/).
-More information [here](https://rlberry.readthedocs.io/en/latest/about.html#).
+More information [here](https://rlberry-py.github.io/rlberry/stable/about.html).
 
 ## Contributing
 
-Want to contribute to `rlberry`? Please check [our contribution guidelines](https://rlberry.readthedocs.io/en/latest/contributing.html). **If you want to add any new agents or environments, do not hesitate
+Want to contribute to `rlberry`? Please check [our contribution guidelines](https://rlberry-py.github.io/rlberry/stable/contributing.html). **If you want to add any new agents or environments, do not hesitate
 to [open an issue](https://github.com/rlberry-py/rlberry/issues/new/choose)!**

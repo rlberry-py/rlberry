@@ -1,9 +1,9 @@
 import pytest
 
 from rlberry.wrappers import WriterWrapper
-from rlberry.envs import GridWorld
+from rlberry_research.envs import GridWorld
 
-from rlberry.agents import UCBVIAgent
+from rlberry_research.agents import UCBVIAgent
 
 
 @pytest.mark.parametrize("write_scalar", ["action", "reward", "action_and_reward"])

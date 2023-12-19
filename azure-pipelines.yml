@@ -48,26 +48,20 @@ jobs:
     displayName: 'Use Python $(python.version)'
 
   - script: |
-      python -m pip install --upgrade pip
-      pip install -r requirements.txt
+      curl -sSL install.python-poetry.org | python3 -
       sudo apt install libglu1-mesa
+    displayName: 'Install poetry'
+
+  - script: echo "##vso[task.setvariable variable=PATH]${PATH}:$HOME/.local/bin"
+    displayName: 'Add poetry to PATH'
+
+  - script: poetry install --all-extras --with dev --sync
     displayName: 'Install dependencies'
-  - script: |
-      set -xe
-      pip install -e .
-    displayName: 'Install rlberry'
-  - script: |
-      pip install git+https://github.com/DLR-RM/stable-baselines3@feat/gymnasium-support
-      pip install git+https://github.com/Stable-Baselines-Team/stable-baselines3-contrib@feat/gymnasium-support
-    displayName: 'Install stable-baselines3 for Gymnasium'
 
   - script: |
       set -xe
-      pip install pytest==7.0.1 pytest-azurepipelines pytest-cov pytest-xvfb pytest-xprocess
-      # run doctests in the documentation
-      # TODO: use following line for doctest ?
-      pytest docs/*rst || echo "Ignoring exit status"
-      pytest --import-mode=importlib --cov=rlberry --cov-report xml rlberry
+      poetry add pytest-azurepipelines pytest-cov pytest-xvfb
+      poetry run pytest --import-mode=importlib --cov=rlberry --cov-report xml rlberry
     displayName: 'Test and coverage'
   - script: |
       curl -Os https://uploader.codecov.io/latest/linux/codecov
@@ -94,22 +88,18 @@ jobs:
     displayName: 'Use Python $(python.version)'
 
   - script: |
-      python -m pip install --upgrade pip
-      pip install -r requirements.txt
+      curl -sSL install.python-poetry.org | python3 -
+    displayName: 'Install poetry'
+
+  - script: echo "##vso[task.setvariable variable=PATH]${PATH}:$HOME/.local/bin"
+    displayName: 'Add poetry to PATH'
+
+  - script: poetry install --all-extras --with dev --sync
     displayName: 'Install dependencies'
 
   - script: |
-      set -xe
-      pip install -e .
-    displayName: 'Install rlberry'
-  - script: |
-      pip install git+https://github.com/DLR-RM/stable-baselines3@feat/gymnasium-support
-      pip install git+https://github.com/Stable-Baselines-Team/stable-baselines3-contrib@feat/gymnasium-support
-    displayName: 'Install stable-baselines3 for Gymnasium'
-
-  - script: |
-      pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
-      pytest --ignore=rlberry/network
+      poetry add pytest-azurepipelines pytest-xvfb
+      poetry run pytest --ignore=rlberry/network
     displayName: 'pytest'
 
 - job: 'windows'
@@ -129,22 +119,11 @@ jobs:
     displayName: 'Use Python $(python.version)'
 
   - script: |
-      python -m pip install --upgrade pip
-      pip install -r requirements.txt
-    displayName: 'Install dependencies'
-
-  - script: |
-      pip wheel . -w dist\
-      pip install --pre --no-index --find-links dist\ rlberry
-    displayName: 'Install rlberry'
-  - script: |
-      pip install git+https://github.com/DLR-RM/stable-baselines3@feat/gymnasium-support
-      pip install git+https://github.com/Stable-Baselines-Team/stable-baselines3-contrib@feat/gymnasium-support
-    displayName: 'Install stable-baselines3 for Gymnasium'
-
-  - script: |
-      pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
-      pytest --ignore=rlberry/network
+      curl -sSL install.python-poetry.org | python3 -
+      set PATH=%PATH%;%USERPROFILE%\AppData\Roaming\pypoetry\venv\Scripts
+      poetry install --all-extras --with dev --sync
+      poetry add pytest-azurepipelines pytest-xvfb
+      poetry run pytest --ignore=rlberry/network
     displayName: 'pytest'
 
 
@@ -174,11 +153,21 @@ jobs:
       set -xe
       pip install .
     displayName: 'Install rlberry'
-  #ignore les tests qui viennent des extras : torch, experimental, stablebaselines, optuna
+
   - script: |
       pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
+      pytest rlberry/tests/test_imports.py
+    displayName: 'pytest imports'
+
+  - script: |
+      pip install git+https://github.com/rlberry-py/rlberry-scool.git
+      pip install git+https://github.com/rlberry-py/rlberry-research.git
+    displayName: 'Install rlberry-scool and rlberry-research'
+
+  #ignore les tests qui viennent des extras : torch, experimental, stablebaselines, optuna
+  - script: |
       pytest rlberry/tests/test_agents_base.py rlberry/tests/test_envs.py
-    displayName: 'pytest'
+    displayName: 'pytest agents and envs'
 
 
 - job: 'macOS_non_editable'
@@ -209,8 +198,17 @@ jobs:
 
   - script: |
       pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
+      pytest rlberry/tests/test_imports.py
+    displayName: 'pytest imports'
+
+  - script: |
+      pip install git+https://github.com/rlberry-py/rlberry-scool.git
+      pip install git+https://github.com/rlberry-py/rlberry-research.git
+    displayName: 'Install rlberry-scool and rlberry-research'
+
+  - script: |
       pytest rlberry/tests/test_agents_base.py rlberry/tests/test_envs.py
-    displayName: 'pytest'
+    displayName: 'pytest agents and envs'
 
 - job: 'windows_non_editable'
   dependsOn: checkPrLabel
@@ -238,5 +236,14 @@ jobs:
 
   - script: |
       pip install pytest==7.0.1 pytest-azurepipelines pytest-xvfb
+      pytest rlberry/tests/test_imports.py
+    displayName: 'pytest imports'
+
+  - script: |
+      pip install git+https://github.com/rlberry-py/rlberry-scool.git
+      pip install git+https://github.com/rlberry-py/rlberry-research.git
+    displayName: 'Install rlberry-scool and rlberry-research'
+
+  - script: |
       pytest rlberry/tests/test_agents_base.py rlberry/tests/test_envs.py
-    displayName: 'pytest'
+    displayName: 'pytest agents and envs'

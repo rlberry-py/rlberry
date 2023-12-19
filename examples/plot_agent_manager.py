@@ -17,7 +17,7 @@ Then, we implement a value iteration algorithm for the action values:
 Finally, we compare with a baseline provided by a random policy using the ExperimentManager class which trains, evaluates and gathers statistics about the two agents.
 """
 
-from rlberry.envs import GridWorld
+from rlberry_research.envs import GridWorld
 
 # Create a grid world environment and an agent with a value iteration policy
 env_ctor = GridWorld

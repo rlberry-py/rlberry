@@ -65,4 +65,8 @@
     <a href='https://github.com/riccardodv'><img src='https://avatars.githubusercontent.com/u/18311484?v=4' class='avatar' /></a> <br />
     <p>Riccardo Della Vecchia</p>
     </div>
+    <div>
+    <a href='https://github.com/YannBerthelot'><img src='https://avatars.githubusercontent.com/u/49097534?v=4' class='avatar' /></a> <br />
+    <p>YannBerthelot</p>
+    </div>
     </div>

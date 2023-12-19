@@ -11,8 +11,9 @@ import pytest
 import numpy as np
 import sys
 
-import rlberry.agents as agents
-from rlberry.agents.features import FeatureMap
+import rlberry_research.agents as agents_research
+import rlberry_scool.agents as agents_scool
+from rlberry_scool.agents.features import FeatureMap
 
 from rlberry.utils.check_agent import (
     check_rl_agent,
@@ -33,32 +34,32 @@ class OneHotFeatureMap(FeatureMap):
 
 
 # LSVIUCBAgent needs a feature map function to work.
-class OneHotLSVI(agents.LSVIUCBAgent):
+class OneHotLSVI(agents_scool.LSVIUCBAgent):
     def __init__(self, env, **kwargs):
         def feature_map_fn(_env):
             return OneHotFeatureMap(5, 2)  # values for Chain
 
-        agents.LSVIUCBAgent.__init__(
+        agents_scool.LSVIUCBAgent.__init__(
             self, env, feature_map_fn=feature_map_fn, horizon=10, **kwargs
         )
 
 
 FINITE_MDP_AGENTS = [
-    agents.QLAgent,
-    agents.SARSAAgent,
-    agents.ValueIterationAgent,
-    agents.MBQVIAgent,
-    agents.UCBVIAgent,
-    agents.OptQLAgent,
-    agents.PSRLAgent,
-    agents.RLSVIAgent,
+    agents_scool.QLAgent,
+    agents_scool.SARSAAgent,
+    agents_scool.ValueIterationAgent,
+    agents_scool.MBQVIAgent,
+    agents_research.UCBVIAgent,
+    agents_research.OptQLAgent,
+    agents_research.PSRLAgent,
+    agents_research.RLSVIAgent,
     OneHotLSVI,
 ]
 
 
 CONTINUOUS_STATE_AGENTS = [
-    agents.RSUCBVIAgent,
-    agents.RSKernelUCBVIAgent,
+    agents_research.RSUCBVIAgent,
+    agents_research.RSKernelUCBVIAgent,
 ]
 
 

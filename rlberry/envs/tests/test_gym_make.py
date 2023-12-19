@@ -23,11 +23,11 @@ def test_atari_make():
 
 def test_rendering_with_atari_make():
     from rlberry.manager import ExperimentManager
-    from rlberry.agents.torch import PPOAgent
+    from rlberry_research.agents.torch import PPOAgent
     from gymnasium.wrappers.record_video import RecordVideo
     import os
     from rlberry.envs.gym_make import atari_make
-    from rlberry.agents.torch.utils.training import model_factory_from_env
+    from rlberry_research.agents.torch.utils.training import model_factory_from_env
     import tempfile
 
     with tempfile.TemporaryDirectory() as tmpdirname:

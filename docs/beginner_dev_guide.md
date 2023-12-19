@@ -1,7 +1,7 @@
 (dev_guide)=
 
 ## How to contribute
-### git crash-course
+### Forking and installing rl-berry
 
 The preferred way to contribute to rlberry is to fork the main repository on GitHub, then submit a “pull request” (PR).
 
@@ -14,35 +14,37 @@ In the first few steps, we explain how to locally install rlberry, and how to se
     git clone https://github.com/YOUR_LOGIN/rlberry  # add --depth 1 if your connection is slow
     cd rlberry
     ```
-4. Install the full dependencies
+4. Install poetry (a better version of pip needed to dev on the package). Please refer to the [doc](https://python-poetry.org/docs/basic-usage/) if needed.
     ```bash
-    pip install -r requirement.txt
+    curl -sSL https://install.python-poetry.org | python3 -
     ```
-5. Install the package locally with pip
+5. Install the development dependencies and activate the venv
     ```bash
-    pip install -e . --user
+    poetry install --with dev,doc,torch,extras --sync
+    poetry shell #this will activate the venv, all the following commands will be executed in it.
     ```
-6. Install the development dependencies
+    alternatively you can also use
     ```bash
-    pip install pytest pytest-cov flake8 black
+    poetry install --with dev,doc,torch,extras --sync
+    poetry run yourcommandhere #e.g. poetry run python script.py
     ```
-7. Add the upstream remote. This saves a reference to the main rlberry repository, which you can use to keep your repository synchronized with the latest changes:
+6. Add the upstream remote. This saves a reference to the main rlberry repository, which you can use to keep your repository synchronized with the latest changes:
     ```bash
     git remote add upstream https://github.com/rlberry-py/rlberry
     ```
     You should now have a working installation of rlberry, and your git repository properly configured. The next steps now describe the process of modifying code and submitting a PR:
-8. Synchronize your main branch with the upstream/main branch, more details on [GitHub Docs](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/syncing-a-fork):
+7. Synchronize your main branch with the upstream/main branch, more details on [GitHub Docs](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/syncing-a-fork):
     ```bash
     git checkout main
     git fetch upstream
     git merge upstream/main
     ```
-9. Create a feature branch to hold your development changes:
+8. Create a feature branch to hold your development changes:
     ```bash
     git checkout -b my_feature
     ```
     and start making changes. Always use a feature branch. It’s good practice to never work on the main branch!
-10. Develop the feature on your feature branch on your computer, using Git to do the version control. When you’re done editing, add changed files using git add and then git commit:
+9. Develop the feature on your feature branch on your computer, using Git to do the version control. When you’re done editing, add changed files using git add and then git commit:
     ```bash
     git add modified_files
     git commit
@@ -51,7 +53,7 @@ In the first few steps, we explain how to locally install rlberry, and how to se
     ```bash
     git push -u origin my_feature
     ```
-11. Follow [these](https://help.github.com/articles/creating-a-pull-request-from-a-fork) instructions to create a pull request from your fork. This will send an email to the committers.
+10. Follow [these](https://help.github.com/articles/creating-a-pull-request-from-a-fork) instructions to create a pull request from your fork. This will send an email to the committers.
 
 
 ````{admonition} Note
@@ -115,7 +117,7 @@ Before a PR can be merged, it needs to be approved. Please prefix the title of y
 
 
 * Azure pipelines are used for testing rlberry on Linux, Mac and Windows, with different dependencies and settings.
-* Readthedocs is used to build the docs for viewing.
+* github page are used to build the docs for viewing.
 
 Please note that if you want to skip the CI (azure pipeline is long to run), use `[ci skip]` in the description of the commit.
 

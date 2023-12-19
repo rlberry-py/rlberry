@@ -3,12 +3,33 @@
 Changelog
 =========
 
+
 Dev version
 -----------
 
+
+*PR #397*
+
+ * Automatic save after fit() in ExperienceManager
+
+*PR #376*
+
+ * New plot_writer_data function that does not depend on seaborn and that can plot smoothed function and confidence band if scikit-fda is installed.
+
+Version 0.6.0
+-------------
+
+*PR #276*
+
+ * Non adaptive multiple tests for agent comparison.
+
 *PR #365*
 
- * Fix Sphinx version to <7
+ * Fix Sphinx version to <7.
+
+*PR #350*
+
+ * Rename AgentManager to ExperimentManager.
 
 
 
@@ -23,6 +44,7 @@ Dev version
 *PR #335*
 
  * Upgrade from Python3.9 -> python3.10
+
 
 Version 0.5.0
 -------------
@@ -56,7 +78,6 @@ Version 0.4.1
 
 Version 0.4.0
 -------------
-
 
 *PR #273*
 

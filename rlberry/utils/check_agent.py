@@ -1,5 +1,3 @@
-from rlberry.envs import Chain, Pendulum
-from rlberry.envs.benchmarks.ball_exploration import PBall2D
 from rlberry.manager import ExperimentManager
 import numpy as np
 from rlberry.seeding import set_external_seed
@@ -20,15 +18,21 @@ def _make_tuple_env(env):
         env, str
     ):  # If env param is a str, we use the corresponding "by default" env, and return it as tuple
         if env == "continuous_state":
+            from rlberry_research.envs.benchmarks.ball_exploration import PBall2D
+
             env_ctor = PBall2D
             env_kwargs = {}
         elif env == "discrete_state":
+            from rlberry_research.envs import Chain
+
             env_ctor = Chain
             env_kwargs = {}
         elif env == "vectorized_env_continuous":
             env_ctor = gym_make
             env_kwargs = dict(id="CartPole-v1")
         elif env == "continuous_action":
+            from rlberry_research.envs import Pendulum
+
             env_ctor = Pendulum
             env_kwargs = {}
         else:
@@ -61,7 +65,7 @@ def _fit_experiment_manager(agent, env="continuous_state", init_kwargs=None):
     train_env = _make_tuple_env(env)
     try:
         xp_manager = ExperimentManager(
-            agent, train_env, fit_budget=5, n_fit=1, seed=SEED, init_kwargs=init_kwargs
+            agent, train_env,agent_name="test_agent", fit_budget=5, n_fit=1, seed=SEED, init_kwargs=init_kwargs
         )
         xp_manager.fit()
     except Exception as exc:
@@ -488,7 +492,7 @@ def check_rl_agent(agent, env="continuous_state", init_kwargs=None):
 
     Examples
     --------
-    >>> from rlberry.agents import UCBVIAgent
+    >>> from rlberry_research.agents import UCBVIAgent
     >>> from rlberry.utils import check_rl_agent
     >>> check_rl_agent(UCBVIAgent) # which does not return an error.
     """

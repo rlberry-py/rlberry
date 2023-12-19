@@ -1,15 +1,12 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
 from pathlib import Path
 from datetime import datetime
 import pickle
 import bz2
 import _pickle as cPickle
-from itertools import cycle
 import dill
-from distutils.version import LooseVersion
 
 from rlberry.manager import ExperimentManager
 import rlberry
@@ -24,7 +21,6 @@ def evaluate_agents(
     fignum=None,
     show=True,
     plot=True,
-    sns_kwargs=None,
 ):
     """
     Evaluate and compare each of the agents in experiment_manager_list.
@@ -43,8 +39,6 @@ def evaluate_agents(
         If true, calls plt.show().
     plot: bool
         If false, do not plot.
-    sns_kwargs:
-        Extra parameters for sns.boxplot
 
     Returns
     -------
@@ -72,7 +66,6 @@ def evaluate_agents(
     >>>     data = evaluate_agents(managers, n_simulations=50, plot=False)
 
     """
-    sns_kwargs = sns_kwargs or {}
 
     #
     # evaluation
@@ -124,12 +117,11 @@ def evaluate_agents(
     # plot
     if plot:
         plt.figure(fignum)
-        with sns.axes_style("whitegrid"):
-            ax = sns.boxplot(data=output, **sns_kwargs)
-            ax.set_xlabel("agent")
-            ax.set_ylabel("evaluation output")
-            if show:
-                plt.show()
+        plt.boxplot(output.values, labels=output.columns)
+        plt.xlabel("agent")
+        plt.ylabel("evaluation output")
+        if show:
+            plt.show()
 
     return output
 
@@ -270,11 +262,11 @@ def read_writer_data(data_source, tag=None, preprocess_func=None, id_agent=None)
                     # n_simulation
                     processed_df["name"] = agent_name
                     processed_df["n_simu"] = idx
-
-                    processed_df = pd.concat(
-                        [processed_df, df[df["tag"] != tag]], ignore_index=True
-                    )
-                    # add column
+                    if len(df[df["tag"] != tag]) > 0:
+                        processed_df = pd.concat(
+                            [processed_df, df[df["tag"] != tag]], ignore_index=True
+                        )
+                        # add column
                     data_list.append(processed_df)
     all_writer_data = pd.concat(data_list, ignore_index=True)
     return all_writer_data
@@ -351,201 +343,3 @@ def _load_data(agent_folder, dir_name, id_agent):
         writer_data[str(ii)] = tmp_dict.get("_writer").data
 
     return writer_data
-
-
-def plot_writer_data(
-    data_source,
-    tag,
-    xtag=None,
-    id_agent=None,
-    ax=None,
-    show=True,
-    preprocess_func=None,
-    title=None,
-    savefig_fname=None,
-    sns_kwargs=None,
-    smooth_weight=0.09,
-    plot_raw_curves=True,
-):
-    """
-    Given a list of ExperimentManager or a folder, plot data (corresponding to info) obtained in each episode.
-    The dictionary returned by agents' .fit() method must contain a key equal to `info`.
-
-    If there are several simulations, a confidence interval is plotted ( 90% percentile interval if seaborn version >= 0.12.0
-    otherwise standard deviation is used). This can be overridden using `sns_kwargs`.
-    If there is only one simulation, a tensorboard-style smoothing is performed.
-
-    Parameters
-    ----------
-    data_source : :class:`~rlberry.manager.ExperimentManager`, or list of :class:`~rlberry.manager.ExperimentManager` or str or list of str
-        - If ExperimentManager or list of ExperimentManager, load data from it (the agents must be fitted).
-
-        - If str, the string must be the string path of a directory,  each
-        subdirectory of this directory must contain pickle files.
-        load the data from the directory of the latest experiment in date.
-        This str should be equal to the value of the `output_dir` parameter in
-        :class:`~rlberry.manager.ExperimentManager`.
-
-        - If list of str, each string must be a directory containing pickle files
-        load the data from these pickle files.
-
-        Note: the agent's save function must save its writer at the key `_writer`.
-        This is the default for rlberry agents.
-    tag : str
-        Tag of data to plot on y-axis.
-    xtag : str or None, default=None
-        Tag of data to plot on x-axis. If None, use 'global_step' and aggregate data.
-        If not None, only the data for one agents are used (i.e. from one fit,
-        not from all n_fit fits). See id_agent in this case.
-    id_agent : int or None, default=None
-        id of the agent to plot, used only if xtag is not None.
-    ax: matplotlib axis or None, default=None
-        Matplotlib axis on which we plot. If None, create one. Can be used to
-        customize the plot.
-    show: bool, default=True
-        If true, calls plt.show().
-    preprocess_func: Callable, default=None
-        Function to apply to 'tag' column before plot. For instance, if tag=episode_rewards,
-        setting preprocess_func=np.cumsum will plot cumulative rewards. If None, do nothing.
-    title: str (Optional)
-        Optional title to plot. If None, set to tag.
-    savefig_fname: str (Optional)
-        Name of the figure in which the plot is saved with figure.savefig. If None,
-        the figure is not saved.
-    sns_kwargs: dict
-        Optional extra params for seaborn lineplot.
-    smooth_weight: float in [0,1], default=0.9
-        Apply smoothing tensorboard-style to the plots with parameter smooth_weight.
-        Only applied if there is one simulation only.
-    plot_raw_curves: bool, default=True
-        If True and if the curves are smoothed, plot also the unsmoothed curves.
-
-    Returns
-    -------
-    Pandas DataFrame with processed data used by seaborn's lineplot.
-
-    Examples
-    --------
-    >>> from rlberry.agents.torch import A2CAgent, DQNAgent
-    >>> from rlberry.manager import ExperimentManager, plot_writer_data
-    >>> from rlberry.envs import gym_make
-    >>>
-    >>> if __name__=="__main__":
-    >>>     managers = [ ExperimentManager(
-    >>>         agent_class,
-    >>>         (gym_make, dict(id="CartPole-v1")),
-    >>>         fit_budget=4e4,
-    >>>         eval_kwargs=dict(eval_horizon=500),
-    >>>         n_fit=1,
-    >>>         parallelization="process",
-    >>>         mp_context="spawn",
-    >>>         seed=42,
-    >>>          ) for agent_class in [A2CAgent, DQNAgent]]
-    >>>     for manager in managers:
-    >>>         manager.fit()
-    >>>     # We have only one seed (n_fit=1) hence the curves are automatically smoothed
-    >>>     data = plot_writer_data(managers, "episode_rewards", smooth_weight=0.95)
-    """
-    sns_kwargs = sns_kwargs or {}
-
-    title = title or tag
-    if preprocess_func is not None:
-        ylabel = "value"
-    else:
-        ylabel = tag
-    if (xtag is not None) and (id_agent is None):
-        id_agent = 0
-    processed_df = read_writer_data(
-        data_source, tag, preprocess_func, id_agent=id_agent
-    )
-
-    if len(processed_df) == 0:
-        logger.error("[plot_writer_data]: No data to be plotted.")
-        return
-
-    data = processed_df[processed_df["tag"] == tag]
-
-    if xtag is None:
-        xtag = "global_step"
-
-    if data[xtag].notnull().sum() > 0:
-        xx = xtag
-        if data["global_step"].isna().sum() > 0:
-            logger.warning(
-                f"Plotting {tag} vs {xtag}, but {xtag} might be missing for some agents."
-            )
-    else:
-        xx = data.index
-
-    if ax is None:
-        figure, ax = plt.subplots(1, 1)
-
-    # Customizing linestyle in sns.lineplot
-    if "style" in sns_kwargs:
-        # Number of unique dash styles. Default: 4 styles max.
-        n_uniq_dash = sns_kwargs.get("n_uniq_dash", 4)
-        linestyles = ["", (1, 1), (5, 5), (1, 5, 3, 5)]
-        # Cycle through default sns linestyles.
-        dash_cycler = cycle(linestyles[:n_uniq_dash])
-        sns_kwargs["dashes"] = [
-            next(dash_cycler) for _ in range(data["name"].unique().size)
-        ]
-
-    # PS: in the next release of seaborn, ci should be deprecated and replaced
-    # with errorbar, which allows to specifies other types of confidence bars,
-    # in particular quantiles.
-
-    def _smooth(df):
-        df["value"] = smooth(list(df["value"]), smooth_weight)
-        return df
-
-    if len(data["n_simu"].unique()) == 1:
-        legends = []
-        if plot_raw_curves:
-            sns.lineplot(x=xx, y="value", hue="name", data=data, ax=ax, alpha=0.3)
-            legends += ["raw " + str(n) for n in data["name"].unique()]
-        data = data.groupby(["name"]).apply(_smooth)
-        lineplot_kwargs = dict(x=xx, y="value", hue="name", data=data, ax=ax)
-        lineplot_kwargs.update(sns_kwargs)
-        sns.lineplot(**lineplot_kwargs)
-        ax.legend(legends + ["smoothed " + str(n) for n in data["name"].unique()])
-    else:
-        if LooseVersion(sns.__version__) >= LooseVersion("0.12.0"):
-            if "errorbar" in sns_kwargs.keys():
-                lineplot_kwargs = dict(x=xx, y="value", hue="name", data=data, ax=ax)
-            else:
-                # See https://seaborn.pydata.org/tutorial/error_bars
-                lineplot_kwargs = dict(
-                    x=xx, y="value", hue="name", data=data, ax=ax, errorbar=("pi", 90)
-                )
-        else:
-            if "ci" in sns_kwargs.keys():
-                lineplot_kwargs = dict(x=xx, y="value", hue="name", data=data, ax=ax)
-            else:
-                lineplot_kwargs = dict(
-                    x=xx, y="value", hue="name", data=data, ax=ax, ci="sd"
-                )
-        lineplot_kwargs.update(sns_kwargs)
-        sns.lineplot(**lineplot_kwargs)
-    ax.set_title(title)
-    ax.set_ylabel(ylabel)
-
-    if show:
-        plt.show()
-
-    if savefig_fname is not None:
-        plt.gcf().savefig(savefig_fname)
-
-    return data
-
-
-# https://stackoverflow.com/questions/42281844/what-is-the-mathematics-behind-the-smoothing-parameter-in-tensorboards-scalar#_=_
-def smooth(scalars, weight):  # Weight between 0 and 1
-    last = scalars[0]  # First value in the plot (first timestep)
-    smoothed = list()
-    for point in scalars:
-        smoothed_val = last * weight + (1 - weight) * point  # Calculate smoothed value
-        smoothed.append(smoothed_val)  # Save it
-        last = smoothed_val  # Anchor the last smoothed value
-
-    return smoothed

@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from rlberry.envs import GridWorld, Chain
+from rlberry_research.envs import GridWorld, Chain
 from rlberry.utils.check_env import check_env
 from rlberry.utils.check_agent import (
     check_rl_agent,
@@ -9,7 +9,8 @@ from rlberry.utils.check_agent import (
 )
 from rlberry.spaces import Box, Dict, Discrete
 import gymnasium as gym
-from rlberry.agents import ValueIterationAgent, UCBVIAgent
+from rlberry_scool.agents import ValueIterationAgent
+from rlberry_research.agents import UCBVIAgent
 
 
 class ActionDictTestEnv(gym.Env):

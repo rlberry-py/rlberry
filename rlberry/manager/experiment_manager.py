@@ -1,5 +1,6 @@
 import concurrent.futures
 from copy import deepcopy
+import os
 from pathlib import Path
 import cProfile, pstats
 from pstats import SortKey
@@ -30,14 +31,14 @@ from rlberry.utils.writers import DefaultWriter
 from rlberry.manager.utils import create_database
 from rlberry import types
 
-
 _OPTUNA_INSTALLED = True
 try:
     import optuna
-except Exception:
-    _OPTUNA_INSTALLED = False
+except Exception:  # pragma: no cover
+    _OPTUNA_INSTALLED = False  # pragma: no cover
 
 logger = rlberry.logger
+
 
 # Aux
 #
@@ -226,7 +227,9 @@ class ExperimentManager:
         If 'unique', data is saved to ``output_dir/manager_data/<AGENT_NAME_UNIQUE_ID>``
         If 'timestamp', data is saved to ``output_dir/manager_data/<AGENT_NAME_TIMESTAMP_SHORT_ID>``
     default_writer_kwargs : dict
-        Optional arguments for :class:`~rlberry.utils.writers.DefaultWriter`.
+        Optional arguments for :class:`~rlberry.utils.writers.DefaultWriter`. Typically one may
+        want to change the log style with default_writer_kwargs set to {"style_log":"progressbar"} or
+         {"style_log":"one_line"}
     init_kwargs_per_instance : List[dict] (optional)
         List of length ``n_fit`` containing the params to initialize each of
         the ``n_fit`` agent instances. It can be useful if different instances
@@ -388,6 +391,10 @@ class ExperimentManager:
         elif outdir_id_style == "timestamp":
             self.output_dir_ = self.output_dir_ / (
                 self.agent_name + "_" + self.timestamp_id
+            )
+        if os.path.exists(self.output_dir_):
+            logger.warning(
+                "This output directory already exists, the save may overwrite the previous Experiment."
             )
 
         # Create list of writers for each agent that will be trained
@@ -617,7 +624,15 @@ class ExperimentManager:
                     " Returning []."
                 )
                 return []
-            values.append(agent.eval(**eval_kwargs))
+            # Update eval_kwargs with n_simulations parameter
+            eval_kwargs_with_n_simulations = eval_kwargs.copy()
+            if "n_simulations" in eval_kwargs:
+                # Issue a warning that n_simulations is overwritten
+                logger.info(
+                    "Warning: n_simulations parameter in eval_kwargs is being overwritten with 1."
+                )
+            eval_kwargs_with_n_simulations["n_simulations"] = 1
+            values.append(agent.eval(**eval_kwargs_with_n_simulations))
             if verbose:
                 if logger.getEffectiveLevel() <= 10:  # If debug
                     logger.debug(f"[eval]... simulation {ii + 1}/{n_simulations}")
@@ -800,6 +815,7 @@ class ExperimentManager:
 
         # gather all stats in a dictionary
         self._gather_default_writer_data()
+        self.save()
 
     def _gather_default_writer_data(self):
         """Gather DefaultWriter data in a dictionary"""
@@ -873,6 +889,7 @@ class ExperimentManager:
                 logger.warning(
                     "[ExperimentManager] Instance cannot be pickled: " + str(ex)
                 )
+        logger.info("The ExperimentManager was saved in : '" + str(filename) + "'")
 
         return filename
 
@@ -1043,8 +1060,8 @@ class ExperimentManager:
 
         global _OPTUNA_INSTALLED
         if not _OPTUNA_INSTALLED:
-            logging.error("Optuna not installed.")
-            return
+            logging.error("Optuna not installed.")  # pragma: no cover
+            return  # pragma: no cover
 
         assert fit_fraction > 0.0 and fit_fraction <= 1.0
 

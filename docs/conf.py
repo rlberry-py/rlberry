@@ -13,6 +13,7 @@
 import os
 import sys
 
+
 import sphinx_gallery  # noqa
 from sphinx_gallery.sorting import ExplicitOrder
 
@@ -22,14 +23,12 @@ sys.path.insert(0, os.path.abspath("../"))
 # -- Project information -----------------------------------------------------
 
 project = "rlberry"
-copyright = "2022, rlberry team"
+copyright = "2023, rlberry team"
 author = "rlberry team"
 
+import rlberry
 
-ver_file = os.path.join("../rlberry", "_version.py")
-with open(ver_file) as f:
-    exec(f.read())
-release = __version__
+release = rlberry.__version__
 # -- General configuration ---------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be
@@ -51,19 +50,7 @@ extensions = [
 ]
 
 myst_enable_extensions = ["amsmath"]
-# myst_enable_extensions = [
-#     "amsmath",
-#     "colon_fence",
-#     "deflist",
-#     "dollarmath",
-#     "fieldlist",
-#     "html_admonition",
-#     "html_image",
-#     "replacements",
-#     "smartquotes",
-#     "substitution",
-#     "tasklist",
-# ]
+
 
 autodoc_default_options = {
     "members": True,
