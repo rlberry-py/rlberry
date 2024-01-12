@@ -72,16 +72,12 @@ class DummyAgent2(Agent):
 
     # 3 - function to evaluate a model
     def eval(self, n_simulations: int = 2, eval_horizon=3):
+        obs = self.eval_env.reset()
+        action = self.policy(obs)
         episode_returns = [
             0,
         ] * n_simulations
         return np.mean(episode_returns)
-
-    @classmethod
-    def sample_parameters(cls, trial):
-        hyperparameter1 = trial.suggest_categorical("hyperparameter1", [1, 2, 3])
-        hyperparameter2 = trial.suggest_float("hyperparameter2", -10, 10)
-        return {"hyperparameter1": hyperparameter1, "hyperparameter2": hyperparameter2}
 
 
 @pytest.mark.xfail(sys.platform == "win32", reason="bug with windows???")
