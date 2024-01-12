@@ -5,7 +5,7 @@ import numpy as np
 import sys
 import os
 from rlberry_research.envs import GridWorld
-from rlberry.agents import AgentWithSimplePolicy, AgentTorch
+from rlberry.agents import AgentWithSimplePolicy, AgentTorch, Agent
 from rlberry.manager import (
     ExperimentManager,
     plot_writer_data,
@@ -47,6 +47,43 @@ class DummyAgent(AgentWithSimplePolicy):
         return {"hyperparameter1": hyperparameter1, "hyperparameter2": hyperparameter2}
 
 
+class DummyAgent2(Agent):
+    def __init__(self, env, hyperparameter1=0, hyperparameter2=0, **kwargs):
+        AgentWithSimplePolicy.__init__(self, env, **kwargs)
+        self.name = "DummyAgent"
+        self.fitted = False
+        self.hyperparameter1 = hyperparameter1
+        self.hyperparameter2 = hyperparameter2
+
+        self.total_budget = 0.0
+
+    def fit(self, budget, **kwargs):
+        del kwargs
+        self.fitted = True
+        self.total_budget += budget
+        for ii in range(budget):
+            if self.writer is not None:
+                self.writer.add_scalar("a", 5)
+                self.writer.add_scalar("b", 6, ii)
+        return None
+
+    def policy(self, observation):
+        return 0
+
+    # 3 - function to evaluate a model
+    def eval(self, n_simulations: int = 2, eval_horizon=3):
+        episode_returns = [
+            0,
+        ] * n_simulations
+        return np.mean(episode_returns)
+
+    @classmethod
+    def sample_parameters(cls, trial):
+        hyperparameter1 = trial.suggest_categorical("hyperparameter1", [1, 2, 3])
+        hyperparameter2 = trial.suggest_float("hyperparameter2", -10, 10)
+        return {"hyperparameter1": hyperparameter1, "hyperparameter2": hyperparameter2}
+
+
 @pytest.mark.xfail(sys.platform == "win32", reason="bug with windows???")
 def test_experiment_manager_1():
     # Define train and evaluation envs
@@ -74,7 +111,7 @@ def test_experiment_manager_1():
         init_kwargs_per_instance=params_per_instance,
     )
     stats_agent2 = ExperimentManager(
-        DummyAgent,
+        DummyAgent2,
         train_env,
         fit_budget=5,
         eval_kwargs=eval_kwargs,
@@ -141,7 +178,7 @@ def test_experiment_manager_2():
         seed=123,
     )
     stats_agent2 = ExperimentManager(
-        DummyAgent,
+        DummyAgent2,
         train_env,
         eval_env=eval_env,
         fit_budget=5,
@@ -209,7 +246,7 @@ def test_experiment_manager_partial_fit_and_tuple_env(train_env):
         seed=123,
     )
     stats2 = ExperimentManager(
-        DummyAgent,
+        DummyAgent2,
         train_env,
         init_kwargs=params,
         n_fit=4,
