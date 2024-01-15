@@ -12,7 +12,7 @@ from rlberry.wrappers.discrete2onehot import DiscreteToOneHotWrapper
 from rlberry.wrappers.discretize_state import DiscretizeStateWrapper
 from rlberry.wrappers.rescale_reward import RescaleRewardWrapper
 from rlberry.wrappers.uncertainty_estimator_wrapper import UncertaintyEstimatorWrapper
-from rlberry.wrappers.vis2d import Vis2dWrapper
+from rlberry_research.wrappers.vis2d import Vis2dWrapper
 from rlberry.wrappers.gym_utils import OldGymCompatibilityWrapper
 
 
