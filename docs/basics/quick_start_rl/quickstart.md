@@ -17,7 +17,7 @@ import numpy as np
 import pandas as pd
 import time
 from rlberry.agents import AgentWithSimplePolicy
-from rlberry_scool.agents import UCBVIAgent
+from rlberry_research.agents import UCBVIAgent
 from rlberry_research.envs import Chain
 from rlberry.manager import (
     ExperimentManager,
