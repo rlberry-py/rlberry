@@ -486,6 +486,10 @@ def check_rl_agent(agent, env="continuous_state", init_kwargs=None):
     Check ExperimentManager compatibility and check reproducibility/seeding.
     Raises an exception if a check fails.
 
+    Warning
+    ----------
+    To use this function you need to install rlberry_research via : pip install git+https://github.com/rlberry-py/rlberry-research.git
+
     Parameters
     ----------
     agent: rlberry agent module
@@ -518,6 +522,10 @@ def check_rlberry_agent(agent, env="continuous_state", init_kwargs=None):
     for an agent to satisfy this check but satisfying this check give access to
     additional features in rlberry.
 
+    Warning
+    ----------
+    To use this function you need to install rlberry_research via : pip install git+https://github.com/rlberry-py/rlberry-research.git
+
     Parameters
     ----------
     agent: rlberry agent module
@@ -549,6 +557,10 @@ def check_hyperparam_optimisation_agent(
     """
     Check hyperparameter optimisation compatibility with manager
     Raises an exception if a check fails.
+
+    Warning
+    ----------
+    To use this function you need to install rlberry_research via : pip install git+https://github.com/rlberry-py/rlberry-research.git
 
     Parameters
     ----------

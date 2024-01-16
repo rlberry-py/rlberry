@@ -12,6 +12,25 @@ Dev version
 
  * Automatic save after fit() in ExperienceManager
 
+*PR #396*
+
+ * Improve coverage and fix version workflow
+
+*PR #385 to #390*
+
+ * Switch from RTD to github page
+
+*PR #382*
+
+ * switch to poetry
+
+*PR #379*
+
+ * rlberry: everything for rl that is not an agent or an environment, e.g. experiment management, parallelization, statistical tools, plotting...
+ * rlberry-scool: repository for teaching materials, e.g. simplified algorithms for teaching, notebooks for tutorials for learning RL...
+ * rlberry-research: repository of agents and environments used inside Inria Scool team
+
+
 *PR #376*
 
  * New plot_writer_data function that does not depend on seaborn and that can plot smoothed function and confidence band if scikit-fda is installed.
