@@ -170,5 +170,4 @@ Environment Wrappers
   wrappers.discretize_state.DiscretizeStateWrapper
   wrappers.gym_utils.OldGymCompatibilityWrapper
   wrappers.RescaleRewardWrapper
-  wrappers.vis2d.Vis2dWrapper
   wrappers.WriterWrapper
