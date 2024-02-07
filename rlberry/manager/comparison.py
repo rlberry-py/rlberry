@@ -27,11 +27,9 @@ def compare_agents(
     Parameters
     ----------
     agent_source : list of :class:`~rlberry.manager.ExperimentManager`, list of str
-
         - If list of ExperimentManager, load data from it (the agents must be fitted).
-
         - If str, each string must be the path of a agent_manager.obj.
-
+        **Each agent must have unique name.**
     method: str in {"tukey_hsd", "permutation"}, default="tukey_hsd"
         Method used in the test. "tukey_hsd" use scipy implementation [1] and "permutation" use permutation test with Step-Down method for multiple testing [2]. Tukey HSD method suppose Gaussian model on the aggregated evaluations and permutation test is non-parametric and does not make assumption on the distribution. permutation is the safe choice when the reward is likely to be heavy-tailed or multimodal.
     eval_function: callable or None, default = None
@@ -56,6 +54,34 @@ def compare_agents(
 
     [2]: Testing Statistical Hypotheses by E. L. Lehmann, Joseph P. Romano (Section 15.4.4), https://doi.org/10.1007/0-387-27605-X, Springer
 
+    """
+    df_agent_data = preprocess_agent_data(agent_source, eval_function, n_simulations)
+    return compare_agents_data(df_agent_data, method, alpha, B, seed)
+
+
+def preprocess_agent_data(
+    agent_source,
+    eval_function=None,
+    n_simulations=50,
+):
+    """
+    Compare several trained agents using the mean over n_simulations evaluations for each agent.
+
+    Parameters
+    ----------
+    agent_source : list of :class:`~rlberry.manager.ExperimentManager`, list of str
+        - If list of ExperimentManager, load data from it (the agents must be fitted).
+        - If str, each string must be the path of a agent_manager.obj.
+        **Each agent must have unique name.**
+    eval_function: callable or None, default = None
+        Function used the evaluate the agents. lambda manager : ExperimentManager, eval_budget : int or None, agent_id: int -> eval:float
+        If None, the mean of the eval function of the agent is used over n_simulations evaluations.
+    n_simulations: int, default = 50
+        Number of evaluations to use if eval_function is None.
+
+    Returns
+    -------
+    results: a DataFrame with the evaluation results.
     """
 
     # Construction of the array of evaluations
@@ -91,13 +117,49 @@ def compare_agents(
                 ],
                 ignore_index=True,
             )
+    return df
 
-    agent_names = df["agent"].unique()
-    assert len(agent_names) == len(
-        agent_manager_list
-    ), "Each agent must have unique name."
+
+def compare_agents_data(
+    data_to_compare,
+    method="tukey_hsd",
+    alpha=0.05,
+    B=10_000,
+    seed=None,
+):
+    """
+    Compare several trained agents using the mean over n_simulations evaluations for each agent.
+
+    Parameters
+    ----------
+    data_to_compare : DataFrame
+        Data of the agents to compare (result from their evaluation). The dataframe must have 2 columns : 'mean_eval' and 'agent'
+    method: str in {"tukey_hsd", "permutation"}, default="tukey_hsd"
+        Method used in the test. "tukey_hsd" use scipy implementation [1] and "permutation" use permutation test with Step-Down method for multiple testing [2]. Tukey HSD method suppose Gaussian model on the aggregated evaluations and permutation test is non-parametric and does not make assumption on the distribution. permutation is the safe choice when the reward is likely to be heavy-tailed or multimodal.
+    alpha: float, default = 0.05
+        Level of the test, control the Family-wise error.
+    B: int, default = 10_000
+        Number of random permutations used to approximate the permutation test if method = "permutation"
+    seed: int or None,
+        The seed of the random number generator from which we sample permutations. If None, create one.
+
+    Returns
+    -------
+    results: a DataFrame summarising the results.
+
+    References
+    ----------
+    [1]: https://scipy.github.io/devdocs/reference/generated/scipy.stats.tukey_hsd.html
+
+    [2]: Testing Statistical Hypotheses by E. L. Lehmann, Joseph P. Romano (Section 15.4.4), https://doi.org/10.1007/0-387-27605-X, Springer
+
+    """
+    agent_names = data_to_compare["agent"].unique()
     data = np.array(
-        [np.array(df.loc[df["agent"] == name, "mean_eval"]) for name in agent_names]
+        [
+            np.array(data_to_compare.loc[data_to_compare["agent"] == name, "mean_eval"])
+            for name in agent_names
+        ]
     )
 
     n_agents = len(agent_names)
@@ -109,23 +171,33 @@ def compare_agents(
     ]
 
     mean_agent1 = [
-        np.mean(df.loc[df["agent"] == vs[i][0], "mean_eval"]) for i in range(len(vs))
+        np.mean(data_to_compare.loc[data_to_compare["agent"] == vs[i][0], "mean_eval"])
+        for i in range(len(vs))
     ]
 
     mean_agent2 = [
-        np.mean(df.loc[df["agent"] == vs[i][1], "mean_eval"]) for i in range(len(vs))
+        np.mean(data_to_compare.loc[data_to_compare["agent"] == vs[i][1], "mean_eval"])
+        for i in range(len(vs))
     ]
     mean_diff = [
         np.mean(
-            np.array(df.loc[df["agent"] == vs[i][0], "mean_eval"])
-            - np.array(df.loc[df["agent"] == vs[i][1], "mean_eval"])
+            np.array(
+                data_to_compare.loc[data_to_compare["agent"] == vs[i][0], "mean_eval"]
+            )
+            - np.array(
+                data_to_compare.loc[data_to_compare["agent"] == vs[i][1], "mean_eval"]
+            )
         )
         for i in range(len(vs))
     ]
     std_diff = [
         np.std(
-            np.array(df.loc[df["agent"] == vs[i][0], "mean_eval"])
-            - np.array(df.loc[df["agent"] == vs[i][1], "mean_eval"])
+            np.array(
+                data_to_compare.loc[data_to_compare["agent"] == vs[i][0], "mean_eval"]
+            )
+            - np.array(
+                data_to_compare.loc[data_to_compare["agent"] == vs[i][1], "mean_eval"]
+            )
         )
         for i in range(len(vs))
     ]
