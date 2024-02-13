@@ -6,12 +6,154 @@ import rlberry
 from rlberry.manager import ExperimentManager
 from rlberry.seeding import Seeder
 import pathlib
+from adastop import MultipleAgentsComparator
 
 logger = rlberry.logger
 
-# TODO : be able to compare agents from pickle files.
 
+class AdastopComparator(MultipleAgentsComparator):
+    """
+    Compare sequentially agents, with possible early stopping.
+    At maximum, there can be n times K fits done.
 
+    For now, implement only a two-sided test.
+
+    Parameters
+    ----------
+
+    n: int, or array of ints of size self.n_agents, default=5
+        If int, number of fits before each early stopping check. If array of int, a
+        different number of fits is used for each agent.
+
+    K: int, default=5
+        number of check.
+
+    B: int, default=None
+        Number of random permutations used to approximate permutation distribution.
+
+    comparisons: list of tuple of indices or None
+        if None, all the pairwise comparison are done.
+        If = [(0,1), (0,2)] for instance, the compare only 0 vs 1  and 0 vs 2
+
+    alpha: float, default=0.01
+        level of the test
+
+    beta: float, default=0
+        power spent in early accept.
+
+    seed: int or None, default = None
+
+    Attributes
+    ----------
+    agent_names: list of str
+        list of the agents' names.
+    decision: dict
+        decision of the tests for each comparison, keys are the comparisons and values are in {"equal", "larger", "smaller"}.
+    n_iters: dict
+        number of iterations (i.e. number of fits) used for each agent. Keys are the agents' names and values are ints.
+
+    """
+
+    def __init__(
+        self,
+        n=5,
+        K=5,
+        B=10000,
+        comparisons=None,
+        alpha=0.01,
+        beta=0,
+        seed=None,
+    ):
+
+        MultipleAgentsComparator.__init__(self, n, K,B,  comparisons, alpha, beta, seed)
+
+    def compare(self, manager_list, n_evaluations=50, verbose=True):
+        """
+        Run Adastop on the managers from manager_list
+
+        Parameters
+        ----------
+        manager_list: list of ExperimentManager kwargs
+            List of manager containing agents we want to compare.
+        verbose: bool
+            Print Steps.
+        Returns
+        -------
+        decisions: dictionary with comparisons as index and with values str in {"equal", "larger", "smaller", "continue"}
+           Decision of the test at this step.
+        """
+        eval_values = {
+            ExperimentManager(**manager).agent_name: [] for manager in manager_list
+        }
+        self.n_evaluations = n_evaluations
+        seeder = Seeder(self.rng.randint(10000))
+        seeders = seeder.spawn(len(manager_list) * self.K + 1)
+        self.rng = seeders[-1].rng
+        for k in range(self.K):
+            eval_values = self._fit_evaluate(
+                manager_list, eval_values,  seeders
+            )
+            self.partial_compare(eval_values, verbose=True)
+            if self.is_finished:
+                break
+
+        logger.info("Test finished")
+        logger.info("Results are ")
+        print(self.get_results())
+
+    def _fit_evaluate(self, managers, eval_values, seeders):
+        """
+        fit rlberry agents.
+        """
+        if isinstance(self.n,int):
+            self.n = np.array([self.n]*len(managers))
+        
+        for i, kwargs in enumerate(managers):
+            kwargs["n_fit"] = self.n[i]
+        managers_in = []
+        agent_names_in = []
+        for i in range(len(managers)):
+            if (self.current_comparisons is None) or (
+                i in np.array(self.current_comparisons).ravel()
+            ):
+                manager_kwargs = managers[i]
+                seeder = seeders[i]
+                managers_in.append(ExperimentManager(**manager_kwargs, seed=seeder))
+                agent_names_in.append(managers_in[-1].agent_name)
+
+        if self.agent_names is None:
+            self.agent_names = agent_names_in
+
+        if len(set(self.agent_names)) != len(self.agent_names):
+            raise ValueError("Error: there must be different names for each agent.")
+
+        # Fit all the agents
+        managers_in = [ _fit_agent(manager) for manager in managers_in]
+
+        # Get the evaluations
+        idz = 0
+        for i in range(len(managers_in)):
+            eval_values[agent_names_in[i]] = np.hstack([eval_values[agent_names_in[i]],self._get_evals(managers_in[i], self.n[i])])
+            
+        return eval_values
+
+    def _get_evals(self, manager, n):
+        """
+        Can be overwritten for alternative evaluation function.
+        """
+        eval_values = []
+        for idx in range(n):
+            logger.info("Evaluating agent " + str(idx))
+            eval_values.append(
+                np.mean(manager.eval_agents(self.n_evaluations, agent_id=idx))
+            )
+        return eval_values
+    
+def _fit_agent(manager):
+    manager.fit()
+    return manager
+
+# TODO : be able to compare agents from dataframes and from pickle files.
 def compare_agents(
     agent_source,
     method="tukey_hsd",
