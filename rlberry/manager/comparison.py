@@ -64,8 +64,7 @@ class AdastopComparator(MultipleAgentsComparator):
         beta=0,
         seed=None,
     ):
-
-        MultipleAgentsComparator.__init__(self, n, K,B,  comparisons, alpha, beta, seed)
+        MultipleAgentsComparator.__init__(self, n, K, B, comparisons, alpha, beta, seed)
 
     def compare(self, manager_list, n_evaluations=50, verbose=True):
         """
@@ -90,9 +89,7 @@ class AdastopComparator(MultipleAgentsComparator):
         seeders = seeder.spawn(len(manager_list) * self.K + 1)
         self.rng = seeders[-1].rng
         for k in range(self.K):
-            eval_values = self._fit_evaluate(
-                manager_list, eval_values,  seeders
-            )
+            eval_values = self._fit_evaluate(manager_list, eval_values, seeders)
             self.partial_compare(eval_values, verbose=True)
             if self.is_finished:
                 break
@@ -105,9 +102,9 @@ class AdastopComparator(MultipleAgentsComparator):
         """
         fit rlberry agents.
         """
-        if isinstance(self.n,int):
-            self.n = np.array([self.n]*len(managers))
-        
+        if isinstance(self.n, int):
+            self.n = np.array([self.n] * len(managers))
+
         for i, kwargs in enumerate(managers):
             kwargs["n_fit"] = self.n[i]
         managers_in = []
@@ -128,13 +125,18 @@ class AdastopComparator(MultipleAgentsComparator):
             raise ValueError("Error: there must be different names for each agent.")
 
         # Fit all the agents
-        managers_in = [ _fit_agent(manager) for manager in managers_in]
+        managers_in = [_fit_agent(manager) for manager in managers_in]
 
         # Get the evaluations
         idz = 0
         for i in range(len(managers_in)):
-            eval_values[agent_names_in[i]] = np.hstack([eval_values[agent_names_in[i]],self._get_evals(managers_in[i], self.n[i])])
-            
+            eval_values[agent_names_in[i]] = np.hstack(
+                [
+                    eval_values[agent_names_in[i]],
+                    self._get_evals(managers_in[i], self.n[i]),
+                ]
+            )
+
         return eval_values
 
     def _get_evals(self, manager, n):
@@ -148,10 +150,12 @@ class AdastopComparator(MultipleAgentsComparator):
                 np.mean(manager.eval_agents(self.n_evaluations, agent_id=idx))
             )
         return eval_values
-    
+
+
 def _fit_agent(manager):
     manager.fit()
     return manager
+
 
 # TODO : be able to compare agents from dataframes and from pickle files.
 def compare_agents(
