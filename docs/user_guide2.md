@@ -2,6 +2,9 @@
 
 
 # User Guide
+
+You can find a compacted version [here](#compacted-version).
+
 ## Introduction
 Welcome to rlberry.
 Use rlberry's [ExperimentManager](experimentManager_page) to train, evaluate and compare rl agents.
@@ -35,11 +38,15 @@ You can find the guide for ExperimentManager [here](experimentManager_page).
 Logging is used to keep a trace of the experiments. It's include runing informations, data, and results.
 You can find the guide for Logging [here](logging_page).
 ### Analyse the results
+In construction
 ## Experimenting with Deep agents
 ### Torch Agents   <!-- TOCHECK :plus tard -->
+In construction
 ### Policy and Value Networks<!-- TOCHECK :plus tard -->
+In construction
 <!--already in Agent_page ### Stable Baselines 3 -->
 ## Experimenting with Bandits. <!-- TOCHECK :plus tard -->
+In construction
 ## Reproducibility
 ### Seeding
 In rlberry you can use a seed to generate pseudo-"random number". Most of the time, it allow you to re-run the same algorithm with the same pseudo-"random number", and make your experiment reproducible.You can find the guide for Seeding [here](seeding_page).
@@ -52,7 +59,9 @@ It could be useful in many way :
 
 You can find the guide for Saving and Loading [here](save_load_page).
 ### Saving and Loading Agents <!-- TOCHECK :plus tard -->
+In construction
 ### Saving and Loading Data <!-- TOCHECK :plus tard -->
+In construction
 
 <!--
 ---------------------------------------
@@ -64,5 +73,30 @@ regarder/expliquer les LoadResults.py  (dans rlberry/experiment et ..../test
 
 ## Advanced Usage<!-- TOCHECK :plus tard -->
 ### Custom Agents <!-- TOCHECK :plus tard -->
+In construction
 ### Custom Environments<!-- TOCHECK :plus tard -->
+In construction
 ### Transfer Learning<!-- TOCHECK :plus tard -->
+In construction
+
+
+# Compacted version
+## Set up an experiment
+- [Environment](environment_page)
+- [Agent](agent_page)
+- [ExperimentManager](experimentManager_page)
+- [Logging](logging_page).
+- [Analyse the results (In construction)]()
+## Experimenting with Deep agents
+- [Torch Agents (In construction)]()
+- [Policy and Value Networks (In construction)]()
+- [Experimenting with Bandits (In construction)]()
+## Reproducibility
+- [Seeding](seeding_page)
+- [Save & Load Experiment](save_load_page)
+- [Save & Load Agents (In construction)]()
+- [Save & Load Data (In construction)]()
+## Advanced Usage
+- [Custom Agents (In construction)]()
+- [Custom Environments (In construction)]()
+- [Transfer Learning (In construction)]()
