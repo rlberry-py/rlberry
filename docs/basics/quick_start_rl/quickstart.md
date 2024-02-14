@@ -256,7 +256,7 @@ policies learned by the agents, **after** the learning period.
 To compare the performance of the agents **during** the learning period
 (in the fit method), we can estimate their cumulative regret, which is
 the difference between the rewards gathered by the agents during
-training and the rewards of an optimal agent. Alternatively, if the we
+training and the rewards of an optimal agent. Alternatively, if we
 cannot compute the optimal policy, we could simply compare the rewards
 gathered during learning, instead of the regret.
 
