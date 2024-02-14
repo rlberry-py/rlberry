@@ -151,7 +151,7 @@ class. Here is a diagram to explain briefly what it does.
 In a few words, ExperimentManager spawns agents and environments for
 training and then once the agents are trained, it uses these agents and
 new environments to evaluate how well the agent perform. All of these
-steps can be done several times to assess stochasticity of agents and/or
+steps can be done several times to assess the stochasticity of agents and/or
 environment.
 
 Comparing the expected rewards of the final policies
