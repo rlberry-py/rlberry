@@ -143,7 +143,10 @@ One of the main feature of rlberry is its
 [ExperimentManager](rlberry.manager.ExperimentManager)
 class. Here is a diagram to explain briefly what it does.
 
-![](experiment_manager_diagram.png){.align-center}
+
+```{image} experiment_manager_diagram.png
+:align: center
+```
 
 In a few words, ExperimentManager spawns agents and environments for
 training and then once the agents are trained, it uses these agents and
@@ -237,7 +240,9 @@ output = evaluate_agents([ucbvi_stats, baseline_stats], n_simulations=10, plot=T
 
 </br>
 
-![image](output_10_1.png){.align-center}
+```{image} output_10_1.png
+:align: center
+```
 
 Comparing the agents during the learning period
 -----------------------------------------------
@@ -374,4 +379,6 @@ output = plot_writer_data(
 )
 ```
 
-![image](output_19_0.png){.align-center}
+```{image} output_19_0.png
+:align: center
+```
