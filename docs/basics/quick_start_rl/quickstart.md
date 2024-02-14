@@ -31,19 +31,19 @@ from rlberry.wrappers import WriterWrapper
 Choosing an RL environment
 --------------------------
 
-In this tutorial, we will use the [Chain](rlberry.envs.finite.chain.Chain)
+In this tutorial, we will use the Chain(from [rlberry_scool]((https://github.com/rlberry-py/rlberry-scool)))
 environment, which is a very simple environment where the agent has to
 go from one end of a chain to the other end.
 
 ```python
 env_ctor = Chain
 env_kwargs = dict(L=10, fail_prob=0.1)
-# chain of length 10. With proba 0.1, the agent will not be able to take the action it wants to take/
+# chain of length 10. With proba 0.1, the agent will not be able to take the action it wants to take.
 env = env_ctor(**env_kwargs)
 ```
 
-The agent has two actions, go to the left of to the right, but it might
-move to a random direction according to a failure probability
+The agent has two actions, going left or going right, but it might
+move in the opposite direction according to a failure probability
 `fail_prob=0.1`.
 
 Let us see a graphical representation
@@ -111,16 +111,12 @@ video = env.save_video("video_chain.mp4", framerate=5)
 Defining an agent and a baseline
 --------------------------------
 
-We will compare a RandomAgent (which plays random action) to the
-[UCBVIAgent](rlberry.agents.ucbvi.ucbvi.UCBVIAgent), which is a algorithm that is designed to perform an
+We will compare a RandomAgent (which select random action) to the
+UCBVIAgent(from [rlberry_research]((https://github.com/rlberry-py/rlberry-research))), which is a algorithm that is designed to perform an
 efficient exploration. Our goal is then to assess the performance of the
 two algorithms.
 
-There are a number of agents that are already coded in rlberry. See the
-module [Agent](rlberry.agents.Agent) for more
-informations.
-
-Or, as we want for the RandomAgent, you can code your own agent :
+You can code your RandomAgent agent :
 
 ```python
 # Create random agent as a baseline
