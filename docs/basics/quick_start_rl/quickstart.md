@@ -245,6 +245,8 @@ output = evaluate_agents([ucbvi_stats, baseline_stats], n_simulations=10, plot=T
 :align: center
 ```
 
+<span>&#9888;</span> : For more in depth methodology to compare agents, you can check [here](comparison_page)
+
 Comparing the agents during the learning period
 -----------------------------------------------
 
