@@ -160,17 +160,18 @@ Comparing the expected rewards of the final policies
 We want to assess the expected reward of the policy learned by our
 agents for a time horizon of (say) $T=20$.
 
-To do that we use 10 Monte-Carlo simulations, i.e., we do the experiment
-10 times for each agent and at the end we take the mean of the obtained
-reward.
+To evaluate the agents during the training, we can (arbitrary) use 10 Monte-Carlo simulations (```n_simulations``` in eval_kwargs), i.e., we do the evaluation 10 times for each agent and at the end we take the mean of the obtained reward.
 
 To check variability, we can train many instance of the same agent with
-`n_fit` (here 1) Each instance of agent will train with a specific
+`n_fit` (here, we use only 1 to be faster). Each instance of agent will train with a specific
 budget `fit_budget` (here 100). Remark that `fit_budget` may not mean
 the same thing among agents.
 
 In order to manage the agents, we use an Experiment Manager. The manager
 will then spawn agents as desired during the experiment.
+
+To summarize:
+We will train 1 agent (```n_fit```) with a budget of 100 (```fit_budget```). During the training, the evaluation will be on 10 Monte-Carlo run (```n_simulations```), and we doing it for both Agent (```UCBVIAgent``` and ```RandomAgent```)
 
 ```python
 # Define parameters
