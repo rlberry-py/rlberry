@@ -31,7 +31,7 @@ from rlberry.wrappers import WriterWrapper
 Choosing an RL environment
 --------------------------
 
-In this tutorial, we will use the Chain(from [rlberry_scool]((https://github.com/rlberry-py/rlberry-scool)))
+In this tutorial, we will use the Chain(from [rlberry_scool](https://github.com/rlberry-py/rlberry-scool))
 environment, which is a very simple environment where the agent has to
 go from one end of a chain to the other end.
 
@@ -112,11 +112,11 @@ Defining an agent and a baseline
 --------------------------------
 
 We will compare a RandomAgent (which select random action) to the
-UCBVIAgent(from [rlberry_research]((https://github.com/rlberry-py/rlberry-research))), which is a algorithm that is designed to perform an
+UCBVIAgent(from [rlberry_research](https://github.com/rlberry-py/rlberry-research)), which is a algorithm that is designed to perform an
 efficient exploration. Our goal is then to assess the performance of the
 two algorithms.
 
-You can code your RandomAgent agent :
+This is the code to create your RandomAgent agent :
 
 ```python
 # Create random agent as a baseline
