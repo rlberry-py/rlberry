@@ -1,12 +1,12 @@
 (agent_page)=
 
 # How to use an Agent
-In Reinforcement learning, the Agent is the entity to train to solve an environment. It's able interact with the environment: observe, take actions, and learn through trial and error.
+In Reinforcement learning, the Agent is the entity to train to solve an environment. It's able to interact with the environment: observe, take actions, and learn through trial and error.
 In rlberry, you can use existing Agent, or create your own custom Agent. You can find the API [here](/api) and [here](rlberry.agents.Agent) .
 
 
 ## Use rlberry Agent
-An agent need an environment to train. We'll use the same environment as in the [environment](environment_page) section of the user guide.
+An agent needs an environment to train. We'll use the same environment as in the [environment](environment_page) section of the user guide.
 ("Chain" environment from "[rlberry-research](https://github.com/rlberry-py/rlberry-research)")
 
 ### without agent
@@ -129,7 +129,7 @@ The agent has learned how to obtain good results (the cross go to the right).
 
 
 ## Use StableBaselines3 as rlberry Agent
-With rlberry, you can use algorithm from [StableBaselines3](https://stable-baselines3.readthedocs.io/en/master/guide/algos.html) and wrap it in rlberry Agent. To do that, you need to use [StableBaselinesAgent](rlberry.agents.stable_baselines.StableBaselinesAgent).
+With rlberry, you can use an algorithm from [StableBaselines3](https://stable-baselines3.readthedocs.io/en/master/guide/algos.html) and wrap it in rlberry Agent. To do that, you need to use [StableBaselinesAgent](rlberry.agents.stable_baselines.StableBaselinesAgent).
 
 
 ```python
@@ -442,5 +442,5 @@ Moviepy - video ready <yourPath>/FrozenLake_no_slippery-episode-0.mp4
 
 ## Use experimentManager
 
-This is one of the core element in rlberry. The ExperimentManager allow you to easily make an experiment between an Agent and an Environment. It's use to train, optimize hyperparameters, evaluate and gather statistics about an agent.
+This is one of the core element in rlberry. The ExperimentManager allows you to easily make an experiment between an Agent and an Environment. It is used to train, optimize hyperparameters, evaluate and gather statistics about an agent.
 You can find the guide for ExperimentManager [here](experimentManager_page).
