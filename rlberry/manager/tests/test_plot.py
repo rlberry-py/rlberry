@@ -23,7 +23,7 @@ class RandomAgent(AgentWithSimplePolicy):
 
     def fit(self, budget=100, **kwargs):
         observation, info = self.env.reset()
-        for ep in range(budget):
+        for ep in range(budget+np.random.randint(5)): # to simulate having different sizes
             action = self.policy(observation)
             observation, reward, done, _, _ = self.env.step(action)
 

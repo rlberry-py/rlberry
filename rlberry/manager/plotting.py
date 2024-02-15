@@ -67,7 +67,7 @@ def plot_writer_data(
     xtag : str or None, default=None
         Tag of data to plot on x-axis. If None, use 'global_step'. Another often-used x-axis is
         the time elapsed `dw_time_elapsed`, in which case smooth needs to be set to True or there must be only one run.
-    smooth : boolean, default=True
+    smooth : boolean, default=False
         Whether to smooth the curve with a Nadaraya-Watson Kernel smoothing.
         Remark that this also allow for an xtag which is not synchronized on all the simulations (e.g. time for instance).
     smoothing_bandwidth: float or array of floats or None
@@ -530,7 +530,9 @@ def plot_synchronized_curves(
     ylabel = y
     assert len(data) > 0, "dataset is empty"
     n_tot_simu = int(data["n_simu"].max())
-    # check that every simulation have the same xs
+    
+    # check that every simulation have the same xs or truncate
+    processed_df = pd.DataFrame()
     for name in np.unique(data["name"]):
         df_name = data.loc[data["name"] == name]
         x_simu_0 = df_name.loc[df_name["n_simu"] == 0, xlabel].values.astype(float)
@@ -538,7 +540,14 @@ def plot_synchronized_curves(
             x_simu = df_name.loc[df_name["n_simu"] == n_simu, xlabel].values.astype(
                 float
             )
-            assert np.all(x_simu == x_simu_0)
+            if len(x_simu) != len(x_simu_0):
+                logger.warn("x axis is not the same for all the runs, truncating.")
+            x_simu_0 = np.intersect1d(x_simu_0, x_simu)
+        df_name = df_name.loc[df_name[xlabel].apply(lambda x : x in x_simu_0)]
+        assert len(df_name)>0, "x_axis are incompatible across runs, you should use smoothing"
+        processed_df = pd.concat([processed_df, df_name], ignore_index=True)
+    data = processed_df
+    
 
     ax, styles, cmap = _prepare_ax(data, ax, linestyles)
 
