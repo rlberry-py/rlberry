@@ -2,9 +2,9 @@
 
 # How to use the ExperimentManager
 
-It's the element that allow you to make your experiments on [Agent](agent_page) and [Environment](environment_page).
+It's the element that allows you to make your experiments on [Agent](agent_page) and [Environment](environment_page).
 You can use it to train, optimize hyperparameters, evaluate, compare, and gather statistics about your agent on a specific environment. You can find the API doc [here](rlberry.manager.ExperimentManager).
-It's not the only solution, but it's the compact (and recommended) way of experiment with an agent.
+It's not the only solution, but it's the compact (and recommended) way of doing experiments with an agent.
 
 For these examples, you will use the "PPO" torch agent from "[rlberry-research](https://github.com/rlberry-py/rlberry-research)"
 
@@ -59,8 +59,8 @@ print(output)
 
 
 
-## Compare with other agent
-Now you can compare this agent with another one. Here, we gonna compare it with the same agent, but with a bigger fit budget, and some fine tuning.
+## Compare with another agent
+Now you can compare this agent with another one. Here, we are going to compare it with the same agent, but with a bigger fit budget, and some fine tuning.
 
 
 <span>&#9888;</span> **warning :** add this code after the previous one. <span>&#9888;</span>
