@@ -15,6 +15,7 @@ from rlberry.agents import AgentWithSimplePolicy
 
 np.random.seed(42)
 
+
 class RandomAgent(AgentWithSimplePolicy):
     name = "RandomAgent"
 
