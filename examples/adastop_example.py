@@ -22,13 +22,13 @@ managers = [{"agent_class": StableBaselinesAgent,
              "train_env": (env_ctor, env_kwargs),
              "fit_budget":10000,
              "agent_name":"A2C",
-             "init_kwargs":{"algo_cls": A2C, "policy":"MlpPolicy",  "verbose":1}},
+             "init_kwargs":{"algo_cls": A2C, "policy":"MlpPolicy",  "verbose":0}},
             {"agent_class": StableBaselinesAgent,
              "train_env": (env_ctor, env_kwargs),
              "agent_name":"PPO",
              "fit_budget":10000,
-             "init_kwargs":{"algo_cls": PPO,"policy":"MlpPolicy", "verbose":1}},
+             "init_kwargs":{"algo_cls": PPO,"policy":"MlpPolicy", "verbose":0}},
             ]
 
-comparator = AdastopComparator()
+comparator = AdastopComparator(n=10,K=5)
 comparator.compare(managers)
