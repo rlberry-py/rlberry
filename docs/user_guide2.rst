@@ -1,6 +1,6 @@
 .. title:: User guide : contents
 
-.. _user_guide:
+.. _user_guide2:
 
 ==========
 User guide

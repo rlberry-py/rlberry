@@ -1,9 +1,9 @@
-(user_guide2)=
+(user_guide)=
 
 
 # User Guide
 
-You can find a compacted version [here](#compacted-version).
+You can find a **compacted version** [here](#compacted-version).
 
 ## Introduction
 Welcome to rlberry.
