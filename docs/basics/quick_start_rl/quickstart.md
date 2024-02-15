@@ -241,7 +241,7 @@ output = evaluate_agents([ucbvi_stats, baseline_stats], n_simulations=10, plot=T
 
 </br>
 
-```{image} output_10_1.png
+```{image} Figure_1.png
 :align: center
 ```
 
@@ -282,29 +282,8 @@ class UCBVIAgent2(UCBVIAgent):
         self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
 ```
 
-To compute the regret, we also need to define an optimal agent. Here
-it's an agent that always chooses the action that moves to the right.
 
-```python
-class OptimalAgent(AgentWithSimplePolicy):
-    name = "OptimalAgent"
-
-    def __init__(self, env, **kwargs):
-        AgentWithSimplePolicy.__init__(self, env, **kwargs)
-        self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
-
-    def fit(self, budget=100, **kwargs):
-        observation, info = self.env.reset()
-        for ep in range(budget):
-            action = 1
-            observation, reward, terminated, truncated, info = self.env.step(action)
-            done = terminated or truncated
-
-    def policy(self, observation):
-        return 1
-```
-
-Then, we fit the two agents and plot the data in the writer.
+Then, we fit the two agents.
 
 ```python
 # Create ExperimentManager for UCBI to fit 10 agents
@@ -325,15 +304,6 @@ baseline_stats = ExperimentManager(
     n_fit=10,
 )
 baseline_stats.fit()
-
-# Create ExperimentManager for OptimalAgent to fit 10 agents
-opti_stats = ExperimentManager(
-    OptimalAgent,
-    (env_ctor, env_kwargs),
-    fit_budget=5000,
-    n_fit=1,
-)
-opti_stats.fit()
 ```
 
 ```none
@@ -345,51 +315,42 @@ opti_stats.fit()
     [INFO] ... trained!
 ```
 
-Remark that `fit_budget` may not mean the same thing among agents. For
-OptimalAgent and RandomAgent `fit_budget` is the number of steps in the
-environments that the agent is allowed to take.
+Remark that `fit_budget` may not mean the same thing among agents. For RandomAgent `fit_budget` is the number of steps in the environments that the agent is allowed to take.
 
-The reward that we recover is recorded every time env.step is called.
+The reward that we recover is recorded every time `env.step` is called.
 
 For UCBVI this is the number of iterations of the algorithm and in each
 iteration, the environment takes 100 steps (`horizon`) times the
 `fit_budget`. Hence the fit_budget used here
 
-Next, we estimate the optimal reward using the optimal policy.
 
-Be careful that this is only an estimation: we estimate the optimal
-regret using Monte Carlo and the optimal policy.
 
-```python
-df = plot_writer_data(opti_stats, tag="reward", show=False)
-df = df.loc[df["tag"] == "reward"][["global_step", "value"]]
-opti_reward = df.groupby("global_step").mean()["value"].values
-```
-
-Finally, we plot the cumulative regret using the 5000 reward values.
+Finally, we plot the reward: Here you can see the mean value over the 10 fited agent, with 2 options (raw and smoothed).
 
 ```python
-def compute_regret(rewards):
-    return np.cumsum(opti_reward - rewards[: len(opti_reward)])
-
-
-# Plot of the cumulative reward.
+# Plot of the reward.
 output = plot_writer_data(
     [ucbvi_stats, baseline_stats],
     tag="reward",
-    preprocess_func=compute_regret,
-    title="Cumulative Regret",
+    title="Episode Reward",
+)
+
+
+# Plot of the reward.
+output = plot_writer_data(
+    [ucbvi_stats, baseline_stats],
+    tag="reward",
+    smooth=True,
+    title="Episode Reward smoothed",
 )
 ```
 
-```{image} output_19_0.png
+```{image} Figure_2.png
+:align: center
+```
+```{image} Figure_3.png
 :align: center
 ```
 
-<!-- TODO regenerate image with new visualisation-->
-<!-- TODO regenerate image with new visualisation-->
-<!-- TODO regenerate image with new visualisation-->
-<!-- TODO regenerate image with new visualisation-->
-<!-- TODO regenerate image with new visualisation-->
 
-<span>&#9728;</span> : For more informations on plots and visualisation, you can check [here (in construction)](visualisation_page)
+<span>&#9728;</span> : As you can see, different visualizations are possible. For more information on plots and visualisation, you can check [here (in construction)](visualisation_page)
