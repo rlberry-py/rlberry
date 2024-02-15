@@ -103,6 +103,7 @@ def plot_writer_data(
     preprocess_func: Callable, default=None
         Function to apply to 'tag' column before plot. For instance, if tag=episode_rewards,
         setting preprocess_func=np.cumsum will plot cumulative rewards. If None, do nothing.
+        Warning: this function should return an array of the same size as the input.
     title: str (Optional)
         Optional title to plot. If None, set to tag.
     savefig_fname: str (Optional)
@@ -573,7 +574,7 @@ def plot_synchronized_curves(
         )
 
         quantile = norm.ppf(1 - (1 - level) / 2)
-        ax.plot(x_plot, y_mean, color=cmap[id_c])
+        ax.plot(x_plot, y_mean, color=cmap[id_c], label=name)
 
         if error_representation in ["ci", "pi"]:
             if error_representation == "pi":
@@ -596,7 +597,7 @@ def plot_synchronized_curves(
                 y = df_name.loc[df_name["n_simu"] == n_simu, ylabel].values
 
                 if n_simu == 0:
-                    ax.plot(x_simu, y, alpha=0.2, label="raw " + name, color=cmap[id_c])
+                    ax.plot(x_simu, y, alpha=0.2, color=cmap[id_c])
                 else:
                     ax.plot(x_simu, y, alpha=0.25, color=cmap[id_c])
 
