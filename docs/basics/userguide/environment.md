@@ -122,6 +122,8 @@ Moviepy - video ready [your path]/MountainCar-episode-0.mp4
    <source src="../../../../_video/user_guide_video/_env_page_MountainCar.mp4" type="video/mp4">
 </video>
 
+To customize the environments, you can use some wrappers. You can find the rlberry's wrappers and more information [here (in construction)](wrappers_page), or you can use [Gymnasium wrappers](https://gymnasium.farama.org/api/wrappers/) (or create your own).
+
 
 
 ## Use Atari environment
