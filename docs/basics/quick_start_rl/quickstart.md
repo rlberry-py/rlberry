@@ -245,7 +245,7 @@ output = evaluate_agents([ucbvi_stats, baseline_stats], n_simulations=10, plot=T
 :align: center
 ```
 
-<span>&#9888;</span> : For more in depth methodology to compare agents, you can check [here](comparison_page)
+<span>&#9728;</span> : For more in depth methodology to compare agents, you can check [here](comparison_page)
 
 Comparing the agents during the learning period
 -----------------------------------------------
@@ -385,3 +385,11 @@ output = plot_writer_data(
 ```{image} output_19_0.png
 :align: center
 ```
+
+<!-- TODO regenerate image with new visualisation-->
+<!-- TODO regenerate image with new visualisation-->
+<!-- TODO regenerate image with new visualisation-->
+<!-- TODO regenerate image with new visualisation-->
+<!-- TODO regenerate image with new visualisation-->
+
+<span>&#9728;</span> : For more informations on plots and visualisation, you can check [here (in construction)](visualisation_page)
