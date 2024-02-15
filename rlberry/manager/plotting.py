@@ -530,7 +530,7 @@ def plot_synchronized_curves(
     ylabel = y
     assert len(data) > 0, "dataset is empty"
     n_tot_simu = int(data["n_simu"].max())
-    
+
     # check that every simulation have the same xs or truncate
     processed_df = pd.DataFrame()
     for name in np.unique(data["name"]):
@@ -543,11 +543,12 @@ def plot_synchronized_curves(
             if len(x_simu) != len(x_simu_0):
                 logger.warn("x axis is not the same for all the runs, truncating.")
             x_simu_0 = np.intersect1d(x_simu_0, x_simu)
-        df_name = df_name.loc[df_name[xlabel].apply(lambda x : x in x_simu_0)]
-        assert len(df_name)>0, "x_axis are incompatible across runs, you should use smoothing"
+        df_name = df_name.loc[df_name[xlabel].apply(lambda x: x in x_simu_0)]
+        assert (
+            len(df_name) > 0
+        ), "x_axis are incompatible across runs, you should use smoothing"
         processed_df = pd.concat([processed_df, df_name], ignore_index=True)
     data = processed_df
-    
 
     ax, styles, cmap = _prepare_ax(data, ax, linestyles)
 
