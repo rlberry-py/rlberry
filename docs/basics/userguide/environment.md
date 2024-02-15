@@ -82,7 +82,9 @@ video:10kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing ov
 
 
 ## Use Gymnasium environment
-Gymnasium can give you some classic environment. You can use theme with [gym_make](rlberry.envs.gym_make). More information [here](https://gymnasium.farama.org/environments/classic_control/).
+Gymnasium is a project that provides an API for all single agent reinforcement learning environments, and includes implementations of common environments: cartpole, pendulum, mountain-car, mujoco, atari, and more.More information [here](https://gymnasium.farama.org/environments/classic_control/).
+
+In rlberry, you can use Gymnasium environment with [gym_make](rlberry.envs.gym_make). Here, we will use ```MountainCar-v0```, one of the "Classic Control environments".
 
 ```python
 from rlberry.envs import gym_make
