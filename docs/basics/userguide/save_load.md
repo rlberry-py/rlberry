@@ -71,12 +71,7 @@ writers.py:108: FutureWarning: The behavior of DataFrame concatenation with empt
 
 After this run, you can see the 'print' of the q-table.
 At the end of the fit, the data of this experiment are saved automatically. It will be saved according to the `output_dir` parameter (here `./results/`). If you don't specify the `output_dir` parameter, it will saved by default inside the `rlberry_data/temp/` folder.
-
-Or you can use temporary folder with:
-```
-    import tempfile
-    with tempfile.TemporaryDirectory() as tmpdir:
-```
+(Or you can use temporary folder by importing `tempfile` librrary and using `with tempfile.TemporaryDirectory() as tmpdir:`)
 
 In this folder, you should find :
 - `manager_obj.pickle` and folder `agent_handler`, the save of your experiment and your agent.
