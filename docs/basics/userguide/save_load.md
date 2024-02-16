@@ -42,17 +42,13 @@ experiment_to_save = ExperimentManager(
 experiment_to_save.fit()
 print(experiment_to_save.get_agent_instances()[0].Q)  # print the content of the Q-table
 ```
-Then save:
-```python
-experiment_to_save.save()  # save the model inside the 'output_dir'
-```
 
 ```none
 [INFO] 11:11: Running ExperimentManager fit() for PPOFrozenLake-v1 with n_fit = 1 and max_workers = None.
 [INFO] 11:11:                                    agent_name     worker  episode_rewards  max_global_step
                                               PPOFrozenLake-v1    0          0.0             178711
 [INFO] 11:11: ... trained!
-/home/jteigny/my_projects/work_in_progress/rlberry/rlberry_userguide/user_guide/rlberry/utils/writers.py:108: FutureWarning: The behavior of DataFrame concatenation with empty or all-NA entries is deprecated. In a future version, this will no longer exclude empty or all-NA columns when determining the result dtypes. To retain the old behavior, exclude the relevant entries before the concat operation.
+writers.py:108: FutureWarning: The behavior of DataFrame concatenation with empty or all-NA entries is deprecated. In a future version, this will no longer exclude empty or all-NA columns when determining the result dtypes. To retain the old behavior, exclude the relevant entries before the concat operation.
   df = pd.concat([df, pd.DataFrame(self._data[tag])], ignore_index=True)
 [[0.73509189 0.77378094 0.77378094 0.73509189]
  [0.73509189 0.         0.81450625 0.77378094]
@@ -73,7 +69,15 @@ experiment_to_save.save()  # save the model inside the 'output_dir'
 [INFO] 11:11: Saved ExperimentManager(PPOFrozenLake-v1) using pickle.
 ```
 
-After this run, you can see the 'print' of the q-table, and should find a folder named according to the `output_dir` parameter (here `results`), with the data about your experiment.
+After this run, you can see the 'print' of the q-table.
+At the end of the fit, the data of this experiment are saved automatically. It will be saved according to the `output_dir` parameter (here `./results/`). If you don't specify the `output_dir` parameter, it will saved by default inside the `rlberry_data/temp/` folder.
+
+Or you can use temporary folder with:
+```
+    import tempfile
+    with tempfile.TemporaryDirectory() as tmpdir:
+```
+
 In this folder, you should find :
 - `manager_obj.pickle` and folder `agent_handler`, the save of your experiment and your agent.
 - `data.csv`, the episodes result during the training process
@@ -152,7 +156,7 @@ As you can see, we haven't re-fit the experiment, and the q-table is the same as
 
 ## Other informations
 
-The `save` and `load` can be use if :
+The `save` and `load` can be useful for :
 - you want to train your agent on a computer, and test/use it on others.
 - you have a long training, and you want to do some 'checkpoints'.
 - you want to do the training in more than once (only if your agent has "fit(x) then fit(y), is the same as fit(x+y)")
