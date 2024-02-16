@@ -353,4 +353,4 @@ output = plot_writer_data(
 ```
 
 
-<span>&#9728;</span> : As you can see, different visualizations are possible. For more information on plots and visualisation, you can check [here (in construction)](visualisation_page)
+<span>&#9728;</span> : As you can see, different visualizations are possible. For more information on plots and visualization, you can check [here (in construction)](visualization_page)

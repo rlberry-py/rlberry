@@ -229,7 +229,9 @@ INFO: Making new env: CartPole-v1 INFO: Making new env: CartPole-v1
 
 </br>
 
-![image](output_5_3.png){.align-center}
+```{image} output_5_3.png
+:align: center
+```
 
 ```python
 print("Evaluating ...")
@@ -306,7 +308,10 @@ Evaluating ...
 
 </br>
 
-![image](output_6_3.png){.align-center}
+
+```{image} output_6_3.png
+:align: center
+```
 
 Let's try to change the neural networks' architectures and see if we can
 beat our previous result. This time we use a smaller learning rate and
@@ -442,7 +447,12 @@ INFO: Making new env: CartPole-v1
 
 </br>
 
-![image](output_9_3.png){.align-center}
+
+```{image} output_9_3.png
+:align: center
+```
+
+<span>&#9728;</span> : For more information on plots and visualization, you can check [here (in construction)](visualization_page)
 
 ```python
 print("Evaluating ...")
@@ -566,4 +576,6 @@ Evaluating ...
 
 </br>
 
-![image](output_10_3.png){.align-center}
+```{image} output_10_3.png
+:align: center
+```
