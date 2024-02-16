@@ -37,7 +37,7 @@ You can find the guide for ExperimentManager [here](experimentManager_page).
 ### Logging
 Logging is used to keep a trace of the experiments. It's include runing informations, data, and results.
 You can find the guide for Logging [here](logging_page).
-### Analyse the results
+### Results analysis
 In construction
 ## Experimenting with Deep agents
 ### Torch Agents   <!-- TOCHECK :plus tard -->
@@ -86,7 +86,7 @@ In construction
 - [Agent](agent_page)
 - [ExperimentManager](experimentManager_page)
 - [Logging](logging_page).
-- [Analyse the results (In construction)]()
+- [Results analysis (In construction)]()
 ## Experimenting with Deep agents
 - [Torch Agents (In construction)]()
 - [Policy and Value Networks (In construction)]()
