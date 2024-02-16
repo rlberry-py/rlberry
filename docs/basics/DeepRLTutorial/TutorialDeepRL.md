@@ -130,7 +130,7 @@ default networks are:
 
 ```python
 """
-The ExperimentManager class is compact way of experimenting with a deepRL agent.
+The ExperimentManager class is a compact way of experimenting with a deepRL agent.
 """
 default_agent = ExperimentManager(
     A2CAgent,  # The Agent class.
