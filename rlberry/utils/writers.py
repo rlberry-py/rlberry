@@ -103,10 +103,12 @@ class DefaultWriter:
 
     @property
     def data(self):
-        df = pd.DataFrame(columns=("name", "tag", "value", "global_step"))
+        df = None
         for tag in self._data:
-            if len(self._data[tag])>0:
-                df = pd.concat([df, pd.DataFrame(self._data[tag])], ignore_index=True)
+            if df is None:
+                df = pd.DataFrame(self._data[tag])
+            else:
+                df = pd.concat([df, ], ignore_index=True)
         return df
 
     def set_max_global_step(self, max_global_step):
