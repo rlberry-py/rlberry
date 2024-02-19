@@ -425,7 +425,7 @@ def plot_smoothed_curves(
                     for b in range(n_boot):
                         id_b = np.random.choice(
                             n_tot_simu, size=n_tot_simu, replace=True
-                        )
+                        )-1
                         mustar = np.mean(Xhat[id_b], axis=0)
                         residus = (
                             np.sqrt(len(xplot[sigma != 0]))
