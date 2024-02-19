@@ -108,7 +108,12 @@ class DefaultWriter:
             if df is None:
                 df = pd.DataFrame(self._data[tag])
             else:
-                df = pd.concat([df, ], ignore_index=True)
+                df = pd.concat(
+                    [
+                        df,
+                    ],
+                    ignore_index=True,
+                )
         return df
 
     def set_max_global_step(self, max_global_step):
