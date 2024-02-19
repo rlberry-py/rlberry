@@ -162,7 +162,7 @@ def plot_writer_data(
             )
     else:
         data[xtag] = data.index
-    data["n_simu"] = data["n_simu"].astype(int)
+    data.loc[:,"n_simu"] = data["n_simu"].astype(int)
     if sub_sample:
         new_df = pd.DataFrame()
         for name in data["name"].unique():
@@ -308,7 +308,7 @@ def plot_smoothed_curves(
     ylabel = y
     x_values = data[xlabel].values
     min_x, max_x = x_values.min(), x_values.max()
-    n_tot_simu = int(data["n_simu"].max())
+    n_tot_simu = int(data["n_simu"].max())+1
 
     if not isinstance(smoothing_bandwidth, numbers.Number):
         sorted_x = np.sort(np.unique(x_values))
@@ -347,7 +347,6 @@ def plot_smoothed_curves(
             bw = smoothing_bandwidth
 
         Xhat = np.zeros([n_tot_simu, len(xplot)])
-
         for f in range(n_tot_simu):
             X = df_name.loc[df["n_simu"] == f, ylabel].values
             try:
@@ -393,7 +392,7 @@ def plot_smoothed_curves(
             linestyle=(0, styles[id_c]),
         )
 
-        if error_representation == "raw_curves":
+        if (error_representation == "raw_curves") and (n_tot_simu>1):
             for n_simu in range(n_tot_simu):
                 x_simu = df_name.loc[df_name["n_simu"] == n_simu, xlabel].values.astype(
                     float
@@ -403,7 +402,7 @@ def plot_smoothed_curves(
                     ax.plot(x_simu, y, alpha=0.2, label="raw " + name, color=cmap[id_c])
                 else:
                     ax.plot(x_simu, y, alpha=0.25, color=cmap[id_c])
-        else:
+        elif n_tot_simu>1:
             sigma = np.sqrt(np.sum((Xhat - mu) ** 2, axis=0) / (len(Xhat) - 1))
 
             if error_representation == "ci":
