@@ -112,6 +112,9 @@ class DefaultWriter:
                     [df, pd.DataFrame(self._data[tag])],
                     ignore_index=True,
                 )
+        if df is None:
+            # if there are no data, return empty dataframe
+            df = pd.DataFrame()
         return df
 
     def set_max_global_step(self, max_global_step):
