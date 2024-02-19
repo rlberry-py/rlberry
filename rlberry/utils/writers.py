@@ -109,9 +109,7 @@ class DefaultWriter:
                 df = pd.DataFrame(self._data[tag])
             else:
                 df = pd.concat(
-                    [
-                        df,
-                    ],
+                    [df, pd.DataFrame(self._data[tag])],
                     ignore_index=True,
                 )
         return df
