@@ -13,7 +13,7 @@ Gridworld environment.
 # sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_gridworld.jpg'
 
 from rlberry_scool.agents.dynprog import ValueIterationAgent
-from rlberry_research.envs.finite import GridWorld
+from rlberry_scool.envs.finite import GridWorld
 
 
 env = GridWorld(7, 10, walls=((2, 2), (3, 3)))
@@ -33,4 +33,4 @@ for tt in range(50):
         # See the doc of GridWorld for more informations on the default parameters of GridWorld.
         break
 # Save the video
-video = env.save_video("_video/video_plot_gridworld.mp4", framerate=10)
+env.save_video("_video/video_plot_gridworld.mp4", framerate=10)
