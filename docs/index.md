@@ -54,7 +54,5 @@ TODO : Text
 TODO :
 
 
-
-
-## And many more !
+### And many more !
 Check the [User Guide](user_guide) to find more tools !
