@@ -12,10 +12,8 @@ Dev version
 
  * Moving "rendering" to rlberry
 
-
 Version 0.7.0
 -------------
-
 
 *PR #397*
 
@@ -43,6 +41,9 @@ Version 0.7.0
 *PR #376*
 
  * New plot_writer_data function that does not depend on seaborn and that can plot smoothed function and confidence band if scikit-fda is installed.
+
+Version 0.6.0
+-------------
 
 *PR #276*
 
