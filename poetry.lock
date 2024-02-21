@@ -12,6 +12,24 @@ files = [
 ]
 
 [[package]]
+name = "adastop"
+version = "0.1.2"
+description = ""
+optional = false
+python-versions = "*"
+files = [
+    {file = "adastop-0.1.2-py3-none-any.whl", hash = "sha256:ce826e2b032e562d33e1af692a3366115112e7bfe621a6a472878de838df0236"},
+    {file = "adastop-0.1.2.tar.gz", hash = "sha256:5cbdae890237a62d868a1c0a283a99632907f6b5dfe75e093dafc0a4146d237b"},
+]
+
+[package.dependencies]
+Click = "*"
+matplotlib = "*"
+numpy = "*"
+pandas = "*"
+tabulate = "*"
+
+[[package]]
 name = "alabaster"
 version = "0.7.16"
 description = "A light, configurable Sphinx theme"
@@ -3199,7 +3217,7 @@ mpmath = ">=0.19"
 name = "tabulate"
 version = "0.9.0"
 description = "Pretty-print tabular data"
-optional = true
+optional = false
 python-versions = ">=3.7"
 files = [
     {file = "tabulate-0.9.0-py3-none-any.whl", hash = "sha256:024ca478df22e9340661486f85298cff5f6dcdba14f3813e8830015b9ed1948f"},
@@ -3488,4 +3506,4 @@ torch = ["ale-py", "opencv-python", "stable-baselines3", "tensorboard", "torch"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9, <3.13"
-content-hash = "3a9a31ac5fc42727d24c01bc02da727fb0573ca64f4ee0c0014083ef612baf8a"
+content-hash = "cc459bca802b87577728911ff80f4f6fd14f20d13e48e06adad3b9c6ea157fe9"
