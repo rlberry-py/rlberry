@@ -2529,7 +2529,7 @@ windows-terminal = ["colorama (>=0.4.6)"]
 name = "pyopengl"
 version = "3.1.7"
 description = "Standard OpenGL bindings for Python"
-optional = true
+optional = false
 python-versions = "*"
 files = [
     {file = "PyOpenGL-3.1.7-py3-none-any.whl", hash = "sha256:a6ab19cf290df6101aaf7470843a9c46207789855746399d0af92521a0a92b7a"},
@@ -2779,7 +2779,7 @@ rlberry = "*"
 type = "git"
 url = "https://github.com/rlberry-py/rlberry-scool.git"
 reference = "HEAD"
-resolved_reference = "385bcf9dfa54b07135eeb6b9ccd959090a4c16b3"
+resolved_reference = "f639b8a22fa777c08b755908d9e98f8f6ece6ab7"
 
 [[package]]
 name = "rsa"
@@ -3622,10 +3622,10 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 
 [extras]
 doc = ["matplotlib", "myst-parser", "numpydoc", "sphinx", "sphinx-gallery", "sphinx-math-dollar", "sphinxcontrib-video"]
-extras = ["ffmpeg-python", "numba", "optuna", "pyopengl", "pyvirtualdisplay", "scikit-fda", "scikit-learn"]
+extras = ["ffmpeg-python", "numba", "optuna", "pyvirtualdisplay", "scikit-fda", "scikit-learn"]
 torch = ["ale-py", "opencv-python", "stable-baselines3", "tensorboard", "torch"]
 
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9, <3.13"
-content-hash = "362fde3f26bf7c0c9e002bf797985cb6fc80ded360af97177cfb0c62501b3c58"
+content-hash = "58fb3608e19406eb5708e49bedab669fd1d43b459090c2416bb30684c3f499db"
