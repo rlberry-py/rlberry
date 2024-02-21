@@ -7,11 +7,7 @@ from rlberry.manager import ExperimentManager
 from rlberry.seeding import Seeder
 import pathlib
 
-ADASTOP_INSTALLED = True
-try:
-    from adastop import MultipleAgentsComparator
-except:
-    ADASTOP_INSTALLED = False
+from adastop import MultipleAgentsComparator
 
 logger = rlberry.logger
 
@@ -67,10 +63,6 @@ class AdastopComparator(MultipleAgentsComparator):
         beta=0,
         seed=None,
     ):
-        if not ADASTOP_INSTALLED:
-            raise ImportError(
-                "Adastop not installed, please install python library adastop."
-            )
         MultipleAgentsComparator.__init__(self, n, K, B, comparisons, alpha, beta, seed)
 
     def compare(self, manager_list, n_evaluations=50, verbose=True):

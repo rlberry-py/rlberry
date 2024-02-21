@@ -1,5 +1,5 @@
 import pytest
-from rlberry_research.envs import GridWorld
+from rlberry_scool.envs import GridWorld
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry.manager import AgentManager
 from rlberry.manager import compare_agents, AdastopComparator
