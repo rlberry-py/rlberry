@@ -22,7 +22,7 @@ class AdastopComparator(MultipleAgentsComparator):
     Compare sequentially agents, with possible early stopping.
     At maximum, there can be n times K fits done.
 
-    For now, implement only a two-sided test.
+    See adastop library for more details (https://github.com/TimotheeMathieu/adastop)
 
     Parameters
     ----------
@@ -56,7 +56,6 @@ class AdastopComparator(MultipleAgentsComparator):
         decision of the tests for each comparison, keys are the comparisons and values are in {"equal", "larger", "smaller"}.
     n_iters: dict
         number of iterations (i.e. number of fits) used for each agent. Keys are the agents' names and values are ints.
-
     """
 
     def __init__(
@@ -83,6 +82,8 @@ class AdastopComparator(MultipleAgentsComparator):
         ----------
         manager_list: list of ExperimentManager kwargs
             List of manager containing agents we want to compare.
+        n_evaluations: int, default = 50
+            number of evaluations used to estimate the score used for AdaStop.
         verbose: bool
             Print Steps.
         Returns
@@ -187,6 +188,9 @@ def compare_agents(
 
         - If str, each string must be the path of a agent_manager.obj.
 
+        - If pandas DataFrame with column agent (containing agent's names) and mean_eval containing
+          the scores, it is used as input data.
+
     method: str in {"tukey_hsd", "permutation"}, default="tukey_hsd"
         Method used in the test. "tukey_hsd" use scipy implementation [1] and "permutation" use permutation test with Step-Down method for multiple testing [2]. Tukey HSD method suppose Gaussian model on the aggregated evaluations and permutation test is non-parametric and does not make assumption on the distribution. permutation is the safe choice when the reward is likely to be heavy-tailed or multimodal.
     eval_function: callable or None, default = None
@@ -212,45 +216,47 @@ def compare_agents(
     [2]: Testing Statistical Hypotheses by E. L. Lehmann, Joseph P. Romano (Section 15.4.4), https://doi.org/10.1007/0-387-27605-X, Springer
 
     """
+    if isinstance(agent_source, list):
+        # Construction of the array of evaluations
+        df = pd.DataFrame()
+        if isinstance(agent_source[0], str) or isinstance(
+            agent_source[0], pathlib.PurePath
+        ):
+            agent_manager_list = [ExperimentManager(None) for _ in agent_source]
+            for i, manager in enumerate(agent_manager_list):
+                agent_manager_list[i] = manager.load(agent_source[i])
+        else:
+            agent_manager_list = agent_source
 
-    # Construction of the array of evaluations
-    df = pd.DataFrame()
-    assert isinstance(agent_source, list)
-    if isinstance(agent_source[0], str) or isinstance(
-        agent_source[0], pathlib.PurePath
-    ):
-        agent_manager_list = [ExperimentManager(None) for _ in agent_source]
-        for i, manager in enumerate(agent_manager_list):
-            agent_manager_list[i] = manager.load(agent_source[i])
-    else:
-        agent_manager_list = agent_source
-
-    for manager in agent_manager_list:
-        n_fit = len(manager.agent_handlers)
-        for id_agent in range(n_fit):
-            if eval_function is None:
-                eval_values = manager.eval_agents(100, agent_id=id_agent)
-            else:
-                eval_values = eval_function(
-                    manager, eval_budget=n_simulations, agent_id=id_agent
+        for manager in agent_manager_list:
+            n_fit = len(manager.agent_handlers)
+            for id_agent in range(n_fit):
+                if eval_function is None:
+                    eval_values = manager.eval_agents(100, agent_id=id_agent)
+                else:
+                    eval_values = eval_function(
+                        manager, eval_budget=n_simulations, agent_id=id_agent
+                    )
+                df = pd.concat(
+                    [
+                        df,
+                        pd.DataFrame(
+                            {
+                                "mean_eval": [np.mean(eval_values)],
+                                "agent": [manager.agent_name],
+                            }
+                        ),
+                    ],
+                    ignore_index=True,
                 )
-            df = pd.concat(
-                [
-                    df,
-                    pd.DataFrame(
-                        {
-                            "mean_eval": [np.mean(eval_values)],
-                            "agent": [manager.agent_name],
-                        }
-                    ),
-                ],
-                ignore_index=True,
-            )
+        agent_names = df["agent"].unique()
+        assert len(agent_names) == len(
+            agent_manager_list
+        ), "Each agent must have unique name."
+    else:
+        df = agent_source
 
     agent_names = df["agent"].unique()
-    assert len(agent_names) == len(
-        agent_manager_list
-    ), "Each agent must have unique name."
     data = np.array(
         [np.array(df.loc[df["agent"] == name, "mean_eval"]) for name in agent_names]
     )
