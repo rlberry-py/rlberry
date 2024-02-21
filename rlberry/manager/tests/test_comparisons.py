@@ -4,7 +4,6 @@ from rlberry.agents import AgentWithSimplePolicy
 from rlberry.manager import AgentManager
 from rlberry.manager import compare_agents, AdastopComparator
 import pandas as pd
-import numpy as np
 
 
 class DummyAgent(AgentWithSimplePolicy):

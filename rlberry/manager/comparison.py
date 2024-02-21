@@ -6,7 +6,6 @@ import rlberry
 from rlberry.manager import ExperimentManager
 from rlberry.seeding import Seeder
 import pathlib
-import joblib
 
 ADASTOP_INSTALLED = True
 try:
