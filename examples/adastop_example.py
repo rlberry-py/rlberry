@@ -18,17 +18,22 @@ from rlberry.manager import AdastopComparator
 
 env_ctor, env_kwargs = gym_make, dict(id="Acrobot-v1")
 
-managers = [{"agent_class": StableBaselinesAgent,
-             "train_env": (env_ctor, env_kwargs),
-             "fit_budget":10000,
-             "agent_name":"A2C",
-             "init_kwargs":{"algo_cls": A2C, "policy":"MlpPolicy",  "verbose":1}},
-            {"agent_class": StableBaselinesAgent,
-             "train_env": (env_ctor, env_kwargs),
-             "agent_name":"PPO",
-             "fit_budget":10000,
-             "init_kwargs":{"algo_cls": PPO,"policy":"MlpPolicy", "verbose":1}},
-            ]
+managers = [
+    {
+        "agent_class": StableBaselinesAgent,
+        "train_env": (env_ctor, env_kwargs),
+        "fit_budget": 10000,
+        "agent_name": "A2C",
+        "init_kwargs": {"algo_cls": A2C, "policy": "MlpPolicy", "verbose": 1},
+    },
+    {
+        "agent_class": StableBaselinesAgent,
+        "train_env": (env_ctor, env_kwargs),
+        "agent_name": "PPO",
+        "fit_budget": 10000,
+        "init_kwargs": {"algo_cls": PPO, "policy": "MlpPolicy", "verbose": 1},
+    },
+]
 
 comparator = AdastopComparator()
 comparator.compare(managers)
