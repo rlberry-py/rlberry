@@ -26,7 +26,6 @@ class AdastopComparator(MultipleAgentsComparator):
 
     Parameters
     ----------
-
     n: int, or array of ints of size self.n_agents, default=5
         If int, number of fits before each early stopping check. If array of int, a
         different number of fits is used for each agent.
