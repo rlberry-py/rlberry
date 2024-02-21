@@ -26,13 +26,7 @@ Tutorials
 
 The tutorials below will present to you the main functionalities of ``rlberry`` in a few minutes.
 
-Installation
-------------
 
-.. toctree::
-   :maxdepth: 2
-
-   installation.rst
 
 
 Quick start: setup an experiment and evaluate different agents

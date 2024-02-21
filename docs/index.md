@@ -1,66 +1,60 @@
-.. image:: ../assets/logo_wide.svg
-    :width: 50%
-    :alt: rlberry logo
-    :align: center
+(index)=
 
-.. _rlberry: https://github.com/rlberry-py/rlberry
+```{image} ../assets/logo_wide.svg
+:align: center
+:width: 50%
+:alt: rlberry logo
+```
 
-
-.. _index:
-
-An RL Library for Research and Education
-========================================
-
-
-:ref:`old user guide<user_guide2>`
-
+## An RL Library for Research and Education
 **Writing reinforcement learning algorithms is fun!** *But after the fun, we have
 lots of boring things to implement*: run our agents in parallel, average and plot results,
 optimize hyperparameters, compare to baselines, create tricky environments etc etc!
 
-rlberry_ **is here to make your life easier** by doing all these things with a few lines of code,
-so that you can spend most of your time developing agents. **Check our** :ref:`the quickstart<quick_start>`
+[rlberry](https://github.com/rlberry-py/rlberry) **is here to make your life easier** by doing all these things with a few lines of code,
+so that you can spend most of your time developing agents. **Check our** [quickstart](quick_start) **and our** [Deep RL quickstart](TutorialDeepRL).
 
 
+## Documentation Contents
+You can find main documentation here :
+- [Installation](installation)
+- [User Guide](user_guide)
+- [Using extrenal libraries](external) (like [Stable Baselines](stable_baselines) and [Gymnasium](Gymnasium_ancor))
+- [API](api)
+- [Changelog](changelog)
 
 
-In addition, rlberry_:
+## Contributing to rlberry
+If you want to contribute to rlberry, check out [the contribution guidelines](contributing).
 
-* Provides **implementations of several RL agents** for you to use as a starting point or as baselines;
-* Provides a set of **benchmark environments**, very useful to debug and challenge your algorithms;
-* Handles all random seeds for you, ensuring **reproducibility** of your results;
-* Is **fully compatible with** several commonly used RL libraries like `Gymnasium <https://gymnasium.farama.org/>`_ and `Stable Baselines <https://stable-baselines.readthedocs.io/en/master/>`_ (see :ref:`userguide/agents<agent_page>`).
+## Useful tools
 
+### ExperimentManager
+This is one of the core element in [rlberry](https://github.com/rlberry-py/rlberry). The [ExperimentManager](rlberry.manager.experiment_manager.ExperimentManager) allow you to easily make an experiment between an [Agent](agent_page) and an [Environment](environment_page). It's use to train, optimize hyperparameters, evaluate and gather statistics about an agent. See the [ExperimentManager](experimentManager_page) page.
 
-
-Seeding & Reproducibility
-==========================
-
-rlberry_ has a class :class:`~rlberry.seeding.seeder.Seeder` that conveniently wraps a `NumPy SeedSequence <https://numpy.org/doc/stable/reference/random/parallel.html>`_,
+### Seeding & Reproducibilitys
+[rlberry](https://github.com/rlberry-py/rlberry) has a class [Seeder](rlberry.seeding.seeder.Seeder) that conveniently wraps a [NumPy SeedSequence](https://numpy.org/doc/stable/reference/random/parallel.html),
 and allows us to create independent random number generators for different objects and threads, using a single
-:class:`~rlberry.seeding.seeder.Seeder` instance. See :ref:`Seeding <seeding>`.
+[Seeder](rlberry.seeding.seeder.Seeder) instance. See the [Seeding](seeding_page) page.
+
+
+You can also save and load your experiments.
+It could be useful in many way :
+- don't repeat the training part every time.
+- continue a previous training (or doing checkpoint).
+
+See the [Save and Load Experiment](save_load_page) page.
+
+### AdaStop
+TODO : Text
+[linked paper](https://hal-lara.archives-ouvertes.fr/hal-04132861/)
+[GitHub](https://github.com/TimotheeMathieu/adastop)
+
+### Visualization
+TODO :
 
 
 
-Contributing to rlberry
-=======================
 
-If you want to contribute to rlberry, check out :ref:`the contribution guidelines<contributing>`.
-
-
-
-Documentation Contents
-======================
-
-.. toctree::
-  :maxdepth: 3
-
-  installation
-  user_guide
-  external
-
-.. toctree::
-  :maxdepth: 2
-
-  api
-  changelog
+## And many more !
+Check the [User Guide](user_guide) to find more tools !
