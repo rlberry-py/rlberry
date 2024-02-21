@@ -11,15 +11,18 @@
 lots of boring things to implement*: run our agents in parallel, average and plot results,
 optimize hyperparameters, compare to baselines, create tricky environments etc etc!
 
-[rlberry](https://github.com/rlberry-py/rlberry) **is here to make your life easier** by doing all these things with a few lines of code,
-so that you can spend most of your time developing agents. **Check our** [quickstart](quick_start) **and our** [Deep RL quickstart](TutorialDeepRL).
+[rlberry](https://github.com/rlberry-py/rlberry) **is here to make your life easier** by doing all these things with a few lines of code, so that you can spend most of your time developing agents.
+
+We provide you a number of tools to help you achieve **reproducibility**, **statistically comparisons** of RL agents, and **nice visualization**.
+
+ If you begin with [rlberry](https://github.com/rlberry-py/rlberry), **check our** [quickstart](quick_start) **and our** [Deep RL quickstart](TutorialDeepRL).
 
 
 ## Documentation Contents
 You can find main documentation here :
 - [Installation](installation)
 - [User Guide](user_guide)
-- [Using extrenal libraries](external) (like [Stable Baselines](stable_baselines) and [Gymnasium](Gymnasium_ancor))
+- [Examples](examples)
 - [API](api)
 - [Changelog](changelog)
 
@@ -27,12 +30,12 @@ You can find main documentation here :
 ## Contributing to rlberry
 If you want to contribute to rlberry, check out [the contribution guidelines](contributing).
 
-## Useful tools
+## rlberry main features
 
 ### ExperimentManager
 This is one of the core element in [rlberry](https://github.com/rlberry-py/rlberry). The [ExperimentManager](rlberry.manager.experiment_manager.ExperimentManager) allow you to easily make an experiment between an [Agent](agent_page) and an [Environment](environment_page). It's use to train, optimize hyperparameters, evaluate and gather statistics about an agent. See the [ExperimentManager](experimentManager_page) page.
 
-### Seeding & Reproducibilitys
+### Seeding & Reproducibility
 [rlberry](https://github.com/rlberry-py/rlberry) has a class [Seeder](rlberry.seeding.seeder.Seeder) that conveniently wraps a [NumPy SeedSequence](https://numpy.org/doc/stable/reference/random/parallel.html),
 and allows us to create independent random number generators for different objects and threads, using a single
 [Seeder](rlberry.seeding.seeder.Seeder) instance. See the [Seeding](seeding_page) page.
@@ -45,9 +48,19 @@ It could be useful in many way :
 
 See the [Save and Load Experiment](save_load_page) page.
 
-### AdaStop
+### Statistical comparison of RL agents
+
+#### Compare agents
+Compare several trained agents using the mean over a specify number of evaluations for each agent.
+TODO : to complete
+
+#### AdaStop
 TODO : Text
+
+
 [linked paper](https://hal-lara.archives-ouvertes.fr/hal-04132861/)
+
+
 [GitHub](https://github.com/TimotheeMathieu/adastop)
 
 ### Visualization

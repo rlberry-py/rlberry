@@ -36,5 +36,6 @@ It's the repository used for teaching purposes. These are mainly basic agents an
 ## Advanced Usage
 - [Custom Agents (In construction)]()
 - [Custom Environments (In construction)]()
+- [Using extrenal libraries](external) (like [Stable Baselines](stable_baselines) and [Gymnasium](Gymnasium_ancor))
 - [Transfer Learning (In construction)]()
 - [AdaStop(In construction)]()
