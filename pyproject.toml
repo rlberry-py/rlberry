@@ -44,9 +44,16 @@ numba = "^0.58.1"
 scikit-fda = {version="^0.9", optional=true}
 scikit-learn = {version="1.2.2", optional=true}
 
+
+#hack : some dependencies are not compatible
 # dependency of scikit-fda, but new version (2.5.8) crash all our CI  (21-02-2024)
 fdasrsf = {version="2.5.2", optional=true}
 
+# dependencies that can crash test "rlberry/manager/tests/test_plot.py"  (21-02-2024)
+numpy = {version="1.26.2", optional=true}
+matplotlib = {version="3.8.2", optional=true}
+pillow = {version="10.1.0", optional=true}
+scipy = {version="1.11.4", optional=true}
 
 [tool.poetry.extras]
 torch = ["opencv-python", "ale-py", "stable-baselines3", "tensorboard", "torch"]
