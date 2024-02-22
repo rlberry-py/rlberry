@@ -44,6 +44,10 @@ numba = "^0.58.1"
 scikit-fda = {version="^0.9", optional=true}
 scikit-learn = {version="1.2.2", optional=true}
 
+# dependency of scikit-fda, but new version (2.5.8) crash all our CI  (21-02-2024)
+fdasrsf = {version="2.5.2", optional=true}
+
+
 [tool.poetry.extras]
 torch = ["opencv-python", "ale-py", "stable-baselines3", "tensorboard", "torch"]
 extras = ["optuna", "numba", "ffmpeg-python", "pyvirtualdisplay", "scikit-fda", "scikit-learn"]
