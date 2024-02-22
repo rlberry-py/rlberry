@@ -16,6 +16,9 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     steps:
+      - name: Wait for version update
+        run: |
+          sleep 20
       - name: Checkout
         uses: actions/checkout@v4
       - uses: actions/setup-python@v4
@@ -27,6 +30,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          curl -C - https://raw.githubusercontent.com/rlberry-py/rlberry/main/pyproject.toml > pyproject.toml
           poetry install --all-extras --with dev --sync
       - name: Sphinx build
         run: |
