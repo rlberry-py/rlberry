@@ -34,7 +34,7 @@ pyopengl = "^3.1.7"
 optuna ={version="^3.4.0", optional=true}
 ffmpeg-python = {version="^0.2.0", optional=true}
 pyvirtualdisplay = {version="^3.0", optional=true}
-opencv-python = {version="^4.8.1.78", optional=true}
+#opencv-python = {version="^4.8.1.78", optional=true}
 ale-py = {version="^0.8.1", optional=true}
 stable-baselines3 = {version="^2.1.0", optional=true}
 tensorboard = {version="^2.15.1", optional=true}
@@ -54,6 +54,11 @@ numpy = {version="1.26.2", optional=true}
 matplotlib = "3.8.2"
 pillow = {version="10.1.0", optional=true}
 scipy ="1.11.4"
+cython = {version="3.0.6", optional=true}
+importlib-metadata = {version="7.0.0", optional=true}
+opencv-python = {version="4.8.1.78", optional=true}
+setuptools = {version="69.0.2", optional=true}
+#check pytest below
 
 [tool.poetry.extras]
 torch = ["opencv-python", "ale-py", "stable-baselines3", "tensorboard", "torch"]
@@ -64,7 +69,8 @@ doc = ["sphinx", "sphinx-gallery", "sphinx-math-dollar", "numpydoc", "myst-parse
 optional = true
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^7.4.3"
+#pytest = "^7.4.3"
+pytest = "7.4.3"
 pytest-xprocess = "^0.23.0"
 codecov = "^2.1.13"
 black = "23.9.1"
