@@ -57,9 +57,8 @@ jobs:
     displayName: 'Add poetry to PATH'
 
   - script: |
-      sleep 40
-
-    condition: eq(variables['Build.Reason'], 'PullRequest') # only run step if it is a PR
+      sleep 40      
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')  #run only on main
     displayName: 'timer and checkout for version when push on main'
 
   - script: |
@@ -107,7 +106,7 @@ jobs:
 
   - script: |
       sleep 40
-    condition: eq(variables['Build.Reason'], 'PullRequest') # only run step if it is a PR
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')  #run only on main
     displayName: 'timer and checkout for version when push on main'
 
   - script: |
@@ -139,7 +138,7 @@ jobs:
     displayName: 'Use Python $(python.version)'
   - script: |
       sleep 40
-    condition: eq(variables['Build.Reason'], 'PullRequest') # only run step if it is a PR
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')  #run only on main
     displayName: 'timer and checkout for version when push on main'
 
   - script: |
