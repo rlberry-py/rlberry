@@ -57,7 +57,7 @@ jobs:
     displayName: 'Add poetry to PATH'
 
   - script: |
-      sleep 40      
+      sleep 40
     condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')  #run only on main
     displayName: 'timer and checkout for version when push on main'
 
