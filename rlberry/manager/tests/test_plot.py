@@ -15,6 +15,7 @@ from rlberry.agents import AgentWithSimplePolicy
 
 # np.random.seed(42)
 
+
 class RandomAgent(AgentWithSimplePolicy):
     name = "RandomAgent"
 
@@ -45,7 +46,7 @@ def _create_and_fit_experiment_manager(output_dir, outdir_id_style):
         n_fit=3,
         output_dir=output_dir,
         outdir_id_style=outdir_id_style,
-        seed = 42,
+        seed=42,
     )
     manager.fit()
     manager.save()
