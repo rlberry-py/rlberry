@@ -49,10 +49,11 @@ jobs:
 
   - script: |
       sleep 120
-      git fetch
-      git checkout
     displayName: 'timer and checkout for version when push on main'
 
+  - checkout: self
+    displayName: 'second checkout'
+    
   - script: |
       curl -sSL install.python-poetry.org | python3 -
       sudo apt install libglu1-mesa
