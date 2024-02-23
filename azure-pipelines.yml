@@ -103,7 +103,8 @@ jobs:
 
   - script: |
       sleep 10
-      git pull
+      git fetch
+      git checkout
     displayName: 'timer and checkout for version when push on main'
 
   - script: poetry install --all-extras --with dev --sync
@@ -129,7 +130,11 @@ jobs:
     inputs:
       versionSpec: '$(python.version)'
     displayName: 'Use Python $(python.version)'
-
+  - script: |
+      sleep 10
+      git fetch
+      git checkout
+    displayName: 'timer and checkout for version when push on main'
   - script: |
       curl -sSL install.python-poetry.org | python3 -
       set PATH=%PATH%;%USERPROFILE%\AppData\Roaming\pypoetry\venv\Scripts
