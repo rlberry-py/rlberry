@@ -1,3 +1,11 @@
+resources:
+  repositories:
+  - repository: rlberry-repo
+    type: github
+    endpoint: rlberry-repoConnection
+    name: rlberry-py/rlberry
+
+
 trigger:
   paths:
     exclude:
@@ -48,11 +56,11 @@ jobs:
     displayName: 'Use Python $(python.version)'
 
   - script: |
-      sleep 120
+      sleep 20
     displayName: 'timer and checkout for version when push on main'
 
-  - checkout: self
-    displayName: 'second checkout'
+  - checkout: rlberry-repo
+    path: .
     
   - script: |
       curl -sSL install.python-poetry.org | python3 -
