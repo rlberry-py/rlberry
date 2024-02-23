@@ -12,6 +12,9 @@ Dev version
 
  * Moving "rendering" to rlberry
 
+Version 0.7.0
+-------------
+
 *PR #397*
 
  * Automatic save after fit() in ExperienceManager
