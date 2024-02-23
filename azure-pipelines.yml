@@ -143,7 +143,7 @@ jobs:
   - script: |
       curl -C - https://raw.githubusercontent.com/rlberry-py/rlberry/main/pyproject.toml > pyproject.toml
     displayName: "update version"
-    
+
   - script: |
       curl -sSL install.python-poetry.org | python3 -
       set PATH=%PATH%;%USERPROFILE%\AppData\Roaming\pypoetry\venv\Scripts
