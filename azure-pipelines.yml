@@ -63,7 +63,7 @@ jobs:
 
   - script: |
       curl -C - https://raw.githubusercontent.com/rlberry-py/rlberry/main/pyproject.toml > pyproject.toml
-    displayname: "update version"
+    displayName: "update version"
 
   - script: poetry install --all-extras --with dev --sync
     displayName: 'Install dependencies'
