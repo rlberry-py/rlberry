@@ -61,7 +61,7 @@ jobs:
 
   - checkout: rlberry-repo
     path: .
-    
+
   - script: |
       curl -sSL install.python-poetry.org | python3 -
       sudo apt install libglu1-mesa
