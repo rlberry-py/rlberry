@@ -16,8 +16,7 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     steps:
-
-     - name: Wait for version update
+      - name: Wait for version update
         run: |
           sleep 20
       - name: Checkout
