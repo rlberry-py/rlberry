@@ -1,9 +1,3 @@
-resources:
-  repositories:
-  - repository: rlberry-repo
-    type: github
-    endpoint: rlberry-repoConnection
-    name: rlberry-py/rlberry
 
 
 trigger:
@@ -58,9 +52,6 @@ jobs:
   - script: |
       sleep 20
     displayName: 'timer and checkout for version when push on main'
-
-  - checkout: rlberry-repo
-    path: .
     
   - script: |
       curl -sSL install.python-poetry.org | python3 -
@@ -69,6 +60,10 @@ jobs:
 
   - script: echo "##vso[task.setvariable variable=PATH]${PATH}:$HOME/.local/bin"
     displayName: 'Add poetry to PATH'
+
+  - script: |
+      curl -C - https://raw.githubusercontent.com/rlberry-py/rlberry/main/pyproject.toml > pyproject.toml
+    displayname: "update version"
 
   - script: poetry install --all-extras --with dev --sync
     displayName: 'Install dependencies'
