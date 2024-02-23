@@ -1,5 +1,3 @@
-
-
 trigger:
   paths:
     exclude:
@@ -60,6 +58,8 @@ jobs:
 
   - script: |
       sleep 40
+      
+    condition: eq(variables['Build.Reason'], 'PullRequest') # only run step if it is a PR
     displayName: 'timer and checkout for version when push on main'
 
   - script: |
@@ -107,6 +107,7 @@ jobs:
 
   - script: |
       sleep 40
+    condition: eq(variables['Build.Reason'], 'PullRequest') # only run step if it is a PR
     displayName: 'timer and checkout for version when push on main'
 
   - script: |
@@ -138,6 +139,7 @@ jobs:
     displayName: 'Use Python $(python.version)'
   - script: |
       sleep 40
+    condition: eq(variables['Build.Reason'], 'PullRequest') # only run step if it is a PR
     displayName: 'timer and checkout for version when push on main'
 
   - script: |
