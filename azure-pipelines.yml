@@ -1,4 +1,5 @@
 
+
 trigger:
   paths:
     exclude:
@@ -53,6 +54,7 @@ jobs:
     displayName: 'timer and checkout for version when push on main'
 
 
+
   - script: |
       curl -sSL install.python-poetry.org | python3 -
       sudo apt install libglu1-mesa
@@ -63,7 +65,7 @@ jobs:
 
   - script: |
       curl -C - https://raw.githubusercontent.com/rlberry-py/rlberry/main/pyproject.toml > pyproject.toml
-    displayname: "update version"
+    displayName: "update version"
 
   - script: poetry install --all-extras --with dev --sync
     displayName: 'Install dependencies'
