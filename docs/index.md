@@ -15,7 +15,7 @@ optimize hyperparameters, compare to baselines, create tricky environments etc e
 
 We provide you a number of tools to help you achieve **reproducibility**, **statistically comparisons** of RL agents, and **nice visualization**.
 
- If you begin with [rlberry](https://github.com/rlberry-py/rlberry), **check our** [quickstart](quick_start) **and our** [Deep RL quickstart](TutorialDeepRL).
+ If you begin with [rlberry](https://github.com/rlberry-py/rlberry), **check our** [RL quickstart](quick_start) **and our** [Deep RL quickstart](TutorialDeepRL).
 
 
 ## Documentation Contents
