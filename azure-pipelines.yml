@@ -52,7 +52,7 @@ jobs:
       sleep 20
     displayName: 'timer and checkout for version when push on main'
 
-    
+
   - script: |
       curl -sSL install.python-poetry.org | python3 -
       sudo apt install libglu1-mesa
