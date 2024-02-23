@@ -68,6 +68,7 @@ Base class
     :template: class.rst
 
     envs.interface.Model
+    envs.basewrapper.Wrapper
 
 Spaces
 ------

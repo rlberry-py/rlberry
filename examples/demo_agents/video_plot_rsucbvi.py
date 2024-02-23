@@ -11,8 +11,8 @@ A demo of RSUCBVI algorithm in MountainCar environment
 """
 # sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_rsucbvi.jpg'
 
-from rlberry.agents import RSUCBVIAgent
-from rlberry.envs.classic_control import MountainCar
+from rlberry_research.agents import RSUCBVIAgent
+from rlberry_research.envs.classic_control import MountainCar
 
 env = MountainCar()
 horizon = 170

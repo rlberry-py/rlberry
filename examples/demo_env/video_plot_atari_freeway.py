@@ -16,7 +16,7 @@ Agent is slightly tuned, but not optimal. This is just for illustration purpose.
 
 from rlberry.manager import ExperimentManager
 from datetime import datetime
-from rlberry.agents.torch.dqn.dqn import DQNAgent
+from rlberry_research.agents.torch.dqn.dqn import DQNAgent
 from gymnasium.wrappers.record_video import RecordVideo
 import shutil
 import os
@@ -54,7 +54,7 @@ tuned_agent = ExperimentManager(
         ),
     ),  # The Environment to solve.
     init_kwargs=dict(  # Where to put the agent's hyperparameters
-        q_net_constructor="rlberry.agents.torch.utils.training.model_factory_from_env",
+        q_net_constructor="rlberry_research.agents.torch.utils.training.model_factory_from_env",
         q_net_kwargs=cnn_configs,
         max_replay_size=50000,
         batch_size=32,

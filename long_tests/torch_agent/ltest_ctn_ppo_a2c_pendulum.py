@@ -1,5 +1,5 @@
 from rlberry.envs import gym_make
-from rlberry.agents.torch import A2CAgent, PPOAgent
+from rlberry_research.agents.torch import A2CAgent, PPOAgent
 from rlberry.manager import ExperimentManager, plot_writer_data, evaluate_agents
 import seaborn as sns
 import matplotlib.pyplot as plt
