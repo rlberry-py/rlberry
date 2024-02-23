@@ -16,6 +16,10 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     steps:
+
+     - name: Wait for version update
+        run: |
+          sleep 20
       - name: Checkout
         uses: actions/checkout@v4
       - uses: actions/setup-python@v4
