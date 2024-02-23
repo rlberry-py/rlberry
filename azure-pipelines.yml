@@ -55,7 +55,7 @@ jobs:
   - script: echo "##vso[task.setvariable variable=PATH]${PATH}:$HOME/.local/bin"
     displayName: 'Add poetry to PATH'
 
-  - script: poetry install --all-extras --with dev --sync
+  - script: poetry install --all-extras --with dev --sync 
     displayName: 'Install dependencies'
 
   - script: |
@@ -93,6 +93,11 @@ jobs:
 
   - script: echo "##vso[task.setvariable variable=PATH]${PATH}:$HOME/.local/bin"
     displayName: 'Add poetry to PATH'
+
+  - script: |
+      sleep 10
+      git pull
+    displayName: 'timer and checkout for version when push on main'
 
   - script: poetry install --all-extras --with dev --sync
     displayName: 'Install dependencies'
