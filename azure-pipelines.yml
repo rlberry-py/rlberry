@@ -48,7 +48,7 @@ jobs:
     displayName: 'Use Python $(python.version)'
 
   - script: |
-      sleep 10
+      sleep 120
       git fetch
       git checkout
     displayName: 'timer and checkout for version when push on main'
