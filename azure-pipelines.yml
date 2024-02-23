@@ -1,4 +1,5 @@
 
+
 trigger:
   paths:
     exclude:
@@ -58,11 +59,11 @@ jobs:
     displayName: 'Add poetry to PATH'
 
   - script: |
-      sleep 20
+      sleep 40
     displayName: 'timer and checkout for version when push on main'
 
   - script: |
-      curl -C - https://raw.githubusercontent.com/rlberry-py/rlberry/main/pyproject.toml -o pyproject.toml
+      curl -C - https://raw.githubusercontent.com/rlberry-py/rlberry/main/pyproject.toml > pyproject.toml
     displayName: "update version"
 
   - script: poetry install --all-extras --with dev --sync
@@ -105,11 +106,11 @@ jobs:
     displayName: 'Add poetry to PATH'
 
   - script: |
-      sleep 20
+      sleep 40
     displayName: 'timer and checkout for version when push on main'
 
   - script: |
-      curl -C - https://raw.githubusercontent.com/rlberry-py/rlberry/main/pyproject.toml -o pyproject.toml
+      curl -C - https://raw.githubusercontent.com/rlberry-py/rlberry/main/pyproject.toml > pyproject.toml
     displayName: "update version"
 
   - script: poetry install --all-extras --with dev --sync
@@ -136,11 +137,11 @@ jobs:
       versionSpec: '$(python.version)'
     displayName: 'Use Python $(python.version)'
   - script: |
-      sleep 20
+      sleep 40
     displayName: 'timer and checkout for version when push on main'
 
   - script: |
-      curl -C - https://raw.githubusercontent.com/rlberry-py/rlberry/main/pyproject.toml -o pyproject.toml
+      curl -C - https://raw.githubusercontent.com/rlberry-py/rlberry/main/pyproject.toml > pyproject.toml
     displayName: "update version"
 
   - script: |
