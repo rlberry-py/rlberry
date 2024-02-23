@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "rlberry"
-version = "v0.7.0.post9.dev0+e5423ff "
+version = "v0.7.0.post35.dev0+6b671bc "
 description = "An easy-to-use reinforcement learning library for research and education"
 authors = ["Omar Darwiche Domingues, Yannis Flet-Berliac, Edouard Leurent, Pierre Menard, Xuedong Shang"]
 homepage = "https://github.com/rlberry-py"
@@ -31,9 +31,9 @@ pyyaml = "^6.0.1"
 tqdm = "^4.66.1"
 adastop = "*"
 moviepy = "^1.0.3"
+pyopengl = "^3.1.7"
 optuna ={version="^3.4.0", optional=true}
 ffmpeg-python = {version="^0.2.0", optional=true}
-pyopengl = {version="^3.1.7", optional=true}
 pyvirtualdisplay = {version="^3.0", optional=true}
 opencv-python = {version="^4.8.1.78", optional=true}
 ale-py = {version="^0.8.1", optional=true}
@@ -44,10 +44,24 @@ pandas = "2.1.0"
 numba = "^0.58.1"
 scikit-fda = {version="^0.9", optional=true}
 scikit-learn = {version="1.2.2", optional=true}
+sphinxcontrib-video = {git = "https://github.com/sphinx-contrib/video", optional=true}
+sphinx = {version="6.2.1", optional=true}
+sphinx-gallery = { version= "^0.14.0", optional=true}
+sphinx-math-dollar = {version="^1.2.1", optional=true}
+numpydoc = {version="^1.6.0", optional=true}
+myst-parser = {version="^2.0.0", optional=true}
+
+
+########### hack : some dependencies are not compatible #############
+# dependency of scikit-fda :
+fdasrsf = {version="2.5.2", optional=true}   # new version (2.5.8) : crash all our CI  (21-02-2024)
+multimethod = {version="1.10", optional=true}     # new version 1.11 : crash our tests in "rlberry/manager/tests/test_plot.py"  (21-02-2024)
+###############################################################
+
 
 [tool.poetry.extras]
 torch = ["opencv-python", "ale-py", "stable-baselines3", "tensorboard", "torch"]
-extras = ["optuna", "numba", "ffmpeg-python", "pyopengl", "pyvirtualdisplay", "scikit-fda", "scikit-learn"]
+extras = ["optuna", "numba", "ffmpeg-python", "pyvirtualdisplay", "scikit-fda", "scikit-learn"]
 doc = ["sphinx", "sphinx-gallery", "sphinx-math-dollar", "numpydoc", "myst-parser", "sphinxcontrib-video", "matplotlib"]
 
 [tool.poetry.group.dev]
