@@ -59,11 +59,12 @@ jobs:
   - script: |
       sleep 40
     condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')  #run only on main
-    displayName: 'timer and checkout for version when push on main'
+    displayName: 'timer for version when push on main'
 
   - script: |
       curl -C - https://raw.githubusercontent.com/rlberry-py/rlberry/main/pyproject.toml > pyproject.toml
-    displayName: "update version"
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')  #run only on main
+    displayName: "update version when push on main"
 
   - script: poetry install --all-extras --with dev --sync
     displayName: 'Install dependencies'
@@ -107,11 +108,12 @@ jobs:
   - script: |
       sleep 40
     condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')  #run only on main
-    displayName: 'timer and checkout for version when push on main'
+    displayName: 'timer for version when push on main'
 
   - script: |
       curl -C - https://raw.githubusercontent.com/rlberry-py/rlberry/main/pyproject.toml > pyproject.toml
-    displayName: "update version"
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')  #run only on main
+    displayName: "update version when push on main"
 
   - script: poetry install --all-extras --with dev --sync
     displayName: 'Install dependencies'
@@ -139,11 +141,12 @@ jobs:
   - script: |
       sleep 40
     condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')  #run only on main
-    displayName: 'timer and checkout for version when push on main'
+    displayName: 'timer for version when push on main'
 
   - script: |
       curl -C - https://raw.githubusercontent.com/rlberry-py/rlberry/main/pyproject.toml > pyproject.toml
-    displayName: "update version"
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')  #run only on main
+    displayName: "update version when push on main"
 
   - script: |
       curl -sSL install.python-poetry.org | python3 -
