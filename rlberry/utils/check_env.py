@@ -13,7 +13,7 @@ def check_env(env):
 
     Parameters
     ----------
-    env: gym.env or rlberry env
+    env: gymnasium.env or rlberry env
         Environment that we want to check.
     """
     # Small reproducibility test
@@ -44,7 +44,7 @@ def check_rlberry_env(env):
 
     Parameters
     ----------
-    env: gym.env or rlberry env
+    env: gymnasium.env or rlberry env
         Environment that we want to check.
     """
     try:

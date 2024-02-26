@@ -24,7 +24,7 @@ def test_a2c_cartpole():
     env_ctor = gym_make
     env_kwargs = dict(id="CartPole-v1")
 
-    rbagent = ExperimentManager(
+    rb_xp = ExperimentManager(
         A2CAgent,
         (env_ctor, env_kwargs),
         agent_name="A2CAgent",
@@ -46,8 +46,8 @@ def test_a2c_cartpole():
         seed=42,
     )
 
-    rbagent.fit()
-    writer_data = rbagent.get_writer_data()
+    rb_xp.fit()
+    writer_data = rb_xp.get_writer_data()
     id500 = [
         writer_data[idx].loc[writer_data[idx]["tag"] == "episode_rewards", "value"]
         == 500
