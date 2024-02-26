@@ -49,7 +49,7 @@ def test_dqn_vs_mdqn_acro():
         learning_starts=5_000,
     )
 
-    dqnagent = ExperimentManager(
+    dqn_xp_manager = ExperimentManager(
         DQNAgent,
         (env_ctor, env_kwargs),
         init_kwargs=dqn_init_kwargs,
@@ -60,7 +60,7 @@ def test_dqn_vs_mdqn_acro():
         # mp_context="fork",
     )
 
-    mdqnagent = ExperimentManager(
+    mdqn_xp_manager = ExperimentManager(
         MDQNAgent,
         (env_ctor, env_kwargs),
         init_kwargs=mdqn_init_kwargs,
@@ -71,10 +71,10 @@ def test_dqn_vs_mdqn_acro():
         # mp_context="fork",
     )
 
-    mdqnagent.fit()
-    dqnagent.fit()
+    mdqn_xp_manager.fit()
+    dqn_xp_manager.fit()
     plot_writer_data(
-        [mdqnagent, dqnagent],
+        [mdqn_xp_manager, dqn_xp_manager],
         tag="episode_rewards",
         # ylabel_="Cumulative Reward",
         title=" Rewards during training",
@@ -83,7 +83,7 @@ def test_dqn_vs_mdqn_acro():
     )
     plt.clf()
     plot_writer_data(
-        [mdqnagent, dqnagent],
+        [mdqn_xp_manager, dqn_xp_manager],
         tag="losses/q_loss",
         # ylabel_="Cumulative Reward",
         title="q_loss",
@@ -91,7 +91,9 @@ def test_dqn_vs_mdqn_acro():
         savefig_fname="mdqn_acro_loss.pdf",
     )
     plt.clf()
-    evaluation = evaluate_agents([mdqnagent, dqnagent], n_simulations=100, show=False)
+    evaluation = evaluate_agents(
+        [mdqn_xp_manager, dqn_xp_manager], n_simulations=100, show=False
+    )
     with sns.axes_style("whitegrid"):
         ax = sns.boxplot(data=evaluation)
         ax.set_xlabel("agent")

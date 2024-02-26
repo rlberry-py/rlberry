@@ -36,7 +36,7 @@ def test_myoutput(capsys):  # or use "capfd" for fd-level
     env_kwargs = dict()
 
     env = env_ctor(**env_kwargs)
-    agent = ExperimentManager(
+    xp_manager = ExperimentManager(
         DummyAgent,
         (env_ctor, env_kwargs),
         fit_budget=3,
@@ -44,15 +44,15 @@ def test_myoutput(capsys):  # or use "capfd" for fd-level
         default_writer_kwargs={"log_interval": 1},
     )
     budget_size = 22
-    agent.fit(budget=budget_size)
+    xp_manager.fit(budget=budget_size)
 
-    assert agent.agent_handlers[0].writer.summary_writer == None
-    assert list(agent.agent_handlers[0].writer.read_tag_value("a")) == list(
+    assert xp_manager.agent_handlers[0].writer.summary_writer == None
+    assert list(xp_manager.agent_handlers[0].writer.read_tag_value("a")) == list(
         range(budget_size)
     )
-    assert agent.agent_handlers[0].writer.read_first_tag_value("a") == 0
+    assert xp_manager.agent_handlers[0].writer.read_first_tag_value("a") == 0
     assert (
-        agent.agent_handlers[0].writer.read_last_tag_value("a") == budget_size - 1
+        xp_manager.agent_handlers[0].writer.read_last_tag_value("a") == budget_size - 1
     )  # start at 0
 
     captured = capsys.readouterr()

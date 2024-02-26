@@ -132,7 +132,7 @@ default networks are:
 """
 The ExperimentManager class is a compact way of experimenting with a deepRL agent.
 """
-default_agent = ExperimentManager(
+default_xp = ExperimentManager(
     A2CAgent,  # The Agent class.
     (gym_make, dict(id="CartPole-v1")),  # The Environment to solve.
     fit_budget=3e5,  # The number of interactions
@@ -149,12 +149,12 @@ default_agent = ExperimentManager(
 )
 
 print("Training ...")
-default_agent.fit()  # Trains the agent on fit_budget steps!
+default_xp.fit()  # Trains the agent on fit_budget steps!
 
 
 # Plot the training data:
 _ = plot_writer_data(
-    [default_agent],
+    [default_xp],
     tag="episode_rewards",
     title="Training Episode Cumulative Rewards",
     show=True,
@@ -236,7 +236,7 @@ INFO: Making new env: CartPole-v1 INFO: Making new env: CartPole-v1
 ```python
 print("Evaluating ...")
 _ = evaluate_agents(
-    [default_agent], n_simulations=50, show=True
+    [default_xp], n_simulations=50, show=True
 )  # Evaluate the trained agent on
 # 10 simulations of 500 steps each.
 ```
@@ -336,7 +336,7 @@ critic_configs = {
 ```
 
 ```python
-tuned_agent = ExperimentManager(
+tuned_xp = ExperimentManager(
     A2CAgent,  # The Agent class.
     (gym_make, dict(id="CartPole-v1")),  # The Environment to solve.
     init_kwargs=dict(  # Where to put the agent's hyperparameters
@@ -368,12 +368,12 @@ tuned_agent = ExperimentManager(
 
 
 print("Training ...")
-tuned_agent.fit()  # Trains the agent on fit_budget steps!
+tuned_xp.fit()  # Trains the agent on fit_budget steps!
 
 
 # Plot the training data:
 _ = plot_writer_data(
-    [default_agent, tuned_agent],
+    [default_xp, tuned_xp],
     tag="episode_rewards",
     title="Training Episode Cumulative Rewards",
     show=True,
@@ -458,7 +458,7 @@ INFO: Making new env: CartPole-v1
 print("Evaluating ...")
 
 # Evaluating and comparing the agents :
-_ = evaluate_agents([default_agent, tuned_agent], n_simulations=50, show=True)
+_ = evaluate_agents([default_xp, tuned_xp], n_simulations=50, show=True)
 ```
 
 </br>

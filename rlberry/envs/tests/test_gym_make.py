@@ -60,7 +60,7 @@ def test_rendering_with_atari_make():
 
         critic_configs = {
             "type": "ConvolutionalNetwork",
-            "layer_sizes": "RELU",
+            "activation": "RELU",
             "in_channels": 4,
             "in_height": 84,
             "in_width": 84,
@@ -69,7 +69,7 @@ def test_rendering_with_atari_make():
             "out_size": 1,
         }
 
-        tuned_agent = ExperimentManager(
+        tuned_xp = ExperimentManager(
             PPOAgent,  # The Agent class.
             (
                 atari_make,
@@ -99,7 +99,7 @@ def test_rendering_with_atari_make():
             output_dir=str(tmpdirname) + "/PPO_for_breakout",
         )
 
-        tuned_agent.fit()
+        tuned_xp.fit()
 
         env = atari_make("ALE/Breakout-v5", render_mode="rgb_array")
         env = RecordVideo(env, str(tmpdirname) + "/_video/temp")
@@ -111,7 +111,7 @@ def test_rendering_with_atari_make():
 
         observation, info = env.reset()
         for tt in range(3000):
-            action = tuned_agent.get_agent_instances()[0].policy(observation)
+            action = tuned_xp.get_agent_instances()[0].policy(observation)
             observation, reward, terminated, truncated, info = env.step(action)
             done = terminated or truncated
             if done:
