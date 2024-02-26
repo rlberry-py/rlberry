@@ -18,7 +18,7 @@ jobs:
     steps:
       - name: Wait for version update
         run: |
-          sleep 20
+          sleep 60
       - name: Checkout
         uses: actions/checkout@v4
       - uses: actions/setup-python@v4
