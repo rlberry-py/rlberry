@@ -13,7 +13,6 @@ from rlberry_research.agents.torch.sac import SACAgent
 from rlberry_research.envs import Pendulum
 from rlberry.manager import ExperimentManager
 
-
 def env_ctor(env, wrap_spaces=True):
     return env
 

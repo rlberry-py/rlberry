@@ -152,6 +152,7 @@ print("Training ...")
 default_xp.fit()  # Trains the agent on fit_budget steps!
 
 
+
 # Plot the training data:
 _ = plot_writer_data(
     [default_xp],
@@ -369,6 +370,7 @@ tuned_xp = ExperimentManager(
 
 print("Training ...")
 tuned_xp.fit()  # Trains the agent on fit_budget steps!
+
 
 
 # Plot the training data:
