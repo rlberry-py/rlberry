@@ -12,6 +12,14 @@ Dev version
 
  * Moving "rendering" to rlberry
 
+*PR #405 #406 #408* 
+
+ * fix plots
+
+*PR #404*
+
+ * add AdaStop
+
 Version 0.7.0
 -------------
 
