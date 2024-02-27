@@ -589,7 +589,7 @@ def plot_synchronized_curves(
                 alpha=0.25,
                 color=cmap[id_c],
             )
-        else:
+        elif error_representation == "raw_curves":
             for n_simu in range(n_tot_simu):
                 x_simu = df_name.loc[df_name["n_simu"] == n_simu, xlabel].values.astype(
                     float
@@ -600,6 +600,8 @@ def plot_synchronized_curves(
                     ax.plot(x_simu, y, alpha=0.2, color=cmap[id_c])
                 else:
                     ax.plot(x_simu, y, alpha=0.25, color=cmap[id_c])
+        else:
+            raise ValueError("Error representation {} not known for non-smoothed plots".format(error_representation))
 
     ax.set_ylabel(ylabel)
     ax.set_xlabel(xlabel)
