@@ -601,7 +601,11 @@ def plot_synchronized_curves(
                 else:
                     ax.plot(x_simu, y, alpha=0.25, color=cmap[id_c])
         else:
-            raise ValueError("Error representation {} not known for non-smoothed plots".format(error_representation))
+            raise ValueError(
+                "Error representation {} not known for non-smoothed plots".format(
+                    error_representation
+                )
+            )
 
     ax.set_ylabel(ylabel)
     ax.set_xlabel(xlabel)

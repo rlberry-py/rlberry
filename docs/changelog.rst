@@ -12,7 +12,7 @@ Dev version
 
  * Moving "rendering" to rlberry
 
-*PR #405 #406 #408* 
+*PR #405 #406 #408*
 
  * fix plots
 
