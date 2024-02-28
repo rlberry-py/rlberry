@@ -141,10 +141,14 @@ def test_write_gif():
             pass
 
 
-@pytest.mark.xfail(sys.platform == "darwin", reason="bug with Mac???")
-def test_gridworld_rendering():
+RENDERING_TOOL = ["pygame", "opengl"]
+
+
+@pytest.mark.xfail(sys.platform == "darwin", reason="bug with Mac with pygame")
+@pytest.mark.parametrize("rendering_tool", RENDERING_TOOL)
+def test_gridworld_rendering(rendering_tool):
     env = GridWorld(7, 10, walls=((2, 2), (3, 3)))
-    env.renderer_type = "pygame"
+    env.renderer_type = rendering_tool
 
     agent = ValueIterationAgent(env, gamma=0.95)
     info = agent.fit()
