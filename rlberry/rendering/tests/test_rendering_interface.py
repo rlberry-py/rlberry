@@ -175,35 +175,36 @@ def test_gridworld_rendering_gif(rendering_tool):
             pass
 
 
-@pytest.mark.xfail(sys.platform == "darwin", reason="bug with Mac with pygame")
-@pytest.mark.parametrize("rendering_tool", RENDERING_TOOL)
-def test_gridworld_rendering_mp4(rendering_tool):
-    env = GridWorld(7, 10, walls=((2, 2), (3, 3)))
-    env.renderer_type = rendering_tool
+##### Fonctionne uniquement si on ajoute une dépendance à ffmpeg ############
+# @pytest.mark.xfail(sys.platform == "darwin", reason="bug with Mac with pygame")
+# @pytest.mark.parametrize("rendering_tool", RENDERING_TOOL)
+# def test_gridworld_rendering_mp4(rendering_tool):
+#     env = GridWorld(7, 10, walls=((2, 2), (3, 3)))
+#     env.renderer_type = rendering_tool
 
-    agent = ValueIterationAgent(env, gamma=0.95)
-    info = agent.fit()
-    print(info)
+#     agent = ValueIterationAgent(env, gamma=0.95)
+#     info = agent.fit()
+#     print(info)
 
-    env.enable_rendering()
-    observation, info = env.reset()
-    for tt in range(50):
-        action = agent.policy(observation)
-        observation, reward, terminated, truncated, info = env.step(action)
-        done = terminated or truncated
-        if done:
-            # Warning: this will never happen in the present case because there is no terminal state.
-            # See the doc of GridWorld for more informations on the default parameters of GridWorld.
-            break
+#     env.enable_rendering()
+#     observation, info = env.reset()
+#     for tt in range(50):
+#         action = agent.policy(observation)
+#         observation, reward, terminated, truncated, info = env.step(action)
+#         done = terminated or truncated
+#         if done:
+#             # Warning: this will never happen in the present case because there is no terminal state.
+#             # See the doc of GridWorld for more informations on the default parameters of GridWorld.
+#             break
 
-    with tempfile.TemporaryDirectory() as tmpdirname:
-        saving_path = tmpdirname + "/test_gif.mp4"
-        env.save_video(saving_path)
-        assert os.path.isfile(saving_path)
-        try:
-            os.remove(saving_path)
-        except Exception:
-            pass
+#     with tempfile.TemporaryDirectory() as tmpdirname:
+#         saving_path = tmpdirname + "/test_gif.mp4"
+#         env.save_video(saving_path)
+#         assert os.path.isfile(saving_path)
+#         try:
+#             os.remove(saving_path)
+#         except Exception:
+#             pass
 
 
 @pytest.mark.xfail(sys.platform == "darwin", reason="bug with Mac with pygame")
