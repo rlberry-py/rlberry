@@ -22,6 +22,12 @@ Evaluation and plot
 --------------------
 
 .. autosummary::
+  :toctree: generated/
+  :template: class.rst
+
+   manager.AdastopComparator
+
+.. autosummary::
    :toctree: generated/
    :template: function.rst
 

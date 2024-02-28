@@ -1,13 +1,23 @@
 """
-======================================
-Compare Bandit Algorithms with AdaStop
-======================================
+===========================================
+Compare PPO and A2C on Acrobot with AdaStop
+===========================================
 
 This example illustrate the use of adastop_comparator which uses adaptive multiple-testing to assess whether trained agents are
 statistically different or not.
 
 Remark that in the case where two agents are not deemed statistically different it can mean either that they are as efficient,
 or it can mean that there have not been enough fits to assess the variability of the agents.
+
+Results in
+
+.. code-block::
+
+    [INFO] 13:35: Test finished
+    [INFO] 13:35: Results are
+      Agent1 vs Agent2  mean Agent1  mean Agent2  mean diff  std Agent 1  std Agent 2 decisions
+    0       A2C vs PPO     -274.274      -85.068   -189.206    185.82553      2.71784   smaller
+
 
 """
 
@@ -37,3 +47,4 @@ managers = [
 
 comparator = AdastopComparator()
 comparator.compare(managers)
+print(comparator.managers_paths)
