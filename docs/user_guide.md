@@ -13,6 +13,7 @@ To run all the examples, you will need to install other libraries like "[rlberry
 The easiest way to do it is :
 ```none
 pip install rlberry[torch,extras]
+pip install rlberry-scool
 pip install git+https://github.com/rlberry-py/rlberry-research.git
 ```
 
