@@ -23,7 +23,7 @@ pip install git+https://github.com/rlberry-py/rlberry-research.git
 [rlberry-scool](https://github.com/rlberry-py/rlberry-scool) :
 It's the repository used for teaching purposes. These are mainly basic agents and environments, in a version that makes it easier for students to learn.
 
-You can find more details about installation [here](installation)
+You can find more details about installation [here](installation)!
 
 ## Set up an experiment
 - [Environment](environment_page)
