@@ -47,6 +47,8 @@ class AdastopComparator(MultipleAgentsComparator):
     ----------
     agent_names: list of str
         list of the agents' names.
+    managers_paths: dictionary
+        managers_paths[agent_name] is a list of the paths to the trained experiment managers. Can be loaded with ExperimentManager.load.
     decision: dict
         decision of the tests for each comparison, keys are the comparisons and values are in {"equal", "larger", "smaller"}.
     n_iters: dict
@@ -64,6 +66,7 @@ class AdastopComparator(MultipleAgentsComparator):
         seed=None,
     ):
         MultipleAgentsComparator.__init__(self, n, K, B, comparisons, alpha, beta, seed)
+        self.managers_paths = {}
 
     def compare(self, manager_list, n_evaluations=50, verbose=True):
         """
@@ -83,6 +86,9 @@ class AdastopComparator(MultipleAgentsComparator):
            Decision of the test at this step.
         """
         eval_values = {
+            ExperimentManager(**manager).agent_name: [] for manager in manager_list
+        }
+        self.managers_paths = {
             ExperimentManager(**manager).agent_name: [] for manager in manager_list
         }
         self.n_evaluations = n_evaluations
@@ -127,6 +133,10 @@ class AdastopComparator(MultipleAgentsComparator):
 
         # Fit all the agents
         managers_in = [_fit_agent(manager) for manager in managers_in]
+
+        # Save the managers' save path
+        for i in range(len(managers_in)):
+            self.managers_paths[agent_names_in[i]] = managers_in[i].save()
 
         # Get the evaluations
         idz = 0
