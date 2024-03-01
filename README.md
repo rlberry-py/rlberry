@@ -82,13 +82,6 @@ If you use `rlberry` in scientific publications, we would appreciate citations u
 }
 ```
 
-
-## Development notes
-
-The modules listed below are experimental at the moment, that is, they are not thoroughly tested and are susceptible to evolve.
-
-* `None`: currently, nothing is experimental here
-
 ## About us
 This project was initiated and is actively maintained by [INRIA SCOOL team](https://team.inria.fr/scool/).
 More information [here](https://rlberry-py.github.io/rlberry/stable/about.html).
