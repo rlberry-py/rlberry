@@ -1,7 +1,6 @@
 from rlberry.envs import gym_make
 from rlberry_research.agents.torch import A2CAgent, PPOAgent
 from rlberry.manager import ExperimentManager, plot_writer_data, evaluate_agents
-import seaborn as sns
 import matplotlib.pyplot as plt
 
 
@@ -55,10 +54,9 @@ def test_a2c_vs_ppo_pendul():
     evaluation = evaluate_agents(
         [a2c_xp_manager, ppo_xp_manager], n_simulations=100, show=False
     )
-    with sns.axes_style("whitegrid"):
-        ax = sns.boxplot(data=evaluation)
-        ax.set_xlabel("agent")
-        ax.set_ylabel("Cumulative Reward")
+    ax = plt.boxplot(data=evaluation)
+    ax.set_xlabel("agent")
+    ax.set_ylabel("Cumulative Reward")
     plt.title("Evals")
     plt.gcf().savefig("a2c_ppo_pendul_eval.pdf")
     plt.clf()

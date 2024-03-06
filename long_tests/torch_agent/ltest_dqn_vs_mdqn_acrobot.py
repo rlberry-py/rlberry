@@ -3,7 +3,6 @@ from rlberry_research.agents.torch import DQNAgent
 from rlberry_research.agents.torch import MunchausenDQNAgent as MDQNAgent
 from rlberry.manager import ExperimentManager, evaluate_agents, plot_writer_data
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 
 def test_dqn_vs_mdqn_acro():
@@ -94,10 +93,9 @@ def test_dqn_vs_mdqn_acro():
     evaluation = evaluate_agents(
         [mdqn_xp_manager, dqn_xp_manager], n_simulations=100, show=False
     )
-    with sns.axes_style("whitegrid"):
-        ax = sns.boxplot(data=evaluation)
-        ax.set_xlabel("agent")
-        ax.set_ylabel("Cumulative Reward")
+    ax = plt.boxplot(data=evaluation)
+    ax.set_xlabel("agent")
+    ax.set_ylabel("Cumulative Reward")
     plt.title("Evals")
     plt.gcf().savefig("mdqn_acro_eval.pdf")
     plt.clf()
