@@ -1,0 +1,257 @@
+
+
+.. _sphx_glr_auto_examples_demo_env:
+
+Illustration of rlberry environments
+====================================
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A demo of Chain environment">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_env/images/thumb/sphx_glr_video_plot_chain_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_env_video_plot_chain.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of Chain environment</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A demo of MountainCar environment">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_env/images/thumb/sphx_glr_video_plot_mountain_car_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_env_video_plot_mountain_car.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of MountainCar environment</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A demo of AppleGold environment">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_env/images/thumb/sphx_glr_video_plot_apple_gold_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_env_video_plot_apple_gold.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of AppleGold environment</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A demo of Acrobot environment with RSUCBVIAgent">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_env/images/thumb/sphx_glr_video_plot_acrobot_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_env_video_plot_acrobot.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of Acrobot environment with RSUCBVIAgent</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A demo of Gridworld environment with ValueIterationAgent">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_env/images/thumb/sphx_glr_video_plot_gridworld_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_env_video_plot_gridworld.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of Gridworld environment with ValueIterationAgent</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A demo of twinrooms environment">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_env/images/thumb/sphx_glr_video_plot_twinrooms_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_env_video_plot_twinrooms.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of twinrooms environment</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A demo of OldGymCompatibilityWrapper with old_Acrobot environment">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_env/images/thumb/sphx_glr_video_plot_old_gym_compatibility_wrapper_old_acrobot_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_env_video_plot_old_gym_compatibility_wrapper_old_acrobot.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of OldGymCompatibilityWrapper with old_Acrobot environment</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A demo of rooms environment">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_env/images/thumb/sphx_glr_video_plot_rooms_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_env_video_plot_rooms.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of rooms environment</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A demo of PBALL2D environment">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_env/images/thumb/sphx_glr_video_plot_pball_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_env_video_plot_pball.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of PBALL2D environment</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Agent is slightly tuned, but not optimal. This is just for illustration purpose.">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_env/images/thumb/sphx_glr_video_plot_springcartpole_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_env_video_plot_springcartpole.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of SpringCartPole environment with DQNAgent</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Agent is slightly tuned, but not optimal. This is just for illustration purpose.">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_env/images/thumb/sphx_glr_video_plot_atari_freeway_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_env_video_plot_atari_freeway.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of ATARI Freeway environment with DQNAgent</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Agent is slightly tuned, but not optimal. This is just for illustration purpose.">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_env/images/thumb/sphx_glr_example_atari_atlantis_vectorized_ppo_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_env_example_atari_atlantis_vectorized_ppo.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of ATARI Atlantis environment with vectorized PPOAgent</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Agent is slightly tuned, but not optimal. This is just for illustration purpose.">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_env/images/thumb/sphx_glr_example_atari_breakout_vectorized_ppo_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_env_example_atari_breakout_vectorized_ppo.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of ATARI Breakout environment with vectorized PPOAgent</div>
+    </div>
+
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/demo_env/video_plot_chain
+   /auto_examples/demo_env/video_plot_mountain_car
+   /auto_examples/demo_env/video_plot_apple_gold
+   /auto_examples/demo_env/video_plot_acrobot
+   /auto_examples/demo_env/video_plot_gridworld
+   /auto_examples/demo_env/video_plot_twinrooms
+   /auto_examples/demo_env/video_plot_old_gym_compatibility_wrapper_old_acrobot
+   /auto_examples/demo_env/video_plot_rooms
+   /auto_examples/demo_env/video_plot_pball
+   /auto_examples/demo_env/video_plot_springcartpole
+   /auto_examples/demo_env/video_plot_atari_freeway
+   /auto_examples/demo_env/example_atari_atlantis_vectorized_ppo
+   /auto_examples/demo_env/example_atari_breakout_vectorized_ppo
+

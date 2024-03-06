@@ -1,0 +1,846 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  
+  <title>Quickstart for Deep Reinforcement Learning in rlberry &mdash; rlberry 0.7.2 documentation</title>
+  
+  <link rel="canonical" href="https://rlberry-py.github.io/rlberry/basics/DeepRLTutorial/TutorialDeepRL.html" />
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/vendor/bootstrap.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sg_gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sg_gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sg_gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+<script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+<script src="../../_static/jquery.js"></script> 
+</head>
+<body>
+
+
+<nav id="navbar" class="sk-docs-navbar navbar navbar-expand-md navbar-light bg-light py-0">
+  <div class="container-fluid sk-docs-container px-0">
+    <button
+      id="sk-navbar-toggler"
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="sk-navbar-collapse collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../index.html">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../installation.html">Install</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../user_guide.html">User Guide</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../auto_examples/index.html">Examples</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../api.html">API</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../changelog.html">Changelog</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../about.html">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="https://github.com/rlberry-py/rlberry">GitHub</a>
+        </li>
+        <!--
+        <li class="nav-item dropdown nav-more-item-dropdown">
+          <a class="sk-nav-link nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">More</a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          </div>
+        </li>-->
+    </ul>
+      <div id="searchbox" role="search">
+          <div class="searchformwrapper">
+            <form action="https://duckduckgo.com/">
+            <input type="hidden" id="sites" name="sites" value="https://rlberry-py.github.io/rlberry/">
+            <input type="search" placeholder="Search &hellip;" value="" name="q" />
+            <input class="sk-search-text-btn" type="submit" value="Go" /></form>
+
+          </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="d-flex" id="sk-doc-wrapper">
+    <input type="checkbox" name="sk-toggle-checkbox" id="sk-toggle-checkbox">
+    <label id="sk-sidemenu-toggle" class="sk-btn-toggle-toc btn sk-btn-primary" for="sk-toggle-checkbox">Toggle Menu</label>
+    <div id="sk-sidebar-wrapper" class="border-right">
+      <div class="sk-sidebar-toc-wrapper">
+        <div class="sk-sidebar-toc-logo">
+        </div>
+	<br>
+        <div class="alert alert-warning p-1 mb-2" role="alert">
+
+          <p class="text-center mb-0">
+          rlberry 0.7.2<br/>
+          <a href="../../versions.html">Other versions</a>
+          </p>
+
+        </div>
+            <div class="sk-sidebar-toc">
+              <ul>
+<li><a class="reference internal" href="#">Quickstart for Deep Reinforcement Learning in rlberry</a><ul>
+<li><a class="reference internal" href="#imports">Imports</a></li>
+<li><a class="reference internal" href="#reminder-of-the-rl-setting">Reminder of the RL setting</a></li>
+<li><a class="reference internal" href="#gymnasium-environment">Gymnasium Environment</a></li>
+<li><a class="reference internal" href="#actor-critic-algorithms-and-a2c">Actor-Critic algorithms and A2C</a></li>
+<li><a class="reference internal" href="#running-a2c-on-cartpole">Running A2C on CartPole</a></li>
+</ul>
+</li>
+</ul>
+
+            </div>
+      </div>
+    </div>
+    <div id="sk-page-content-wrapper">
+      <div class="sk-page-content container-fluid body px-md-3" role="main">
+        
+  <section id="quickstart-for-deep-reinforcement-learning-in-rlberry">
+<span id="tutorialdeeprl"></span><h1>Quickstart for Deep Reinforcement Learning in rlberry<a class="headerlink" href="#quickstart-for-deep-reinforcement-learning-in-rlberry" title="Permalink to this heading">¶</a></h1>
+<p>In this tutorial, we will focus on Deep Reinforcement Learning with the
+<strong>Advantage Actor-Critic</strong> algorithm.</p>
+<section id="imports">
+<h2>Imports<a class="headerlink" href="#imports" title="Permalink to this heading">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.envs</span> <span class="kn">import</span> <span class="n">gym_make</span>
+<span class="kn">from</span> <span class="nn">rlberry.manager</span> <span class="kn">import</span> <span class="n">plot_writer_data</span><span class="p">,</span> <span class="n">ExperimentManager</span><span class="p">,</span> <span class="n">evaluate_agents</span>
+<span class="kn">from</span> <span class="nn">rlberry_research.agents.torch</span> <span class="kn">import</span> <span class="n">A2CAgent</span>
+<span class="kn">from</span> <span class="nn">rlberry_research.agents.torch.utils.training</span> <span class="kn">import</span> <span class="n">model_factory_from_env</span>
+</pre></div>
+</div>
+</section>
+<section id="reminder-of-the-rl-setting">
+<h2>Reminder of the RL setting<a class="headerlink" href="#reminder-of-the-rl-setting" title="Permalink to this heading">¶</a></h2>
+<p>We will consider a MDP <span class="math notranslate nohighlight">\(M = (\mathcal{S}, \mathcal{A}, p, r, \gamma)\)</span>
+with:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mathcal{S}\)</span> the state space,</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{A}\)</span> the action space,</p></li>
+<li><p><span class="math notranslate nohighlight">\(p(x^\prime \mid x, a)\)</span> the transition probability,</p></li>
+<li><p><span class="math notranslate nohighlight">\(r(x, a, x^\prime)\)</span> the reward of the transition <span class="math notranslate nohighlight">\((x, a, x^\prime)\)</span>,</p></li>
+<li><p><span class="math notranslate nohighlight">\(\gamma \in [0,1)\)</span> is the discount factor.</p></li>
+</ul>
+<p>A policy <span class="math notranslate nohighlight">\(\pi\)</span> is a mapping from the state space <span class="math notranslate nohighlight">\(\mathcal{S}\)</span> to the
+probability of selecting each action. The action value function of a
+policy is the overall expected reward from a state action.
+<span class="math notranslate nohighlight">\(Q^\pi(s, a) = \mathbb{E}_{\tau \sim \pi}\big[R(\tau) \mid s_0=s, a_0=a\big]\)</span>
+where <span class="math notranslate nohighlight">\(\tau\)</span> is an episode
+<span class="math notranslate nohighlight">\((s_0, a_0, r_0, s_1, a_1, r_1, s_2, ..., s_T, a_T, r_T)\)</span> with the
+actions drawn from <span class="math notranslate nohighlight">\(\pi(s)\)</span>; <span class="math notranslate nohighlight">\(R(\tau)\)</span> is the random variable defined as
+the cumulative sum of the discounted reward.</p>
+<p>The goal is to maximize the cumulative sum of discount rewards:</p>
+<p><div class="math notranslate nohighlight">
+\[J(\pi) = \mathbb{E}_{\tau \sim \pi}\big[R(\tau) \big]\]</div>
+</p>
+</section>
+<section id="gymnasium-environment">
+<h2>Gymnasium Environment<a class="headerlink" href="#gymnasium-environment" title="Permalink to this heading">¶</a></h2>
+<p>In this tutorial we are going to use the <a class="reference external" href="https://gymnasium.farama.org/api/env/">Gymnasium library (previously
+OpenAI’s Gym)</a>. This library
+provides a large number of environments to test RL algorithm.</p>
+<p>We will focus only on the <strong>CartPole-v1</strong> environment, although we
+recommend experimenting with other environments such as <strong>Acrobot-v1</strong>
+and <strong>MountainCar-v0</strong>. The following table presents some basic
+components of the three environments, such as the dimensions of their
+observation and action spaces and the rewards occurring at each step.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Env Info</p></th>
+<th class="head text-left"><p>CartPole-v1</p></th>
+<th class="head text-left"><p>Acrobot-v1</p></th>
+<th class="head text-left"><p>MountainCar-v0</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p><strong>Observation Space</strong></p></td>
+<td class="text-left"><p>Box(4)</p></td>
+<td class="text-left"><p>Box(6)</p></td>
+<td class="text-left"><p>Box(2)</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><strong>Action Space</strong></p></td>
+<td class="text-left"><p>Discrete(2)</p></td>
+<td class="text-left"><p>Discrete(3)</p></td>
+<td class="text-left"><p>Discrete(3)</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><strong>Rewards</strong></p></td>
+<td class="text-left"><p>1 per step</p></td>
+<td class="text-left"><p>-1 if not terminal else 0</p></td>
+<td class="text-left"><p>-1 per step</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="actor-critic-algorithms-and-a2c">
+<h2>Actor-Critic algorithms and A2C<a class="headerlink" href="#actor-critic-algorithms-and-a2c" title="Permalink to this heading">¶</a></h2>
+<p><strong>Actor-Critic algorithms</strong> methods consist of two models, which may
+optionally share parameters:</p>
+<ul class="simple">
+<li><p>Critic updates the value function parameters w and depending on the
+algorithm it could be action-value <span class="math notranslate nohighlight">\(Q_{\varphi}(s,a )\)</span> or state-value
+<span class="math notranslate nohighlight">\(V_{\varphi}(s)\)</span>.</p></li>
+<li><p>Actor updates the policy parameters <span class="math notranslate nohighlight">\(\theta\)</span> for
+<span class="math notranslate nohighlight">\(\pi_{\theta}(a \mid s)\)</span>, in the direction suggested by the critic.</p></li>
+</ul>
+<p><strong>A2C</strong> is an Actor-Critic algorithm and it is part of the on-policy
+family, which means that we are learning the value function for one
+policy while following it. The original paper in which it was proposed
+can be found <a class="reference external" href="https://arxiv.org/pdf/1602.01783.pdf">here</a> and the
+pseudocode of the algorithm is the following:</p>
+<ul>
+<li><p>Initialize the actor <span class="math notranslate nohighlight">\(\pi_{\theta}\)</span> and the critic <span class="math notranslate nohighlight">\(V_{\varphi}\)</span>
+with random weights.</p></li>
+<li><p>Observe the initial state <span class="math notranslate nohighlight">\(s_{0}\)</span>.</p></li>
+<li><p>for <span class="math notranslate nohighlight">\(t \in\left[0, T_{\text {total }}\right]\)</span> :</p>
+<ul>
+<li><p>Initialize empty episode minibatch.</p></li>
+<li><p>for <span class="math notranslate nohighlight">\(k \in[0, n]:\)</span> # Sample episode</p>
+<ul class="simple">
+<li><p>Select a action <span class="math notranslate nohighlight">\(a_{k}\)</span> using the actor <span class="math notranslate nohighlight">\(\pi_{\theta}\)</span>.</p></li>
+<li><p>Perform the action <span class="math notranslate nohighlight">\(a_{k}\)</span> and observe the next state
+<span class="math notranslate nohighlight">\(s_{k+1}\)</span> and the reward <span class="math notranslate nohighlight">\(r_{k+1}\)</span>.</p></li>
+<li><p>Store <span class="math notranslate nohighlight">\(\left(s_{k}, a_{k}, r_{k+1}\right)\)</span> in the episode
+minibatch.</p></li>
+</ul>
+</li>
+<li><p>if <span class="math notranslate nohighlight">\(s_{n}\)</span> is not terminal: set
+<span class="math notranslate nohighlight">\(R=V_{\varphi}\left(s_{n}\right)\)</span> with the critic, else <span class="math notranslate nohighlight">\(R=0\)</span>.</p></li>
+<li><p>Reset gradient <span class="math notranslate nohighlight">\(d \theta\)</span> and <span class="math notranslate nohighlight">\(d \varphi\)</span> to 0 .</p></li>
+<li><p>for <span class="math notranslate nohighlight">\(k \in[n-1,0]\)</span> : # Backwards iteration over the episode</p>
+<ul>
+<li><p>Update the discounted sum of rewards
+<span class="math notranslate nohighlight">\(R \leftarrow r_{k}+\gamma R\)</span></p></li>
+<li><p>Accumulate the policy gradient using the critic:</p>
+<p><div class="math notranslate nohighlight">
+\[d \theta \leftarrow d \theta+\nabla_{\theta} \log \pi_{\theta}\left(a_{k}\mid s_{k}\right)\left(R-V_{\varphi}\left(s_{k}\right)\right)\]</div>
+</p>
+</li>
+<li><p>Accumulate the critic gradient:</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><div class="math notranslate nohighlight">
+\[d \varphi \leftarrow d \varphi+\nabla_{\varphi}\left(R-V_{\varphi}\left(s_{k}\right)\right)^{2}\]</div>
+</p>
+<ul class="simple">
+<li><p>Update the actor and the critic with the accumulated gradients using
+gradient descent or similar:</p></li>
+</ul>
+<p><div class="math notranslate nohighlight">
+\[\theta \leftarrow \theta+\eta d \theta \quad \varphi \leftarrow \varphi+\eta d \varphi\]</div>
+</p>
+</section>
+<section id="running-a2c-on-cartpole">
+<h2>Running A2C on CartPole<a class="headerlink" href="#running-a2c-on-cartpole" title="Permalink to this heading">¶</a></h2>
+<p><span>⚠</span> <strong>warning :</strong> depending on the seed, you may get different results, and if you’re (un)lucky, your default agent may learn and be better than the tuned agent. <span>⚠</span></p>
+<p>In the next example we use default parameters for both the Actor and the
+Critic and we use rlberry to train and evaluate our A2C agent. The
+default networks are:</p>
+<ul class="simple">
+<li><p>a dense neural network with two hidden layers of 64 units for the
+<strong>Actor</strong>, the input layer has the dimension of the state space
+while the output layer has the dimension of the action space. The
+activations are RELU functions and we have a softmax in the last
+layer.</p></li>
+<li><p>a dense neural network with two hidden layers of 64 units for the
+<strong>Critic</strong>, the input layer has the dimension of the state space
+while the output has dimension 1. The activations are RELU functions
+apart from the last layer that has a linear activation.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">The ExperimentManager class is a compact way of experimenting with a deepRL agent.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">default_xp</span> <span class="o">=</span> <span class="n">ExperimentManager</span><span class="p">(</span>
+    <span class="n">A2CAgent</span><span class="p">,</span>  <span class="c1"># The Agent class.</span>
+    <span class="p">(</span><span class="n">gym_make</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">)),</span>  <span class="c1"># The Environment to solve.</span>
+    <span class="n">fit_budget</span><span class="o">=</span><span class="mf">3e5</span><span class="p">,</span>  <span class="c1"># The number of interactions</span>
+    <span class="c1"># between the agent and the</span>
+    <span class="c1"># environment during training.</span>
+    <span class="n">eval_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">eval_horizon</span><span class="o">=</span><span class="mi">500</span><span class="p">),</span>  <span class="c1"># The number of interactions</span>
+    <span class="c1"># between the agent and the</span>
+    <span class="c1"># environment during evaluations.</span>
+    <span class="n">n_fit</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># The number of agents to train.</span>
+    <span class="c1"># Usually, it is good to do more</span>
+    <span class="c1"># than 1 because the training is</span>
+    <span class="c1"># stochastic.</span>
+    <span class="n">agent_name</span><span class="o">=</span><span class="s2">&quot;A2C default&quot;</span><span class="p">,</span>  <span class="c1"># The agent&#39;s name.</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Training ...&quot;</span><span class="p">)</span>
+<span class="n">default_xp</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>  <span class="c1"># Trains the agent on fit_budget steps!</span>
+
+
+<span class="c1"># Plot the training data:</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">plot_writer_data</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">default_xp</span><span class="p">],</span>
+    <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;episode_rewards&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Training Episode Cumulative Rewards&quot;</span><span class="p">,</span>
+    <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[INFO] Running ExperimentManager fit() for A2C default with n_fit = 1 and max_workers = None.
+INFO: Making new env: CartPole-v1
+INFO: Making new env: CartPole-v1
+[INFO] Could not find least used device (nvidia-smi might be missing), use cuda:0 instead
+</pre></div>
+</div>
+</br>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Training ...
+</pre></div>
+</div>
+</br>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[INFO] [A2C default[worker: 0]] | max_global_step = 5644 |episode_rewards = 196.0 | total_episodes = 111 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 9551 | episode_rewards = 380.0 | total_episodes = 134 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 13128 | episode_rewards = 125.0 | total_episodes = 182 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 16617 | episode_rewards = 246.0 | total_episodes = 204 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 20296 | episode_rewards = 179.0 | total_episodes = 222 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 23633 | episode_rewards = 120.0 | total_episodes = 240 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 26193 | episode_rewards = 203.0 | total_episodes = 252 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 28969 | episode_rewards = 104.0 | total_episodes = 271 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 34757 | episode_rewards = 123.0 | total_episodes = 335 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 41554 | episode_rewards = 173.0 | total_episodes = 373 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 48418 | episode_rewards = 217.0 | total_episodes = 423 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 55322 | episode_rewards = 239.0 | total_episodes = 446 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 62193 | episode_rewards = 218.0 | total_episodes = 471 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 69233 | episode_rewards = 377.0 | total_episodes = 509 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 76213 | episode_rewards = 211.0 | total_episodes = 536 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 83211 | episode_rewards = 212.0 | total_episodes = 562 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 90325 | episode_rewards = 211.0 | total_episodes = 586 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 97267 | episode_rewards = 136.0 | total_episodes = 631 | [INFO] [A2C default[worker: 0]] | max_global_step = 104280 | episode_rewards = 175.0 | total_episodes = 686 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 111194 | episode_rewards = 258.0 | total_episodes = 722 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 118067 | episode_rewards = 235.0 | total_episodes = 755 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 125040 | episode_rewards = 500.0 | total_episodes = 777 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 132478 | episode_rewards = 500.0 | total_episodes = 792 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 139591 | episode_rewards = 197.0 | total_episodes = 813 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 146462 | episode_rewards = 500.0 | total_episodes = 835 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 153462 | episode_rewards = 500.0 | total_episodes = 849 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 160462 | episode_rewards = 500.0 | total_episodes = 863 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 167462 | episode_rewards = 500.0 | total_episodes = 877 | [INFO] [A2C default[worker: 0]] | max_global_step = 174462 | episode_rewards = 500.0 | total_episodes = 891 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 181462 | episode_rewards = 500.0 | total_episodes = 905 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 188462 | episode_rewards = 500.0 | total_episodes = 919 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 195462 | episode_rewards = 500.0 | total_episodes = 933 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 202520 | episode_rewards = 206.0 | total_episodes = 957 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 209932 | episode_rewards = 500.0 | total_episodes = 978 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 216932 | episode_rewards = 500.0 | total_episodes = 992 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 223932 | episode_rewards = 500.0 | total_episodes = 1006 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 230916 | episode_rewards = 214.0 | total_episodes = 1024 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 235895 | episode_rewards = 500.0 | total_episodes = 1037 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 242782 | episode_rewards = 118.0 | total_episodes = 1072 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 249695 | episode_rewards = 131.0 | total_episodes = 1111 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 256649 | episode_rewards = 136.0 | total_episodes = 1160 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 263674 | episode_rewards = 100.0 | total_episodes = 1215 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 270727 | episode_rewards = 136.0 | total_episodes = 1279 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 277588 | episode_rewards = 275.0 | total_episodes = 1313 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 284602 | episode_rewards = 136.0 | total_episodes = 1353 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 291609 | episode_rewards = 117.0 | total_episodes = 1413 |
+[INFO] [A2C default[worker: 0]] | max_global_step = 298530 | episode_rewards = 147.0 | total_episodes = 1466 |
+[INFO] ... trained!
+INFO: Making new env: CartPole-v1 INFO: Making new env: CartPole-v1
+[INFO] Could not find least used device (nvidia-smi might be missing), use cuda:0 instead
+</pre></div>
+</div>
+</br>
+<img alt="../../_images/output_5_3.png" class="align-center" src="../../_images/output_5_3.png" />
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Evaluating ...&quot;</span><span class="p">)</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">evaluate_agents</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">default_xp</span><span class="p">],</span> <span class="n">n_simulations</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>  <span class="c1"># Evaluate the trained agent on</span>
+<span class="c1"># 10 simulations of 500 steps each.</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[INFO] Evaluating A2C default...
+</pre></div>
+</div>
+</br>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Evaluating ...
+</pre></div>
+</div>
+</br>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[INFO][eval]... simulation 1/50
+[INFO][eval]... simulation 2/50
+[INFO][eval]... simulation 3/50
+[INFO][eval]... simulation 4/50
+[INFO][eval]... simulation 5/50
+[INFO][eval]... simulation 6/50
+[INFO][eval]... simulation 7/50
+[INFO][eval]... simulation 8/50
+[INFO][eval]... simulation 9/50
+[INFO][eval]... simulation 10/50
+[INFO][eval]... simulation 11/50
+[INFO][eval]... simulation 12/50
+[INFO][eval]... simulation 13/50
+[INFO][eval]... simulation 14/50
+[INFO][eval]... simulation 15/50
+[INFO][eval]... simulation 16/50
+[INFO][eval]... simulation 17/50
+[INFO][eval]... simulation 18/50
+[INFO][eval]... simulation 19/50
+[INFO][eval]... simulation 20/50
+[INFO][eval]... simulation 21/50
+[INFO][eval]... simulation 22/50
+[INFO][eval]... simulation 23/50
+[INFO][eval]... simulation 24/50
+[INFO][eval]... simulation 25/50
+[INFO][eval]... simulation 26/50
+[INFO][eval]... simulation 27/50
+[INFO][eval]... simulation 28/50
+[INFO][eval]... simulation 29/50
+[INFO][eval]... simulation 30/50
+[INFO][eval]... simulation 31/50
+[INFO][eval]... simulation 32/50
+[INFO][eval]... simulation 33/50
+[INFO][eval]... simulation 34/50
+[INFO][eval]... simulation 35/50
+[INFO][eval]... simulation 36/50
+[INFO][eval]... simulation 37/50
+[INFO][eval]... simulation 38/50
+[INFO][eval]... simulation 39/50
+[INFO][eval]... simulation 40/50
+[INFO][eval]... simulation 41/50
+[INFO][eval]... simulation 42/50
+[INFO][eval]... simulation 43/50
+[INFO][eval]... simulation 44/50
+[INFO][eval]... simulation 45/50
+[INFO][eval]... simulation 46/50
+[INFO][eval]... simulation 47/50
+[INFO][eval]... simulation 48/50
+[INFO][eval]... simulation 49/50
+[INFO][eval]... simulation 50/50
+</pre></div>
+</div>
+</br>
+<img alt="../../_images/output_6_3.png" class="align-center" src="../../_images/output_6_3.png" />
+<p>Let’s try to change the neural networks’ architectures and see if we can
+beat our previous result. This time we use a smaller learning rate and
+bigger batch size to have more stable training.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">policy_configs</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;MultiLayerPerceptron&quot;</span><span class="p">,</span>  <span class="c1"># A network architecture</span>
+    <span class="s2">&quot;layer_sizes&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">),</span>  <span class="c1"># Network dimensions</span>
+    <span class="s2">&quot;reshape&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;is_policy&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># The network should output a distribution</span>
+    <span class="c1"># over actions</span>
+<span class="p">}</span>
+
+<span class="n">critic_configs</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;MultiLayerPerceptron&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;layer_sizes&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">),</span>
+    <span class="s2">&quot;reshape&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;out_size&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1"># The critic network is an approximator of</span>
+    <span class="c1"># a value function V: States -&gt; |R</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tuned_xp</span> <span class="o">=</span> <span class="n">ExperimentManager</span><span class="p">(</span>
+    <span class="n">A2CAgent</span><span class="p">,</span>  <span class="c1"># The Agent class.</span>
+    <span class="p">(</span><span class="n">gym_make</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">)),</span>  <span class="c1"># The Environment to solve.</span>
+    <span class="n">init_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>  <span class="c1"># Where to put the agent&#39;s hyperparameters</span>
+        <span class="n">policy_net_fn</span><span class="o">=</span><span class="n">model_factory_from_env</span><span class="p">,</span>  <span class="c1"># A policy network constructor</span>
+        <span class="n">policy_net_kwargs</span><span class="o">=</span><span class="n">policy_configs</span><span class="p">,</span>  <span class="c1"># Policy network&#39;s architecure</span>
+        <span class="n">value_net_fn</span><span class="o">=</span><span class="n">model_factory_from_env</span><span class="p">,</span>  <span class="c1"># A Critic network constructor</span>
+        <span class="n">value_net_kwargs</span><span class="o">=</span><span class="n">critic_configs</span><span class="p">,</span>  <span class="c1"># Critic network&#39;s architecure.</span>
+        <span class="n">optimizer_type</span><span class="o">=</span><span class="s2">&quot;ADAM&quot;</span><span class="p">,</span>  <span class="c1"># What optimizer to use for policy</span>
+        <span class="c1"># gradient descent steps.</span>
+        <span class="n">learning_rate</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>  <span class="c1"># Size of the policy gradient</span>
+        <span class="c1"># descent steps.</span>
+        <span class="n">entr_coef</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># How much to force exploration.</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="mi">1024</span>  <span class="c1"># Number of interactions used to</span>
+        <span class="c1"># estimate the policy gradient</span>
+        <span class="c1"># for each policy update.</span>
+    <span class="p">),</span>
+    <span class="n">fit_budget</span><span class="o">=</span><span class="mf">3e5</span><span class="p">,</span>  <span class="c1"># The number of interactions</span>
+    <span class="c1"># between the agent and the</span>
+    <span class="c1"># environment during training.</span>
+    <span class="n">eval_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">eval_horizon</span><span class="o">=</span><span class="mi">500</span><span class="p">),</span>  <span class="c1"># The number of interactions</span>
+    <span class="c1"># between the agent and the</span>
+    <span class="c1"># environment during evaluations.</span>
+    <span class="n">n_fit</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># The number of agents to train.</span>
+    <span class="c1"># Usually, it is good to do more</span>
+    <span class="c1"># than 1 because the training is</span>
+    <span class="c1"># stochastic.</span>
+    <span class="n">agent_name</span><span class="o">=</span><span class="s2">&quot;A2C tuned&quot;</span><span class="p">,</span>  <span class="c1"># The agent&#39;s name.</span>
+<span class="p">)</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Training ...&quot;</span><span class="p">)</span>
+<span class="n">tuned_xp</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>  <span class="c1"># Trains the agent on fit_budget steps!</span>
+
+
+<span class="c1"># Plot the training data:</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">plot_writer_data</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">default_xp</span><span class="p">,</span> <span class="n">tuned_xp</span><span class="p">],</span>
+    <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;episode_rewards&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Training Episode Cumulative Rewards&quot;</span><span class="p">,</span>
+    <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[INFO] Running ExperimentManager fit() for A2C tuned with n_fit = 1
+and max_workers = None.
+INFO: Making new env: CartPole-v1
+INFO: Making new env: CartPole-v1
+[INFO] Could not find least used device (nvidia-smi might be missing), use cuda:0 instead
+</pre></div>
+</div>
+</br>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Training ...
+</pre></div>
+</div>
+</br>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[INFO] [A2C tuned[worker: 0]] | max_global_step = 6777 | episode_rewards = 15.0 | total_episodes = 314 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 13633 | episode_rewards = 14.0 | total_episodes = 602 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 20522 | episode_rewards = 41.0 | total_episodes = 854 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 27531 | episode_rewards = 13.0 | total_episodes = 1063 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 34398 | episode_rewards = 42.0 | total_episodes = 1237 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 41600 | episode_rewards = 118.0 | total_episodes = 1389 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 48593 | episode_rewards = 50.0 | total_episodes = 1511 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 55721 | episode_rewards = 113.0 | total_episodes = 1603 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 62751 | episode_rewards = 41.0 | total_episodes = 1687 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 69968 | episode_rewards = 344.0 | total_episodes = 1741 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 77259 | episode_rewards = 418.0 | total_episodes = 1787 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 84731 | episode_rewards = 293.0 | total_episodes = 1820 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 91890 | episode_rewards = 185.0 | total_episodes = 1853 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 99031 | episode_rewards = 278.0 | total_episodes = 1876 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 106305 | episode_rewards = 318.0 | total_episodes = 1899 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 113474 | episode_rewards = 500.0 | total_episodes = 1921 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 120632 | episode_rewards = 370.0 | total_episodes = 1941 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 127753 | episode_rewards = 375.0 | total_episodes = 1962 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 135179 | episode_rewards = 393.0 | total_episodes = 1987 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 142433 | episode_rewards = 500.0 | total_episodes = 2005 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 149888 | episode_rewards = 500.0 | total_episodes = 2023 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 157312 | episode_rewards = 467.0 | total_episodes = 2042 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 164651 | episode_rewards = 441.0 | total_episodes = 2060 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 172015 | episode_rewards = 500.0 | total_episodes = 2076 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 178100 | episode_rewards = 481.0 | total_episodes = 2089 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 183522 | episode_rewards = 462.0 | total_episodes = 2101 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 190818 | episode_rewards = 500.0 | total_episodes = 2117 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 198115 | episode_rewards = 500.0 | total_episodes = 2135 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 205097 | episode_rewards = 500.0 | total_episodes = 2151 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 212351 | episode_rewards = 500.0 | total_episodes = 2166 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 219386 | episode_rewards = 500.0 | total_episodes = 2181 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 226386 | episode_rewards = 500.0 | total_episodes = 2195 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 233888 | episode_rewards = 500.0 | total_episodes = 2211 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 241388 | episode_rewards = 500.0 | total_episodes = 2226 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 248287 | episode_rewards = 500.0 | total_episodes = 2240 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 255483 | episode_rewards = 500.0 | total_episodes = 2255 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 262845 | episode_rewards = 500.0 | total_episodes = 2270 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 270032 | episode_rewards = 500.0 | total_episodes = 2285 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 277009 | episode_rewards = 498.0 | total_episodes = 2301 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 284044 | episode_rewards = 255.0 | total_episodes = 2318 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 291189 | episode_rewards = 500.0 | total_episodes = 2334 |
+[INFO] [A2C tuned[worker: 0]] | max_global_step = 298619 | episode_rewards = 500.0 | total_episodes = 2350 |
+[INFO] ... trained!
+INFO: Making new env: CartPole-v1
+INFO: Making new env: CartPole-v1
+[INFO] Could not find least used device (nvidia-smi might be missing), use cuda:0 instead
+</pre></div>
+</div>
+</br>
+<img alt="../../_images/output_9_3.png" class="align-center" src="../../_images/output_9_3.png" />
+<p><span>☀</span> : For more information on plots and visualization, you can check <a class="reference internal" href="#visualization_page"><span class="xref myst">here (in construction)</span></a></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Evaluating ...&quot;</span><span class="p">)</span>
+
+<span class="c1"># Evaluating and comparing the agents :</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">evaluate_agents</span><span class="p">([</span><span class="n">default_xp</span><span class="p">,</span> <span class="n">tuned_xp</span><span class="p">],</span> <span class="n">n_simulations</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</br>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Evaluating ...
+</pre></div>
+</div>
+</br>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[INFO] Evaluating A2C default...
+[INFO] [eval]... simulation 1/50
+[INFO] [eval]... simulation 2/50
+[INFO] [eval]... simulation 3/50
+[INFO] [eval]... simulation 4/50
+[INFO] [eval]... simulation 5/50
+[INFO] [eval]... simulation 6/50
+[INFO] [eval]... simulation 7/50
+[INFO] [eval]... simulation 8/50
+[INFO] [eval]... simulation 9/50
+[INFO] [eval]... simulation 10/50
+[INFO] [eval]... simulation 11/50
+[INFO] [eval]... simulation 12/50
+[INFO] [eval]... simulation 13/50
+[INFO] [eval]... simulation 14/50
+[INFO] [eval]... simulation 15/50
+[INFO] [eval]... simulation 16/50
+[INFO] [eval]... simulation 17/50
+[INFO] [eval]... simulation 18/50
+[INFO] [eval]... simulation 19/50
+[INFO] [eval]... simulation 20/50
+[INFO] [eval]... simulation 21/50
+[INFO] [eval]... simulation 22/50
+[INFO] [eval]... simulation 23/50
+[INFO] [eval]... simulation 24/50
+[INFO] [eval]... simulation 25/50
+[INFO] [eval]... simulation 26/50
+[INFO] [eval]... simulation 27/50
+[INFO] [eval]... simulation 28/50
+[INFO] [eval]... simulation 29/50
+[INFO] [eval]... simulation 30/50
+[INFO] [eval]... simulation 31/50
+[INFO] [eval]... simulation 32/50
+[INFO] [eval]... simulation 33/50
+[INFO] [eval]... simulation 34/50
+[INFO] [eval]... simulation 35/50
+[INFO] [eval]... simulation 36/50
+[INFO] [eval]... simulation 37/50
+[INFO] [eval]... simulation 38/50
+[INFO] [eval]... simulation 39/50
+[INFO] [eval]... simulation 40/50
+[INFO] [eval]... simulation 41/50
+[INFO] [eval]... simulation 42/50
+[INFO] [eval]... simulation 43/50
+[INFO] [eval]... simulation 44/50
+[INFO] [eval]... simulation 45/50
+[INFO] [eval]... simulation 46/50
+[INFO] [eval]... simulation 47/50
+[INFO] [eval]... simulation 48/50
+[INFO] [eval]... simulation 49/50
+[INFO] [eval]... simulation 50/50
+[INFO] Evaluating A2C tuned...
+[INFO] [eval]... simulation 1/50
+[INFO] [eval]... simulation 2/50
+[INFO] [eval]... simulation 3/50
+[INFO] [eval]... simulation 4/50
+[INFO] [eval]... simulation 5/50
+[INFO] [eval]... simulation 6/50
+[INFO] [eval]... simulation 7/50
+[INFO] [eval]... simulation 8/50
+[INFO] [eval]... simulation 9/50
+[INFO] [eval]... simulation 10/50
+[INFO] [eval]... simulation 11/50
+[INFO] [eval]... simulation 12/50
+[INFO] [eval]... simulation 13/50
+[INFO] [eval]... simulation 14/50
+[INFO] [eval]... simulation 15/50
+[INFO] [eval]... simulation 16/50
+[INFO] [eval]... simulation 17/50
+[INFO] [eval]... simulation 18/50
+[INFO] [eval]... simulation 19/50
+[INFO] [eval]... simulation 20/50
+[INFO] [eval]... simulation 21/50
+[INFO] [eval]... simulation 22/50
+[INFO] [eval]... simulation 23/50
+[INFO] [eval]... simulation 24/50
+[INFO] [eval]... simulation 25/50
+[INFO] [eval]... simulation 26/50
+[INFO] [eval]... simulation 27/50
+[INFO] [eval]... simulation 28/50
+[INFO] [eval]... simulation 29/50
+[INFO] [eval]... simulation 30/50
+[INFO] [eval]... simulation 31/50
+[INFO] [eval]... simulation 32/50
+[INFO] [eval]... simulation 33/50
+[INFO] [eval]... simulation 34/50
+[INFO] [eval]... simulation 35/50
+[INFO] [eval]... simulation 36/50
+[INFO] [eval]... simulation 37/50
+[INFO] [eval]... simulation 38/50
+[INFO] [eval]... simulation 39/50
+[INFO] [eval]... simulation 40/50
+[INFO] [eval]... simulation 41/50
+[INFO] [eval]... simulation 42/50
+[INFO] [eval]... simulation 43/50
+[INFO] [eval]... simulation 44/50
+[INFO] [eval]... simulation 45/50
+[INFO] [eval]... simulation 46/50
+[INFO] [eval]... simulation 47/50
+[INFO] [eval]... simulation 48/50
+[INFO] [eval]... simulation 49/50
+[INFO] [eval]... simulation 50/50
+</pre></div>
+</div>
+</br>
+<img alt="../../_images/output_10_3.png" class="align-center" src="../../_images/output_10_3.png" />
+</section>
+</section>
+
+
+      </div>
+    <div class="container">
+      <footer class="sk-content-footer">
+            &copy; 2023, rlberry team.
+          <a href="../../_sources/basics/DeepRLTutorial/TutorialDeepRL.md.txt" rel="nofollow">Show this page source</a>
+      </footer>
+    </div>
+  </div>
+</div>
+<script src="../../_static/js/vendor/bootstrap.min.js"></script>
+
+<script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-22606712-2', 'auto');
+    ga('set', 'anonymizeIp', true);
+    ga('send', 'pageview');
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+<script>
+$(document).ready(function() {
+    /* Add a [>>>] button on the top-right corner of code samples to hide
+     * the >>> and ... prompts and the output and thus make the code
+     * copyable. */
+    var div = $('.highlight-python .highlight,' +
+                '.highlight-python3 .highlight,' +
+                '.highlight-pycon .highlight,' +
+		'.highlight-default .highlight')
+    var pre = div.find('pre');
+
+    // get the styles from the current theme
+    pre.parent().parent().css('position', 'relative');
+    var hide_text = 'Hide prompts and outputs';
+    var show_text = 'Show prompts and outputs';
+
+    // create and add the button to all the code blocks that contain >>>
+    div.each(function(index) {
+        var jthis = $(this);
+        if (jthis.find('.gp').length > 0) {
+            var button = $('<span class="copybutton">&gt;&gt;&gt;</span>');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+            jthis.prepend(button);
+        }
+        // tracebacks (.gt) contain bare text elements that need to be
+        // wrapped in a span to work with .nextUntil() (see later)
+        jthis.find('pre:has(.gt)').contents().filter(function() {
+            return ((this.nodeType == 3) && (this.data.trim().length > 0));
+        }).wrap('<span>');
+    });
+
+    // define the behavior of the button when it's clicked
+    $('.copybutton').click(function(e){
+        e.preventDefault();
+        var button = $(this);
+        if (button.data('hidden') === 'false') {
+            // hide the code output
+            button.parent().find('.go, .gp, .gt').hide();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'hidden');
+            button.css('text-decoration', 'line-through');
+            button.attr('title', show_text);
+            button.data('hidden', 'true');
+        } else {
+            // show the code output
+            button.parent().find('.go, .gp, .gt').show();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'visible');
+            button.css('text-decoration', 'none');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+        }
+    });
+
+	/*** Add permalink buttons next to glossary terms ***/
+	$('dl.glossary > dt[id]').append(function() {
+		return ('<a class="headerlink" href="#' +
+			    this.getAttribute('id') +
+			    '" title="Permalink to this term">¶</a>');
+	});
+  /*** Hide navbar when scrolling down ***/
+  // Returns true when headerlink target matches hash in url
+  (function() {
+    hashTargetOnTop = function() {
+        var hash = window.location.hash;
+        if ( hash.length < 2 ) { return false; }
+
+        var target = document.getElementById( hash.slice(1) );
+        if ( target === null ) { return false; }
+
+        var top = target.getBoundingClientRect().top;
+        return (top < 2) && (top > -2);
+    };
+
+    // Hide navbar on load if hash target is on top
+    var navBar = document.getElementById("navbar");
+    var navBarToggler = document.getElementById("sk-navbar-toggler");
+    var navBarHeightHidden = "-" + navBar.getBoundingClientRect().height + "px";
+    var $window = $(window);
+
+    hideNavBar = function() {
+        navBar.style.top = navBarHeightHidden;
+    };
+
+    showNavBar = function() {
+        navBar.style.top = "0";
+    }
+
+    if (hashTargetOnTop()) {
+        hideNavBar()
+    }
+
+    var prevScrollpos = window.pageYOffset;
+    hideOnScroll = function(lastScrollTop) {
+        if (($window.width() < 768) && (navBarToggler.getAttribute("aria-expanded") === 'true')) {
+            return;
+        }
+        if (lastScrollTop > 2 && (prevScrollpos <= lastScrollTop) || hashTargetOnTop()){
+            hideNavBar()
+        } else {
+            showNavBar()
+        }
+        prevScrollpos = lastScrollTop;
+    };
+
+    /*** high performance scroll event listener***/
+    var raf = window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        window.oRequestAnimationFrame;
+    var lastScrollTop = $window.scrollTop();
+
+    if (raf) {
+        loop();
+    }
+
+    function loop() {
+        var scrollTop = $window.scrollTop();
+        if (lastScrollTop === scrollTop) {
+            raf(loop);
+            return;
+        } else {
+            lastScrollTop = scrollTop;
+            hideOnScroll(lastScrollTop);
+            raf(loop);
+        }
+    }
+  })();
+});
+
+</script>
+    
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    
+</body>
+</html>

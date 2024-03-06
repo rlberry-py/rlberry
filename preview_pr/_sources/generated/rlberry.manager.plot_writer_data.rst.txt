@@ -1,0 +1,12 @@
+﻿:mod:`rlberry.manager`.plot_writer_data
+====================================================
+
+.. currentmodule:: rlberry.manager
+
+.. autofunction:: plot_writer_data
+
+.. include:: rlberry.manager.plot_writer_data.examples
+
+.. raw:: html
+
+    <div class="clearer"></div>

@@ -1,0 +1,12 @@
+﻿:mod:`rlberry.manager`.evaluate_agents
+===================================================
+
+.. currentmodule:: rlberry.manager
+
+.. autofunction:: evaluate_agents
+
+.. include:: rlberry.manager.evaluate_agents.examples
+
+.. raw:: html
+
+    <div class="clearer"></div>

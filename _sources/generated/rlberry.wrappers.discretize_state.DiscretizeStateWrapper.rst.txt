@@ -1,0 +1,12 @@
+﻿:mod:`rlberry.wrappers.discretize_state`.DiscretizeStateWrapper
+======================================================================
+
+.. currentmodule:: rlberry.wrappers.discretize_state
+
+.. autoclass:: DiscretizeStateWrapper
+
+.. include:: rlberry.wrappers.discretize_state.DiscretizeStateWrapper.examples
+
+.. raw:: html
+
+    <div class="clearer"></div>

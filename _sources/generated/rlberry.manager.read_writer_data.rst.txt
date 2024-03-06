@@ -1,0 +1,12 @@
+﻿:mod:`rlberry.manager`.read_writer_data
+====================================================
+
+.. currentmodule:: rlberry.manager
+
+.. autofunction:: read_writer_data
+
+.. include:: rlberry.manager.read_writer_data.examples
+
+.. raw:: html
+
+    <div class="clearer"></div>
