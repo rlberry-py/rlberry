@@ -8,6 +8,7 @@ A demo of rooms environment
    :width: 600
 
 """
+
 # sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_rooms.jpg'
 
 from rlberry_research.envs.benchmarks.grid_exploration.nroom import NRoom

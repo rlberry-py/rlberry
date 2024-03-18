@@ -4,6 +4,7 @@ This script generates an html table of contributors, with names and avatars.
 The table should be updated for each new inclusion in the teams.
 Generating the table requires admin rights.
 """
+
 import requests
 import time
 from pathlib import Path

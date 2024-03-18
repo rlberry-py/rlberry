@@ -10,6 +10,7 @@ Gridworld environment.
 .. video:: ../../video_plot_gridworld.mp4
    :width: 600
 """
+
 # sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_gridworld.jpg'
 
 from rlberry_scool.agents.dynprog import ValueIterationAgent
