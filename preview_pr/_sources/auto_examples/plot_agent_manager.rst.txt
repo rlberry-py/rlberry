@@ -49,16 +49,16 @@ Finally, we compare with a baseline provided by a random policy using the Experi
 
  .. code-block:: none
 
-    [INFO] 08:40: ... trained! 
-    [INFO] 08:40: Saved ExperimentManager(ValueIterationAgent) using pickle. 
-    [INFO] 08:40: The ExperimentManager was saved in : 'rlberry_data/temp/manager_data/ValueIterationAgent_2024-03-01_08-40-22_4037c6c2/manager_obj.pickle' 
-    [INFO] 08:40: Running ExperimentManager fit() for RandomAgent with n_fit = 1 and max_workers = None. 
-    [INFO] 08:40: ... trained! 
-    [INFO] 08:40: Saved ExperimentManager(RandomAgent) using pickle. 
-    [INFO] 08:40: The ExperimentManager was saved in : 'rlberry_data/temp/manager_data/RandomAgent_2024-03-01_08-40-23_9e5c33bd/manager_obj.pickle' 
-    [INFO] 08:40: Evaluating ValueIterationAgent... 
+    [INFO] 08:20: ... trained! 
+    [INFO] 08:20: Saved ExperimentManager(ValueIterationAgent) using pickle. 
+    [INFO] 08:20: The ExperimentManager was saved in : 'rlberry_data/temp/manager_data/ValueIterationAgent_2024-03-25_08-20-35_e00077a2/manager_obj.pickle' 
+    [INFO] 08:20: Running ExperimentManager fit() for RandomAgent with n_fit = 1 and max_workers = None. 
+    [INFO] 08:20: ... trained! 
+    [INFO] 08:20: Saved ExperimentManager(RandomAgent) using pickle. 
+    [INFO] 08:20: The ExperimentManager was saved in : 'rlberry_data/temp/manager_data/RandomAgent_2024-03-25_08-20-36_eb0334ab/manager_obj.pickle' 
+    [INFO] 08:20: Evaluating ValueIterationAgent... 
     [INFO] Evaluation:..........  Evaluation finished 
-    [INFO] 08:40: Evaluating RandomAgent... 
+    [INFO] 08:20: Evaluating RandomAgent... 
     [INFO] Evaluation:..........  Evaluation finished 
 
 
@@ -184,7 +184,7 @@ Finally, we compare with a baseline provided by a random policy using the Experi
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.002 seconds)
+   **Total running time of the script:** (0 minutes 0.990 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_agent_manager.py:

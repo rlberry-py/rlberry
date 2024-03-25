@@ -10,7 +10,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   
-  <title>A demo of Bandit BAI on a real dataset to select mirrors &mdash; rlberry 0.7.0.post38.dev0+7daec3a documentation</title>
+  <title>A demo of Bandit BAI on a real dataset to select mirrors &mdash; rlberry 0.7.2 documentation</title>
   
   <link rel="canonical" href="https://rlberry-py.github.io/rlberry/auto_examples/demo_bandits/plot_mirror_bandit.html" />
 
@@ -101,7 +101,7 @@
         <div class="alert alert-warning p-1 mb-2" role="alert">
 
           <p class="text-center mb-0">
-          rlberry 0.7.0.post38.dev0+7daec3a<br/>
+          rlberry 0.7.2<br/>
           <a href="../../versions.html">Other versions</a>
           </p>
 
@@ -131,21 +131,23 @@ a server. We handle this by using the median instead of the mean in sequential
 halving’s objective.</p>
 <p>The code is in three parts: definition of environment, definition of agent,
 and finally definition of the experiment.</p>
-<img src="../../_images/sphx_glr_plot_mirror_bandit_001.png" srcset="../../_images/sphx_glr_plot_mirror_bandit_001.png" alt="plot mirror bandit" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[INFO] 08:40:        agent_name  worker  reward  action  max_global_step
-                         SH        0     -0.344    5           7
-[INFO] 08:41:        agent_name  worker  reward  action  max_global_step
-                         SH        0     -0.313    0           18
-[INFO] 08:41:        agent_name  worker  reward  action  max_global_step
-                         SH        0     -0.171    5           31
-[INFO] 08:41:        agent_name  worker  reward  action  max_global_step
-                         SH        0     -0.173    3           48
-[INFO] 08:41:        agent_name  worker  reward  action  max_global_step
-                         SH        0     -0.178    6           65
-[INFO] 08:41:        agent_name  worker  reward  action  max_global_step
-                         SH        0     -0.173    6           83
-[INFO] 08:41: ... trained!
-[INFO] 08:41: Saved ExperimentManager(SH) using pickle.
-[INFO] 08:41: The ExperimentManager was saved in : &#39;rlberry_data/temp/manager_data/SH_2024-03-01_08-40-56_1366d99f/manager_obj.pickle&#39;
+<img src="../../_images/sphx_glr_plot_mirror_bandit_001.png" srcset="../../_images/sphx_glr_plot_mirror_bandit_001.png" alt="plot mirror bandit" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[INFO] 08:21:        agent_name  worker  reward  action  max_global_step
+                         SH        0     -4.477    2           4
+[INFO] 08:21:        agent_name  worker  reward  action  max_global_step
+                         SH        0     -0.371    4           14
+[INFO] 08:21:        agent_name  worker  reward  action  max_global_step
+                         SH        0     -1.261    6           24
+[INFO] 08:21:        agent_name  worker  reward  action  max_global_step
+                         SH        0     -0.183    2           38
+[INFO] 08:21:        agent_name  worker  reward  action  max_global_step
+                         SH        0     -0.187    2           58
+[INFO] 08:21:        agent_name  worker  reward  action  max_global_step
+                         SH        0     -0.168    3           76
+[INFO] 08:21:        agent_name  worker  reward  action  max_global_step
+                         SH        0     -0.168    3           94
+[INFO] 08:21: ... trained!
+[INFO] 08:21: Saved ExperimentManager(SH) using pickle.
+[INFO] 08:21: The ExperimentManager was saved in : &#39;rlberry_data/temp/manager_data/SH_2024-03-25_08-21-09_ad7acc58/manager_obj.pickle&#39;
 The optimal action (fastest server) is server number  7
 </pre></div>
 </div>
@@ -322,7 +324,7 @@ The optimal action (fastest server) is server number  7
 <span class="p">)</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 21.116 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 25.688 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-demo-bandits-plot-mirror-bandit-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/10b71a51b8ae10571824280d3b92d89b/plot_mirror_bandit.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_mirror_bandit.py</span></code></a></p>

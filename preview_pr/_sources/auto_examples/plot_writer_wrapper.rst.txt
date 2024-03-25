@@ -63,9 +63,9 @@ during the fit of the agent and then use the plot utils.
 
  .. code-block:: none
 
-    [INFO] 08:40: ... trained! 
-    [INFO] 08:40: Saved ExperimentManager(UCBVIAgent) using pickle. 
-    [INFO] 08:40: The ExperimentManager was saved in : 'rlberry_data/temp/manager_data/UCBVIAgent_2024-03-01_08-39-59_1b881129/manager_obj.pickle' 
+    [INFO] 08:20: ... trained! 
+    [INFO] 08:20: Saved ExperimentManager(UCBVIAgent) using pickle. 
+    [INFO] 08:20: The ExperimentManager was saved in : 'rlberry_data/temp/manager_data/UCBVIAgent_2024-03-25_08-20-12_79027412/manager_obj.pickle' 
 
 
 
@@ -146,7 +146,7 @@ during the fit of the agent and then use the plot utils.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.958 seconds)
+   **Total running time of the script:** (0 minutes 1.928 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_writer_wrapper.py:
