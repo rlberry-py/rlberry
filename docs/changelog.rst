@@ -7,6 +7,10 @@ Changelog
 Dev version
 -----------
 
+* nothing
+
+Version 0.7.1
+-------------
 
 *PR #411*
 

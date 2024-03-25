@@ -15,7 +15,7 @@ First, we suggest you to create a virtual environment using
     $ conda activate rlberry
 
 
-Latest version (0.7.0)
+Latest version (0.7.1)
 -------------------------------------
 
 Install the latest version for a stable release.
