@@ -111,18 +111,21 @@ class AdastopComparator(MultipleAgentsComparator):
         """
         print("Number of scores used for each agent:")
         for key in self.n_iters:
-            print(key + ":"+ str(self.n_iters[key]))
+            print(key + ":" + str(self.n_iters[key]))
 
         print("")
         print("Mean of scores of each agent:")
         for key in self.eval_values:
-            print(key + ":"+ str(np.mean(self.eval_values[key])))
+            print(key + ":" + str(np.mean(self.eval_values[key])))
 
         print("")
         print("Decision for each comparison:")
         for c in self.comparisons:
-            print("{0} vs {1}".format(self.agent_names[c[0]], self.agent_names[c[1]])
-                       + ":"+ str(self.decisions[str(c)]))
+            print(
+                "{0} vs {1}".format(self.agent_names[c[0]], self.agent_names[c[1]])
+                + ":"
+                + str(self.decisions[str(c)])
+            )
 
     def _fit_evaluate(self, managers, eval_values, seeders):
         """
