@@ -186,7 +186,7 @@ Moviepy - video ready <yourPath>/CartPole-v1-episode-1.mp4
 ```
 
 <video controls="controls" style="max-width: 600px;">
-   <source src="../../../../_video/user_guide_video/_experimentManager_page_CartPole.mp4" type="video/mp4">
+   <source src="../../_video/user_guide_video/_experimentManager_page_CartPole.mp4" type="video/mp4">
 </video>
 
 
