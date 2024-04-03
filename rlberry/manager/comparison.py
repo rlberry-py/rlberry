@@ -105,6 +105,25 @@ class AdastopComparator(MultipleAgentsComparator):
         logger.info("Results are ")
         print(self.get_results())
 
+    def print_results(self):
+        """
+        Print the results of the test.
+        """
+        print("Number of scores used for each agent:")
+        for key in self.n_iters:
+            print(key + ":"+ str(self.n_iters[key]))
+
+        print("")
+        print("Mean of scores of each agent:")
+        for key in self.eval_values:
+            print(key + ":"+ str(np.mean(self.eval_values[key])))
+
+        print("")
+        print("Decision for each comparison:")
+        for c in self.comparisons:
+            print("{0} vs {1}".format(self.agent_names[c[0]], self.agent_names[c[1]])
+                       + ":"+ str(self.decisions[str(c)]))
+
     def _fit_evaluate(self, managers, eval_values, seeders):
         """
         fit rlberry agents.
