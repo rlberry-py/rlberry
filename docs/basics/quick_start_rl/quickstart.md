@@ -26,6 +26,7 @@ from rlberry.manager import (
     read_writer_data,
 )
 from rlberry.wrappers import WriterWrapper
+from IPython.display import Image
 ```
 
 Choosing an RL environment
@@ -54,57 +55,18 @@ observation, info = env.reset()
 for tt in range(5):
     observation, reward, terminated, truncated, info = env.step(1)
     done = terminated or truncated
-video = env.save_video("video_chain.mp4", framerate=5)
+env.save_gif("gif_chain.gif")
+# clear rendering data
+env.clear_render_buffer()
+env.disable_rendering()
+# view result
+Image(open('gif_chain.gif','rb').read())
 ```
 
-```none
-    ffmpeg version n5.0 Copyright (c) 2000-2022 the FFmpeg developers
-      built with gcc 11.2.0 (GCC)
-      configuration: --prefix=/usr --disable-debug --disable-static --disable-stripping --enable-amf --enable-avisynth --enable-cuda-llvm --enable-lto --enable-fontconfig --enable-gmp --enable-gnutls --enable-gpl --enable-ladspa --enable-libaom --enable-libass --enable-libbluray --enable-libdav1d --enable-libdrm --enable-libfreetype --enable-libfribidi --enable-libgsm --enable-libiec61883 --enable-libjack --enable-libmfx --enable-libmodplug --enable-libmp3lame --enable-libopencore_amrnb --enable-libopencore_amrwb --enable-libopenjpeg --enable-libopus --enable-libpulse --enable-librav1e --enable-librsvg --enable-libsoxr --enable-libspeex --enable-libsrt --enable-libssh --enable-libsvtav1 --enable-libtheora --enable-libv4l2 --enable-libvidstab --enable-libvmaf --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxcb --enable-libxml2 --enable-libxvid --enable-libzimg --enable-nvdec --enable-nvenc --enable-shared --enable-version3
-      libavutil      57. 17.100 / 57. 17.100
-      libavcodec     59. 18.100 / 59. 18.100
-      libavformat    59. 16.100 / 59. 16.100
-      libavdevice    59.  4.100 / 59.  4.100
-      libavfilter     8. 24.100 /  8. 24.100
-      libswscale      6.  4.100 /  6.  4.100
-      libswresample   4.  3.100 /  4.  3.100
-      libpostproc    56.  3.100 / 56.  3.100
-    Input #0, rawvideo, from 'pipe:':
-      Duration: N/A, start: 0.000000, bitrate: 7680 kb/s
-      Stream #0:0: Video: rawvideo (RGB[24] / 0x18424752), rgb24, 800x80, 7680 kb/s, 5 tbr, 5 tbn
-    Stream mapping:
-      Stream #0:0 -> #0:0 (rawvideo (native) -> h264 (libx264))
-    [libx264 @ 0x564b9e570340] using cpu capabilities: MMX2 SSE2Fast SSSE3 SSE4.2 AVX FMA3 BMI2 AVX2
-    [libx264 @ 0x564b9e570340] profile High, level 1.2, 4:2:0, 8-bit
-    [libx264 @ 0x564b9e570340] 264 - core 164 r3081 19856cc - H.264/MPEG-4 AVC codec - Copyleft 2003-2021 - http://www.videolan.org/x264.html - options: cabac=1 ref=3 deblock=1:0:0 analyse=0x3:0x113 me=hex subme=7 psy=1 psy_rd=1.00:0.00 mixed_ref=1 me_range=16 chroma_me=1 trellis=1 8x8dct=1 cqm=0 deadzone=21,11 fast_pskip=1 chroma_qp_offset=-2 threads=2 lookahead_threads=1 sliced_threads=0 nr=0 decimate=1 interlaced=0 bluray_compat=0 constrained_intra=0 bframes=3 b_pyramid=2 b_adapt=1 b_bias=0 direct=1 weightb=1 open_gop=0 weightp=2 keyint=250 keyint_min=5 scenecut=40 intra_refresh=0 rc_lookahead=40 rc=crf mbtree=1 crf=23.0 qcomp=0.60 qpmin=0 qpmax=69 qpstep=4 ip_ratio=1.40 aq=1:1.00
-    Output #0, mp4, to 'video_chain.mp4':
-      Metadata:
-        encoder         : Lavf59.16.100
-      Stream #0:0: Video: h264 (avc1 / 0x31637661), yuv420p(tv, progressive), 800x80, q=2-31, 5 fps, 10240 tbn
-        Metadata:
-          encoder         : Lavc59.18.100 libx264
-        Side data:
-          cpb: bitrate max/min/avg: 0/0/0 buffer size: 0 vbv_delay: N/A
-    frame=    6 fps=0.0 q=-1.0 Lsize=       4kB time=00:00:00.60 bitrate=  48.8kbits/s speed=56.2x
-    video:3kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 32.212582%
-    [libx264 @ 0x564b9e570340] frame I:1     Avg QP: 6.94  size:   742
-    [libx264 @ 0x564b9e570340] frame P:5     Avg QP:22.68  size:   267
-    [libx264 @ 0x564b9e570340] mb I  I16..4: 95.2%  0.0%  4.8%
-    [libx264 @ 0x564b9e570340] mb P  I16..4:  1.2%  2.1%  2.0%  P16..4:  0.2%  0.0%  0.0%  0.0%  0.0%    skip:94.6%
-    [libx264 @ 0x564b9e570340] 8x8 transform intra:8.2% inter:0.0%
-    [libx264 @ 0x564b9e570340] coded y,uvDC,uvAC intra: 6.5% 12.3% 11.4% inter: 0.0% 0.0% 0.0%
-    [libx264 @ 0x564b9e570340] i16 v,h,dc,p: 79%  1% 20%  0%
-    [libx264 @ 0x564b9e570340] i8 v,h,dc,ddl,ddr,vr,hd,vl,hu:  0%  0% 100%  0%  0%  0%  0%  0%  0%
-    [libx264 @ 0x564b9e570340] i4 v,h,dc,ddl,ddr,vr,hd,vl,hu: 52% 22% 19%  1%  0%  3%  1%  3%  1%
-    [libx264 @ 0x564b9e570340] i8c dc,h,v,p: 92%  4%  3%  0%
-    [libx264 @ 0x564b9e570340] Weighted P-Frames: Y:0.0% UV:0.0%
-    [libx264 @ 0x564b9e570340] kb/s:13.85
-```
+
 </br>
 
-<video controls="controls" style="max-width: 600px;">
-   <source src="../../video_chain_quickstart.mp4" type="video/mp4">
-</video>
+![](../../gif_chain.gif)
 
 
 
@@ -112,7 +74,7 @@ Defining an agent and a baseline
 --------------------------------
 
 We will compare a RandomAgent (which select random action) to the
-UCBVIAgent(from [rlberry_research](https://github.com/rlberry-py/rlberry-research)), which is a algorithm that is designed to perform an
+UCBVIAgent(from [rlberry_research](https://github.com/rlberry-py/rlberry-research)), which is an algorithm that is designed to perform an
 efficient exploration. Our goal is then to assess the performance of the
 two algorithms.
 
@@ -151,8 +113,7 @@ class. Here is a diagram to explain briefly what it does.
 In a few words, ExperimentManager spawns agents and environments for
 training and then once the agents are trained, it uses these agents and
 new environments to evaluate how well the agent perform. All of these
-steps can be done several times to assess the stochasticity of agents and/or
-environment.
+steps can be done several times to assess the stochasticity of agents and/or of the environment.
 
 Comparing the expected rewards of the final policies
 ----------------------------------------------------
@@ -325,7 +286,7 @@ iteration, the environment takes 100 steps (`horizon`) times the
 
 
 
-Finally, we plot the reward: Here you can see the mean value over the 10 fited agent, with 2 options (raw and smoothed).
+Finally, we plot the reward: Here you can see the mean value over the 10 fited agent, with 2 options (raw and smoothed). Note that, to be able to see the smoothed version, you must have installed the extra package `scikit-fda`.
 
 ```python
 # Plot of the reward.
