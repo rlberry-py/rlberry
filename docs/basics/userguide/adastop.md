@@ -22,7 +22,7 @@ from stable_baselines3 import A2C, PPO
 from rlberry.agents.stable_baselines import StableBaselinesAgent
 from rlberry.manager import AdastopComparator
 
-env_ctor, env_kwargs = gym_make, dict(id="CartPole-v1" )
+env_ctor, env_kwargs = gym_make, dict(id="CartPole-v1")
 
 managers = [
     {
