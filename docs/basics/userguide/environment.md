@@ -77,7 +77,7 @@ video:10kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing ov
 </br>
 
 <video controls="controls" style="max-width: 600px;">
-   <source src="../../_video/user_guide_video/_env_page_chain.mp4" type="video/mp4">
+   <source src="../../user_guide_video/_env_page_chain.mp4" type="video/mp4">
 </video>
 
 
@@ -119,7 +119,7 @@ Moviepy - video ready [your path]/MountainCar-episode-0.mp4
 </br>
 
 <video controls="controls" style="max-width: 600px;">
-   <source src="../../_video/user_guide_video/_env_page_MountainCar.mp4" type="video/mp4">
+   <source src="../../user_guide_video/_env_page_MountainCar.mp4" type="video/mp4">
 </video>
 
 To customize the environments, you can use some wrappers. You can find the rlberry's wrappers and more information [here (in construction)](wrappers_page), or you can use [Gymnasium wrappers](https://gymnasium.farama.org/api/wrappers/) (or create your own).
@@ -172,7 +172,7 @@ Moviepy - video ready [your path]/Breakout-episode-0.mp4
 </br>
 
 <video controls="controls" style="max-width: 600px;">
-   <source src="../../_video/user_guide_video/_env_page_Breakout.mp4" type="video/mp4">
+   <source src="../../user_guide_video/_env_page_Breakout.mp4" type="video/mp4">
 </video>
 
 

@@ -26,7 +26,7 @@ env.close()
 </br>
 
 <video controls="controls" style="max-width: 600px;">
-   <source src="../../_video/user_guide_video/_agent_page_chain1.mp4" type="video/mp4">
+   <source src="../../user_guide_video/_agent_page_chain1.mp4" type="video/mp4">
 </video>
 
 If we use random actions on this environment, we don't have good results (the cross don't go to the right)
@@ -118,7 +118,7 @@ video:11kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing ov
 </br>
 
 <video controls="controls" style="max-width: 600px;">
-   <source src="../../_video/user_guide_video/_agent_page_chain2.mp4" type="video/mp4">
+   <source src="../../user_guide_video/_agent_page_chain2.mp4" type="video/mp4">
 </video>
 
 The agent has learned how to obtain good results (the cross go to the right).
@@ -271,7 +271,7 @@ Moviepy - video ready <yourPath>/CartPole-episode-0.mp4
 </br>
 
 <video controls="controls" style="max-width: 600px;">
-   <source src="../../_video/user_guide_video/_agent_page_CartPole.mp4" type="video/mp4">
+   <source src="../../user_guide_video/_agent_page_CartPole.mp4" type="video/mp4">
 </video>
 
 
@@ -434,7 +434,7 @@ Moviepy - video ready <yourPath>/FrozenLake_no_slippery-episode-0.mp4
 
 
 <video controls="controls" style="max-width: 600px;">
-   <source src="../../_video/user_guide_video/_agent_page_frozenLake.mp4" type="video/mp4">
+   <source src="../../user_guide_video/_agent_page_frozenLake.mp4" type="video/mp4">
 </video>
 
 
