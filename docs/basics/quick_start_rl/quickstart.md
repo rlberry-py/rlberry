@@ -60,7 +60,7 @@ env.save_gif("gif_chain.gif")
 env.clear_render_buffer()
 env.disable_rendering()
 # view result
-Image(open('gif_chain.gif','rb').read())
+Image(open("gif_chain.gif", "rb").read())
 ```
 
 
