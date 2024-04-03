@@ -314,7 +314,10 @@ def _load_data(agent_folder, dir_name, id_agent):
     agent_dir = Path(dir_name) / agent_folder
     # list all the fits of this experiment
     exp_files = (agent_dir / Path("agent_handlers")).iterdir()
-    nfit = len(list(exp_files))
+    nfit = len(
+        [1 for a_ in [str(e).split(".") for e in exp_files] if a_[-1] == "pickle"]
+    )
+    # nfit = len(list(exp_files))
     if nfit == 0:
         raise ValueError("Folders do not contain pickle files")
 
