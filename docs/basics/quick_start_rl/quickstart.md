@@ -66,7 +66,7 @@ Image(open('gif_chain.gif','rb').read())
 
 </br>
 
-![](../../gif_chain.gif)
+![](gif_chain.gif)
 
 
 
