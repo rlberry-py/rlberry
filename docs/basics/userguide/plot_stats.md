@@ -1073,7 +1073,7 @@ data = plot_writer_data([first_agent, second_agent], "rollout/ep_rew_mean")
 
 
     
-![png](rlberry_doc%20%281%29_files/rlberry_doc%20%281%29_7_1.png)
+![png](doc1.png)
     
 
 
@@ -1111,7 +1111,7 @@ evaluate_agents([first_agent, second_agent])
 
 
     
-![png](rlberry_doc%20%281%29_files/rlberry_doc%20%281%29_8_1.png)
+![png](doc2.png)
     
 
 
