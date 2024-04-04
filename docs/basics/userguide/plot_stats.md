@@ -1072,9 +1072,9 @@ data = plot_writer_data([first_agent, second_agent], "rollout/ep_rew_mean")
 
 
 
-    
+
 ![png](doc1.png)
-    
+
 
 
 
@@ -1111,9 +1111,9 @@ evaluate_agents([first_agent, second_agent])
 
 
 
-    
+
 ![png](doc2.png)
-    
+
 
 
 
