@@ -1225,30 +1225,30 @@ evaluate_agents([first_agent, second_agent])
     }
   </style>
 
-    <script>
-      const buttonEl =
-        document.querySelector('#df-d236c75f-11cc-405d-aea2-275c1e62f498 button.colab-df-convert');
-      buttonEl.style.display =
-        google.colab.kernel.accessAllowed ? 'block' : 'none';
+  <script>
+    const buttonEl =
+      document.querySelector('#df-d236c75f-11cc-405d-aea2-275c1e62f498 button.colab-df-convert');
+    buttonEl.style.display =
+      google.colab.kernel.accessAllowed ? 'block' : 'none';
 
-      async function convertToInteractive(key) {
-        const element = document.querySelector('#df-d236c75f-11cc-405d-aea2-275c1e62f498');
-        const dataTable =
-          await google.colab.kernel.invokeFunction('convertToInteractive',
-                                                    [key], {});
-        if (!dataTable) return;
+    async function convertToInteractive(key) {
+      const element = document.querySelector('#df-d236c75f-11cc-405d-aea2-275c1e62f498');
+      const dataTable =
+        await google.colab.kernel.invokeFunction('convertToInteractive',
+                                                  [key], {});
+      if (!dataTable) return;
 
-        const docLinkHtml = 'Like what you see? Visit the ' +
-          '<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
-          + ' to learn more about interactive tables.';
-        element.innerHTML = '';
-        dataTable['output_type'] = 'display_data';
-        await google.colab.output.renderOutput(dataTable, element);
-        const docLink = document.createElement('div');
-        docLink.innerHTML = docLinkHtml;
-        element.appendChild(docLink);
-      }
-    </script>
+      const docLinkHtml = 'Like what you see? Visit the ' +
+        '<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
+        + ' to learn more about interactive tables.';
+      element.innerHTML = '';
+      dataTable['output_type'] = 'display_data';
+      await google.colab.output.renderOutput(dataTable, element);
+      const docLink = document.createElement('div');
+      docLink.innerHTML = docLinkHtml;
+      element.appendChild(docLink);
+    }
+  </script>
   </div>
 
 
@@ -3586,33 +3586,33 @@ compare_agents(
     }
   </style>
 
-    <script>
-      const buttonEl =
-        document.querySelector('#df-f3437c30-0350-4b04-8159-eea00a2d66ac button.colab-df-convert');
-      buttonEl.style.display =
-        google.colab.kernel.accessAllowed ? 'block' : 'none';
+  <script>
+    const buttonEl =
+      document.querySelector('#df-f3437c30-0350-4b04-8159-eea00a2d66ac button.colab-df-convert');
+    buttonEl.style.display =
+      google.colab.kernel.accessAllowed ? 'block' : 'none';
 
-      async function convertToInteractive(key) {
-        const element = document.querySelector('#df-f3437c30-0350-4b04-8159-eea00a2d66ac');
-        const dataTable =
-          await google.colab.kernel.invokeFunction('convertToInteractive',
-                                                    [key], {});
-        if (!dataTable) return;
+    async function convertToInteractive(key) {
+      const element = document.querySelector('#df-f3437c30-0350-4b04-8159-eea00a2d66ac');
+      const dataTable =
+        await google.colab.kernel.invokeFunction('convertToInteractive',
+                                                  [key], {});
+      if (!dataTable) return;
 
-        const docLinkHtml = 'Like what you see? Visit the ' +
-          '<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
-          + ' to learn more about interactive tables.';
-        element.innerHTML = '';
-        dataTable['output_type'] = 'display_data';
-        await google.colab.output.renderOutput(dataTable, element);
-        const docLink = document.createElement('div');
-        docLink.innerHTML = docLinkHtml;
-        element.appendChild(docLink);
-      }
-    </script>
+      const docLinkHtml = 'Like what you see? Visit the ' +
+        '<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
+        + ' to learn more about interactive tables.';
+      element.innerHTML = '';
+      dataTable['output_type'] = 'display_data';
+      await google.colab.output.renderOutput(dataTable, element);
+      const docLink = document.createElement('div');
+      docLink.innerHTML = docLinkHtml;
+      element.appendChild(docLink);
+    }
+  </script>
   </div>
 
-    </div>
+  </div>
   </div>
 
 
