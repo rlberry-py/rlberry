@@ -66,7 +66,9 @@ Image(open("gif_chain.gif", "rb").read())
 
 </br>
 
-![](gif_chain.gif)
+<video controls="controls" style="max-width: 600px;">
+   <source src="../../video_chain_quickstart.mp4" type="video/mp4">
+</video>
 
 
 
