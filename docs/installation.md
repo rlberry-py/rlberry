@@ -16,7 +16,7 @@ $ pip install rlberry
 ```
 
 ## Options
-To install more options with rlberry, you can use ``pip install rlberry[xxxxxxxx]``, with `xxxxxxxx` as :
+To install rlberry with more options, you can use ``pip install rlberry[xxxxxxxx]``, with `xxxxxxxx` as :
 
 - `torch` to install `opencv-python, ale-py, stable-baselines3, tensorboard, torch`
 - `extras` to install `optuna, numba, ffmpeg-python, pyvirtualdisplay, scikit-fda, scikit-learn`
