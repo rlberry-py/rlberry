@@ -7,10 +7,48 @@ Changelog
 Dev version
 -----------
 
+* nothing
+
+Version 0.7.1
+-------------
+
+*PR #411*
+
+ * Moving "rendering" to rlberry
+
+*PR #405 #406 #408*
+
+ * fix plots
+
+*PR #404*
+
+ * add AdaStop
+
+Version 0.7.0
+-------------
 
 *PR #397*
 
  * Automatic save after fit() in ExperienceManager
+
+*PR #396*
+
+ * Improve coverage and fix version workflow
+
+*PR #385 to #390*
+
+ * Switch from RTD to github page
+
+*PR #382*
+
+ * switch to poetry
+
+*PR #379*
+
+ * rlberry: everything for rl that is not an agent or an environment, e.g. experiment management, parallelization, statistical tools, plotting...
+ * rlberry-scool: repository for teaching materials, e.g. simplified algorithms for teaching, notebooks for tutorials for learning RL...
+ * rlberry-research: repository of agents and environments used inside Inria Scool team
+
 
 *PR #376*
 

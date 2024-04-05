@@ -22,6 +22,12 @@ Evaluation and plot
 --------------------
 
 .. autosummary::
+  :toctree: generated/
+  :template: class.rst
+
+   manager.AdastopComparator
+
+.. autosummary::
    :toctree: generated/
    :template: function.rst
 
@@ -68,6 +74,7 @@ Base class
     :template: class.rst
 
     envs.interface.Model
+    envs.basewrapper.Wrapper
 
 Spaces
 ------
@@ -169,5 +176,4 @@ Environment Wrappers
   wrappers.discretize_state.DiscretizeStateWrapper
   wrappers.gym_utils.OldGymCompatibilityWrapper
   wrappers.RescaleRewardWrapper
-  wrappers.vis2d.Vis2dWrapper
   wrappers.WriterWrapper

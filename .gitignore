@@ -171,3 +171,6 @@ dmypy.json
 
 
 *.prof
+
+# poetry.lock
+poetry.lock

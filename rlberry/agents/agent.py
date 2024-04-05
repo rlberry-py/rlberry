@@ -23,15 +23,17 @@ logger = rlberry.logger
 class Agent(ABC):
     """Basic interface for agents.
 
-    .. note::
+    If the 'inherited class' from Agent use the torch lib, that is higly recommanded to inherit :class:`~rlberry.agents.AgentTorch` instead.
 
-        Classes that implement this interface must send ``**kwargs`` to :code:`Agent.__init__()`
+    .. note::
+        | 1 - Abstract Class : can't be cannot be instantiated. The abstract methods have to be overwriten by the 'inherited class' agent.
+        | 2 - Classes that implements this interface can send `**kwargs` to initiate :code:`Agent.__init__()`, but the keys must match the parameters.
 
     Parameters
     ----------
-    env : :class:`gym.Env` or tuple (constructor, kwargs)
+    env : :class:`gymnasium.Env` or tuple (constructor, kwargs)
         Environment on which to train the agent.
-    eval_env : :class:`gym.Env` or tuple (constructor, kwargs)
+    eval_env : :class:`gymnasium.Env` or tuple (constructor, kwargs)
         Environment on which to evaluate the agent. If None, copied from env.
     copy_env : bool
         If true, makes a deep copy of the environment.
@@ -58,12 +60,12 @@ class Agent(ABC):
     ----------
     name : string
         Agent identifier (not necessarily unique).
-    env : :class:`gym.Env` or tuple (constructor, kwargs)
+    env : :class:`gymnasium.Env` or tuple (constructor, kwargs)
         Environment on which to train the agent.
-    eval_env : :class:`gym.Env` or tuple (constructor, kwargs)
+    eval_env : :class:`gymnasium.Env` or tuple (constructor, kwargs)
         Environment on which to evaluate the agent. If None, copied from env.
     writer : object, default: None
-        Writer object (e.g. tensorboard SummaryWriter).
+        Writer object to log the output(e.g. tensorboard SummaryWriter).
     seeder : :class:`~rlberry.seeding.seeder.Seeder`, int, or None
         Seeder/seed for random number generation.
     rng : :class:`numpy.random._generator.Generator`
@@ -129,7 +131,7 @@ class Agent(ABC):
     @property
     def writer(self):
         """
-        Writer object.
+        Writer object to log the output (e.g. tensorboard SummaryWriter)..
         """
         return self._writer
 
@@ -167,7 +169,7 @@ class Agent(ABC):
     def fit(self, budget: int, **kwargs):
         """
 
-        Train the agent using the provided environment.
+        Train the agent with a fixed budget, using the provided environment.
 
         Parameters
         ----------
@@ -201,14 +203,15 @@ class Agent(ABC):
             elsewhere in the library.
 
             If the agent does not require a budget, set it to -1.
-        **kwargs
-            Extra arguments.
+        **kwargs: Keyword Arguments
+            Extra parameters specific to the implemented fit.
         """
         pass
 
     @abstractmethod
     def eval(self, **kwargs):
         """
+        Abstract method.
 
         Returns a float measuring the quality of the agent (e.g. MC policy evaluation).
 
@@ -216,8 +219,8 @@ class Agent(ABC):
         ----------
         eval_env: object
             Environment for evaluation.
-        **kwargs: dict
-            Extra parameters.
+        **kwargs: Keyword Arguments
+            Extra parameters specific to the implemented evaluation.
         """
         pass
 
@@ -331,14 +334,17 @@ class Agent(ABC):
 
     @classmethod
     def load(cls, filename, **kwargs):
-        """Load agent object.
+        # If overridden, save() method must also be overriden.
+        """Load agent object from filepath.
 
         If overridden, save() method must also be overriden.
 
         Parameters
         ----------
-        **kwargs: dict
-            Arguments to required by the __init__ method of the Agent subclass.
+        filename: str
+            Path to the object (pickle) to load.
+        **kwargs: Keyword Arguments
+            Arguments required by the __init__ method of the Agent subclass to load.
         """
         filename = Path(filename).with_suffix(".pickle")
         obj = cls(**kwargs)
@@ -365,7 +371,7 @@ class Agent(ABC):
 
     @classmethod
     def _get_param_names(cls):
-        """Get parameter names for the Model"""
+        """Get parameter names for the Agent"""
         # fetch the constructor or the original constructor before
         # deprecation wrapping if any
         init = getattr(cls.__init__, "deprecated_original", cls.__init__)
@@ -373,7 +379,7 @@ class Agent(ABC):
             # No explicit constructor to introspect
             return []
 
-        # introspect the constructor arguments to find the model parameters
+        # introspect the constructor arguments to find the Agent parameters
         # to represent
         init_signature = inspect.signature(init)
         # Consider the constructor parameters excluding 'self'
@@ -418,17 +424,20 @@ class AgentWithSimplePolicy(Agent):
 
     The :meth:`policy` method takes an observation as input and returns an action.
 
-    Classes that implement this interface must send ``**kwargs``
-    to :code:`AgentWithSimplePolicy.__init__()`
+    .. note::
+        | 1 - Abstract Class : can't be cannot be instantiated. The abstract methods have to be overwriten by the 'inherited class' agent.
+        | 2 - Classes that implements this interface can send `**kwargs` to initiate :code:`Agent.__init__()` (:class:`~rlberry.agents.Agent`), but the keys must match the parameters.
 
     Parameters
     ----------
-    env : gym.Env or tuple (constructor, kwargs)
+    env : gymnasium.Env or tuple (constructor, kwargs)
         Environment used to fit the agent.
-    eval_env : gym.Env or tuple (constructor, kwargs)
+    eval_env : gymnasium.Env or tuple (constructor, kwargs)
         Environment on which to evaluate the agent. If None, copied from env.
     copy_env : bool
         If true, makes a deep copy of the environment.
+    compress_pickle : bool
+        If true, compress the save files using bz2.
     seeder : :class:`~rlberry.seeding.seeder.Seeder`, int, or None
         Seeder/seed for random number generation.
     output_dir : str or Path
@@ -439,6 +448,8 @@ class AgentWithSimplePolicy(Agent):
     _default_writer_kwargs : dict, optional
         Parameters to initialize :class:`~rlberry.utils.writers.DefaultWriter` (attribute self.writer).
         Used by :class:`~rlberry.manager.ExperimentManager`.
+    _thread_shared_data : dict, optional
+        Used by :class:`~rlberry.manager.ExperimentManager` to share data across Agent instances created in different threads.
     **kwargs : dict
         Classes that implement this interface must send ``**kwargs``
         to :code:`AgentWithSimplePolicy.__init__()`.
@@ -447,12 +458,12 @@ class AgentWithSimplePolicy(Agent):
     ----------
     name : string
         Agent identifier (not necessarily unique).
-    env : :class:`gym.Env` or tuple (constructor, kwargs)
+    env : :class:`gymnasium.Env` or tuple (constructor, kwargs)
         Environment on which to train the agent.
-    eval_env : :class:`gym.Env` or tuple (constructor, kwargs)
+    eval_env : :class:`gymnasium.Env` or tuple (constructor, kwargs)
         Environment on which to evaluate the agent. If None, copied from env.
     writer : object, default: None
-        Writer object (e.g. tensorboard SummaryWriter).
+        Writer object to log the output(e.g. tensorboard SummaryWriter).
     seeder : :class:`~rlberry.seeding.seeder.Seeder`, int, or None
         Seeder/seed for random number generation.
     rng : :class:`numpy.random._generator.Generator`
@@ -463,7 +474,9 @@ class AgentWithSimplePolicy(Agent):
         Directory that the agent can use to store data.
     unique_id : str
         Unique identifier for the agent instance. Can be used, for example,
-        to create files/directories for the agent to log data safely.
+        to create files/directories for the agent to log data safely..
+    thread_shared_data : dict
+        Data shared by agent instances among different threads.
 
     Examples
     --------
@@ -485,30 +498,46 @@ class AgentWithSimplePolicy(Agent):
 
     @abstractmethod
     def policy(self, observation):
-        """Returns an action, given an observation."""
+        """
+        Abstract method.
+        The policy function takes an observation from the environment and returns an action.
+        The specific implementation of the policy function depends on the agent's learning algorithm
+        or strategy, which can be deterministic or stochastic.
+        Parameters
+        ----------
+        observation (any): An observation from the environment.
+        Returns
+        -------
+        action (any): The action to be taken based on the provided observation.
+        Notes
+        -----
+        The data type of 'observation' and 'action' can vary depending on the specific agent
+        and the environment it interacts with.
+        """
         pass
 
     def eval(self, eval_horizon=10**5, n_simulations=10, gamma=1.0, **kwargs):
         """
-        Monte-Carlo policy evaluation [1]_ of an agent to estimate the value at the initial state.
+        Monte-Carlo policy evaluation [1]_ method to estimate the mean discounted reward using the current policy on the evaluation environment.
 
         Parameters
         ----------
-        eval_horizon : int, default: 10**5
-            Horizon, maximum episode length.
-        n_simulations : int, default: 10
-            Number of Monte Carlo simulations.
-        gamma : double, default: 1.0
-            Discount factor.
+        eval_horizon : int, optional, default: 10**5
+            Maximum episode length, representing the horizon for each simulation.
+        n_simulations : int, optional, default: 10
+            Number of Monte Carlo simulations to perform for the evaluation.
+        gamma : float, optional, default: 1.0
+            Discount factor for future rewards.
 
         Returns
         -------
         float
-            Mean over the n simulations of the sum of rewards in each simulation.
+            The mean value over 'n_simulations' of the sum of rewards obtained in each simulation.
 
         References
         ----------
-        .. [1] http://incompleteideas.net/book/first/ebook/node50.html
+        .. [1] Sutton, R. S., & Barto, A. G. (2018). Reinforcement Learning: An Introduction.
+            MIT Press.
         """
         del kwargs  # unused
         episode_rewards = np.zeros(n_simulations)
@@ -529,13 +558,19 @@ class AgentWithSimplePolicy(Agent):
 
 
 class AgentTorch(Agent):
-    """Interface for torch agent agents to specify the save and load.
+    # Need a specific save and load to manage torch.
+    """
+    Abstract Class to inherit for torch agents.
+    This class use the 'torch' functions to save/load agents.
+    .. note::
+        | 1 - Abstract Class : can't be cannot be instantiated. The abstract methods (from Agent) have to be overwriten by the 'inherited class' agent.
+        | 2 - Classes that implements this interface can send `**kwargs` to initiate :code:`Agent.__init__()`(:class:`~rlberry.agents.Agent`), but the keys must match the parameters.
 
     Parameters
     ----------
-    env : gym.Env or tuple (constructor, kwargs)
+    env : gymnasium.Env or tuple (constructor, kwargs)
         Environment used to fit the agent.
-    eval_env : gym.Env or tuple (constructor, kwargs)
+    eval_env : gymnasium.Env or tuple (constructor, kwargs)
         Environment on which to evaluate the agent. If None, copied from env.
     copy_env : bool
         If true, makes a deep copy of the environment.
@@ -562,9 +597,9 @@ class AgentTorch(Agent):
     ----------
     name : string
         Agent identifier (not necessarily unique).
-    env : :class:`gym.Env` or tuple (constructor, kwargs)
+    env : :class:`gymnasium.Env` or tuple (constructor, kwargs)
         Environment on which to train the agent.
-    eval_env : :class:`gym.Env` or tuple (constructor, kwargs)
+    eval_env : :class:`gymnasium.Env` or tuple (constructor, kwargs)
         Environment on which to evaluate the agent. If None, copied from env.
     writer : object, default: None
         Writer object (e.g. tensorboard SummaryWriter).
@@ -584,14 +619,12 @@ class AgentTorch(Agent):
     """
 
     def save(self, filename):
+        # Overwrite the 'save' method to manage CPU and GPU with torch agent
+        # If overridden, the load() method must also be overriden.
         """
-        Overwrite the 'save' function to manage CPU vs GPU  save/load in torch agent
-
         ----- documentation from original save -----
 
         Save agent object. By default, the agent is pickled.
-
-        If overridden, the load() method must also be overriden.
 
         Before saving, consider setting writer to None if it can't be pickled (tensorboard writers
         keep references to files and cannot be pickled).
@@ -610,6 +643,7 @@ class AgentTorch(Agent):
         pathlib.Path
             If save() is successful, a Path object corresponding to the filename is returned.
             Otherwise, None is returned.
+
         .. warning:: The returned filename might differ from the input filename: For instance,
         the method can append the correct suffix to the name before saving.
 
@@ -632,21 +666,17 @@ class AgentTorch(Agent):
         try:
             if not self.compress_pickle:
                 with filename.open("wb") as ff:
-                    # pickle.dump(dict_to_save, ff)
                     torch.save(dict_to_save, ff, pickle)
             else:
                 with bz2.BZ2File(filename, "wb") as ff:
-                    # cPickle.dump(dict_to_save, ff)
                     torch.save(dict_to_save, ff, cPickle)
         except Exception as ex:
             try:
                 if not self.compress_pickle:
                     with filename.open("wb") as ff:
-                        # dill.dump(dict_to_save, ff)
                         torch.save(dict_to_save, ff, dill)
                 else:
                     with bz2.BZ2File(filename, "wb") as ff:
-                        # dill.dump(dict_to_save, ff)
                         torch.save(dict_to_save, ff, dill)
             except Exception as ex:
                 logger.warning("Agent instance cannot be pickled: " + str(ex))
@@ -656,17 +686,18 @@ class AgentTorch(Agent):
 
     @classmethod
     def load(cls, filename, **kwargs):
+        # Overwrite 'load' method to manage CPU vs GPU with torch agent.
+        # If overridden, save() method must also be overriden.
         """
-        Overwrite the 'save' and 'load' functions to manage CPU vs GPU  save/load in torch agent.
-
         ----- documentation from original load -----
         Load agent object.
-        If overridden, save() method must also be overriden.
 
         Parameters
         ----------
-        **kwargs: dict
-            Arguments to required by the __init__ method of the Agent subclass.
+        filename: str
+            Path to the object (pickle) to load.
+        **kwargs: Keyword Arguments
+            Arguments required by the __init__ method of the Agent subclass to load.
         """
 
         from rlberry.utils.torch import choose_device

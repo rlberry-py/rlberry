@@ -116,6 +116,7 @@ for i, error in enumerate(["cb", "raw_curves", "ci", "pi"]):
         tag="action",
         preprocess_func=compute_pseudo_regret,
         title=error,
+        smooth=True,
         error_representation=error,
         ax=axes[i],
         show=False,

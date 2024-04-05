@@ -21,6 +21,8 @@ class DummyAgent(AgentWithSimplePolicy):
         for ii in range(budget):
             if self.writer is not None:
                 self.writer.add_scalar("a", ii, ii)
+                scalar_dict = dict(multi1=1, multi2=2)
+                self.writer.add_scalars("multi_scalar_test", scalar_dict)
             time.sleep(1)
 
         return None
@@ -34,19 +36,24 @@ def test_myoutput(capsys):  # or use "capfd" for fd-level
     env_kwargs = dict()
 
     env = env_ctor(**env_kwargs)
-    agent = ExperimentManager(
+    xp_manager = ExperimentManager(
         DummyAgent,
         (env_ctor, env_kwargs),
         fit_budget=3,
         n_fit=1,
         default_writer_kwargs={"log_interval": 1},
     )
-    agent.fit(budget=3)
+    budget_size = 22
+    xp_manager.fit(budget=budget_size)
 
-    assert agent.agent_handlers[0].writer.summary_writer == None
-    assert list(agent.agent_handlers[0].writer.read_tag_value("a")) == [0, 1, 2]
-    assert agent.agent_handlers[0].writer.read_first_tag_value("a") == 0
-    assert agent.agent_handlers[0].writer.read_last_tag_value("a") == 2
+    assert xp_manager.agent_handlers[0].writer.summary_writer == None
+    assert list(xp_manager.agent_handlers[0].writer.read_tag_value("a")) == list(
+        range(budget_size)
+    )
+    assert xp_manager.agent_handlers[0].writer.read_first_tag_value("a") == 0
+    assert (
+        xp_manager.agent_handlers[0].writer.read_last_tag_value("a") == budget_size - 1
+    )  # start at 0
 
     captured = capsys.readouterr()
     # test that what is written to stderr is longer than 50 char,

@@ -38,7 +38,7 @@ M = 20  # number of MC simu
 env_ctor = NormalBandit
 env_kwargs = {"means": means, "stds": 2 * np.ones(len(means))}
 
-agent = ExperimentManager(
+xp_manager = ExperimentManager(
     UCBAgent,
     (env_ctor, env_kwargs),
     fit_budget=T,
@@ -52,7 +52,7 @@ agent = ExperimentManager(
 
 # Agent training
 
-agent.fit()
+xp_manager.fit()
 
 
 # Compute and plot (pseudo-)regret
@@ -63,7 +63,7 @@ def compute_pseudo_regret(actions):
 fig = plt.figure(1, figsize=(5, 3))
 ax = plt.gca()
 output = plot_writer_data(
-    [agent],
+    [xp_manager],
     tag="action",
     preprocess_func=compute_pseudo_regret,
     title="Cumulative Pseudo-Regret",

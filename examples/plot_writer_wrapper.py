@@ -53,9 +53,9 @@ env_kwargs = dict(
 )
 
 env = env_ctor(**env_kwargs)
-agent = ExperimentManager(VIAgent, (env_ctor, env_kwargs), fit_budget=10, n_fit=3)
+xp_manager = ExperimentManager(VIAgent, (env_ctor, env_kwargs), fit_budget=10, n_fit=3)
 
-agent.fit(budget=10)
+xp_manager.fit(budget=10)
 # comment the line above if you only want to load data from rlberry_data.
 
 
@@ -66,14 +66,14 @@ def compute_reward(rewards):
 
 # Plot of the cumulative reward.
 output = plot_writer_data(
-    agent, tag="reward", preprocess_func=compute_reward, title="Cumulative Reward"
+    xp_manager, tag="reward", preprocess_func=compute_reward, title="Cumulative Reward"
 )
 # The output is for 500 global steps because it uses 10 fit_budget * horizon
 
 # Log-Log plot :
 fig, ax = plt.subplots(1, 1)
 plot_writer_data(
-    agent,
+    xp_manager,
     tag="reward",
     preprocess_func=compute_reward,
     title="Cumulative Reward",

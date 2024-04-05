@@ -13,8 +13,8 @@ Agent is slightly tuned, but not optimal. This is just for illustration purpose.
 """
 # sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_springcartpole.jpg'
 
-from rlberry.envs.classic_control import SpringCartPole
-from rlberry.agents.torch import DQNAgent
+from rlberry_research.envs.classic_control import SpringCartPole
+from rlberry_research.agents.torch import DQNAgent
 from gymnasium.wrappers.time_limit import TimeLimit
 
 model_configs = {
@@ -24,7 +24,7 @@ model_configs = {
 }
 
 init_kwargs = dict(
-    q_net_constructor="rlberry.agents.torch.utils.training.model_factory_from_env",
+    q_net_constructor="rlberry_research.agents.torch.utils.training.model_factory_from_env",
     q_net_kwargs=model_configs,
 )
 
