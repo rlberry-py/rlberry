@@ -288,7 +288,7 @@ iteration, the environment takes 100 steps (`horizon`) times the
 
 
 
-Finally, we plot the reward: Here you can see the mean value over the 10 fited agent, with 2 options (raw and smoothed). Note that, to be able to see the smoothed version, you must have installed the extra package `scikit-fda`.
+Finally, we plot the reward: Here you can see the mean value over the 10 fited agent, with 2 options (raw and smoothed). Note that, to be able to see the smoothed version, you must have installed the extra package `scikit-fda`, (For more information, you can check the options on the [install page](../../installation.md#options)).
 
 ```python
 # Plot of the reward.
