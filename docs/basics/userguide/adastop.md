@@ -31,7 +31,7 @@ managers = [
     {
         "agent_class": StableBaselinesAgent,
         "train_env": (env_ctor, env_kwargs),
-        "fit_budget": 1e4,
+        "fit_budget": 5e4,
         "agent_name": "A2C",
         "init_kwargs": {"algo_cls": A2C, "policy": "MlpPolicy", "verbose": 1},
     },
@@ -39,7 +39,7 @@ managers = [
         "agent_class": StableBaselinesAgent,
         "train_env": (env_ctor, env_kwargs),
         "agent_name": "PPO",
-        "fit_budget": 1e4,
+        "fit_budget": 5e4,
         "init_kwargs": {"algo_cls": PPO, "policy": "MlpPolicy", "verbose": 1},
     },
 ]
@@ -57,10 +57,27 @@ The results of the comparison can be obtained either in text format using `print
 comparator.print_results()
 ```
 
+The result is found using 10 scores for each agent:
+```
+Number of scores used for each agent:
+A2C:10
+PPO:10
+
+Mean of scores of each agent:
+A2C:271.17600000000004
+PPO:500.0
+
+Decision for each comparison:
+A2C vs PPO:smaller
+```
+
+
 or with a plot using `plot_results`
 
 ```python
 comparator.plot_results()
 ```
+
+![](adastop_boxplots.png)
 
 The boxplots in the plot represent the distribution of the scores gathered for each agent. The table on the top of the figure represent the decisions taken by the test: larger, smaller or equal.
