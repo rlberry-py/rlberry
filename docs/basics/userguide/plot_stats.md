@@ -522,4 +522,4 @@ print(comparator.managers_paths)
 
 ### Interpretation of AdaStop results
 
-AdaStop did 3 steps of 5 seeds of 10_000 timesteps training of 2 agents. So with rlberry a researcher could have concluded that PPO is better than SAC on CartPole with 300_000 timesteps and statistical guarantees. For more information check out this [AdaStop paper](https://arxiv.org/abs/2306.10882). A dedicated user guide will be released soon.  
+AdaStop did 3 steps of 5 seeds of 10_000 timesteps training of 2 agents. So with rlberry a researcher could have concluded that PPO is better than SAC on CartPole with 300_000 timesteps and statistical guarantees. For more information check out this [AdaStop paper](https://arxiv.org/abs/2306.10882). A dedicated user guide will be released soon.
