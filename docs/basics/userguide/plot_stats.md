@@ -511,6 +511,7 @@ comparator = AdastopComparator()
 comparator.compare(managers)
 print(comparator.managers_paths)
 ```
+  step 3
   reject
       Agent1 vs Agent2  mean Agent1  mean Agent2  mean diff  std Agent 1  \
     0       A2C vs PPO      278.048      365.285    -87.237   155.561606
@@ -518,3 +519,7 @@ print(comparator.managers_paths)
        std Agent 2 decisions
     0    53.671506   smaller
     {'A2C': PosixPath('rlberry_data/temp/manager_data/A2C_2024-04-03_15-15-47_671933e0/manager_obj.pickle'), 'PPO': PosixPath('rlberry_data/temp/manager_data/PPO_2024-04-03_15-15-47_79c2d608/manager_obj.pickle')}
+
+### Interpretation of AdaStop results
+
+AdaStop did 3 steps of 5 seeds of 10_000 timesteps training of 2 agents. So with rlberry a researcher could have concluded that PPO is better than SAC on CartPole with 300_000 timesteps and statistical guarantees. For more information check out this [AdaStop paper](https://arxiv.org/abs/2306.10882). A dedicated user guide will be released soon.  
