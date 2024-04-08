@@ -41,25 +41,15 @@ second_agent = ExperimentManager(
 first_agent.fit()
 second_agent.fit()
 ```
+## Plot training and evaluation.
+
+After training agents, a researcher can analyse two things. The training curves (usually smoothed and averaged over multiple seeds) and the evaluations (draw a trained agent at random from the fitted ones, and average its performance over some episode of the environment).
 
 ```python
 from rlberry.manager import plot_writer_data
 
 data = plot_writer_data([first_agent, second_agent], "rollout/ep_rew_mean")
 ```
-
-    /usr/local/lib/python3.10/dist-packages/rlberry/manager/plotting.py:165: SettingWithCopyWarning:
-    A value is trying to be set on a copy of a slice from a DataFrame.
-    Try using .loc[row_indexer,col_indexer] = value instead
-
-    See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-      data.loc[:, "n_simu"] = data["n_simu"].astype(int)
-    /usr/local/lib/python3.10/dist-packages/rlberry/manager/plotting.py:165: DeprecationWarning: In a future version, `df.iloc[:, i] = newvals` will attempt to set the values inplace instead of always setting a new array. To retain the old behavior, use either `df[df.columns[i]] = newvals` or, if columns are non-unique, `df.isetitem(i, newvals)`
-      data.loc[:, "n_simu"] = data["n_simu"].astype(int)
-
-
-
-
 ![png](doc1.png)
 
 

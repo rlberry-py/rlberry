@@ -30,7 +30,7 @@ You can find more details about installation [here](installation)!
 - [Agent](agent_page)
 - [ExperimentManager](experimentManager_page)
 - [Logging](logging_page).
-- Results analysis & visualization (In construction)
+- [Results analysis & visualization](plot_stats_page)
 ## Experimenting with Deep agents
 - Torch Agents (In construction)
 - Policy and Value Networks (In construction)
