@@ -40,8 +40,8 @@ second_agent = ExperimentManager(
 )
 first_agent.fit()
 second_agent.fit()
-```   
-   
+```
+
 ```python
 from rlberry.manager import plot_writer_data
 
@@ -520,7 +520,7 @@ managers = [
 comparator = AdastopComparator()
 comparator.compare(managers)
 print(comparator.managers_paths)
-```    
+```
   reject
       Agent1 vs Agent2  mean Agent1  mean Agent2  mean diff  std Agent 1  \
     0       A2C vs PPO      278.048      365.285    -87.237   155.561606
