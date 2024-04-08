@@ -49,14 +49,12 @@ It could be useful in many way :
 See the [Save and Load Experiment](save_load_page) page.
 
 ### Statistical comparison of RL agents
-
+The principal goal of rlberry is to give tools for proper experimentations in RL. In research, one of the usual tasks is to compare two or more RL agents, and for this one typically uses several seeds to train the agents several times and compare the resulting mean reward. We show here how to make sure that enough data and enough information were acquired to assert that two RL agents are indeed different. We propose two ways to do that: first are classical hypothesis testing and second are sequential testing scheme with AdaStop that aim at saving computation by stopping early if possible.
 #### Compare agents
-Compare several trained agents using the mean over a specify number of evaluations for each agent.
-TODO : to complete
+We give tools to compare several trained agents using the mean over a specify number of evaluations for each agent. The explanation can be found in the [user guide](comparison_page).
 
 #### AdaStop
-TODO : Text
-
+AdaStop is a Sequential testing for efficient and reliable comparison of stochastic algorithms. It has been successfully used to compare efficiently RL agents and an example of such use can be found in the [user guide](adastop_userguide).
 
 [linked paper](https://hal-lara.archives-ouvertes.fr/hal-04132861/)
 
