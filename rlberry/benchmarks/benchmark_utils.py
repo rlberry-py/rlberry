@@ -62,7 +62,7 @@ def download_directory(
         else:
             try:
                 path = content.path
-                time.sleep(0.75)
+                time.sleep(2)
                 file_content = repository.get_contents(path, ref=sha)
                 if not isinstance(file_content, ContentFile):
                     raise ValueError("Expected ContentFile")
@@ -152,9 +152,12 @@ def import_from_google_atari_bucket():
     print("TODO")
 
 
-def import_from_SB3_zoo(agent_name, environment_name):
+def download_benchmark_from_SB3_zoo(
+    agent_name, environment_name, download_path="download_benchmark"
+):
     """
     Download folder from pre-trained Reinforcement Learning agents using the rl-baselines3-zoo and Stable Baselines3.
+    https://github.com/DLR-RM/rl-trained-agents
 
     Parameters
     -----------
@@ -168,11 +171,12 @@ def import_from_SB3_zoo(agent_name, environment_name):
     TODO
 
     """
-    print("TODO")
     github = Github(None)
     repository = github.get_repo("DLR-RM/rl-trained-agents")
     sha = get_sha_for_tag(repository, "master")
-    download_directory(repository, sha, str(agent_name + "/" + environment_name))
+    download_directory(
+        repository, sha, str(agent_name + "/" + environment_name), download_path
+    )
 
 
 def import_from_cleanrl():
@@ -187,4 +191,4 @@ if __name__ == "__main__":
     """
     Entry point
     """
-    import_from_SB3_zoo("ppo", "Acrobot-v1_1")
+    download_benchmark_from_SB3_zoo("ppo", "Acrobot-v1_1")
