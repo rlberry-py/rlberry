@@ -139,5 +139,6 @@ def test_adastop():
 
     comparator = AdastopComparator(seed=42)
     comparator.compare(managers)
+    comparator.print_results()
     assert comparator.is_finished
     assert not ("equal" in comparator.decisions.values())
