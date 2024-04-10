@@ -41,7 +41,9 @@ def import_from_hugingface():
     print("TODO")
 
 
-def download_benchmark_from_SB3_zoo(agent_name, environment_name, download_path=None):
+def download_benchmark_from_SB3_zoo(
+    agent_name, environment_name, overwrite, download_path=None
+):
     """
     Download folder from pre-trained Reinforcement Learning agents using the rl-baselines3-zoo and Stable Baselines3.
     https://github.com/DLR-RM/rl-trained-agents
@@ -52,6 +54,12 @@ def download_benchmark_from_SB3_zoo(agent_name, environment_name, download_path=
         agent name for benchmark to download
     environment_name : list
         environment name for benchmark to download
+    overwrite : bool
+        how to manage if the combination agent_name/environment_name exist :
+        True : delete the previous folder, then download
+        False : raise an error
+    download_path : str
+        root path where to download files. (default=None : create temp folder)
 
     Returns
     --------
@@ -67,6 +75,11 @@ def download_benchmark_from_SB3_zoo(agent_name, environment_name, download_path=
     environment_base_name = environment_name.split("_")[0]
 
     if os.path.exists(output_folder):
+        if not overwrite:
+            raise FileExistsError(
+                "The 'overwrite' bool is false, and the combination %s / %s already exist"
+                % (agent_name, environment_name)
+            )
         shutil.rmtree(output_folder)
     os.makedirs(output_folder)
 

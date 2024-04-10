@@ -6,7 +6,7 @@ import pytest
 
 @pytest.mark.parametrize("agent_class", ["dqn"])
 @pytest.mark.parametrize("env", ["PongNoFrameskip-v4_1"])
-def test_experiment_manager_and_multiple_managers_seeding(agent_class, env):
+def test_download_benchmark_from_SB3_zoo_(agent_class, env):
     # remove previous test if existing
     test_folder_path = "./tests_dl"
     if os.path.exists(test_folder_path):
@@ -15,7 +15,7 @@ def test_experiment_manager_and_multiple_managers_seeding(agent_class, env):
 
     # download benchmark
     ret_value = download_benchmark_from_SB3_zoo(
-        agent_class, env, download_path=test_folder_path
+        agent_class, env, overwrite=True, download_path=test_folder_path
     )
 
     # tests expected result
@@ -50,6 +50,39 @@ def test_experiment_manager_and_multiple_managers_seeding(agent_class, env):
             "vecnormalize.pkl",
         )
     )
+
+    if os.path.exists(test_folder_path):
+        shutil.rmtree(test_folder_path)
+
+
+@pytest.mark.parametrize("agent_class", ["dqn"])
+@pytest.mark.parametrize("env", ["PongNoFrameskip-v4_1"])
+@pytest.mark.parametrize("overwrite", [True, False])
+def test_download_benchmark_from_SB3_zoo_overwrite_True(agent_class, env, overwrite):
+    # remove previous test if existing
+    test_folder_path = "./tests_dl"
+    if os.path.exists(test_folder_path):
+        shutil.rmtree(test_folder_path)
+    os.makedirs(test_folder_path)
+
+    # first call
+    ret_value = download_benchmark_from_SB3_zoo(
+        agent_class, env, overwrite=overwrite, download_path=test_folder_path
+    )
+
+    #'overwrite' test
+    error_was_raised = False
+    try:
+        ret_value = download_benchmark_from_SB3_zoo(
+            agent_class, env, overwrite=overwrite, download_path=test_folder_path
+        )
+    except FileExistsError:
+        error_was_raised = True
+
+    if overwrite:
+        assert not error_was_raised
+    else:
+        assert error_was_raised
 
     if os.path.exists(test_folder_path):
         shutil.rmtree(test_folder_path)
