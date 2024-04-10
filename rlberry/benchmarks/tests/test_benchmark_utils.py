@@ -20,7 +20,7 @@ def test_download_benchmark_from_SB3_zoo_(agent_class, env):
 
     # tests expected result
     environment_base_name = env.split("_")[0]
-    assert test_folder_path + "/" + agent_class + "/" + env == ret_value
+    assert str(os.path.join(test_folder_path, agent_class, env)) == ret_value
     assert os.path.exists(os.path.join(test_folder_path, agent_class, env))
     assert os.path.exists(
         os.path.join(test_folder_path, agent_class, env, "0.monitor.csv")
