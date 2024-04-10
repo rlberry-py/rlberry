@@ -1,126 +1,7 @@
-import time
-
-
-# This code (below) was copied from
-# https://gist.github.com/pdashford/2e4bcd4fc2343e2fd03efe4da17f577d
-# and modified by "leynier" to work with Python 3, type hints, correct format and
-# simplified the code to our needs.
-
-
-import base64
-import getopt
+import requests
+from tempfile import mkdtemp
 import os
 import shutil
-import sys
-from typing import Optional
-
-from github import Github, GithubException
-from github.ContentFile import ContentFile
-from github.Repository import Repository
-
-
-def get_sha_for_tag(repository: Repository, tag: str) -> str:
-    """
-    Returns a commit PyGithub object for the specified repository and tag.
-    """
-    branches = repository.get_branches()
-    matched_branches = [match for match in branches if match.name == tag]
-    if matched_branches:
-        return matched_branches[0].commit.sha
-
-    tags = repository.get_tags()
-    matched_tags = [match for match in tags if match.name == tag]
-    if not matched_tags:
-        raise ValueError("No Tag or Branch exists with that name")
-    return matched_tags[0].commit.sha
-
-
-def download_directory(
-    repository: Repository,
-    sha: str,
-    server_path: str,
-    download_path: str = "download_benchmark",
-) -> None:
-    """
-    Download all contents at server_path with commit tag sha in
-    the repository.
-    """
-
-    full_download_path = os.path.join(download_path, server_path)
-
-    if os.path.exists(full_download_path):
-        shutil.rmtree(full_download_path)
-
-    os.makedirs(full_download_path)
-    contents = repository.get_dir_contents(server_path, ref=sha)
-
-    for content in contents:
-        print("Processing %s" % content.path)
-        if content.type == "dir":
-            os.makedirs(os.path.join(download_path, content.path))
-            download_directory(repository, sha, content.path)
-        else:
-            try:
-                path = content.path
-                time.sleep(2)
-                file_content = repository.get_contents(path, ref=sha)
-                if not isinstance(file_content, ContentFile):
-                    raise ValueError("Expected ContentFile")
-                file_out = open(os.path.join(download_path, content.path), "w+")
-                if file_content.content:
-                    file_data = base64.b64decode(file_content.content)
-                    file_out.write(file_data.decode("utf-8"))
-                file_out.close()
-            except (GithubException, IOError, ValueError) as exc:
-                print("Error processing %s: %s", content.path, exc)
-
-
-def usage():
-    """
-    Prints the usage command lines
-    """
-    print("usage: gh-download --repo=repo --branch=branch --folder=folder")
-
-
-def main(argv):
-    """
-    Main function block
-    """
-    try:
-        opts, _ = getopt.getopt(argv, "r:b:f:", ["repo=", "branch=", "folder="])
-    except getopt.GetoptError as err:
-        print(str(err))
-        usage()
-        sys.exit(2)
-    repo: Optional[str] = None
-    branch: Optional[str] = None
-    folder: Optional[str] = None
-    for opt, arg in opts:
-        if opt in ("-r", "--repo"):
-            repo = arg
-        elif opt in ("-b", "--branch"):
-            branch = arg
-        elif opt in ("-f", "--folder"):
-            folder = arg
-
-    if not repo:
-        print("Repo is required")
-        usage()
-        sys.exit(2)
-    if not branch:
-        print("Branch is required")
-        usage()
-        sys.exit(2)
-    if not folder:
-        print("Folder is required")
-        usage()
-        sys.exit(2)
-
-
-# End of code copied code from
-# https://gist.github.com/pdashford/2e4bcd4fc2343e2fd03efe4da17f577d
-# and modified by "leynier" to work with Python 3, type hints, correct format and
-# simplified the code to our needs.
 
 
 # TODO : convert external benchmark to DataFrame that match the input of rlberry.manager.comparaison.py -> compare_agents_data()
@@ -152,9 +33,15 @@ def import_from_google_atari_bucket():
     print("TODO")
 
 
-def download_benchmark_from_SB3_zoo(
-    agent_name, environment_name, download_path="download_benchmark"
-):
+def import_from_cleanrl():
+    print("TODO")
+
+
+def import_from_hugingface():
+    print("TODO")
+
+
+def download_benchmark_from_SB3_zoo(agent_name, environment_name, download_path=None):
     """
     Download folder from pre-trained Reinforcement Learning agents using the rl-baselines3-zoo and Stable Baselines3.
     https://github.com/DLR-RM/rl-trained-agents
@@ -168,27 +55,84 @@ def download_benchmark_from_SB3_zoo(
 
     Returns
     --------
-    TODO
-
+    Return the path containing the downloaded files   (download_path/agent_name/environment_name)
     """
-    github = Github(None)
-    repository = github.get_repo("DLR-RM/rl-trained-agents")
-    sha = get_sha_for_tag(repository, "master")
-    download_directory(
-        repository, sha, str(agent_name + "/" + environment_name), download_path
-    )
+    if not download_path:
+        download_path = mkdtemp()
 
+    GITHUB_URL = "https://raw.githubusercontent.com/DLR-RM/rl-trained-agents/master/"
+    base_url = GITHUB_URL + agent_name + "/" + environment_name + "/"
 
-def import_from_cleanrl():
-    print("TODO")
+    output_folder = os.path.join(download_path, agent_name, environment_name)
+    environment_base_name = environment_name.split("_")[0]
 
+    if os.path.exists(output_folder):
+        shutil.rmtree(output_folder)
+    os.makedirs(output_folder)
 
-def import_from_hugingface():
-    print("TODO")
+    # download CSVs
+    url_content = None
+    i = 0
+    while url_content != b"404: Not Found":
+        file_name_to_download = str(i) + ".monitor.csv"
+        url_csv_to_download = base_url + file_name_to_download
 
+        req = requests.get(url_csv_to_download)
+        url_content = req.content
 
-if __name__ == "__main__":
-    """
-    Entry point
-    """
-    download_benchmark_from_SB3_zoo("ppo", "Acrobot-v1_1")
+        if url_content != b"404: Not Found":
+            csv_file = open(os.path.join(output_folder, file_name_to_download), "wb")
+            csv_file.write(url_content)
+            csv_file.close()
+        else:
+            break
+        i = i + 1
+
+    # download zip
+    file_name_to_download = environment_base_name + ".zip"
+    url_zip_to_download = base_url + file_name_to_download
+    req = requests.get(url_zip_to_download)
+    url_content = req.content
+    csv_file = open(os.path.join(output_folder, file_name_to_download), "wb")
+    csv_file.write(url_content)
+    csv_file.close()
+
+    # download evaluations.npz
+    file_name_to_download = "evaluations.npz"
+    url_zip_to_download = base_url + file_name_to_download
+    req = requests.get(url_zip_to_download)
+    url_content = req.content
+    csv_file = open(os.path.join(output_folder, file_name_to_download), "wb")
+    csv_file.write(url_content)
+    csv_file.close()
+
+    # hyperparameter and config
+    config_folder = output_folder + "/" + environment_base_name
+    base_url_config = base_url + environment_base_name + "/"
+
+    os.makedirs(config_folder)
+    file_name_to_download = "args.yml"
+    url_zip_to_download = base_url_config + file_name_to_download
+    req = requests.get(url_zip_to_download)
+    url_content = req.content
+    csv_file = open(os.path.join(config_folder, file_name_to_download), "wb")
+    csv_file.write(url_content)
+    csv_file.close()
+
+    file_name_to_download = "config.yml"
+    url_zip_to_download = base_url_config + file_name_to_download
+    req = requests.get(url_zip_to_download)
+    url_content = req.content
+    csv_file = open(os.path.join(config_folder, file_name_to_download), "wb")
+    csv_file.write(url_content)
+    csv_file.close()
+
+    file_name_to_download = "vecnormalize.pkl"
+    url_zip_to_download = base_url_config + file_name_to_download
+    req = requests.get(url_zip_to_download)
+    url_content = req.content
+    csv_file = open(os.path.join(config_folder, file_name_to_download), "wb")
+    csv_file.write(url_content)
+    csv_file.close()
+
+    return output_folder
