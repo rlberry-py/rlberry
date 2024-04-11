@@ -1,6 +1,6 @@
 (benchmarks)=
 
-# How to seed your experiment
+# How to use benchmarks
 
 Rlberry has a tool to download some benchmarks if you need to compare your agent with them.
 
@@ -23,6 +23,6 @@ path_with_downloaded_files = download_benchmark_from_SB3_zoo(
 )
 ```
 
-## how to use these benchmarks
+## How to use these benchmarks to compare your agent
 
 in construction ...

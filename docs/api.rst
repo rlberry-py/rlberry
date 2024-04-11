@@ -173,7 +173,7 @@ Benchmarks
    :toctree: generated/
    :template: function.rst
 
-   benchmarks.benchmark_utils
+   benchmarks.benchmark_utils.download_benchmark_from_SB3_zoo
 
 Environment Wrappers
 ====================
