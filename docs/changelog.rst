@@ -7,7 +7,12 @@ Changelog
 Dev version
 -----------
 
-* nothing
+
+
+*PR #449*
+
+  * Add module to download benchmarks
+    - Pre-trained Reinforcement Learning agents using the rl-baselines3-zoo and Stable Baselines3.
 
 Version 0.7.1
 -------------
