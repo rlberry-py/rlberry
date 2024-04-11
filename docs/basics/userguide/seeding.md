@@ -76,7 +76,7 @@ from rlberry.seeding import Seeder
 seeder = Seeder(123)  # seeder initialization
 
 from rlberry.envs import gym_make
-from rlberry_research.agents import RSUCBVIAgent
+from rlberry_scool.agents import RSUCBVIAgent
 
 
 env = gym_make("MountainCar-v0")

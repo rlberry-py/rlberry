@@ -10,7 +10,7 @@ from rlberry.utils.check_agent import (
 from rlberry.spaces import Box, Dict, Discrete
 import gymnasium as gym
 from rlberry_scool.agents import ValueIterationAgent
-from rlberry_research.agents import UCBVIAgent
+from rlberry_scool.agents import UCBVIAgent
 
 
 class ActionDictTestEnv(gym.Env):

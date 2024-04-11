@@ -17,7 +17,7 @@ import numpy as np
 import pandas as pd
 import time
 from rlberry.agents import AgentWithSimplePolicy
-from rlberry_research.agents import UCBVIAgent
+from rlberry_scool.agents import UCBVIAgent
 from rlberry_research.envs import Chain
 from rlberry.manager import (
     ExperimentManager,
@@ -76,7 +76,7 @@ Defining an agent and a baseline
 --------------------------------
 
 We will compare a RandomAgent (which select random action) to the
-UCBVIAgent(from [rlberry_research](https://github.com/rlberry-py/rlberry-research)), which is an algorithm that is designed to perform an
+UCBVIAgent(from [rlberry_scool](https://github.com/rlberry-py/rlberry-scool)), which is an algorithm that is designed to perform an
 efficient exploration. Our goal is then to assess the performance of the
 two algorithms.
 
