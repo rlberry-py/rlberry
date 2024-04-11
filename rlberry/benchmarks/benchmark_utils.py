@@ -42,7 +42,7 @@ import shutil
 
 
 def download_benchmark_from_SB3_zoo(
-    agent_name, environment_name, overwrite, download_path=None
+    agent_name, environment_name, overwrite, output_dir=None
 ):
     """
     Download folder from pre-trained Reinforcement Learning agents using the rl-baselines3-zoo and Stable Baselines3.
@@ -58,20 +58,20 @@ def download_benchmark_from_SB3_zoo(
         how to manage if the combination agent_name/environment_name exist :
         True : delete the previous folder, then download
         False : raise an error
-    download_path : str
+    output_dir : str
         root path where to download files. (default=None : create temp folder)
 
     Returns
     --------
-    Return the path containing the downloaded files   (download_path/agent_name/environment_name)
+    Return the path containing the downloaded files   (output_dir/agent_name/environment_name)
     """
-    if not download_path:
-        download_path = mkdtemp()
+    if not output_dir:
+        output_dir = mkdtemp()
 
     GITHUB_URL = "https://raw.githubusercontent.com/DLR-RM/rl-trained-agents/master/"
     base_url = GITHUB_URL + agent_name + "/" + environment_name + "/"
 
-    output_folder = os.path.join(download_path, agent_name, environment_name)
+    output_folder = os.path.join(output_dir, agent_name, environment_name)
     environment_base_name = environment_name.split("_")[0]
 
     if os.path.exists(output_folder):

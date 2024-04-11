@@ -15,7 +15,7 @@ def test_download_benchmark_from_SB3_zoo_(agent_class, env):
 
     # download benchmark
     ret_value = download_benchmark_from_SB3_zoo(
-        agent_class, env, overwrite=True, download_path=test_folder_path
+        agent_class, env, overwrite=True, output_dir=test_folder_path
     )
 
     # tests expected result
@@ -67,14 +67,14 @@ def test_download_benchmark_from_SB3_zoo_overwrite_True(agent_class, env, overwr
 
     # first call
     ret_value = download_benchmark_from_SB3_zoo(
-        agent_class, env, overwrite=overwrite, download_path=test_folder_path
+        agent_class, env, overwrite=overwrite, output_dir=test_folder_path
     )
 
     #'overwrite' test
     error_was_raised = False
     try:
         ret_value = download_benchmark_from_SB3_zoo(
-            agent_class, env, overwrite=overwrite, download_path=test_folder_path
+            agent_class, env, overwrite=overwrite, output_dir=test_folder_path
         )
     except FileExistsError:
         error_was_raised = True

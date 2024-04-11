@@ -9,8 +9,8 @@ Currently, the available benchmars are :
 
 ## Download the benchmark
 To download the benchmark it's easy, you just have to call the function matching the expected benchmark.
-You need to specify the names of the agent and the environment. And If you want overwrite the previous data on this combination. (you can use the `download_path` parameter if you want to download the benchmark in a specific folder).
-You can find the API about the benchmark [here](rlberry.benchmarks.benchmark_utils)
+You need to specify the names of the agent and the environment. And If you want overwrite the previous data on this combination. (you can use the `output_dir` parameter if you want to download the benchmark in a specific folder).
+You can find the API about this benchmark [here](rlberry.benchmarks.benchmark_utils.download_benchmark_from_SB3_zoo)
 
 ```python
 from rlberry.benchmarks.benchmark_utils import download_benchmark_from_SB3_zoo
