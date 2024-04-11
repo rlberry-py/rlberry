@@ -284,6 +284,11 @@ def preprocess_agent_data(
         else:
             agent_manager_list = agent_source
 
+        agent_names = df["agent"].unique()
+        assert len(agent_names) == len(
+            agent_manager_list
+        ), "Each agent must have unique name."
+
         for manager in agent_manager_list:
             n_fit = len(manager.agent_handlers)
             for id_agent in range(n_fit):

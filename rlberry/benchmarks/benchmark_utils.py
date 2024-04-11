@@ -4,41 +4,41 @@ import os
 import shutil
 
 
-# TODO : convert external benchmark to DataFrame that match the input of rlberry.manager.comparaison.py -> compare_agents_data()
-# TODO : Download the external benchmark to a specific folder (or new rlberrygithub?), except if they are stable (huggingface/github)
+# # TODO : convert external benchmark to DataFrame that match the input of rlberry.manager.comparaison.py -> compare_agents_data()
+# # TODO : Download the external benchmark to a specific folder (or new rlberrygithub?), except if they are stable (huggingface/github)
 
-benchmark_list = {
-    "Google Atari bucket": "https://console.cloud.google.com/storage/brow",
-    "SB3 zoo": "https://github.com/DLR-RM/rl-baselines3-zoo/tree/master/logs/benchmark",
-    "cleanrl": "https://wandb.ai/openrlbenchmark/openrlbenchmark/reportlist",
-}
-
-
-def import_from_google_atari_bucket():
-    """import benchmark from Google Atari bucket
-
-    Parameters
-    -----------
-    x_vec : numpy.ndarray
-        numpy 1d array to be searched in the bins
-    bins : list
-        list of numpy 1d array, bins[d] = bins of the d-th dimension
+# benchmark_list = {
+#     "Google Atari bucket": "https://console.cloud.google.com/storage/brow",
+#     "SB3 zoo": "https://github.com/DLR-RM/rl-baselines3-zoo/tree/master/logs/benchmark",
+#     "cleanrl": "https://wandb.ai/openrlbenchmark/openrlbenchmark/reportlist",
+# }
 
 
-    Returns
-    --------
-    index (int) corresponding to the position of x in the partition
-    defined by the bins.
-    """
-    print("TODO")
+# def import_from_google_atari_bucket():
+#     """import benchmark from Google Atari bucket
+
+#     Parameters
+#     -----------
+#     x_vec : numpy.ndarray
+#         numpy 1d array to be searched in the bins
+#     bins : list
+#         list of numpy 1d array, bins[d] = bins of the d-th dimension
 
 
-def import_from_cleanrl():
-    print("TODO")
+#     Returns
+#     --------
+#     index (int) corresponding to the position of x in the partition
+#     defined by the bins.
+#     """
+#     print("TODO")
 
 
-def import_from_hugingface():
-    print("TODO")
+# def import_from_cleanrl():
+#     print("TODO")
+
+
+# def import_from_hugingface():
+#     print("TODO")
 
 
 def download_benchmark_from_SB3_zoo(
