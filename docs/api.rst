@@ -166,6 +166,15 @@ Logging Utilities
    utils.logging.set_level
 
 
+Benchmarks
+----------------
+
+.. autosummary::
+   :toctree: generated/
+   :template: function.rst
+
+   benchmarks.benchmark_utils
+
 Environment Wrappers
 ====================
 
