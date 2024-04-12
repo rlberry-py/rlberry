@@ -76,13 +76,13 @@ from rlberry.seeding import Seeder
 seeder = Seeder(123)  # seeder initialization
 
 from rlberry.envs import gym_make
-from rlberry_scool.agents import RSUCBVIAgent
+from rlberry_scool.agents import UCBVIAgent
 
 
 env = gym_make("MountainCar-v0")
 env.reseed(seeder)  # seeder first use
 
-agent = RSUCBVIAgent(env)
+agent = UCBVIAgent(env)
 agent.reseed(seeder)  # same seeder
 
 # check that the generated numbers are differents
@@ -119,7 +119,8 @@ For this part we will use the same code from the [ExperimentManager](ExperimentM
 
 ```python
 from rlberry.envs import gym_make
-from rlberry_research.agents.torch import PPOAgent
+from rlberry.agents.stable_baselines import StableBaselinesAgent
+from stable_baselines3 import PPO
 from rlberry.manager import ExperimentManager, evaluate_agents
 
 
@@ -130,9 +131,10 @@ env_kwargs = dict(id=env_id)  # give the id of the env inside the kwargs
 
 
 first_experiment = ExperimentManager(
-    PPOAgent,  # Agent Class
+    StableBaselinesAgent,  # Agent Class
     (env_ctor, env_kwargs),  # Environment as Tuple(constructor,kwargs)
     fit_budget=int(100),  # Budget used to call our agent "fit()"
+    init_kwargs=dict(algo_cls=PPO),  # Init value for StableBaselinesAgent
     eval_kwargs=dict(
         eval_horizon=1000
     ),  # Arguments required to call rlberry.agents.agent.Agent.eval().
@@ -202,7 +204,8 @@ Run 3 :
 
 ```python
 from rlberry.envs import gym_make
-from rlberry_research.agents.torch import PPOAgent
+from rlberry.agents.stable_baselines import StableBaselinesAgent
+from stable_baselines3 import PPO
 from rlberry.manager import ExperimentManager, evaluate_agents
 
 from rlberry.seeding import Seeder
@@ -216,9 +219,10 @@ env_kwargs = dict(id=env_id)  # give the id of the env inside the kwargs
 
 
 first_experiment = ExperimentManager(
-    PPOAgent,  # Agent Class
+    StableBaselinesAgent,  # Agent Class
     (env_ctor, env_kwargs),  # Environment as Tuple(constructor,kwargs)
     fit_budget=int(100),  # Budget used to call our agent "fit()"
+    init_kwargs=dict(algo_cls=PPO),  # Init value for StableBaselinesAgent
     eval_kwargs=dict(
         eval_horizon=1000
     ),  # Arguments required to call rlberry.agents.agent.Agent.eval().

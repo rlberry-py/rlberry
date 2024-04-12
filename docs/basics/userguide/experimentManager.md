@@ -88,11 +88,11 @@ Now you can compare this agent with another one. Here, we are going to compare i
 <span>&#9888;</span> **warning :** add this code after the previous one. <span>&#9888;</span>
 ```python
 second_experiment = ExperimentManager(
-    PPOAgent,  # Agent Class
+    StableBaselinesAgent,  # Agent Class
     (env_ctor, env_kwargs),  # Environment as Tuple(constructor,kwargs)
     fit_budget=int(10000),  # Budget used to call our agent "fit()"
     init_kwargs=dict(
-        batch_size=24, n_steps=96, device="cpu"
+        algo_cls=PPO, batch_size=24, n_steps=96, device="cpu"
     ),  # Arguments for the Agent’s constructor.
     eval_kwargs=dict(
         eval_horizon=1000

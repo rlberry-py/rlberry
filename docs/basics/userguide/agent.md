@@ -37,7 +37,7 @@ With the same environment, we will use an Agent to choose the actions instead of
 For this example, you can use "ValueIterationAgent" Agent from "[rlberry-scool](https://github.com/rlberry-py/rlberry-scool)"
 
 ```python
-from rlberry_research.envs.finite import Chain
+from rlberry_scool.envs.finite import Chain
 from rlberry_scool.agents.dynprog import ValueIterationAgent
 
 env = Chain(10, 0.1)  # same env

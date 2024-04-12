@@ -26,7 +26,8 @@ from rlberry.manager import (
     read_writer_data,
 )
 from rlberry.wrappers import WriterWrapper
-from IPython.display import Image
+
+# from IPython.display import Image    # (uncomment if JupyterNotebook)
 ```
 
 Choosing an RL environment
@@ -60,7 +61,7 @@ env.save_gif("gif_chain.gif")
 env.clear_render_buffer()
 env.disable_rendering()
 # view result
-Image(open("gif_chain.gif", "rb").read())
+# Image(open("gif_chain.gif", "rb").read())    # (uncomment if JupyterNotebook)
 ```
 
 

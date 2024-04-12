@@ -82,6 +82,9 @@ The template below gives the general structure that the Agent code must follow. 
 class (`rlberry/agents/agent.py`).
 
 ```python
+from rlberry.agents import Agent
+
+
 class MyAgent(Agent):
     name = "MyAgent"
 
