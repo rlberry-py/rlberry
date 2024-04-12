@@ -18,7 +18,7 @@ import pandas as pd
 import time
 from rlberry.agents import AgentWithSimplePolicy
 from rlberry_scool.agents import UCBVIAgent
-from rlberry_research.envs import Chain
+from rlberry_scool.envs import Chain
 from rlberry.manager import (
     ExperimentManager,
     evaluate_agents,

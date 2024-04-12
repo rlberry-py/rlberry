@@ -23,7 +23,7 @@ def _make_tuple_env(env):
             env_ctor = PBall2D
             env_kwargs = {}
         elif env == "discrete_state":
-            from rlberry_research.envs import Chain
+            from rlberry_scool.envs import Chain
 
             env_ctor = Chain
             env_kwargs = {}
