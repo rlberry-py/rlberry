@@ -26,10 +26,16 @@ You can find more details about installation [here](installation)!
  - [Deep RL quickstart](TutorialDeepRL).
 
 ## Set up an experiment
-- [Environment](environment_page)
-- [Agent](agent_page)
-- [ExperimentManager](experimentManager_page)
-- [Logging](logging_page).
+```{include} templates/nice_toc.md
+```
+
+```{toctree}
+:maxdepth: 2
+basics/userguide/environment.md
+basics/userguide/agent.md
+basics/userguide/experimentManager.md
+basics/userguide/logging.md
+```
 - Results analysis & visualization (In construction)
 ## Experimenting with Deep agents
 - Torch Agents (In construction)
