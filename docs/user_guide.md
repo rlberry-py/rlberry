@@ -21,6 +21,10 @@ It's the repository used for teaching purposes. These are mainly basic agents an
 
 You can find more details about installation [here](installation)!
 
+ You can find our quick starts here :
+ - [RL quickstart](quick_start)
+ - [Deep RL quickstart](TutorialDeepRL).
+
 ## Set up an experiment
 - [Environment](environment_page)
 - [Agent](agent_page)
