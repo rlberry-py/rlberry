@@ -4,11 +4,12 @@
 
 To get informations and readable result about the training of your algorithm, you can use different logger.
 ## Set rlberry's logger level
-For this examples, you will use the "PPO" torch agent from "[rlberry-research](https://github.com/rlberry-py/rlberry-research)"
+For this examples, you will use the "PPO" torch agent from "[StableBaselines3](https://stable-baselines3.readthedocs.io/en/master/guide/algos.html)" and wrap it in rlberry Agent. To do that, you need to use [StableBaselinesAgent](rlberry.agents.stable_baselines.StableBaselinesAgent). More information [here](stable_baselines).
 
 ```python
 from rlberry.envs import gym_make
-from rlberry_research.agents.torch import PPOAgent
+from rlberry.agents.stable_baselines import StableBaselinesAgent
+from stable_baselines3 import PPO
 from rlberry.manager import ExperimentManager, evaluate_agents
 
 
@@ -19,8 +20,9 @@ env_kwargs = dict(id=env_id)  # give the id of the env inside the kwargs
 
 
 first_experiment = ExperimentManager(
-    PPOAgent,  # Agent Class
+    StableBaselinesAgent,  # Agent Class to manage stableBaselinesAgents
     (env_ctor, env_kwargs),  # Environment as Tuple(constructor,kwargs)
+    init_kwargs=dict(algo_cls=PPO, verbose=1),  # Init value for StableBaselinesAgent
     fit_budget=int(100),  # Budget used to call our agent "fit()"
     eval_kwargs=dict(
         eval_horizon=1000
@@ -39,16 +41,37 @@ print(output)
 ```
 
 ```none
-[INFO] 15:50: Running ExperimentManager fit() for PPO_first_experimentCartPole-v1 with n_fit = 1 and max_workers = None.
-[INFO] 15:51: ... trained!
-[INFO] 15:51: Evaluating PPO_first_experimentCartPole-v1...
-[INFO] Evaluation:.....  Evaluation finished
+[INFO] 09:18: Running ExperimentManager fit() for PPO_first_experimentCartPole-v1 with n_fit = 1 and max_workers = None.
+Using cpu device
+Wrapping the env with a `Monitor` wrapper
+Wrapping the env in a DummyVecEnv.
+---------------------------------
+| rollout/           |          |
+|    ep_len_mean     | 23.9     |
+|    ep_rew_mean     | 23.9     |
+| time/              |          |
+|    fps             | 2977     |
+|    iterations      | 1        |
+|    time_elapsed    | 0        |
+|    total_timesteps | 2048     |
+---------------------------------
+[INFO] 09:18: ... trained!
+Using cpu device
+Wrapping the env with a `Monitor` wrapper
+Wrapping the env in a DummyVecEnv.
+[INFO] 09:18: Saved ExperimentManager(PPO_first_experimentCartPole-v1) using pickle.
+[INFO] 09:18: The ExperimentManager was saved in : 'rlberry_data/temp/manager_data/PPO_first_experimentCartPole-v1_2024-04-12_09-18-10_3a9fa8ad/manager_obj.pickle'
+[INFO] 09:18: Evaluating PPO_first_experimentCartPole-v1...
+[INFO] Evaluation:Using cpu device
+Wrapping the env with a `Monitor` wrapper
+Wrapping the env in a DummyVecEnv.
+.....  Evaluation finished
    PPO_first_experimentCartPole-v1
-0                             15.0
-1                             16.0
-2                             16.0
-3                             18.0
-4                             15.0
+0                             89.0
+1                             64.0
+2                             82.0
+3                            121.0
+4                             64.0
 ```
 
 As you can see, on the previous output, you have the "[INFO]" output (from [ExperimentManager](rlberry.manager.ExperimentManager))
@@ -66,11 +89,11 @@ rlberry.utils.logging.set_level(level="CRITICAL")
 
 ```none
    PPO_first_experimentCartPole-v1
-0                             15.0
-1                             16.0
-2                             16.0
-3                             18.0
-4                             15.0
+0                             89.0
+1                             64.0
+2                             82.0
+3                            121.0
+4                             64.0
 ```
 As you can see, on the previous output, you don't have the "INFO" output anymore (because it's not a "CRITICAL" output)
 

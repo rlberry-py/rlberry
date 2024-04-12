@@ -7,11 +7,11 @@ In rlberry, you can use existing Agent, or create your own custom Agent. You can
 
 ## Use rlberry Agent
 An agent needs an environment to train. We'll use the same environment as in the [environment](environment_page) section of the user guide.
-("Chain" environment from "[rlberry-research](https://github.com/rlberry-py/rlberry-research)")
+("Chain" environment from "[rlberry-scool](https://github.com/rlberry-py/rlberry-scool)")
 
 ### without agent
 ```python
-from rlberry_research.envs.finite import Chain
+from rlberry_scool.envs.finite import Chain
 
 env = Chain(10, 0.1)
 env.enable_rendering()

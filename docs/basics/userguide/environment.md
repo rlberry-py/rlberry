@@ -7,9 +7,9 @@ This is the world with which the agent interacts. The agent can observe this env
 
 ## Use rlberry environment
 You can find some environments in our other projects "[rlberry-research](https://github.com/rlberry-py/rlberry-research)" and "[rlberry-scool](https://github.com/rlberry-py/rlberry-scool)".
-For this example, you can use "Chain" environment from "[rlberry-research](https://github.com/rlberry-py/rlberry-research)"
+For this example, you can use "Chain" environment from "[rlberry-scool](https://github.com/rlberry-py/rlberry-scool)"
 ```python
-from rlberry_research.envs.finite import Chain
+from rlberry_scool.envs.finite import Chain
 
 env = Chain(10, 0.1)
 env.enable_rendering()
