@@ -147,7 +147,7 @@ Evaluating ...
 ```
 
 Let's try to change the hyperparameters and see if we can
-beat our previous result. This time we use the recommanded hyperparameters from SB3.
+beat our previous result. This time we use the recommanded hyperparameters from [rl-baselines3-zoo](https://github.com/DLR-RM/rl-baselines3-zoo/).
 
 
 ```python
@@ -222,10 +222,9 @@ Training ...
 ```{image} output_9_3.png
 :align: center
 ```
-
-<span>&#9728;</span> : For more information on plots and visualization, you can check [here (in construction)](visualization_page)
 Here, we can see that modifying the hyperparameters has accelerated learning...
 
+<span>&#9728;</span> : For more information on plots and visualization, you can check [here (in construction)](visualization_page)
 
 ```python
 print("Evaluating ...")
