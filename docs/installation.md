@@ -48,7 +48,7 @@ $ pip install rlberry[torch,extras]
 
 
 
-## Options
+### Options
 To install rlberry with more options, you can use ``pip install rlberry[xxxxxxxx]``, with `xxxxxxxx` as :
 
 - `torch` to install `opencv-python, ale-py, stable-baselines3, tensorboard, torch`
@@ -70,7 +70,7 @@ $ pip install rlberry@git+https://github.com/rlberry-py/rlberry.git
 For `zsh` users, `zsh` uses brackets for globbing, therefore it is necessary to add quotes around the argument,
 e.g. ```pip install 'rlberry@git+https://github.com/rlberry-py/rlberry.git'```.
 
-## Previous versions
+### Previous versions
 If you used a previous version in your work, you can install it by running
 
 ```bash
@@ -86,7 +86,7 @@ to install version 0.1.
 For `zsh` users, `zsh` uses brackets for globbing, therefore it is necessary to add quotes around the argument,
 e.g. ```pip install 'rlberry@git+https://github.com/rlberry-py/rlberry.git@v0.1'```.
 
-## Deep RL agents
+### Deep RL agents
 Deep RL agents require extra libraries, like PyTorch.
 
 * PyTorch agents:
