@@ -11,15 +11,34 @@ $ conda activate rlberry
 ## Latest version (0.7.2)
 Install the latest version for a stable release.
 
+minimal version :
 ```bash
 $ pip install rlberry
 ```
+
+
+Recommanded version (more adapted for RL usage):
+```bash
+$ pip install rlberry[extras]
+```
+** `extras` allow to install : **
+`optuna` : to optimize hyperparameters
+`ffmpeg-python` : to render videos
+`scikit-fda` :
+`scikit-learn` :
+
+DeepRL version :
+```bash
+$ pip install rlberry[torch,extras]
+```
+
+
 
 ## Options
 To install rlberry with more options, you can use ``pip install rlberry[xxxxxxxx]``, with `xxxxxxxx` as :
 
 - `torch` to install `opencv-python, ale-py, stable-baselines3, tensorboard, torch`
-- `extras` to install `optuna, numba, ffmpeg-python, pyvirtualdisplay, scikit-fda, scikit-learn`
+- `extras` to install `optuna, numba, ffmpeg-python, scikit-fda, scikit-learn`
 
 (for dev)
 

@@ -33,7 +33,6 @@ moviepy = "*"
 pyopengl = "*"
 optuna ={version="*", optional=true}
 ffmpeg-python = {version="*", optional=true}
-pyvirtualdisplay = {version="*", optional=true}
 opencv-python = {version="*", optional=true}
 ale-py = {version="*", optional=true}
 stable-baselines3 = {version="*", optional=true}
@@ -60,7 +59,7 @@ multimethod = {version="1.10", optional=true}     # new version 1.11 : crash our
 
 [tool.poetry.extras]
 torch = ["opencv-python", "ale-py", "stable-baselines3", "tensorboard", "torch"]
-extras = ["optuna", "numba", "ffmpeg-python", "pyvirtualdisplay", "scikit-fda", "scikit-learn"]
+extras = ["optuna", "numba", "ffmpeg-python", "scikit-fda", "scikit-learn"]
 doc = ["sphinx", "sphinx-gallery", "sphinx-math-dollar", "numpydoc", "myst-parser", "sphinxcontrib-video", "matplotlib"]
 
 [tool.poetry.group.dev]
