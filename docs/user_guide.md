@@ -47,3 +47,4 @@ You can find more details about installation [here](installation)!
 - Transfer Learning (In construction)
 - [Hypothesis testing for comparison of RL agents](comparison_page)
 - [Adaptive hypothesis testing for comparison of RL agents with AdaStop](adastop_userguide)
+- [Using benchmarks](benchmarks)

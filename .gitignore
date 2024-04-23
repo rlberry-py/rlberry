@@ -4,6 +4,9 @@ docs/python_scripts/
 # tensorboard runs
 runs/
 
+#benchmark folder
+download_benchmark/
+
 # videos
 #*.mp4
 notebooks/videos/*
