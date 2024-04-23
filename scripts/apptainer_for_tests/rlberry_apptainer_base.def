@@ -1,35 +1,70 @@
 Bootstrap: docker
 From: ubuntu:latest
 
-#script for the build
 %post -c /bin/bash
 
-    #get the last Ubuntu Update,
+    #get the last Ubuntu Update
     apt-get update \
     && apt-get upgrade -y
 
-    # Install python, and graphic and basic libs.
-    apt-get install -y software-properties-common python3-pip git ffmpeg libsm6 libxext6 libsdl2-dev xvfb x11-xkb-utils
+    echo "export PS1=Apptainer-\[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$" >> /etc/profile
 
-    #Remove the old tmp folder if it exist, then download rlberry
+    # Install python, and graphic and basic libs.
+    apt-get install -y software-properties-common python3-pip git ffmpeg libsm6 libxext6 libsdl2-dev xvfb x11-xkb-utils libblas-dev liblapack-dev
+    pip3 install --upgrade pip setuptools wheel
+
+    # remove the old folder
     if [ -d /tmp/rlberry_test_dir ]; then /bin/rm -r /tmp/rlberry_test_dir; fi
+    if [ -d /tmp/rlberry-research_test_dir ]; then /bin/rm -r /tmp/rlberry-research_test_dir; fi
+
+    # get all the git repos to do their tests
     git clone https://github.com/rlberry-py/rlberry.git /tmp/rlberry_test_dir
 
-    #Install all the lib we need to run rlberry and its tests
-    pip3 install rlberry[torch_agents] opencv-python pytest pytest-xvfb pytest-xprocess tensorboard #--break-system-packages
-    pip3 install gymnasium[other]
+    cd /tmp/rlberry_test_dir/
+    git fetch --tags
+    latestTag=$(git describe --tags `git rev-list --tags --max-count=1`)
+    git checkout $latestTag
+
+
+    git clone  https://github.com/rlberry-py/rlberry-research.git /tmp/rlberry-research_test_dir
+
+    cd /tmp/rlberry-research_test_dir/
+    git fetch --tags
+    latestTagResearch=$(git describe --tags `git rev-list --tags --max-count=1`)
+    git checkout $latestTagResearch
+
+    # install rlberry, rlberry-scool and rlberry-research
+    pip3 install rlberry[torch,doc,extras] rlberry-scool opencv-python pytest pytest-xvfb pytest-xprocess tensorboard #--break-system-packages
+    pip3 install git+https://github.com/rlberry-py/rlberry-research.git
+
+
 
 %environment
     export LC_ALL=C
 
-#script that will be executed with the "run" command : run the tests in rlberry, the longtests, and then export the exit code inside a text file
 %runscript
-    pip list
-    cd /tmp/rlberry_test_dir && \
+    # info about current versions
+    pip list > [path]/lib_versions.txt
+
+    #run tests
+    (cd /tmp/rlberry_test_dir && \
+    date && \
     pytest rlberry && \
-    pytest long_tests/rl_agent/ltest_mbqvi_applegold.py long_tests/torch_agent/ltest_a2c_cartpole.py long_tests/torch_agent/ltest_ctn_ppo_a2c_pendulum.py long_tests/torch_agent/ltest_dqn_montaincar.py
+    date) > [path]/test_result.txt
+    echo $? > [path]/exit_code1.txt
 
-    echo $? > [path]/exit_code.txt
+    #run long tests
+    (cd /tmp/rlberry-research_test_dir && \
+    date && \
+    pytest long_tests/rl_agent/ltest_mbqvi_applegold.py long_tests/torch_agent/ltest_a2c_cartpole.py long_tests/torch_agent/ltest_ctn_ppo_a2c_pendulum.py long_tests/torch_agent/ltest_dqn_montaincar.py && \
+    date) > [path]/long_test_result.txt
+    #pytest --ignore=long_tests/torch_agent/ltest_dqn_vs_mdqn_acrobot.py long_tests/**/*.py
+    echo $? > [path]exit_code2.txt
 
-    #Run all the long test
-    #pytest long_tests/**/*.py
+    #run doc test
+    (cd /tmp/rlberry_test_dir/docs/ && \
+    date && \
+    ./markdown_to_py.sh && \
+    for f in python_scripts/*.py; do python3 $f ; done && \
+    date) > [path]/doc_test_result.txt
+    echo $? > [path]/exit_code3.txt

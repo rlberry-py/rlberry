@@ -2,7 +2,6 @@
 
 # Set the email recipient and subject
 recipient="email1@inria.fr,email2@inria.fr"
-attachment="test_report.txt"
 
 # Build, then run, the Apptainer container and capture the test results
 cd [Path_to_your_apptainer_folder]
@@ -13,16 +12,19 @@ apptainer run --fakeroot --overlay my_overlay/ rlberry_apptainer.sif > "$attachm
 
 
 # Send the test results by email
-exit_code=$(cat [path]/exit_code.txt)  # Read the exit code from the file
+exit_code1=$(cat [path]/exit_code1.txt)  # Read the exit code from the file (tests)
+exit_code2=$(cat [path]/exit_code2.txt)  # Read the exit code from the file (long tests)
+exit_code3=$(cat [path]/exit_code3.txt)  # Read the exit code from the file (doc test)
 
 if [ $exit_code -eq 0 ]; then
     # Initialization when the exit code is 0 (success)
-    subject="Rlberry : Succes Monthly Test Report"
-    core_message="Success. Please find attached the monthly test report."
+    subject="Rlberry : Success Monthly Test Report"
+    core_message="Success. Please find attached the monthly test reports."
 else
     # Initialization when the exit code is not 0 (failed)
     subject="Rlberry : Failed Monthly Test Report"
-    core_message="Failed. Please find attached the monthly test report."
+    core_message="Failed. Please find attached the monthly test reports."
 fi
 
-echo "$core_message" | mail -s "$subject" -A "$attachment" "$recipient"  -aFrom:"Rlberry_Monthly_tests"
+
+echo "$core_message" | mail -s "$subject" -A "test_result.txt" -A "long_test_result.txt" -A "doc_test_result.txt" -A"lib_versions.txt"  "$recipient"  -aFrom:"Rlberry_Monthly_tests"
