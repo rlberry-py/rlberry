@@ -53,3 +53,6 @@ basics/userguide/logging.md
 - Transfer Learning (In construction)
 - [Hypothesis testing for comparison of RL agents](comparison_page)
 - [Adaptive hypothesis testing for comparison of RL agents with AdaStop](adastop_userguide)
+
+# Contributing to rlberry
+If you want to contribute to rlberry, check out [the contribution guidelines](contributing).
