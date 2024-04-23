@@ -26,11 +26,11 @@ It's the repository used for teaching purposes. These are mainly basic agents an
 You can find more details about installation [here](installation)!
 
 ## Set up an experiment
-- [Environment](environment_page)
-- [Agent](agent_page)
-- [ExperimentManager](experimentManager_page)
+- [Environment](environment_page).
+- [Agent](agent_page).
+- [ExperimentManager](experimentManager_page).
 - [Logging](logging_page).
-- Results analysis & visualization (In construction)
+- [Results analysis & visualization](visu_userguide).
 ## Experimenting with Deep agents
 - Torch Agents (In construction)
 - Policy and Value Networks (In construction)
