@@ -2,7 +2,6 @@ import os
 import pytest
 import sys
 
-from pyvirtualdisplay import Display
 from rlberry_research.envs.classic_control import MountainCar
 from rlberry_research.envs.classic_control import Acrobot
 from rlberry_research.envs.classic_control import Pendulum
@@ -20,11 +19,6 @@ from rlberry.envs import Wrapper
 
 import tempfile
 
-try:
-    display = Display(visible=0, size=(1400, 900))
-    display.start()
-except Exception:
-    pass
 
 classes = [
     Acrobot,

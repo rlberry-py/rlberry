@@ -13,8 +13,8 @@ for script in $list_files; do
     sed -n '/^```python/,/^```/ p' < $script | sed '/^```/ d' > python_scripts/${script##*/}.py
 done
 
-read -p "Do you wish to execute all python scripts? (y/n)" yn
-case $yn in
-    [Yy]* ) for f in python_scripts/*.py; do python3 $f ; done ;;
-    * ) exit;;
-esac
+# read -p "Do you wish to execute all python scripts? (y/n)" yn
+# case $yn in
+#     [Yy]* ) for f in python_scripts/*.py; do python3 $f ; done ;;
+#     * ) exit;;
+# esac
