@@ -38,21 +38,25 @@ basics/userguide/logging.md
 ```
 - Results analysis & visualization (In construction)
 ## Experimenting with Deep agents
-- Torch Agents (In construction)
-- Policy and Value Networks (In construction)
-- Experimenting with Bandits (In construction)
+[(In construction)](https://github.com/rlberry-py/rlberry/issues/459)
 ## Reproducibility
-- [Seeding](seeding_page)
-- [Save & Load Experiment](save_load_page)
+```{toctree}
+:maxdepth: 2
+basics/userguide/seeding.md
+basics/userguide/save_load.md
+```
 - Save & Load Agents (In construction)
 - Save & Load Data (In construction)
 ## Advanced Usage
+```{toctree}
+:maxdepth: 2
+basics/userguide/adastop.md
+basics/comparison.md
+basics/userguide/external_lib.md
+```
 - Custom Agents (In construction)
 - Custom Environments (In construction)
-- [Using extrenal libraries](external) (like [Stable Baselines](stable_baselines) and [Gymnasium](Gymnasium_ancor))
 - Transfer Learning (In construction)
-- [Hypothesis testing for comparison of RL agents](comparison_page)
-- [Adaptive hypothesis testing for comparison of RL agents with AdaStop](adastop_userguide)
 
 # Contributing to rlberry
 If you want to contribute to rlberry, check out [the contribution guidelines](contributing).

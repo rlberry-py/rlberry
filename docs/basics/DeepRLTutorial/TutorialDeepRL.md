@@ -147,7 +147,7 @@ Evaluating ...
 ```
 
 Let's try to change the hyperparameters and see if we can
-beat our previous result. This time we use the recommanded hyperparameters from [rl-baselines3-zoo](https://github.com/DLR-RM/rl-baselines3-zoo/).
+beat our previous result. This time we use the recommended hyperparameters from [rl-baselines3-zoo](https://github.com/DLR-RM/rl-baselines3-zoo/).
 
 
 ```python

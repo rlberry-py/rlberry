@@ -4,7 +4,7 @@
 
 To get informations and readable result about the training of your algorithm, you can use different logger.
 ## Set rlberry's logger level
-For this examples, you will use the "PPO" torch agent from "[StableBaselines3](https://stable-baselines3.readthedocs.io/en/master/guide/algos.html)" and wrap it in rlberry Agent. To do that, you need to use [StableBaselinesAgent](rlberry.agents.stable_baselines.StableBaselinesAgent). More information [here](stable_baselines).
+For this example, you will use the "PPO" torch agent from "[StableBaselines3](https://stable-baselines3.readthedocs.io/en/master/guide/algos.html)" and wrap it in rlberry Agent. To do that, you need to use [StableBaselinesAgent](rlberry.agents.stable_baselines.StableBaselinesAgent). More information [here](stable_baselines).
 
 ```python
 from rlberry.envs import gym_make

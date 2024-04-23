@@ -6,7 +6,7 @@ It's the element that allows you to make your experiments on [Agent](agent_page)
 You can use it to train, optimize hyperparameters, evaluate, compare, and gather statistics about your agent on a specific environment. You can find the API doc [here](rlberry.manager.ExperimentManager).
 It's not the only solution, but it's the compact (and recommended) way of doing experiments with an agent.
 
-For this examples, you will use the "PPO" torch agent from "[StableBaselines3](https://stable-baselines3.readthedocs.io/en/master/guide/algos.html)" and wrap it in rlberry Agent. To do that, you need to use [StableBaselinesAgent](rlberry.agents.stable_baselines.StableBaselinesAgent). More information [here](stable_baselines).
+For this example, you will use the "PPO" torch agent from "[StableBaselines3](https://stable-baselines3.readthedocs.io/en/master/guide/algos.html)" and wrap it in rlberry Agent. To do that, you need to use [StableBaselinesAgent](rlberry.agents.stable_baselines.StableBaselinesAgent). More information [here](stable_baselines).
 
 ## Create your experiment
 
