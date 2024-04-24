@@ -8,7 +8,7 @@ First, we suggest you to create a virtual environment using
 $ conda create -n rlberry
 $ conda activate rlberry
 ```
-## Latest version (0.7.2)
+## Latest version (0.7.3)
 Install the latest version for a stable release.
 
 **minimal version :**

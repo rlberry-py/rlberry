@@ -42,7 +42,7 @@ We provide you a number of tools to help you achieve **reproducibility**, **stat
 
 ## Installation
 
-Install the latest version for a stable release.
+Install the latest (minimal) version for a stable release.
 
 ```bash
 pip install rlberry
