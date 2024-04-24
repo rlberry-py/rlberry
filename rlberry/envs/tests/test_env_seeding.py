@@ -4,8 +4,8 @@ import rlberry.seeding as seeding
 
 from copy import deepcopy
 from rlberry_research.envs.classic_control import MountainCar, Acrobot, Pendulum
-from rlberry_research.envs.finite import Chain
-from rlberry_research.envs.finite import GridWorld
+from rlberry_scool.envs.finite import Chain
+from rlberry_scool.envs.finite import GridWorld
 from rlberry_research.envs.benchmarks.grid_exploration.four_room import FourRoom
 from rlberry_research.envs.benchmarks.grid_exploration.six_room import SixRoom
 from rlberry_research.envs.benchmarks.grid_exploration.apple_gold import AppleGold

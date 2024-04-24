@@ -12,8 +12,8 @@ Imports
 ```python
 from rlberry.envs import gym_make
 from rlberry.manager import plot_writer_data, ExperimentManager, evaluate_agents
-from rlberry_research.agents.torch import A2CAgent
-from rlberry_research.agents.torch.utils.training import model_factory_from_env
+from rlberry.agents.stable_baselines import StableBaselinesAgent
+from stable_baselines3 import PPO
 ```
 
 Reminder of the RL setting
@@ -48,9 +48,9 @@ In this tutorial we are going to use the [Gymnasium library (previously
 OpenAI's Gym)](https://gymnasium.farama.org/api/env/). This library
 provides a large number of environments to test RL algorithm.
 
-We will focus only on the **CartPole-v1** environment, although we
-recommend experimenting with other environments such as **Acrobot-v1**
-and **MountainCar-v0**. The following table presents some basic
+We will focus only on the **Acrobot-v1** environment, although you can
+experimenting with other environments such as **CartPole-v1**
+or **MountainCar-v0**. The following table presents some basic
 components of the three environments, such as the dimensions of their
 observation and action spaces and the rewards occurring at each step.
 
@@ -60,92 +60,33 @@ observation and action spaces and the rewards occurring at each step.
  | **Action Space**      |  Discrete(2)|   Discrete(3)               | Discrete(3)    |
  | **Rewards**           |  1 per step |   -1 if not terminal else 0 | -1 per step    |
 
-Actor-Critic algorithms and A2C
--------------------------------
 
-**Actor-Critic algorithms** methods consist of two models, which may
-optionally share parameters:
-
-- Critic updates the value function parameters w and depending on the
-algorithm it could be action-value $Q_{\varphi}(s,a )$ or state-value
-$V_{\varphi}(s)$.
-- Actor updates the policy parameters $\theta$ for
-$\pi_{\theta}(a \mid s)$, in the direction suggested by the critic.
-
-**A2C** is an Actor-Critic algorithm and it is part of the on-policy
-family, which means that we are learning the value function for one
-policy while following it. The original paper in which it was proposed
-can be found [here](https://arxiv.org/pdf/1602.01783.pdf) and the
-pseudocode of the algorithm is the following:
-
--   Initialize the actor $\pi_{\theta}$ and the critic $V_{\varphi}$
-    with random weights.
--   Observe the initial state $s_{0}$.
--   for $t \in\left[0, T_{\text {total }}\right]$ :
-    -   Initialize empty episode minibatch.
-    -   for $k \in[0, n]:$ \# Sample episode
-        -   Select a action $a_{k}$ using the actor $\pi_{\theta}$.
-        -   Perform the action $a_{k}$ and observe the next state
-            $s_{k+1}$ and the reward $r_{k+1}$.
-        -   Store $\left(s_{k}, a_{k}, r_{k+1}\right)$ in the episode
-            minibatch.
-    -   if $s_{n}$ is not terminal: set
-        $R=V_{\varphi}\left(s_{n}\right)$ with the critic, else $R=0$.
-    -   Reset gradient $d \theta$ and $d \varphi$ to 0 .
-    -   for $k \in[n-1,0]$ : \# Backwards iteration over the episode
-        -   Update the discounted sum of rewards
-            $R \leftarrow r_{k}+\gamma R$
-
-        -   Accumulate the policy gradient using the critic:
-
-            $$d \theta \leftarrow d \theta+\nabla_{\theta} \log \pi_{\theta}\left(a_{k}\mid s_{k}\right)\left(R-V_{\varphi}\left(s_{k}\right)\right)$$
-
-        -   Accumulate the critic gradient:
-
-$$d \varphi \leftarrow d \varphi+\nabla_{\varphi}\left(R-V_{\varphi}\left(s_{k}\right)\right)^{2}$$
-
--   Update the actor and the critic with the accumulated gradients using
-    gradient descent or similar:
-
-$$\theta \leftarrow \theta+\eta d \theta \quad \varphi \leftarrow \varphi+\eta d \varphi$$
-
-Running A2C on CartPole
+Running A2C on Acrobot-v1
 -----------------------
 
-<span>&#9888;</span> **warning :** depending on the seed, you may get different results, and if you're (un)lucky, your default agent may learn and be better than the tuned agent. <span>&#9888;</span>
+<span>&#9888;</span> **warning:** depending on the seed, you may get different results. <span>&#9888;</span>
 
-In the next example we use default parameters for both the Actor and the
-Critic and we use rlberry to train and evaluate our A2C agent. The
-default networks are:
-
--   a dense neural network with two hidden layers of 64 units for the
-    **Actor**, the input layer has the dimension of the state space
-    while the output layer has the dimension of the action space. The
-    activations are RELU functions and we have a softmax in the last
-    layer.
--   a dense neural network with two hidden layers of 64 units for the
-    **Critic**, the input layer has the dimension of the state space
-    while the output has dimension 1. The activations are RELU functions
-    apart from the last layer that has a linear activation.
+In the next example we use default parameters PPO and we use rlberry to train and evaluate the [Stable Baselines](https://github.com/DLR-RM/stable-baselines3) PPO agent.
 
 ```python
 """
 The ExperimentManager class is a compact way of experimenting with a deepRL agent.
 """
 default_xp = ExperimentManager(
-    A2CAgent,  # The Agent class.
-    (gym_make, dict(id="CartPole-v1")),  # The Environment to solve.
-    fit_budget=3e5,  # The number of interactions
+    StableBaselinesAgent,  # The Agent class.
+    (gym_make, dict(id="Acrobot-v1")),  # The Environment to solve.
+    fit_budget=1e5,  # The number of interactions
     # between the agent and the
     # environment during training.
+    init_kwargs=dict(algo_cls=PPO),  # Init value for StableBaselinesAgent
     eval_kwargs=dict(eval_horizon=500),  # The number of interactions
     # between the agent and the
     # environment during evaluations.
-    n_fit=1,  # The number of agents to train.
+    n_fit=3,  # The number of agents to train.
     # Usually, it is good to do more
     # than 1 because the training is
     # stochastic.
-    agent_name="A2C default",  # The agent's name.
+    agent_name="PPO default",  # The agent's name.
 )
 
 print("Training ...")
@@ -155,76 +96,27 @@ default_xp.fit()  # Trains the agent on fit_budget steps!
 # Plot the training data:
 _ = plot_writer_data(
     [default_xp],
-    tag="episode_rewards",
+    tag="rollout/ep_rew_mean",
     title="Training Episode Cumulative Rewards",
     show=True,
 )
 ```
 
 ```none
-[INFO] Running ExperimentManager fit() for A2C default with n_fit = 1 and max_workers = None.
-INFO: Making new env: CartPole-v1
-INFO: Making new env: CartPole-v1
-[INFO] Could not find least used device (nvidia-smi might be missing), use cuda:0 instead
-```
-
-</br>
-
-```none
 Training ...
-```
-
-</br>
-
-```none
-[INFO] [A2C default[worker: 0]] | max_global_step = 5644 |episode_rewards = 196.0 | total_episodes = 111 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 9551 | episode_rewards = 380.0 | total_episodes = 134 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 13128 | episode_rewards = 125.0 | total_episodes = 182 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 16617 | episode_rewards = 246.0 | total_episodes = 204 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 20296 | episode_rewards = 179.0 | total_episodes = 222 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 23633 | episode_rewards = 120.0 | total_episodes = 240 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 26193 | episode_rewards = 203.0 | total_episodes = 252 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 28969 | episode_rewards = 104.0 | total_episodes = 271 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 34757 | episode_rewards = 123.0 | total_episodes = 335 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 41554 | episode_rewards = 173.0 | total_episodes = 373 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 48418 | episode_rewards = 217.0 | total_episodes = 423 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 55322 | episode_rewards = 239.0 | total_episodes = 446 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 62193 | episode_rewards = 218.0 | total_episodes = 471 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 69233 | episode_rewards = 377.0 | total_episodes = 509 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 76213 | episode_rewards = 211.0 | total_episodes = 536 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 83211 | episode_rewards = 212.0 | total_episodes = 562 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 90325 | episode_rewards = 211.0 | total_episodes = 586 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 97267 | episode_rewards = 136.0 | total_episodes = 631 | [INFO] [A2C default[worker: 0]] | max_global_step = 104280 | episode_rewards = 175.0 | total_episodes = 686 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 111194 | episode_rewards = 258.0 | total_episodes = 722 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 118067 | episode_rewards = 235.0 | total_episodes = 755 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 125040 | episode_rewards = 500.0 | total_episodes = 777 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 132478 | episode_rewards = 500.0 | total_episodes = 792 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 139591 | episode_rewards = 197.0 | total_episodes = 813 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 146462 | episode_rewards = 500.0 | total_episodes = 835 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 153462 | episode_rewards = 500.0 | total_episodes = 849 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 160462 | episode_rewards = 500.0 | total_episodes = 863 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 167462 | episode_rewards = 500.0 | total_episodes = 877 | [INFO] [A2C default[worker: 0]] | max_global_step = 174462 | episode_rewards = 500.0 | total_episodes = 891 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 181462 | episode_rewards = 500.0 | total_episodes = 905 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 188462 | episode_rewards = 500.0 | total_episodes = 919 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 195462 | episode_rewards = 500.0 | total_episodes = 933 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 202520 | episode_rewards = 206.0 | total_episodes = 957 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 209932 | episode_rewards = 500.0 | total_episodes = 978 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 216932 | episode_rewards = 500.0 | total_episodes = 992 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 223932 | episode_rewards = 500.0 | total_episodes = 1006 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 230916 | episode_rewards = 214.0 | total_episodes = 1024 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 235895 | episode_rewards = 500.0 | total_episodes = 1037 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 242782 | episode_rewards = 118.0 | total_episodes = 1072 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 249695 | episode_rewards = 131.0 | total_episodes = 1111 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 256649 | episode_rewards = 136.0 | total_episodes = 1160 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 263674 | episode_rewards = 100.0 | total_episodes = 1215 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 270727 | episode_rewards = 136.0 | total_episodes = 1279 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 277588 | episode_rewards = 275.0 | total_episodes = 1313 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 284602 | episode_rewards = 136.0 | total_episodes = 1353 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 291609 | episode_rewards = 117.0 | total_episodes = 1413 |
-[INFO] [A2C default[worker: 0]] | max_global_step = 298530 | episode_rewards = 147.0 | total_episodes = 1466 |
-[INFO] ... trained!
-INFO: Making new env: CartPole-v1 INFO: Making new env: CartPole-v1
-[INFO] Could not find least used device (nvidia-smi might be missing), use cuda:0 instead
+[INFO] 09:31: Running ExperimentManager fit() for PPO default with n_fit = 3 and max_workers = None.
+[INFO] 09:31: [PPO default[worker: 0]] | max_global_step = 4096 | time/iterations = 1 | rollout/ep_rew_mean = -500.0 | rollout/ep_len_mean = 500.0 | time/fps = 791 | time/time_elapsed = 2 | time/total_timesteps = 2048 | train/learning_rate = 0.0003 |
+[INFO] 09:31: [PPO default[worker: 1]] | max_global_step = 4096 | time/iterations = 1 | rollout/ep_rew_mean = -500.0 | rollout/ep_len_mean = 500.0 | time/fps = 741 | time/time_elapsed = 2 | time/total_timesteps = 2048 | train/learning_rate = 0.0003 |
+[INFO] 09:31: [PPO default[worker: 2]] | max_global_step = 4096 | time/iterations = 1 | rollout/ep_rew_mean = -500.0 | rollout/ep_len_mean = 500.0 | time/fps = 751 | time/time_elapsed = 2 | time/total_timesteps = 2048 | train/learning_rate = 0.0003 |
+[INFO] 09:32: [PPO default[worker: 0]] | max_global_step = 6144 | time/iterations = 2 | rollout/ep_rew_mean = -500.0 | rollout/ep_len_mean = 500.0 | time/fps = 617 | time/time_elapsed = 6 | time/total_timesteps = 4096 | train/learning_rate = 0.0003 | train/entropy_loss = -1.0967000976204873 | train/policy_gradient_loss = -0.0017652213326073251 | train/value_loss = 139.4249062538147 | train/approx_kl = 0.004285778850317001 | train/clip_fraction = 0.0044921875 | train/loss = 16.845857620239258 | train/explained_variance = -0.0011605024337768555 | train/n_updates = 10 | train/clip_range = 0.2 |
+...
+...
+...
+[INFO] 09:35: [PPO default[worker: 1]] | max_global_step = 100352 | time/iterations = 48 | rollout/ep_rew_mean = -89.81 | rollout/ep_len_mean = 90.8 | time/fps = 486 | time/time_elapsed = 202 | time/total_timesteps = 98304 | train/learning_rate = 0.0003 | train/entropy_loss = -0.19921453138813378 | train/policy_gradient_loss = -0.002730156043253373 | train/value_loss = 21.20977843105793 | train/approx_kl = 0.0014179411809891462 | train/clip_fraction = 0.017626953125 | train/loss = 9.601455688476562 | train/explained_variance = 0.8966712430119514 | train/n_updates = 470 | train/clip_range = 0.2 |
+[INFO] 09:35: [PPO default[worker: 0]] | max_global_step = 100352 | time/iterations = 48 | rollout/ep_rew_mean = -83.22 | rollout/ep_len_mean = 84.22 | time/fps = 486 | time/time_elapsed = 202 | time/total_timesteps = 98304 | train/learning_rate = 0.0003 | train/entropy_loss = -0.14615743807516993 | train/policy_gradient_loss = -0.002418491238495335 | train/value_loss = 22.7100858271122 | train/approx_kl = 0.0006727844011038542 | train/clip_fraction = 0.010546875 | train/loss = 8.74121379852295 | train/explained_variance = 0.8884317129850388 | train/n_updates = 470 | train/clip_range = 0.2 |
+[INFO] 09:35: ... trained!
+[INFO] 09:35: Saved ExperimentManager(PPO default) using pickle.
+[INFO] 09:35: The ExperimentManager was saved in : 'rlberry_data/temp/manager_data/PPO default_2024-04-24_09-31-51_be15b329/manager_obj.pickle'
 ```
 
 </br>
@@ -241,69 +133,11 @@ _ = evaluate_agents(
 # 10 simulations of 500 steps each.
 ```
 
-```none
-[INFO] Evaluating A2C default...
-```
-
-</br>
 
 ```none
 Evaluating ...
-```
-
-</br>
-
-```none
-[INFO][eval]... simulation 1/50
-[INFO][eval]... simulation 2/50
-[INFO][eval]... simulation 3/50
-[INFO][eval]... simulation 4/50
-[INFO][eval]... simulation 5/50
-[INFO][eval]... simulation 6/50
-[INFO][eval]... simulation 7/50
-[INFO][eval]... simulation 8/50
-[INFO][eval]... simulation 9/50
-[INFO][eval]... simulation 10/50
-[INFO][eval]... simulation 11/50
-[INFO][eval]... simulation 12/50
-[INFO][eval]... simulation 13/50
-[INFO][eval]... simulation 14/50
-[INFO][eval]... simulation 15/50
-[INFO][eval]... simulation 16/50
-[INFO][eval]... simulation 17/50
-[INFO][eval]... simulation 18/50
-[INFO][eval]... simulation 19/50
-[INFO][eval]... simulation 20/50
-[INFO][eval]... simulation 21/50
-[INFO][eval]... simulation 22/50
-[INFO][eval]... simulation 23/50
-[INFO][eval]... simulation 24/50
-[INFO][eval]... simulation 25/50
-[INFO][eval]... simulation 26/50
-[INFO][eval]... simulation 27/50
-[INFO][eval]... simulation 28/50
-[INFO][eval]... simulation 29/50
-[INFO][eval]... simulation 30/50
-[INFO][eval]... simulation 31/50
-[INFO][eval]... simulation 32/50
-[INFO][eval]... simulation 33/50
-[INFO][eval]... simulation 34/50
-[INFO][eval]... simulation 35/50
-[INFO][eval]... simulation 36/50
-[INFO][eval]... simulation 37/50
-[INFO][eval]... simulation 38/50
-[INFO][eval]... simulation 39/50
-[INFO][eval]... simulation 40/50
-[INFO][eval]... simulation 41/50
-[INFO][eval]... simulation 42/50
-[INFO][eval]... simulation 43/50
-[INFO][eval]... simulation 44/50
-[INFO][eval]... simulation 45/50
-[INFO][eval]... simulation 46/50
-[INFO][eval]... simulation 47/50
-[INFO][eval]... simulation 48/50
-[INFO][eval]... simulation 49/50
-[INFO][eval]... simulation 50/50
+[INFO] 09:36: Evaluating PPO default...
+[INFO] Evaluation:..................................................  Evaluation finished
 ```
 
 </br>
@@ -313,57 +147,42 @@ Evaluating ...
 :align: center
 ```
 
-Let's try to change the neural networks' architectures and see if we can
-beat our previous result. This time we use a smaller learning rate and
-bigger batch size to have more stable training.
+Let's try to change the hyperparameters and see if it change the previous result.
 
-```python
-policy_configs = {
-    "type": "MultiLayerPerceptron",  # A network architecture
-    "layer_sizes": (64, 64),  # Network dimensions
-    "reshape": False,
-    "is_policy": True,  # The network should output a distribution
-    # over actions
-}
+<span>&#9888;</span> **warning:** The aim of this section is to show that hyperparameters have an effect on agent training, and to demonstrate that it is possible to modify them.
 
-critic_configs = {
-    "type": "MultiLayerPerceptron",
-    "layer_sizes": (64, 64),
-    "reshape": False,
-    "out_size": 1,  # The critic network is an approximator of
-    # a value function V: States -> |R
-}
-```
+For pedagogical purposes, since the default hyperparameters are effective on these simple environments, we'll compare the default agent with an agent tuned with the wrong hyperparameters, which decreases the results. Obviously, in practical cases, the aim is to find hyperparameters that improve results... not decrease them. <span>&#9888;</span>
+
+
+
 
 ```python
 tuned_xp = ExperimentManager(
-    A2CAgent,  # The Agent class.
-    (gym_make, dict(id="CartPole-v1")),  # The Environment to solve.
+    StableBaselinesAgent,  # The Agent class.
+    (gym_make, dict(id="Acrobot-v1")),  # The Environment to solve.
     init_kwargs=dict(  # Where to put the agent's hyperparameters
-        policy_net_fn=model_factory_from_env,  # A policy network constructor
-        policy_net_kwargs=policy_configs,  # Policy network's architecure
-        value_net_fn=model_factory_from_env,  # A Critic network constructor
-        value_net_kwargs=critic_configs,  # Critic network's architecure.
-        optimizer_type="ADAM",  # What optimizer to use for policy
+        algo_cls=PPO,
         # gradient descent steps.
-        learning_rate=1e-3,  # Size of the policy gradient
         # descent steps.
-        entr_coef=0.0,  # How much to force exploration.
-        batch_size=1024  # Number of interactions used to
-        # estimate the policy gradient
-        # for each policy update.
+        ent_coef=0.10,  # How much to force exploration.
+        normalize_advantage=False,  # normalize the advantage
+        gae_lambda=0.90,  # Factor for trade-off of bias vs variance for Generalized Advantage Estimator
+        n_epochs=20,  # Number of epoch when optimizing the surrogate loss
+        n_steps=64,  # The number of steps to run for the environment per update
+        learning_rate=1e-3,
+        batch_size=32,
     ),
-    fit_budget=3e5,  # The number of interactions
+    fit_budget=1e5,  # The number of interactions
     # between the agent and the
     # environment during training.
     eval_kwargs=dict(eval_horizon=500),  # The number of interactions
     # between the agent and the
     # environment during evaluations.
-    n_fit=1,  # The number of agents to train.
+    n_fit=3,  # The number of agents to train.
     # Usually, it is good to do more
     # than 1 because the training is
     # stochastic.
-    agent_name="A2C tuned",  # The agent's name.
+    agent_name="PPO incorrectly tuned",  # The agent's name.
 )
 
 
@@ -374,21 +193,11 @@ tuned_xp.fit()  # Trains the agent on fit_budget steps!
 # Plot the training data:
 _ = plot_writer_data(
     [default_xp, tuned_xp],
-    tag="episode_rewards",
+    tag="rollout/ep_rew_mean",
     title="Training Episode Cumulative Rewards",
     show=True,
 )
 ```
-
-```none
-[INFO] Running ExperimentManager fit() for A2C tuned with n_fit = 1
-and max_workers = None.
-INFO: Making new env: CartPole-v1
-INFO: Making new env: CartPole-v1
-[INFO] Could not find least used device (nvidia-smi might be missing), use cuda:0 instead
-```
-
-</br>
 
 ```none
 Training ...
@@ -397,52 +206,20 @@ Training ...
 </br>
 
 ```none
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 6777 | episode_rewards = 15.0 | total_episodes = 314 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 13633 | episode_rewards = 14.0 | total_episodes = 602 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 20522 | episode_rewards = 41.0 | total_episodes = 854 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 27531 | episode_rewards = 13.0 | total_episodes = 1063 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 34398 | episode_rewards = 42.0 | total_episodes = 1237 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 41600 | episode_rewards = 118.0 | total_episodes = 1389 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 48593 | episode_rewards = 50.0 | total_episodes = 1511 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 55721 | episode_rewards = 113.0 | total_episodes = 1603 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 62751 | episode_rewards = 41.0 | total_episodes = 1687 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 69968 | episode_rewards = 344.0 | total_episodes = 1741 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 77259 | episode_rewards = 418.0 | total_episodes = 1787 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 84731 | episode_rewards = 293.0 | total_episodes = 1820 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 91890 | episode_rewards = 185.0 | total_episodes = 1853 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 99031 | episode_rewards = 278.0 | total_episodes = 1876 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 106305 | episode_rewards = 318.0 | total_episodes = 1899 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 113474 | episode_rewards = 500.0 | total_episodes = 1921 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 120632 | episode_rewards = 370.0 | total_episodes = 1941 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 127753 | episode_rewards = 375.0 | total_episodes = 1962 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 135179 | episode_rewards = 393.0 | total_episodes = 1987 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 142433 | episode_rewards = 500.0 | total_episodes = 2005 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 149888 | episode_rewards = 500.0 | total_episodes = 2023 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 157312 | episode_rewards = 467.0 | total_episodes = 2042 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 164651 | episode_rewards = 441.0 | total_episodes = 2060 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 172015 | episode_rewards = 500.0 | total_episodes = 2076 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 178100 | episode_rewards = 481.0 | total_episodes = 2089 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 183522 | episode_rewards = 462.0 | total_episodes = 2101 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 190818 | episode_rewards = 500.0 | total_episodes = 2117 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 198115 | episode_rewards = 500.0 | total_episodes = 2135 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 205097 | episode_rewards = 500.0 | total_episodes = 2151 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 212351 | episode_rewards = 500.0 | total_episodes = 2166 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 219386 | episode_rewards = 500.0 | total_episodes = 2181 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 226386 | episode_rewards = 500.0 | total_episodes = 2195 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 233888 | episode_rewards = 500.0 | total_episodes = 2211 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 241388 | episode_rewards = 500.0 | total_episodes = 2226 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 248287 | episode_rewards = 500.0 | total_episodes = 2240 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 255483 | episode_rewards = 500.0 | total_episodes = 2255 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 262845 | episode_rewards = 500.0 | total_episodes = 2270 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 270032 | episode_rewards = 500.0 | total_episodes = 2285 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 277009 | episode_rewards = 498.0 | total_episodes = 2301 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 284044 | episode_rewards = 255.0 | total_episodes = 2318 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 291189 | episode_rewards = 500.0 | total_episodes = 2334 |
-[INFO] [A2C tuned[worker: 0]] | max_global_step = 298619 | episode_rewards = 500.0 | total_episodes = 2350 |
-[INFO] ... trained!
-INFO: Making new env: CartPole-v1
-INFO: Making new env: CartPole-v1
-[INFO] Could not find least used device (nvidia-smi might be missing), use cuda:0 instead
+[INFO] 09:37: Running ExperimentManager fit() for PPO incorrectly tuned with n_fit = 3 and max_workers = None.
+```
+
+</br>
+
+```none
+[INFO] 09:37: [PPO incorrectly tuned[worker: 1]] | max_global_step = 832 | time/iterations = 12 | time/fps = 260 | time/time_elapsed = 2 | time/total_timesteps = 768 | train/learning_rate = 0.001 | train/entropy_loss = -0.9725531369447709 | train/policy_gradient_loss = 5.175539326667786 | train/value_loss = 17.705344581604002 | train/approx_kl = 0.028903376311063766 | train/clip_fraction = 0.33828125 | train/loss = 8.651824951171875 | train/explained_variance = 0.03754150867462158 | train/n_updates = 220 | train/clip_range = 0.2 | rollout/ep_rew_mean = -251.0 | rollout/ep_len_mean = 252.0 |
+[INFO] 09:37: [PPO incorrectly tuned[worker: 2]] | max_global_step = 832 | time/iterations = 12 | time/fps = 260 | time/time_elapsed = 2 | time/total_timesteps = 768 | train/learning_rate = 0.001 | train/entropy_loss = -1.0311604633927345 | train/policy_gradient_loss = 5.122353088855744 | train/value_loss = 18.54480469226837 | train/approx_kl = 0.02180374786257744 | train/clip_fraction = 0.359375 | train/loss = 9.690193176269531 | train/explained_variance = -0.00020706653594970703 | train/n_updates = 220 | train/clip_range = 0.2 | rollout/ep_rew_mean = -500.0 | rollout/ep_len_mean = 500.0 |
+...
+...
+...
+[INFO] 09:45: ... trained!
+[INFO] 09:45: Saved ExperimentManager(PPO incorrectly tuned) using pickle.
+[INFO] 09:45: The ExperimentManager was saved in : 'rlberry_data/temp/manager_data/PPO incorrectly tuned_2024-04-24_09-37-32_33d1646b/manager_obj.pickle'
 ```
 
 </br>
@@ -451,6 +228,7 @@ INFO: Making new env: CartPole-v1
 ```{image} output_9_3.png
 :align: center
 ```
+Here, we can see that modifying the hyperparameters has change the learning process (for the worse): it learns faster, but the final result is lower...
 
 <span>&#9728;</span> : For more information on plots and visualization, you can check [here (in construction)](visualization_page)
 
@@ -470,108 +248,10 @@ Evaluating ...
 </br>
 
 ```none
-[INFO] Evaluating A2C default...
-[INFO] [eval]... simulation 1/50
-[INFO] [eval]... simulation 2/50
-[INFO] [eval]... simulation 3/50
-[INFO] [eval]... simulation 4/50
-[INFO] [eval]... simulation 5/50
-[INFO] [eval]... simulation 6/50
-[INFO] [eval]... simulation 7/50
-[INFO] [eval]... simulation 8/50
-[INFO] [eval]... simulation 9/50
-[INFO] [eval]... simulation 10/50
-[INFO] [eval]... simulation 11/50
-[INFO] [eval]... simulation 12/50
-[INFO] [eval]... simulation 13/50
-[INFO] [eval]... simulation 14/50
-[INFO] [eval]... simulation 15/50
-[INFO] [eval]... simulation 16/50
-[INFO] [eval]... simulation 17/50
-[INFO] [eval]... simulation 18/50
-[INFO] [eval]... simulation 19/50
-[INFO] [eval]... simulation 20/50
-[INFO] [eval]... simulation 21/50
-[INFO] [eval]... simulation 22/50
-[INFO] [eval]... simulation 23/50
-[INFO] [eval]... simulation 24/50
-[INFO] [eval]... simulation 25/50
-[INFO] [eval]... simulation 26/50
-[INFO] [eval]... simulation 27/50
-[INFO] [eval]... simulation 28/50
-[INFO] [eval]... simulation 29/50
-[INFO] [eval]... simulation 30/50
-[INFO] [eval]... simulation 31/50
-[INFO] [eval]... simulation 32/50
-[INFO] [eval]... simulation 33/50
-[INFO] [eval]... simulation 34/50
-[INFO] [eval]... simulation 35/50
-[INFO] [eval]... simulation 36/50
-[INFO] [eval]... simulation 37/50
-[INFO] [eval]... simulation 38/50
-[INFO] [eval]... simulation 39/50
-[INFO] [eval]... simulation 40/50
-[INFO] [eval]... simulation 41/50
-[INFO] [eval]... simulation 42/50
-[INFO] [eval]... simulation 43/50
-[INFO] [eval]... simulation 44/50
-[INFO] [eval]... simulation 45/50
-[INFO] [eval]... simulation 46/50
-[INFO] [eval]... simulation 47/50
-[INFO] [eval]... simulation 48/50
-[INFO] [eval]... simulation 49/50
-[INFO] [eval]... simulation 50/50
-[INFO] Evaluating A2C tuned...
-[INFO] [eval]... simulation 1/50
-[INFO] [eval]... simulation 2/50
-[INFO] [eval]... simulation 3/50
-[INFO] [eval]... simulation 4/50
-[INFO] [eval]... simulation 5/50
-[INFO] [eval]... simulation 6/50
-[INFO] [eval]... simulation 7/50
-[INFO] [eval]... simulation 8/50
-[INFO] [eval]... simulation 9/50
-[INFO] [eval]... simulation 10/50
-[INFO] [eval]... simulation 11/50
-[INFO] [eval]... simulation 12/50
-[INFO] [eval]... simulation 13/50
-[INFO] [eval]... simulation 14/50
-[INFO] [eval]... simulation 15/50
-[INFO] [eval]... simulation 16/50
-[INFO] [eval]... simulation 17/50
-[INFO] [eval]... simulation 18/50
-[INFO] [eval]... simulation 19/50
-[INFO] [eval]... simulation 20/50
-[INFO] [eval]... simulation 21/50
-[INFO] [eval]... simulation 22/50
-[INFO] [eval]... simulation 23/50
-[INFO] [eval]... simulation 24/50
-[INFO] [eval]... simulation 25/50
-[INFO] [eval]... simulation 26/50
-[INFO] [eval]... simulation 27/50
-[INFO] [eval]... simulation 28/50
-[INFO] [eval]... simulation 29/50
-[INFO] [eval]... simulation 30/50
-[INFO] [eval]... simulation 31/50
-[INFO] [eval]... simulation 32/50
-[INFO] [eval]... simulation 33/50
-[INFO] [eval]... simulation 34/50
-[INFO] [eval]... simulation 35/50
-[INFO] [eval]... simulation 36/50
-[INFO] [eval]... simulation 37/50
-[INFO] [eval]... simulation 38/50
-[INFO] [eval]... simulation 39/50
-[INFO] [eval]... simulation 40/50
-[INFO] [eval]... simulation 41/50
-[INFO] [eval]... simulation 42/50
-[INFO] [eval]... simulation 43/50
-[INFO] [eval]... simulation 44/50
-[INFO] [eval]... simulation 45/50
-[INFO] [eval]... simulation 46/50
-[INFO] [eval]... simulation 47/50
-[INFO] [eval]... simulation 48/50
-[INFO] [eval]... simulation 49/50
-[INFO] [eval]... simulation 50/50
+[INFO] 09:47: Evaluating PPO default...
+[INFO] Evaluation:..................................................  Evaluation finished
+[INFO] 09:47: Evaluating PPO incorrectly tuned...
+[INFO] Evaluation:..................................................  Evaluation finished
 ```
 
 </br>

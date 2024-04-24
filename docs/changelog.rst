@@ -7,7 +7,11 @@ Changelog
 Dev version
 -----------
 
-* nothing
+
+*PR #451*
+
+ * Moving UCBVI to rlberry_scool
+
 
 Version 0.7.1
 -------------

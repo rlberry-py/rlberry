@@ -8,7 +8,7 @@ import sys
 import matplotlib.pyplot as plt
 
 from rlberry.wrappers import WriterWrapper
-from rlberry_research.envs import Chain
+from rlberry_scool.envs import Chain
 from rlberry.manager import plot_writer_data, ExperimentManager, read_writer_data
 from rlberry.manager.plotting import plot_smoothed_curves, plot_synchronized_curves
 from rlberry.agents import AgentWithSimplePolicy

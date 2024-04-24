@@ -1,7 +1,7 @@
 (adastop_userguide)=
 
 
-# AdaStop
+# Adaptive hypothesis testing for comparison of RL agents with AdaStop
 
 
 

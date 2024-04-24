@@ -48,7 +48,8 @@ We compute the performances of one agent as follows:
 ```python
 import numpy as np
 from rlberry.envs import gym_make
-from rlberry.agents.torch import A2CAgent
+from rlberry.agents.stable_baselines import StableBaselinesAgent
+from stable_baselines3 import A2C
 from rlberry.manager import AgentManager, evaluate_agents
 
 env_ctor = gym_make
@@ -58,8 +59,9 @@ n_simulations = 50
 n_fit = 8
 
 rbagent = AgentManager(
-    A2CAgent,
+    StableBaselinesAgent,
     (env_ctor, env_kwargs),
+    init_kwargs=dict(algo_cls=A2C),  # Init value for StableBaselinesAgent
     agent_name="A2CAgent",
     fit_budget=3e4,
     eval_kwargs=dict(eval_horizon=500),
@@ -78,32 +80,36 @@ The evaluation and statistical hypothesis testing is handled through the functio
 
 For example we may compare PPO, A2C and DQNAgent on Cartpole with the following code.
 
-``` python
-from rlberry.agents.torch import A2CAgent, PPOAgent, DQNAgent
+```python
+from rlberry.agents.stable_baselines import StableBaselinesAgent
+from stable_baselines3 import A2C, PPO, DQN
 from rlberry.manager.comparison import compare_agents
 
 agents = [
     AgentManager(
-        A2CAgent,
+        StableBaselinesAgent,
         (env_ctor, env_kwargs),
+        init_kwargs=dict(algo_cls=A2C),  # Init value for StableBaselinesAgent
         agent_name="A2CAgent",
-        fit_budget=3e4,
+        fit_budget=1e5,
         eval_kwargs=dict(eval_horizon=500),
         n_fit=n_fit,
     ),
     AgentManager(
-        PPOAgent,
+        StableBaselinesAgent,
         (env_ctor, env_kwargs),
+        init_kwargs=dict(algo_cls=PPO),  # Init value for StableBaselinesAgent
         agent_name="PPOAgent",
-        fit_budget=3e4,
+        fit_budget=1e5,
         eval_kwargs=dict(eval_horizon=500),
         n_fit=n_fit,
     ),
     AgentManager(
-        DQNAgent,
+        StableBaselinesAgent,
         (env_ctor, env_kwargs),
+        init_kwargs=dict(algo_cls=DQN),  # Init value for StableBaselinesAgent
         agent_name="DQNAgent",
-        fit_budget=3e4,
+        fit_budget=1e5,
         eval_kwargs=dict(eval_horizon=500),
         n_fit=n_fit,
     ),
@@ -116,12 +122,12 @@ print(compare_agents(agents))
 ```
 
 ```
-       Agent1 vs Agent2  mean Agent1  mean Agent2   mean diff    std diff decisions     p-val significance
-0  A2CAgent vs PPOAgent   213.600875   423.431500 -209.830625  144.600160    reject  0.002048           **
-1  A2CAgent vs DQNAgent   213.600875   443.296625 -229.695750  152.368506    reject  0.000849          ***
-2  PPOAgent vs DQNAgent   423.431500   443.296625  -19.865125  104.279024    accept  0.926234
+       Agent1 vs Agent2  mean Agent1  mean Agent2  mean diff    std diff decisions     p-val significance
+0  A2CAgent vs PPOAgent     416.9975    500.00000  -83.00250  147.338488    accept  0.266444
+1  A2CAgent vs DQNAgent     416.9975    260.38375  156.61375  179.503659    reject  0.017001            *
+2  PPOAgent vs DQNAgent     500.0000    260.38375  239.61625   80.271521    reject  0.000410          ***
 ```
 
-The results of `compare_agents(agents)` show the p-values and significance level if the method is `tukey_hsd` and in all the cases it shows the decision accept or reject of the test with Family-wise error controlled by $0.05$. In our case, we see that A2C seems significantly worst than both PPO and DQN but the difference between PPO and DQN is not statistically significant. Remark that no significance (which is to say, decision to accept $H_0$) does not necessarily mean that the algorithms perform the same, it can be that there is not enough data.
+The results of `compare_agents(agents)` show the p-values and significance level if the method is tukey_hsd and  it shows the decision accept or reject of the test with Family-wise error controlled by $0.05$. In our case, we see that DQN is worse than A2C and PPO but the difference between PPO and A2C is not statistically significant. Remark that no significance (which is to say, decision to accept $H_0$) does not necessarily mean that the algorithms perform the same, it can be that there is not enough data (and it is likely that it is the case here).
 
 *Remark*: the comparison we do here is a black-box comparison in the sense that we don't care how the algorithms were tuned or how many training steps are used, we suppose that the user already tuned these parameters adequately for a fair comparison.
