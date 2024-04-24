@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "rlberry"
-version = "v0.7.2.post23.dev0+6f933f5 "
+version = "v0.7.2.post25.dev0+dfd5ce3 "
 description = "An easy-to-use reinforcement learning library for research and education"
 authors = ["Omar Darwiche Domingues, Yannis Flet-Berliac, Edouard Leurent, Pierre Menard, Xuedong Shang"]
 homepage = "https://github.com/rlberry-py"
