@@ -8,7 +8,7 @@ Dev version
 -----------
 
  *nothing*
- 
+
 
 Version 0.7.3
 -------------
