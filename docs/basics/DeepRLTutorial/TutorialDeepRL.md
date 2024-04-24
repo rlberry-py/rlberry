@@ -64,10 +64,9 @@ observation and action spaces and the rewards occurring at each step.
 Running A2C on Acrobot-v1
 -----------------------
 
-<span>&#9888;</span> **warning :** depending on the seed, you may get different results, and if you're (un)lucky, your default agent may learn and be better than the tuned agent. <span>&#9888;</span>
+<span>&#9888;</span> **warning:** depending on the seed, you may get different results. <span>&#9888;</span>
 
-In the next example we use default parameters PPO and we use rlberry to train and evaluate our PPO agent. The
-default networks are:
+In the next example we use default parameters PPO and we use rlberry to train and evaluate the [Stable Baselines](https://github.com/DLR-RM/stable-baselines3) PPO agent.
 
 ```python
 """
@@ -105,17 +104,19 @@ _ = plot_writer_data(
 
 ```none
 Training ...
-[INFO] 15:57: Running ExperimentManager fit() for PPO default with n_fit = 3 and max_workers = None.
-[INFO] 15:57:                                   agent_name  worker  time/iterations  max_global_step
-                                               PPO default    0           1               2048
-[INFO] 15:57: [PPO default[worker: 2]] | max_global_step = 4096 | time/iterations = 1 | rollout/ep_rew_mean = -500.0 | rollout/ep_len_mean = 500.0 | time/fps = 727 | time/time_elapsed = 2 | time/total_timesteps = 2048 | train/learning_rate = 0.0003 |
-[INFO] 15:57: [PPO default[worker: 0]] | max_global_step = 4096 | time/iterations = 1 | rollout/ep_rew_mean = -500.0 | rollout/ep_len_mean = 500.0 | time/fps = 705 | time/time_elapsed = 2 | time/total_timesteps = 2048 | train/learning_rate = 0.0003 |
-[INFO] 15:57: [PPO default[worker: 1]] | max_global_step = 4096 | time/iterations = 1 | rollout/ep_rew_mean = -500.0 | rollout/ep_len_mean = 500.0 | time/fps = 719 | time/time_elapsed = 2 | time/total_timesteps = 2048 | train/learning_rate = 0.0003 |
+[INFO] 09:31: Running ExperimentManager fit() for PPO default with n_fit = 3 and max_workers = None.
+[INFO] 09:31: [PPO default[worker: 0]] | max_global_step = 4096 | time/iterations = 1 | rollout/ep_rew_mean = -500.0 | rollout/ep_len_mean = 500.0 | time/fps = 791 | time/time_elapsed = 2 | time/total_timesteps = 2048 | train/learning_rate = 0.0003 |
+[INFO] 09:31: [PPO default[worker: 1]] | max_global_step = 4096 | time/iterations = 1 | rollout/ep_rew_mean = -500.0 | rollout/ep_len_mean = 500.0 | time/fps = 741 | time/time_elapsed = 2 | time/total_timesteps = 2048 | train/learning_rate = 0.0003 |
+[INFO] 09:31: [PPO default[worker: 2]] | max_global_step = 4096 | time/iterations = 1 | rollout/ep_rew_mean = -500.0 | rollout/ep_len_mean = 500.0 | time/fps = 751 | time/time_elapsed = 2 | time/total_timesteps = 2048 | train/learning_rate = 0.0003 |
+[INFO] 09:32: [PPO default[worker: 0]] | max_global_step = 6144 | time/iterations = 2 | rollout/ep_rew_mean = -500.0 | rollout/ep_len_mean = 500.0 | time/fps = 617 | time/time_elapsed = 6 | time/total_timesteps = 4096 | train/learning_rate = 0.0003 | train/entropy_loss = -1.0967000976204873 | train/policy_gradient_loss = -0.0017652213326073251 | train/value_loss = 139.4249062538147 | train/approx_kl = 0.004285778850317001 | train/clip_fraction = 0.0044921875 | train/loss = 16.845857620239258 | train/explained_variance = -0.0011605024337768555 | train/n_updates = 10 | train/clip_range = 0.2 |
 ...
 ...
 ...
-[INFO] 16:01: [PPO default[worker: 1]] | max_global_step = 100352 | time/iterations = 48 | rollout/ep_rew_mean = -79.26 | rollout/ep_len_mean = 80.26 | time/fps = 398 | time/time_elapsed = 246 | time/total_timesteps = 98304 | train/learning_rate = 0.0003 | train/entropy_loss = -0.1558212914969772 | train/policy_gradient_loss = -0.001575780064376886 | train/value_loss = 9.463472159206868 | train/approx_kl = 0.0019107917323708534 | train/clip_fraction = 0.018701171875 | train/loss = 10.015292167663574 | train/explained_variance = 0.9502505771815777 | train/n_updates = 470 | train/clip_range = 0.2 |
-[INFO] 16:01: [PPO default[worker: 2]] | max_global_step = 100352 | time/iterations = 48 | rollout/ep_rew_mean = -81.55 | rollout/ep_len_mean = 82.55 | time/fps = 398 | time/time_elapsed = 246 | time/total_timesteps = 98304 | train/learning_rate = 0.0003 | train/entropy_loss = -0.1251153098186478 | train/policy_gradient_loss = -0.003398912865668535 | train/value_loss = 8.9318665035069 | train/approx_kl = 0.0023679514415562153 | train/clip_fraction = 0.022314453125 | train/loss = 4.039802551269531 | train/explained_variance = 0.9598834589123726 | train/n_updates = 470 | train/clip_range = 0.2 |
+[INFO] 09:35: [PPO default[worker: 1]] | max_global_step = 100352 | time/iterations = 48 | rollout/ep_rew_mean = -89.81 | rollout/ep_len_mean = 90.8 | time/fps = 486 | time/time_elapsed = 202 | time/total_timesteps = 98304 | train/learning_rate = 0.0003 | train/entropy_loss = -0.19921453138813378 | train/policy_gradient_loss = -0.002730156043253373 | train/value_loss = 21.20977843105793 | train/approx_kl = 0.0014179411809891462 | train/clip_fraction = 0.017626953125 | train/loss = 9.601455688476562 | train/explained_variance = 0.8966712430119514 | train/n_updates = 470 | train/clip_range = 0.2 |
+[INFO] 09:35: [PPO default[worker: 0]] | max_global_step = 100352 | time/iterations = 48 | rollout/ep_rew_mean = -83.22 | rollout/ep_len_mean = 84.22 | time/fps = 486 | time/time_elapsed = 202 | time/total_timesteps = 98304 | train/learning_rate = 0.0003 | train/entropy_loss = -0.14615743807516993 | train/policy_gradient_loss = -0.002418491238495335 | train/value_loss = 22.7100858271122 | train/approx_kl = 0.0006727844011038542 | train/clip_fraction = 0.010546875 | train/loss = 8.74121379852295 | train/explained_variance = 0.8884317129850388 | train/n_updates = 470 | train/clip_range = 0.2 |
+[INFO] 09:35: ... trained!
+[INFO] 09:35: Saved ExperimentManager(PPO default) using pickle.
+[INFO] 09:35: The ExperimentManager was saved in : 'rlberry_data/temp/manager_data/PPO default_2024-04-24_09-31-51_be15b329/manager_obj.pickle'
 ```
 
 </br>
@@ -135,7 +136,7 @@ _ = evaluate_agents(
 
 ```none
 Evaluating ...
-[INFO] 16:03: Evaluating PPO default...
+[INFO] 09:36: Evaluating PPO default...
 [INFO] Evaluation:..................................................  Evaluation finished
 ```
 
@@ -146,8 +147,13 @@ Evaluating ...
 :align: center
 ```
 
-Let's try to change the hyperparameters and see if we can
-beat our previous result. This time we use the recommended hyperparameters from [rl-baselines3-zoo](https://github.com/DLR-RM/rl-baselines3-zoo/).
+Let's try to change the hyperparameters and see if it change the previous result.
+
+<span>&#9888;</span> **warning:** The aim of this section is to show that hyperparameters have an effect on agent training, and to demonstrate that it is possible to modify them.
+
+For pedagogical purposes, since the default hyperparameters are effective on these simple environments, we'll compare the default agent with an agent tuned with the wrong hyperparameters, which decreases the results. Obviously, in practical cases, the aim is to find hyperparameters that improve results... not decrease them. <span>&#9888;</span>
+
+
 
 
 ```python
@@ -158,11 +164,13 @@ tuned_xp = ExperimentManager(
         algo_cls=PPO,
         # gradient descent steps.
         # descent steps.
-        ent_coef=0.00,  # How much to force exploration.
-        normalize_advantage=True,  # normalize the advantage
-        gae_lambda=0.94,  # Factor for trade-off of bias vs variance for Generalized Advantage Estimator
-        n_epochs=4,  # Number of epoch when optimizing the surrogate loss
-        n_steps=256,  # The number of steps to run for the environment per update
+        ent_coef=0.10,  # How much to force exploration.
+        normalize_advantage=False,  # normalize the advantage
+        gae_lambda=0.90,  # Factor for trade-off of bias vs variance for Generalized Advantage Estimator
+        n_epochs=20,  # Number of epoch when optimizing the surrogate loss
+        n_steps=64,  # The number of steps to run for the environment per update
+        learning_rate=1e-3,
+        batch_size=32,
     ),
     fit_budget=1e5,  # The number of interactions
     # between the agent and the
@@ -174,7 +182,7 @@ tuned_xp = ExperimentManager(
     # Usually, it is good to do more
     # than 1 because the training is
     # stochastic.
-    agent_name="PPO tuned",  # The agent's name.
+    agent_name="PPO incorrectly tuned",  # The agent's name.
 )
 
 
@@ -192,28 +200,26 @@ _ = plot_writer_data(
 ```
 
 ```none
-[INFO] 16:06: Running ExperimentManager fit() for PPO tuned with n_fit = 3 and max_workers = None.
-```
-
-</br>
-
-```none
 Training ...
 ```
 
 </br>
 
 ```none
-[INFO] 16:07: [PPO tuned[worker: 1]] | max_global_step = 2048 | time/iterations = 7 | time/fps = 609 | time/time_elapsed = 2 | time/total_timesteps = 1792 | train/learning_rate = 0.0003 | train/entropy_loss = -1.0974667742848396 | train/policy_gradient_loss = -0.0009369864128530025 | train/value_loss = 162.15267086029053 | train/approx_kl = 0.00016404897905886173 | train/clip_fraction = 0.0 | train/loss = 70.76416778564453 | train/explained_variance = 0.038179218769073486 | train/n_updates = 24 | train/clip_range = 0.2 | rollout/ep_rew_mean = -500.0 | rollout/ep_len_mean = 500.0 |
-[INFO] 16:07: [PPO tuned[worker: 0]] | max_global_step = 2048 | time/iterations = 7 | time/fps = 608 | time/time_elapsed = 2 | time/total_timesteps = 1792 | train/learning_rate = 0.0003 | train/entropy_loss = -1.097521685063839 | train/policy_gradient_loss = -0.0021453166846185923 | train/value_loss = 159.90410614013672 | train/approx_kl = 0.00030635856091976166 | train/clip_fraction = 0.0 | train/loss = 72.51579284667969 | train/explained_variance = 0.00991511344909668 | train/n_updates = 24 | train/clip_range = 0.2 | rollout/ep_rew_mean = -500.0 | rollout/ep_len_mean = 500.0 |
-[INFO] 16:07: [PPO tuned[worker: 2]] | max_global_step = 2048 | time/iterations = 7 | time/fps = 604 | time/time_elapsed = 2 | time/total_timesteps = 1792 | train/learning_rate = 0.0003 | train/entropy_loss = -1.0938222110271454 | train/policy_gradient_loss = -0.002581374952569604 | train/value_loss = 167.01866149902344 | train/approx_kl = 0.0009766086004674435 | train/clip_fraction = 0.0 | train/loss = 77.16150665283203 | train/explained_variance = -0.26804113388061523 | train/n_updates = 24 | train/clip_range = 0.2 | rollout/ep_rew_mean = -500.0 | rollout/ep_len_mean = 500.0 |
-[INFO] 16:07: [PPO tuned[worker: 1]] | max_global_step = 3840 | time/iterations = 14 | time/fps = 598 | time/time_elapsed = 5 | time/total_timesteps = 3584 | train/learning_rate = 0.0003 | train/entropy_loss = -1.0899569168686867 | train/policy_gradient_loss = -0.002536407206207514 | train/value_loss = 165.09891891479492 | train/approx_kl = 0.0010566194541752338 | train/clip_fraction = 0.0 | train/loss = 79.24039459228516 | train/explained_variance = -0.2665156126022339 | train/n_updates = 52 | train/clip_range = 0.2 | rollout/ep_rew_mean = -493.7142857142857 | rollout/ep_len_mean = 493.85714285714283 |
+[INFO] 09:37: Running ExperimentManager fit() for PPO incorrectly tuned with n_fit = 3 and max_workers = None.
+```
+
+</br>
+
+```none
+[INFO] 09:37: [PPO incorrectly tuned[worker: 1]] | max_global_step = 832 | time/iterations = 12 | time/fps = 260 | time/time_elapsed = 2 | time/total_timesteps = 768 | train/learning_rate = 0.001 | train/entropy_loss = -0.9725531369447709 | train/policy_gradient_loss = 5.175539326667786 | train/value_loss = 17.705344581604002 | train/approx_kl = 0.028903376311063766 | train/clip_fraction = 0.33828125 | train/loss = 8.651824951171875 | train/explained_variance = 0.03754150867462158 | train/n_updates = 220 | train/clip_range = 0.2 | rollout/ep_rew_mean = -251.0 | rollout/ep_len_mean = 252.0 |
+[INFO] 09:37: [PPO incorrectly tuned[worker: 2]] | max_global_step = 832 | time/iterations = 12 | time/fps = 260 | time/time_elapsed = 2 | time/total_timesteps = 768 | train/learning_rate = 0.001 | train/entropy_loss = -1.0311604633927345 | train/policy_gradient_loss = 5.122353088855744 | train/value_loss = 18.54480469226837 | train/approx_kl = 0.02180374786257744 | train/clip_fraction = 0.359375 | train/loss = 9.690193176269531 | train/explained_variance = -0.00020706653594970703 | train/n_updates = 220 | train/clip_range = 0.2 | rollout/ep_rew_mean = -500.0 | rollout/ep_len_mean = 500.0 |
 ...
 ...
 ...
-[INFO] 16:10: ... trained!
-[INFO] 16:10: Saved ExperimentManager(PPO tuned) using pickle.
-[INFO] 16:10: The ExperimentManager was saved in : 'rlberry_data/temp/manager_data/PPO tuned_2024-04-17_16-06-57_5f0b4f99/manager_obj.pickle'
+[INFO] 09:45: ... trained!
+[INFO] 09:45: Saved ExperimentManager(PPO incorrectly tuned) using pickle.
+[INFO] 09:45: The ExperimentManager was saved in : 'rlberry_data/temp/manager_data/PPO incorrectly tuned_2024-04-24_09-37-32_33d1646b/manager_obj.pickle'
 ```
 
 </br>
@@ -222,7 +228,7 @@ Training ...
 ```{image} output_9_3.png
 :align: center
 ```
-Here, we can see that modifying the hyperparameters has accelerated learning...
+Here, we can see that modifying the hyperparameters has change the learning process (for the worse): it learns faster, but the final result is lower...
 
 <span>&#9728;</span> : For more information on plots and visualization, you can check [here (in construction)](visualization_page)
 
@@ -242,9 +248,9 @@ Evaluating ...
 </br>
 
 ```none
-[INFO] 16:11: Evaluating PPO default...
+[INFO] 09:47: Evaluating PPO default...
 [INFO] Evaluation:..................................................  Evaluation finished
-[INFO] 16:11: Evaluating PPO tuned...
+[INFO] 09:47: Evaluating PPO incorrectly tuned...
 [INFO] Evaluation:..................................................  Evaluation finished
 ```
 
