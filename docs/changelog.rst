@@ -7,6 +7,12 @@ Changelog
 Dev version
 -----------
 
+ *nothing*
+ 
+
+Version 0.7.3
+-------------
+
  *PR #454*
 
  * remove unused librairies
