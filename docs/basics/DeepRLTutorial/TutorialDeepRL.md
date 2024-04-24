@@ -61,7 +61,7 @@ observation and action spaces and the rewards occurring at each step.
  | **Rewards**           |  1 per step |   -1 if not terminal else 0 | -1 per step    |
 
 
-Running A2C on **Acrobot-v1**
+Running A2C on Acrobot-v1
 -----------------------
 
 <span>&#9888;</span> **warning :** depending on the seed, you may get different results, and if you're (un)lucky, your default agent may learn and be better than the tuned agent. <span>&#9888;</span>

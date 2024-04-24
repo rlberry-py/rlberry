@@ -22,8 +22,11 @@ It's the repository used for teaching purposes. These are mainly basic agents an
 You can find more details about installation [here](installation)!
 
  You can find our quick starts here :
- - [RL quickstart](quick_start)
- - [Deep RL quickstart](TutorialDeepRL).
+ ```{toctree}
+:maxdepth: 2
+basics/quick_start_rl/quickstart.md
+basics/DeepRLTutorial/TutorialDeepRL.md
+```
 
 ## Set up an experiment
 ```{include} templates/nice_toc.md
