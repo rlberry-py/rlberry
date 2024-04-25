@@ -116,21 +116,23 @@ from rlberry.manager import ExperimentManager, evaluate_agents
 from rlberry.envs import gym_make
 import matplotlib.pyplot as plt
 
-if __name__ == "__main__":
-    managers = [
-        ExperimentManager(
-            StableBaselinesAgent,
-            (gym_make, dict(id="Acrobot-v1")),
-            fit_budget=1e5,
-            eval_kwargs=dict(eval_horizon=500),
-            init_kwargs={"algo_cls": algo_cls, "policy": "MlpPolicy", "verbose": 0},
-            n_fit=1,
-            seed=42,
-        )
-        for algo_cls in [A2C, PPO]
-    ]
-    for manager in managers:
-        manager.fit()
-    data = evaluate_agents(managers, n_simulations=50, plot=False)
+names = ["A2C", "PPO"]
+managers = [
+    ExperimentManager(
+        StableBaselinesAgent,
+        (gym_make, dict(id="Acrobot-v1")),
+        fit_budget=1e5,
+        agent_name=names[i],
+        eval_kwargs=dict(eval_horizon=500),
+        init_kwargs={"algo_cls": algo_cls, "policy": "MlpPolicy", "verbose": 0},
+        n_fit=1,
+        seed=42,
+    )
+    for i, algo_cls in enumerate([A2C, PPO])
+]
+for manager in managers:
+    manager.fit()
+data = evaluate_agents(managers, n_simulations=50)
+plt.savefig("example_eval.png")
 ```
 ![](example_eval.png)
