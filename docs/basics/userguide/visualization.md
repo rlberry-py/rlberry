@@ -1,7 +1,6 @@
 (visu_userguide)=
 
-
-# Visualization
+# Visualization of policies and plots of training/evaluation metrics in rlberry
 
 Good plots and visualization tools are important to design, debug and assess the performance of a RL algorithm.
 
