@@ -35,7 +35,7 @@ in just a few lines:
 ```python
 from rlberry.envs import gym_make
 from stable_baselines3 import A2C
-from rlberry.agents import StableBaselinesAgent
+from rlberry.agents.stable_baselines import StableBaselinesAgent
 
 env_ctor, env_kwargs = gym_make, dict(id="CartPole-v1")
 env = env_ctor(**env_kwargs)
