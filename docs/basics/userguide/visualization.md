@@ -106,7 +106,7 @@ There are several error representation availables in {mod}`rlberry.manager.plot_
 
 ## Visualization of evaluations of trained agents in rlberry
 
-Once agents are trained, you may want to compare their evaluations on environments. This is done through {mod}`rlberry.manager.evaluate_agents`, this function takes as input a list of {mod}`rlberry.manager.ExperimentManager` .
+Once agents are trained, you may want to compare their evaluations on environments. This is done through {mod}`rlberry.manager.evaluate_agents`, this function takes as input a list of {mod}`rlberry.manager.ExperimentManager` and plot the boxplots of the evaluations of each agent. If there are several fits for the agent in the experiment manager, an agent is chosen at random at each iteration (you can use the parameter `choose_random_agents` to change this behavior).
 
 
 ```python
