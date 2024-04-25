@@ -83,13 +83,13 @@ def plot_writer_data(
     error_representation: str in {"cb", "raw_curves", "ci",  "pi"}
         How to represent multiple simulations. The "ci" and "pi" do not take into account the need for simultaneous inference, it is then harder to draw conclusion from them than with "cb" and "pb" but they are the most widely used.
 
-        - "cb" is a confidence band on the mean curve using functional data analysis (band in which the curve is with probability larger than 1-level).
+        - "cb" is a confidence band on the mean curve using functional data analysis (band in which the mean curve is with probability larger than 1-level).
 
         - "raw curves" is a plot of the raw curves.
 
         - "pi" is a plot of a non-simultaneous prediction interval with gaussian model around the mean smoothed curve (e.g. we do curve plus/minus gaussian quantile times std).
 
-        - "ci" is a confidence interval on the prediction interval with gaussian model around the mean smoothed curve (e.g. we do curve plus/minus gaussian quantile times std divided by sqrt of number of seeds).
+        - "ci" is a confidence interval with gaussian model around the mean smoothed curve (e.g. we do curve plus/minus gaussian quantile times std divided by sqrt of number of seeds).
     n_boot: int, default=500,
 
         Number of bootstrap evaluations used for confidence interval estimation.
@@ -265,13 +265,13 @@ def plot_smoothed_curves(
     error_representation: str in {"cb", "raw_curves", "ci",  "pi"}
         How to represent multiple simulations. The "ci" and "pi" do not take into account the need for simultaneous inference, it is then harder to draw conclusion from them than with "cb" but they are the most widely used.
 
-        - "cb" is a confidence band on the mean curve using functional data analysis (band in which the curve is with probability larger than 1-level). Method from [1], using scikit-fda [2] library.
+        - "cb" is a confidence band on the mean curve using functional data analysis (band in which the mean curve is with probability larger than 1-level). Method from [1], using scikit-fda [2] library.
 
         - "raw curves" is a plot of the raw curves.
 
         - "pi" is a plot of a non-simultaneous prediction interval with gaussian model around the mean smoothed curve (e.g. we do curve plus/minus gaussian quantile times std).
 
-        - "ci" is a confidence interval on the prediction interval with gaussian model around the mean smoothed curve (e.g. we do curve plus/minus gaussian quantile times std divided by sqrt of number of seeds).
+        - "ci" is a confidence interval with gaussian model around the mean smoothed curve (e.g. we do curve plus/minus gaussian quantile times std divided by sqrt of number of seeds).
 
     n_boot: int, default=2500,
         Number of bootstrap evaluations used for confidence interval estimation.
@@ -590,7 +590,7 @@ def plot_synchronized_curves(
                 color=cmap[id_c],
             )
         elif error_representation == "raw_curves":
-            for n_simu in range(n_tot_simu):
+            for n_simu in range(n_tot_simu + 1):
                 x_simu = df_name.loc[df_name["n_simu"] == n_simu, xlabel].values.astype(
                     float
                 )
