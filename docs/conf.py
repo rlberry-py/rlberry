@@ -47,7 +47,7 @@ extensions = [
     "numpydoc",
     "sphinx_gallery.gen_gallery",
     "myst_parser",
-    "sphinx_copybutton",
+    # "sphinx_copybutton",
 ]
 
 myst_enable_extensions = ["amsmath"]
