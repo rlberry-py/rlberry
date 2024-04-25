@@ -28,6 +28,40 @@ p {
   hyphens: auto;
 }
 
+
+div.body div.toctree-wrapper ul {
+        padding-left: 0;
+    }
+
+    div.body li.toctree-l1 {
+        padding: 0.5em 0 0.5em 0;
+        list-style-type: none;
+        font-size: 130%;
+        font-weight: bold;
+    }
+
+    div.body li.toctree-l2 {
+        font-size: 70%;
+        list-style-type: square;
+        font-weight: normal;
+        margin-left: 40px;
+    }
+
+    div.body li.toctree-l3 {
+        font-size: 85%;
+        list-style-type: circle;
+        font-weight: normal;
+        margin-left: 40px;
+    }
+
+    div.body li.toctree-l4 {
+        margin-left: 40px;
+    }
+
+
+
+
+
 input:focus {
   outline: none;
 }
@@ -128,6 +162,8 @@ a.sk-landing-btn {
 a.sk-landing-btn:hover {
   background-color: #ffb05f;
 }
+
+
 
 .sk-donate-btn {
   cursor: pointer;

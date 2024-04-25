@@ -49,7 +49,7 @@ FINITE_MDP_AGENTS = [
     agents_scool.SARSAAgent,
     agents_scool.ValueIterationAgent,
     agents_scool.MBQVIAgent,
-    agents_research.UCBVIAgent,
+    agents_scool.UCBVIAgent,
     agents_research.OptQLAgent,
     agents_research.PSRLAgent,
     agents_research.RLSVIAgent,

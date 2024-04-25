@@ -17,8 +17,8 @@ import numpy as np
 import pandas as pd
 import time
 from rlberry.agents import AgentWithSimplePolicy
-from rlberry_research.agents import UCBVIAgent
-from rlberry_research.envs import Chain
+from rlberry_scool.agents import UCBVIAgent
+from rlberry_scool.envs import Chain
 from rlberry.manager import (
     ExperimentManager,
     evaluate_agents,
@@ -26,7 +26,6 @@ from rlberry.manager import (
     read_writer_data,
 )
 from rlberry.wrappers import WriterWrapper
-from IPython.display import Image
 ```
 
 Choosing an RL environment
@@ -59,8 +58,6 @@ env.save_gif("gif_chain.gif")
 # clear rendering data
 env.clear_render_buffer()
 env.disable_rendering()
-# view result
-Image(open("gif_chain.gif", "rb").read())
 ```
 
 
@@ -76,7 +73,7 @@ Defining an agent and a baseline
 --------------------------------
 
 We will compare a RandomAgent (which select random action) to the
-UCBVIAgent(from [rlberry_research](https://github.com/rlberry-py/rlberry-research)), which is an algorithm that is designed to perform an
+UCBVIAgent(from [rlberry_scool](https://github.com/rlberry-py/rlberry-scool)), which is an algorithm that is designed to perform an
 efficient exploration. Our goal is then to assess the performance of the
 two algorithms.
 
@@ -288,7 +285,7 @@ iteration, the environment takes 100 steps (`horizon`) times the
 
 
 
-Finally, we plot the reward: Here you can see the mean value over the 10 fited agent, with 2 options (raw and smoothed). Note that, to be able to see the smoothed version, you must have installed the extra package `scikit-fda`, (For more information, you can check the options on the [install page](../../installation.md#options)).
+Finally, we plot the reward. Here you can see the mean value over the 10 fitted agent, with 2 options (raw and smoothed). Note that, to be able to see the smoothed version, you must have installed the extra package `scikit-fda`, (For more information, you can check the options on the [install page](../../installation.md#options)).
 
 ```python
 # Plot of the reward.

@@ -35,7 +35,7 @@ experiment_to_save = ExperimentManager(
     fit_budget=int(300000),  # Budget used to call our agent "fit()"
     n_fit=1,  # Number of agent instances to fit.
     seed=seeder,  # to be reproductible
-    agent_name="PPO" + env_id,  # Name of the agent
+    agent_name="QL" + env_id,  # Name of the agent
     output_dir="./results/",  # where to store the outpus
 )
 
@@ -44,9 +44,9 @@ print(experiment_to_save.get_agent_instances()[0].Q)  # print the content of the
 ```
 
 ```none
-[INFO] 11:11: Running ExperimentManager fit() for PPOFrozenLake-v1 with n_fit = 1 and max_workers = None.
+[INFO] 11:11: Running ExperimentManager fit() for QLFrozenLake-v1 with n_fit = 1 and max_workers = None.
 [INFO] 11:11:                                    agent_name     worker  episode_rewards  max_global_step
-                                              PPOFrozenLake-v1    0          0.0             178711
+                                              QLFrozenLake-v1    0          0.0             178711
 [INFO] 11:11: ... trained!
 writers.py:108: FutureWarning: The behavior of DataFrame concatenation with empty or all-NA entries is deprecated. In a future version, this will no longer exclude empty or all-NA columns when determining the result dtypes. To retain the old behavior, exclude the relevant entries before the concat operation.
   df = pd.concat([df, pd.DataFrame(self._data[tag])], ignore_index=True)
@@ -66,7 +66,7 @@ writers.py:108: FutureWarning: The behavior of DataFrame concatenation with empt
  [0.         0.9025     0.95       0.857375  ]
  [0.9025     0.95       1.         0.9025    ]
  [0.         0.         0.         0.        ]]
-[INFO] 11:11: Saved ExperimentManager(PPOFrozenLake-v1) using pickle.
+[INFO] 11:11: Saved ExperimentManager(QLFrozenLake-v1) using pickle.
 ```
 
 After this run, you can see the 'print' of the q-table.

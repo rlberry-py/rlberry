@@ -110,5 +110,3 @@ def configure_logging(
     gym.logger.set_level(
         logging.getLevelName(level) + 10
     )  # If info -> go to warning gym level. If debug, go to info.
-    numba_logger = logging.getLogger("numba")
-    numba_logger.setLevel(logging.WARNING)
