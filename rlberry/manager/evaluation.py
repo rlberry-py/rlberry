@@ -55,7 +55,7 @@ def evaluate_agents(
     >>> if __name__=="__main__":
     >>>     managers = [ ExperimentManager(
     >>>         StableBaselinesAgent,
-    >>>         (gym_make, dict(id="CartPole-v1")),
+    >>>         (gym_make, dict(id="Acrobot-v1")),
     >>>         fit_budget=1e5,
     >>>         eval_kwargs=dict(eval_horizon=500),
     >>>         init_kwargs= {"algo_cls": algo_cls, "policy": "MlpPolicy", "verbose": 0},
