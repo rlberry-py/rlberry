@@ -9,10 +9,11 @@ Good plots and visualization tools are important to design, debug and assess the
 - *Visualizing training metrics*. In rlberry, all the training data acquisition is done via the writer and we then use mainly the function `rlberry.manager.plot_writer_data` in order to plot the resulting metrics as they are recorded during training.
 - *Visualizing evaluations of a trained agent* The user can generate evaluation data for trained agents and plot the resulting evaluation boxplots with `rlberry.manager.evaluate_agents`.
 
-## Generating videos of the policy of a trained agent
+## Generating videos and gif of the policy of a trained agent
+### Generating videos
 To generate a video, we typically use a wrapper around the environment that will record what is happening in the environment and then we generate a video from these recordings. To do that with gymnasium, see  [RecordVideo](https://gymnasium.farama.org/api/wrappers/misc_wrappers/#gymnasium.wrappers.RecordVideo) wrapper, and for a use-case with rlberry see for instance our [DQN on CartPole example](https://rlberry-py.github.io/rlberry/auto_examples/demo_agents/video_plot_dqn.html#sphx-glr-auto-examples-demo-agents-video-plot-dqn-py).
 
-## Generating gif videos
+### Generating gifs
 
 When teaching RL, it may be easier not to have to ask students to install ffmpeg on their computers, and more generally it is most of the time more fool-proof to generate gif instead of videos. This is the prime reasons for our visualization tool `rlberry.rendering.utils.gif_write` that works for rlberry-scool environments `Chain` and `Gridworld` in the following way:
 
@@ -45,9 +46,11 @@ Training metrics in reinforcement learning are typically very unstable because t
 
 Plotting training metric in rlberry goes through the use of `plot_writer_data`. The function can take as first argument either a trained rlberry agent (whose writer contains the training data) or a pandas dataframe containing the training data. The dataframe is supposed to adhere to rlberry format and must contain the columns `tag` (description of value being stored), `value` (the value), a column with the x-axis (whose name must be fed to the `xtag` parameter), `n_simu` (identifier for which training this corresponds to if there are several), `name` (name of the agent).
 
-### Plotting unsmoothed curves
+There are two type of plots that can be done with rlberry: synchronized plots are plots in which the x coordinate for each curve are the same, for instance this is what happens if the x coordinate are the steps in the environment (the variable called `global_step`). On the other hand, when the curves are not synchronized (for instance if the x coordinates are the wall time, then two separate training will give different x coordinates) we need to smooth the curves before doing any kind of aggregation. This distinction is done through the use of the `smooth` parameter in `plot_writer_data` using the library [scikit-fda](https://github.com/GAA-UAM/scikit-fda).
 
-If there are very few curves and they are not too "rugged", they can be plotted directly through the parameter `error_representation="raw_curves"`.
+### Plotting raw curves
+
+If there are very few curves and they are not too "rugged", they can be plotted directly through the parameter `error_representation="raw_curves"`. In deep blue is plotted the mean curve, averaged over the training and in light blue are the inidividual curves for each training.  We give here an example of the plot of the entropy loss function for stablebaselines3 PPO agent on CartPole-v1 environment.
 
 ```python
 from rlberry.envs import gym_make
@@ -81,8 +84,25 @@ plt.savefig("entropy_loss.png")
 
 ![](entropy_loss.png)
 
-### Plotting smoothed curves -- synchronized case
+### Error representation -- confidence intervals and prediction intervals
 
-### Plotting smoothed curves -- advanced smoothing techniques
+
+If the number curves becomes large, you may want to aggregate the curves and render an error bar using one of the available error representations.
+
+We now explicit the various ways to represent the vertical errorbars of a curve in rlberry. Example of code to do these various plots is available in the example section: {ref}`sphx_glr_auto_examples_plot_smooth.py`.
+
+```{image} ../../../../_images/sphx_glr_plot_smooth_002.png
+:align: center
+:target: ../../auto_examples/plot_smooth.html
+```
+
+There are several error representation availables in `plot_writer_data`:
+
+- `error_representation="cb"` is a confidence band on the mean curve using functional data analysis (band in which the mean curve is with probability larger than 1-level). Available only for smoothed curves, this is a simultaneous confidence interval along the whole curve and should be prefered to "ci" when possible because it allows us to interpret the whole curve simultaneously. See the docstring of `plot_writer_data` for details on this method.
+
+- `error_representation="ci"` is a confidence interval around the mean curve. We use a Gaussian model around the mean smoothed curve (e.g. we do curve plus/minus gaussian quantile times std divided by sqrt of number of seeds).
+
+- `error_representation="pi"` is a plot of a non-simultaneous prediction interval with gaussian model around the mean smoothed curve (e.g. we do curve plus/minus gaussian quantile times std).
+
 
 ## Visualization of evaluations of trained agents in rlberry
