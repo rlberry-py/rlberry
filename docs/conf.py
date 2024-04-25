@@ -47,6 +47,7 @@ extensions = [
     "numpydoc",
     "sphinx_gallery.gen_gallery",
     "myst_parser",
+    "sphinx_copybutton",
 ]
 
 myst_enable_extensions = ["amsmath"]
@@ -105,6 +106,8 @@ html_theme_path = ["themes"]
 html_logo = "../assets/logo_wide.svg"
 
 
+# syntax highlight
+
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
@@ -128,3 +131,6 @@ sphinx_gallery_conf = {
         ]
     ),
 }
+
+pygments_style = "sphinx"
+highlight_language = "python3"
