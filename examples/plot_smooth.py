@@ -3,6 +3,8 @@
 Illustration of plotting tools on Bandits
 =========================================
 
+.. _plot_smooth:
+
 This script shows how to define a bandit environment and an UCB Index-based algorithm.
 """
 

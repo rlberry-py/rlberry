@@ -38,8 +38,9 @@ basics/userguide/environment.md
 basics/userguide/agent.md
 basics/userguide/experimentManager.md
 basics/userguide/logging.md
+basics/userguide/visualization.md
 ```
-- Results analysis & visualization (In construction)
+
 ## Experimenting with Deep agents
 [(In construction)](https://github.com/rlberry-py/rlberry/issues/459)
 ## Reproducibility
