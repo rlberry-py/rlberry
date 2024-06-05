@@ -12,7 +12,7 @@ Illustration of the wrapper for old environments (old Acrobot).
 
 
 from rlberry.wrappers.tests.old_env.old_acrobot import Old_Acrobot
-from rlberry.agents import RSUCBVIAgent
+from rlberry_research.agents import RSUCBVIAgent
 from rlberry.wrappers import RescaleRewardWrapper
 from rlberry.wrappers.gym_utils import OldGymCompatibilityWrapper
 

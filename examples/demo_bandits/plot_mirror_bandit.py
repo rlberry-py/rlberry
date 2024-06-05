@@ -16,7 +16,7 @@ import numpy as np
 
 from rlberry.manager import ExperimentManager, read_writer_data
 from rlberry.envs.interface import Model
-from rlberry.agents.bandits import BanditWithSimplePolicy
+from rlberry_research.agents.bandits import BanditWithSimplePolicy
 from rlberry.wrappers import WriterWrapper
 import rlberry.spaces as spaces
 
@@ -158,17 +158,17 @@ class SeqHalvAgent(BanditWithSimplePolicy):
 
 # Experiment
 
-agent = ExperimentManager(
+xp_manager = ExperimentManager(
     SeqHalvAgent,
     (env_ctor, env_kwargs),
     fit_budget=100,  # we use only 100 iterations for faster example run in doc.
     n_fit=1,
     agent_name="SH",
 )
-agent.fit()
+xp_manager.fit()
 
-rewards = read_writer_data([agent], tag="reward")["value"]
-actions = read_writer_data([agent], tag="action")["value"]
+rewards = read_writer_data([xp_manager], tag="reward")["value"]
+actions = read_writer_data([xp_manager], tag="action")["value"]
 
 
 plt.boxplot([-rewards[actions == a] for a in range(6)])
@@ -178,5 +178,5 @@ plt.show()
 
 print(
     "The optimal action (fastest server) is server number ",
-    agent.agent_handlers[0].optimal_action + 1,
+    xp_manager.agent_handlers[0].optimal_action + 1,
 )

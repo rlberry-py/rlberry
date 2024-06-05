@@ -1,5 +1,3 @@
-from rlberry.envs import Chain, Pendulum
-from rlberry.envs.benchmarks.ball_exploration import PBall2D
 from rlberry.manager import ExperimentManager
 import numpy as np
 from rlberry.seeding import set_external_seed
@@ -20,15 +18,21 @@ def _make_tuple_env(env):
         env, str
     ):  # If env param is a str, we use the corresponding "by default" env, and return it as tuple
         if env == "continuous_state":
+            from rlberry_research.envs.benchmarks.ball_exploration import PBall2D
+
             env_ctor = PBall2D
             env_kwargs = {}
         elif env == "discrete_state":
+            from rlberry_scool.envs import Chain
+
             env_ctor = Chain
             env_kwargs = {}
         elif env == "vectorized_env_continuous":
             env_ctor = gym_make
             env_kwargs = dict(id="CartPole-v1")
         elif env == "continuous_action":
+            from rlberry_research.envs import Pendulum
+
             env_ctor = Pendulum
             env_kwargs = {}
         else:
@@ -60,19 +64,25 @@ def _fit_experiment_manager(agent, env="continuous_state", init_kwargs=None):
 
     train_env = _make_tuple_env(env)
     try:
-        agent = ExperimentManager(
-            agent, train_env, fit_budget=5, n_fit=1, seed=SEED, init_kwargs=init_kwargs
+        xp_manager = ExperimentManager(
+            agent,
+            train_env,
+            agent_name="test_agent",
+            fit_budget=5,
+            n_fit=1,
+            seed=SEED,
+            init_kwargs=init_kwargs,
         )
-        agent.fit()
+        xp_manager.fit()
     except Exception as exc:
-        raise RuntimeError("Agent not compatible with Agent Manager") from exc
+        raise RuntimeError("Agent not compatible with ExperimentManager") from exc
 
-    return agent
+    return xp_manager
 
 
 def _fit_agent(agent, env="continuous_state", init_kwargs=None):
     """
-    Check that the agent can fit without agentManager.
+    Check that the agent can fit without ExperimentManager.
 
     Parameters
     ----------
@@ -94,7 +104,7 @@ def _fit_agent(agent, env="continuous_state", init_kwargs=None):
         my_agent = agent(env, **init_kwargs)
         my_agent.fit(10)
     except Exception as exc:
-        raise RuntimeError("Agent can not fit without Agent Manager") from exc
+        raise RuntimeError("Agent can not fit without ExperimentManager") from exc
 
     return my_agent
 
@@ -274,7 +284,7 @@ def _check_save_load_with_manager(agent, env="continuous_state", init_kwargs=Non
         except Exception as ex:
             raise RuntimeError("Failed to load the agent file.")
 
-        # test agentManager save and load
+        # test ExperimentManager save and load
         manager.save()
         assert os.path.exists(tmpdirname)
 
@@ -325,7 +335,7 @@ def _check_save_load_without_manager(agent, env="continuous_state", init_kwargs=
 
         saving_path = tmpdirname + "/agent_test.pickle"
 
-        # test agentManager save and load
+        # test ExperimentManager save and load
         my_agent.save(saving_path)
         assert os.path.exists(tmpdirname)
 
@@ -473,8 +483,12 @@ def check_vectorized_env_agent(
 
 def check_rl_agent(agent, env="continuous_state", init_kwargs=None):
     """
-    Check agent manager compatibility  and check reproducibility/seeding.
+    Check ExperimentManager compatibility  and check reproducibility/seeding.
     Raises an exception if a check fails.
+
+    Warning
+    ----------
+    To use this function you need to install rlberry_research via : pip install git+https://github.com/rlberry-py/rlberry-research.git
 
     Parameters
     ----------
@@ -488,7 +502,7 @@ def check_rl_agent(agent, env="continuous_state", init_kwargs=None):
 
     Examples
     --------
-    >>> from rlberry.agents import UCBVIAgent
+    >>> from rlberry_scool.agents import UCBVIAgent
     >>> from rlberry.utils import check_rl_agent
     >>> check_rl_agent(UCBVIAgent) # which does not return an error.
     """
@@ -508,6 +522,10 @@ def check_rlberry_agent(agent, env="continuous_state", init_kwargs=None):
     for an agent to satisfy this check but satisfying this check give access to
     additional features in rlberry.
 
+    Warning
+    ----------
+    To use this function you need to install rlberry_research via : pip install git+https://github.com/rlberry-py/rlberry-research.git
+
     Parameters
     ----------
     agent: rlberry agent module
@@ -520,7 +538,7 @@ def check_rlberry_agent(agent, env="continuous_state", init_kwargs=None):
 
     Examples
     --------
-    >>> from rlberry.agents import UCBVIAgent
+    >>> from rlberry_scool.agents import UCBVIAgent
     >>> from rlberry.utils import check_rl_agent
     >>> check_rl_agent(UCBVIAgent) #
     """
@@ -539,6 +557,10 @@ def check_hyperparam_optimisation_agent(
     """
     Check hyperparameter optimisation compatibility with manager
     Raises an exception if a check fails.
+
+    Warning
+    ----------
+    To use this function you need to install rlberry_research via : pip install git+https://github.com/rlberry-py/rlberry-research.git
 
     Parameters
     ----------

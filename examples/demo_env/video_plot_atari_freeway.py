@@ -16,7 +16,7 @@ Agent is slightly tuned, but not optimal. This is just for illustration purpose.
 
 from rlberry.manager import ExperimentManager
 from datetime import datetime
-from rlberry.agents.torch.dqn.dqn import DQNAgent
+from rlberry_research.agents.torch.dqn.dqn import DQNAgent
 from gymnasium.wrappers.record_video import RecordVideo
 import shutil
 import os
@@ -45,7 +45,7 @@ cnn_configs = {
     "is_policy": False,  # The network should output a distribution
 }
 
-tuned_agent = ExperimentManager(
+tuned_xp = ExperimentManager(
     DQNAgent,  # The Agent class.
     (
         atari_make,
@@ -54,7 +54,7 @@ tuned_agent = ExperimentManager(
         ),
     ),  # The Environment to solve.
     init_kwargs=dict(  # Where to put the agent's hyperparameters
-        q_net_constructor="rlberry.agents.torch.utils.training.model_factory_from_env",
+        q_net_constructor="rlberry_research.agents.torch.utils.training.model_factory_from_env",
         q_net_kwargs=cnn_configs,
         max_replay_size=50000,
         batch_size=32,
@@ -76,7 +76,7 @@ tuned_agent = ExperimentManager(
 print("-------- init agent : done!--------")
 print("-------- train agent --------")
 
-tuned_agent.fit()
+tuned_xp.fit()
 
 print("-------- train agent : done!--------")
 
@@ -94,7 +94,7 @@ if "render_modes" in env.metadata:
 
 observation, info = env.reset()
 for tt in range(30000):
-    action = tuned_agent.get_agent_instances()[0].policy(observation)
+    action = tuned_xp.get_agent_instances()[0].policy(observation)
     observation, reward, terminated, truncated, info = env.step(action)
     done = terminated or truncated
     if done:
@@ -104,7 +104,7 @@ env.close()
 
 print("-------- test agent with video : done!--------")
 final_test_time = datetime.now()
-tuned_agent.save()
+tuned_xp.save()
 
 # need to move the final result inside the folder used for documentation
 os.rename("_video/temp/rl-video-episode-0.mp4", "_video/video_plot_atari_freeway.mp4")

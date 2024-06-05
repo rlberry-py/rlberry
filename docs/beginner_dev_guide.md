@@ -1,7 +1,7 @@
 (dev_guide)=
 
 ## How to contribute
-### git crash-course
+### Forking and installing rl-berry
 
 The preferred way to contribute to rlberry is to fork the main repository on GitHub, then submit a “pull request” (PR).
 
@@ -14,13 +14,19 @@ In the first few steps, we explain how to locally install rlberry, and how to se
     git clone https://github.com/YOUR_LOGIN/rlberry  # add --depth 1 if your connection is slow
     cd rlberry
     ```
-4. Install the package locally with pip
+4. Install poetry (a better version of pip needed to dev on the package). Please refer to the [doc](https://python-poetry.org/docs/basic-usage/) if needed.
     ```bash
-    pip install -e . --user
+    curl -sSL https://install.python-poetry.org | python3 -
     ```
-5. Install the development dependencies
+5. Install the development dependencies and activate the venv
     ```bash
-    pip install pytest pytest-cov flake8 black
+    poetry install --with dev,doc,torch,extras --sync
+    poetry shell #this will activate the venv, all the following commands will be executed in it.
+    ```
+    alternatively you can also use
+    ```bash
+    poetry install --with dev,doc,torch,extras --sync
+    poetry run yourcommandhere #e.g. poetry run python script.py
     ```
 6. Add the upstream remote. This saves a reference to the main rlberry repository, which you can use to keep your repository synchronized with the latest changes:
     ```bash
@@ -111,7 +117,7 @@ Before a PR can be merged, it needs to be approved. Please prefix the title of y
 
 
 * Azure pipelines are used for testing rlberry on Linux, Mac and Windows, with different dependencies and settings.
-* Readthedocs is used to build the docs for viewing.
+* github page are used to build the docs for viewing.
 
 Please note that if you want to skip the CI (azure pipeline is long to run), use `[ci skip]` in the description of the commit.
 
@@ -143,7 +149,7 @@ If you want to look at some examples, you can look at docs/index.rst file for rs
 To generate the videos for the examples, cd to the docs folder  and then use `make video`.
 
 Here is a template of the python script of a video example:
-```python
+```bash
 """
 ===============
 Some good title

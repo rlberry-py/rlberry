@@ -10,8 +10,8 @@ A demo of MountainCar environment
 """
 # sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_montain_car.jpg'
 
-from rlberry.agents.mbqvi import MBQVIAgent
-from rlberry.envs.classic_control import MountainCar
+from rlberry_scool.agents.mbqvi import MBQVIAgent
+from rlberry_research.envs.classic_control import MountainCar
 from rlberry.wrappers import DiscretizeStateWrapper
 
 _env = MountainCar()

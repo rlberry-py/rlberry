@@ -3,7 +3,7 @@
 Compare Bandit Algorithms
 =========================
 
-This example illustrate the use of compare_agents, a function that uses multiple-testing to assess whether traine agents are
+This example illustrate the use of compare_agents, a function that uses multiple-testing to assess whether trained agents are
 statistically different or not.
 
 Remark that in the case where two agents are not deemed statistically different it can mean either that they are as efficient,
@@ -15,9 +15,9 @@ import numpy as np
 
 from rlberry.manager.comparison import compare_agents
 from rlberry.manager import AgentManager
-from rlberry.envs.bandits import BernoulliBandit
+from rlberry_research.envs.bandits import BernoulliBandit
 from rlberry.wrappers import WriterWrapper
-from rlberry.agents.bandits import (
+from rlberry_research.agents.bandits import (
     IndexAgent,
     makeBoundedMOSSIndex,
     makeBoundedNPTSIndex,

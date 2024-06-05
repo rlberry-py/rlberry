@@ -13,6 +13,7 @@
 import os
 import sys
 
+
 import sphinx_gallery  # noqa
 from sphinx_gallery.sorting import ExplicitOrder
 
@@ -22,14 +23,12 @@ sys.path.insert(0, os.path.abspath("../"))
 # -- Project information -----------------------------------------------------
 
 project = "rlberry"
-copyright = "2022, rlberry team"
+copyright = "2023, rlberry team"
 author = "rlberry team"
 
+import rlberry
 
-ver_file = os.path.join("../rlberry", "_version.py")
-with open(ver_file) as f:
-    exec(f.read())
-release = __version__
+release = rlberry.__version__
 # -- General configuration ---------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be
@@ -48,22 +47,11 @@ extensions = [
     "numpydoc",
     "sphinx_gallery.gen_gallery",
     "myst_parser",
+    # "sphinx_copybutton",
 ]
 
 myst_enable_extensions = ["amsmath"]
-# myst_enable_extensions = [
-#     "amsmath",
-#     "colon_fence",
-#     "deflist",
-#     "dollarmath",
-#     "fieldlist",
-#     "html_admonition",
-#     "html_image",
-#     "replacements",
-#     "smartquotes",
-#     "substitution",
-#     "tasklist",
-# ]
+
 
 autodoc_default_options = {
     "members": True,
@@ -118,6 +106,8 @@ html_theme_path = ["themes"]
 html_logo = "../assets/logo_wide.svg"
 
 
+# syntax highlight
+
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
@@ -141,3 +131,6 @@ sphinx_gallery_conf = {
         ]
     ),
 }
+
+pygments_style = "sphinx"
+highlight_language = "python3"

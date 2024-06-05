@@ -11,8 +11,8 @@ environment.
 """
 # sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_acrobot.jpg'
 
-from rlberry.envs import Acrobot
-from rlberry.agents import RSUCBVIAgent
+from rlberry_research.envs import Acrobot
+from rlberry_research.agents import RSUCBVIAgent
 from rlberry.wrappers import RescaleRewardWrapper
 
 env = Acrobot()

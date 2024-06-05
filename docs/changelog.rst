@@ -3,12 +3,93 @@
 Changelog
 =========
 
+
 Dev version
 -----------
 
+ *nothing*
+
+
+Version 0.7.3
+-------------
+
+ *PR #454*
+
+ * remove unused librairies
+
+*PR #451*
+
+ * Moving UCBVI to rlberry_scool
+
+ *PR #438*
+
+ * move long tests to rlberry research
+
+ *PR #436 #444 #445 #447 #448 #455 #456*
+
+ * Update user guide
+ * add tests on the userguide examples
+ * removing rlberry_research references as much as possible (doc and code)
+
+Version 0.7.1
+-------------
+
+*PR #411*
+
+ * Moving "rendering" to rlberry
+
+*PR #405 #406 #408*
+
+ * fix plots
+
+*PR #404*
+
+ * add AdaStop
+
+Version 0.7.0
+-------------
+
+*PR #397*
+
+ * Automatic save after fit() in ExperienceManager
+
+*PR #396*
+
+ * Improve coverage and fix version workflow
+
+*PR #385 to #390*
+
+ * Switch from RTD to github page
+
+*PR #382*
+
+ * switch to poetry
+
+*PR #379*
+
+ * rlberry: everything for rl that is not an agent or an environment, e.g. experiment management, parallelization, statistical tools, plotting...
+ * rlberry-scool: repository for teaching materials, e.g. simplified algorithms for teaching, notebooks for tutorials for learning RL...
+ * rlberry-research: repository of agents and environments used inside Inria Scool team
+
+
+*PR #376*
+
+ * New plot_writer_data function that does not depend on seaborn and that can plot smoothed function and confidence band if scikit-fda is installed.
+
+Version 0.6.0
+-------------
+
+*PR #276*
+
+ * Non adaptive multiple tests for agent comparison.
+
 *PR #365*
 
- * Fix Sphinx version to <7
+ * Fix Sphinx version to <7.
+
+*PR #350*
+
+ * Rename AgentManager to ExperimentManager.
 
 *PR #326*
 
@@ -17,6 +98,7 @@ Dev version
 *PR #335*
 
  * Upgrade from Python3.9 -> python3.10
+
 
 Version 0.5.0
 -------------

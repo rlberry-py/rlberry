@@ -7,7 +7,7 @@ from abc import ABC, abstractmethod
 
 from rlberry.rendering.opengl_render2d import OpenGLRender2D
 from rlberry.rendering.pygame_render2d import PyGameRender2D
-from rlberry.rendering.utils import video_write
+from rlberry.rendering.utils import video_write, gif_write
 
 import rlberry
 
@@ -160,3 +160,7 @@ class RenderInterface2D(RenderInterface):
     def save_video(self, filename, framerate=25, **kwargs):
         video_data = self.get_video(framerate=framerate, **kwargs)
         video_write(filename, video_data, framerate=framerate)
+
+    def save_gif(self, filename, framerate=25, **kwargs):
+        video_data = self.get_video(framerate=framerate, **kwargs)
+        gif_write(filename, video_data)

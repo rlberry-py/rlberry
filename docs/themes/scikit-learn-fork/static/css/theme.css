@@ -28,6 +28,40 @@ p {
   hyphens: auto;
 }
 
+
+div.body div.toctree-wrapper ul {
+        padding-left: 0;
+    }
+
+    div.body li.toctree-l1 {
+        padding: 0.5em 0 0.5em 0;
+        list-style-type: none;
+        font-size: 130%;
+        font-weight: bold;
+    }
+
+    div.body li.toctree-l2 {
+        font-size: 70%;
+        list-style-type: square;
+        font-weight: normal;
+        margin-left: 40px;
+    }
+
+    div.body li.toctree-l3 {
+        font-size: 85%;
+        list-style-type: circle;
+        font-weight: normal;
+        margin-left: 40px;
+    }
+
+    div.body li.toctree-l4 {
+        margin-left: 40px;
+    }
+
+
+
+
+
 input:focus {
   outline: none;
 }
@@ -90,8 +124,16 @@ div.highlight {
 div.highlight-none{
     max-height: 300px;
     overflow-y: auto;
+    background-color: #ddd;
 }
-
+div.highlight-default{
+  max-height: 300px;
+  overflow-y: auto;
+  background-color: #ddd;
+}
+div.highlight-python{
+  background-color: #f8f8f8;
+  }
 
 div.highlight pre {
   padding: 0.2rem 0.5rem;
@@ -120,6 +162,8 @@ a.sk-landing-btn {
 a.sk-landing-btn:hover {
   background-color: #ffb05f;
 }
+
+
 
 .sk-donate-btn {
   cursor: pointer;
@@ -1249,10 +1293,41 @@ table.sk-sponsor-table td {
   text-align: center
 }
 
+
+.mainmenubtn {
+    background-color: skyblue;
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding:20px;
+    margin-top:20px;
+}
+.mainmenubtn:hover {
+    background-color: blue;
+    }
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+.dropdown-child {
+    display: none;
+    background-color: skyblue;
+    min-width: 200px;
+}
+.dropdown-child a {
+    color: blue;
+    padding: 20px;
+    text-decoration: none;
+    display: block;
+}
+.dropdown:hover .dropdown-child {
+    display: block;
+}
+
 /* pygments - highlighting */
 
 .highlight .hll { background-color: #ffffcc }
-.highlight  { background: #f8f8f8; }
+.highlight  { background: none; }
 .highlight .c { color: #408090; font-style: italic } /* Comment */
 .highlight .err { border: 1px solid #FF0000 } /* Error */
 .highlight .k { color: #007020; font-weight: bold } /* Keyword */

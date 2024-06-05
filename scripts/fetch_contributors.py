@@ -15,7 +15,6 @@ REPO_FOLDER = Path(path.abspath(__file__)).parent.parent
 
 
 MEMBERS = [
-    "sauxpa",
     "TimotheeMathieu",
     "omardrwch",
     "xuedong",
@@ -23,6 +22,7 @@ MEMBERS = [
     "yfletberliac",
     "mmcenta",
     "menardprr",
+    "sauxpa",
     "riccardodv",
     "AleShi94",
     "KohlerHECTOR",
@@ -30,6 +30,7 @@ MEMBERS = [
     "riiswa",
     "brahimdriss",
     "RemyDegenne",
+    "YannBerthelot",
 ]
 
 

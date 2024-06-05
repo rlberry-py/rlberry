@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from rlberry.envs import GridWorld, Chain
+from rlberry_research.envs import GridWorld, Chain
 from rlberry.utils.check_env import check_env
 from rlberry.utils.check_agent import (
     check_rl_agent,
@@ -9,7 +9,8 @@ from rlberry.utils.check_agent import (
 )
 from rlberry.spaces import Box, Dict, Discrete
 import gymnasium as gym
-from rlberry.agents import ValueIterationAgent, UCBVIAgent
+from rlberry_scool.agents import ValueIterationAgent
+from rlberry_scool.agents import UCBVIAgent
 
 
 class ActionDictTestEnv(gym.Env):
@@ -92,6 +93,6 @@ def test_error_message_check_agent():
         check_rl_agent(ValueIterationAgent, "not_implemented")
     with pytest.raises(ValueError, match=msg):
         check_rl_agent(ValueIterationAgent, 42)
-    msg = "Agent not compatible with Agent Manager"
+    msg = "Agent not compatible with ExperimentManager"
     with pytest.raises(RuntimeError, match=msg):
         check_rl_agent(DummyAgent)

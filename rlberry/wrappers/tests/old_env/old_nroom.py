@@ -2,7 +2,7 @@ import math
 import numpy as np
 import rlberry.spaces as spaces
 from rlberry.wrappers.tests.old_env.old_gridworld import Old_GridWorld
-from rlberry.rendering import Scene, GeometricPrimitive
+from rlberry_research.rendering import Scene, GeometricPrimitive
 
 import rlberry
 

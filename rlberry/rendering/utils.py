@@ -1,4 +1,8 @@
 import numpy as np
+import rlberry
+
+logger = rlberry.logger
+import imageio
 
 
 _FFMPEG_INSTALLED = True
@@ -6,10 +10,6 @@ try:
     import ffmpeg
 except Exception:
     _FFMPEG_INSTALLED = False
-
-import rlberry
-
-logger = rlberry.logger
 
 
 def video_write(fn, images, framerate=60, vcodec="libx264"):
@@ -68,6 +68,39 @@ def video_write(fn, images, framerate=60, vcodec="libx264"):
         logger.warning(
             "Not possible to save \
 video, due to exception: {}".format(
+                str(ex)
+            )
+        )
+
+
+def gif_write(fn, images):
+    """
+    Save list of images to a gif file
+
+    Parameters
+    ----------
+    fn : string
+        filename
+    images : list or np.array
+        list of images to save to a gif.
+    """
+
+    try:
+        if len(images) == 0:
+            logger.warning("Calling gif_write() with empty images.")
+            return
+
+        if not isinstance(images, np.ndarray):
+            images = np.asarray(images)
+
+        with imageio.get_writer(fn, mode="I") as writer:
+            for frame in images:
+                writer.append_data(frame)
+
+    except Exception as ex:
+        logger.warning(
+            "Not possible to save \
+gif, due to exception: {}".format(
                 str(ex)
             )
         )

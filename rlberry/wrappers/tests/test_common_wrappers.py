@@ -1,17 +1,18 @@
 import numpy as np
 import pytest
 from rlberry import spaces
-from rlberry.agents import RSUCBVIAgent
-from rlberry.envs.classic_control import MountainCar
-from rlberry.envs.finite import FiniteMDP, GridWorld
-from rlberry.exploration_tools.discrete_counter import DiscreteCounter
+from rlberry_research.agents import RSUCBVIAgent
+from rlberry_research.envs.classic_control import MountainCar
+from rlberry_research.envs.finite import GridWorld
+from rlberry.envs.finite_mdp import FiniteMDP
+from rlberry_research.exploration_tools.discrete_counter import DiscreteCounter
 from rlberry.seeding import Seeder
 from rlberry.wrappers.autoreset import AutoResetWrapper
 from rlberry.wrappers.discrete2onehot import DiscreteToOneHotWrapper
 from rlberry.wrappers.discretize_state import DiscretizeStateWrapper
 from rlberry.wrappers.rescale_reward import RescaleRewardWrapper
 from rlberry.wrappers.uncertainty_estimator_wrapper import UncertaintyEstimatorWrapper
-from rlberry.wrappers.vis2d import Vis2dWrapper
+from rlberry_research.wrappers.vis2d import Vis2dWrapper
 from rlberry.wrappers.gym_utils import OldGymCompatibilityWrapper
 
 

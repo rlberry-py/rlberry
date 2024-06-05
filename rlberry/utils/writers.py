@@ -35,7 +35,7 @@ class DefaultWriter:
     log_interval : int
         Minimum number of seconds between consecutive logs (with logging module).
     style_log: str
-        Possible values are "multi_line" and "one_line". Define the style of the logs.
+        Possible values are "multi_line", "one_line" and "progressbar". Define the style of the logs.
     tensorboard_kwargs : Optional[dict]
         Parameters for tensorboard SummaryWriter. If provided, DefaultWriter
         will behave as tensorboard.SummaryWriter, and will keep utilities to handle
@@ -103,9 +103,18 @@ class DefaultWriter:
 
     @property
     def data(self):
-        df = pd.DataFrame(columns=("name", "tag", "value", "global_step"))
+        df = None
         for tag in self._data:
-            df = pd.concat([df, pd.DataFrame(self._data[tag])], ignore_index=True)
+            if df is None:
+                df = pd.DataFrame(self._data[tag])
+            else:
+                df = pd.concat(
+                    [df, pd.DataFrame(self._data[tag])],
+                    ignore_index=True,
+                )
+        if df is None:
+            # if there are no data, return empty dataframe
+            df = pd.DataFrame()
         return df
 
     def set_max_global_step(self, max_global_step):
@@ -430,6 +439,8 @@ class extending_tqdm(tqdm):
 
     def set_description(self, desc=None, refresh=True):
         screen_width, _ = _screen_shape_wrapper()(sys.stdout)
+        if screen_width is None:
+            screen_width = 600
         max_len = screen_width
         if len(desc) > 1:
             if not self.subbar:
