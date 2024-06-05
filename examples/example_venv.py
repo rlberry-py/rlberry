@@ -14,7 +14,6 @@ def run_mushroom():
     from mushroom_rl.environments import generate_simple_chain
     from mushroom_rl.policy import EpsGreedy
     from mushroom_rl.utils.parameters import Parameter
-
     from mushroom_rl.utils.dataset import compute_J
 
     np.random.seed()
