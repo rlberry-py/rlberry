@@ -45,7 +45,7 @@ We provide you a number of tools to help you achieve **reproducibility**, **stat
 Install the latest (minimal) version for a stable release.
 
 ```bash
-pip install -U git+https://github.com/rlberry-py/rlberry.git@v0.3.0#egg=rlberry[default]
+pip install -U rlberry
 ```
 
 The documentation includes more [installation instructions](https://rlberry-py.github.io/rlberry/installation.html).
