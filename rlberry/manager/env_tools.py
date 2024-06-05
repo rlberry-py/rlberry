@@ -81,22 +81,35 @@ def __func_to_script(func):
 
     source = "\n" + dedent("\n".join(fun_source.split("\n")[2:]))
 
+    source = dedent(source)
+
     filename = os.path.join(temp_dir, m.group(0) + ".py")
 
     with open(filename, "w") as f:
-        f.write(dedent(source))
+        f.write(source)
     return filename
 
 
-def with_venv(import_libs, python_ver=None):
+def with_venv(import_libs=None, requirements=None, python_ver=None, verbose=False):
     def wrap(func):
-        assert NOX_INSTALLED
+        assert (
+            NOX_INSTALLED
+        ), "module not found: nox. nox must be installed to use rlberry's venv tools"
         filename = __func_to_script(func)
 
-        @nox.session(name=m.group(0), python=python_ver)
+        assert (
+            import_libs or requirement or pyproject_toml
+        ), "At least one of import_libs or requirements must be not None"
+
+        @nox.session(name=filename.split(".")[0], python=python_ver)
         def myscript(session):
-            for lib in import_libs:
-                session.install(lib, silent=True)
+            if requirements:
+                session.install("-r", requirements)
+            else:
+                for lib in import_libs:
+                    session.install(lib, silent=not (verbose))
+            deps = session.run("python", "-m", "pip", "freeze")
+            print(deps)
             session.run("python", filename, silent=False)
 
         return myscript
@@ -117,13 +130,11 @@ def run_venv_xp(venv_dir_name="rlberry_venvs", verbose=False):
     args.append("-r")
 
     subprocess.run(
-        ["nox", "-f", run_file]
+        ["nox", "--reuse-venv=yes", "-f", run_file]
         + args
         + ["--envdir", os.path.join(os.path.dirname(run_file), venv_dir_name)],
         check=True,
     )
-
-    temp_dir.cleanup()
 
 
 def with_guix(
