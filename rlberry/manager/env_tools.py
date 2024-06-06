@@ -16,6 +16,9 @@ temp_dir = "rlberry_venvs"
 
 
 def __func_to_script(func):
+    """
+    Transform a function to a script string written in a python file.
+    """
     fun_source = inspect.getsource(func)
     name = fun_source.split("\n")[1]  # skip decorator
 
@@ -34,6 +37,39 @@ def __func_to_script(func):
 
 
 def with_venv(import_libs=None, requirements=None, python_ver=None, verbose=False):
+    """
+    Decorator to run the script in a function using a virtual environment.
+
+    Parameters
+    ----------
+
+    import_libs: list of str or None, default = None
+        libraries to install in the virtual environment.
+
+    requirements: str or None, default = None
+        requirement file containing dependencies.
+
+    python_ver: str, default=None
+        version of python to use in a virtual environment. For example "3.11"
+
+    verbose: boolean, default=False
+        verbose installation.
+
+    Examples
+    --------
+    >>> from rlberry.manager import with_venv, run_venv_xp
+    >>>
+    >>> @with_venv(import_libs=["tqdm"])
+    >>> def run_tqdm():
+    >>>     from tqdm import tqdm  # noqa
+    >>>     for i in tqdm(range(100)):
+    >>>         sleep(0.01)
+    >>>
+    >>> def test_venv():
+    >>>     run_venv_xp()
+
+    """
+
     def wrap(func):
         assert (
             NOX_INSTALLED
@@ -67,6 +103,17 @@ def with_venv(import_libs=None, requirements=None, python_ver=None, verbose=Fals
 
 
 def run_venv_xp(venv_dir_name="rlberry_venvs", verbose=False):
+    """
+    Function to launch experiments in virtual environments.
+
+    Parameters
+    ----------
+    venv_dir_name: str, default="rlberry_venvs"
+        name of the directory containing the virtual environments and requirement files.
+
+    verbose: boolean, default=False
+        verbosity level.
+    """
     assert NOX_INSTALLED
     frame = inspect.stack()[1]
     module = inspect.getmodule(frame[0])
