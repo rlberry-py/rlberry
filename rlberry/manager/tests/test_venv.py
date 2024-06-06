@@ -1,9 +1,9 @@
-from rlberry.manager import with_venv
+from rlberry.manager import with_venv, run_venv_xp
 
 
-@with_venv(import_libs=["rlberry"])
+@with_venv(import_libs=["tqdm"])
 def run_sb():
-    import rlberry  # noqa
+    from tqdm import tqdm  # noqa
 
 
 def test_venv():
