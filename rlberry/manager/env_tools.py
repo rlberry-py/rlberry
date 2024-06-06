@@ -26,7 +26,16 @@ def __func_to_script(func):
         "(?<= )\w+", name
     )  # isolate the name of function to use as script name
 
-    source = "\n" + dedent("\n".join(fun_source.split("\n")[2:]))
+    source = "\n"
+
+    # add path to python path to be able to import local modules
+    source += "import sys\n"
+    source += "import os\n"
+
+    source += "SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))\n"
+    source += "sys.path.append(os.path.dirname(SCRIPT_DIR))\n"
+
+    source += dedent("\n".join(fun_source.split("\n")[2:]))
     source = dedent(source)
 
     filename = os.path.join(temp_dir, m.group(0) + ".py")
