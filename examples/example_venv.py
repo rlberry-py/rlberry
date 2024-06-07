@@ -1,3 +1,15 @@
+"""
+================================================
+Using multiple virtual environments with rlberry
+================================================
+
+This example illustrate how to use the "with_venv" decorator
+in order to automatically construct and use virtual environments
+for RL experimentation with several separated environments.
+
+"""
+
+
 from rlberry.manager import with_venv, run_venv_xp
 
 
