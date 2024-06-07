@@ -139,7 +139,7 @@ Virtual environment Utilities
    :template: function.rst
 
    manager.with_venv
-   managet.run_venv_xp
+   manager.run_venv_xp
 
 Writer Utilities
 ----------------
