@@ -45,7 +45,7 @@ We provide you a number of tools to help you achieve **reproducibility**, **stat
 Install the latest (minimal) version for a stable release.
 
 ```bash
-pip install rlberry
+pip install -U rlberry
 ```
 
 The documentation includes more [installation instructions](https://rlberry-py.github.io/rlberry/installation.html).

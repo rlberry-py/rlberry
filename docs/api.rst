@@ -131,6 +131,15 @@ Manager Utilitis
 
    manager.preset_manager
 
+Virtual environment Utilities
+-----------------------------
+
+.. autosummary::
+   :toctree: generated/
+   :template: function.rst
+
+   manager.with_venv
+   manager.run_venv_xp
 
 Writer Utilities
 ----------------
