@@ -7,4 +7,4 @@ def run_tqdm():
 
 
 def test_venv():
-    run_venv_xp()
+    run_venv_xp(verbose=True)
