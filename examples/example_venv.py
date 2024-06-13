@@ -7,13 +7,20 @@ This example illustrate how to use the "with_venv" decorator
 in order to automatically construct and use virtual environments
 for RL experimentation with several separated environments.
 
+The decorator `with_venv` is used to generate scripts at compile time
+and then are run via `run_venv_xp`.
+Remark: the functions 'run_sb' and 'run_mushroom' are not directly called
+and are only there to give the script's text.
 """
 
 
 from rlberry.manager import with_venv, run_venv_xp
 
 
-@with_venv(import_libs=["numpy", "mushroom_rl"])
+# Decorator with_venv will create a script to be run in the virtual environment with
+# the libraries in the import_libs list. Here we want to create a virtual environment
+# containing mushroom_rl library and run an example script taken from mushroom_rl doc.
+@with_venv(import_libs=["numpy", "mushroom_rl"], venv_dir_name="rlberry_venvs")
 def run_mushroom():
     """
     Simple script to solve a simple chain with Q-Learning.
@@ -63,7 +70,11 @@ def run_mushroom():
     logger.info(f"J final: {J}")
 
 
-@with_venv(import_libs=["stable-baselines3"], python_ver="3.9")
+# Here we want to create a virtual environment containing stable-baselines3 library
+# and run an example script taken from stable-baselines3 doc.
+@with_venv(
+    import_libs=["stable-baselines3"], venv_dir_name="rlberry_venvs", python_ver="3.9"
+)
 def run_sb():
     import gymnasium as gym
 
@@ -85,4 +96,5 @@ def run_sb():
 
 
 if __name__ == "__main__":
-    run_venv_xp()
+    # Collect all the scripts from the directory rlberry_venvs and tun them.
+    run_venv_xp(venv_dir_name="rlberry_venvs")

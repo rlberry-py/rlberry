@@ -45,7 +45,13 @@ def __func_to_script(func):
     return filename
 
 
-def with_venv(import_libs=None, requirements=None, python_ver=None, verbose=False):
+def with_venv(
+    import_libs=None,
+    requirements=None,
+    venv_dir_name="rlberry_venvs",
+    python_ver=None,
+    verbose=False,
+):
     """
     Decorator to run the script in a function using a virtual environment.
 
@@ -54,10 +60,14 @@ def with_venv(import_libs=None, requirements=None, python_ver=None, verbose=Fals
 
     import_libs: list of str or None, default = None
         libraries to install in the virtual environment.
+        If import_libs and requirements are both not None, requirements is used.
 
     requirements: str or None, default = None
-        requirement file containing dependencies.
+        requirement file containing dependencies. If not None, this takes precedence on
+        import_libs.
 
+    venv_fir_name: str, default = "rlberry_venvs"
+        name of the directory containing the virtual environments and requirement files.
     python_ver: str, default=None
         version of python to use in a virtual environment. For example "3.11"
 
@@ -113,7 +123,7 @@ def with_venv(import_libs=None, requirements=None, python_ver=None, verbose=Fals
 
 def run_venv_xp(venv_dir_name="rlberry_venvs", verbose=False):
     """
-    Function to launch experiments in virtual environments.
+    Function to launch experiments in the current script file in virtual environments.
 
     Parameters
     ----------
