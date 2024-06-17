@@ -86,7 +86,7 @@ jobs:
   condition: or(in(variables['Build.SourceBranch'], 'refs/heads/main'), eq(dependencies.checkPrLabel.outputs['checkPrLabel.prHasCILabel'], true))
 
   pool:
-    vmImage: 'macOS-11'
+    vmImage: 'macOS-14'
   strategy:
     matrix:
       Python311:
