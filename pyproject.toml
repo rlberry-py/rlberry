@@ -37,7 +37,7 @@ opencv-python = {version="*", optional=true}
 ale-py = {version="*", optional=true}
 stable-baselines3 = {version="*", optional=true}
 tensorboard = {version="*", optional=true}
-torch = [{version=">=2.0.0", optional=true}
+torch = {version=">=2.0.0", optional=true}
 pandas = "*"
 scikit-fda = {version="^0.9", optional=true}
 nox = {version="*", optional=true}
