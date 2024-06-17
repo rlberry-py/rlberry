@@ -20,6 +20,7 @@ classifiers=[
 
 [tool.poetry.dependencies]
 python = "^3.9, <3.13"
+numpy = "<2.0.0"
 scipy = "*"
 pygame-ce = "*"
 matplotlib = "*"
