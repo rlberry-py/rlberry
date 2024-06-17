@@ -8,6 +8,6 @@ def run_tqdm():
     from tqdm import tqdm  # noqa
 
 
-@pytest.mark.skip(sys.platform == "darwin", reason="bug with MacOS_14")
+@pytest.mark.skipif(sys.platform == "darwin", reason="bug with MacOS_14")
 def test_venv():
     run_venv_xp(verbose=True)
