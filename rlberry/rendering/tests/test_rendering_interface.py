@@ -96,6 +96,7 @@ def test_render2d_interface_wrapped(ModelClass):
             pass
 
 
+@pytest.mark.xfail(sys.platform == "darwin", reason="bug with Mac with pygame")
 def test_render_appelGold():
     env = AppleGold()
     env.render_mode = "human"
@@ -120,6 +121,7 @@ def test_render_appelGold():
         pass
 
 
+@pytest.mark.xfail(sys.platform == "darwin", reason="bug with Mac with pygame")
 def test_write_gif():
     env = Chain(10, 0.3)
     env.enable_rendering()
