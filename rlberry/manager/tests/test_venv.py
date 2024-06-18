@@ -1,5 +1,3 @@
-import pytest
-import sys
 from rlberry.manager import with_venv, run_venv_xp
 
 
@@ -8,6 +6,5 @@ def run_tqdm():
     from tqdm import tqdm  # noqa
 
 
-@pytest.mark.skipif(sys.platform == "darwin", reason="bug with MacOS_14")
 def test_venv():
     run_venv_xp(verbose=True)
