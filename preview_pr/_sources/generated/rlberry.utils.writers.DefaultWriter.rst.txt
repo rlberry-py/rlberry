@@ -1,0 +1,12 @@
+﻿:mod:`rlberry.utils.writers`.DefaultWriter
+=================================================
+
+.. currentmodule:: rlberry.utils.writers
+
+.. autoclass:: DefaultWriter
+
+.. include:: rlberry.utils.writers.DefaultWriter.examples
+
+.. raw:: html
+
+    <div class="clearer"></div>
