@@ -47,7 +47,7 @@ def test_instantiation(ModelClass):
         assert env.is_render_enabled()
 
 
-@pytest.mark.xfail(sys.platform != "linux", reason="bug with mac and windows???")
+@pytest.mark.skipif(sys.platform != "linux", reason="bug with mac and windows???")
 @pytest.mark.parametrize("ModelClass", classes)
 def test_render2d_interface(ModelClass):
     env = ModelClass()
@@ -71,7 +71,7 @@ def test_render2d_interface(ModelClass):
                 env.clear_render_buffer()
 
 
-@pytest.mark.xfail(sys.platform != "linux", reason="bug with mac and windows???")
+@pytest.mark.skipif(sys.platform != "linux", reason="bug with mac and windows???")
 @pytest.mark.parametrize("ModelClass", classes)
 def test_render2d_interface_wrapped(ModelClass):
     env = Wrapper(ModelClass())
@@ -204,7 +204,7 @@ def test_gridworld_rendering_gif(rendering_tool):
 #             pass
 
 
-@pytest.mark.xfail(sys.platform == "darwin", reason="bug with Mac with pygame")
+@pytest.mark.skipif(sys.platform == "darwin", reason="bug with Mac with pygame")
 @pytest.mark.parametrize("rendering_tool", RENDERING_TOOL)
 def test_gridworld_rendering_screen(rendering_tool):
     env = GridWorld(7, 10, walls=((2, 2), (3, 3)))
