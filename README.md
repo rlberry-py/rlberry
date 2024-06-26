@@ -12,7 +12,7 @@
 <!-- The badges -->
 <p align="center">
    <a href="https://pypi.org/project/rlberry/">
-      <img alt="Python Version" src="https://img.shields.io/badge/python-3.10-blue">
+      <img alt="Python Version" src="https://img.shields.io/badge/python-3.11-blue">
    </a>
    <a href="https://img.shields.io/github/contributors/rlberry-py/rlberry">
       <img alt="contributors" src="https://img.shields.io/github/contributors/rlberry-py/rlberry">
@@ -22,36 +22,6 @@
      </a>
 </p>
 
-<p align="center">
-   <!-- <a href="https://img.shields.io/pypi/pyversions/rlberry">
-      <img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/rlberry">
-   </a> -->
-</p>
-
-<p align="center">
-   <!-- <a href="https://pypi.org/project/rlberry/">
-      <img alt="PyPI" src="https://img.shields.io/pypi/v/rlberry">
-   </a> -->
-   <!-- <a href="https://img.shields.io/pypi/wheel/rlberry">
-      <img alt="PyPI - Wheel" src="https://img.shields.io/pypi/wheel/rlberry">
-   </a> -->
-   <!-- <a href="https://img.shields.io/pypi/status/rlberry">
-      <img alt="PyPI - Status" src="https://img.shields.io/pypi/status/rlberry">
-   </a> -->
-   <!-- <a href="https://img.shields.io/pypi/dm/rlberry">
-      <img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/rlberry">
-   </a> -->
-   <!-- <a href="https://zenodo.org/badge/latestdoi/304451364">
-      <img src="https://zenodo.org/badge/304451364.svg" alt="DOI">
-   </a> -->
-</p>
-
-<p align="center">
-   <a href="https://colab.research.google.com/github/rlberry-py/notebooks/blob/main/introduction_to_rlberry.ipynb">
-      <b>Try it on Google Colab!</b>
-      <img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg">
-   </a>
-</p>
 
 <!-- Horizontal rule -->
 <hr>
@@ -68,12 +38,14 @@ environments etc etc!
 that you can spend most of your time developing agents.
 `rlberry` also provides implementations of several RL agents, benchmark environments and many other useful tools.
 
+We provide you a number of tools to help you achieve **reproducibility**, **statistically comparisons** of RL agents, and **nice visualization**.
+
 ## Installation
 
-Install the latest version for a stable release.
+Install the latest (minimal) version for a stable release.
 
 ```bash
-pip install rlberry
+pip install -U rlberry
 ```
 
 The documentation includes more [installation instructions](https://rlberry-py.github.io/rlberry/installation.html).
@@ -81,19 +53,19 @@ The documentation includes more [installation instructions](https://rlberry-py.g
 
 ## Getting started
 
-In our [documentation](https://rlberry-py.github.io/rlberry/), you will find [quick starts](https://rlberry-py.github.io/rlberry/basics/quick_start_rl/quickstart.html#quick-start) to the library and a [user guide](https://rlberry-py.github.io/rlberry/user_guide.html) with a few tutorials on using rlberry. See also the [stable documentation](https://rlberry-py.github.io/rlberry/stable/) for the documentation corresponding to the last release.
+In our [dev documentation](https://rlberry-py.github.io/rlberry/), you will find [quick starts](https://rlberry-py.github.io/rlberry/basics/quick_start_rl/quickstart.html#quick-start) to the library and a [user guide](https://rlberry-py.github.io/rlberry/user_guide.html) with a few tutorials on using rlberry, and some [examples](https://rlberry-py.github.io/rlberry/auto_examples/index.html). See also the [stable documentation](https://rlberry-py.github.io/rlberry/stable/) for the documentation corresponding to the last release.
 
-Also, we provide a handful of notebooks on [Google colab](https://colab.research.google.com/) as examples to show you
-how to use `rlberry`:
-
-| Content | Description | Link |
-|-|-|-|
-| Introduction to `rlberry` | How to create an agent, optimize its hyperparameters and compare to a baseline.| <a href="https://colab.research.google.com/github/rlberry-py/notebooks/blob/main/introduction_to_rlberry.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg"></a>|
-| Evaluating and optimizing agents | Train a REINFORCE agent and optimize its hyperparameters|  <a href="https://colab.research.google.com/github/rlberry-py/notebooks/blob/main/rlberry_evaluate_and_optimize_agent.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg"></a>
 
 ## Changelog
 
 See the [changelog](https://rlberry-py.github.io/rlberry/changelog.html) for a history of the chages made to rlberry.
+
+## Other rlberry projects
+
+[rlberry-scool](https://github.com/rlberry-py/rlberry-scool) : It’s the repository used for teaching purposes. These are mainly basic agents and environments, in a version that makes it easier for students to learn.
+
+[rlberry-research](https://github.com/rlberry-py/rlberry-research) : It’s the repository where our research team keeps some agents, environments, or tools compatible with rlberry. It’s a permanent “work in progress” repository, and some code may be not maintained anymore.
+
 
 ## Citing rlberry
 
@@ -109,13 +81,6 @@ If you use `rlberry` in scientific publications, we would appreciate citations u
     year = {2021}
 }
 ```
-
-
-## Development notes
-
-The modules listed below are experimental at the moment, that is, they are not thoroughly tested and are susceptible to evolve.
-
-* `None`: currently, nothing is experimental here
 
 ## About us
 This project was initiated and is actively maintained by [INRIA SCOOL team](https://team.inria.fr/scool/).

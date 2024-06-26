@@ -149,7 +149,7 @@ If you want to look at some examples, you can look at docs/index.rst file for rs
 To generate the videos for the examples, cd to the docs folder  and then use `make video`.
 
 Here is a template of the python script of a video example:
-```python
+```bash
 """
 ===============
 Some good title

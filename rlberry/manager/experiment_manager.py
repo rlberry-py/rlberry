@@ -599,6 +599,7 @@ class ExperimentManager:
         eval_kwargs = eval_kwargs or self.eval_kwargs
         if not n_simulations:
             n_simulations = 2 * self.n_fit
+        logger.info(f"Computing {n_simulations} evaluations.")
         values = []
 
         if verbose:
@@ -626,11 +627,6 @@ class ExperimentManager:
                 return []
             # Update eval_kwargs with n_simulations parameter
             eval_kwargs_with_n_simulations = eval_kwargs.copy()
-            if "n_simulations" in eval_kwargs:
-                # Issue a warning that n_simulations is overwritten
-                logger.info(
-                    "Warning: n_simulations parameter in eval_kwargs is being overwritten with 1."
-                )
             eval_kwargs_with_n_simulations["n_simulations"] = 1
             values.append(agent.eval(**eval_kwargs_with_n_simulations))
             if verbose:

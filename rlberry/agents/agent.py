@@ -124,7 +124,7 @@ class Agent(ABC):
     @property
     def writer(self):
         """
-        Writer object to log the output (e.g. tensorboard SummaryWriter).
+        Writer object to log the output (e.g. tensorboard SummaryWriter)..
         """
         return self._writer
 
@@ -331,6 +331,8 @@ class Agent(ABC):
         # If overridden, save() method must also be overriden.
         """Load agent object from filepath.
 
+        If overridden, save() method must also be overriden.
+
         Parameters
         ----------
         filename: str
@@ -418,7 +420,6 @@ class AgentWithSimplePolicy(Agent):
     The :meth:`policy` method takes an observation as input and returns an action.
 
     .. note::
-
         | 1 - Abstract Class : can't be cannot be instantiated. The abstract methods have to be overwriten by the 'inherited class' agent.
         | 2 - Classes that implements this interface can send `**kwargs` to initiate :code:`Agent.__init__()` (:class:`~rlberry.agents.Agent`), but the keys must match the parameters.
 
@@ -444,6 +445,9 @@ class AgentWithSimplePolicy(Agent):
         Used by :class:`~rlberry.manager.ExperimentManager`.
     _thread_shared_data : dict, optional
         Used by :class:`~rlberry.manager.ExperimentManager` to share data across Agent instances created in different threads.
+    **kwargs : dict
+        Classes that implement this interface must send ``**kwargs``
+        to :code:`AgentWithSimplePolicy.__init__()`.
 
     Attributes
     ----------
@@ -454,7 +458,7 @@ class AgentWithSimplePolicy(Agent):
     eval_env : :class:`gymnasium.Env` or tuple (constructor, kwargs)
         Environment on which to evaluate the agent. If None, copied from env.
     writer : object, default: None
-        Writer object to log the output (e.g. tensorboard SummaryWriter).
+        Writer object to log the output(e.g. tensorboard SummaryWriter).
     seeder : :class:`~rlberry.seeding.seeder.Seeder`, int, or None
         Seeder/seed for random number generation.
     rng : :class:`numpy.random._generator.Generator`
@@ -465,7 +469,7 @@ class AgentWithSimplePolicy(Agent):
         Directory that the agent can use to store data.
     unique_id : str
         Unique identifier for the agent instance. Can be used, for example,
-        to create files/directories for the agent to log data safely.
+        to create files/directories for the agent to log data safely..
     thread_shared_data : dict
         Data shared by agent instances among different threads.
 
@@ -491,19 +495,15 @@ class AgentWithSimplePolicy(Agent):
     def policy(self, observation):
         """
         Abstract method.
-
         The policy function takes an observation from the environment and returns an action.
         The specific implementation of the policy function depends on the agent's learning algorithm
         or strategy, which can be deterministic or stochastic.
-
         Parameters
         ----------
         observation (any): An observation from the environment.
-
         Returns
         -------
         action (any): The action to be taken based on the provided observation.
-
         Notes
         -----
         The data type of 'observation' and 'action' can vary depending on the specific agent
@@ -618,6 +618,8 @@ class AgentTorch(Agent):
         # Overwrite the 'save' method to manage CPU and GPU with torch agent
         # If overridden, the load() method must also be overriden.
         """
+        ----- documentation from original save -----
+
         Save agent object. By default, the agent is pickled.
 
         Before saving, consider setting writer to None if it can't be pickled (tensorboard writers
@@ -682,7 +684,9 @@ class AgentTorch(Agent):
     def load(cls, filename, **kwargs):
         # Overwrite 'load' method to manage CPU vs GPU with torch agent.
         # If overridden, save() method must also be overriden.
-        """Load agent object from filepath.
+        """
+        ----- documentation from original load -----
+        Load agent object.
 
         Parameters
         ----------

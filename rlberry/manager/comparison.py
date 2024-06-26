@@ -7,11 +7,190 @@ from rlberry.manager import ExperimentManager
 from rlberry.seeding import Seeder
 import pathlib
 
+from adastop import MultipleAgentsComparator
+
 logger = rlberry.logger
 
-# TODO : be able to compare agents from pickle files.
+
+class AdastopComparator(MultipleAgentsComparator):
+    """
+    Compare sequentially agents, with possible early stopping.
+    At maximum, there can be n times K fits done.
+
+    See adastop library for more details (https://github.com/TimotheeMathieu/adastop)
+
+    Parameters
+    ----------
+    n: int, or array of ints of size self.n_agents, default=5
+        If int, number of fits before each early stopping check. If array of int, a
+        different number of fits is used for each agent.
+
+    K: int, default=5
+        number of check.
+
+    B: int, default=None
+        Number of random permutations used to approximate permutation distribution.
+
+    comparisons: list of tuple of indices or None
+        if None, all the pairwise comparison are done.
+        If = [(0,1), (0,2)] for instance, the compare only 0 vs 1  and 0 vs 2
+
+    alpha: float, default=0.01
+        level of the test
+
+    beta: float, default=0
+        power spent in early accept.
+
+    seed: int or None, default = None
+
+    Attributes
+    ----------
+    agent_names: list of str
+        list of the agents' names.
+    managers_paths: dictionary
+        managers_paths[agent_name] is a list of the paths to the trained experiment managers. Can be loaded with ExperimentManager.load.
+    decision: dict
+        decision of the tests for each comparison, keys are the comparisons and values are in {"equal", "larger", "smaller"}.
+    n_iters: dict
+        number of iterations (i.e. number of fits) used for each agent. Keys are the agents' names and values are ints.
+    """
+
+    def __init__(
+        self,
+        n=5,
+        K=5,
+        B=10000,
+        comparisons=None,
+        alpha=0.01,
+        beta=0,
+        seed=None,
+    ):
+        MultipleAgentsComparator.__init__(self, n, K, B, comparisons, alpha, beta, seed)
+        self.managers_paths = {}
+
+    def compare(self, manager_list, n_evaluations=50, verbose=True):
+        """
+        Run Adastop on the managers from manager_list
+
+        Parameters
+        ----------
+        manager_list: list of ExperimentManager kwargs
+            List of manager containing agents we want to compare.
+        n_evaluations: int, default = 50
+            number of evaluations used to estimate the score used for AdaStop.
+        verbose: bool
+            Print Steps.
+        Returns
+        -------
+        decisions: dictionary with comparisons as index and with values str in {"equal", "larger", "smaller", "continue"}
+           Decision of the test at this step.
+        """
+        eval_values = {
+            ExperimentManager(**manager).agent_name: [] for manager in manager_list
+        }
+        self.managers_paths = {
+            ExperimentManager(**manager).agent_name: [] for manager in manager_list
+        }
+        self.n_evaluations = n_evaluations
+        seeder = Seeder(self.rng.randint(10000))
+        seeders = seeder.spawn(len(manager_list) * self.K + 1)
+        self.rng = seeders[-1].rng
+        for k in range(self.K):
+            eval_values = self._fit_evaluate(manager_list, eval_values, seeders)
+            self.partial_compare(eval_values, verbose=True)
+            if self.is_finished:
+                break
+
+        logger.info("Test finished")
+        logger.info("Results are ")
+        print(self.get_results())
+
+    def print_results(self):
+        """
+        Print the results of the test.
+        """
+        print("Number of scores used for each agent:")
+        for key in self.n_iters:
+            print(key + ":" + str(self.n_iters[key]))
+
+        print("")
+        print("Mean of scores of each agent:")
+        for key in self.eval_values:
+            print(key + ":" + str(np.mean(self.eval_values[key])))
+
+        print("")
+        print("Decision for each comparison:")
+        for c in self.comparisons:
+            print(
+                "{0} vs {1}".format(self.agent_names[c[0]], self.agent_names[c[1]])
+                + ":"
+                + str(self.decisions[str(c)])
+            )
+
+    def _fit_evaluate(self, managers, eval_values, seeders):
+        """
+        fit rlberry agents.
+        """
+        if isinstance(self.n, int):
+            self.n = np.array([self.n] * len(managers))
+
+        for i, kwargs in enumerate(managers):
+            kwargs["n_fit"] = self.n[i]
+        managers_in = []
+        agent_names_in = []
+        for i in range(len(managers)):
+            if (self.current_comparisons is None) or (
+                i in np.array(self.current_comparisons).ravel()
+            ):
+                manager_kwargs = managers[i]
+                seeder = seeders[i]
+                managers_in.append(ExperimentManager(**manager_kwargs, seed=seeder))
+                agent_names_in.append(managers_in[-1].agent_name)
+
+        if self.agent_names is None:
+            self.agent_names = agent_names_in
+
+        if len(set(self.agent_names)) != len(self.agent_names):
+            raise ValueError("Error: there must be different names for each agent.")
+
+        # Fit all the agents
+        managers_in = [_fit_agent(manager) for manager in managers_in]
+
+        # Save the managers' save path
+        for i in range(len(managers_in)):
+            self.managers_paths[agent_names_in[i]] = managers_in[i].save()
+
+        # Get the evaluations
+        idz = 0
+        for i in range(len(managers_in)):
+            eval_values[agent_names_in[i]] = np.hstack(
+                [
+                    eval_values[agent_names_in[i]],
+                    self._get_evals(managers_in[i], self.n[i]),
+                ]
+            )
+
+        return eval_values
+
+    def _get_evals(self, manager, n):
+        """
+        Can be overwritten for alternative evaluation function.
+        """
+        eval_values = []
+        for idx in range(n):
+            logger.info("Evaluating agent " + str(idx))
+            eval_values.append(
+                np.mean(manager.eval_agents(self.n_evaluations, agent_id=idx))
+            )
+        return eval_values
 
 
+def _fit_agent(manager):
+    manager.fit()
+    return manager
+
+
+# TODO : be able to compare agents from dataframes and from pickle files.
 def compare_agents(
     agent_source,
     method="tukey_hsd",
@@ -31,6 +210,9 @@ def compare_agents(
         - If list of ExperimentManager, load data from it (the agents must be fitted).
 
         - If str, each string must be the path of a agent_manager.obj.
+
+        - If pandas DataFrame with column agent (containing agent's names) and mean_eval containing
+          the scores, it is used as input data.
 
     method: str in {"tukey_hsd", "permutation"}, default="tukey_hsd"
         Method used in the test. "tukey_hsd" use scipy implementation [1] and "permutation" use permutation test with Step-Down method for multiple testing [2]. Tukey HSD method suppose Gaussian model on the aggregated evaluations and permutation test is non-parametric and does not make assumption on the distribution. permutation is the safe choice when the reward is likely to be heavy-tailed or multimodal.
@@ -57,45 +239,47 @@ def compare_agents(
     [2]: Testing Statistical Hypotheses by E. L. Lehmann, Joseph P. Romano (Section 15.4.4), https://doi.org/10.1007/0-387-27605-X, Springer
 
     """
+    if isinstance(agent_source, list):
+        # Construction of the array of evaluations
+        df = pd.DataFrame()
+        if isinstance(agent_source[0], str) or isinstance(
+            agent_source[0], pathlib.PurePath
+        ):
+            agent_manager_list = [ExperimentManager(None) for _ in agent_source]
+            for i, manager in enumerate(agent_manager_list):
+                agent_manager_list[i] = manager.load(agent_source[i])
+        else:
+            agent_manager_list = agent_source
 
-    # Construction of the array of evaluations
-    df = pd.DataFrame()
-    assert isinstance(agent_source, list)
-    if isinstance(agent_source[0], str) or isinstance(
-        agent_source[0], pathlib.PurePath
-    ):
-        agent_manager_list = [ExperimentManager(None) for _ in agent_source]
-        for i, manager in enumerate(agent_manager_list):
-            agent_manager_list[i] = manager.load(agent_source[i])
-    else:
-        agent_manager_list = agent_source
-
-    for manager in agent_manager_list:
-        n_fit = len(manager.agent_handlers)
-        for id_agent in range(n_fit):
-            if eval_function is None:
-                eval_values = manager.eval_agents(100, agent_id=id_agent)
-            else:
-                eval_values = eval_function(
-                    manager, eval_budget=n_simulations, agent_id=id_agent
+        for manager in agent_manager_list:
+            n_fit = len(manager.agent_handlers)
+            for id_agent in range(n_fit):
+                if eval_function is None:
+                    eval_values = manager.eval_agents(100, agent_id=id_agent)
+                else:
+                    eval_values = eval_function(
+                        manager, eval_budget=n_simulations, agent_id=id_agent
+                    )
+                df = pd.concat(
+                    [
+                        df,
+                        pd.DataFrame(
+                            {
+                                "mean_eval": [np.mean(eval_values)],
+                                "agent": [manager.agent_name],
+                            }
+                        ),
+                    ],
+                    ignore_index=True,
                 )
-            df = pd.concat(
-                [
-                    df,
-                    pd.DataFrame(
-                        {
-                            "mean_eval": [np.mean(eval_values)],
-                            "agent": [manager.agent_name],
-                        }
-                    ),
-                ],
-                ignore_index=True,
-            )
+        agent_names = df["agent"].unique()
+        assert len(agent_names) == len(
+            agent_manager_list
+        ), "Each agent must have unique name."
+    else:
+        df = agent_source
 
     agent_names = df["agent"].unique()
-    assert len(agent_names) == len(
-        agent_manager_list
-    ), "Each agent must have unique name."
     data = np.array(
         [np.array(df.loc[df["agent"] == name, "mean_eval"]) for name in agent_names]
     )

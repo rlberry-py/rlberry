@@ -8,10 +8,12 @@ import sys
 import matplotlib.pyplot as plt
 
 from rlberry.wrappers import WriterWrapper
-from rlberry_research.envs import Chain
+from rlberry_scool.envs import Chain
 from rlberry.manager import plot_writer_data, ExperimentManager, read_writer_data
 from rlberry.manager.plotting import plot_smoothed_curves, plot_synchronized_curves
 from rlberry.agents import AgentWithSimplePolicy
+
+# np.random.seed(42)
 
 
 class RandomAgent(AgentWithSimplePolicy):
@@ -23,7 +25,9 @@ class RandomAgent(AgentWithSimplePolicy):
 
     def fit(self, budget=100, **kwargs):
         observation, info = self.env.reset()
-        for ep in range(budget):
+        for ep in range(
+            budget + np.random.randint(5)
+        ):  # to simulate having different sizes
             action = self.policy(observation)
             observation, reward, done, _, _ = self.env.step(action)
 
@@ -42,6 +46,7 @@ def _create_and_fit_experiment_manager(output_dir, outdir_id_style):
         n_fit=3,
         output_dir=output_dir,
         outdir_id_style=outdir_id_style,
+        seed=42,
     )
     manager.fit()
     manager.save()

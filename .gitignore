@@ -1,3 +1,9 @@
+# test markdown
+docs/python_scripts/
+
+#test venvs
+rlberry_venvs
+
 # tensorboard runs
 runs/
 
@@ -168,3 +174,6 @@ dmypy.json
 
 
 *.prof
+
+# poetry.lock
+poetry.lock

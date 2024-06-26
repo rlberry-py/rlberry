@@ -11,8 +11,8 @@ A demo of ValueIteration algorithm in Chain environment
 """
 # sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_vi.jpg'
 
-from rlberry_research.agents.dynprog import ValueIterationAgent
-from rlberry_research.envs.finite import Chain
+from rlberry_scool.agents.dynprog import ValueIterationAgent
+from rlberry_scool.envs.finite import Chain
 
 env = Chain()
 agent = ValueIterationAgent(env, gamma=0.95)

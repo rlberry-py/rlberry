@@ -11,9 +11,3 @@ try:
     import torch.utils.tensorboard
 except ModuleNotFoundError:  # pragma: no cover
     TENSORBOARD_INSTALLED = False  # pragma: no cover
-
-NUMBA_INSTALLED = True
-try:
-    import numba
-except ModuleNotFoundError:  # pragma: no cover
-    NUMBA_INSTALLED = False  # pragma: no cover

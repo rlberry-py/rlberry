@@ -16,6 +16,9 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     steps:
+      - name: Wait for version update
+        run: |
+          sleep 60
       - name: Checkout
         uses: actions/checkout@v4
       - uses: actions/setup-python@v4
@@ -27,10 +30,21 @@ jobs:
 
       - name: Install dependencies
         run: |
+          curl -C - https://raw.githubusercontent.com/rlberry-py/rlberry/main/pyproject.toml > pyproject.toml
           poetry install --all-extras --with dev --sync
       - name: Sphinx build
         run: |
           poetry run sphinx-build docs _build
+      - uses: actions/checkout@v4
+        with:
+          # This is necessary so that we have the tags.
+          fetch-depth: 0
+          ref: gh-pages
+          path: gh_pages
+      - name: copy stable and preview version changes
+        run: |
+          cp -rv  gh_pages/stable _build/stable || echo "Ignoring exit status"
+          cp -rv  gh_pages/preview_pr _build/preview_pr || echo "Ignoring exit status"
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}

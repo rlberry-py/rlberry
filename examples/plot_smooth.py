@@ -3,6 +3,8 @@
 Illustration of plotting tools on Bandits
 =========================================
 
+.. _plot_smooth:
+
 This script shows how to define a bandit environment and an UCB Index-based algorithm.
 """
 
@@ -116,6 +118,7 @@ for i, error in enumerate(["cb", "raw_curves", "ci", "pi"]):
         tag="action",
         preprocess_func=compute_pseudo_regret,
         title=error,
+        smooth=True,
         error_representation=error,
         ax=axes[i],
         show=False,

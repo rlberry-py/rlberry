@@ -22,6 +22,12 @@ Evaluation and plot
 --------------------
 
 .. autosummary::
+  :toctree: generated/
+  :template: class.rst
+
+   manager.AdastopComparator
+
+.. autosummary::
    :toctree: generated/
    :template: function.rst
 
@@ -69,6 +75,7 @@ Base class
     :template: class.rst
 
     envs.interface.Model
+    envs.basewrapper.Wrapper
 
 Spaces
 ------
@@ -125,6 +132,15 @@ Manager Utilitis
 
    manager.preset_manager
 
+Virtual environment Utilities
+-----------------------------
+
+.. autosummary::
+   :toctree: generated/
+   :template: function.rst
+
+   manager.with_venv
+   manager.run_venv_xp
 
 Writer Utilities
 ----------------

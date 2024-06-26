@@ -46,24 +46,27 @@ def evaluate_agents(
 
     Examples
     --------
-    >>> from rlberry.agents.torch import A2CAgent, DQNAgent
+    >>> from rlberry.agents.stable_baselines import StableBaselinesAgent
+    >>> from stable_baselines3 import PPO, A2C
     >>> from rlberry.manager import ExperimentManager, evaluate_agents
     >>> from rlberry.envs import gym_make
+    >>> import matplotlib.pyplot as plt
     >>>
     >>> if __name__=="__main__":
+    >>>     names = ["A2C", "PPO"]
     >>>     managers = [ ExperimentManager(
-    >>>         agent_class,
-    >>>         (gym_make, dict(id="CartPole-v1")),
-    >>>         fit_budget=1e4,
+    >>>         StableBaselinesAgent,
+    >>>         (gym_make, dict(id="Acrobot-v1")),
+    >>>         fit_budget=1e5,
+    >>>         agent_name = names[i],
     >>>         eval_kwargs=dict(eval_horizon=500),
+    >>>         init_kwargs= {"algo_cls": algo_cls, "policy": "MlpPolicy", "verbose": 0},
     >>>         n_fit=1,
-    >>>         parallelization="process",
-    >>>         mp_context="spawn",
     >>>         seed=42,
-    >>>          ) for agent_class in [A2CAgent, DQNAgent]]
+    >>>          ) for i, algo_cls in enumerate([A2C, PPO])]
     >>>     for manager in managers:
     >>>         manager.fit()
-    >>>     data = evaluate_agents(managers, n_simulations=50, plot=False)
+    >>>     data = evaluate_agents(managers, n_simulations=50)
 
     """
 
@@ -314,7 +317,10 @@ def _load_data(agent_folder, dir_name, id_agent):
     agent_dir = Path(dir_name) / agent_folder
     # list all the fits of this experiment
     exp_files = (agent_dir / Path("agent_handlers")).iterdir()
-    nfit = len(list(exp_files))
+    nfit = len(
+        [1 for a_ in [str(e).split(".") for e in exp_files] if a_[-1] == "pickle"]
+    )
+    # nfit = len(list(exp_files))
     if nfit == 0:
         raise ValueError("Folders do not contain pickle files")
 

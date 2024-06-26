@@ -23,7 +23,7 @@ def _make_tuple_env(env):
             env_ctor = PBall2D
             env_kwargs = {}
         elif env == "discrete_state":
-            from rlberry_research.envs import Chain
+            from rlberry_scool.envs import Chain
 
             env_ctor = Chain
             env_kwargs = {}
@@ -502,7 +502,7 @@ def check_rl_agent(agent, env="continuous_state", init_kwargs=None):
 
     Examples
     --------
-    >>> from rlberry_research.agents import UCBVIAgent
+    >>> from rlberry_scool.agents import UCBVIAgent
     >>> from rlberry.utils import check_rl_agent
     >>> check_rl_agent(UCBVIAgent) # which does not return an error.
     """
@@ -538,7 +538,7 @@ def check_rlberry_agent(agent, env="continuous_state", init_kwargs=None):
 
     Examples
     --------
-    >>> from rlberry.agents import UCBVIAgent
+    >>> from rlberry_scool.agents import UCBVIAgent
     >>> from rlberry.utils import check_rl_agent
     >>> check_rl_agent(UCBVIAgent) #
     """

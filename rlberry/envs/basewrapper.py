@@ -19,7 +19,7 @@ class Wrapper(Model):
     env: gymnasium.Env
         Environment to be wrapped.
     wrap_spaces: bool, default = False
-        If True, gym.spaces are converted to rlberry.spaces, which defined a reseed() method.
+        If True, gymnasium.spaces are converted to rlberry.spaces, which defined a reseed() method.
 
     Attributes
     ----------
