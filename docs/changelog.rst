@@ -7,7 +7,10 @@ Changelog
 Dev version
 -----------
 
- *nothing*
+
+*PR #463*
+
+ * Improve docstring and code documentation
 
 
 Version 0.7.3
@@ -90,12 +93,6 @@ Version 0.6.0
 *PR #350*
 
  * Rename AgentManager to ExperimentManager.
-
-
-
-*PR #355*
-
- * Improve docstring and code documentation
 
 *PR #326*
 
