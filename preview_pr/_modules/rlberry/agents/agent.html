@@ -9,7 +9,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   
-  <title>rlberry.agents.agent &mdash; rlberry 0.7.3.post4.dev0+0646109 documentation</title>
+  <title>rlberry.agents.agent &mdash; rlberry 0.7.3.post6.dev0+f695dae documentation</title>
   
   <link rel="canonical" href="https://rlberry-py.github.io/rlberry/_modules/rlberry/agents/agent.html" />
 
@@ -100,7 +100,7 @@
         <div class="alert alert-warning p-1 mb-2" role="alert">
 
           <p class="text-center mb-0">
-          rlberry 0.7.3.post4.dev0+0646109<br/>
+          rlberry 0.7.3.post6.dev0+f695dae<br/>
           <a href="../../../versions.html">Other versions</a>
           </p>
 
@@ -168,9 +168,6 @@
 <span class="sd">    _thread_shared_data : dict, optional</span>
 <span class="sd">        Used by :class:`~rlberry.manager.ExperimentManager` to share data across Agent</span>
 <span class="sd">        instances created in different threads.</span>
-<span class="sd">    **kwargs : dict</span>
-<span class="sd">        Classes that implement this interface must send ``**kwargs``</span>
-<span class="sd">        to :code:`Agent.__init__()`.</span>
 
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
@@ -181,7 +178,7 @@
 <span class="sd">    eval_env : :class:`gymnasium.Env` or tuple (constructor, kwargs)</span>
 <span class="sd">        Environment on which to evaluate the agent. If None, copied from env.</span>
 <span class="sd">    writer : object, default: None</span>
-<span class="sd">        Writer object to log the output(e.g. tensorboard SummaryWriter).</span>
+<span class="sd">        Writer object to log the output (e.g. tensorboard SummaryWriter).</span>
 <span class="sd">    seeder : :class:`~rlberry.seeding.seeder.Seeder`, int, or None</span>
 <span class="sd">        Seeder/seed for random number generation.</span>
 <span class="sd">    rng : :class:`numpy.random._generator.Generator`</span>
@@ -210,11 +207,7 @@
         <span class="n">_execution_metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">metadata_utils</span><span class="o">.</span><span class="n">ExecutionMetadata</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">_default_writer_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">_thread_shared_data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="c1"># Check if wrong parameters have been sent to an agent.</span>
-        <span class="k">assert</span> <span class="n">kwargs</span> <span class="o">==</span> <span class="p">{},</span> <span class="s2">&quot;Unknown parameters sent to agent:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">seeder</span> <span class="o">=</span> <span class="n">Seeder</span><span class="p">(</span><span class="n">seeder</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">env</span> <span class="o">=</span> <span class="n">process_env</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">seeder</span><span class="p">,</span> <span class="n">copy_env</span><span class="o">=</span><span class="n">copy_env</span><span class="p">)</span>
 
@@ -284,6 +277,7 @@
 <div class="viewcode-block" id="Agent.fit"><a class="viewcode-back" href="../../../generated/rlberry.agents.Agent.html#rlberry.agents.Agent.fit">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">budget</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Abstract method to be overwriten by the &#39;inherited agent&#39; developer.</span>
 
 <span class="sd">        Train the agent with a fixed budget, using the provided environment.</span>
 
@@ -462,6 +456,7 @@
 <span class="sd">        **kwargs: Keyword Arguments</span>
 <span class="sd">            Arguments required by the __init__ method of the Agent subclass to load.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="n">filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">&quot;.pickle&quot;</span><span class="p">)</span>
         <span class="n">obj</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -632,9 +627,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="AgentWithSimplePolicy.eval"><a class="viewcode-back" href="../../../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy.eval">[docs]</a>    <span class="k">def</span> <span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">eval_horizon</span><span class="o">=</span><span class="mi">10</span><span class="o">**</span><span class="mi">5</span><span class="p">,</span> <span class="n">n_simulations</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="AgentWithSimplePolicy.eval"><a class="viewcode-back" href="../../../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy.eval">[docs]</a>    <span class="k">def</span> <span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">eval_horizon</span><span class="o">=</span><span class="mi">10</span><span class="o">**</span><span class="mi">5</span><span class="p">,</span> <span class="n">n_simulations</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Monte-Carlo policy evaluation [1]_ method to estimate the mean discounted reward using the current policy on the evaluation environment.</span>
+<span class="sd">        Monte-Carlo policy evaluation [1]_ method to estimate the mean discounted reward</span>
+<span class="sd">        using the current policy on the evaluation environment.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -655,7 +651,7 @@
 <span class="sd">        .. [1] Sutton, R. S., &amp; Barto, A. G. (2018). Reinforcement Learning: An Introduction.</span>
 <span class="sd">            MIT Press.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">del</span> <span class="n">kwargs</span>  <span class="c1"># unused</span>
+
         <span class="n">episode_rewards</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_simulations</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">sim</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_simulations</span><span class="p">):</span>
             <span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval_env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
@@ -673,12 +669,15 @@
         <span class="k">return</span> <span class="n">episode_rewards</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span></div></div>
 
 
-<span class="k">class</span> <span class="nc">AgentTorch</span><span class="p">(</span><span class="n">Agent</span><span class="p">):</span>
+<div class="viewcode-block" id="AgentTorch"><a class="viewcode-back" href="../../../generated/rlberry.agents.AgentTorch.html#rlberry.agents.AgentTorch">[docs]</a><span class="k">class</span> <span class="nc">AgentTorch</span><span class="p">(</span><span class="n">Agent</span><span class="p">):</span>
     <span class="c1"># Need a specific save and load to manage torch.</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Abstract Class to inherit for torch agents.</span>
+
 <span class="sd">    This class use the &#39;torch&#39; functions to save/load agents.</span>
+
 <span class="sd">    .. note::</span>
+
 <span class="sd">        | 1 - Abstract Class : can&#39;t be cannot be instantiated. The abstract methods (from Agent) have to be overwriten by the &#39;inherited class&#39; agent.</span>
 <span class="sd">        | 2 - Classes that implements this interface can send `**kwargs` to initiate :code:`Agent.__init__()`(:class:`~rlberry.agents.Agent`), but the keys must match the parameters.</span>
 
@@ -705,9 +704,6 @@
 <span class="sd">    _thread_shared_data : dict, optional</span>
 <span class="sd">        Used by :class:`~rlberry.manager.ExperimentManager` to share data across Agent</span>
 <span class="sd">        instances created in different threads.</span>
-<span class="sd">    **kwargs : dict</span>
-<span class="sd">        Classes that implement this interface must send ``**kwargs``</span>
-<span class="sd">        to :code:`Agent.__init__()`.</span>
 
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
@@ -734,7 +730,7 @@
 <span class="sd">        Data shared by agent instances among different threads.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<div class="viewcode-block" id="AgentTorch.save"><a class="viewcode-back" href="../../../generated/rlberry.agents.AgentTorch.html#rlberry.agents.AgentTorch.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
         <span class="c1"># Overwrite the &#39;save&#39; method to manage CPU and GPU with torch agent</span>
         <span class="c1"># If overridden, the load() method must also be overriden.</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -798,9 +794,9 @@
                 <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Agent instance cannot be pickled: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">))</span>
                 <span class="k">return</span> <span class="kc">None</span>
 
-        <span class="k">return</span> <span class="n">filename</span>
+        <span class="k">return</span> <span class="n">filename</span></div>
 
-    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="AgentTorch.load"><a class="viewcode-back" href="../../../generated/rlberry.agents.AgentTorch.html#rlberry.agents.AgentTorch.load">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="c1"># Overwrite &#39;load&#39; method to manage CPU vs GPU with torch agent.</span>
         <span class="c1"># If overridden, save() method must also be overriden.</span>
@@ -848,7 +844,7 @@
         <span class="n">obj</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">tmp_dict</span><span class="p">)</span>
 
         <span class="n">obj</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">device</span>
-        <span class="k">return</span> <span class="n">obj</span>
+        <span class="k">return</span> <span class="n">obj</span></div></div>
 </pre></div>
 
       </div>

@@ -10,7 +10,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   
-  <title>rlberry.manager.ExperimentManager &mdash; rlberry 0.7.3.post4.dev0+0646109 documentation</title>
+  <title>rlberry.manager.ExperimentManager &mdash; rlberry 0.7.3.post6.dev0+f695dae documentation</title>
   
   <link rel="canonical" href="https://rlberry-py.github.io/rlberry/generated/rlberry.manager.ExperimentManager.html" />
 
@@ -101,7 +101,7 @@
         <div class="alert alert-warning p-1 mb-2" role="alert">
 
           <p class="text-center mb-0">
-          rlberry 0.7.3.post4.dev0+0646109<br/>
+          rlberry 0.7.3.post6.dev0+f695dae<br/>
           <a href="../versions.html">Other versions</a>
           </p>
 
@@ -358,57 +358,34 @@ If None, the default set of evaluation arguments will be used (self.eval_kwargs)
 <dt>list of float</dt><dd><p>A list of length ‘n_simulations’, containing the evaluation results
 obtained from each call to the <code class="xref py py-meth docutils literal notranslate"><span class="pre">eval()</span></code> method.</p>
 </dd>
-<dt>Notes</dt><dd></dd>
 </dl>
-<blockquote>
-<div></div></blockquote>
-<dl class="simple">
-<dt>This method facilitates the evaluation of multiple managed agents by calling their ‘eval’</dt><dd></dd>
-<dt>method with the specified evaluation parameters.</dt><dd></dd>
-<dt>The ‘n_simulations’ parameter specifies the total number of evaluations to perform. Each</dt><dd></dd>
-<dt>evaluation will be conducted on one of the managed agents.</dt><dd></dd>
-<dt>The ‘eval_kwargs’ parameter allows you to customize the evaluation by passing specific arguments</dt><dd></dd>
-<dt>to the ‘eval’ method of each agent. If not provided, the default evaluation arguments</dt><dd></dd>
-<dt>(self.eval_kwargs) will be used.</dt><dd></dd>
-<dt>The ‘agent_id’ parameter is used to specify a particular agent for evaluation. If None, an agent</dt><dd></dd>
-<dt>will be chosen randomly for evaluation.</dt><dd></dd>
-<dt>The ‘verbose’ parameter determines whether a progress report will be printed during the</dt><dd></dd>
-<dt>evaluation process.</dt><dd></dd>
-<dt>Examples</dt><dd></dd>
+</dd>
 </dl>
-<blockquote>
-<div></div></blockquote>
+<p class="rubric">Notes</p>
+<p>This method facilitates the evaluation of multiple managed agents by calling their ‘eval’
+method with the specified evaluation parameters.</p>
+<p>The ‘n_simulations’ parameter specifies the total number of evaluations to perform. Each
+evaluation will be conducted on one of the managed agents.</p>
+<p>The ‘eval_kwargs’ parameter allows you to customize the evaluation by passing specific arguments
+to the ‘eval’ method of each agent. If not provided, the default evaluation arguments
+(self.eval_kwargs) will be used.</p>
+<p>The ‘agent_id’ parameter is used to specify a particular agent for evaluation. If None, an agent
+will be chosen randomly for evaluation.</p>
+<p>The ‘verbose’ parameter determines whether a progress report will be printed during the
+evaluation process.</p>
+<p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">rlberry.agents</span> <span class="kn">import</span> <span class="n">ExperimentManager</span>
-<span class="go">    ..</span>
-</pre></div>
-</div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">eval_kwargs</span> <span class="o">=</span> <span class="p">{</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">eval_kwargs</span> <span class="o">=</span> <span class="p">{</span>
 <span class="go">    &#39;horizon&#39;: 1000,</span>
 <span class="go">    &#39;n_simulations&#39;: 10,</span>
 <span class="go">    &#39;gamma&#39;: 0.99</span>
+<span class="go">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">agent_manager</span> <span class="o">=</span> <span class="n">ExperimentManager</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">eval_kwargs</span><span class="o">=</span><span class="n">eval_kwargs</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># evaluation_results will return 5 values (n_simulations=5) where each value is the Monte-Carlo</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># evaluation over 10 simulations ((eval_kwargs[&quot;n_simulation&quot;]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">evaluation_results</span> <span class="o">=</span> <span class="n">agent_manager</span><span class="o">.</span><span class="n">eval_agents</span><span class="p">(</span><span class="n">n_simulations</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<dl class="simple">
-<dt>}</dt><dd></dd>
-</dl>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">agent_manager</span> <span class="o">=</span> <span class="n">ExperimentManager</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">eval_kwargs</span><span class="o">=</span><span class="n">eval_kwargs</span><span class="p">)</span>
-<span class="go">    ..</span>
-</pre></div>
-</div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># evaluation_results will return 5 values (n_simulations=5) where each value is the Monte-Carlo</span>
-<span class="go">    ..</span>
-</pre></div>
-</div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># evaluation over 10 simulations ((eval_kwargs[&quot;n_simulation&quot;]))</span>
-<span class="go">    ..</span>
-</pre></div>
-</div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">evaluation_results</span> <span class="o">=</span> <span class="n">agent_manager</span><span class="o">.</span><span class="n">eval_agents</span><span class="p">(</span><span class="n">n_simulations</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="go">    ..</span>
-</pre></div>
-</div>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py method">

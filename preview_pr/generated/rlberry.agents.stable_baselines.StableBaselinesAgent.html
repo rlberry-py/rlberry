@@ -10,7 +10,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   
-  <title>rlberry.agents.stable_baselines.StableBaselinesAgent &mdash; rlberry 0.7.3.post4.dev0+0646109 documentation</title>
+  <title>rlberry.agents.stable_baselines.StableBaselinesAgent &mdash; rlberry 0.7.3.post6.dev0+f695dae documentation</title>
   
   <link rel="canonical" href="https://rlberry-py.github.io/rlberry/generated/rlberry.agents.stable_baselines.StableBaselinesAgent.html" />
 
@@ -101,7 +101,7 @@
         <div class="alert alert-warning p-1 mb-2" role="alert">
 
           <p class="text-center mb-0">
-          rlberry 0.7.3.post4.dev0+0646109<br/>
+          rlberry 0.7.3.post6.dev0+f695dae<br/>
           <a href="../versions.html">Other versions</a>
           </p>
 
@@ -215,7 +215,7 @@ Used by <a class="reference internal" href="rlberry.manager.ExperimentManager.ht
 <td><p>Get parameters for this agent.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#rlberry.agents.stable_baselines.StableBaselinesAgent.load" title="rlberry.agents.stable_baselines.StableBaselinesAgent.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>(filename, **kwargs)</p></td>
-<td><p>Load agent object. Parameters ---------- filename: str     Path to the object (pickle) to load. <a href="#id2"><span class="problematic" id="id3">**</span></a>kwargs: Keyword Arguments     Arguments required by the __init__ method of the Agent subclass to load.</p></td>
+<td><p>Load agent object.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#rlberry.agents.stable_baselines.StableBaselinesAgent.policy" title="rlberry.agents.stable_baselines.StableBaselinesAgent.policy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">policy</span></code></a>(observation[, deterministic])</p></td>
 <td><p>Get the policy for the given observation.</p></td>
@@ -227,7 +227,7 @@ Used by <a class="reference internal" href="rlberry.manager.ExperimentManager.ht
 <td><p>Sample hyperparameters for hyperparam optimization using Optuna (<a class="reference external" href="https://optuna.org/">https://optuna.org/</a>)</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#rlberry.agents.stable_baselines.StableBaselinesAgent.save" title="rlberry.agents.stable_baselines.StableBaselinesAgent.save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code></a>(filename)</p></td>
-<td><p>Save the agent to a file. Parameters ---------- filename: Path or str     File in which to save the Agent. Returns ------- pathlib.Path     If save() is successful, a Path object corresponding to the filename is returned. Otherwise, None is returned.</p></td>
+<td><p>Save the agent to a file.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#rlberry.agents.stable_baselines.StableBaselinesAgent.set_logger" title="rlberry.agents.stable_baselines.StableBaselinesAgent.set_logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_logger</span></code></a>(logger)</p></td>
 <td><p>Set the logger to a custom SB3 logger.</p></td>
@@ -239,8 +239,9 @@ Used by <a class="reference internal" href="rlberry.manager.ExperimentManager.ht
 </table>
 <dl class="py method">
 <dt class="sig sig-object py" id="rlberry.agents.stable_baselines.StableBaselinesAgent.eval">
-<span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eval_horizon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_simulations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#rlberry.agents.stable_baselines.StableBaselinesAgent.eval" title="Permalink to this definition">¶</a></dt>
-<dd><p>Monte-Carlo policy evaluation <a class="reference internal" href="#rc77e6caa73e4-1" id="id4">[1]</a> method to estimate the mean discounted reward using the current policy on the evaluation environment.</p>
+<span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eval_horizon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_simulations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#rlberry.agents.stable_baselines.StableBaselinesAgent.eval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Monte-Carlo policy evaluation <a class="reference internal" href="#rc77e6caa73e4-1" id="id2">[1]</a> method to estimate the mean discounted reward
+using the current policy on the evaluation environment.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
@@ -263,7 +264,7 @@ Used by <a class="reference internal" href="rlberry.manager.ExperimentManager.ht
 <div role="list" class="citation-list">
 <div class="citation" id="rc77e6caa73e4-1" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
-<span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id4">2</a>)</span>
+<span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id2">2</a>)</span>
 <p>Sutton, R. S., &amp; Barto, A. G. (2018). Reinforcement Learning: An Introduction.
 MIT Press.</p>
 </div>
@@ -314,15 +315,15 @@ contained subobjects.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="rlberry.agents.stable_baselines.StableBaselinesAgent.load">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rlberry/agents/stable_baselines/stable_baselines.html#StableBaselinesAgent.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.agents.stable_baselines.StableBaselinesAgent.load" title="Permalink to this definition">¶</a></dt>
-<dd><p>Load agent object.
-Parameters
-———-
-filename: str</p>
-<blockquote>
-<div><p>Path to the object (pickle) to load.</p>
-</div></blockquote>
-<dl class="simple">
-<dt><a href="#id6"><span class="problematic" id="id7">**</span></a>kwargs: Keyword Arguments</dt><dd><p>Arguments required by the __init__ method of the Agent subclass to load.</p>
+<dd><p>Load agent object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>filename: str</strong></dt><dd><p>Path to the object (pickle) to load.</p>
+</dd>
+<dt><strong>**kwargs: Keyword Arguments</strong></dt><dd><p>Arguments required by the __init__ method of the Agent subclass to load.</p>
+</dd>
+</dl>
 </dd>
 </dl>
 </dd></dl>
@@ -385,21 +386,22 @@ include in the Agent constructor all “optimizable” parameters.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="rlberry.agents.stable_baselines.StableBaselinesAgent.save">
 <span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rlberry/agents/stable_baselines/stable_baselines.html#StableBaselinesAgent.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.agents.stable_baselines.StableBaselinesAgent.save" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save the agent to a file.
-Parameters
-———-
-filename: Path or str</p>
-<blockquote>
-<div><p>File in which to save the Agent.</p>
-</div></blockquote>
-<section id="returns">
-<h2>Returns<a class="headerlink" href="#returns" title="Permalink to this heading">¶</a></h2>
-<dl class="simple">
+<dd><p>Save the agent to a file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>filename: Path or str</strong></dt><dd><p>File in which to save the Agent.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
 <dt>pathlib.Path</dt><dd><p>If save() is successful, a Path object corresponding to the filename is returned.
 Otherwise, None is returned.</p>
 </dd>
 </dl>
-</section>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">

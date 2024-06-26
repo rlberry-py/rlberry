@@ -10,7 +10,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   
-  <title>rlberry API &mdash; rlberry 0.7.3.post4.dev0+0646109 documentation</title>
+  <title>rlberry API &mdash; rlberry 0.7.3.post6.dev0+f695dae documentation</title>
   
   <link rel="canonical" href="https://rlberry-py.github.io/rlberry/api.html" />
 
@@ -101,7 +101,7 @@
         <div class="alert alert-warning p-1 mb-2" role="alert">
 
           <p class="text-center mb-0">
-          rlberry 0.7.3.post4.dev0+0646109<br/>
+          rlberry 0.7.3.post6.dev0+f695dae<br/>
           <a href="versions.html">Other versions</a>
           </p>
 
@@ -208,7 +208,10 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/rlberry.agents.Agent.html#rlberry.agents.Agent" title="rlberry.agents.Agent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">agents.Agent</span></code></a>([env, eval_env, copy_env, ...])</p></td>
 <td><p>Basic interface for agents.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">agents.AgentWithSimplePolicy</span></code></a>([env, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/rlberry.agents.AgentTorch.html#rlberry.agents.AgentTorch" title="rlberry.agents.AgentTorch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">agents.AgentTorch</span></code></a>([env, eval_env, copy_env, ...])</p></td>
+<td><p>Abstract Class to inherit for torch agents.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">agents.AgentWithSimplePolicy</span></code></a>([env, ...])</p></td>
 <td><p>Interface for agents whose policy is a function of observations only.</p></td>
 </tr>
 </tbody>
@@ -346,7 +349,7 @@
 <div><table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/rlberry.utils.check_rl_agent.html#rlberry.utils.check_rl_agent" title="rlberry.utils.check_rl_agent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">utils.check_rl_agent</span></code></a>(agent[, env, init_kwargs])</p></td>
-<td><p>Check ExperimentManager compatibility  and check reproducibility/seeding.</p></td>
+<td><p>Check ExperimentManager compatibility and check reproducibility/seeding.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="generated/rlberry.utils.check_env.html#rlberry.utils.check_env" title="rlberry.utils.check_env"><code class="xref py py-obj docutils literal notranslate"><span class="pre">utils.check_env</span></code></a>(env)</p></td>
 <td><p>Check that the environment is (almost) gym-compatible and that it is reproducible in the sense that it returns the same states when given the same seed.</p></td>

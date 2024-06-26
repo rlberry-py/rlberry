@@ -6,16 +6,16 @@
 
 Computation times
 =================
-**01:32.569** total execution time for **auto_examples_demo_bandits** files:
+**01:46.255** total execution time for **auto_examples_demo_bandits** files:
 
 +--------------------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_demo_bandits_plot_compare_index_bandits.py` (``plot_compare_index_bandits.py``) | 00:40.595 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_demo_bandits_plot_compare_index_bandits.py` (``plot_compare_index_bandits.py``) | 00:40.272 | 0.0 MB |
 +--------------------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_demo_bandits_plot_mirror_bandit.py` (``plot_mirror_bandit.py``)                 | 00:20.718 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_demo_bandits_plot_mirror_bandit.py` (``plot_mirror_bandit.py``)                 | 00:35.238 | 0.0 MB |
 +--------------------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_demo_bandits_plot_TS_bandit.py` (``plot_TS_bandit.py``)                         | 00:19.284 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_demo_bandits_plot_TS_bandit.py` (``plot_TS_bandit.py``)                         | 00:18.912 | 0.0 MB |
 +--------------------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_demo_bandits_plot_exp3_bandit.py` (``plot_exp3_bandit.py``)                     | 00:07.318 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_demo_bandits_plot_exp3_bandit.py` (``plot_exp3_bandit.py``)                     | 00:07.218 | 0.0 MB |
 +--------------------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_demo_bandits_plot_ucb_bandit.py` (``plot_ucb_bandit.py``)                       | 00:04.654 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_demo_bandits_plot_ucb_bandit.py` (``plot_ucb_bandit.py``)                       | 00:04.615 | 0.0 MB |
 +--------------------------------------------------------------------------------------------------------------+-----------+--------+

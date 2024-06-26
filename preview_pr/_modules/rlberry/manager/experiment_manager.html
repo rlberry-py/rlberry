@@ -9,7 +9,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   
-  <title>rlberry.manager.experiment_manager &mdash; rlberry 0.7.3.post4.dev0+0646109 documentation</title>
+  <title>rlberry.manager.experiment_manager &mdash; rlberry 0.7.3.post6.dev0+f695dae documentation</title>
   
   <link rel="canonical" href="https://rlberry-py.github.io/rlberry/_modules/rlberry/manager/experiment_manager.html" />
 
@@ -100,7 +100,7 @@
         <div class="alert alert-warning p-1 mb-2" role="alert">
 
           <p class="text-center mb-0">
-          rlberry 0.7.3.post4.dev0+0646109<br/>
+          rlberry 0.7.3.post6.dev0+f695dae<br/>
           <a href="../../../versions.html">Other versions</a>
           </p>
 
@@ -680,19 +680,25 @@
 <span class="sd">        list of float</span>
 <span class="sd">            A list of length &#39;n_simulations&#39;, containing the evaluation results</span>
 <span class="sd">            obtained from each call to the :meth:`~rlberry.agents.agent.Agent.eval` method.</span>
+
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
 <span class="sd">        This method facilitates the evaluation of multiple managed agents by calling their &#39;eval&#39;</span>
 <span class="sd">        method with the specified evaluation parameters.</span>
+
 <span class="sd">        The &#39;n_simulations&#39; parameter specifies the total number of evaluations to perform. Each</span>
 <span class="sd">        evaluation will be conducted on one of the managed agents.</span>
+
 <span class="sd">        The &#39;eval_kwargs&#39; parameter allows you to customize the evaluation by passing specific arguments</span>
 <span class="sd">        to the &#39;eval&#39; method of each agent. If not provided, the default evaluation arguments</span>
 <span class="sd">        (self.eval_kwargs) will be used.</span>
+
 <span class="sd">        The &#39;agent_id&#39; parameter is used to specify a particular agent for evaluation. If None, an agent</span>
 <span class="sd">        will be chosen randomly for evaluation.</span>
+
 <span class="sd">        The &#39;verbose&#39; parameter determines whether a progress report will be printed during the</span>
 <span class="sd">        evaluation process.</span>
+
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
 <span class="sd">        &gt;&gt;&gt; from rlberry.agents import ExperimentManager</span>
