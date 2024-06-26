@@ -50,7 +50,6 @@ Base classes
     :template: class.rst
 
     agents.Agent
-    agents.AgentTorch
     agents.AgentWithSimplePolicy
 
 

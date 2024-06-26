@@ -669,7 +669,7 @@
         <span class="k">return</span> <span class="n">episode_rewards</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span></div></div>
 
 
-<div class="viewcode-block" id="AgentTorch"><a class="viewcode-back" href="../../../generated/rlberry.agents.AgentTorch.html#rlberry.agents.AgentTorch">[docs]</a><span class="k">class</span> <span class="nc">AgentTorch</span><span class="p">(</span><span class="n">Agent</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">AgentTorch</span><span class="p">(</span><span class="n">Agent</span><span class="p">):</span>
     <span class="c1"># Need a specific save and load to manage torch.</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Abstract Class to inherit for torch agents.</span>
@@ -730,7 +730,7 @@
 <span class="sd">        Data shared by agent instances among different threads.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="AgentTorch.save"><a class="viewcode-back" href="../../../generated/rlberry.agents.AgentTorch.html#rlberry.agents.AgentTorch.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
         <span class="c1"># Overwrite the &#39;save&#39; method to manage CPU and GPU with torch agent</span>
         <span class="c1"># If overridden, the load() method must also be overriden.</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -794,9 +794,9 @@
                 <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Agent instance cannot be pickled: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">))</span>
                 <span class="k">return</span> <span class="kc">None</span>
 
-        <span class="k">return</span> <span class="n">filename</span></div>
+        <span class="k">return</span> <span class="n">filename</span>
 
-<div class="viewcode-block" id="AgentTorch.load"><a class="viewcode-back" href="../../../generated/rlberry.agents.AgentTorch.html#rlberry.agents.AgentTorch.load">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="c1"># Overwrite &#39;load&#39; method to manage CPU vs GPU with torch agent.</span>
         <span class="c1"># If overridden, save() method must also be overriden.</span>
@@ -844,7 +844,7 @@
         <span class="n">obj</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">tmp_dict</span><span class="p">)</span>
 
         <span class="n">obj</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">device</span>
-        <span class="k">return</span> <span class="n">obj</span></div></div>
+        <span class="k">return</span> <span class="n">obj</span>
 </pre></div>
 
       </div>
