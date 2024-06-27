@@ -49,8 +49,7 @@ basics/userguide/visualization.md
 basics/userguide/seeding.md
 basics/userguide/save_load.md
 ```
-- Save & Load Agents (In construction)
-- Save & Load Data (In construction)
+- Save & Load Writer Data (In construction)
 ## Advanced Usage
 ```{toctree}
 :maxdepth: 2
