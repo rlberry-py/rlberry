@@ -173,7 +173,6 @@ seeder = Seeder(500)  # seeder initialization
 env_seed_max_value = 500
 
 env_id = "FrozenLake-v1"  # Id of the environment
-saving_path = "./results/"
 
 env = gym_make(env_id)
 env.seed(int(seeder.rng.integers(env_seed_max_value)))
@@ -188,7 +187,7 @@ agent_to_train_and_save = QLAgent(
 agent_to_train_and_save.fit(300000)  # Agent's training
 print(agent_to_train_and_save.Q)  # print the content of the Q-table
 
-agent_to_train_and_save.save(saving_path)  # save the agent
+agent_to_train_and_save.save("./results/")  # save the agent
 ```
 
 ```none
@@ -226,7 +225,7 @@ env_for_loader.seed(int(seeder.rng.integers(env_seed_max_value)))
 params_for_loader = dict(env=env_for_loader)
 
 # load the agent
-loaded_agent = QLAgent.load(saving_path, **params_for_loader)
+loaded_agent = QLAgent.load("./results/", **params_for_loader)
 print(loaded_agent.Q)  # print the content of the Q-table
 ```
 
@@ -275,4 +274,5 @@ for tt in range(50):
 ```
 
 ```none
-Success!```
+Success!
+```
