@@ -157,7 +157,7 @@ The `save` and `load` can be useful for :
 - you want to do the training in more than once (only if your agent has "fit(x) then fit(y), is the same as fit(x+y)")
 
 
-## How to save/load an agent ?
+## How to save/load an agent only?
 
 <span>&#9888;</span> We highly recommend to use the save/load with the `ExperimentManager` to have all the information. But if you need to save the agent for a specific case, you can do so : <span>&#9888;</span>
 
@@ -214,18 +214,24 @@ agent_to_train_and_save.save(saving_path)  # save the agent
 
 ### Load the agent
 
+To load an agent, you should use its `load()` function. But be careful, you have to add some not-saved parameters (in this case, the environment). This parameters should be given through a `dict`.
+
+
 ```python
-# To load an agent, you need to specify its environment
+# create a seeded env
 env_for_loader = gym_make(env_id)
 env_for_loader.seed(int(seeder.rng.integers(env_seed_max_value)))
+
+# create the 'not-saved parameters' dict
 params_for_loader = dict(env=env_for_loader)
 
+# load the agent
 loaded_agent = QLAgent.load(saving_path, **params_for_loader)
 print(loaded_agent.Q)  # print the content of the Q-table
 ```
 
 
-```
+```none
 [[0.1830874  0.15802259 0.12087594 0.16358512]
  [0.         0.         0.         0.16674384]
  [0.10049071 0.09517673 0.11326436 0.07236883]
@@ -249,6 +255,7 @@ As you can see, we haven't re-fit the agent, and the q-table is the same as the 
 Then, you can use your agent to solve a test environment :
 
 ```python
+# create a seeded test env
 test_env = gym_make(env_id)
 test_env.seed(int(seeder.rng.integers(env_seed_max_value)))
 
@@ -268,5 +275,4 @@ for tt in range(50):
 ```
 
 ```none
-Success!
-```
+Success!```
