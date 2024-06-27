@@ -112,7 +112,7 @@
 <li><a class="reference internal" href="#how-to-save-an-experiment">how to save an experiment?</a></li>
 <li><a class="reference internal" href="#how-to-load-a-previous-experiment">How to load a previous experiment?</a></li>
 <li><a class="reference internal" href="#other-informations">Other informations</a></li>
-<li><a class="reference internal" href="#how-to-save-load-an-agent">How to save/load an agent ?</a><ul>
+<li><a class="reference internal" href="#how-to-save-load-an-agent-only">How to save/load an agent only?</a><ul>
 <li><a class="reference internal" href="#save-the-agent">Save the agent</a></li>
 <li><a class="reference internal" href="#load-the-agent">Load the agent</a></li>
 </ul>
@@ -278,8 +278,8 @@ Success!
 <li><p>you want to do the training in more than once (only if your agent has “fit(x) then fit(y), is the same as fit(x+y)”)</p></li>
 </ul>
 </section>
-<section id="how-to-save-load-an-agent">
-<h2>How to save/load an agent ?<a class="headerlink" href="#how-to-save-load-an-agent" title="Permalink to this heading">¶</a></h2>
+<section id="how-to-save-load-an-agent-only">
+<h2>How to save/load an agent only?<a class="headerlink" href="#how-to-save-load-an-agent-only" title="Permalink to this heading">¶</a></h2>
 <p><span>⚠</span> We highly recommend to use the save/load with the <code class="docutils literal notranslate"><span class="pre">ExperimentManager</span></code> to have all the information. But if you need to save the agent for a specific case, you can do so : <span>⚠</span></p>
 <section id="save-the-agent">
 <h3>Save the agent<a class="headerlink" href="#save-the-agent" title="Permalink to this heading">¶</a></h3>
@@ -333,36 +333,41 @@ Success!
 </section>
 <section id="load-the-agent">
 <h3>Load the agent<a class="headerlink" href="#load-the-agent" title="Permalink to this heading">¶</a></h3>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># To load an agent, you need to specify its environment</span>
+<p>To load an agent, you should use its <code class="docutils literal notranslate"><span class="pre">load()</span></code> function. But be careful, you have to add some not-saved parameters (in this case, the environment). This parameters should be given through a <code class="docutils literal notranslate"><span class="pre">dict</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># create a seeded env</span>
 <span class="n">env_for_loader</span> <span class="o">=</span> <span class="n">gym_make</span><span class="p">(</span><span class="n">env_id</span><span class="p">)</span>
 <span class="n">env_for_loader</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">seeder</span><span class="o">.</span><span class="n">rng</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="n">env_seed_max_value</span><span class="p">)))</span>
+
+<span class="c1"># create the &#39;not-saved parameters&#39; dict</span>
 <span class="n">params_for_loader</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">env</span><span class="o">=</span><span class="n">env_for_loader</span><span class="p">)</span>
 
+<span class="c1"># load the agent</span>
 <span class="n">loaded_agent</span> <span class="o">=</span> <span class="n">QLAgent</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">saving_path</span><span class="p">,</span> <span class="o">**</span><span class="n">params_for_loader</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">loaded_agent</span><span class="o">.</span><span class="n">Q</span><span class="p">)</span>  <span class="c1"># print the content of the Q-table</span>
 </pre></div>
 </div>
-<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="p">[[</span><span class="mf">0.1830874</span>  <span class="mf">0.15802259</span> <span class="mf">0.12087594</span> <span class="mf">0.16358512</span><span class="p">]</span>
- <span class="p">[</span><span class="mf">0.</span>         <span class="mf">0.</span>         <span class="mf">0.</span>         <span class="mf">0.16674384</span><span class="p">]</span>
- <span class="p">[</span><span class="mf">0.10049071</span> <span class="mf">0.09517673</span> <span class="mf">0.11326436</span> <span class="mf">0.07236883</span><span class="p">]</span>
- <span class="p">[</span><span class="mf">0.10552007</span> <span class="mf">0.06660356</span> <span class="mf">0.07020302</span> <span class="mf">0.1104349</span> <span class="p">]</span>
- <span class="p">[</span><span class="mf">0.23065463</span> <span class="mf">0.</span>         <span class="mf">0.19028937</span> <span class="mf">0.20689438</span><span class="p">]</span>
- <span class="p">[</span><span class="mf">0.</span>         <span class="mf">0.</span>         <span class="mf">0.</span>         <span class="mf">0.</span>        <span class="p">]</span>
- <span class="p">[</span><span class="mf">0.08408004</span> <span class="mf">0.</span>         <span class="mf">0.</span>         <span class="mf">0.</span>        <span class="p">]</span>
- <span class="p">[</span><span class="mf">0.</span>         <span class="mf">0.</span>         <span class="mf">0.</span>         <span class="mf">0.</span>        <span class="p">]</span>
- <span class="p">[</span><span class="mf">0.</span>         <span class="mf">0.17382279</span> <span class="mf">0.</span>         <span class="mf">0.2417443</span> <span class="p">]</span>
- <span class="p">[</span><span class="mf">0.</span>         <span class="mf">0.29498867</span> <span class="mf">0.</span>         <span class="mf">0.</span>        <span class="p">]</span>
- <span class="p">[</span><span class="mf">0.46487572</span> <span class="mf">0.</span>         <span class="mf">0.</span>         <span class="mf">0.</span>        <span class="p">]</span>
- <span class="p">[</span><span class="mf">0.</span>         <span class="mf">0.</span>         <span class="mf">0.</span>         <span class="mf">0.</span>        <span class="p">]</span>
- <span class="p">[</span><span class="mf">0.</span>         <span class="mf">0.</span>         <span class="mf">0.</span>         <span class="mf">0.</span>        <span class="p">]</span>
- <span class="p">[</span><span class="mf">0.</span>         <span class="mf">0.52043878</span> <span class="mf">0.56986596</span> <span class="mf">0.19259904</span><span class="p">]</span>
- <span class="p">[</span><span class="mf">0.57831479</span> <span class="mf">0.6858159</span>  <span class="mf">0.22998936</span> <span class="mf">0.39350426</span><span class="p">]</span>
- <span class="p">[</span><span class="mf">0.</span>         <span class="mf">0.</span>         <span class="mf">0.</span>         <span class="mf">0.</span>        <span class="p">]]</span>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[[0.1830874  0.15802259 0.12087594 0.16358512]
+ [0.         0.         0.         0.16674384]
+ [0.10049071 0.09517673 0.11326436 0.07236883]
+ [0.10552007 0.06660356 0.07020302 0.1104349 ]
+ [0.23065463 0.         0.19028937 0.20689438]
+ [0.         0.         0.         0.        ]
+ [0.08408004 0.         0.         0.        ]
+ [0.         0.         0.         0.        ]
+ [0.         0.17382279 0.         0.2417443 ]
+ [0.         0.29498867 0.         0.        ]
+ [0.46487572 0.         0.         0.        ]
+ [0.         0.         0.         0.        ]
+ [0.         0.         0.         0.        ]
+ [0.         0.52043878 0.56986596 0.19259904]
+ [0.57831479 0.6858159  0.22998936 0.39350426]
+ [0.         0.         0.         0.        ]]
 </pre></div>
 </div>
 <p>As you can see, we haven’t re-fit the agent, and the q-table is the same as the one previously saved.</p>
 <p>Then, you can use your agent to solve a test environment :</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">test_env</span> <span class="o">=</span> <span class="n">gym_make</span><span class="p">(</span><span class="n">env_id</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># create a seeded test env</span>
+<span class="n">test_env</span> <span class="o">=</span> <span class="n">gym_make</span><span class="p">(</span><span class="n">env_id</span><span class="p">)</span>
 <span class="n">test_env</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">seeder</span><span class="o">.</span><span class="n">rng</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="n">env_seed_max_value</span><span class="p">)))</span>
 
 <span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">test_env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
@@ -380,7 +385,7 @@ Success!
     <span class="n">observation</span> <span class="o">=</span> <span class="n">next_observation</span>
 </pre></div>
 </div>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Success!
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Success!```
 </pre></div>
 </div>
 </section>

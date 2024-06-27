@@ -49,18 +49,18 @@ Finally, we compare with a baseline provided by a random policy using the Experi
 
  .. code-block:: none
 
-    [INFO] 09:40: ... trained! 
-    [INFO] 09:40: Saved ExperimentManager(ValueIterationAgent) using pickle. 
-    [INFO] 09:40: The ExperimentManager was saved in : 'rlberry_data/temp/manager_data/ValueIterationAgent_2024-06-27_09-40-23_75ab4a03/manager_obj.pickle' 
-    [INFO] 09:40: Running ExperimentManager fit() for RandomAgent with n_fit = 1 and max_workers = None. 
-    [INFO] 09:40: ... trained! 
-    [INFO] 09:40: Saved ExperimentManager(RandomAgent) using pickle. 
-    [INFO] 09:40: The ExperimentManager was saved in : 'rlberry_data/temp/manager_data/RandomAgent_2024-06-27_09-40-23_396360ff/manager_obj.pickle' 
-    [INFO] 09:40: Evaluating ValueIterationAgent... 
-    [INFO] 09:40: Computing 10 evaluations. 
+    [INFO] 10:09: ... trained! 
+    [INFO] 10:09: Saved ExperimentManager(ValueIterationAgent) using pickle. 
+    [INFO] 10:09: The ExperimentManager was saved in : 'rlberry_data/temp/manager_data/ValueIterationAgent_2024-06-27_10-09-15_2cf9f6af/manager_obj.pickle' 
+    [INFO] 10:09: Running ExperimentManager fit() for RandomAgent with n_fit = 1 and max_workers = None. 
+    [INFO] 10:09: ... trained! 
+    [INFO] 10:09: Saved ExperimentManager(RandomAgent) using pickle. 
+    [INFO] 10:09: The ExperimentManager was saved in : 'rlberry_data/temp/manager_data/RandomAgent_2024-06-27_10-09-15_dcea19b8/manager_obj.pickle' 
+    [INFO] 10:09: Evaluating ValueIterationAgent... 
+    [INFO] 10:09: Computing 10 evaluations. 
     [INFO] Evaluation:..........  Evaluation finished 
-    [INFO] 09:40: Evaluating RandomAgent... 
-    [INFO] 09:40: Computing 10 evaluations. 
+    [INFO] 10:09: Evaluating RandomAgent... 
+    [INFO] 10:09: Computing 10 evaluations. 
     [INFO] Evaluation:..........  Evaluation finished 
 
 
@@ -186,7 +186,7 @@ Finally, we compare with a baseline provided by a random policy using the Experi
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.122 seconds)
+   **Total running time of the script:** (0 minutes 1.137 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_agent_manager.py:
