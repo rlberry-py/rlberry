@@ -292,7 +292,6 @@ Success!
 <span class="n">env_seed_max_value</span> <span class="o">=</span> <span class="mi">500</span>
 
 <span class="n">env_id</span> <span class="o">=</span> <span class="s2">&quot;FrozenLake-v1&quot;</span>  <span class="c1"># Id of the environment</span>
-<span class="n">saving_path</span> <span class="o">=</span> <span class="s2">&quot;./results/&quot;</span>
 
 <span class="n">env</span> <span class="o">=</span> <span class="n">gym_make</span><span class="p">(</span><span class="n">env_id</span><span class="p">)</span>
 <span class="n">env</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">seeder</span><span class="o">.</span><span class="n">rng</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="n">env_seed_max_value</span><span class="p">)))</span>
@@ -307,7 +306,7 @@ Success!
 <span class="n">agent_to_train_and_save</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="mi">300000</span><span class="p">)</span>  <span class="c1"># Agent&#39;s training</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">agent_to_train_and_save</span><span class="o">.</span><span class="n">Q</span><span class="p">)</span>  <span class="c1"># print the content of the Q-table</span>
 
-<span class="n">agent_to_train_and_save</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">saving_path</span><span class="p">)</span>  <span class="c1"># save the agent</span>
+<span class="n">agent_to_train_and_save</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;./results/&quot;</span><span class="p">)</span>  <span class="c1"># save the agent</span>
 </pre></div>
 </div>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[INFO] 11:28:                                 agent_name  worker  episode_rewards  max_global_step
@@ -342,7 +341,7 @@ Success!
 <span class="n">params_for_loader</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">env</span><span class="o">=</span><span class="n">env_for_loader</span><span class="p">)</span>
 
 <span class="c1"># load the agent</span>
-<span class="n">loaded_agent</span> <span class="o">=</span> <span class="n">QLAgent</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">saving_path</span><span class="p">,</span> <span class="o">**</span><span class="n">params_for_loader</span><span class="p">)</span>
+<span class="n">loaded_agent</span> <span class="o">=</span> <span class="n">QLAgent</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;./results/&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">params_for_loader</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">loaded_agent</span><span class="o">.</span><span class="n">Q</span><span class="p">)</span>  <span class="c1"># print the content of the Q-table</span>
 </pre></div>
 </div>
@@ -385,7 +384,7 @@ Success!
     <span class="n">observation</span> <span class="o">=</span> <span class="n">next_observation</span>
 </pre></div>
 </div>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Success!```
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Success!
 </pre></div>
 </div>
 </section>
