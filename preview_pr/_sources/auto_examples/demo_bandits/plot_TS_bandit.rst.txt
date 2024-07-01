@@ -54,21 +54,21 @@ For the Gaussian case, we use a Gaussian prior and compare it to a sub-Gaussian 
 
  .. code-block:: none
 
-    [INFO] 12:12: ... trained! 
-    [INFO] 12:12: Saved ExperimentManager(Bounded UCB Agent) using pickle. 
-    [INFO] 12:12: The ExperimentManager was saved in : 'rlberry_data/temp/manager_data/Bounded UCB Agent_2024-06-27_12-12-03_a693e4a6/manager_obj.pickle' 
-    [INFO] 12:12: Running ExperimentManager fit() for Bernoulli TS Agent with n_fit = 10 and max_workers = None. 
-    [INFO] 12:12: ... trained! 
-    [INFO] 12:12: Saved ExperimentManager(Bernoulli TS Agent) using pickle. 
-    [INFO] 12:12: The ExperimentManager was saved in : 'rlberry_data/temp/manager_data/Bernoulli TS Agent_2024-06-27_12-12-03_418c151f/manager_obj.pickle' 
-    [INFO] 12:12: Running ExperimentManager fit() for Gaussian UCB Agent with n_fit = 10 and max_workers = None. 
-    [INFO] 12:12: ... trained! 
-    [INFO] 12:12: Saved ExperimentManager(Gaussian UCB Agent) using pickle. 
-    [INFO] 12:12: The ExperimentManager was saved in : 'rlberry_data/temp/manager_data/Gaussian UCB Agent_2024-06-27_12-12-13_69449c2f/manager_obj.pickle' 
-    [INFO] 12:12: Running ExperimentManager fit() for Gaussian TS Agent with n_fit = 10 and max_workers = None. 
-    [INFO] 12:12: ... trained! 
-    [INFO] 12:12: Saved ExperimentManager(Gaussian TS Agent) using pickle. 
-    [INFO] 12:12: The ExperimentManager was saved in : 'rlberry_data/temp/manager_data/Gaussian TS Agent_2024-06-27_12-12-13_a63e1d23/manager_obj.pickle' 
+    [INFO] 14:23: ... trained! 
+    [INFO] 14:23: Saved ExperimentManager(Bounded UCB Agent) using pickle. 
+    [INFO] 14:23: The ExperimentManager was saved in : 'rlberry_data/temp/manager_data/Bounded UCB Agent_2024-07-01_14-23-18_2043b4eb/manager_obj.pickle' 
+    [INFO] 14:23: Running ExperimentManager fit() for Bernoulli TS Agent with n_fit = 10 and max_workers = None. 
+    [INFO] 14:23: ... trained! 
+    [INFO] 14:23: Saved ExperimentManager(Bernoulli TS Agent) using pickle. 
+    [INFO] 14:23: The ExperimentManager was saved in : 'rlberry_data/temp/manager_data/Bernoulli TS Agent_2024-07-01_14-23-18_9d134c8e/manager_obj.pickle' 
+    [INFO] 14:23: Running ExperimentManager fit() for Gaussian UCB Agent with n_fit = 10 and max_workers = None. 
+    [INFO] 14:23: ... trained! 
+    [INFO] 14:23: Saved ExperimentManager(Gaussian UCB Agent) using pickle. 
+    [INFO] 14:23: The ExperimentManager was saved in : 'rlberry_data/temp/manager_data/Gaussian UCB Agent_2024-07-01_14-23-28_addab774/manager_obj.pickle' 
+    [INFO] 14:23: Running ExperimentManager fit() for Gaussian TS Agent with n_fit = 10 and max_workers = None. 
+    [INFO] 14:23: ... trained! 
+    [INFO] 14:23: Saved ExperimentManager(Gaussian TS Agent) using pickle. 
+    [INFO] 14:23: The ExperimentManager was saved in : 'rlberry_data/temp/manager_data/Gaussian TS Agent_2024-07-01_14-23-28_f5e7ea17/manager_obj.pickle' 
 
 
 
@@ -229,7 +229,7 @@ For the Gaussian case, we use a Gaussian prior and compare it to a sub-Gaussian 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 18.660 seconds)
+   **Total running time of the script:** (0 minutes 19.445 seconds)
 
 
 .. _sphx_glr_download_auto_examples_demo_bandits_plot_TS_bandit.py:
