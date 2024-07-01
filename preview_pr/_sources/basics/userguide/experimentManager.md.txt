@@ -132,7 +132,7 @@ print(output)
 ```
 As we can see in the output or in the following image, the second agent succeed better.
 
-![image](expManager_multieval.png){.align-center}
+![image](expManager_multieval.png)
 
 </br>
 
