@@ -7,7 +7,10 @@ Changelog
 Dev version
 -----------
 
- *nothing*
+
+*PR #463*
+
+ * Improve docstring and code documentation
 
 
 Version 0.7.3

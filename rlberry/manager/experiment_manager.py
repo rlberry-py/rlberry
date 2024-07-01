@@ -564,19 +564,25 @@ class ExperimentManager:
         list of float
             A list of length 'n_simulations', containing the evaluation results
             obtained from each call to the :meth:`~rlberry.agents.agent.Agent.eval` method.
+
         Notes
         -----
         This method facilitates the evaluation of multiple managed agents by calling their 'eval'
         method with the specified evaluation parameters.
+
         The 'n_simulations' parameter specifies the total number of evaluations to perform. Each
         evaluation will be conducted on one of the managed agents.
+
         The 'eval_kwargs' parameter allows you to customize the evaluation by passing specific arguments
         to the 'eval' method of each agent. If not provided, the default evaluation arguments
         (self.eval_kwargs) will be used.
+
         The 'agent_id' parameter is used to specify a particular agent for evaluation. If None, an agent
         will be chosen randomly for evaluation.
+
         The 'verbose' parameter determines whether a progress report will be printed during the
         evaluation process.
+
         Examples
         --------
         >>> from rlberry.agents import ExperimentManager

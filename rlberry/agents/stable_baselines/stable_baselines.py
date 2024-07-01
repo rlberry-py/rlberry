@@ -189,10 +189,12 @@ class StableBaselinesAgent(AgentWithSimplePolicy):
 
     def save(self, filename):
         """Save the agent to a file.
+
         Parameters
         ----------
         filename: Path or str
             File in which to save the Agent.
+
         Returns
         -------
         pathlib.Path
@@ -212,6 +214,7 @@ class StableBaselinesAgent(AgentWithSimplePolicy):
     @classmethod
     def load(cls, filename, **kwargs):
         """Load agent object.
+
         Parameters
         ----------
         filename: str

@@ -42,7 +42,8 @@ def atari_make(id, seed=None, **kwargs):
     Parameters
     ----------
     id : str
-        Environment id.    seed : int
+        Environment id.
+    seed : int
         seed for the environment
     **kwargs : keywords arguments
         Optional arguments to configure the environment.

@@ -52,9 +52,6 @@ class Agent(ABC):
     _thread_shared_data : dict, optional
         Used by :class:`~rlberry.manager.ExperimentManager` to share data across Agent
         instances created in different threads.
-    **kwargs : dict
-        Classes that implement this interface must send ``**kwargs``
-        to :code:`Agent.__init__()`.
 
     Attributes
     ----------
@@ -65,7 +62,7 @@ class Agent(ABC):
     eval_env : :class:`gymnasium.Env` or tuple (constructor, kwargs)
         Environment on which to evaluate the agent. If None, copied from env.
     writer : object, default: None
-        Writer object to log the output(e.g. tensorboard SummaryWriter).
+        Writer object to log the output (e.g. tensorboard SummaryWriter).
     seeder : :class:`~rlberry.seeding.seeder.Seeder`, int, or None
         Seeder/seed for random number generation.
     rng : :class:`numpy.random._generator.Generator`
@@ -94,11 +91,7 @@ class Agent(ABC):
         _execution_metadata: Optional[metadata_utils.ExecutionMetadata] = None,
         _default_writer_kwargs: Optional[dict] = None,
         _thread_shared_data: Optional[dict] = None,
-        **kwargs,
     ):
-        # Check if wrong parameters have been sent to an agent.
-        assert kwargs == {}, "Unknown parameters sent to agent:" + str(kwargs.keys())
-
         self.seeder = Seeder(seeder)
         self.env = process_env(env, self.seeder, copy_env=copy_env)
 
@@ -168,6 +161,7 @@ class Agent(ABC):
     @abstractmethod
     def fit(self, budget: int, **kwargs):
         """
+        Abstract method to be overwriten by the 'inherited agent' developer.
 
         Train the agent with a fixed budget, using the provided environment.
 
@@ -346,6 +340,7 @@ class Agent(ABC):
         **kwargs: Keyword Arguments
             Arguments required by the __init__ method of the Agent subclass to load.
         """
+
         filename = Path(filename).with_suffix(".pickle")
         obj = cls(**kwargs)
 
@@ -516,9 +511,10 @@ class AgentWithSimplePolicy(Agent):
         """
         pass
 
-    def eval(self, eval_horizon=10**5, n_simulations=10, gamma=1.0, **kwargs):
+    def eval(self, eval_horizon=10**5, n_simulations=10, gamma=1.0):
         """
-        Monte-Carlo policy evaluation [1]_ method to estimate the mean discounted reward using the current policy on the evaluation environment.
+        Monte-Carlo policy evaluation [1]_ method to estimate the mean discounted reward
+        using the current policy on the evaluation environment.
 
         Parameters
         ----------
@@ -539,7 +535,7 @@ class AgentWithSimplePolicy(Agent):
         .. [1] Sutton, R. S., & Barto, A. G. (2018). Reinforcement Learning: An Introduction.
             MIT Press.
         """
-        del kwargs  # unused
+
         episode_rewards = np.zeros(n_simulations)
         for sim in range(n_simulations):
             observation, info = self.eval_env.reset()
@@ -561,8 +557,11 @@ class AgentTorch(Agent):
     # Need a specific save and load to manage torch.
     """
     Abstract Class to inherit for torch agents.
+
     This class use the 'torch' functions to save/load agents.
+
     .. note::
+
         | 1 - Abstract Class : can't be cannot be instantiated. The abstract methods (from Agent) have to be overwriten by the 'inherited class' agent.
         | 2 - Classes that implements this interface can send `**kwargs` to initiate :code:`Agent.__init__()`(:class:`~rlberry.agents.Agent`), but the keys must match the parameters.
 
@@ -589,9 +588,6 @@ class AgentTorch(Agent):
     _thread_shared_data : dict, optional
         Used by :class:`~rlberry.manager.ExperimentManager` to share data across Agent
         instances created in different threads.
-    **kwargs : dict
-        Classes that implement this interface must send ``**kwargs``
-        to :code:`Agent.__init__()`.
 
     Attributes
     ----------

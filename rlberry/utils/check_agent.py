@@ -335,7 +335,7 @@ def _check_save_load_without_manager(agent, env="continuous_state", init_kwargs=
 
         saving_path = tmpdirname + "/agent_test.pickle"
 
-        # test ExperimentManager save and load
+        # test agent save and load
         my_agent.save(saving_path)
         assert os.path.exists(tmpdirname)
 
@@ -483,7 +483,7 @@ def check_vectorized_env_agent(
 
 def check_rl_agent(agent, env="continuous_state", init_kwargs=None):
     """
-    Check ExperimentManager compatibility  and check reproducibility/seeding.
+    Check ExperimentManager compatibility and check reproducibility/seeding.
     Raises an exception if a check fails.
 
     Warning
