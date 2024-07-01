@@ -124,7 +124,7 @@ Backend tkagg is interactive backend. Turning interactive mode on.
 Instead using {mod}`rlberry.manager.plot_writer_data` as in the [visualization page](visu_userguide), you can extract the information into dataframe to use it with other tools.
 For this, there is the {mod}`rlberry.manager.read_writer_data` function
 
-```
+```python
 df = read_writer_data([manager])
 ```
 
