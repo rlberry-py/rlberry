@@ -154,4 +154,4 @@ ax.set_ylabel("rewards")
 plt.show()
 ```
 
-![image](read_writer_example.png){.align-center}
+![image](read_writer_example.png)
