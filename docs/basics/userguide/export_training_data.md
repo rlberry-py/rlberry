@@ -127,6 +127,8 @@ df = read_writer_data([manager])
 ```
 
 Then, you can use your own tools to display what you want.
+
+
 On this example it will be the rewards through the training of the 3 `fit` with matplotlib, but up to you display other information, use other tools, etc.
 
 <span>&#9888;</span> Obviously, the information contained in the writer depends on how it has been configured and what the agent has recorded in it.<span>&#9888;</span>
