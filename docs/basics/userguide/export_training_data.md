@@ -4,10 +4,10 @@
 
 
 ## How to extract data from the WriterData?
-rlberry have tools to display information about the training of an agent. Some of these tools are visible on the [visualization page](visu_userguide) (from User Guide).
+rlberry provides tools displaying information about the training of an agent. Some of these tools are visible on the [visualization page](visu_userguide) (from User Guide).
 
-But maybe you have your favorite tool, and want to use it.
-Rlberry allows training data to be exported as dataframe, to be used with other tools.
+But maybe you have your own favorite tool, and would like to use it.
+rlberry allows you to export the training data as dataframe, to be used with other tools.
 
 Here is the same code from the [visualization page](visu_userguide):
 
@@ -126,12 +126,12 @@ To get these data, use the {mod}`rlberry.manager.read_writer_data` function.
 df = read_writer_data([manager])
 ```
 
-Then, you can use your own tools to display what you want.
+Then, you can use your own tools to display whatever you like.
 
 
-On this example it will be the rewards through the training of the 3 `fit` with matplotlib, but up to you display other information, use other tools, etc.
+In this example, it will be the rewards through the training of the 3 `fit` with matplotlib, but up to you display other information, use other tools, etc.
 
-<span>&#9888;</span> Obviously, the information contained in the writer depends on how it has been configured and what the agent has recorded in it.<span>&#9888;</span>
+<span>&#9888;</span> Of course, the information contained in the writer depends on how it has been configured and what the agent has recorded in it.<span>&#9888;</span>
 
 ```python
 figure, ax = plt.subplots(1, 1)
@@ -159,4 +159,4 @@ plt.show()
 ![image](read_writer_example.png)
 
 
-In this previous example, {mod}`rlberry.manager.read_writer_data` had an [ExperimentManager](rlberry.manager.ExperimentManager) as `data_source`, but it can also be a list of ExperimentManager (if you need data on more than one experimentManager), or a path(String) to a directory that contain pickle files of an [ExperimentManager](rlberry.manager.ExperimentManager).
+In this previous example, {mod}`rlberry.manager.read_writer_data` had an [ExperimentManager](rlberry.manager.ExperimentManager) as `data_source`, but it can also be a list of ExperimentManager (if you need data on more than one experimentManager), or a path(String) to a directory containing pickle files of an [ExperimentManager](rlberry.manager.ExperimentManager).
