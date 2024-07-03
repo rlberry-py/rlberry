@@ -3,13 +3,11 @@
 # How to export data about training?
 
 
-## how to extract data from the WriterData?
-rlberry have tools to display information about the training of the agent. Some of these tool are visible on the [visualization page](visu_userguide) (from User Guide).
+## How to extract data from the WriterData?
+rlberry have tools to display information about the training of an agent. Some of these tools are visible on the [visualization page](visu_userguide) (from User Guide).
 
 But maybe you have your favorite tool, and want to use it.
 Rlberry allows training data to be exported as dataframe, to be used with other tools.
-
-To get these data, use the {mod}`rlberry.manager.read_writer_data` function.
 
 Here is the same code from the [visualization page](visu_userguide):
 
@@ -122,7 +120,7 @@ Backend tkagg is interactive backend. Turning interactive mode on.
 
 
 Instead using {mod}`rlberry.manager.plot_writer_data` as in the [visualization page](visu_userguide), you can extract the information into dataframe to use it with other tools.
-For this, there is the {mod}`rlberry.manager.read_writer_data` function
+To get these data, use the {mod}`rlberry.manager.read_writer_data` function.
 
 ```python
 df = read_writer_data([manager])
@@ -130,6 +128,8 @@ df = read_writer_data([manager])
 
 Then, you can use your own tools to display what you want.
 On this example it will be the rewards through the training of the 3 `fit` with matplotlib, but up to you display other information, use other tools, etc.
+
+<span>&#9888;</span> Obviously, the information contained in the writer depends on how it has been configured and what the agent has recorded in it.<span>&#9888;</span>
 
 ```python
 figure, ax = plt.subplots(1, 1)
@@ -155,3 +155,6 @@ plt.show()
 ```
 
 ![image](read_writer_example.png)
+
+
+In this previous example, {mod}`rlberry.manager.read_writer_data` had an [ExperimentManager](rlberry.manager.ExperimentManager) as `data_source`, but it can also be a list of ExperimentManager (if you need data on more than one experimentManager), or a path(String) to a directory that contain pickle files of an [ExperimentManager](rlberry.manager.ExperimentManager).
