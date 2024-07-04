@@ -334,5 +334,5 @@ print(output)
 - You can check the tensorboard logging with `tensorboard --logdir <path to your output_dir>`.
 
 ## Other information
-Be careful, if you use a torch agent, rlberry's [ExperimentManager](rlberry.manager.ExperimentManager) will manage the "torch seed" for you (if you have specify the seed in the [ExperimentManager](rlberry.manager.ExperimentManager)).
+Be careful, if you use a torch agent with the rlberry's [ExperimentManager](rlberry.manager.ExperimentManager), the "torch seed" will be set for you (if you have specify the seed in the [ExperimentManager](rlberry.manager.ExperimentManager) parameters).
 More information about the seeding in rlberry [here](seeding_page).

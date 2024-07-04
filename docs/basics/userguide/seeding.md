@@ -355,7 +355,7 @@ You can also use a seeder to seed some external libraries using the method `set_
 (currently only [torch](https://pytorch.org/tutorials/beginner/deep_learning_60min_blitz.html))
 
 
-It will be usefull if you want reproducibility with external libraries. In this example, you will use `torch` to generate random numbers.
+It will be usefull if you want reproducibility with external libraries. In this example, we will use `torch` to generate random numbers.
 
 If you run this code many time, you should have different outputs.
 ```python
@@ -413,4 +413,4 @@ run 3 :
 [693246422, 3606543353, 433394544, 2194426398, 3928404622]
 ```
 
-If you like to fit an [ExperimentManager](rlberry.manager.ExperimentManager) with a [torch](https://pytorch.org/tutorials/beginner/deep_learning_60min_blitz.html) agent, you don't need to use the `set_external_seed`, rlberry do it for you.
+<span>&#9888;</span> **warning :** If you like to fit an [ExperimentManager](rlberry.manager.ExperimentManager) with a [torch](https://pytorch.org/tutorials/beginner/deep_learning_60min_blitz.html) agent, you don't need to use the `set_external_seed`, rlberry do it for you.<span>&#9888;</span>
