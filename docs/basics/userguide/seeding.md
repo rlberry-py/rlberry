@@ -351,7 +351,10 @@ random sample 2 from seeder2 rng:  -0.1930990650226178
 </br>
 
 ## External libraries
-You can also use a seeder to seed external libraries (such as torch) using the method `set_external_seed`.
+You can also use a seeder to seed some external libraries using the method `set_external_seed`.
+(currently only [torch](https://pytorch.org/tutorials/beginner/deep_learning_60min_blitz.html))
+
+
 It will be usefull if you want reproducibility with external libraries. In this example, you will use `torch` to generate random numbers.
 
 If you run this code many time, you should have different outputs.
@@ -409,3 +412,5 @@ run 3 :
 ```none
 [693246422, 3606543353, 433394544, 2194426398, 3928404622]
 ```
+
+If you like to fit an [ExperimentManager](rlberry.manager.ExperimentManager) with a [torch](https://pytorch.org/tutorials/beginner/deep_learning_60min_blitz.html) agent, you don't need to use the `set_external_seed`, rlberry do it for you.
