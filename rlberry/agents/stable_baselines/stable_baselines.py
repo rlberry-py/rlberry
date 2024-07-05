@@ -201,7 +201,7 @@ class StableBaselinesAgent(AgentWithSimplePolicy):
             If save() is successful, a Path object corresponding to the filename is returned.
             Otherwise, None is returned.
         """
-        # Save wrappped RL algorithm
+        # Save wrapped RL algorithm
         sb3_file = Path(filename).with_suffix(".zip")
         sb3_file.parent.mkdir(parents=True, exist_ok=True)
         self.wrapped.save(sb3_file)
@@ -242,7 +242,7 @@ class StableBaselinesAgent(AgentWithSimplePolicy):
         Note
         ----
         This method wraps the :code:`learn` method of the algorithm.
-        Logging parameters are processered by rlberry in order to use the
+        Logging parameters are processed by rlberry in order to use the
         agent.writer.
 
         Parameters
