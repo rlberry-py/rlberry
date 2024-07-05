@@ -174,7 +174,7 @@ class ExperimentManager:
     agent_class
         Class of the agent.
     train_env : tuple (constructor, kwargs)
-        Enviroment used to initialize/train the agent.
+        Environment used to initialize/train the agent.
     fit_budget : int
         Budget used to call :meth:`rlberry.agents.agent.Agent.fit`.
         If None, must be given in ``fit_kwargs['fit_budget']``.
@@ -186,7 +186,7 @@ class ExperimentManager:
         Extra arguments to call :meth:`rlberry.agents.agent.Agent.fit`.
     eval_kwargs : dict
         Arguments required to call :meth:`rlberry.agents.agent.Agent.eval`.
-        if eval was not overwrited it's (:class:`~rlberry.agents.AgentWithSimplePolicy`) :
+        if eval was not overwrite it's (:class:`~rlberry.agents.AgentWithSimplePolicy`) :
         eval_horizon : int, default: 10**5
             Horizon, maximum episode length.
         n_simulations : int, default: 10
@@ -318,7 +318,7 @@ class ExperimentManager:
         # check options
         assert outdir_id_style in [None, "unique", "timestamp"]
 
-        # create oject identifier
+        # create object identifier
         self.unique_id = metadata_utils.get_unique_id(self)
         self.timestamp_id = metadata_utils.get_readable_id(self)
 
@@ -453,7 +453,7 @@ class ExperimentManager:
             self.db_filename = None
             self.optuna_storage_url = "sqlite:///:memory:"
             logger.warning(
-                f"Unable to create databate {self.db_filename}. Using sqlite:///:memory:"
+                f"Unable to create database {self.db_filename}. Using sqlite:///:memory:"
             )
 
     def _set_init_kwargs(self):
@@ -621,7 +621,7 @@ class ExperimentManager:
             agent = self.agent_handlers[agent_idx]
             if agent.is_empty():
                 logger.error(
-                    "Calling eval() in an ExperimentManager instance contaning an empty AgentHandler."
+                    "Calling eval() in an ExperimentManager instance containing an empty AgentHandler."
                     " Returning []."
                 )
                 return []
@@ -675,7 +675,7 @@ class ExperimentManager:
         idx : int
             Index of the agent to set the writer (0 <= idx < `n_fit`).
             ExperimentManager fits `n_fit` agents, the writer of each one of them
-            needs to be set separetely.
+            needs to be set separately.
         """
         assert (
             idx >= 0 and idx < self.n_fit
@@ -1377,9 +1377,9 @@ def _optuna_objective(
     return eval_value
 
 
-def _strip_seed_dir(dico):
+def _strip_seed_dir(dict):
     """Remove keys that should not be compared in __eq__"""
-    res = deepcopy(dico)
+    res = deepcopy(dict)
     del res["seeder"]
     del res["output_dir"]
     return res

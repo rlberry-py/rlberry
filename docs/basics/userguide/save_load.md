@@ -34,9 +34,9 @@ experiment_to_save = ExperimentManager(
     ),  # agent args
     fit_budget=int(300000),  # Budget used to call our agent "fit()"
     n_fit=1,  # Number of agent instances to fit.
-    seed=seeder,  # to be reproductible
+    seed=seeder,  # to be reproducible
     agent_name="QL" + env_id,  # Name of the agent
-    output_dir="./results/",  # where to store the outpus
+    output_dir="./results/",  # where to store the outputs
 )
 
 experiment_to_save.fit()
@@ -71,7 +71,7 @@ writers.py:108: FutureWarning: The behavior of DataFrame concatenation with empt
 
 After this run, you can see the 'print' of the q-table.
 At the end of the fit, the data of this experiment are saved automatically. It will be saved according to the `output_dir` parameter (here `./results/`). If you don't specify the `output_dir` parameter, it will saved by default inside the `rlberry_data/temp/` folder.
-(Or you can use temporary folder by importing `tempfile` librrary and using `with tempfile.TemporaryDirectory() as tmpdir:`)
+(Or you can use temporary folder by importing `tempfile` library and using `with tempfile.TemporaryDirectory() as tmpdir:`)
 
 In this folder, you should find :
 - `manager_obj.pickle` and folder `agent_handler`, the save of your experiment and your agent.
@@ -149,7 +149,7 @@ Success!
 
 As you can see, we haven't re-fit the experiment, and the q-table is the same as the one previously saved (and the Agent can finish the environment).
 
-## Other informations
+## Other information
 
 The `save` and `load` can be useful for :
 - you want to train your agent on a computer, and test/use it on others.

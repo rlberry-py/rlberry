@@ -58,7 +58,7 @@ In our [dev documentation](https://rlberry-py.github.io/rlberry/), you will find
 
 ## Changelog
 
-See the [changelog](https://rlberry-py.github.io/rlberry/changelog.html) for a history of the chages made to rlberry.
+See the [changelog](https://rlberry-py.github.io/rlberry/changelog.html) for a history of the changes made to rlberry.
 
 ## Other rlberry projects
 

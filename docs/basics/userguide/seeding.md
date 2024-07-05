@@ -116,7 +116,7 @@ env.reseed(seeder)  # seeder first use
 agent = UCBVIAgent(env)
 agent.reseed(seeder)  # same seeder
 
-# check that the generated numbers are differents
+# check that the generated numbers are different
 print("env seeder: ", env.seeder)
 print("random sample 1 from env rng: ", env.rng.normal())
 print("random sample 2 from env rng: ", env.rng.normal())
@@ -355,7 +355,7 @@ You can also use a seeder to seed some external libraries using the method `set_
 (currently only [torch](https://pytorch.org/tutorials/beginner/deep_learning_60min_blitz.html))
 
 
-It will be usefull if you want reproducibility with external libraries. In this example, we will use `torch` to generate random numbers.
+It will be useful if you want reproducibility with external libraries. In this example, we will use `torch` to generate random numbers.
 
 If you run this code many time, you should have different outputs.
 ```python
@@ -383,7 +383,7 @@ run 3 :
 
 
 
-If you add to this code a [Seeder](rlberry.seeding.seeder.Seeder), use the `set_external_seed` method, and re-run it, you should have the same 'random' numbers everytime.
+If you add to this code a [Seeder](rlberry.seeding.seeder.Seeder), use the `set_external_seed` method, and re-run it, you should have the same 'random' numbers every time.
 
 ```python
 import torch

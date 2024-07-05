@@ -147,10 +147,10 @@ from gymnasium.wrappers.record_video import RecordVideo
 
 env_id = "CartPole-v1"
 env_ctor = gym_make  # constructor for training env
-env_kwargs = dict(id=env_id)  # kwars for training env
+env_kwargs = dict(id=env_id)  # kwargs for training env
 
 eval_env_ctor = PipelineEnv  # constructor for eval env
-eval_env_kwargs = {  # kwars for eval env (with wrapper)
+eval_env_kwargs = {  # kwargs for eval env (with wrapper)
     "env_ctor": gym_make,
     "env_kwargs": {"id": env_id, "render_mode": "rgb_array"},
     "wrappers": [

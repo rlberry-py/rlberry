@@ -15,7 +15,7 @@ class FiniteMDP(Model):
 
     Terminal states are set to be absorbing, and
     are determined by the is_terminal() method,
-    which can be overriden (and returns false by default).
+    which can be override (and returns false by default).
 
     Parameters
     ----------

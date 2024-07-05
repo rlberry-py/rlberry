@@ -23,10 +23,10 @@ logger = rlberry.logger
 class Agent(ABC):
     """Basic interface for agents.
 
-    If the 'inherited class' from Agent use the torch lib, that is higly recommanded to inherit :class:`~rlberry.agents.AgentTorch` instead.
+    If the 'inherited class' from Agent use the torch lib, that is highly recommended to inherit :class:`~rlberry.agents.AgentTorch` instead.
 
     .. note::
-        | 1 - Abstract Class : can't be cannot be instantiated. The abstract methods have to be overwriten by the 'inherited class' agent.
+        | 1 - Abstract Class : can't be cannot be instantiated. The abstract methods have to be override by the 'inherited class' agent.
         | 2 - Classes that implements this interface can send `**kwargs` to initiate :code:`Agent.__init__()`, but the keys must match the parameters.
 
     Parameters
@@ -161,7 +161,7 @@ class Agent(ABC):
     @abstractmethod
     def fit(self, budget: int, **kwargs):
         """
-        Abstract method to be overwriten by the 'inherited agent' developer.
+        Abstract method to be override by the 'inherited agent' developer.
 
         Train the agent with a fixed budget, using the provided environment.
 
@@ -269,7 +269,7 @@ class Agent(ABC):
         """
         Save agent object. By default, the agent is pickled.
 
-        If overridden, the load() method must also be overriden.
+        If override, the load() method must also be override.
 
         Before saving, consider setting writer to None if it can't be pickled (tensorboard writers
         keep references to files and cannot be pickled).
@@ -328,10 +328,10 @@ class Agent(ABC):
 
     @classmethod
     def load(cls, filename, **kwargs):
-        # If overridden, save() method must also be overriden.
+        # If overridden, save() method must also be override.
         """Load agent object from filepath.
 
-        If overridden, save() method must also be overriden.
+        If override, save() method must also be override.
 
         Parameters
         ----------
@@ -420,7 +420,7 @@ class AgentWithSimplePolicy(Agent):
     The :meth:`policy` method takes an observation as input and returns an action.
 
     .. note::
-        | 1 - Abstract Class : can't be cannot be instantiated. The abstract methods have to be overwriten by the 'inherited class' agent.
+        | 1 - Abstract Class : can't be cannot be instantiated. The abstract methods have to be overwrite by the 'inherited class' agent.
         | 2 - Classes that implements this interface can send `**kwargs` to initiate :code:`Agent.__init__()` (:class:`~rlberry.agents.Agent`), but the keys must match the parameters.
 
     Parameters
@@ -562,7 +562,7 @@ class AgentTorch(Agent):
 
     .. note::
 
-        | 1 - Abstract Class : can't be cannot be instantiated. The abstract methods (from Agent) have to be overwriten by the 'inherited class' agent.
+        | 1 - Abstract Class : can't be cannot be instantiated. The abstract methods (from Agent) have to be overwrite by the 'inherited class' agent.
         | 2 - Classes that implements this interface can send `**kwargs` to initiate :code:`Agent.__init__()`(:class:`~rlberry.agents.Agent`), but the keys must match the parameters.
 
     Parameters
@@ -616,7 +616,7 @@ class AgentTorch(Agent):
 
     def save(self, filename):
         # Overwrite the 'save' method to manage CPU and GPU with torch agent
-        # If overridden, the load() method must also be overriden.
+        # If overridden, the load() method must also be override.
         """
         ----- documentation from original save -----
 
@@ -683,7 +683,7 @@ class AgentTorch(Agent):
     @classmethod
     def load(cls, filename, **kwargs):
         # Overwrite 'load' method to manage CPU vs GPU with torch agent.
-        # If overridden, save() method must also be overriden.
+        # If overridden, save() method must also be override.
         """
         ----- documentation from original load -----
         Load agent object.
