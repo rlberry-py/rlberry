@@ -88,37 +88,9 @@ def test_compare(method, source):
         assert len(df) > 0
 
 
-def test_adastop():
+def test_adastop(caplog):
     # Define train and evaluation envs
     train_env = (GridWorld, {})
-    eval_env = (GridWorld, {})
-
-    # Parameters
-    eval_kwargs = dict(eval_horizon=10)
-
-    # Run AgentManager
-    agent1 = AgentManager(
-        DummyAgent,
-        train_env,
-        agent_name="Dummy1",
-        eval_env=eval_env,
-        fit_budget=5,
-        eval_kwargs=eval_kwargs,
-        init_kwargs={"eval_val": 0},
-        n_fit=10,
-        seed=123,
-    )
-    agent2 = AgentManager(
-        DummyAgent,
-        train_env,
-        eval_env=eval_env,
-        agent_name="Dummy2",
-        fit_budget=5,
-        eval_kwargs=eval_kwargs,
-        init_kwargs={"eval_val": 10},
-        n_fit=10,
-        seed=123,
-    )
 
     managers = [
         {
@@ -142,3 +114,37 @@ def test_adastop():
     comparator.print_results()
     assert comparator.is_finished
     assert not ("equal" in comparator.decisions.values())
+
+
+def test_adastop_with_seed_warnings(caplog):
+    warning_overwrite_message = (
+        "Adastop has overwrite the ExperimentManager's seed with it's own seed !"
+    )
+    # Define train and evaluation envs
+    train_env = (GridWorld, {})
+
+    managers = [
+        {
+            "agent_class": DummyAgent,
+            "train_env": train_env,
+            "fit_budget": 5,
+            "agent_name": "Dummy1",
+            "init_kwargs": {"eval_val": 0},
+            "seed": 123,
+        },
+        {
+            "agent_class": DummyAgent,
+            "train_env": train_env,
+            "agent_name": "Dummy2",
+            "fit_budget": 5,
+            "init_kwargs": {"eval_val": 10},
+            "seed": 456,
+        },
+    ]
+
+    comparator = AdastopComparator(seed=42)
+    comparator.compare(managers)
+    comparator.print_results()
+    assert comparator.is_finished
+    assert not ("equal" in comparator.decisions.values())
+    assert warning_overwrite_message in caplog.text

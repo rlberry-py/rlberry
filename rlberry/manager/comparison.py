@@ -144,6 +144,11 @@ class AdastopComparator(MultipleAgentsComparator):
             ):
                 manager_kwargs = managers[i]
                 seeder = seeders[i]
+                if "seed" in manager_kwargs:
+                    del manager_kwargs["seed"]
+                    logger.warning(
+                        "Adastop has overwrite the ExperimentManager's seed with it's own seed !"
+                    )
                 managers_in.append(ExperimentManager(**manager_kwargs, seed=seeder))
                 agent_names_in.append(managers_in[-1].agent_name)
 
@@ -386,7 +391,7 @@ def _permutation_test(data, B, alpha, seed):
     comparisons_alive = np.arange(len(comparisons))
     seeder = Seeder(seed)
 
-    logger.info("Beginning permutationt test")
+    logger.info("Beginning permutation test")
     while True:
         current_comparisons = comparisons[comparisons_alive]
         logger.info(f"Still {len(current_comparisons)} comparisons to test")
