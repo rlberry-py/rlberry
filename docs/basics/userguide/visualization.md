@@ -68,10 +68,11 @@ for tt in range(100):
         # Warning: this will never happen in the present case.
         break
 
-saving_path = "./test_gymnasium_gif.gif"
+saving_path = "./visu_gymnasium_gif.gif"
 env.save_gif(saving_path)
 ```
 
+![](visu_gymnasium_gif.gif)
 
 ## Plotting training data and reward curves in rlberry
 
