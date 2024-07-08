@@ -172,7 +172,7 @@ def test_gridworld_rendering_gif(rendering_tool):
             pass
 
 
-# ##### Fonctionne uniquement si on ajoute une dépendance à ffmpeg ############
+# ##### Works only if you add a dependency to ffmpeg ############
 # @pytest.mark.xfail(sys.platform == "darwin", reason="bug with Mac with pygame")
 # @pytest.mark.parametrize("rendering_tool", RENDERING_TOOL)
 # def test_gridworld_rendering_mp4(rendering_tool):
@@ -269,7 +269,7 @@ def test_gym_make_rendering_gif(rendering_tool):
             pass
 
 
-# ##### Fonctionne uniquement si on ajoute une dépendance à ffmpeg ############
+# ##### Works only if you add a dependency to ffmpeg ############
 # @pytest.mark.skipif(sys.platform == "darwin", reason="bug with Mac with pygame")
 # @pytest.mark.parametrize("rendering_tool", RENDERING_TOOL)
 # def test_gym_make_rendering_mp4(rendering_tool):
