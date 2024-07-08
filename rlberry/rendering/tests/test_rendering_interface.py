@@ -8,6 +8,7 @@ from rlberry_research.envs.classic_control import Pendulum
 from rlberry_scool.envs.finite import Chain
 from rlberry_scool.envs.finite import GridWorld
 from rlberry_scool.agents.dynprog import ValueIterationAgent
+from rlberry_research.agents import RSUCBVIAgent
 from rlberry_research.envs.benchmarks.grid_exploration.four_room import FourRoom
 from rlberry_research.envs.benchmarks.grid_exploration.six_room import SixRoom
 from rlberry_research.envs.benchmarks.grid_exploration.apple_gold import AppleGold
@@ -16,6 +17,8 @@ from rlberry_research.envs.benchmarks.generalization.twinrooms import TwinRooms
 from rlberry.rendering import RenderInterface
 from rlberry.rendering import RenderInterface2D
 from rlberry.envs import Wrapper
+from rlberry.envs import gym_make
+from rlberry.seeding import Seeder
 
 import tempfile
 
@@ -156,7 +159,7 @@ def test_gridworld_rendering_gif(rendering_tool):
         done = terminated or truncated
         if done:
             # Warning: this will never happen in the present case because there is no terminal state.
-            # See the doc of GridWorld for more informations on the default parameters of GridWorld.
+            # See the doc of GridWorld for more information on the default parameters of GridWorld.
             break
 
     with tempfile.TemporaryDirectory() as tmpdirname:
@@ -188,7 +191,7 @@ def test_gridworld_rendering_gif(rendering_tool):
 #         done = terminated or truncated
 #         if done:
 #             # Warning: this will never happen in the present case because there is no terminal state.
-#             # See the doc of GridWorld for more informations on the default parameters of GridWorld.
+#             # See the doc of GridWorld for more information on the default parameters of GridWorld.
 #             break
 
 #     with tempfile.TemporaryDirectory() as tmpdirname:
@@ -219,7 +222,49 @@ def test_gridworld_rendering_screen(rendering_tool):
         done = terminated or truncated
         if done:
             # Warning: this will never happen in the present case because there is no terminal state.
-            # See the doc of GridWorld for more informations on the default parameters of GridWorld.
+            # See the doc of GridWorld for more information on the default parameters of GridWorld.
             break
 
     env.render(loop=False)
+
+
+@pytest.mark.skipif(sys.platform == "darwin", reason="bug with Mac with pygame")
+@pytest.mark.parametrize("rendering_tool", RENDERING_TOOL)
+def test_gym_make_rendering_gif(rendering_tool):
+    seeder = Seeder(123)
+    env = gym_make("MountainCar-v0", render_mode="rgb_array")
+    env.reseed(seeder)
+    env.renderer_type = rendering_tool
+
+    agent = RSUCBVIAgent(
+        env,
+        gamma=0.99,
+        horizon=200,
+        bonus_scale_factor=0.1,
+        copy_env=False,
+        min_dist=0.1,
+    )
+
+    info = agent.fit(15)
+    print(info)
+
+    env.enable_rendering()
+    observation, info = env.reset()
+    for tt in range(100):
+        action = agent.policy(observation)
+        observation, reward, terminated, truncated, info = env.step(action)
+        done = terminated or truncated
+        if done:
+            # Warning: this will never happen in the present case because there is no terminal state.
+            # See the doc of GridWorld for more information on the default parameters of GridWorld.
+            break
+
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        saving_path = tmpdirname + "/test_gif.gif"
+        env.save_gif(saving_path)
+        assert os.path.isfile(saving_path)
+
+        try:
+            os.remove(saving_path)
+        except Exception:
+            pass
