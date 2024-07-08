@@ -172,7 +172,7 @@ def test_gridworld_rendering_gif(rendering_tool):
             pass
 
 
-##### Fonctionne uniquement si on ajoute une dépendance à ffmpeg ############
+# ##### Fonctionne uniquement si on ajoute une dépendance à ffmpeg ############
 # @pytest.mark.xfail(sys.platform == "darwin", reason="bug with Mac with pygame")
 # @pytest.mark.parametrize("rendering_tool", RENDERING_TOOL)
 # def test_gridworld_rendering_mp4(rendering_tool):
@@ -195,7 +195,7 @@ def test_gridworld_rendering_gif(rendering_tool):
 #             break
 
 #     with tempfile.TemporaryDirectory() as tmpdirname:
-#         saving_path = tmpdirname + "/test_gif.mp4"
+#         saving_path = tmpdirname + "/test_video.mp4"
 #         env.save_video(saving_path)
 #         assert os.path.isfile(saving_path)
 #         try:
@@ -255,8 +255,7 @@ def test_gym_make_rendering_gif(rendering_tool):
         observation, reward, terminated, truncated, info = env.step(action)
         done = terminated or truncated
         if done:
-            # Warning: this will never happen in the present case because there is no terminal state.
-            # See the doc of GridWorld for more information on the default parameters of GridWorld.
+            # Warning: this will never happen in the present case.
             break
 
     with tempfile.TemporaryDirectory() as tmpdirname:
@@ -268,3 +267,44 @@ def test_gym_make_rendering_gif(rendering_tool):
             os.remove(saving_path)
         except Exception:
             pass
+
+
+# ##### Fonctionne uniquement si on ajoute une dépendance à ffmpeg ############
+# @pytest.mark.skipif(sys.platform == "darwin", reason="bug with Mac with pygame")
+# @pytest.mark.parametrize("rendering_tool", RENDERING_TOOL)
+# def test_gym_make_rendering_mp4(rendering_tool):
+#     seeder = Seeder(123)
+#     env = gym_make("MountainCar-v0", render_mode="rgb_array")
+#     env.reseed(seeder)
+#     env.renderer_type = rendering_tool
+
+#     agent = RSUCBVIAgent(
+#         env,
+#         gamma=0.99,
+#         horizon=200,
+#         bonus_scale_factor=0.1,
+#         copy_env=False,
+#         min_dist=0.1,
+#     )
+
+#     info = agent.fit(15)
+#     print(info)
+
+#     env.enable_rendering()
+#     observation, info = env.reset()
+#     for tt in range(100):
+#         action = agent.policy(observation)
+#         observation, reward, terminated, truncated, info = env.step(action)
+#         done = terminated or truncated
+#         if done:
+#             # Warning: this will never happen in the present case.
+#             break
+
+#     with tempfile.TemporaryDirectory() as tmpdirname:
+#         saving_path = tmpdirname + "/test_video.mp4"
+#         env.save_video(saving_path)
+#         assert os.path.isfile(saving_path)
+#         try:
+#             os.remove(saving_path)
+#         except Exception:
+#             pass

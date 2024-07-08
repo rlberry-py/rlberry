@@ -139,7 +139,7 @@ class RenderInterface2D(RenderInterface):
             logger.info("Rendering not enabled for the environment.")
             return 1
 
-    def get_video(self, framerate=25, **kwargs):
+    def get_video(self, **kwargs):
         # background and data
         background, data = self._get_background_and_scenes()
 
@@ -158,9 +158,9 @@ class RenderInterface2D(RenderInterface):
         return renderer.get_video_data()
 
     def save_video(self, filename, framerate=25, **kwargs):
-        video_data = self.get_video(framerate=framerate, **kwargs)
+        video_data = self.get_video(**kwargs)
         video_write(filename, video_data, framerate=framerate)
 
-    def save_gif(self, filename, framerate=25, **kwargs):
-        video_data = self.get_video(framerate=framerate, **kwargs)
+    def save_gif(self, filename, **kwargs):
+        video_data = self.get_video(**kwargs)
         gif_write(filename, video_data)

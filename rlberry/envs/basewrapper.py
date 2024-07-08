@@ -153,15 +153,15 @@ class Wrapper(Model, RenderInterface):
         except Exception:
             return False
 
-    def get_video(self, framerate=25, **kwargs):
+    def get_video(self, **kwargs):
         return self.frames
 
     def save_video(self, filename, framerate=25, **kwargs):
-        video_data = self.get_video(framerate=framerate, **kwargs)
+        video_data = self.get_video(**kwargs)
         video_write(filename, video_data, framerate=framerate)
 
-    def save_gif(self, filename, framerate=25, **kwargs):
-        video_data = self.get_video(framerate=framerate, **kwargs)
+    def save_gif(self, filename, **kwargs):
+        video_data = self.get_video(**kwargs)
         gif_write(filename, video_data)
 
     def __repr__(self):
