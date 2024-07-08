@@ -71,7 +71,7 @@ writers.py:108: FutureWarning: The behavior of DataFrame concatenation with empt
 
 After this run, you can see the 'print' of the q-table.
 At the end of the fit, the data of this experiment are saved automatically. It will be saved according to the `output_dir` parameter (here `./results/`). If you don't specify the `output_dir` parameter, it will saved by default inside the `rlberry_data/temp/` folder.
-(Or you can use temporary folder by importing `tempfile` library and using `with tempfile.TemporaryDirectory() as tmpdir:`)
+(Or you can use temporary folder by importing [tempfile](https://docs.python.org/3/library/tempfile.html) library and using `with tempfile.TemporaryDirectory() as tmpdir:`)
 
 In this folder, you should find :
 - `manager_obj.pickle` and folder `agent_handler`, the save of your experiment and your agent.
@@ -157,9 +157,9 @@ The `save` and `load` can be useful for :
 - you want to do the training in more than once (only if your agent has "fit(x) then fit(y), is the same as fit(x+y)")
 
 
-## How to save/load an agent only?
+## How to save/load an agent only? (advanced users)
 
-<span>&#9888;</span> We highly recommend to use the save/load with the `ExperimentManager` to have all the information. But if you need to save the agent for a specific case, you can do so : <span>&#9888;</span>
+<span>&#9888;</span> We highly recommend to use the save/load with the `ExperimentManager` to have all the information (as above). But if you need to save only the agent for a specific case, you can do so : <span>&#9888;</span>
 
 
 ### Save the agent
@@ -227,6 +227,24 @@ params_for_loader = dict(env=env_for_loader)
 # load the agent
 loaded_agent = QLAgent.load("./results/", **params_for_loader)
 print(loaded_agent.Q)  # print the content of the Q-table
+
+# create a seeded test env
+test_env = gym_make(env_id)
+test_env.seed(int(seeder.rng.integers(env_seed_max_value)))
+
+observation, info = test_env.reset()
+for tt in range(50):
+    action = loaded_agent.policy(observation)
+    next_observation, reward, terminated, truncated, info = test_env.step(action)
+    done = terminated or truncated
+    if done:
+        if reward == 1:
+            print("Success!")
+            break
+        else:
+            print("Fail! Retry!")
+            next_observation, info = test_env.reset()
+    observation = next_observation
 ```
 
 
@@ -247,32 +265,11 @@ print(loaded_agent.Q)  # print the content of the Q-table
  [0.         0.52043878 0.56986596 0.19259904]
  [0.57831479 0.6858159  0.22998936 0.39350426]
  [0.         0.         0.         0.        ]]
-```
 
-As you can see, we haven't re-fit the agent, and the q-table is the same as the one previously saved.
-
-Then, you can use your agent to solve a test environment :
-
-```python
-# create a seeded test env
-test_env = gym_make(env_id)
-test_env.seed(int(seeder.rng.integers(env_seed_max_value)))
-
-observation, info = test_env.reset()
-for tt in range(50):
-    action = loaded_agent.policy(observation)
-    next_observation, reward, terminated, truncated, info = test_env.step(action)
-    done = terminated or truncated
-    if done:
-        if reward == 1:
-            print("Success!")
-            break
-        else:
-            print("Fail! Retry!")
-            next_observation, info = test_env.reset()
-    observation = next_observation
-```
-
-```none
 Success!
+
 ```
+
+
+This code show that the loaded agent contains all the necessary component needed to reuse the agent.
+(As you can see, we haven't re-fit the agent, and the q-table is the same as the one previously saved)

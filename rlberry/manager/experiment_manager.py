@@ -186,7 +186,7 @@ class ExperimentManager:
         Extra arguments to call :meth:`rlberry.agents.agent.Agent.fit`.
     eval_kwargs : dict
         Arguments required to call :meth:`rlberry.agents.agent.Agent.eval`.
-        if eval was not overwrite it's (:class:`~rlberry.agents.AgentWithSimplePolicy`) :
+        if eval was not overwritten it's (:class:`~rlberry.agents.AgentWithSimplePolicy`) :
         eval_horizon : int, default: 10**5
             Horizon, maximum episode length.
         n_simulations : int, default: 10

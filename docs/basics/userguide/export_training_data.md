@@ -9,7 +9,7 @@ rlberry provides tools displaying information about the training of an agent. So
 But maybe you have your own favorite tool, and would like to use it.
 rlberry allows you to export the training data as dataframe, to be used with other tools.
 
-Here is the same code from the [visualization page](visu_userguide):
+To show how it works with an example, here is a code training PPO from [stablebaselines3](https://stable-baselines3.readthedocs.io) on [CartPole](https://www.gymlibrary.dev/environments/classic_control/cart_pole/) environment via rlberry :
 
 ```python
 from rlberry.envs import gym_make
@@ -119,8 +119,7 @@ Backend tkagg is interactive backend. Turning interactive mode on.
 ```
 
 
-Instead using {mod}`rlberry.manager.plot_writer_data` as in the [visualization page](visu_userguide), you can extract the information into dataframe to use it with other tools.
-To get these data, use the {mod}`rlberry.manager.read_writer_data` function.
+The easy way to display information is to use {mod}`rlberry.manager.plot_writer_data` as in the [visualization page](visu_userguide), but instead you can use {mod}`rlberry.manager.read_writer_data` function to extract the information into dataframe :
 
 ```python
 df = read_writer_data([manager])
@@ -129,27 +128,19 @@ df = read_writer_data([manager])
 Then, you can use your own tools to display whatever you like.
 
 
-In this example, it will be the rewards through the training of the 3 `fit` with matplotlib, but up to you display other information, use other tools, etc.
+To illustrate this, we plot the rollout reward mean of PPO coming from 3 `fit` using matplotlib.
 
 <span>&#9888;</span> Of course, the information contained in the writer depends on how it has been configured and what the agent has recorded in it.<span>&#9888;</span>
 
 ```python
 figure, ax = plt.subplots(1, 1)
 
-toplot_df1 = df.loc[
-    (df["tag"] == "rollout/ep_rew_mean") & (df["n_simu"] == 0), ["global_step", "value"]
-]
-toplot_df2 = df.loc[
-    (df["tag"] == "rollout/ep_rew_mean") & (df["n_simu"] == 1), ["global_step", "value"]
-]
-toplot_df3 = df.loc[
-    (df["tag"] == "rollout/ep_rew_mean") & (df["n_simu"] == 2), ["global_step", "value"]
-]
-
-
-ax.plot(toplot_df1["global_step"], toplot_df1["value"])
-ax.plot(toplot_df2["global_step"], toplot_df2["value"])
-ax.plot(toplot_df3["global_step"], toplot_df3["value"])
+for n_simu in df["n_simu"].unique():
+    to_plot_df = df.loc[
+        (df["tag"] == "rollout/ep_rew_mean") & (df["n_simu"] == n_simu),
+        ["global_step", "value"],
+    ]
+    ax.plot(to_plot_df["global_step"], to_plot_df["value"])
 
 ax.set_xlabel("steps")
 ax.set_ylabel("rewards")
@@ -159,4 +150,4 @@ plt.show()
 ![image](read_writer_example.png)
 
 
-In this previous example, {mod}`rlberry.manager.read_writer_data` had an [ExperimentManager](rlberry.manager.ExperimentManager) as `data_source`, but it can also be a list of ExperimentManager (if you need data on more than one experimentManager), or a path(String) to a directory containing pickle files of an [ExperimentManager](rlberry.manager.ExperimentManager).
+In this previous example, {mod}`rlberry.manager.read_writer_data` had an [ExperimentManager](rlberry.manager.ExperimentManager) as `data_source`, but {mod}`rlberry.manager.read_writer_data` can also take as input a list of ExperimentManager (if you need data on more than one experimentManager), or a path(String) to a directory containing pickle files of an [ExperimentManager](rlberry.manager.ExperimentManager).

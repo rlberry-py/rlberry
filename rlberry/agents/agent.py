@@ -23,10 +23,10 @@ logger = rlberry.logger
 class Agent(ABC):
     """Basic interface for agents.
 
-    If the 'inherited class' from Agent use the torch lib, that is highly recommended to inherit :class:`~rlberry.agents.AgentTorch` instead.
+    If the 'inherited class' from Agent use the torch lib, it is highly recommended to inherit :class:`~rlberry.agents.AgentTorch` instead.
 
     .. note::
-        | 1 - Abstract Class : can't be cannot be instantiated. The abstract methods have to be override by the 'inherited class' agent.
+        | 1 - Abstract Class : cannot be instantiated. The abstract methods have to be overridden by the 'inherited class' agent.
         | 2 - Classes that implements this interface can send `**kwargs` to initiate :code:`Agent.__init__()`, but the keys must match the parameters.
 
     Parameters
@@ -161,7 +161,7 @@ class Agent(ABC):
     @abstractmethod
     def fit(self, budget: int, **kwargs):
         """
-        Abstract method to be override by the 'inherited agent' developer.
+        Abstract method to be overridden by the 'inherited agent'.
 
         Train the agent with a fixed budget, using the provided environment.
 
@@ -269,7 +269,7 @@ class Agent(ABC):
         """
         Save agent object. By default, the agent is pickled.
 
-        If override, the load() method must also be override.
+        If overridden, the load() method must also be overridden.
 
         Before saving, consider setting writer to None if it can't be pickled (tensorboard writers
         keep references to files and cannot be pickled).
@@ -331,7 +331,7 @@ class Agent(ABC):
         # If overridden, save() method must also be override.
         """Load agent object from filepath.
 
-        If override, save() method must also be override.
+        If overridden, save() method must also be overridden.
 
         Parameters
         ----------
@@ -420,7 +420,7 @@ class AgentWithSimplePolicy(Agent):
     The :meth:`policy` method takes an observation as input and returns an action.
 
     .. note::
-        | 1 - Abstract Class : can't be cannot be instantiated. The abstract methods have to be overwrite by the 'inherited class' agent.
+        | 1 - Abstract Class : cannot be instantiated. The abstract methods have to be Overwritten by the 'inherited class' agent.
         | 2 - Classes that implements this interface can send `**kwargs` to initiate :code:`Agent.__init__()` (:class:`~rlberry.agents.Agent`), but the keys must match the parameters.
 
     Parameters
@@ -562,7 +562,7 @@ class AgentTorch(Agent):
 
     .. note::
 
-        | 1 - Abstract Class : can't be cannot be instantiated. The abstract methods (from Agent) have to be overwrite by the 'inherited class' agent.
+        | 1 - Abstract Class : cannot be instantiated. The abstract methods (from Agent) have to be Overwritten by the 'inherited class' agent.
         | 2 - Classes that implements this interface can send `**kwargs` to initiate :code:`Agent.__init__()`(:class:`~rlberry.agents.Agent`), but the keys must match the parameters.
 
     Parameters
