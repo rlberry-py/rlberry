@@ -11,6 +11,10 @@ Dev version
 *PR #463*
 
  * Improve docstring and code documentation
+ * add warning on adastop seeding
+ * correct some typos
+ * patch a bug on writer_data
+ * update tests
 
 
 Version 0.7.3
