@@ -130,8 +130,6 @@ Then, you can use your own tools to display whatever you like.
 
 To illustrate this, we plot the rollout reward mean of PPO coming from 3 `fit` using matplotlib.
 
-<span>&#9888;</span> Of course, the information contained in the writer depends on how it has been configured and what the agent has recorded in it.<span>&#9888;</span>
-
 ```python
 figure, ax = plt.subplots(1, 1)
 
@@ -151,3 +149,17 @@ plt.show()
 
 
 In this previous example, {mod}`rlberry.manager.read_writer_data` had an [ExperimentManager](rlberry.manager.ExperimentManager) as `data_source`, but {mod}`rlberry.manager.read_writer_data` can also take as input a list of ExperimentManager (if you need data on more than one experimentManager), or a path(String) to a directory containing pickle files of an [ExperimentManager](rlberry.manager.ExperimentManager).
+
+
+### Default writer
+
+
+<span>&#9888;</span> Of course, the information contained in the writer (the result of the {mod}`rlberry.manager.read_writer_data` function) depends on how it has been configured and what the agent has recorded in it.<span>&#9888;</span>
+
+In the default writer you have the following information :
+- name : Name of the agent
+- tag : The type/name of the information (depending of the agent login policy, in our previous example it was `rollout/ep_rew_mean` from the [PPO stableBaselines3 agent](https://stable-baselines3.readthedocs.io/en/master/_modules/stable_baselines3/common/off_policy_algorithm.html) )
+- value : The value of the information
+- dw_time_elapsed : Time elapsed since writer initialization
+- global_step : Step where value was added.
+- n_simu : Added by {mod}`rlberry.manager.read_writer_data`, give you the number of the agent (if you use fit>1, you will have information on more than 1 agent in your writer.)
