@@ -158,8 +158,8 @@ In this previous example, {mod}`rlberry.manager.read_writer_data` had an [Experi
 
 In the default writer you have the following information :
 - name : Name of the agent
-- tag : The type/name of the information (depending of the agent login policy, in our previous example it was `rollout/ep_rew_mean` from the [PPO stableBaselines3 agent](https://stable-baselines3.readthedocs.io/en/master/_modules/stable_baselines3/common/off_policy_algorithm.html) )
+- tag : The type/name of the information (depending of the agent logging policy, in our previous example it was `rollout/ep_rew_mean` from the [PPO stableBaselines3 agent](https://stable-baselines3.readthedocs.io/en/master/_modules/stable_baselines3/common/off_policy_algorithm.html) )
 - value : The value of the information
 - dw_time_elapsed : Time elapsed since writer initialization
-- global_step : Step where value was added.
-- n_simu : Added by {mod}`rlberry.manager.read_writer_data`, give you the number of the agent (if you use fit>1, you will have information on more than 1 agent in your writer.)
+- global_step : Step at which the value was added.
+- n_simu : Added by {mod}`rlberry.manager.read_writer_data`, n_simu is an integer identifying the agent (if you use fit>1, you will have information on more than 1 agent in your writer.)
