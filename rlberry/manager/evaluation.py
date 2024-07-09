@@ -8,6 +8,8 @@ import bz2
 import _pickle as cPickle
 import dill
 
+import pathlib
+
 from rlberry.manager import ExperimentManager
 import rlberry
 
@@ -194,28 +196,30 @@ def read_writer_data(data_source, tag=None, preprocess_func=None, id_agent=None)
 
     if not isinstance(data_source, list):
         if isinstance(data_source, ExperimentManager):
-            data_source = [data_source]
+            experiment_manager_list = [data_source]
         else:
-            take_last_date = True
+            # find the path to the latest "manager_obj.pickle"
+            path_to_load = sorted(
+                pathlib.Path(data_source).glob("**/manager_obj.pickle"), reverse=True
+            )[0]
+            experiment_manager_list = [ExperimentManager.load(path_to_load)]
     else:
         if not isinstance(data_source[0], ExperimentManager):
-            take_last_date = False
-            for dir in data_source:
-                files = list(Path(dir).iterdir())
-                if len(files) == 0:
-                    raise RuntimeError(
-                        "One of the files in data_source does not contain pickle files"
-                    )
-
-    if isinstance(data_source[0], ExperimentManager):
-        experiment_manager_list = data_source
-    else:
-        input_dir = data_source
+            clone_data_source = data_source.copy()
+            experiment_manager_list = []
+            for path in clone_data_source:
+                # find the path to the latest "manager_obj.pickle"
+                path_to_load = sorted(
+                    pathlib.Path(path).glob("**/manager_obj.pickle"), reverse=True
+                )[0]
+                experiment_manager_list.append(ExperimentManager.load(path_to_load))
+        else:
+            experiment_manager_list = data_source
 
     if isinstance(tag, str):
         tags = [tag]
         preprocess_funcs = [preprocess_func or (lambda x: x)]
-    elif tag is not None:
+    elif isinstance(tag, list):
         tags = tag
         if preprocess_func is None:
             preprocess_funcs = [lambda x: x for _ in range(len(tags))]
@@ -226,27 +230,13 @@ def read_writer_data(data_source, tag=None, preprocess_func=None, id_agent=None)
         tags = None
 
     writer_datas = []
-    if input_dir is not None:
-        if take_last_date:
-            subdirs = list((Path(input_dir) / "manager_data").iterdir())
-            agent_name_list = [str(p.stem).split("_")[0] for p in subdirs]
-            for name in agent_name_list:
-                filename, dir_name = _get_last_xp(input_dir, name)
-                writer_datas.append(_load_data(filename, dir_name, id_agent))
-        else:
-            agent_name_list = [str(Path(p).stem).split("_")[0] for p in input_dir]
-            agent_dirs = [str(Path(p).parent).split("_")[0] for p in input_dir]
-
-            for id_f, filename in enumerate(input_dir):
-                writer_datas.append(_load_data(filename, agent_dirs[id_f], id_agent))
-    else:
-        for manager in experiment_manager_list:
-            # Important: since manager can be a RemoteExperimentManager,
-            # it is important to avoid repeated accesses to its methods and properties.
-            # That is why writer_data is taken from the manager instance only in
-            # the line below.
-            writer_datas.append(manager.get_writer_data())
-        agent_name_list = [manager.agent_name for manager in experiment_manager_list]
+    for manager in experiment_manager_list:
+        # Important: since manager can be a RemoteExperimentManager,
+        # it is important to avoid repeated accesses to its methods and properties.
+        # That is why writer_data is taken from the manager instance only in
+        # the line below.
+        writer_datas.append(manager.get_writer_data())
+    agent_name_list = [manager.agent_name for manager in experiment_manager_list]
     # preprocess agent stats
     data_list = []
 
