@@ -222,6 +222,8 @@ def read_writer_data(data_source, tag=None, preprocess_func=None, id_agent=None)
         else:
             assert len(preprocess_func) == len(tags)
             preprocess_funcs = preprocess_func
+    else:
+        tags = None
 
     writer_datas = []
     if input_dir is not None:
@@ -252,21 +254,28 @@ def read_writer_data(data_source, tag=None, preprocess_func=None, id_agent=None)
         writer_data = writer_datas[id_agent]
         if writer_data is not None:
             for idx in writer_data:
-                if tag is None:
-                    tags = list(writer_data[idx]["tag"].unique())
-                    preprocess_funcs = [lambda x: x for _ in range(len(tags))]
+                df = writer_data[idx]
+                if tags:
+                    # add the column that don't need to be preprocessed
+                    processed_df = pd.DataFrame(df[~df["tag"].isin(tags)])
 
-                for id_tag, tag in enumerate(list(writer_data[idx]["tag"].unique())):
-                    df = writer_data[idx]
-                    processed_df = pd.DataFrame(df[df["tag"] == tag])
-                    if tag in tags:
-                        processed_df["value"] = preprocess_funcs[id_tag](
-                            processed_df["value"].values
+                    # add the preprocessed column
+                    for id_tag, tag in enumerate(tags):
+                        new_column = pd.DataFrame(df[df["tag"] == tag])
+                        new_column["value"] = preprocess_funcs[id_tag](
+                            new_column["value"].values
                         )
-                    # update name according to ExperimentManager name and n_simulation
-                    processed_df["name"] = agent_name
-                    processed_df["n_simu"] = idx
-                    data_list.append(processed_df)
+                        processed_df = pd.concat(
+                            [processed_df, new_column], ignore_index=True
+                        )
+                else:
+                    processed_df = pd.DataFrame(df)
+
+                # update name according to ExperimentManager name and n_simulation
+                processed_df["name"] = agent_name
+                processed_df["n_simu"] = idx
+                data_list.append(processed_df)
+
     all_writer_data = pd.concat(data_list, ignore_index=True)
     return all_writer_data
 
