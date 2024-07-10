@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 # import numpy as np
 import pandas as pd
 
+import os
+
 # from pathlib import Path
 # from datetime import datetime
 # import pickle
@@ -28,11 +30,17 @@ def _get_latest_pickle_manager_obj(directory_path_to_search):
     directory_path_to_search str : the path where the ExperimentManager was saved... the parent folder of the manager_obj.pickle
 
     """
-    path_to_load = sorted(
-        pathlib.Path(directory_path_to_search).glob("**/manager_obj.pickle"),
-        reverse=True,
-    )[0]
-    return path_to_load
+
+    ########### Sort based on the name's timestamp
+    # path_to_load = sorted(
+    #     pathlib.Path(directory_path_to_search).glob("**/manager_obj.pickle"),
+    #     reverse=True,
+    # )[0]
+
+    ########### Sort based on file lastmodification time
+    paths = list(pathlib.Path(directory_path_to_search).glob("**/manager_obj.pickle"))
+    paths.sort(key=lambda x: os.path.getmtime(x), reverse=True)
+    return paths[0]
 
 
 def evaluate_agents(
@@ -211,7 +219,6 @@ def read_writer_data(data_source, tag=None, preprocess_func=None, id_agent=None)
     >>>         manager.fit()
     >>>     data = read_writer_data(managers)
     """
-    input_dir = None
 
     if not isinstance(data_source, list):
         if isinstance(data_source, ExperimentManager):
@@ -246,10 +253,6 @@ def read_writer_data(data_source, tag=None, preprocess_func=None, id_agent=None)
 
     writer_datas = []
     for manager in experiment_manager_list:
-        # Important: since manager can be a RemoteExperimentManager,
-        # it is important to avoid repeated accesses to its methods and properties.
-        # That is why writer_data is taken from the manager instance only in
-        # the line below.
         writer_datas.append(manager.get_writer_data())
     agent_name_list = [manager.agent_name for manager in experiment_manager_list]
     # preprocess agent stats
