@@ -1,12 +1,14 @@
 import matplotlib.pyplot as plt
-import numpy as np
+
+# import numpy as np
 import pandas as pd
-from pathlib import Path
-from datetime import datetime
-import pickle
-import bz2
-import _pickle as cPickle
-import dill
+
+# from pathlib import Path
+# from datetime import datetime
+# import pickle
+# import bz2
+# import _pickle as cPickle
+# import dill
 
 import pathlib
 
@@ -14,6 +16,23 @@ from rlberry.manager import ExperimentManager
 import rlberry
 
 logger = rlberry.logger
+
+
+def _get_latest_pickle_manager_obj(directory_path_to_search):
+    """
+    search the pathes to all manager_obj.pickle in a directory, sort them by reverse alphabetic, and give the first.
+    As the path should start by the date, the first should be the latest.
+
+    Parameters
+    ----------
+    directory_path_to_search str : the path where the ExperimentManager was saved... the parent folder of the manager_obj.pickle
+
+    """
+    path_to_load = sorted(
+        pathlib.Path(directory_path_to_search).glob("**/manager_obj.pickle"),
+        reverse=True,
+    )[0]
+    return path_to_load
 
 
 def evaluate_agents(
@@ -199,9 +218,7 @@ def read_writer_data(data_source, tag=None, preprocess_func=None, id_agent=None)
             experiment_manager_list = [data_source]
         else:
             # find the path to the latest "manager_obj.pickle"
-            path_to_load = sorted(
-                pathlib.Path(data_source).glob("**/manager_obj.pickle"), reverse=True
-            )[0]
+            path_to_load = _get_latest_pickle_manager_obj(data_source)
             experiment_manager_list = [ExperimentManager.load(path_to_load)]
     else:
         if not isinstance(data_source[0], ExperimentManager):
@@ -209,9 +226,7 @@ def read_writer_data(data_source, tag=None, preprocess_func=None, id_agent=None)
             experiment_manager_list = []
             for path in clone_data_source:
                 # find the path to the latest "manager_obj.pickle"
-                path_to_load = sorted(
-                    pathlib.Path(path).glob("**/manager_obj.pickle"), reverse=True
-                )[0]
+                path_to_load = _get_latest_pickle_manager_obj(path)
                 experiment_manager_list.append(ExperimentManager.load(path_to_load))
         else:
             experiment_manager_list = data_source
@@ -270,77 +285,80 @@ def read_writer_data(data_source, tag=None, preprocess_func=None, id_agent=None)
     return all_writer_data
 
 
-def _get_last_xp(input_dir, name):
-    dir_name = Path(input_dir) / "manager_data"
+######## old code to remove ?
+# def _get_last_xp(input_dir, name):
+#     dir_name = Path(input_dir) / "manager_data"
 
-    # list all of the experiments for this particular agent
-    agent_xp = list(dir_name.glob(name + "*"))
+#     # list all of the experiments for this particular agent
+#     agent_xp = list(dir_name.glob(name + "*"))
 
-    # get the times at which the experiment have been made
-    times = [str(p).split("_")[-2] for p in agent_xp]
-    days = [str(p).split("_")[-3] for p in agent_xp]
-    hashs = [str(p).split("_")[-1] for p in agent_xp]
-    datetimes = [
-        datetime.strptime(days[i] + "_" + times[i], "%Y-%m-%d_%H-%M-%S")
-        for i in range(len(days))
-    ]
+#     # get the times at which the experiment have been made
+#     times = [str(p).split("_")[-2] for p in agent_xp]
+#     days = [str(p).split("_")[-3] for p in agent_xp]
+#     hashs = [str(p).split("_")[-1] for p in agent_xp]
+#     datetimes = [
+#         datetime.strptime(days[i] + "_" + times[i], "%Y-%m-%d_%H-%M-%S")
+#         for i in range(len(days))
+#     ]
 
-    if len(datetimes) == 0:
-        raise ValueError(
-            "input dir not found, verify that the agent are trained "
-            'and that ExperimentManager.outdir_id_style="timestamp"'
-        )
+#     if len(datetimes) == 0:
+#         raise ValueError(
+#             "input dir not found, verify that the agent are trained "
+#             'and that ExperimentManager.outdir_id_style="timestamp"'
+#         )
 
-    # get the date of last experiment
-    max_date = np.max(datetimes)
-    id_max = np.argmax(datetimes)
-    hash = hashs[id_max]
-    agent_folder = (
-        name + "_" + datetime.strftime(max_date, "%Y-%m-%d_%H-%M-%S") + "_" + hash
-    )
-    return agent_folder, dir_name
-
-
-def is_bz_file(filepath):
-    with open(filepath, "rb") as test_f:
-        return test_f.read(2) == b"BZ"
+#     # get the date of last experiment
+#     max_date = np.max(datetimes)
+#     id_max = np.argmax(datetimes)
+#     hash = hashs[id_max]
+#     agent_folder = (
+#         name + "_" + datetime.strftime(max_date, "%Y-%m-%d_%H-%M-%S") + "_" + hash
+#     )
+#     return agent_folder, dir_name
 
 
-def _load_data(agent_folder, dir_name, id_agent):
-    writer_data = {}
+# ######## old code to remove ?
+# def is_bz_file(filepath):
+#     with open(filepath, "rb") as test_f:
+#         return test_f.read(2) == b"BZ"
 
-    agent_dir = Path(dir_name) / agent_folder
-    # list all the fits of this experiment
-    exp_files = (agent_dir / Path("agent_handlers")).iterdir()
-    nfit = len(
-        [1 for a_ in [str(e).split(".") for e in exp_files] if a_[-1] == "pickle"]
-    )
-    # nfit = len(list(exp_files))
-    if nfit == 0:
-        raise ValueError("Folders do not contain pickle files")
 
-    if id_agent is not None:
-        id_fits = [id_agent]
-    else:
-        id_fits = range(nfit)
+######## old code to remove ?
+# def _load_data(agent_folder, dir_name, id_agent):
+#     writer_data = {}
 
-    for ii in id_fits:
-        # For each fit, load the writer data
-        handler_name = agent_dir / Path(f"agent_handlers/idx_{ii}.pickle")
-        try:
-            if is_bz_file(handler_name):
-                with bz2.BZ2File(handler_name, "rb") as ff:
-                    tmp_dict = cPickle.load(ff)
-            else:
-                with handler_name.open("rb") as ff:
-                    tmp_dict = pickle.load(ff)
-        except Exception:
-            if not is_bz_file(handler_name):
-                with handler_name.open("rb") as ff:
-                    tmp_dict = dill.load(ff)
-            else:
-                with bz2.BZ2File(handler_name, "rb") as ff:
-                    tmp_dict = dill.load(ff)
-        writer_data[str(ii)] = tmp_dict.get("_writer").data
+#     agent_dir = Path(dir_name) / agent_folder
+#     # list all the fits of this experiment
+#     exp_files = (agent_dir / Path("agent_handlers")).iterdir()
+#     nfit = len(
+#         [1 for a_ in [str(e).split(".") for e in exp_files] if a_[-1] == "pickle"]
+#     )
+#     # nfit = len(list(exp_files))
+#     if nfit == 0:
+#         raise ValueError("Folders do not contain pickle files")
 
-    return writer_data
+#     if id_agent is not None:
+#         id_fits = [id_agent]
+#     else:
+#         id_fits = range(nfit)
+
+#     for ii in id_fits:
+#         # For each fit, load the writer data
+#         handler_name = agent_dir / Path(f"agent_handlers/idx_{ii}.pickle")
+#         try:
+#             if is_bz_file(handler_name):
+#                 with bz2.BZ2File(handler_name, "rb") as ff:
+#                     tmp_dict = cPickle.load(ff)
+#             else:
+#                 with handler_name.open("rb") as ff:
+#                     tmp_dict = pickle.load(ff)
+#         except Exception:
+#             if not is_bz_file(handler_name):
+#                 with handler_name.open("rb") as ff:
+#                     tmp_dict = dill.load(ff)
+#             else:
+#                 with bz2.BZ2File(handler_name, "rb") as ff:
+#                     tmp_dict = dill.load(ff)
+#         writer_data[str(ii)] = tmp_dict.get("_writer").data
+
+#     return writer_data
