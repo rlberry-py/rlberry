@@ -29,19 +29,33 @@ def _get_paths_multi_latest_pickle_manager_obj(directory_path_to_search):
     directory_path_to_search str : the parent folder of all the manager_obj.pickle to select
     """
     # get all the "manager_obj.pickle" from the directory
-    paths = list(pathlib.Path(directory_path_to_search).glob("**/manager_obj.pickle"))
+    paths = list(
+        pathlib.Path(directory_path_to_search).glob(
+            "**" + os.sep + "manager_obj.pickle"
+        )
+    )
 
     # isolate the name of all the agent of directory
     list_agent_name = []
     for path in paths:
-        half_split = str(path).split("/manager_data/")[-1]
+        half_split = str(path).split(os.sep + "manager_data" + os.sep)[-1]
         list_agent_name.append(half_split.split("_")[0])
     list_unique_agent_name = list(set(list_agent_name))
 
     # for each of this agent, get the latest manager_obj.pickle (by finding all, and keep the first after sorting by last modification time).
     paths_to_return = []
     for unique_name in list_unique_agent_name:
-        regex_to_search = "**/manager_data/" + unique_name + "_*/manager_obj.pickle"
+        regex_to_search = (
+            "**"
+            + os.sep
+            + "manager_data"
+            + os.sep
+            + ""
+            + unique_name
+            + "_*"
+            + os.sep
+            + "manager_obj.pickle"
+        )
         paths = list(pathlib.Path(directory_path_to_search).glob(regex_to_search))
         paths.sort(key=lambda x: os.path.getmtime(x), reverse=True)
         paths_to_return.append(paths[0])
@@ -58,7 +72,11 @@ def _get_latest_pickle_manager_obj(directory_path_to_search):
 
     """
     # Sort based on file lastmodification time
-    paths = list(pathlib.Path(directory_path_to_search).glob("**/manager_obj.pickle"))
+    paths = list(
+        pathlib.Path(directory_path_to_search).glob(
+            "**" + os.sep + "manager_obj.pickle"
+        )
+    )
     paths.sort(key=lambda x: os.path.getmtime(x), reverse=True)
     return paths[0]
 
