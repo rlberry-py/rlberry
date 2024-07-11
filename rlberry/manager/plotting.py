@@ -143,7 +143,11 @@ def plot_writer_data(
     else:
         ylabel = tag
     processed_df = read_writer_data(
-        data_source, tag, preprocess_func, id_agent=id_agent
+        data_source,
+        many_agent_by_str_datasource=False,
+        tag=tag,
+        preprocess_func=preprocess_func,
+        id_agent=id_agent,
     )
 
     data = processed_df[processed_df["tag"] == tag]

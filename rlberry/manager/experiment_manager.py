@@ -223,7 +223,7 @@ class ExperimentManager:
     enable_tensorboard : bool, default : False
         If True, enable tensorboard logging in Agent's :class:`~rlberry.utils.writers.DefaultWriter`.
     outdir_id_style: {None, 'unique', 'timestamp'}, default = 'timestamp'
-        If None, data is saved to output_dir/manager_data
+        If None, data is saved to output_dir/manager_data/<AGENT_NAME_>
         If 'unique', data is saved to ``output_dir/manager_data/<AGENT_NAME_UNIQUE_ID>``
         If 'timestamp', data is saved to ``output_dir/manager_data/<AGENT_NAME_TIMESTAMP_SHORT_ID>``
     default_writer_kwargs : dict
@@ -392,6 +392,9 @@ class ExperimentManager:
             self.output_dir_ = self.output_dir_ / (
                 self.agent_name + "_" + self.timestamp_id
             )
+        else:
+            self.output_dir_ = self.output_dir_ / (self.agent_name + "_")
+
         if os.path.exists(self.output_dir_):
             logger.warning(
                 "This output directory already exists, the save may overwrite the previous Experiment."

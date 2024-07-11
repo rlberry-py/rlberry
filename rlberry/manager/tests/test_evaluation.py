@@ -32,12 +32,14 @@ class RandomAgent2(RandomAgent):
     name = "RandomAgent2"
 
 
-def _create_and_fit_experiment_manager(output_dir, outdir_id_style):
+def _create_and_fit_experiment_manager(
+    output_dir, outdir_id_style, agent_class=RandomAgent
+):
     env_ctor = Chain
     env_kwargs = dict(L=3, fail_prob=0.5)
 
     manager = ExperimentManager(
-        RandomAgent,
+        agent_class,
         (env_ctor, env_kwargs),
         fit_budget=15,
         n_fit=3,
@@ -51,11 +53,15 @@ def _create_and_fit_experiment_manager(output_dir, outdir_id_style):
     return saved_path
 
 
-def _create_and_fit_5_experiment_manager(output_dir, outdir_id_style):
+def _create_and_fit_5_experiment_manager(
+    output_dir, outdir_id_style, agent_class=RandomAgent
+):
     list_path = []
 
     for i in range(0, 5):
-        saved_path = _create_and_fit_experiment_manager(output_dir, outdir_id_style)
+        saved_path = _create_and_fit_experiment_manager(
+            output_dir, outdir_id_style, agent_class
+        )
         list_path.append(saved_path)
         time.sleep(2)
     return list_path
@@ -63,7 +69,6 @@ def _create_and_fit_5_experiment_manager(output_dir, outdir_id_style):
 
 @pytest.mark.parametrize("outdir_id_style", [None, "unique", "timestamp"])
 def test_get_latest_pickle_manager_obj(outdir_id_style):
-    # create 5saves of ExperimentManager
     with tempfile.TemporaryDirectory() as tmpdirname:
         output_dir = tmpdirname + "/rlberry_data"
         path_list = _create_and_fit_5_experiment_manager(output_dir, outdir_id_style)
@@ -74,7 +79,29 @@ def test_get_latest_pickle_manager_obj(outdir_id_style):
         assert expected_result == function_result
 
 
-def test_read_writer_data_single():
+@pytest.mark.parametrize("outdir_id_style", [None, "unique", "timestamp"])
+def test_get_paths_multi_latest_pickle_manager_obj(outdir_id_style):
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        output_dir = tmpdirname + "/rlberry_data"
+        path_list = _create_and_fit_5_experiment_manager(
+            output_dir, outdir_id_style, RandomAgent
+        )
+        expected_result1 = path_list[-1]  # latest added, is the more recent
+        path_list = _create_and_fit_5_experiment_manager(
+            output_dir, outdir_id_style, RandomAgent2
+        )
+        expected_result2 = path_list[-1]  # latest added, is the more recent
+
+        function_result = evaluation._get_paths_multi_latest_pickle_manager_obj(
+            output_dir
+        )
+
+        assert len(function_result) == 2
+        assert expected_result1 in function_result
+        assert expected_result2 in function_result
+
+
+def test_read_writer_data_single_experiment():
     with tempfile.TemporaryDirectory() as tmpdirname:
         output_dir = tmpdirname + "/rlberry_data"
 
@@ -105,7 +132,7 @@ def test_read_writer_data_single():
         ]
 
 
-def test_read_writer_data_multi():
+def test_read_writer_data_list_experiment():
     env_ctor = Chain
     env_kwargs = dict(L=3, fail_prob=0.5)
 
