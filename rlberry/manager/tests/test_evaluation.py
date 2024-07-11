@@ -101,7 +101,8 @@ def test_get_paths_multi_latest_pickle_manager_obj(outdir_id_style):
         assert expected_result2 in function_result
 
 
-def test_read_writer_data_single_experiment():
+@pytest.mark.parametrize("many_agent_by_str_datasource", [True, False])
+def test_read_writer_data_single_experiment(many_agent_by_str_datasource):
     with tempfile.TemporaryDirectory() as tmpdirname:
         output_dir = tmpdirname + "/rlberry_data"
 
@@ -119,7 +120,9 @@ def test_read_writer_data_single_experiment():
         manager.fit()
 
         training_info_experiment = evaluation.read_writer_data(manager)
-        training_info_str = evaluation.read_writer_data(output_dir)
+        training_info_str = evaluation.read_writer_data(
+            output_dir, many_agent_by_str_datasource
+        )
 
         assert training_info_experiment.equals(training_info_str)
         assert list(training_info_experiment.columns) == [
@@ -132,7 +135,8 @@ def test_read_writer_data_single_experiment():
         ]
 
 
-def test_read_writer_data_list_experiment():
+@pytest.mark.parametrize("many_agent_by_str_datasource", [True, False])
+def test_read_writer_data_list_experiment(many_agent_by_str_datasource):
     env_ctor = Chain
     env_kwargs = dict(L=3, fail_prob=0.5)
 
@@ -163,7 +167,9 @@ def test_read_writer_data_list_experiment():
         list_str = [output_dir1, output_dir2]
 
         training_info_experiment = evaluation.read_writer_data(list_experiment)
-        training_info_str = evaluation.read_writer_data(list_str)
+        training_info_str = evaluation.read_writer_data(
+            list_str, many_agent_by_str_datasource
+        )
 
         assert training_info_experiment.equals(training_info_str)
         assert list(training_info_experiment.columns) == [
