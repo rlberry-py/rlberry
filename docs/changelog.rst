@@ -7,8 +7,11 @@ Changelog
 Dev version
 -----------
 
+ *PR #467*
 
-*PR #463*
+ * Allow the save as Gif for gymnasium env (make_gym) : https://github.com/rlberry-py/rlberry/issues/453
+ 
+ *PR #463*
 
  * Improve docstring and code documentation
  * add warning on adastop seeding

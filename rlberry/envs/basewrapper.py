@@ -2,10 +2,12 @@ import gymnasium as gym
 from rlberry.seeding import Seeder, safe_reseed
 import numpy as np
 from rlberry.envs.interface import Model
+from rlberry.rendering import RenderInterface
 from rlberry.spaces.from_gym import convert_space_from_gym
+from rlberry.rendering.utils import video_write, gif_write
 
 
-class Wrapper(Model):
+class Wrapper(Model, RenderInterface):
     """
     Wraps a given environment, similar to OpenAI gym's wrapper [1,2] (now updated to gymnasium).
     Can also be used to wrap gym environments.
@@ -46,6 +48,7 @@ class Wrapper(Model):
         self.env = env
         self.metadata = self.env.metadata
         self.render_mode = self.env.render_mode
+        self.frames = []
 
         if wrap_spaces:
             self.observation_space = convert_space_from_gym(self.env.observation_space)
@@ -107,11 +110,14 @@ class Wrapper(Model):
     def reset(self, seed=None, options=None):
         if self.env.render_mode == "human":
             self.render()
+        self.frames = []
         return self.env.reset(seed=seed, options=options)
 
     def step(self, action):
         if self.render_mode == "human":
             self.render()
+        elif self.render_mode == "rgb_array":
+            self.frames.append(self.render())
         return self.env.step(action)
 
     def sample(self, state, action):
@@ -146,6 +152,17 @@ class Wrapper(Model):
             return True
         except Exception:
             return False
+
+    def get_video(self, **kwargs):
+        return self.frames
+
+    def save_video(self, filename, framerate=25, **kwargs):
+        video_data = self.get_video(**kwargs)
+        video_write(filename, video_data, framerate=framerate)
+
+    def save_gif(self, filename, **kwargs):
+        video_data = self.get_video(**kwargs)
+        gif_write(filename, video_data)
 
     def __repr__(self):
         return str(self)
