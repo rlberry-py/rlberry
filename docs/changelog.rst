@@ -7,7 +7,9 @@ Changelog
 Dev version
 -----------
 
- *nothing*
+ *PR #467*
+
+ * Allow the save as Gif for gymnasium env (make_gym) : https://github.com/rlberry-py/rlberry/issues/453
 
 
 Version 0.7.3
