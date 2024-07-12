@@ -189,17 +189,19 @@ class StableBaselinesAgent(AgentWithSimplePolicy):
 
     def save(self, filename):
         """Save the agent to a file.
+
         Parameters
         ----------
         filename: Path or str
             File in which to save the Agent.
+
         Returns
         -------
         pathlib.Path
             If save() is successful, a Path object corresponding to the filename is returned.
             Otherwise, None is returned.
         """
-        # Save wrappped RL algorithm
+        # Save wrapped RL algorithm
         sb3_file = Path(filename).with_suffix(".zip")
         sb3_file.parent.mkdir(parents=True, exist_ok=True)
         self.wrapped.save(sb3_file)
@@ -212,6 +214,7 @@ class StableBaselinesAgent(AgentWithSimplePolicy):
     @classmethod
     def load(cls, filename, **kwargs):
         """Load agent object.
+
         Parameters
         ----------
         filename: str
@@ -239,7 +242,7 @@ class StableBaselinesAgent(AgentWithSimplePolicy):
         Note
         ----
         This method wraps the :code:`learn` method of the algorithm.
-        Logging parameters are processered by rlberry in order to use the
+        Logging parameters are processed by rlberry in order to use the
         agent.writer.
 
         Parameters

@@ -23,10 +23,10 @@ logger = rlberry.logger
 class Agent(ABC):
     """Basic interface for agents.
 
-    If the 'inherited class' from Agent use the torch lib, that is higly recommanded to inherit :class:`~rlberry.agents.AgentTorch` instead.
+    If the 'inherited class' from Agent use the torch lib, it is highly recommended to inherit :class:`~rlberry.agents.AgentTorch` instead.
 
     .. note::
-        | 1 - Abstract Class : can't be cannot be instantiated. The abstract methods have to be overwriten by the 'inherited class' agent.
+        | 1 - Abstract Class : cannot be instantiated. The abstract methods have to be overridden by the 'inherited class' agent.
         | 2 - Classes that implements this interface can send `**kwargs` to initiate :code:`Agent.__init__()`, but the keys must match the parameters.
 
     Parameters
@@ -52,9 +52,6 @@ class Agent(ABC):
     _thread_shared_data : dict, optional
         Used by :class:`~rlberry.manager.ExperimentManager` to share data across Agent
         instances created in different threads.
-    **kwargs : dict
-        Classes that implement this interface must send ``**kwargs``
-        to :code:`Agent.__init__()`.
 
     Attributes
     ----------
@@ -65,7 +62,7 @@ class Agent(ABC):
     eval_env : :class:`gymnasium.Env` or tuple (constructor, kwargs)
         Environment on which to evaluate the agent. If None, copied from env.
     writer : object, default: None
-        Writer object to log the output(e.g. tensorboard SummaryWriter).
+        Writer object to log the output (e.g. tensorboard SummaryWriter).
     seeder : :class:`~rlberry.seeding.seeder.Seeder`, int, or None
         Seeder/seed for random number generation.
     rng : :class:`numpy.random._generator.Generator`
@@ -94,11 +91,7 @@ class Agent(ABC):
         _execution_metadata: Optional[metadata_utils.ExecutionMetadata] = None,
         _default_writer_kwargs: Optional[dict] = None,
         _thread_shared_data: Optional[dict] = None,
-        **kwargs,
     ):
-        # Check if wrong parameters have been sent to an agent.
-        assert kwargs == {}, "Unknown parameters sent to agent:" + str(kwargs.keys())
-
         self.seeder = Seeder(seeder)
         self.env = process_env(env, self.seeder, copy_env=copy_env)
 
@@ -168,6 +161,7 @@ class Agent(ABC):
     @abstractmethod
     def fit(self, budget: int, **kwargs):
         """
+        Abstract method to be overridden by the 'inherited agent'.
 
         Train the agent with a fixed budget, using the provided environment.
 
@@ -275,7 +269,7 @@ class Agent(ABC):
         """
         Save agent object. By default, the agent is pickled.
 
-        If overridden, the load() method must also be overriden.
+        If overridden, the load() method must also be overridden.
 
         Before saving, consider setting writer to None if it can't be pickled (tensorboard writers
         keep references to files and cannot be pickled).
@@ -334,10 +328,10 @@ class Agent(ABC):
 
     @classmethod
     def load(cls, filename, **kwargs):
-        # If overridden, save() method must also be overriden.
+        # If overridden, save() method must also be override.
         """Load agent object from filepath.
 
-        If overridden, save() method must also be overriden.
+        If overridden, save() method must also be overridden.
 
         Parameters
         ----------
@@ -346,6 +340,7 @@ class Agent(ABC):
         **kwargs: Keyword Arguments
             Arguments required by the __init__ method of the Agent subclass to load.
         """
+
         filename = Path(filename).with_suffix(".pickle")
         obj = cls(**kwargs)
 
@@ -425,7 +420,7 @@ class AgentWithSimplePolicy(Agent):
     The :meth:`policy` method takes an observation as input and returns an action.
 
     .. note::
-        | 1 - Abstract Class : can't be cannot be instantiated. The abstract methods have to be overwriten by the 'inherited class' agent.
+        | 1 - Abstract Class : cannot be instantiated. The abstract methods have to be Overwritten by the 'inherited class' agent.
         | 2 - Classes that implements this interface can send `**kwargs` to initiate :code:`Agent.__init__()` (:class:`~rlberry.agents.Agent`), but the keys must match the parameters.
 
     Parameters
@@ -516,9 +511,10 @@ class AgentWithSimplePolicy(Agent):
         """
         pass
 
-    def eval(self, eval_horizon=10**5, n_simulations=10, gamma=1.0, **kwargs):
+    def eval(self, eval_horizon=10**5, n_simulations=10, gamma=1.0):
         """
-        Monte-Carlo policy evaluation [1]_ method to estimate the mean discounted reward using the current policy on the evaluation environment.
+        Monte-Carlo policy evaluation [1]_ method to estimate the mean discounted reward
+        using the current policy on the evaluation environment.
 
         Parameters
         ----------
@@ -539,7 +535,7 @@ class AgentWithSimplePolicy(Agent):
         .. [1] Sutton, R. S., & Barto, A. G. (2018). Reinforcement Learning: An Introduction.
             MIT Press.
         """
-        del kwargs  # unused
+
         episode_rewards = np.zeros(n_simulations)
         for sim in range(n_simulations):
             observation, info = self.eval_env.reset()
@@ -561,9 +557,12 @@ class AgentTorch(Agent):
     # Need a specific save and load to manage torch.
     """
     Abstract Class to inherit for torch agents.
+
     This class use the 'torch' functions to save/load agents.
+
     .. note::
-        | 1 - Abstract Class : can't be cannot be instantiated. The abstract methods (from Agent) have to be overwriten by the 'inherited class' agent.
+
+        | 1 - Abstract Class : cannot be instantiated. The abstract methods (from Agent) have to be Overwritten by the 'inherited class' agent.
         | 2 - Classes that implements this interface can send `**kwargs` to initiate :code:`Agent.__init__()`(:class:`~rlberry.agents.Agent`), but the keys must match the parameters.
 
     Parameters
@@ -589,9 +588,6 @@ class AgentTorch(Agent):
     _thread_shared_data : dict, optional
         Used by :class:`~rlberry.manager.ExperimentManager` to share data across Agent
         instances created in different threads.
-    **kwargs : dict
-        Classes that implement this interface must send ``**kwargs``
-        to :code:`Agent.__init__()`.
 
     Attributes
     ----------
@@ -620,7 +616,7 @@ class AgentTorch(Agent):
 
     def save(self, filename):
         # Overwrite the 'save' method to manage CPU and GPU with torch agent
-        # If overridden, the load() method must also be overriden.
+        # If overridden, the load() method must also be override.
         """
         ----- documentation from original save -----
 
@@ -687,7 +683,7 @@ class AgentTorch(Agent):
     @classmethod
     def load(cls, filename, **kwargs):
         # Overwrite 'load' method to manage CPU vs GPU with torch agent.
-        # If overridden, save() method must also be overriden.
+        # If overridden, save() method must also be override.
         """
         ----- documentation from original load -----
         Load agent object.

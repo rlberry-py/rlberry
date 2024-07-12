@@ -48,9 +48,9 @@ basics/userguide/visualization.md
 :maxdepth: 2
 basics/userguide/seeding.md
 basics/userguide/save_load.md
+basics/userguide/export_training_data.md
 ```
-- Save & Load Agents (In construction)
-- Save & Load Data (In construction)
+
 ## Advanced Usage
 ```{toctree}
 :maxdepth: 2

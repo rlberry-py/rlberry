@@ -132,14 +132,14 @@ print(output)
 ```
 As we can see in the output or in the following image, the second agent succeed better.
 
-![image](expManager_multieval.png){.align-center}
+![image](expManager_multieval.png)
 
 </br>
 
 ## Output the video
 If you want to see the output video of the trained Agent, you need to use the RecordVideo wrapper. As ExperimentManager use tuple for env parameter, you need to give the constructor with the wrapper. To do that, you can use [PipelineEnv](rlberry.envs.PipelineEnv) as constructor, and add the wrapper + the env information in its kwargs.
 
-<span>&#9888;</span> **warning :** You have to do it on the eval environment, or you may have videos during the fit of your Agent. <span>&#9888;</span>
+<span>&#9888;</span> **warning :** You have to do it on the 'eval environment', or you may have videos during the fit of your Agent. <span>&#9888;</span>
 
 ```python
 from rlberry.envs import PipelineEnv
@@ -147,10 +147,10 @@ from gymnasium.wrappers.record_video import RecordVideo
 
 env_id = "CartPole-v1"
 env_ctor = gym_make  # constructor for training env
-env_kwargs = dict(id=env_id)  # kwars for training env
+env_kwargs = dict(id=env_id)  # kwargs for training env
 
 eval_env_ctor = PipelineEnv  # constructor for eval env
-eval_env_kwargs = {  # kwars for eval env (with wrapper)
+eval_env_kwargs = {  # kwargs for eval env (with wrapper)
     "env_ctor": gym_make,
     "env_kwargs": {"id": env_id, "render_mode": "rgb_array"},
     "wrappers": [
@@ -332,3 +332,7 @@ print(output)
 
 - In the output you can see the learning of the workers 0 and 1 first, then 2 and 3 (4 fit, but max 2 threads with parallelization).
 - You can check the tensorboard logging with `tensorboard --logdir <path to your output_dir>`.
+
+## Other information
+Be careful, if you use a torch agent with the rlberry's [ExperimentManager](rlberry.manager.ExperimentManager), the "torch seed" will be set for you (if you have specify the seed in the [ExperimentManager](rlberry.manager.ExperimentManager) parameters).
+More information about the seeding in rlberry [here](seeding_page).

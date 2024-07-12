@@ -37,12 +37,13 @@ def gym_make(id, wrap_spaces=False, **kwargs):
 
 def atari_make(id, seed=None, **kwargs):
     """
-    Adaptator to manage Atari Env
+    Adaptor to manage Atari Env
 
     Parameters
     ----------
     id : str
-        Environment id.    seed : int
+        Environment id.
+    seed : int
         seed for the environment
     **kwargs : keywords arguments
         Optional arguments to configure the environment.

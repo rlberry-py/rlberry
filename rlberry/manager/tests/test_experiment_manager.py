@@ -208,7 +208,7 @@ def test_experiment_manager_2():
     loaded_stats = ExperimentManager.load(fname)
     assert stats_agent1.unique_id == loaded_stats.unique_id
 
-    # test hyperparemeter optimization
+    # test hyperparameters optimization
     loaded_stats.optimize_hyperparams(n_trials=5)
 
     # delete some writers

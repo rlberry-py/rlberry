@@ -11,13 +11,21 @@ Dev version
 
  * Allow the save as Gif for gymnasium env (make_gym) : https://github.com/rlberry-py/rlberry/issues/453
 
+ *PR #463*
+
+ * Improve docstring and code documentation
+ * add warning on adastop seeding
+ * correct some typos
+ * patch a bug on writer_data
+ * update tests
+
 
 Version 0.7.3
 -------------
 
  *PR #454*
 
- * remove unused librairies
+ * remove unused libraries
 
 *PR #451*
 
@@ -30,7 +38,7 @@ Version 0.7.3
  *PR #436 #444 #445 #447 #448 #455 #456*
 
  * Update user guide
- * add tests on the userguide examples
+ * add tests on the user guide examples
  * removing rlberry_research references as much as possible (doc and code)
 
 Version 0.7.1
