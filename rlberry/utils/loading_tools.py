@@ -62,7 +62,7 @@ def get_dict_of_all_experiment_manager_obj_from_path(path_to_explore):
 
     Dict format :
     key = Agent name
-    value = [(path1,date1),(path2,date2),...]
+    value = list of paths for this agent : [path1,path2,...]
     """
 
     # get all the "manager_obj.pickle" from the directory
