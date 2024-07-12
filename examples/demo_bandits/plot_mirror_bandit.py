@@ -167,8 +167,8 @@ xp_manager = ExperimentManager(
 )
 xp_manager.fit()
 
-rewards = read_writer_data([xp_manager], tag="reward")["value"]
-actions = read_writer_data([xp_manager], tag="action")["value"]
+rewards = read_writer_data([xp_manager], preprocess_tag="reward")["value"]
+actions = read_writer_data([xp_manager], preprocess_tag="action")["value"]
 
 
 plt.boxplot([-rewards[actions == a] for a in range(6)])

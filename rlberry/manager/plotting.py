@@ -145,7 +145,7 @@ def plot_writer_data(
     processed_df = read_writer_data(
         data_source,
         many_agent_by_str_datasource=False,
-        tag=tag,
+        preprocess_tag=tag,
         preprocess_func=preprocess_func,
         id_agent=id_agent,
     )

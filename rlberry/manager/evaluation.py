@@ -26,7 +26,7 @@ def _get_paths_multi_latest_pickle_manager_obj(directory_path_to_search):
 
     Parameters
     ----------
-    directory_path_to_search str : the parent folder of all the manager_obj.pickle to select
+    directory_path_to_search str: the parent folder of all the manager_obj.pickle to select
     """
     # get all the "manager_obj.pickle" from the directory
     paths = list(
@@ -68,7 +68,7 @@ def _get_latest_pickle_manager_obj(directory_path_to_search):
 
     Parameters
     ----------
-    directory_path_to_search str : the path where the ExperimentManager was saved... the parent folder of the manager_obj.pickle
+    directory_path_to_search str: the path where the ExperimentManager was saved... the parent folder of the manager_obj.pickle
 
     """
     # Sort based on file lastmodification time
@@ -94,7 +94,7 @@ def evaluate_agents(
 
     Parameters
     ----------
-    experiment_manager_list : list of ExperimentManager objects.
+    experiment_manager_list: list of ExperimentManager objects.
     n_simulations: int
         Number of calls to the eval() method of each ExperimentManager instance.
     choose_random_agents: bool
@@ -202,9 +202,9 @@ def _preprocess_list_datasource_str(data_source, many_agent_by_str_datasource):
 
     Parameters
     ----------
-    data_source :
+    data_source:
         check 'read_writer_data' doc below
-    many_agent_by_str_datasource : bool (False by default)
+    many_agent_by_str_datasource: bool (False by default)
         check 'read_writer_data' doc below
     """
     experiment_manager_list = []
@@ -227,9 +227,9 @@ def _preprocess_not_a_list_datasource_str(data_source, many_agent_by_str_datasou
 
     Parameters
     ----------
-    data_source :
+    data_source:
         check 'read_writer_data' doc below
-    many_agent_by_str_datasource : bool (False by default)
+    many_agent_by_str_datasource: bool (False by default)
         check 'read_writer_data' doc below
     """
     if many_agent_by_str_datasource:
@@ -250,9 +250,9 @@ def _preprocess_list_datasource(data_source, many_agent_by_str_datasource):
 
     Parameters
     ----------
-    data_source :
+    data_source:
         check 'read_writer_data' doc below
-    many_agent_by_str_datasource : bool (False by default)
+    many_agent_by_str_datasource: bool (False by default)
         check 'read_writer_data' doc below
     """
     if isinstance(data_source[0], ExperimentManager):
@@ -270,9 +270,9 @@ def _preprocess_not_a_list_datasource(data_source, many_agent_by_str_datasource)
 
     Parameters
     ----------
-    data_source :
+    data_source:
         check 'read_writer_data' doc below
-    many_agent_by_str_datasource : bool (False by default)
+    many_agent_by_str_datasource: bool (False by default)
         check 'read_writer_data' doc below
     """
     if isinstance(data_source, ExperimentManager):
@@ -287,7 +287,7 @@ def _preprocess_not_a_list_datasource(data_source, many_agent_by_str_datasource)
 def read_writer_data(
     data_source,
     many_agent_by_str_datasource=False,
-    tag=None,
+    preprocess_tag=None,
     preprocess_func=None,
     id_agent=None,
 ):
@@ -297,7 +297,7 @@ def read_writer_data(
 
     Parameters
     ----------
-    data_source : :class:`~rlberry.manager.ExperimentManager`, or list of :class:`~rlberry.manager.ExperimentManager` or str or list of str
+    data_source: :class:`~rlberry.manager.ExperimentManager`, or list of :class:`~rlberry.manager.ExperimentManager` or str or list of str
         - If ExperimentManager or list of ExperimentManager, load data from it (the agents must be fitted).
 
         - If str, the string must be the string path of a directory,  each
@@ -312,21 +312,21 @@ def read_writer_data(
         Note: the agent's save function must save its writer at the key `_writer`.
         This is the default for rlberry agents.
 
-    many_agent_by_str_datasource : bool (False by default)
+    many_agent_by_str_datasource: bool (False by default)
         (only useful if the datasource is a str or a list of str)
-        If True, select many agent : the last agent of every different agent name inside the folder
-        If False, select only one agent :the last trained agent from the directory (whatever its name)
+        If True, select many agent: the last agent of every different agent name inside the folder
+        If False, select only one agent: the most recently trained agent from the directory (whatever its name)
 
-    tag :  str or list of str or None
+    preprocess_tag:  str or list of str or None
         Tag of data that we want to preprocess.
 
     preprocess_func: Callable or None or list of Callable or None
-        Function to apply to 'tag' column before returning data.
-        For instance, if tag=episode_rewards,setting preprocess_func=np.cumsum
+        Function to apply to 'preprocess_tag' column before returning data.
+        For instance, if preprocess_tag=episode_rewards,setting preprocess_func=np.cumsum
         will return cumulative rewards
         If None, do not preprocess.
-        If tag is a list, preprocess_func must be None or a list of Callable or
-        None that matches the length of tag.
+        If preprocess_tag is a list, preprocess_func must be None or a list of Callable or
+        None that matches the length of preprocess_tag.
 
     id_agent: int or None, default=None
         If not None, returns the data only for agent 'id_agent'.
@@ -366,11 +366,11 @@ def read_writer_data(
             data_source, many_agent_by_str_datasource
         )
 
-    if isinstance(tag, str):
-        tags = [tag]
+    if isinstance(preprocess_tag, str):
+        tags = [preprocess_tag]
         preprocess_funcs = [preprocess_func or (lambda x: x)]
-    elif isinstance(tag, list):
-        tags = tag
+    elif isinstance(preprocess_tag, list):
+        tags = preprocess_tag
         if preprocess_func is None:
             preprocess_funcs = [lambda x: x for _ in range(len(tags))]
         else:
