@@ -82,17 +82,17 @@ In this folder, you should find :
 In this example you will load the experiment saved in the part 1.
 
 To load an experiment previously saved, you need to :
-- Locate the file you want to load
+- Locate the file you want to load (you can use the tool function `get_single_path_of_most_recently_trained_experiment_manager_obj_from_path` to get the most recently saved `manager_obj.pickle` from a folder)
 - use the function `load()` from the class [ExperimentManager](rlberry.manager.ExperimentManager.load).
 
 ```python
-import pathlib
 from rlberry.envs import gym_make
 from rlberry.manager.experiment_manager import ExperimentManager
+from rlberry.utils import loading_tools
 
 
-path_to_load = next(
-    pathlib.Path("results").glob("**/manager_obj.pickle")
+path_to_load = loading_tools.get_single_path_of_most_recently_trained_experiment_manager_obj_from_path(
+    "results"
 )  # find the path to the "manager_obj.pickle"
 
 loaded_experiment_manager = ExperimentManager.load(path_to_load)  # load the experiment
