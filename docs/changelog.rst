@@ -7,6 +7,10 @@ Changelog
 Dev version
 -----------
 
+ *PR #468*
+
+* New tool to find the path of the 'manager_obj.pickle' more easily: https://github.com/rlberry-py/rlberry/issues/407
+
  *PR #467*
 
  * Allow the save as Gif for gymnasium env (make_gym) : https://github.com/rlberry-py/rlberry/issues/453
