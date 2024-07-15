@@ -3,8 +3,6 @@ import matplotlib.pyplot as plt
 # import numpy as np
 import pandas as pd
 
-import os
-
 # from pathlib import Path
 # from datetime import datetime
 # import pickle
@@ -12,73 +10,11 @@ import os
 # import _pickle as cPickle
 # import dill
 
-import pathlib
-
 from rlberry.manager import ExperimentManager
+from rlberry.utils import loading_tools
 import rlberry
 
 logger = rlberry.logger
-
-
-def _get_paths_multi_latest_pickle_manager_obj(directory_path_to_search):
-    """
-    Find the paths for all the latest 'manager_obj.pickle' from each different Agent that was saved in the directory
-
-    Parameters
-    ----------
-    directory_path_to_search str: the parent folder of all the manager_obj.pickle to select
-    """
-    # get all the "manager_obj.pickle" from the directory
-    paths = list(
-        pathlib.Path(directory_path_to_search).glob(
-            "**" + os.sep + "manager_obj.pickle"
-        )
-    )
-
-    # isolate the name of all the agent of directory
-    list_agent_name = []
-    for path in paths:
-        half_split = str(path).split(os.sep + "manager_data" + os.sep)[-1]
-        list_agent_name.append(half_split.split("_")[0])
-    list_unique_agent_name = list(set(list_agent_name))
-
-    # for each of this agent, get the latest manager_obj.pickle (by finding all, and keep the first after sorting by last modification time).
-    paths_to_return = []
-    for unique_name in list_unique_agent_name:
-        regex_to_search = (
-            "**"
-            + os.sep
-            + "manager_data"
-            + os.sep
-            + ""
-            + unique_name
-            + "_*"
-            + os.sep
-            + "manager_obj.pickle"
-        )
-        paths = list(pathlib.Path(directory_path_to_search).glob(regex_to_search))
-        paths.sort(key=lambda x: os.path.getmtime(x), reverse=True)
-        paths_to_return.append(paths[0])
-    return paths_to_return
-
-
-def _get_latest_pickle_manager_obj(directory_path_to_search):
-    """
-    search the path to the latest manager_obj.pickle (whatever the agent) in a directory, sort them by reverse created date, and give the first.
-
-    Parameters
-    ----------
-    directory_path_to_search str: the path where the ExperimentManager was saved... the parent folder of the manager_obj.pickle
-
-    """
-    # Sort based on file lastmodification time
-    paths = list(
-        pathlib.Path(directory_path_to_search).glob(
-            "**" + os.sep + "manager_obj.pickle"
-        )
-    )
-    paths.sort(key=lambda x: os.path.getmtime(x), reverse=True)
-    return paths[0]
 
 
 def evaluate_agents(
@@ -210,13 +146,17 @@ def _preprocess_list_datasource_str(data_source, many_agent_by_str_datasource):
     experiment_manager_list = []
     if many_agent_by_str_datasource:
         for path in data_source:
-            paths_to_load = _get_paths_multi_latest_pickle_manager_obj(path)
+            paths_to_load = loading_tools.get_all_path_of_most_recently_trained_experiments_manager_obj_from_path(
+                path
+            )
             for current_path in paths_to_load:
                 experiment_manager_list.append(ExperimentManager.load(current_path))
     else:
         for path in data_source:
             # find the path to the latest "manager_obj.pickle"
-            path_to_load = _get_latest_pickle_manager_obj(path)
+            path_to_load = loading_tools.get_single_path_of_most_recently_trained_experiment_manager_obj_from_path(
+                path
+            )
             experiment_manager_list.append(ExperimentManager.load(path_to_load))
     return experiment_manager_list
 
@@ -233,13 +173,17 @@ def _preprocess_not_a_list_datasource_str(data_source, many_agent_by_str_datasou
         check 'read_writer_data' doc below
     """
     if many_agent_by_str_datasource:
-        paths_to_load = _get_paths_multi_latest_pickle_manager_obj(data_source)
+        paths_to_load = loading_tools.get_all_path_of_most_recently_trained_experiments_manager_obj_from_path(
+            data_source
+        )
         experiment_manager_list = []
         for current_path in paths_to_load:
             experiment_manager_list.append(ExperimentManager.load(current_path))
     else:
         # find the path to the latest "manager_obj.pickle"
-        paths_to_load = _get_latest_pickle_manager_obj(data_source)
+        paths_to_load = loading_tools.get_single_path_of_most_recently_trained_experiment_manager_obj_from_path(
+            data_source
+        )
         experiment_manager_list = [ExperimentManager.load(paths_to_load)]
     return experiment_manager_list
 

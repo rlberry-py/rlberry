@@ -4,7 +4,7 @@ from rlberry.seeding import set_external_seed
 import tempfile
 import os
 from rlberry.envs.gym_make import gym_make
-import pathlib
+from rlberry.utils import loading_tools
 
 
 SEED = 42
@@ -288,7 +288,9 @@ def _check_save_load_with_manager(agent, env="continuous_state", init_kwargs=Non
         manager.save()
         assert os.path.exists(tmpdirname)
 
-        path_to_load = next(pathlib.Path(tmpdirname).glob("**/manager_obj.pickle"))
+        path_to_load = loading_tools.get_single_path_of_most_recently_trained_experiment_manager_obj_from_path(
+            tmpdirname
+        )
         loaded_experiment_manager = ExperimentManager.load(path_to_load)
         assert loaded_experiment_manager
 
