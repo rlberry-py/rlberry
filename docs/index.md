@@ -18,6 +18,54 @@ We provide you a number of tools to help you achieve **reproducibility**, **stat
  If you begin with [rlberry](https://github.com/rlberry-py/rlberry), **check our** [RL quickstart](quick_start) **and our** [Deep RL quickstart](TutorialDeepRL).
 
 
+``````{grid} 3
+```{card} Comprehensive workflow for RL research
+:link: quick_start
+:link-type: ref
+:img-bottom: thumbnails/experiment_manager_diagram.png
+:width: 95
+
+Tools designed to facilitate RL experimentation.
+```
+```{card} Statistical tests
+:link: comparison_page
+:link-type: ref
+:img-bottom: thumbnails/adastop_boxplots.png
+:width: 95
+
+Statistical tools for agent comparison.
+
+```
+```{card} Visualization
+:link: visu_userguide
+:link-type: ref
+:img-bottom: thumbnails/output_9_3.png
+:width: 95
+
+Proper smoothing and plot of confidence intervals.
+```
+```{card} Teaching tools
+:link: https://github.com/rlberry-py/rlberry-scool
+:img-bottom: thumbnails/chain_thumb.jpg
+:width: 95
+
+Simple environments and tools for use in teaching RL.
+```
+```{card} Hackable library
+:link: https://github.com/rlberry-py/rlberry
+:width: 95
+
+Code is easy to read and easy to change.
+```
+```{card} Compatible
+:link: user_guide
+:link-type: ref
+:width: 95
+
+Uses stable-baselines, tensorboard, gymnasium, and you can easily write your wrapper to use your own RL library. Visualization and statistical tool can be used with dataframes as input/output in order to be library-independent.
+```
+``````
+
 ## Documentation Contents
 You can find main documentation here :
 - [Installation](installation)

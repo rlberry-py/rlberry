@@ -131,3 +131,5 @@ print(compare_agents(agents))
 The results of `compare_agents(agents)` show the p-values and significance level if the method is tukey_hsd and  it shows the decision accept or reject of the test with Family-wise error controlled by $0.05$. In our case, we see that DQN is worse than A2C and PPO but the difference between PPO and A2C is not statistically significant. Remark that no significance (which is to say, decision to accept $H_0$) does not necessarily mean that the algorithms perform the same, it can be that there is not enough data (and it is likely that it is the case here).
 
 *Remark*: the comparison we do here is a black-box comparison in the sense that we don't care how the algorithms were tuned or how many training steps are used, we suppose that the user already tuned these parameters adequately for a fair comparison.
+
+*Remark 2*: the comparison we do here is non-adaptive. To go further and use as little seeds as possible, look at [AdaStop](adastop_userguide).
