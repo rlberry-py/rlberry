@@ -19,50 +19,53 @@ We provide you a number of tools to help you achieve **reproducibility**, **stat
 
 
 ``````{grid} 3
-```{card} Comprehensive workflow for RL research
+:gutter: 3 3 3 3
+```{grid-item-card} Comprehensive workflow for RL research
 :link: quick_start
 :link-type: ref
 :img-bottom: thumbnails/experiment_manager_diagram.png
-:width: 95
+:width: 90
 
 Tools designed to facilitate RL experimentation.
 ```
-```{card} Statistical tests
+```{grid-item-card} Statistical tests
 :link: comparison_page
 :link-type: ref
 :img-bottom: thumbnails/adastop_boxplots.png
-:width: 95
+:width: 90
 
 Statistical tools for agent comparison.
 
 ```
-```{card} Visualization
+```{grid-item-card} Visualization
 :link: visu_userguide
 :link-type: ref
 :img-bottom: thumbnails/output_9_3.png
-:width: 95
+:width: 90
 
 Proper smoothing and plot of confidence intervals.
 ```
-```{card} Teaching tools
+```{grid-item-card} Teaching tools
 :link: https://github.com/rlberry-py/rlberry-scool
 :img-bottom: thumbnails/chain_thumb.jpg
-:width: 95
+:width: 90
 
 Simple environments and tools for use in teaching RL.
 ```
-```{card} Hackable library
-:link: https://github.com/rlberry-py/rlberry
-:width: 95
+```{grid-item-card} Hackable library
+:link: https://rlberry-py.github.io/rlberry/basics/userguide/agent.html#create-your-own-agent
+:width: 90
+:img-bottom: thumbnails/code.png
+
 
 Code is easy to read and easy to change.
 ```
-```{card} Compatible
+```{grid-item-card} Compatible
 :link: user_guide
 :link-type: ref
-:width: 95
+:width: 90
 
-Uses stable-baselines, tensorboard, gymnasium, and you can easily write your wrapper to use your own RL library. Visualization and statistical tool can be used with dataframes as input/output in order to be library-independent.
+Uses *stable-baselines*, *tensorboard*, *gymnasium*, and you can easily write your wrapper to use your own RL library. Visualization and statistical tool can be used with dataframes as input/output in order to be library-independent.
 ```
 ``````
 
