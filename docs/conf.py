@@ -36,6 +36,7 @@ release = rlberry.__version__
 # ones.
 extensions = [
     "sphinx.ext.doctest",
+    "sphinx_design",
     "sphinx.ext.todo",
     "sphinx.ext.viewcode",
     "sphinx.ext.autodoc",
