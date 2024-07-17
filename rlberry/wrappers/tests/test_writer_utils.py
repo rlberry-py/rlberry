@@ -1,19 +1,19 @@
 import pytest
 
-from rlberry.wrappers import WriterWrapper
 from rlberry_scool.envs import GridWorld
 
 from rlberry_scool.agents import UCBVIAgent
 
 
-@pytest.mark.parametrize("write_scalar", ["action", "reward", "action_and_reward"])
+@pytest.mark.parametrize(
+    "write_scalar", [None, "action", "reward", "action_and_reward"]
+)
 def test_wrapper(write_scalar):
     """Test that the wrapper record data"""
 
     class MyAgent(UCBVIAgent):
         def __init__(self, env, **kwargs):
-            UCBVIAgent.__init__(self, env, **kwargs)
-            self.env = WriterWrapper(self.env, self.writer, write_scalar=write_scalar)
+            UCBVIAgent.__init__(self, env, writer_extra=write_scalar, **kwargs)
 
     env = GridWorld()
     agent = MyAgent(env)
@@ -26,8 +26,7 @@ def test_invalid_wrapper_name():
 
     class MyAgent(UCBVIAgent):
         def __init__(self, env, **kwargs):
-            UCBVIAgent.__init__(self, env, **kwargs)
-            self.env = WriterWrapper(self.env, self.writer, write_scalar="invalid")
+            UCBVIAgent.__init__(self, env, writer_extra="invalid", **kwargs)
 
     msg = "write_scalar invalid is not known"
     env = GridWorld()

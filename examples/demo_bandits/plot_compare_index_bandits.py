@@ -10,7 +10,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from rlberry_research.envs.bandits import BernoulliBandit
 from rlberry.manager import ExperimentManager, plot_writer_data
-from rlberry.wrappers import WriterWrapper
 from rlberry_research.agents.bandits import (
     IndexAgent,
     RandomizedAgent,
@@ -44,9 +43,8 @@ class UCBAgent(IndexAgent):
 
     def __init__(self, env, **kwargs):
         index, _ = makeBoundedUCBIndex()
-        IndexAgent.__init__(self, env, index, **kwargs)
-        self.env = WriterWrapper(
-            self.env, self.writer, write_scalar="action_and_reward"
+        IndexAgent.__init__(
+            self, env, index, writer_extra="action_and_reward", **kwargs
         )
 
 
@@ -55,9 +53,13 @@ class UCBVAgent(IndexAgent):
 
     def __init__(self, env, **kwargs):
         index, params = makeBoundedUCBVIndex()
-        IndexAgent.__init__(self, env, index, tracker_params=params, **kwargs)
-        self.env = WriterWrapper(
-            self.env, self.writer, write_scalar="action_and_reward"
+        IndexAgent.__init__(
+            self,
+            env,
+            index,
+            writer_extra="action_and_reward",
+            tracker_params=params,
+            **kwargs
         )
 
 
@@ -66,9 +68,8 @@ class ETCAgent(IndexAgent):
 
     def __init__(self, env, m=20, **kwargs):
         index, _ = makeETCIndex(A, m)
-        IndexAgent.__init__(self, env, index, **kwargs)
-        self.env = WriterWrapper(
-            self.env, self.writer, write_scalar="action_and_reward"
+        IndexAgent.__init__(
+            self, env, index, writer_extra="action_and_reward", **kwargs
         )
 
 
@@ -77,9 +78,8 @@ class MOSSAgent(IndexAgent):
 
     def __init__(self, env, **kwargs):
         index, _ = makeBoundedMOSSIndex(T, A)
-        IndexAgent.__init__(self, env, index, **kwargs)
-        self.env = WriterWrapper(
-            self.env, self.writer, write_scalar="action_and_reward"
+        IndexAgent.__init__(
+            self, env, index, writer_extra="action_and_reward", **kwargs
         )
 
 
@@ -88,9 +88,13 @@ class IMEDAgent(IndexAgent):
 
     def __init__(self, env, **kwargs):
         index, tracker_params = makeBoundedIMEDIndex()
-        IndexAgent.__init__(self, env, index, tracker_params=tracker_params, **kwargs)
-        self.env = WriterWrapper(
-            self.env, self.writer, write_scalar="action_and_reward"
+        IndexAgent.__init__(
+            self,
+            env,
+            index,
+            writer_extra="action_and_reward",
+            tracker_params=tracker_params,
+            **kwargs
         )
 
 
@@ -99,9 +103,13 @@ class NPTSAgent(IndexAgent):
 
     def __init__(self, env, **kwargs):
         index, tracker_params = makeBoundedNPTSIndex()
-        IndexAgent.__init__(self, env, index, tracker_params=tracker_params, **kwargs)
-        self.env = WriterWrapper(
-            self.env, self.writer, write_scalar="action_and_reward"
+        IndexAgent.__init__(
+            self,
+            env,
+            index,
+            writer_extra="action_and_reward",
+            tracker_params=tracker_params,
+            **kwargs
         )
 
 
@@ -111,10 +119,12 @@ class EXP3Agent(RandomizedAgent):
     def __init__(self, env, **kwargs):
         prob, tracker_params = makeEXP3Index()
         RandomizedAgent.__init__(
-            self, env, prob, tracker_params=tracker_params, **kwargs
-        )
-        self.env = WriterWrapper(
-            self.env, self.writer, write_scalar="action_and_reward"
+            self,
+            env,
+            prob,
+            writer_extra="action_and_reward",
+            tracker_params=tracker_params,
+            **kwargs
         )
 
 

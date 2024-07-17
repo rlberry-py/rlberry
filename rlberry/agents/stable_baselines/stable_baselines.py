@@ -122,6 +122,7 @@ class StableBaselinesAgent(AgentWithSimplePolicy):
         "_execution_metadata",
         "_default_writer_kwargs",
         "_thread_shared_data",
+        "writer_extra",
     ]
 
     def __init__(
@@ -140,12 +141,14 @@ class StableBaselinesAgent(AgentWithSimplePolicy):
         _thread_shared_data: Optional[dict] = None,
         **kwargs,
     ):
+        writer_extra = kwargs.get("writer_extra")
         super(StableBaselinesAgent, self).__init__(
             env,
             eval_env=eval_env,
             copy_env=copy_env,
             seeder=seeder,
             output_dir=output_dir,
+            writer_extra=writer_extra,
             _execution_metadata=_execution_metadata,
             _default_writer_kwargs=_default_writer_kwargs,
             _thread_shared_data=_thread_shared_data,

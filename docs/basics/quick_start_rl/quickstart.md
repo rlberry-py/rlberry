@@ -25,7 +25,6 @@ from rlberry.manager import (
     plot_writer_data,
     read_writer_data,
 )
-from rlberry.wrappers import WriterWrapper
 ```
 
 Choosing an RL environment
@@ -230,16 +229,14 @@ class RandomAgent2(RandomAgent):
     name = "RandomAgent2"
 
     def __init__(self, env, **kwargs):
-        RandomAgent.__init__(self, env, **kwargs)
-        self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
+        RandomAgent.__init__(self, env, writer_extra="reward", **kwargs)
 
 
 class UCBVIAgent2(UCBVIAgent):
     name = "UCBVIAgent2"
 
     def __init__(self, env, **kwargs):
-        UCBVIAgent.__init__(self, env, **kwargs)
-        self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
+        UCBVIAgent.__init__(self, env, writer_extra="reward", **kwargs)
 ```
 
 

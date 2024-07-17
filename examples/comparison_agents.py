@@ -16,7 +16,6 @@ import numpy as np
 from rlberry.manager.comparison import compare_agents
 from rlberry.manager import AgentManager
 from rlberry_research.envs.bandits import BernoulliBandit
-from rlberry.wrappers import WriterWrapper
 from rlberry_research.agents.bandits import (
     IndexAgent,
     makeBoundedMOSSIndex,
@@ -42,8 +41,7 @@ class UCBAgent(IndexAgent):
 
     def __init__(self, env, **kwargs):
         index, _ = makeBoundedUCBIndex()
-        IndexAgent.__init__(self, env, index, **kwargs)
-        self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
+        IndexAgent.__init__(self, env, index, writer_extra="reward", **kwargs)
 
 
 class ETCAgent(IndexAgent):
@@ -51,9 +49,8 @@ class ETCAgent(IndexAgent):
 
     def __init__(self, env, m=20, **kwargs):
         index, _ = makeETCIndex(A, m)
-        IndexAgent.__init__(self, env, index, **kwargs)
-        self.env = WriterWrapper(
-            self.env, self.writer, write_scalar="action_and_reward"
+        IndexAgent.__init__(
+            self, env, index, writer_extra="action_and_reward", **kwargs
         )
 
 
@@ -62,9 +59,8 @@ class MOSSAgent(IndexAgent):
 
     def __init__(self, env, **kwargs):
         index, _ = makeBoundedMOSSIndex(T, A)
-        IndexAgent.__init__(self, env, index, **kwargs)
-        self.env = WriterWrapper(
-            self.env, self.writer, write_scalar="action_and_reward"
+        IndexAgent.__init__(
+            self, env, index, writer_extra="action_and_reward", **kwargs
         )
 
 
@@ -73,8 +69,14 @@ class NPTSAgent(IndexAgent):
 
     def __init__(self, env, **kwargs):
         index, tracker_params = makeBoundedNPTSIndex()
-        IndexAgent.__init__(self, env, index, tracker_params=tracker_params, **kwargs)
-        self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
+        IndexAgent.__init__(
+            self,
+            env,
+            index,
+            writer_extra="reward",
+            tracker_params=tracker_params,
+            **kwargs,
+        )
 
 
 Agents_class = [MOSSAgent, NPTSAgent, UCBAgent, ETCAgent]

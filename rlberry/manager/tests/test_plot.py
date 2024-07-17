@@ -7,7 +7,6 @@ import pandas as pd
 import sys
 import matplotlib.pyplot as plt
 
-from rlberry.wrappers import WriterWrapper
 from rlberry_scool.envs import Chain
 from rlberry.manager import plot_writer_data, ExperimentManager, read_writer_data
 from rlberry.manager.plotting import plot_smoothed_curves, plot_synchronized_curves
@@ -20,8 +19,7 @@ class RandomAgent(AgentWithSimplePolicy):
     name = "RandomAgent"
 
     def __init__(self, env, **kwargs):
-        AgentWithSimplePolicy.__init__(self, env, **kwargs)
-        self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
+        AgentWithSimplePolicy.__init__(self, env, writer_extra="reward", **kwargs)
 
     def fit(self, budget=100, **kwargs):
         observation, info = self.env.reset()

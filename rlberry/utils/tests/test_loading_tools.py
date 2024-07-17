@@ -3,7 +3,6 @@ from rlberry.agents import AgentWithSimplePolicy
 from rlberry.utils import loading_tools
 from rlberry.manager import ExperimentManager
 from rlberry_scool.envs import Chain
-from rlberry.wrappers import WriterWrapper
 import tempfile
 import numpy as np
 import time
@@ -13,8 +12,7 @@ class RandomAgent(AgentWithSimplePolicy):
     name = "RandomAgent"
 
     def __init__(self, env, **kwargs):
-        AgentWithSimplePolicy.__init__(self, env, **kwargs)
-        self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
+        AgentWithSimplePolicy.__init__(self, env, writer_extra="reward", **kwargs)
 
     def fit(self, budget=100, **kwargs):
         observation, info = self.env.reset()
