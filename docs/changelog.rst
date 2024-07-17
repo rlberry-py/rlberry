@@ -7,6 +7,11 @@ Changelog
 Dev version
 -----------
 
+
+ *PR #470*
+
+* Integrates the writer directly into the base "Agent" via an option: https://github.com/rlberry-py/rlberry/issues/457
+
  *PR #468*
 
 * New tool to find the path of the 'manager_obj.pickle' more easily: https://github.com/rlberry-py/rlberry/issues/407

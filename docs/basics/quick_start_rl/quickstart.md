@@ -220,9 +220,7 @@ cannot compute the optimal policy, we could simply compare the rewards
 gathered during learning, instead of the regret.
 
 First, we have to record the reward during the fit as this is not done
-automatically. To do this, we can use the
-[WriterWrapper](rlberry.wrappers.writer_utils.WriterWrapper)
-module, or simply the [writer](rlberry.agents.Agent.writer) attribute.
+automatically. To do this, we can use the `writer_extra` optional parameter.
 
 ```python
 class RandomAgent2(RandomAgent):
