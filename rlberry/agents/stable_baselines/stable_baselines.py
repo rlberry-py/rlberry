@@ -94,6 +94,8 @@ class StableBaselinesAgent(AgentWithSimplePolicy):
         Seeder/seed for random number generation.
     output_dir : str or Path
         Directory that the agent can use to store data.
+    writer_extra (through class Agent) : str in {"reward", "action", "action_and_reward"},
+        Scalar that will be recorded in the writer.
     _execution_metadata : ExecutionMetadata, optional
         Extra information about agent execution (e.g. about which is the process id where the agent is running).
         Used by :class:`~rlberry.manager.ExperimentManager`.

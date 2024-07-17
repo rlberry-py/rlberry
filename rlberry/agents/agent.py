@@ -478,6 +478,8 @@ class AgentWithSimplePolicy(Agent):
         to create files/directories for the agent to log data safely..
     thread_shared_data : dict
         Data shared by agent instances among different threads.
+    writer_extra (through class Agent) : str in {"reward", "action", "action_and_reward"},
+        Scalar that will be recorded in the writer.
 
     Examples
     --------

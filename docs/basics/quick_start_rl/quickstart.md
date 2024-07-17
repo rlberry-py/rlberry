@@ -227,20 +227,23 @@ class RandomAgent2(RandomAgent):
     name = "RandomAgent2"
 
     def __init__(self, env, **kwargs):
-        RandomAgent.__init__(self, env, writer_extra="reward", **kwargs)
+        RandomAgent.__init__(self, env, **kwargs)
 
 
 class UCBVIAgent2(UCBVIAgent):
     name = "UCBVIAgent2"
 
     def __init__(self, env, **kwargs):
-        UCBVIAgent.__init__(self, env, writer_extra="reward", **kwargs)
+        UCBVIAgent.__init__(self, env, **kwargs)
 ```
 
 
 Then, we fit the two agents.
 
 ```python
+ucbvi_params["writer_extra"] = "reward"
+random_params = {"writer_extra": "reward"}
+
 # Create ExperimentManager for UCBI to fit 10 agents
 ucbvi_stats = ExperimentManager(
     UCBVIAgent2,
@@ -256,6 +259,7 @@ baseline_stats = ExperimentManager(
     RandomAgent2,
     (env_ctor, env_kwargs),
     fit_budget=5000,
+    init_kwargs=random_params,
     n_fit=10,
 )
 baseline_stats.fit()
