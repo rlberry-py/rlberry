@@ -17,7 +17,6 @@ import numpy as np
 from rlberry.manager import ExperimentManager, read_writer_data
 from rlberry.envs.interface import Model
 from rlberry_research.agents.bandits import BanditWithSimplePolicy
-from rlberry.wrappers import WriterWrapper
 import rlberry.spaces as spaces
 
 import requests
@@ -117,9 +116,8 @@ class SeqHalvAgent(BanditWithSimplePolicy):
     name = "SeqHalvAgent"
 
     def __init__(self, env, **kwargs):
-        BanditWithSimplePolicy.__init__(self, env, **kwargs)
-        self.env = WriterWrapper(
-            self.env, self.writer, write_scalar="action_and_reward"
+        BanditWithSimplePolicy.__init__(
+            self, env, writer_extra="action_and_reward", **kwargs
         )
 
     def fit(self, budget=None, **kwargs):

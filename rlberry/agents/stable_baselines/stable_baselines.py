@@ -94,6 +94,8 @@ class StableBaselinesAgent(AgentWithSimplePolicy):
         Seeder/seed for random number generation.
     output_dir : str or Path
         Directory that the agent can use to store data.
+    writer_extra (through class Agent) : str in {"reward", "action", "action_and_reward"},
+        Scalar that will be recorded in the writer.
     _execution_metadata : ExecutionMetadata, optional
         Extra information about agent execution (e.g. about which is the process id where the agent is running).
         Used by :class:`~rlberry.manager.ExperimentManager`.
@@ -122,6 +124,7 @@ class StableBaselinesAgent(AgentWithSimplePolicy):
         "_execution_metadata",
         "_default_writer_kwargs",
         "_thread_shared_data",
+        "writer_extra",
     ]
 
     def __init__(
@@ -140,12 +143,14 @@ class StableBaselinesAgent(AgentWithSimplePolicy):
         _thread_shared_data: Optional[dict] = None,
         **kwargs,
     ):
+        writer_extra = kwargs.get("writer_extra")
         super(StableBaselinesAgent, self).__init__(
             env,
             eval_env=eval_env,
             copy_env=copy_env,
             seeder=seeder,
             output_dir=output_dir,
+            writer_extra=writer_extra,
             _execution_metadata=_execution_metadata,
             _default_writer_kwargs=_default_writer_kwargs,
             _thread_shared_data=_thread_shared_data,

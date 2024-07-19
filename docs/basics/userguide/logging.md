@@ -100,11 +100,15 @@ As you can see, on the previous output, you don't have the "INFO" output anymore
 
 
 ## Writer
-To keep informations during and after the experiment, rlberry use a 'writer'. The writer is stored inside the [Agent](agent_page), and is updated in its fit() function.
+To keep information during and after the experiment, rlberry uses a 'writer'. The writer is stored inside the [Agent](agent_page), and is updated in its fit() function.
 
 By default (with the [Agent interface](rlberry.agents.Agent)), the writer is [DefaultWriter](rlberry.utils.writers.DefaultWriter).
+You can add information about the environment's `reward` and `action` with the optional parameter `writer_extra` during the agent initialization.
 
-To keep informations about the environment inside the writer, you can wrap the environment inside [WriterWrapper](rlberry.wrappers.WriterWrapper).
+In the previous example, to get the reward, this would give (parameter for the ExperimentManager):
+```python
+init_kwargs = dict(algo_cls=PPO, verbose=1, writer_extra="reward")
+```
 
 
 To get the data, saved during an experiment, in a Pandas DataFrame, you can use [plot_writer_data](rlberry.manager.plot_writer_data) on the [ExperimentManager](rlberry.manager.ExperimentManager) (or a list of them).

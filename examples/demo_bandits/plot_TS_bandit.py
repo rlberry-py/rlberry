@@ -21,7 +21,6 @@ from rlberry_research.agents.bandits import (
     makeGaussianPrior,
 )
 from rlberry.manager import ExperimentManager, plot_writer_data
-from rlberry.wrappers import WriterWrapper
 
 
 # Bernoulli
@@ -36,8 +35,7 @@ class BernoulliTSAgent(TSAgent):
 
     def __init__(self, env, **kwargs):
         prior, _ = makeBetaPrior()
-        TSAgent.__init__(self, env, prior, **kwargs)
-        self.env = WriterWrapper(self.env, self.writer, write_scalar="action")
+        TSAgent.__init__(self, env, prior, writer_extra="action", **kwargs)
 
 
 class BoundedUCBAgent(IndexAgent):
@@ -47,8 +45,7 @@ class BoundedUCBAgent(IndexAgent):
 
     def __init__(self, env, **kwargs):
         index, _ = makeBoundedUCBIndex(0, 1)
-        IndexAgent.__init__(self, env, index, **kwargs)
-        self.env = WriterWrapper(self.env, self.writer, write_scalar="action")
+        IndexAgent.__init__(self, env, index, writer_extra="action", **kwargs)
 
 
 # Parameters of the problem
@@ -101,8 +98,7 @@ class GaussianTSAgent(TSAgent):
 
     def __init__(self, env, sigma=1.0, **kwargs):
         prior, _ = makeGaussianPrior(sigma)
-        TSAgent.__init__(self, env, prior, **kwargs)
-        self.env = WriterWrapper(self.env, self.writer, write_scalar="action")
+        TSAgent.__init__(self, env, prior, writer_extra="action", **kwargs)
 
 
 class GaussianUCBAgent(IndexAgent):
@@ -112,8 +108,7 @@ class GaussianUCBAgent(IndexAgent):
 
     def __init__(self, env, sigma=1.0, **kwargs):
         index, _ = makeSubgaussianUCBIndex(sigma)
-        IndexAgent.__init__(self, env, index, **kwargs)
-        self.env = WriterWrapper(self.env, self.writer, write_scalar="action")
+        IndexAgent.__init__(self, env, index, writer_extra="action", **kwargs)
 
 
 # Parameters of the problem

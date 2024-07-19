@@ -11,7 +11,6 @@ from rlberry_research.envs.bandits import NormalBandit
 from rlberry_research.agents.bandits import IndexAgent, makeSubgaussianUCBIndex
 from rlberry.manager import ExperimentManager, plot_writer_data
 import matplotlib.pyplot as plt
-from rlberry.wrappers import WriterWrapper
 
 
 # Agents definition
@@ -24,8 +23,7 @@ class UCBAgent(IndexAgent):
 
     def __init__(self, env, sigma=1, **kwargs):
         index, _ = makeSubgaussianUCBIndex(sigma)
-        IndexAgent.__init__(self, env, index, **kwargs)
-        self.env = WriterWrapper(self.env, self.writer, write_scalar="action")
+        IndexAgent.__init__(self, env, index, writer_extra="action", **kwargs)
 
 
 # Parameters of the problem

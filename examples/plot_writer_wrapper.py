@@ -22,7 +22,6 @@ during the fit of the agent and then use the plot utils.
 
 import numpy as np
 
-from rlberry.wrappers import WriterWrapper
 from rlberry_scool.envs import GridWorld
 from rlberry.manager import plot_writer_data, ExperimentManager
 from rlberry_scool.agents import UCBVIAgent
@@ -36,11 +35,7 @@ class VIAgent(UCBVIAgent):
     name = "UCBVIAgent"
 
     def __init__(self, env, **kwargs):
-        UCBVIAgent.__init__(self, env, horizon=50, **kwargs)
-        self.env = WriterWrapper(self.env, self.writer, write_scalar="reward")
-        # we could also record actions with
-        # self.env = WriterWrapper(self.env, self.writer,
-        #                          write_scalar = "action")
+        UCBVIAgent.__init__(self, env, writer_extra="reward", horizon=50, **kwargs)
 
 
 env_ctor = GridWorld

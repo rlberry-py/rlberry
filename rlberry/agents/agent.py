@@ -74,6 +74,8 @@ class Agent(ABC):
     unique_id : str
         Unique identifier for the agent instance. Can be used, for example,
         to create files/directories for the agent to log data safely.
+    writer_extra : str in {"reward", "action", "action_and_reward"},
+        Scalar that will be recorded in the writer.
     thread_shared_data : dict
         Data shared by agent instances among different threads.
     """
@@ -88,6 +90,7 @@ class Agent(ABC):
         compress_pickle: bool = True,
         seeder: Optional[types.Seed] = None,
         output_dir: Optional[str] = None,
+        writer_extra: str = None,
         _execution_metadata: Optional[metadata_utils.ExecutionMetadata] = None,
         _default_writer_kwargs: Optional[dict] = None,
         _thread_shared_data: Optional[dict] = None,
@@ -120,6 +123,9 @@ class Agent(ABC):
 
         # shared data among threads
         self._thread_shared_data = _thread_shared_data
+
+        if writer_extra:
+            self.env = _WriterWrapper(self.env, self.writer, write_scalar=writer_extra)
 
     @property
     def writer(self):
@@ -472,6 +478,8 @@ class AgentWithSimplePolicy(Agent):
         to create files/directories for the agent to log data safely..
     thread_shared_data : dict
         Data shared by agent instances among different threads.
+    writer_extra (through class Agent) : str in {"reward", "action", "action_and_reward"},
+        Scalar that will be recorded in the writer.
 
     Examples
     --------
@@ -729,3 +737,48 @@ class AgentTorch(Agent):
 
         obj.device = device
         return obj
+
+
+from rlberry.envs import Wrapper
+
+
+# copy of the WriterWrapper class, but in private
+class _WriterWrapper(Wrapper):
+    """
+    Wrapper for environment to automatically record reward or action in writer.
+
+    Parameters
+    ----------
+    env : gymnasium.Env or tuple (constructor, kwargs)
+        Environment used to fit the agent.
+
+    writer : object, default: None
+        Writer object (e.g. tensorboard SummaryWriter).
+
+    write_scalar : string in {"reward", "action", "action_and_reward"},
+                    default = "reward"
+        Scalar that will be recorded in the writer.
+
+    """
+
+    def __init__(self, env, writer, write_scalar="reward"):
+        Wrapper.__init__(self, env)
+        self.writer = writer
+        self.write_scalar = write_scalar
+        self.iteration_ = 0
+
+    def step(self, action):
+        observation, reward, terminated, truncated, info = self.env.step(action)
+
+        self.iteration_ += 1
+        if self.write_scalar == "reward":
+            self.writer.add_scalar("reward", reward, self.iteration_)
+        elif self.write_scalar == "action":
+            self.writer.add_scalar("action", action, self.iteration_)
+        elif self.write_scalar == "action_and_reward":
+            self.writer.add_scalar("reward", reward, self.iteration_)
+            self.writer.add_scalar("action", action, self.iteration_)
+        else:
+            raise ValueError("write_scalar %s is not known" % (self.write_scalar))
+
+        return observation, reward, terminated, truncated, info

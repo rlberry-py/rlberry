@@ -17,7 +17,6 @@ from rlberry_research.agents.bandits import (
 )
 from rlberry.manager import ExperimentManager, plot_writer_data
 import matplotlib.pyplot as plt
-from rlberry.wrappers import WriterWrapper
 
 
 # Parameters of the problem
@@ -34,8 +33,7 @@ class UCBAgent(IndexAgent):
 
     def __init__(self, env, sigma=1, **kwargs):
         index, _ = makeSubgaussianUCBIndex(sigma)
-        IndexAgent.__init__(self, env, index, **kwargs)
-        self.env = WriterWrapper(self.env, self.writer, write_scalar="action")
+        IndexAgent.__init__(self, env, index, writer_extra="action", **kwargs)
 
 
 class MOSSAgent(IndexAgent):
@@ -45,8 +43,7 @@ class MOSSAgent(IndexAgent):
 
     def __init__(self, env, sigma=1, **kwargs):
         index, _ = makeSubgaussianMOSSIndex(T, len(means), sigma=sigma)
-        IndexAgent.__init__(self, env, index, **kwargs)
-        self.env = WriterWrapper(self.env, self.writer, write_scalar="action")
+        IndexAgent.__init__(self, env, index, writer_extra="action", **kwargs)
 
 
 # Construction of the experiment

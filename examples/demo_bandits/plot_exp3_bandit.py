@@ -16,7 +16,6 @@ from rlberry_research.agents.bandits import (
     makeBetaPrior,
 )
 from rlberry.manager import ExperimentManager, plot_writer_data
-from rlberry.wrappers import WriterWrapper
 
 
 # Agents definition
@@ -28,9 +27,13 @@ class EXP3Agent(RandomizedAgent):
     def __init__(self, env, **kwargs):
         prob, tracker_params = makeEXP3Index()
         RandomizedAgent.__init__(
-            self, env, prob, tracker_params=tracker_params, **kwargs
+            self,
+            env,
+            prob,
+            writer_extra="action",
+            tracker_params=tracker_params,
+            **kwargs
         )
-        self.env = WriterWrapper(self.env, self.writer, write_scalar="action")
 
 
 class BernoulliTSAgent(TSAgent):
@@ -40,8 +43,7 @@ class BernoulliTSAgent(TSAgent):
 
     def __init__(self, env, **kwargs):
         prior, _ = makeBetaPrior()
-        TSAgent.__init__(self, env, prior, **kwargs)
-        self.env = WriterWrapper(self.env, self.writer, write_scalar="action")
+        TSAgent.__init__(self, env, prior, writer_extra="action", **kwargs)
 
 
 # Parameters of the problem
