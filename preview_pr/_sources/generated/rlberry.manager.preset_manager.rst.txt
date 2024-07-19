@@ -1,0 +1,12 @@
+﻿:mod:`rlberry.manager`.preset_manager
+==================================================
+
+.. currentmodule:: rlberry.manager
+
+.. autofunction:: preset_manager
+
+.. include:: rlberry.manager.preset_manager.examples
+
+.. raw:: html
+
+    <div class="clearer"></div>

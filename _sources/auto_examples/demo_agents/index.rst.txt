@@ -1,0 +1,185 @@
+
+
+.. _sphx_glr_auto_examples_demo_agents:
+
+Illustration of rlberry agents
+==============================
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A demo of PPO algorithm in PBall2D environment">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_agents/images/thumb/sphx_glr_video_plot_ppo_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_agents_video_plot_ppo.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of PPO algorithm in PBall2D environment</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A demo of ValueIteration algorithm in Chain environment">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_agents/images/thumb/sphx_glr_video_plot_vi_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_agents_video_plot_vi.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of ValueIteration algorithm in Chain environment</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A demo of RSUCBVI algorithm in MountainCar environment">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_agents/images/thumb/sphx_glr_video_plot_rsucbvi_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_agents_video_plot_rsucbvi.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of RSUCBVI algorithm in MountainCar environment</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A demo of A2C algorithm in PBall2D environment">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_agents/images/thumb/sphx_glr_video_plot_a2c_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_agents_video_plot_a2c.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of A2C algorithm in PBall2D environment</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This script shows how to train a SAC agent on a Pendulum environment.">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_agents/images/thumb/sphx_glr_demo_SAC_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_agents_demo_SAC.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">SAC Soft Actor-Critic</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A demo of MBQVI algorithm in Gridworld environment">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_agents/images/thumb/sphx_glr_video_plot_mbqvi_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_agents_video_plot_mbqvi.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of MBQVI algorithm in Gridworld environment</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A demo of RSKernelUCBVIAgent algorithm in Acrobot environment">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_agents/images/thumb/sphx_glr_video_plot_rs_kernel_ucbvi_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_agents_video_plot_rs_kernel_ucbvi.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of RSKernelUCBVIAgent algorithm in Acrobot environment</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="As DQN can be computationally intensive and hard to tune, one can use tensorboard to visualize ...">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_agents/images/thumb/sphx_glr_video_plot_dqn_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_agents_video_plot_dqn.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of DQN algorithm in CartPole environment</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="As DQN can be computationally intensive and hard to tune, one can use tensorboard to visualize ...">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_agents/images/thumb/sphx_glr_video_plot_mdqn_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_agents_video_plot_mdqn.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of M-DQN algorithm in CartPole environment</div>
+    </div>
+
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/demo_agents/video_plot_ppo
+   /auto_examples/demo_agents/video_plot_vi
+   /auto_examples/demo_agents/video_plot_rsucbvi
+   /auto_examples/demo_agents/video_plot_a2c
+   /auto_examples/demo_agents/demo_SAC
+   /auto_examples/demo_agents/video_plot_mbqvi
+   /auto_examples/demo_agents/video_plot_rs_kernel_ucbvi
+   /auto_examples/demo_agents/video_plot_dqn
+   /auto_examples/demo_agents/video_plot_mdqn
+
