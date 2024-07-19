@@ -222,22 +222,6 @@ gathered during learning, instead of the regret.
 First, we have to record the reward during the fit as this is not done
 automatically. To do this, we can use the `writer_extra` optional parameter.
 
-```python
-class RandomAgent2(RandomAgent):
-    name = "RandomAgent2"
-
-    def __init__(self, env, **kwargs):
-        RandomAgent.__init__(self, env, **kwargs)
-
-
-class UCBVIAgent2(UCBVIAgent):
-    name = "UCBVIAgent2"
-
-    def __init__(self, env, **kwargs):
-        UCBVIAgent.__init__(self, env, **kwargs)
-```
-
-
 Then, we fit the two agents.
 
 ```python
@@ -246,21 +230,23 @@ random_params = {"writer_extra": "reward"}
 
 # Create ExperimentManager for UCBI to fit 10 agents
 ucbvi_stats = ExperimentManager(
-    UCBVIAgent2,
+    UCBVIAgent,
     (env_ctor, env_kwargs),
     fit_budget=50,
     init_kwargs=ucbvi_params,
     n_fit=10,
+    agent_name="UCBVIAgent2",
 )
 ucbvi_stats.fit()
 
 # Create ExperimentManager for baseline to fit 10 agents
 baseline_stats = ExperimentManager(
-    RandomAgent2,
+    RandomAgent,
     (env_ctor, env_kwargs),
     fit_budget=5000,
     init_kwargs=random_params,
     n_fit=10,
+    agent_name="RandomAgent2",
 )
 baseline_stats.fit()
 ```
