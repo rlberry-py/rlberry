@@ -9,6 +9,7 @@ A demo of PPO algorithm in PBall2D environment
    :width: 600
 
 """
+
 # sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_a2c.jpg'
 
 from rlberry_research.agents.torch import PPOAgent

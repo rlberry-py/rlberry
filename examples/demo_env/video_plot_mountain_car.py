@@ -8,6 +8,7 @@ A demo of MountainCar environment
    :width: 600
 
 """
+
 # sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_montain_car.jpg'
 
 from rlberry_scool.agents.mbqvi import MBQVIAgent
