@@ -1,5 +1,4 @@
 import sqlite3
-from tensorflow.python.summary.summary_iterator import summary_iterator
 import os
 import pandas as pd
 
@@ -25,6 +24,8 @@ def tensorboard_folder_to_dataframe_for_plotting(path_to_tensorboard_data):
 
     Return a dict of panda dataframe (key = tag, value = panda.dataframe)
     """
+    from tensorflow.python.summary.summary_iterator import summary_iterator
+
     dataframe_by_tag = {}
     for algo_name in os.listdir(path_to_tensorboard_data):
         path_for_this_algo = os.path.join(path_to_tensorboard_data, algo_name)
