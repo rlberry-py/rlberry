@@ -61,8 +61,8 @@ multimethod = {version="1.10", optional=true}     # new version 1.11 : crash our
 
 
 [tool.poetry.extras]
-torch = ["opencv-python", "ale-py", "stable-baselines3", "tensorboard", "torch", "tensorflow"]
-extras = ["optuna", "ffmpeg-python", "scikit-fda","nox"]
+torch = ["opencv-python", "ale-py", "stable-baselines3", "tensorboard", "torch"]
+extras = ["optuna", "ffmpeg-python", "scikit-fda","nox", "tensorflow"]
 doc = ["sphinx", "sphinx-gallery", "sphinx-copybutton", "sphinx-math-dollar", "numpydoc", "myst-parser", "sphinxcontrib-video", "matplotlib"]
 
 [tool.poetry.group.dev]
