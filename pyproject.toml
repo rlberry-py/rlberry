@@ -43,7 +43,7 @@ torch = [
     { version = ">=2.0.0,<2.3", platform = "linux", optional=true },
     { version = ">=2.0.0,<2.3", platform = "win32", optional=true },
 ]
-tensorflow = {version="*", platform != "darwin", optional=true}
+tensorflow = {version="*", markers = "sys_platform != 'darwin'", optional=true}
 tensorflow-metal = {version="*", platform = "darwin", optional=true}
 
 pandas = "*"
