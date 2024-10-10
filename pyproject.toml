@@ -43,8 +43,7 @@ torch = [
     { version = ">=2.0.0,<2.3", platform = "linux", optional=true },
     { version = ">=2.0.0,<2.3", platform = "win32", optional=true },
 ]
-tensorflow = {version="*", markers = "sys_platform != 'darwin'", optional=true}
-tensorflow-macos = {version="*", platform = "darwin", optional=true}
+tensorflow = {version="*", optional=true}
 
 pandas = "*"
 scikit-fda = {version="^0.9", optional=true}
@@ -68,7 +67,7 @@ multimethod = {version="1.10", optional=true}     # new version 1.11 : crash our
 
 [tool.poetry.extras]
 torch = ["opencv-python", "ale-py", "stable-baselines3", "tensorboard", "torch"]
-extras = ["optuna", "ffmpeg-python", "scikit-fda","nox", "tensorflow","tensorflow-macos"]
+extras = ["optuna", "ffmpeg-python", "scikit-fda","nox", "tensorflow"]
 doc = ["sphinx", "sphinx-gallery", "sphinx-copybutton", "sphinx-math-dollar", "numpydoc", "myst-parser", "sphinxcontrib-video", "matplotlib"]
 
 [tool.poetry.group.dev]
