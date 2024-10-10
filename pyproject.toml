@@ -39,9 +39,9 @@ ale-py = {version="*", optional=true}
 stable-baselines3 = {version="*", optional=true}
 tensorboard = {version="*", optional=true}
 torch = [
-    { version = ">=2.0.0,<2.3", source = "pypi", platform = "darwin", optional=true },
-    { version = ">=2.0.0,<2.3", source = "pytorch", platform = "linux", optional=true },
-    { version = ">=2.0.0,<2.3", source = "pytorch", platform = "win32", optional=true },
+    { version = ">=2.0.0,<2.3", platform = "darwin", optional=true },
+    { version = ">=2.0.0,<2.3", platform = "linux", optional=true },
+    { version = ">=2.0.0,<2.3", platform = "win32", optional=true },
 ]
 pandas = "*"
 scikit-fda = {version="^0.9", optional=true}
