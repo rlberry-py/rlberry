@@ -27,6 +27,6 @@ jobs:
       - run: poetry lock
       - uses: EndBug/add-and-commit@v8
         with:
-          add: '["pyproject.toml", "poetry.lock"]' 
+          add: '["pyproject.toml", "poetry.lock"]'
           default_author: github_actor
           message: 'Writing version and lock with github action [skip ci]'
