@@ -20,7 +20,7 @@ def create_database(db_file):
 
 def tensorboard_folder_to_dataframe_for_plotting(path_to_tensorboard_data):
     """
-    path_to_tensorboard_data : path to the tensorboard data. It must be the parent folder of all the training, then respect the architecture : <path_to_tensorboard_data/algo_name/n_simu/events.out.xxxxx>
+    path_to_tensorboard_data : path to the tensorboard data. It must be the parent folder of all the training, and the event have to be in this kind of path : <path_to_tensorboard_data/algo_name/n_simu/events.out.tfevents.xxxxx>
 
     Return a dict of panda dataframe (key = tag, value = panda.dataframe)
     """
@@ -55,35 +55,3 @@ def tensorboard_folder_to_dataframe_for_plotting(path_to_tensorboard_data):
     for tag, value in dataframe_by_tag.items():
         df[tag] = pd.DataFrame(value, columns=["name", "n_simu", "x", "y"])
     return df
-
-
-def _summary_value_to_dict(value_to_convert):
-    """
-    convert something like :
-    -------
-    "[tag: "rollout/ep_len_mean"
-    simple_value: 25.15
-    ]"
-    -------
-    to dict :  {'tag': 'rollout/ep_len_mean', 'simple_value': 25.15}
-    """
-    result_dict = {}
-
-    # Removing [] and splitting into lines
-    lines = str(value_to_convert).strip().strip("[]").splitlines()
-
-    for line in lines:
-        # Remove blanks at the beginning and end of lines
-        line = line.strip()
-
-        if line:  # If the line is not empty
-            key, value = line.split(": ", 1)  # Separate key and value
-            value = value.strip('"')  # Remove quotes
-
-            # Convert to float if possible, otherwise keep as string
-            if value.replace(".", "", 1).isdigit():
-                value = float(value)
-
-            result_dict[key] = value
-
-    return result_dict
