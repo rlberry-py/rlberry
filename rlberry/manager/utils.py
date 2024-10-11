@@ -18,7 +18,7 @@ def create_database(db_file):
     return False
 
 
-def tensorboard_folder_to_dataframe_for_plotting(path_to_tensorboard_data):
+def tensorboard_folder_to_dataframe(path_to_tensorboard_data):
     """
     path_to_tensorboard_data : path to the tensorboard data. It must be the parent folder of all the training, and the event have to be in this kind of path : <path_to_tensorboard_data/algo_name/n_simu/events.out.tfevents.xxxxx>
 

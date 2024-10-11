@@ -1,11 +1,11 @@
-from rlberry.manager import tensorboard_folder_to_dataframe_for_plotting
+from rlberry.manager import tensorboard_folder_to_dataframe
 from stable_baselines3 import PPO, A2C
 import tempfile
 import os
 import pandas as pd
 
 
-def test_tensorboard_folder_to_dataframe_for_plotting():
+def test_tensorboard_folder_to_dataframe():
     with tempfile.TemporaryDirectory() as tmpdirname:
         # create data to test
         path_ppo = str(tmpdirname + "/ppo_cartpole_tensorboard/")
@@ -18,7 +18,7 @@ def test_tensorboard_folder_to_dataframe_for_plotting():
         assert os.path.exists(path_ppo)
         assert os.path.exists(path_a2c)
 
-        data_in_dataframe = tensorboard_folder_to_dataframe_for_plotting(tmpdirname)
+        data_in_dataframe = tensorboard_folder_to_dataframe(tmpdirname)
 
         assert isinstance(data_in_dataframe, dict)
         assert "rollout/ep_rew_mean" in data_in_dataframe

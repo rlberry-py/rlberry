@@ -5,7 +5,7 @@ from .evaluation import evaluate_agents, read_writer_data
 from .comparison import compare_agents, AdastopComparator
 from .plotting import plot_smoothed_curves, plot_writer_data, plot_synchronized_curves
 from .env_tools import with_venv, run_venv_xp
-from .utils import tensorboard_folder_to_dataframe_for_plotting
+from .utils import tensorboard_folder_to_dataframe
 
 # AgentManager alias for the ExperimentManager class, for backward compatibility
 AgentManager = ExperimentManager
