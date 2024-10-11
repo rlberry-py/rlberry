@@ -24,7 +24,7 @@ def tensorboard_folder_to_dataframe_for_plotting(path_to_tensorboard_data):
 
     Return a dict of panda dataframe (key = tag, value = panda.dataframe)
     """
-    from tensorflow.python.summary.summary_iterator import summary_iterator
+    from tensorboard.backend.event_processing import event_accumulator
 
     dataframe_by_tag = {}
     for algo_name in os.listdir(path_to_tensorboard_data):
@@ -36,22 +36,19 @@ def tensorboard_folder_to_dataframe_for_plotting(path_to_tensorboard_data):
                 assert len(content) == 1  # should be "events.out.tfevents.xxxxxxxxx"
                 content_path = os.path.join(current_seed_path, content[0])
 
-                for summary in summary_iterator(content_path):
-                    if summary.source_metadata.writer:  # skip useless iteration
-                        continue
+                # load the event in the file, and get the tags
+                ea = event_accumulator.EventAccumulator(content_path)
+                ea.Reload()
+                scalar_tags = ea.Tags()["scalars"]
 
-                    dict_data = _summary_value_to_dict(summary.summary.value)
-                    current_tag = dict_data["tag"]
-
+                for tag in scalar_tags:
+                    events = ea.Scalars(tag)
                     if (
-                        current_tag not in dataframe_by_tag
+                        tag not in dataframe_by_tag
                     ):  # new tag, create new entry in the dict
-                        dataframe_by_tag[current_tag] = []
-
-                    value = dict_data["simple_value"]
-                    dataframe_by_tag[current_tag].append(
-                        [algo_name, seed, summary.step, value]
-                    )
+                        dataframe_by_tag[tag] = []
+                    new_elements = [(algo_name, seed, e.step, e.value) for e in events]
+                    dataframe_by_tag[tag].extend(new_elements)
 
     # convert the "dict of array" to "dict of panda dataframe"
     df = {}
@@ -90,3 +87,8 @@ def _summary_value_to_dict(value_to_convert):
             result_dict[key] = value
 
     return result_dict
+
+
+tensorboard_folder_to_dataframe_for_plotting(
+    "/home/jteigny/my_projects/work_in_progress/rlberry/temps/test_tensorboard/logs/"
+)
