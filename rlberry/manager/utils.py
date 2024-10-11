@@ -87,8 +87,3 @@ def _summary_value_to_dict(value_to_convert):
             result_dict[key] = value
 
     return result_dict
-
-
-tensorboard_folder_to_dataframe_for_plotting(
-    "/home/jteigny/my_projects/work_in_progress/rlberry/temps/test_tensorboard/logs/"
-)
