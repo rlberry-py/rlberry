@@ -6,18 +6,18 @@
 
 Computation times
 =================
-**00:38.203** total execution time for **auto_examples** files:
+**00:38.389** total execution time for **auto_examples** files:
 
 +-----------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_plot_smooth.py` (``plot_smooth.py``)                 | 00:22.215 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_plot_smooth.py` (``plot_smooth.py``)                 | 00:22.006 | 0.0 MB |
 +-----------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_plot_kernels.py` (``plot_kernels.py``)               | 00:10.430 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_plot_kernels.py` (``plot_kernels.py``)               | 00:10.509 | 0.0 MB |
 +-----------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_plot_writer_wrapper.py` (``plot_writer_wrapper.py``) | 00:03.182 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_plot_writer_wrapper.py` (``plot_writer_wrapper.py``) | 00:03.286 | 0.0 MB |
 +-----------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_plot_checkpointing.py` (``plot_checkpointing.py``)   | 00:01.332 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_plot_checkpointing.py` (``plot_checkpointing.py``)   | 00:01.449 | 0.0 MB |
 +-----------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_plot_agent_manager.py` (``plot_agent_manager.py``)   | 00:01.044 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_plot_agent_manager.py` (``plot_agent_manager.py``)   | 00:01.140 | 0.0 MB |
 +-----------------------------------------------------------------------------------+-----------+--------+
 | :ref:`sphx_glr_auto_examples_adastop_example.py` (``adastop_example.py``)         | 00:00.000 | 0.0 MB |
 +-----------------------------------------------------------------------------------+-----------+--------+

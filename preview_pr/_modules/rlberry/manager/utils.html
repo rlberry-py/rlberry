@@ -138,17 +138,16 @@
 <div class="viewcode-block" id="tensorboard_folder_to_dataframe"><a class="viewcode-back" href="../../../generated/rlberry.manager.tensorboard_folder_to_dataframe.html#rlberry.manager.tensorboard_folder_to_dataframe">[docs]</a><span class="k">def</span> <span class="nf">tensorboard_folder_to_dataframe</span><span class="p">(</span><span class="n">path_to_tensorboard_data</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Function to convert &#39;tensorboard log&#39; to &#39;Panda DataFrames&#39;</span>
-
 <span class="sd">    To convert the &#39;tensorboard log&#39;, the input must be must be the path to &quot;the parent folder of all the training log&quot; (path_to_tensorboard_data), and the &#39;events.out.tfevents&#39; files have to be in this kind of path :</span>
 <span class="sd">      &lt; path_to_tensorboard_data/algo_name/n_simu/events.out.tfevents.xxxxx &gt;</span>
 
-<span class="sd">    The output format is a dictionary.</span>
-<span class="sd">    key = tag (type of data)</span>
-<span class="sd">    value = Panda DataFrame with the following structure (4 column) :</span>
-<span class="sd">        &quot;name&quot; = algo_name</span>
-<span class="sd">        &quot;n_simu&quot; = n_simu (seed)</span>
-<span class="sd">        &quot;x&quot; = step number</span>
-<span class="sd">        &quot;y&quot; = value of the data</span>
+<span class="sd">    The output format is a dictionary. \n</span>
+<span class="sd">        key = tag (type of data) \n</span>
+<span class="sd">        value = Panda DataFrame with the following structure (4 column) : \n</span>
+<span class="sd">            &quot;name&quot; = algo_name \n</span>
+<span class="sd">            &quot;n_simu&quot; = n_simu (seed) \n</span>
+<span class="sd">            &quot;x&quot; = step number \n</span>
+<span class="sd">            &quot;y&quot; = value of the data \n</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
