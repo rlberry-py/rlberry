@@ -169,7 +169,7 @@ In the default writer you have the following information :
 
 Maybe you want to use other tools to train your agents, but you want to use rlberry tools for visualisation and/or statistical tests.
 If your training is compatible with tensorboard, you can load the data in a pandas dataframes to use them in rlberry.
-Rlberry offer you this tool [here](rlberry.manager.utils)
+Rlberry offer you this tool [here](rlberry.manager.tensorboard_folder_to_dataframe)
 
 Be careful about this 2 things:
 - The folder containing tensorboard results must respect the following tree structure :
