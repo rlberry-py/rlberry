@@ -155,7 +155,7 @@ randomized algorithm.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 7.305 seconds)
+   **Total running time of the script:** (0 minutes 7.570 seconds)
 
 
 .. _sphx_glr_download_auto_examples_demo_bandits_plot_exp3_bandit.py:
