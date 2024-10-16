@@ -1,0 +1,698 @@
+:orphan:
+
+.. _examples:
+
+===================
+Gallery of examples
+===================
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This script requires matplotlib">
+
+.. only:: html
+
+  .. image:: /auto_examples/images/thumb/sphx_glr_plot_kernels_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_plot_kernels.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Plot kernel functions</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example illustrate the use of adastop_comparator which uses adaptive multiple-testing to a...">
+
+.. only:: html
+
+  .. image:: /auto_examples/images/thumb/sphx_glr_adastop_example_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_adastop_example.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Compare PPO and A2C on Acrobot with AdaStop</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This script shows how to modify an agent to easily record reward or action during the fit of th...">
+
+.. only:: html
+
+  .. image:: /auto_examples/images/thumb/sphx_glr_plot_writer_wrapper_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_plot_writer_wrapper.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Record reward during training and then plot it</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example illustrate the use of compare_agents, a function that uses multiple-testing to ass...">
+
+.. only:: html
+
+  .. image:: /auto_examples/images/thumb/sphx_glr_comparison_agents_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_comparison_agents.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Compare Bandit Algorithms</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example illustrate how to use the &quot;with_venv&quot; decorator in order to automatically construc...">
+
+.. only:: html
+
+  .. image:: /auto_examples/images/thumb/sphx_glr_example_venv_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_example_venv.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Using multiple virtual environments with rlberry</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This script shows how to define a bandit environment and an UCB Index-based algorithm.">
+
+.. only:: html
+
+  .. image:: /auto_examples/images/thumb/sphx_glr_plot_smooth_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_plot_smooth.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Illustration of plotting tools on Bandits</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="First, we initialize a grid world environment with finite state space and actions. A grid world...">
+
+.. only:: html
+
+  .. image:: /auto_examples/images/thumb/sphx_glr_plot_agent_manager_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_plot_agent_manager.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of Experiment Manager</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This is a minimal example of how to create checkpoints while training your agents, and how to r...">
+
+.. only:: html
+
+  .. image:: /auto_examples/images/thumb/sphx_glr_plot_checkpointing_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_plot_checkpointing.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Checkpointing</div>
+    </div>
+
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/plot_kernels
+   /auto_examples/adastop_example
+   /auto_examples/plot_writer_wrapper
+   /auto_examples/comparison_agents
+   /auto_examples/example_venv
+   /auto_examples/plot_smooth
+   /auto_examples/plot_agent_manager
+   /auto_examples/plot_checkpointing
+
+Illustration of rlberry environments
+====================================
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A demo of Chain environment">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_env/images/thumb/sphx_glr_video_plot_chain_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_env_video_plot_chain.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of Chain environment</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A demo of MountainCar environment">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_env/images/thumb/sphx_glr_video_plot_mountain_car_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_env_video_plot_mountain_car.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of MountainCar environment</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A demo of AppleGold environment">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_env/images/thumb/sphx_glr_video_plot_apple_gold_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_env_video_plot_apple_gold.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of AppleGold environment</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A demo of Acrobot environment with RSUCBVIAgent">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_env/images/thumb/sphx_glr_video_plot_acrobot_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_env_video_plot_acrobot.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of Acrobot environment with RSUCBVIAgent</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A demo of Gridworld environment with ValueIterationAgent">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_env/images/thumb/sphx_glr_video_plot_gridworld_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_env_video_plot_gridworld.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of Gridworld environment with ValueIterationAgent</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A demo of twinrooms environment">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_env/images/thumb/sphx_glr_video_plot_twinrooms_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_env_video_plot_twinrooms.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of twinrooms environment</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A demo of OldGymCompatibilityWrapper with old_Acrobot environment">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_env/images/thumb/sphx_glr_video_plot_old_gym_compatibility_wrapper_old_acrobot_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_env_video_plot_old_gym_compatibility_wrapper_old_acrobot.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of OldGymCompatibilityWrapper with old_Acrobot environment</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A demo of rooms environment">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_env/images/thumb/sphx_glr_video_plot_rooms_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_env_video_plot_rooms.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of rooms environment</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A demo of PBALL2D environment">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_env/images/thumb/sphx_glr_video_plot_pball_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_env_video_plot_pball.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of PBALL2D environment</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Agent is slightly tuned, but not optimal. This is just for illustration purpose.">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_env/images/thumb/sphx_glr_video_plot_springcartpole_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_env_video_plot_springcartpole.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of SpringCartPole environment with DQNAgent</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Agent is slightly tuned, but not optimal. This is just for illustration purpose.">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_env/images/thumb/sphx_glr_video_plot_atari_freeway_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_env_video_plot_atari_freeway.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of ATARI Freeway environment with DQNAgent</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Agent is slightly tuned, but not optimal. This is just for illustration purpose.">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_env/images/thumb/sphx_glr_example_atari_atlantis_vectorized_ppo_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_env_example_atari_atlantis_vectorized_ppo.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of ATARI Atlantis environment with vectorized PPOAgent</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Agent is slightly tuned, but not optimal. This is just for illustration purpose.">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_env/images/thumb/sphx_glr_example_atari_breakout_vectorized_ppo_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_env_example_atari_breakout_vectorized_ppo.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of ATARI Breakout environment with vectorized PPOAgent</div>
+    </div>
+
+
+.. raw:: html
+
+    </div>
+
+Illustration of rlberry agents
+==============================
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A demo of PPO algorithm in PBall2D environment">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_agents/images/thumb/sphx_glr_video_plot_ppo_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_agents_video_plot_ppo.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of PPO algorithm in PBall2D environment</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A demo of ValueIteration algorithm in Chain environment">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_agents/images/thumb/sphx_glr_video_plot_vi_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_agents_video_plot_vi.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of ValueIteration algorithm in Chain environment</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A demo of RSUCBVI algorithm in MountainCar environment">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_agents/images/thumb/sphx_glr_video_plot_rsucbvi_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_agents_video_plot_rsucbvi.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of RSUCBVI algorithm in MountainCar environment</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A demo of A2C algorithm in PBall2D environment">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_agents/images/thumb/sphx_glr_video_plot_a2c_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_agents_video_plot_a2c.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of A2C algorithm in PBall2D environment</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This script shows how to train a SAC agent on a Pendulum environment.">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_agents/images/thumb/sphx_glr_demo_SAC_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_agents_demo_SAC.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">SAC Soft Actor-Critic</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A demo of MBQVI algorithm in Gridworld environment">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_agents/images/thumb/sphx_glr_video_plot_mbqvi_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_agents_video_plot_mbqvi.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of MBQVI algorithm in Gridworld environment</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A demo of RSKernelUCBVIAgent algorithm in Acrobot environment">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_agents/images/thumb/sphx_glr_video_plot_rs_kernel_ucbvi_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_agents_video_plot_rs_kernel_ucbvi.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of RSKernelUCBVIAgent algorithm in Acrobot environment</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="As DQN can be computationally intensive and hard to tune, one can use tensorboard to visualize ...">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_agents/images/thumb/sphx_glr_video_plot_dqn_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_agents_video_plot_dqn.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of DQN algorithm in CartPole environment</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="As DQN can be computationally intensive and hard to tune, one can use tensorboard to visualize ...">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_agents/images/thumb/sphx_glr_video_plot_mdqn_thumb.jpg
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_agents_video_plot_mdqn.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of M-DQN algorithm in CartPole environment</div>
+    </div>
+
+
+.. raw:: html
+
+    </div>
+
+Illustration of bandits in rlberry
+==================================
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This script shows how to define a bandit environment and an UCB Index-based algorithm.">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_bandits/images/thumb/sphx_glr_plot_ucb_bandit_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_bandits_plot_ucb_bandit.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">UCB Bandit cumulative regret</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This script shows how to define a bandit environment and an EXP3 randomized algorithm.">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_bandits/images/thumb/sphx_glr_plot_exp3_bandit_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_bandits_plot_exp3_bandit.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">EXP3 Bandit cumulative regret</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This script shows how to use Thompson sampling on two examples: Bernoulli and Gaussian bandits.">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_bandits/images/thumb/sphx_glr_plot_TS_bandit_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_bandits_plot_TS_bandit.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Comparison of Thompson sampling and UCB on Bernoulli and Gaussian bandits</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This script Compare several bandits agents and as a sub-product also shows how to use subplots ...">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_bandits/images/thumb/sphx_glr_plot_compare_index_bandits_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_bandits_plot_compare_index_bandits.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Comparison subplots of various index based bandits algorithms</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The quirck of this application is that there is a possible timeout when pinging a server. We ha...">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_bandits/images/thumb/sphx_glr_plot_mirror_bandit_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_bandits_plot_mirror_bandit.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of Bandit BAI on a real dataset to select mirrors</div>
+    </div>
+
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+   :includehidden:
+
+
+   /auto_examples/demo_env/index.rst
+   /auto_examples/demo_agents/index.rst
+   /auto_examples/demo_bandits/index.rst
+
+
+.. only:: html
+
+  .. container:: sphx-glr-footer sphx-glr-footer-gallery
+
+    .. container:: sphx-glr-download sphx-glr-download-python
+
+      :download:`Download all examples in Python source code: auto_examples_python.zip </auto_examples/auto_examples_python.zip>`
+
+    .. container:: sphx-glr-download sphx-glr-download-jupyter
+
+      :download:`Download all examples in Jupyter notebooks: auto_examples_jupyter.zip </auto_examples/auto_examples_jupyter.zip>`
+
+
+.. only:: html
+
+ .. rst-class:: sphx-glr-signature
+
+    `Gallery generated by Sphinx-Gallery <https://sphinx-gallery.github.io>`_

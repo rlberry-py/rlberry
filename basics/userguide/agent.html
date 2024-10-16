@@ -1,0 +1,703 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  
+  <title>How to use an Agent &mdash; rlberry 0.7.3.post16.dev0+8710009 documentation</title>
+  
+  <link rel="canonical" href="https://rlberry-py.github.io/rlberry/basics/userguide/agent.html" />
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/vendor/bootstrap.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sg_gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sg_gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sg_gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sphinx-design.4cbf315f70debaebd550c87a6162cf0f.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+<script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+<script src="../../_static/js/vendor/jquery-3.6.3.slim.min.js"></script> 
+</head>
+<body>
+
+
+<nav id="navbar" class="sk-docs-navbar navbar navbar-expand-md navbar-light bg-light py-0">
+  <div class="container-fluid sk-docs-container px-0">
+    <button
+      id="sk-navbar-toggler"
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="sk-navbar-collapse collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../index.html">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../installation.html">Install</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../user_guide.html">User Guide</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../auto_examples/index.html">Examples</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../api.html">API</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../changelog.html">Changelog</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../about.html">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="https://github.com/rlberry-py/rlberry">GitHub</a>
+        </li>
+        <!--
+        <li class="nav-item dropdown nav-more-item-dropdown">
+          <a class="sk-nav-link nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">More</a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          </div>
+        </li>-->
+    </ul>
+      <div id="searchbox" role="search">
+          <div class="searchformwrapper">
+            <form action="https://duckduckgo.com/">
+            <input type="hidden" id="sites" name="sites" value="https://rlberry-py.github.io/rlberry/">
+            <input type="search" placeholder="Search &hellip;" value="" name="q" />
+            <input class="sk-search-text-btn" type="submit" value="Go" /></form>
+
+          </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="d-flex" id="sk-doc-wrapper">
+    <input type="checkbox" name="sk-toggle-checkbox" id="sk-toggle-checkbox">
+    <label id="sk-sidemenu-toggle" class="sk-btn-toggle-toc btn sk-btn-primary" for="sk-toggle-checkbox">Toggle Menu</label>
+    <div id="sk-sidebar-wrapper" class="border-right">
+      <div class="sk-sidebar-toc-wrapper">
+        <div class="sk-sidebar-toc-logo">
+        </div>
+	<br>
+        <div class="alert alert-warning p-1 mb-2" role="alert">
+
+          <p class="text-center mb-0">
+          rlberry 0.7.3.post16.dev0+8710009<br/>
+          <a href="../../versions.html">Other versions</a>
+          </p>
+
+        </div>
+            <div class="sk-sidebar-toc">
+              <ul>
+<li><a class="reference internal" href="#">How to use an Agent</a><ul>
+<li><a class="reference internal" href="#use-rlberry-agent">Use rlberry Agent</a><ul>
+<li><a class="reference internal" href="#without-agent">without agent</a></li>
+<li><a class="reference internal" href="#with-agent">With agent</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#use-stablebaselines3-as-rlberry-agent">Use StableBaselines3 as rlberry Agent</a></li>
+<li><a class="reference internal" href="#create-your-own-agent">Create your own Agent</a></li>
+<li><a class="reference internal" href="#use-experimentmanager">Use experimentManager</a></li>
+</ul>
+</li>
+</ul>
+
+            </div>
+      </div>
+    </div>
+    <div id="sk-page-content-wrapper">
+      <div class="sk-page-content container-fluid body px-md-3" role="main">
+        
+  <section id="how-to-use-an-agent">
+<span id="agent-page"></span><h1>How to use an Agent<a class="headerlink" href="#how-to-use-an-agent" title="Permalink to this heading">¶</a></h1>
+<p>In Reinforcement learning, the Agent is the entity to train to solve an environment. It’s able to interact with the environment: observe, take actions, and learn through trial and error.
+In rlberry, you can use existing Agent, or create your own custom Agent. You can find the API <a class="reference internal" href="../../api.html"><span class="doc std std-doc">here</span></a> and <a class="reference internal" href="../../generated/rlberry.agents.Agent.html#rlberry.agents.Agent" title="rlberry.agents.Agent"><span class="xref myst py py-class">here</span></a> .</p>
+<section id="use-rlberry-agent">
+<h2>Use rlberry Agent<a class="headerlink" href="#use-rlberry-agent" title="Permalink to this heading">¶</a></h2>
+<p>An agent needs an environment to train. We’ll use the same environment as in the <a class="reference internal" href="environment.html#environment-page"><span class="std std-ref">environment</span></a> section of the user guide.
+(“Chain” environment from “<a class="reference external" href="https://github.com/rlberry-py/rlberry-scool">rlberry-scool</a>”)</p>
+<section id="without-agent">
+<h3>without agent<a class="headerlink" href="#without-agent" title="Permalink to this heading">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry_scool.envs.finite</span> <span class="kn">import</span> <span class="n">Chain</span>
+
+<span class="n">env</span> <span class="o">=</span> <span class="n">Chain</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+<span class="n">env</span><span class="o">.</span><span class="n">enable_rendering</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">tt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">50</span><span class="p">):</span>
+    <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span>
+<span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">loop</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># env.save_video is only available for rlberry envs and custom env (with &#39;RenderInterface&#39; as parent class)</span>
+<span class="n">video</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">save_video</span><span class="p">(</span><span class="s2">&quot;_agent_page_chain1.mp4&quot;</span><span class="p">)</span>
+<span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</br>
+<video controls="controls" style="max-width: 600px;">
+   <source src="../../user_guide_video/_agent_page_chain1.mp4" type="video/mp4">
+</video>
+<p>If we use random actions on this environment, we don’t have good results (the cross don’t go to the right)</p>
+</section>
+<section id="with-agent">
+<h3>With agent<a class="headerlink" href="#with-agent" title="Permalink to this heading">¶</a></h3>
+<p>With the same environment, we will use an Agent to choose the actions instead of random actions.
+For this example, you can use “ValueIterationAgent” Agent from “<a class="reference external" href="https://github.com/rlberry-py/rlberry-scool">rlberry-scool</a>”</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry_scool.envs.finite</span> <span class="kn">import</span> <span class="n">Chain</span>
+<span class="kn">from</span> <span class="nn">rlberry_scool.agents.dynprog</span> <span class="kn">import</span> <span class="n">ValueIterationAgent</span>
+
+<span class="n">env</span> <span class="o">=</span> <span class="n">Chain</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>  <span class="c1"># same env</span>
+<span class="n">agent</span> <span class="o">=</span> <span class="n">ValueIterationAgent</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.95</span><span class="p">)</span>  <span class="c1"># creation of the agent</span>
+<span class="n">info</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>  <span class="c1"># Agent&#39;s training   (ValueIteration don&#39;t use budget)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+
+<span class="c1"># test the trained agent</span>
+<span class="n">env</span><span class="o">.</span><span class="n">enable_rendering</span><span class="p">()</span>
+<span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">tt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">50</span><span class="p">):</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">policy</span><span class="p">(</span>
+        <span class="n">observation</span>
+    <span class="p">)</span>  <span class="c1"># use the agent&#39;s policy to choose the next action</span>
+    <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>  <span class="c1"># do the action</span>
+    <span class="n">done</span> <span class="o">=</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span>
+    <span class="k">if</span> <span class="n">done</span><span class="p">:</span>
+        <span class="k">break</span>  <span class="c1"># stop if the environement is done</span>
+<span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">loop</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># env.save_video is only available for rlberry envs and custom env (with &#39;RenderInterface&#39; as parent class)</span>
+<span class="n">video</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">save_video</span><span class="p">(</span><span class="s2">&quot;_agent_page_chain2.mp4&quot;</span><span class="p">)</span>
+<span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;n_iterations&#39;: 269, &#39;precision&#39;: 1e-06}
+  pg.display.set_mode(display, DOUBLEBUF | OPENGL)
+  _ = pg.display.set_mode(display, DOUBLEBUF | OPENGL)
+ffmpeg version 4.4.2-0ubuntu0.22.04.1 Copyright (c) 2000-2021 the FFmpeg developers
+  built with gcc 11 (Ubuntu 11.2.0-19ubuntu1)
+  configuration: --prefix=/usr --extra-version=0ubuntu0.22.04.1 --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --arch=amd64 --enable-gpl --disable-stripping --enable-gnutls --enable-ladspa --enable-libaom --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libcodec2 --enable-libdav1d --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libjack --enable-libmp3lame --enable-libmysofa --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librabbitmq --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libsrt --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvidstab --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx265 --enable-libxml2 --enable-libxvid --enable-libzimg --enable-libzmq --enable-libzvbi --enable-lv2 --enable-omx --enable-openal --enable-opencl --enable-opengl --enable-sdl2 --enable-pocketsphinx --enable-librsvg --enable-libmfx --enable-libdc1394 --enable-libdrm --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-libx264 --enable-shared
+  libavutil      56. 70.100 / 56. 70.100
+  libavcodec     58.134.100 / 58.134.100
+  libavformat    58. 76.100 / 58. 76.100
+  libavdevice    58. 13.100 / 58. 13.100
+  libavfilter     7.110.100 /  7.110.100
+  libswscale      5.  9.100 /  5.  9.100
+  libswresample   3.  9.100 /  3.  9.100
+  libpostproc    55.  9.100 / 55.  9.100
+Input #0, rawvideo, from &#39;pipe:&#39;:
+  Duration: N/A, start: 0.000000, bitrate: 38400 kb/s
+  Stream #0:0: Video: rawvideo (RGB[24] / 0x18424752), rgb24, 800x80, 38400 kb/s, 25 tbr, 25 tbn, 25 tbc
+Stream mapping:
+  Stream #0:0 -&gt; #0:0 (rawvideo (native) -&gt; h264 (libx264))
+[libx264 @ 0x5570932967c0] using cpu capabilities: MMX2 SSE2Fast SSSE3 SSE4.2 AVX FMA3 BMI2 AVX2 AVX512
+[libx264 @ 0x5570932967c0] profile High, level 1.3, 4:2:0, 8-bit
+[libx264 @ 0x5570932967c0] 264 - core 163 r3060 5db6aa6 - H.264/MPEG-4 AVC codec - Copyleft 2003-2021 - http://www.videolan.org/x264.html - options: cabac=1 ref=3 deblock=1:0:0 analyse=0x3:0x113 me=hex subme=7 psy=1 psy_rd=1.00:0.00 mixed_ref=1 me_range=16 chroma_me=1 trellis=1 8x8dct=1 cqm=0 deadzone=21,11 fast_pskip=1 chroma_qp_offset=-2 threads=2 lookahead_threads=1 sliced_threads=0 nr=0 decimate=1 interlaced=0 bluray_compat=0 constrained_intra=0 bframes=3 b_pyramid=2 b_adapt=1 b_bias=0 direct=1 weightb=1 open_gop=0 weightp=2 keyint=250 keyint_min=25 scenecut=40 intra_refresh=0 rc_lookahead=40 rc=crf mbtree=1 crf=23.0 qcomp=0.60 qpmin=0 qpmax=69 qpstep=4 ip_ratio=1.40 aq=1:1.00
+Output #0, mp4, to &#39;_agent_page_chain.mp4&#39;:
+  Metadata:
+    encoder         : Lavf58.76.100
+  Stream #0:0: Video: h264 (avc1 / 0x31637661), yuv420p(tv, progressive), 800x80, q=2-31, 25 fps, 12800 tbn
+    Metadata:
+      encoder         : Lavc58.134.100 libx264
+    Side data:
+      cpb: bitrate max/min/avg: 0/0/0 buffer size: 0 vbv_delay: N/A
+frame=   51 fps=0.0 q=-1.0 Lsize=      12kB time=00:00:01.92 bitrate=  51.9kbits/s speed=48.8x
+video:11kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 12.817029%
+[libx264 @ 0x5570932967c0] frame I:1     Avg QP:29.06  size:  6089
+[libx264 @ 0x5570932967c0] frame P:18    Avg QP:18.13  size:   172
+[libx264 @ 0x5570932967c0] frame B:32    Avg QP:13.93  size:    37
+[libx264 @ 0x5570932967c0] consecutive B-frames: 15.7%  0.0%  5.9% 78.4%
+[libx264 @ 0x5570932967c0] mb I  I16..4: 46.4%  0.0% 53.6%
+[libx264 @ 0x5570932967c0] mb P  I16..4:  5.9%  0.8%  1.3%  P16..4:  0.4%  0.0%  0.0%  0.0%  0.0%    skip:91.6%
+[libx264 @ 0x5570932967c0] mb B  I16..4:  0.1%  0.0%  0.2%  B16..8:  1.6%  0.0%  0.0%  direct: 0.0%  skip:98.1%  L0:58.9% L1:41.1% BI: 0.0%
+[libx264 @ 0x5570932967c0] 8x8 transform intra:6.3% inter:14.3%
+[libx264 @ 0x5570932967c0] coded y,uvDC,uvAC intra: 46.1% 37.1% 35.7% inter: 0.0% 0.0% 0.0%
+[libx264 @ 0x5570932967c0] i16 v,h,dc,p: 55%  7% 38%  1%
+[libx264 @ 0x5570932967c0] i8 v,h,dc,ddl,ddr,vr,hd,vl,hu:  0%  0% 100%  0%  0%  0%  0%  0%  0%
+[libx264 @ 0x5570932967c0] i4 v,h,dc,ddl,ddr,vr,hd,vl,hu: 33% 14% 41%  0%  4%  3%  2%  1%  1%
+[libx264 @ 0x5570932967c0] i8c dc,h,v,p: 87%  5%  7%  1%
+[libx264 @ 0x5570932967c0] Weighted P-Frames: Y:5.6% UV:5.6%
+[libx264 @ 0x5570932967c0] ref P L0: 10.5%  5.3% 73.7% 10.5%
+[libx264 @ 0x5570932967c0] ref B L0: 59.2% 27.6% 13.2%
+[libx264 @ 0x5570932967c0] ref B L1: 96.2%  3.8%
+[libx264 @ 0x5570932967c0] kb/s:40.59
+</pre></div>
+</div>
+</br>
+<video controls="controls" style="max-width: 600px;">
+   <source src="../../user_guide_video/_agent_page_chain2.mp4" type="video/mp4">
+</video>
+<p>The agent has learned how to obtain good results (the cross go to the right).</p>
+</section>
+</section>
+<section id="use-stablebaselines3-as-rlberry-agent">
+<h2>Use StableBaselines3 as rlberry Agent<a class="headerlink" href="#use-stablebaselines3-as-rlberry-agent" title="Permalink to this heading">¶</a></h2>
+<p>With rlberry, you can use an algorithm from <a class="reference external" href="https://stable-baselines3.readthedocs.io/en/master/guide/algos.html">StableBaselines3</a> and wrap it in rlberry Agent. To do that, you need to use <a class="reference internal" href="../../generated/rlberry.agents.stable_baselines.StableBaselinesAgent.html#rlberry.agents.stable_baselines.StableBaselinesAgent" title="rlberry.agents.stable_baselines.StableBaselinesAgent"><span class="xref myst py py-class">StableBaselinesAgent</span></a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.envs</span> <span class="kn">import</span> <span class="n">gym_make</span>
+<span class="kn">from</span> <span class="nn">gymnasium.wrappers.record_video</span> <span class="kn">import</span> <span class="n">RecordVideo</span>
+<span class="kn">from</span> <span class="nn">stable_baselines3</span> <span class="kn">import</span> <span class="n">PPO</span>
+<span class="kn">from</span> <span class="nn">rlberry.agents.stable_baselines</span> <span class="kn">import</span> <span class="n">StableBaselinesAgent</span>
+
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym_make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;rgb_array&quot;</span><span class="p">)</span>
+<span class="n">agent</span> <span class="o">=</span> <span class="n">StableBaselinesAgent</span><span class="p">(</span>
+    <span class="n">env</span><span class="p">,</span> <span class="n">PPO</span><span class="p">,</span> <span class="s2">&quot;MlpPolicy&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span>
+<span class="p">)</span>  <span class="c1"># wrap StableBaseline3&#39;s PPO inside rlberry Agent</span>
+<span class="n">info</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>  <span class="c1"># Agent&#39;s training</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+
+<span class="n">env</span> <span class="o">=</span> <span class="n">RecordVideo</span><span class="p">(</span>
+    <span class="n">env</span><span class="p">,</span> <span class="n">video_folder</span><span class="o">=</span><span class="s2">&quot;./&quot;</span><span class="p">,</span> <span class="n">name_prefix</span><span class="o">=</span><span class="s2">&quot;CartPole&quot;</span>
+<span class="p">)</span>  <span class="c1"># wrap the env to save the video output</span>
+<span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>  <span class="c1"># initialize the environment</span>
+<span class="k">for</span> <span class="n">tt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3000</span><span class="p">):</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">policy</span><span class="p">(</span>
+        <span class="n">observation</span>
+    <span class="p">)</span>  <span class="c1"># use the agent&#39;s policy to choose the next action</span>
+    <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>  <span class="c1"># do the action</span>
+    <span class="n">done</span> <span class="o">=</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span>
+    <span class="k">if</span> <span class="n">done</span><span class="p">:</span>
+        <span class="k">break</span>  <span class="c1"># stop if the environement is done</span>
+<span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Using cpu device
+Wrapping the env with a `Monitor` wrapper
+Wrapping the env in a DummyVecEnv.
+---------------------------------
+| rollout/           |          |
+|    ep_len_mean     | 22       |
+|    ep_rew_mean     | 22       |
+| time/              |          |
+|    fps             | 2490     |
+|    iterations      | 1        |
+|    time_elapsed    | 0        |
+|    total_timesteps | 2048     |
+---------------------------------
+-----------------------------------------
+| rollout/                |             |
+|    ep_len_mean          | 28.1        |
+|    ep_rew_mean          | 28.1        |
+| time/                   |             |
+|    fps                  | 1842        |
+|    iterations           | 2           |
+|    time_elapsed         | 2           |
+|    total_timesteps      | 4096        |
+| train/                  |             |
+|    approx_kl            | 0.009214947 |
+|    clip_fraction        | 0.102       |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -0.686      |
+|    explained_variance   | -0.00179    |
+|    learning_rate        | 0.0003      |
+|    loss                 | 8.42        |
+|    n_updates            | 10          |
+|    policy_gradient_loss | -0.0158     |
+|    value_loss           | 51.5        |
+-----------------------------------------
+-----------------------------------------
+| rollout/                |             |
+|    ep_len_mean          | 40          |
+|    ep_rew_mean          | 40          |
+| time/                   |             |
+|    fps                  | 1708        |
+|    iterations           | 3           |
+|    time_elapsed         | 3           |
+|    total_timesteps      | 6144        |
+| train/                  |             |
+|    approx_kl            | 0.009872524 |
+|    clip_fraction        | 0.0705      |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -0.666      |
+|    explained_variance   | 0.119       |
+|    learning_rate        | 0.0003      |
+|    loss                 | 16          |
+|    n_updates            | 20          |
+|    policy_gradient_loss | -0.0195     |
+|    value_loss           | 38.7        |
+-----------------------------------------
+[INFO] 16:36: [[worker: -1]] | max_global_step = 6144 | time/iterations = 2 | rollout/ep_rew_mean = 28.13 | rollout/ep_len_mean = 28.13 | time/fps = 1842 | time/time_elapsed = 2 | time/total_timesteps = 4096 | train/learning_rate = 0.0003 | train/entropy_loss = -0.6860913151875139 | train/policy_gradient_loss = -0.015838009686558508 | train/value_loss = 51.528612112998964 | train/approx_kl = 0.009214947000145912 | train/clip_fraction = 0.10205078125 | train/loss = 8.420166969299316 | train/explained_variance = -0.001785874366760254 | train/n_updates = 10 | train/clip_range = 0.2 |
+------------------------------------------
+| rollout/                |              |
+|    ep_len_mean          | 50.2         |
+|    ep_rew_mean          | 50.2         |
+| time/                   |              |
+|    fps                  | 1674         |
+|    iterations           | 4            |
+|    time_elapsed         | 4            |
+|    total_timesteps      | 8192         |
+| train/                  |              |
+|    approx_kl            | 0.0076105352 |
+|    clip_fraction        | 0.068        |
+|    clip_range           | 0.2          |
+|    entropy_loss         | -0.634       |
+|    explained_variance   | 0.246        |
+|    learning_rate        | 0.0003       |
+|    loss                 | 29.6         |
+|    n_updates            | 30           |
+|    policy_gradient_loss | -0.0151      |
+|    value_loss           | 57.3         |
+------------------------------------------
+-----------------------------------------
+| rollout/                |             |
+|    ep_len_mean          | 66          |
+|    ep_rew_mean          | 66          |
+| time/                   |             |
+|    fps                  | 1655        |
+|    iterations           | 5           |
+|    time_elapsed         | 6           |
+|    total_timesteps      | 10240       |
+| train/                  |             |
+|    approx_kl            | 0.006019583 |
+|    clip_fraction        | 0.0597      |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -0.606      |
+|    explained_variance   | 0.238       |
+|    learning_rate        | 0.0003      |
+|    loss                 | 31.1        |
+|    n_updates            | 40          |
+|    policy_gradient_loss | -0.0147     |
+|    value_loss           | 72.3        |
+-----------------------------------------
+None
+
+Moviepy - Building video &lt;yourPath&gt;/CartPole-episode-0.mp4.
+Moviepy - Writing video &lt;yourPath&gt;/CartPole-episode-0.mp4
+
+Moviepy - Done !
+Moviepy - video ready &lt;yourPath&gt;/CartPole-episode-0.mp4
+</pre></div>
+</div>
+</br>
+<video controls="controls" style="max-width: 600px;">
+   <source src="../../user_guide_video/_agent_page_CartPole.mp4" type="video/mp4">
+</video>
+</section>
+<section id="create-your-own-agent">
+<h2>Create your own Agent<a class="headerlink" href="#create-your-own-agent" title="Permalink to this heading">¶</a></h2>
+<p><span>⚠</span> <strong>warning :</strong> For advanced users only <span>⚠</span></p>
+<p>rlberry requires you to use a <strong>very simple interface</strong> to write agents, with basically
+two methods to implement: <code class="docutils literal notranslate"><span class="pre">fit()</span></code> and <code class="docutils literal notranslate"><span class="pre">eval()</span></code>.</p>
+<p>You can find more information on this interface <a class="reference internal" href="../../generated/rlberry.agents.Agent.html#rlberry.agents.Agent" title="rlberry.agents.agent.Agent"><span class="xref myst py py-class">here(Agent)</span></a>   (or <a class="reference internal" href="../../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.agent.AgentWithSimplePolicy"><span class="xref myst py py-class">here(AgentWithSimplePolicy)</span></a>)</p>
+<p>The example below shows how to create an agent.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">rlberry.agents</span> <span class="kn">import</span> <span class="n">AgentWithSimplePolicy</span>
+
+
+<span class="k">class</span> <span class="nc">MyAgentQLearning</span><span class="p">(</span><span class="n">AgentWithSimplePolicy</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;QLearning&quot;</span>
+    <span class="c1"># create an agent with q-table</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">env</span><span class="p">,</span>
+        <span class="n">exploration_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+        <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+        <span class="n">discount_factor</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">):</span>  <span class="c1"># it&#39;s important to put **kwargs to ensure compatibility with the base class</span>
+        <span class="c1"># self.env is initialized in the base class</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">state_space_size</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">n</span>
+        <span class="n">action_space_size</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">n</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">exploration_rate</span> <span class="o">=</span> <span class="n">exploration_rate</span>  <span class="c1"># percentage to select random action</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_table</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">state_space_size</span><span class="p">,</span> <span class="n">action_space_size</span><span class="p">)</span>
+        <span class="p">)</span>  <span class="c1"># q_table to store result and choose actions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span> <span class="o">=</span> <span class="n">learning_rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">discount_factor</span> <span class="o">=</span> <span class="n">discount_factor</span>  <span class="c1"># gamma</span>
+
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">budget</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The parameter budget can represent the number of steps, the number of episodes etc,</span>
+<span class="sd">        depending on the agent.</span>
+<span class="sd">        * Interact with the environment (self.env);</span>
+<span class="sd">        * Train the agent</span>
+<span class="sd">        * Return useful information</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">n_episodes</span> <span class="o">=</span> <span class="n">budget</span>
+        <span class="n">rewards</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_episodes</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">ep</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_episodes</span><span class="p">):</span>
+            <span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+            <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">while</span> <span class="ow">not</span> <span class="n">done</span><span class="p">:</span>
+                <span class="n">action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span>
+                <span class="n">next_step</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+                <span class="c1"># update the q_table</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">q_table</span><span class="p">[</span><span class="n">observation</span><span class="p">,</span> <span class="n">action</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span>
+                <span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_table</span><span class="p">[</span><span class="n">observation</span><span class="p">,</span> <span class="n">action</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span> <span class="o">*</span> <span class="p">(</span>
+                    <span class="n">reward</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">discount_factor</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_table</span><span class="p">[</span><span class="n">next_step</span><span class="p">,</span> <span class="p">:])</span>
+                <span class="p">)</span>
+                <span class="n">observation</span> <span class="o">=</span> <span class="n">next_step</span>
+                <span class="n">done</span> <span class="o">=</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span>
+                <span class="n">rewards</span><span class="p">[</span><span class="n">ep</span><span class="p">]</span> <span class="o">+=</span> <span class="n">reward</span>
+
+        <span class="n">info</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;episode_rewards&quot;</span><span class="p">:</span> <span class="n">rewards</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">info</span>
+
+    <span class="k">def</span> <span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a value corresponding to the evaluation of the agent on the</span>
+<span class="sd">        evaluation environment.</span>
+
+<span class="sd">        For instance, it can be a Monte-Carlo evaluation of the policy learned in fit().</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>  <span class="c1"># use the eval() from AgentWithSimplePolicy</span>
+
+    <span class="k">def</span> <span class="nf">policy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">,</span> <span class="n">explo</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">observation</span>
+        <span class="k">if</span> <span class="n">explo</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">exploration_rate</span><span class="p">:</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>  <span class="c1"># Explore</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_table</span><span class="p">[</span><span class="n">state</span><span class="p">,</span> <span class="p">:])</span>  <span class="c1"># Exploit</span>
+
+        <span class="k">return</span> <span class="n">action</span>
+</pre></div>
+</div>
+<p><span>⚠</span> <strong>warning :</strong>  It’s important that your agent accepts optional <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> and pass it to the base class as <code class="docutils literal notranslate"><span class="pre">Agent.__init__(self,</span> <span class="pre">env,</span> <span class="pre">**kwargs)</span></code>. <span>⚠</span></p>
+<p>You can use it like this :</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">gymnasium.wrappers.record_video</span> <span class="kn">import</span> <span class="n">RecordVideo</span>
+<span class="kn">from</span> <span class="nn">rlberry.envs</span> <span class="kn">import</span> <span class="n">gym_make</span>
+
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym_make</span><span class="p">(</span>
+    <span class="s2">&quot;FrozenLake-v1&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;rgb_array&quot;</span><span class="p">,</span> <span class="n">is_slippery</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>  <span class="c1"># remove the slippery from the env</span>
+<span class="n">agent</span> <span class="o">=</span> <span class="n">MyAgentQLearning</span><span class="p">(</span>
+    <span class="n">env</span><span class="p">,</span> <span class="n">exploration_rate</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">discount_factor</span><span class="o">=</span><span class="mf">0.95</span>
+<span class="p">)</span>
+<span class="n">info</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="mi">100000</span><span class="p">)</span>  <span class="c1"># Agent&#39;s training</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;----------&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">agent</span><span class="o">.</span><span class="n">q_table</span><span class="p">)</span>  <span class="c1"># display the q_table content</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;----------&quot;</span><span class="p">)</span>
+
+<span class="n">env</span> <span class="o">=</span> <span class="n">RecordVideo</span><span class="p">(</span>
+    <span class="n">env</span><span class="p">,</span> <span class="n">video_folder</span><span class="o">=</span><span class="s2">&quot;./&quot;</span><span class="p">,</span> <span class="n">name_prefix</span><span class="o">=</span><span class="s2">&quot;FrozenLake_no_slippery&quot;</span>
+<span class="p">)</span>  <span class="c1"># wrap the env to save the video output</span>
+<span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>  <span class="c1"># initialize the environment</span>
+<span class="k">for</span> <span class="n">tt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3000</span><span class="p">):</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">policy</span><span class="p">(</span>
+        <span class="n">observation</span><span class="p">,</span> <span class="n">explo</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>  <span class="c1"># use the agent&#39;s policy to choose the next action (without exploration)</span>
+    <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>  <span class="c1"># do the action</span>
+    <span class="n">done</span> <span class="o">=</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span>
+    <span class="k">if</span> <span class="n">done</span><span class="p">:</span>
+        <span class="k">break</span>  <span class="c1"># stop if the environement is done</span>
+<span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>----------
+[[0.73509189 0.77378094 0.77378094 0.73509189]
+ [0.73509189 0.         0.81450625 0.77378094]
+ [0.77378094 0.857375   0.77378094 0.81450625]
+ [0.81450625 0.         0.77378094 0.77378094]
+ [0.77378094 0.81450625 0.         0.73509189]
+ [0.         0.         0.         0.        ]
+ [0.         0.9025     0.         0.81450625]
+ [0.         0.         0.         0.        ]
+ [0.81450625 0.         0.857375   0.77378094]
+ [0.81450625 0.9025     0.9025     0.        ]
+ [0.857375   0.95       0.         0.857375  ]
+ [0.         0.         0.         0.        ]
+ [0.         0.         0.         0.        ]
+ [0.         0.9025     0.95       0.857375  ]
+ [0.9025     0.95       1.         0.9025    ]
+ [0.         0.         0.         0.        ]]
+----------
+
+Moviepy - Building video &lt;yourPath&gt;/FrozenLake_no_slippery-episode-0.mp4.
+Moviepy - Writing video &lt;yourPath&gt;/FrozenLake_no_slippery-episode-0.mp4
+
+Moviepy - Done !
+Moviepy - video ready &lt;yourPath&gt;/FrozenLake_no_slippery-episode-0.mp4
+0.7
+
+</pre></div>
+</div>
+<video controls="controls" style="max-width: 600px;">
+   <source src="../../user_guide_video/_agent_page_frozenLake.mp4" type="video/mp4">
+</video>
+</section>
+<section id="use-experimentmanager">
+<h2>Use experimentManager<a class="headerlink" href="#use-experimentmanager" title="Permalink to this heading">¶</a></h2>
+<p>This is one of the core element in rlberry. The ExperimentManager allows you to easily make an experiment between an Agent and an Environment. It is used to train, optimize hyperparameters, evaluate and gather statistics about an agent.
+You can find the guide for ExperimentManager <a class="reference internal" href="experimentManager.html#experimentmanager-page"><span class="std std-ref">here</span></a>.</p>
+</section>
+</section>
+
+
+      </div>
+    <div class="container">
+      <footer class="sk-content-footer">
+            &copy; 2023, rlberry team.
+          <a href="../../_sources/basics/userguide/agent.md.txt" rel="nofollow">Show this page source</a>
+      </footer>
+    </div>
+  </div>
+</div>
+<script src="../../_static/js/vendor/bootstrap.min.js"></script>
+
+<script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-22606712-2', 'auto');
+    ga('set', 'anonymizeIp', true);
+    ga('send', 'pageview');
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+<script>
+$(document).ready(function() {
+    /* Add a [>>>] button on the top-right corner of code samples to hide
+     * the >>> and ... prompts and the output and thus make the code
+     * copyable. */
+    var div = $('.highlight-python .highlight,' +
+                '.highlight-python3 .highlight,' +
+                '.highlight-pycon .highlight,' +
+		'.highlight-default .highlight')
+    var pre = div.find('pre');
+
+    // get the styles from the current theme
+    pre.parent().parent().css('position', 'relative');
+    var hide_text = 'Hide prompts and outputs';
+    var show_text = 'Show prompts and outputs';
+
+    // create and add the button to all the code blocks that contain >>>
+    div.each(function(index) {
+        var jthis = $(this);
+        if (jthis.find('.gp').length > 0) {
+            var button = $('<span class="copybutton">&gt;&gt;&gt;</span>');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+            jthis.prepend(button);
+        }
+        // tracebacks (.gt) contain bare text elements that need to be
+        // wrapped in a span to work with .nextUntil() (see later)
+        jthis.find('pre:has(.gt)').contents().filter(function() {
+            return ((this.nodeType == 3) && (this.data.trim().length > 0));
+        }).wrap('<span>');
+    });
+
+    // define the behavior of the button when it's clicked
+    $('.copybutton').click(function(e){
+        e.preventDefault();
+        var button = $(this);
+        if (button.data('hidden') === 'false') {
+            // hide the code output
+            button.parent().find('.go, .gp, .gt').hide();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'hidden');
+            button.css('text-decoration', 'line-through');
+            button.attr('title', show_text);
+            button.data('hidden', 'true');
+        } else {
+            // show the code output
+            button.parent().find('.go, .gp, .gt').show();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'visible');
+            button.css('text-decoration', 'none');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+        }
+    });
+
+	/*** Add permalink buttons next to glossary terms ***/
+	$('dl.glossary > dt[id]').append(function() {
+		return ('<a class="headerlink" href="#' +
+			    this.getAttribute('id') +
+			    '" title="Permalink to this term">¶</a>');
+	});
+  /*** Hide navbar when scrolling down ***/
+  // Returns true when headerlink target matches hash in url
+  (function() {
+    hashTargetOnTop = function() {
+        var hash = window.location.hash;
+        if ( hash.length < 2 ) { return false; }
+
+        var target = document.getElementById( hash.slice(1) );
+        if ( target === null ) { return false; }
+
+        var top = target.getBoundingClientRect().top;
+        return (top < 2) && (top > -2);
+    };
+
+    // Hide navbar on load if hash target is on top
+    var navBar = document.getElementById("navbar");
+    var navBarToggler = document.getElementById("sk-navbar-toggler");
+    var navBarHeightHidden = "-" + navBar.getBoundingClientRect().height + "px";
+    var $window = $(window);
+
+    hideNavBar = function() {
+        navBar.style.top = navBarHeightHidden;
+    };
+
+    showNavBar = function() {
+        navBar.style.top = "0";
+    }
+
+    if (hashTargetOnTop()) {
+        hideNavBar()
+    }
+
+    var prevScrollpos = window.pageYOffset;
+    hideOnScroll = function(lastScrollTop) {
+        if (($window.width() < 768) && (navBarToggler.getAttribute("aria-expanded") === 'true')) {
+            return;
+        }
+        if (lastScrollTop > 2 && (prevScrollpos <= lastScrollTop) || hashTargetOnTop()){
+            hideNavBar()
+        } else {
+            showNavBar()
+        }
+        prevScrollpos = lastScrollTop;
+    };
+
+    /*** high performance scroll event listener***/
+    var raf = window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        window.oRequestAnimationFrame;
+    var lastScrollTop = $window.scrollTop();
+
+    if (raf) {
+        loop();
+    }
+
+    function loop() {
+        var scrollTop = $window.scrollTop();
+        if (lastScrollTop === scrollTop) {
+            raf(loop);
+            return;
+        } else {
+            lastScrollTop = scrollTop;
+            hideOnScroll(lastScrollTop);
+            raf(loop);
+        }
+    }
+  })();
+});
+
+</script>
+    
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    
+</body>
+</html>

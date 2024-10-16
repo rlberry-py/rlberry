@@ -1,0 +1,515 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  
+  <title>Quickstart for Deep Reinforcement Learning in rlberry &mdash; rlberry 0.7.3.post16.dev0+8710009 documentation</title>
+  
+  <link rel="canonical" href="https://rlberry-py.github.io/rlberry/basics/DeepRLTutorial/TutorialDeepRL.html" />
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/vendor/bootstrap.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sg_gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sg_gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sg_gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sphinx-design.4cbf315f70debaebd550c87a6162cf0f.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+<script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+<script src="../../_static/js/vendor/jquery-3.6.3.slim.min.js"></script> 
+</head>
+<body>
+
+
+<nav id="navbar" class="sk-docs-navbar navbar navbar-expand-md navbar-light bg-light py-0">
+  <div class="container-fluid sk-docs-container px-0">
+    <button
+      id="sk-navbar-toggler"
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="sk-navbar-collapse collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../index.html">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../installation.html">Install</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../user_guide.html">User Guide</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../auto_examples/index.html">Examples</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../api.html">API</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../changelog.html">Changelog</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../about.html">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="https://github.com/rlberry-py/rlberry">GitHub</a>
+        </li>
+        <!--
+        <li class="nav-item dropdown nav-more-item-dropdown">
+          <a class="sk-nav-link nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">More</a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          </div>
+        </li>-->
+    </ul>
+      <div id="searchbox" role="search">
+          <div class="searchformwrapper">
+            <form action="https://duckduckgo.com/">
+            <input type="hidden" id="sites" name="sites" value="https://rlberry-py.github.io/rlberry/">
+            <input type="search" placeholder="Search &hellip;" value="" name="q" />
+            <input class="sk-search-text-btn" type="submit" value="Go" /></form>
+
+          </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="d-flex" id="sk-doc-wrapper">
+    <input type="checkbox" name="sk-toggle-checkbox" id="sk-toggle-checkbox">
+    <label id="sk-sidemenu-toggle" class="sk-btn-toggle-toc btn sk-btn-primary" for="sk-toggle-checkbox">Toggle Menu</label>
+    <div id="sk-sidebar-wrapper" class="border-right">
+      <div class="sk-sidebar-toc-wrapper">
+        <div class="sk-sidebar-toc-logo">
+        </div>
+	<br>
+        <div class="alert alert-warning p-1 mb-2" role="alert">
+
+          <p class="text-center mb-0">
+          rlberry 0.7.3.post16.dev0+8710009<br/>
+          <a href="../../versions.html">Other versions</a>
+          </p>
+
+        </div>
+            <div class="sk-sidebar-toc">
+              <ul>
+<li><a class="reference internal" href="#">Quickstart for Deep Reinforcement Learning in rlberry</a><ul>
+<li><a class="reference internal" href="#imports">Imports</a></li>
+<li><a class="reference internal" href="#reminder-of-the-rl-setting">Reminder of the RL setting</a></li>
+<li><a class="reference internal" href="#gymnasium-environment">Gymnasium Environment</a></li>
+<li><a class="reference internal" href="#running-a2c-on-acrobot-v1">Running A2C on Acrobot-v1</a></li>
+</ul>
+</li>
+</ul>
+
+            </div>
+      </div>
+    </div>
+    <div id="sk-page-content-wrapper">
+      <div class="sk-page-content container-fluid body px-md-3" role="main">
+        
+  <section id="quickstart-for-deep-reinforcement-learning-in-rlberry">
+<span id="tutorialdeeprl"></span><h1>Quickstart for Deep Reinforcement Learning in rlberry<a class="headerlink" href="#quickstart-for-deep-reinforcement-learning-in-rlberry" title="Permalink to this heading">¶</a></h1>
+<p>In this tutorial, we will focus on Deep Reinforcement Learning with the
+<strong>Advantage Actor-Critic</strong> algorithm.</p>
+<section id="imports">
+<h2>Imports<a class="headerlink" href="#imports" title="Permalink to this heading">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.envs</span> <span class="kn">import</span> <span class="n">gym_make</span>
+<span class="kn">from</span> <span class="nn">rlberry.manager</span> <span class="kn">import</span> <span class="n">plot_writer_data</span><span class="p">,</span> <span class="n">ExperimentManager</span><span class="p">,</span> <span class="n">evaluate_agents</span>
+<span class="kn">from</span> <span class="nn">rlberry.agents.stable_baselines</span> <span class="kn">import</span> <span class="n">StableBaselinesAgent</span>
+<span class="kn">from</span> <span class="nn">stable_baselines3</span> <span class="kn">import</span> <span class="n">PPO</span>
+</pre></div>
+</div>
+</section>
+<section id="reminder-of-the-rl-setting">
+<h2>Reminder of the RL setting<a class="headerlink" href="#reminder-of-the-rl-setting" title="Permalink to this heading">¶</a></h2>
+<p>We will consider a MDP <span class="math notranslate nohighlight">\(M = (\mathcal{S}, \mathcal{A}, p, r, \gamma)\)</span>
+with:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mathcal{S}\)</span> the state space,</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{A}\)</span> the action space,</p></li>
+<li><p><span class="math notranslate nohighlight">\(p(x^\prime \mid x, a)\)</span> the transition probability,</p></li>
+<li><p><span class="math notranslate nohighlight">\(r(x, a, x^\prime)\)</span> the reward of the transition <span class="math notranslate nohighlight">\((x, a, x^\prime)\)</span>,</p></li>
+<li><p><span class="math notranslate nohighlight">\(\gamma \in [0,1)\)</span> is the discount factor.</p></li>
+</ul>
+<p>A policy <span class="math notranslate nohighlight">\(\pi\)</span> is a mapping from the state space <span class="math notranslate nohighlight">\(\mathcal{S}\)</span> to the
+probability of selecting each action. The action value function of a
+policy is the overall expected reward from a state action.
+<span class="math notranslate nohighlight">\(Q^\pi(s, a) = \mathbb{E}_{\tau \sim \pi}\big[R(\tau) \mid s_0=s, a_0=a\big]\)</span>
+where <span class="math notranslate nohighlight">\(\tau\)</span> is an episode
+<span class="math notranslate nohighlight">\((s_0, a_0, r_0, s_1, a_1, r_1, s_2, ..., s_T, a_T, r_T)\)</span> with the
+actions drawn from <span class="math notranslate nohighlight">\(\pi(s)\)</span>; <span class="math notranslate nohighlight">\(R(\tau)\)</span> is the random variable defined as
+the cumulative sum of the discounted reward.</p>
+<p>The goal is to maximize the cumulative sum of discount rewards:</p>
+<p><div class="math notranslate nohighlight">
+\[J(\pi) = \mathbb{E}_{\tau \sim \pi}\big[R(\tau) \big]\]</div>
+</p>
+</section>
+<section id="gymnasium-environment">
+<h2>Gymnasium Environment<a class="headerlink" href="#gymnasium-environment" title="Permalink to this heading">¶</a></h2>
+<p>In this tutorial we are going to use the <a class="reference external" href="https://gymnasium.farama.org/api/env/">Gymnasium library (previously
+OpenAI’s Gym)</a>. This library
+provides a large number of environments to test RL algorithm.</p>
+<p>We will focus only on the <strong>Acrobot-v1</strong> environment, although you can
+experimenting with other environments such as <strong>CartPole-v1</strong>
+or <strong>MountainCar-v0</strong>. The following table presents some basic
+components of the three environments, such as the dimensions of their
+observation and action spaces and the rewards occurring at each step.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Env Info</p></th>
+<th class="head text-left"><p>CartPole-v1</p></th>
+<th class="head text-left"><p>Acrobot-v1</p></th>
+<th class="head text-left"><p>MountainCar-v0</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p><strong>Observation Space</strong></p></td>
+<td class="text-left"><p>Box(4)</p></td>
+<td class="text-left"><p>Box(6)</p></td>
+<td class="text-left"><p>Box(2)</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><strong>Action Space</strong></p></td>
+<td class="text-left"><p>Discrete(2)</p></td>
+<td class="text-left"><p>Discrete(3)</p></td>
+<td class="text-left"><p>Discrete(3)</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><strong>Rewards</strong></p></td>
+<td class="text-left"><p>1 per step</p></td>
+<td class="text-left"><p>-1 if not terminal else 0</p></td>
+<td class="text-left"><p>-1 per step</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="running-a2c-on-acrobot-v1">
+<h2>Running A2C on Acrobot-v1<a class="headerlink" href="#running-a2c-on-acrobot-v1" title="Permalink to this heading">¶</a></h2>
+<p><span>⚠</span> <strong>warning:</strong> depending on the seed, you may get different results. <span>⚠</span></p>
+<p>In the next example we use default parameters PPO and we use rlberry to train and evaluate the <a class="reference external" href="https://github.com/DLR-RM/stable-baselines3">Stable Baselines</a> PPO agent.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">The ExperimentManager class is a compact way of experimenting with a deepRL agent.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">default_xp</span> <span class="o">=</span> <span class="n">ExperimentManager</span><span class="p">(</span>
+    <span class="n">StableBaselinesAgent</span><span class="p">,</span>  <span class="c1"># The Agent class.</span>
+    <span class="p">(</span><span class="n">gym_make</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;Acrobot-v1&quot;</span><span class="p">)),</span>  <span class="c1"># The Environment to solve.</span>
+    <span class="n">fit_budget</span><span class="o">=</span><span class="mf">1e5</span><span class="p">,</span>  <span class="c1"># The number of interactions</span>
+    <span class="c1"># between the agent and the</span>
+    <span class="c1"># environment during training.</span>
+    <span class="n">init_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">algo_cls</span><span class="o">=</span><span class="n">PPO</span><span class="p">),</span>  <span class="c1"># Init value for StableBaselinesAgent</span>
+    <span class="n">eval_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">eval_horizon</span><span class="o">=</span><span class="mi">500</span><span class="p">),</span>  <span class="c1"># The number of interactions</span>
+    <span class="c1"># between the agent and the</span>
+    <span class="c1"># environment during evaluations.</span>
+    <span class="n">n_fit</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>  <span class="c1"># The number of agents to train.</span>
+    <span class="c1"># Usually, it is good to do more</span>
+    <span class="c1"># than 1 because the training is</span>
+    <span class="c1"># stochastic.</span>
+    <span class="n">agent_name</span><span class="o">=</span><span class="s2">&quot;PPO default&quot;</span><span class="p">,</span>  <span class="c1"># The agent&#39;s name.</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Training ...&quot;</span><span class="p">)</span>
+<span class="n">default_xp</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>  <span class="c1"># Trains the agent on fit_budget steps!</span>
+
+
+<span class="c1"># Plot the training data:</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">plot_writer_data</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">default_xp</span><span class="p">],</span>
+    <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;rollout/ep_rew_mean&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Training Episode Cumulative Rewards&quot;</span><span class="p">,</span>
+    <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Training ...
+[INFO] 09:31: Running ExperimentManager fit() for PPO default with n_fit = 3 and max_workers = None.
+[INFO] 09:31: [PPO default[worker: 0]] | max_global_step = 4096 | time/iterations = 1 | rollout/ep_rew_mean = -500.0 | rollout/ep_len_mean = 500.0 | time/fps = 791 | time/time_elapsed = 2 | time/total_timesteps = 2048 | train/learning_rate = 0.0003 |
+[INFO] 09:31: [PPO default[worker: 1]] | max_global_step = 4096 | time/iterations = 1 | rollout/ep_rew_mean = -500.0 | rollout/ep_len_mean = 500.0 | time/fps = 741 | time/time_elapsed = 2 | time/total_timesteps = 2048 | train/learning_rate = 0.0003 |
+[INFO] 09:31: [PPO default[worker: 2]] | max_global_step = 4096 | time/iterations = 1 | rollout/ep_rew_mean = -500.0 | rollout/ep_len_mean = 500.0 | time/fps = 751 | time/time_elapsed = 2 | time/total_timesteps = 2048 | train/learning_rate = 0.0003 |
+[INFO] 09:32: [PPO default[worker: 0]] | max_global_step = 6144 | time/iterations = 2 | rollout/ep_rew_mean = -500.0 | rollout/ep_len_mean = 500.0 | time/fps = 617 | time/time_elapsed = 6 | time/total_timesteps = 4096 | train/learning_rate = 0.0003 | train/entropy_loss = -1.0967000976204873 | train/policy_gradient_loss = -0.0017652213326073251 | train/value_loss = 139.4249062538147 | train/approx_kl = 0.004285778850317001 | train/clip_fraction = 0.0044921875 | train/loss = 16.845857620239258 | train/explained_variance = -0.0011605024337768555 | train/n_updates = 10 | train/clip_range = 0.2 |
+...
+...
+...
+[INFO] 09:35: [PPO default[worker: 1]] | max_global_step = 100352 | time/iterations = 48 | rollout/ep_rew_mean = -89.81 | rollout/ep_len_mean = 90.8 | time/fps = 486 | time/time_elapsed = 202 | time/total_timesteps = 98304 | train/learning_rate = 0.0003 | train/entropy_loss = -0.19921453138813378 | train/policy_gradient_loss = -0.002730156043253373 | train/value_loss = 21.20977843105793 | train/approx_kl = 0.0014179411809891462 | train/clip_fraction = 0.017626953125 | train/loss = 9.601455688476562 | train/explained_variance = 0.8966712430119514 | train/n_updates = 470 | train/clip_range = 0.2 |
+[INFO] 09:35: [PPO default[worker: 0]] | max_global_step = 100352 | time/iterations = 48 | rollout/ep_rew_mean = -83.22 | rollout/ep_len_mean = 84.22 | time/fps = 486 | time/time_elapsed = 202 | time/total_timesteps = 98304 | train/learning_rate = 0.0003 | train/entropy_loss = -0.14615743807516993 | train/policy_gradient_loss = -0.002418491238495335 | train/value_loss = 22.7100858271122 | train/approx_kl = 0.0006727844011038542 | train/clip_fraction = 0.010546875 | train/loss = 8.74121379852295 | train/explained_variance = 0.8884317129850388 | train/n_updates = 470 | train/clip_range = 0.2 |
+[INFO] 09:35: ... trained!
+[INFO] 09:35: Saved ExperimentManager(PPO default) using pickle.
+[INFO] 09:35: The ExperimentManager was saved in : &#39;rlberry_data/temp/manager_data/PPO default_2024-04-24_09-31-51_be15b329/manager_obj.pickle&#39;
+</pre></div>
+</div>
+</br>
+<img alt="../../_images/output_5_3.png" class="align-center" src="../../_images/output_5_3.png" />
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Evaluating ...&quot;</span><span class="p">)</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">evaluate_agents</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">default_xp</span><span class="p">],</span> <span class="n">n_simulations</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>  <span class="c1"># Evaluate the trained agent on</span>
+<span class="c1"># 10 simulations of 500 steps each.</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Evaluating ...
+[INFO] 09:36: Evaluating PPO default...
+[INFO] Evaluation:..................................................  Evaluation finished
+</pre></div>
+</div>
+</br>
+<img alt="../../_images/output_6_3.png" class="align-center" src="../../_images/output_6_3.png" />
+<p>Let’s try to change the hyperparameters and see if it change the previous result.</p>
+<p><span>⚠</span> <strong>warning:</strong> The aim of this section is to show that hyperparameters have an effect on agent training, and to demonstrate that it is possible to modify them.</p>
+<p>For pedagogical purposes, since the default hyperparameters are effective on these simple environments, we’ll compare the default agent with an agent tuned with the wrong hyperparameters, which decreases the results. Obviously, in practical cases, the aim is to find hyperparameters that improve results… not decrease them. <span>⚠</span></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tuned_xp</span> <span class="o">=</span> <span class="n">ExperimentManager</span><span class="p">(</span>
+    <span class="n">StableBaselinesAgent</span><span class="p">,</span>  <span class="c1"># The Agent class.</span>
+    <span class="p">(</span><span class="n">gym_make</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;Acrobot-v1&quot;</span><span class="p">)),</span>  <span class="c1"># The Environment to solve.</span>
+    <span class="n">init_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>  <span class="c1"># Where to put the agent&#39;s hyperparameters</span>
+        <span class="n">algo_cls</span><span class="o">=</span><span class="n">PPO</span><span class="p">,</span>
+        <span class="c1"># gradient descent steps.</span>
+        <span class="c1"># descent steps.</span>
+        <span class="n">ent_coef</span><span class="o">=</span><span class="mf">0.10</span><span class="p">,</span>  <span class="c1"># How much to force exploration.</span>
+        <span class="n">normalize_advantage</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># normalize the advantage</span>
+        <span class="n">gae_lambda</span><span class="o">=</span><span class="mf">0.90</span><span class="p">,</span>  <span class="c1"># Factor for trade-off of bias vs variance for Generalized Advantage Estimator</span>
+        <span class="n">n_epochs</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>  <span class="c1"># Number of epoch when optimizing the surrogate loss</span>
+        <span class="n">n_steps</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span>  <span class="c1"># The number of steps to run for the environment per update</span>
+        <span class="n">learning_rate</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">fit_budget</span><span class="o">=</span><span class="mf">1e5</span><span class="p">,</span>  <span class="c1"># The number of interactions</span>
+    <span class="c1"># between the agent and the</span>
+    <span class="c1"># environment during training.</span>
+    <span class="n">eval_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">eval_horizon</span><span class="o">=</span><span class="mi">500</span><span class="p">),</span>  <span class="c1"># The number of interactions</span>
+    <span class="c1"># between the agent and the</span>
+    <span class="c1"># environment during evaluations.</span>
+    <span class="n">n_fit</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>  <span class="c1"># The number of agents to train.</span>
+    <span class="c1"># Usually, it is good to do more</span>
+    <span class="c1"># than 1 because the training is</span>
+    <span class="c1"># stochastic.</span>
+    <span class="n">agent_name</span><span class="o">=</span><span class="s2">&quot;PPO incorrectly tuned&quot;</span><span class="p">,</span>  <span class="c1"># The agent&#39;s name.</span>
+<span class="p">)</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Training ...&quot;</span><span class="p">)</span>
+<span class="n">tuned_xp</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>  <span class="c1"># Trains the agent on fit_budget steps!</span>
+
+
+<span class="c1"># Plot the training data:</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">plot_writer_data</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">default_xp</span><span class="p">,</span> <span class="n">tuned_xp</span><span class="p">],</span>
+    <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;rollout/ep_rew_mean&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Training Episode Cumulative Rewards&quot;</span><span class="p">,</span>
+    <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Training ...
+</pre></div>
+</div>
+</br>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[INFO] 09:37: Running ExperimentManager fit() for PPO incorrectly tuned with n_fit = 3 and max_workers = None.
+</pre></div>
+</div>
+</br>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[INFO] 09:37: [PPO incorrectly tuned[worker: 1]] | max_global_step = 832 | time/iterations = 12 | time/fps = 260 | time/time_elapsed = 2 | time/total_timesteps = 768 | train/learning_rate = 0.001 | train/entropy_loss = -0.9725531369447709 | train/policy_gradient_loss = 5.175539326667786 | train/value_loss = 17.705344581604002 | train/approx_kl = 0.028903376311063766 | train/clip_fraction = 0.33828125 | train/loss = 8.651824951171875 | train/explained_variance = 0.03754150867462158 | train/n_updates = 220 | train/clip_range = 0.2 | rollout/ep_rew_mean = -251.0 | rollout/ep_len_mean = 252.0 |
+[INFO] 09:37: [PPO incorrectly tuned[worker: 2]] | max_global_step = 832 | time/iterations = 12 | time/fps = 260 | time/time_elapsed = 2 | time/total_timesteps = 768 | train/learning_rate = 0.001 | train/entropy_loss = -1.0311604633927345 | train/policy_gradient_loss = 5.122353088855744 | train/value_loss = 18.54480469226837 | train/approx_kl = 0.02180374786257744 | train/clip_fraction = 0.359375 | train/loss = 9.690193176269531 | train/explained_variance = -0.00020706653594970703 | train/n_updates = 220 | train/clip_range = 0.2 | rollout/ep_rew_mean = -500.0 | rollout/ep_len_mean = 500.0 |
+...
+...
+...
+[INFO] 09:45: ... trained!
+[INFO] 09:45: Saved ExperimentManager(PPO incorrectly tuned) using pickle.
+[INFO] 09:45: The ExperimentManager was saved in : &#39;rlberry_data/temp/manager_data/PPO incorrectly tuned_2024-04-24_09-37-32_33d1646b/manager_obj.pickle&#39;
+</pre></div>
+</div>
+</br>
+<img alt="../../_images/output_9_3.png" class="align-center" src="../../_images/output_9_3.png" />
+<p>Here, we can see that modifying the hyperparameters has change the learning process (for the worse): it learns faster, but the final result is lower…</p>
+<p><span>☀</span> : For more information on plots and visualization, you can check <a class="reference internal" href="#visualization_page"><span class="xref myst">here (in construction)</span></a></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Evaluating ...&quot;</span><span class="p">)</span>
+
+<span class="c1"># Evaluating and comparing the agents :</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">evaluate_agents</span><span class="p">([</span><span class="n">default_xp</span><span class="p">,</span> <span class="n">tuned_xp</span><span class="p">],</span> <span class="n">n_simulations</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</br>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Evaluating ...
+</pre></div>
+</div>
+</br>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[INFO] 09:47: Evaluating PPO default...
+[INFO] Evaluation:..................................................  Evaluation finished
+[INFO] 09:47: Evaluating PPO incorrectly tuned...
+[INFO] Evaluation:..................................................  Evaluation finished
+</pre></div>
+</div>
+</br>
+<img alt="../../_images/output_10_3.png" class="align-center" src="../../_images/output_10_3.png" />
+</section>
+</section>
+
+
+      </div>
+    <div class="container">
+      <footer class="sk-content-footer">
+            &copy; 2023, rlberry team.
+          <a href="../../_sources/basics/DeepRLTutorial/TutorialDeepRL.md.txt" rel="nofollow">Show this page source</a>
+      </footer>
+    </div>
+  </div>
+</div>
+<script src="../../_static/js/vendor/bootstrap.min.js"></script>
+
+<script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-22606712-2', 'auto');
+    ga('set', 'anonymizeIp', true);
+    ga('send', 'pageview');
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+<script>
+$(document).ready(function() {
+    /* Add a [>>>] button on the top-right corner of code samples to hide
+     * the >>> and ... prompts and the output and thus make the code
+     * copyable. */
+    var div = $('.highlight-python .highlight,' +
+                '.highlight-python3 .highlight,' +
+                '.highlight-pycon .highlight,' +
+		'.highlight-default .highlight')
+    var pre = div.find('pre');
+
+    // get the styles from the current theme
+    pre.parent().parent().css('position', 'relative');
+    var hide_text = 'Hide prompts and outputs';
+    var show_text = 'Show prompts and outputs';
+
+    // create and add the button to all the code blocks that contain >>>
+    div.each(function(index) {
+        var jthis = $(this);
+        if (jthis.find('.gp').length > 0) {
+            var button = $('<span class="copybutton">&gt;&gt;&gt;</span>');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+            jthis.prepend(button);
+        }
+        // tracebacks (.gt) contain bare text elements that need to be
+        // wrapped in a span to work with .nextUntil() (see later)
+        jthis.find('pre:has(.gt)').contents().filter(function() {
+            return ((this.nodeType == 3) && (this.data.trim().length > 0));
+        }).wrap('<span>');
+    });
+
+    // define the behavior of the button when it's clicked
+    $('.copybutton').click(function(e){
+        e.preventDefault();
+        var button = $(this);
+        if (button.data('hidden') === 'false') {
+            // hide the code output
+            button.parent().find('.go, .gp, .gt').hide();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'hidden');
+            button.css('text-decoration', 'line-through');
+            button.attr('title', show_text);
+            button.data('hidden', 'true');
+        } else {
+            // show the code output
+            button.parent().find('.go, .gp, .gt').show();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'visible');
+            button.css('text-decoration', 'none');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+        }
+    });
+
+	/*** Add permalink buttons next to glossary terms ***/
+	$('dl.glossary > dt[id]').append(function() {
+		return ('<a class="headerlink" href="#' +
+			    this.getAttribute('id') +
+			    '" title="Permalink to this term">¶</a>');
+	});
+  /*** Hide navbar when scrolling down ***/
+  // Returns true when headerlink target matches hash in url
+  (function() {
+    hashTargetOnTop = function() {
+        var hash = window.location.hash;
+        if ( hash.length < 2 ) { return false; }
+
+        var target = document.getElementById( hash.slice(1) );
+        if ( target === null ) { return false; }
+
+        var top = target.getBoundingClientRect().top;
+        return (top < 2) && (top > -2);
+    };
+
+    // Hide navbar on load if hash target is on top
+    var navBar = document.getElementById("navbar");
+    var navBarToggler = document.getElementById("sk-navbar-toggler");
+    var navBarHeightHidden = "-" + navBar.getBoundingClientRect().height + "px";
+    var $window = $(window);
+
+    hideNavBar = function() {
+        navBar.style.top = navBarHeightHidden;
+    };
+
+    showNavBar = function() {
+        navBar.style.top = "0";
+    }
+
+    if (hashTargetOnTop()) {
+        hideNavBar()
+    }
+
+    var prevScrollpos = window.pageYOffset;
+    hideOnScroll = function(lastScrollTop) {
+        if (($window.width() < 768) && (navBarToggler.getAttribute("aria-expanded") === 'true')) {
+            return;
+        }
+        if (lastScrollTop > 2 && (prevScrollpos <= lastScrollTop) || hashTargetOnTop()){
+            hideNavBar()
+        } else {
+            showNavBar()
+        }
+        prevScrollpos = lastScrollTop;
+    };
+
+    /*** high performance scroll event listener***/
+    var raf = window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        window.oRequestAnimationFrame;
+    var lastScrollTop = $window.scrollTop();
+
+    if (raf) {
+        loop();
+    }
+
+    function loop() {
+        var scrollTop = $window.scrollTop();
+        if (lastScrollTop === scrollTop) {
+            raf(loop);
+            return;
+        } else {
+            lastScrollTop = scrollTop;
+            hideOnScroll(lastScrollTop);
+            raf(loop);
+        }
+    }
+  })();
+});
+
+</script>
+    
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    
+</body>
+</html>

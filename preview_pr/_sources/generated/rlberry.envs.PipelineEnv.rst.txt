@@ -1,0 +1,12 @@
+﻿:mod:`rlberry.envs`.PipelineEnv
+============================================
+
+.. currentmodule:: rlberry.envs
+
+.. autofunction:: PipelineEnv
+
+.. include:: rlberry.envs.PipelineEnv.examples
+
+.. raw:: html
+
+    <div class="clearer"></div>

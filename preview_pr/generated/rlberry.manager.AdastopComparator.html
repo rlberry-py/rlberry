@@ -1,0 +1,467 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  
+  <title>rlberry.manager.AdastopComparator &mdash; rlberry 0.7.3.post16.dev0+8710009 documentation</title>
+  
+  <link rel="canonical" href="https://rlberry-py.github.io/rlberry/generated/rlberry.manager.AdastopComparator.html" />
+
+  
+
+  <link rel="stylesheet" href="../_static/css/vendor/bootstrap.min.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sg_gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sg_gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sg_gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sphinx-design.4cbf315f70debaebd550c87a6162cf0f.min.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+<script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+<script src="../_static/js/vendor/jquery-3.6.3.slim.min.js"></script> 
+</head>
+<body>
+
+
+<nav id="navbar" class="sk-docs-navbar navbar navbar-expand-md navbar-light bg-light py-0">
+  <div class="container-fluid sk-docs-container px-0">
+    <button
+      id="sk-navbar-toggler"
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="sk-navbar-collapse collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../index.html">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../installation.html">Install</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../user_guide.html">User Guide</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../auto_examples/index.html">Examples</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../api.html">API</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../changelog.html">Changelog</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../about.html">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="https://github.com/rlberry-py/rlberry">GitHub</a>
+        </li>
+        <!--
+        <li class="nav-item dropdown nav-more-item-dropdown">
+          <a class="sk-nav-link nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">More</a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          </div>
+        </li>-->
+    </ul>
+      <div id="searchbox" role="search">
+          <div class="searchformwrapper">
+            <form action="https://duckduckgo.com/">
+            <input type="hidden" id="sites" name="sites" value="https://rlberry-py.github.io/rlberry/">
+            <input type="search" placeholder="Search &hellip;" value="" name="q" />
+            <input class="sk-search-text-btn" type="submit" value="Go" /></form>
+
+          </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="d-flex" id="sk-doc-wrapper">
+    <input type="checkbox" name="sk-toggle-checkbox" id="sk-toggle-checkbox">
+    <label id="sk-sidemenu-toggle" class="sk-btn-toggle-toc btn sk-btn-primary" for="sk-toggle-checkbox">Toggle Menu</label>
+    <div id="sk-sidebar-wrapper" class="border-right">
+      <div class="sk-sidebar-toc-wrapper">
+        <div class="sk-sidebar-toc-logo">
+        </div>
+	<br>
+        <div class="alert alert-warning p-1 mb-2" role="alert">
+
+          <p class="text-center mb-0">
+          rlberry 0.7.3.post16.dev0+8710009<br/>
+          <a href="../versions.html">Other versions</a>
+          </p>
+
+        </div>
+            <div class="sk-sidebar-toc">
+              <ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">rlberry.manager</span></code>.AdastopComparator</a><ul>
+<li><a class="reference internal" href="#rlberry.manager.AdastopComparator"><code class="docutils literal notranslate"><span class="pre">AdastopComparator</span></code></a><ul>
+<li><a class="reference internal" href="#rlberry.manager.AdastopComparator.compare"><code class="docutils literal notranslate"><span class="pre">AdastopComparator.compare()</span></code></a></li>
+<li><a class="reference internal" href="#rlberry.manager.AdastopComparator.compute_mean_diffs"><code class="docutils literal notranslate"><span class="pre">AdastopComparator.compute_mean_diffs()</span></code></a></li>
+<li><a class="reference internal" href="#rlberry.manager.AdastopComparator.get_results"><code class="docutils literal notranslate"><span class="pre">AdastopComparator.get_results()</span></code></a></li>
+<li><a class="reference internal" href="#rlberry.manager.AdastopComparator.partial_compare"><code class="docutils literal notranslate"><span class="pre">AdastopComparator.partial_compare()</span></code></a></li>
+<li><a class="reference internal" href="#rlberry.manager.AdastopComparator.plot_results"><code class="docutils literal notranslate"><span class="pre">AdastopComparator.plot_results()</span></code></a></li>
+<li><a class="reference internal" href="#rlberry.manager.AdastopComparator.plot_results_sota"><code class="docutils literal notranslate"><span class="pre">AdastopComparator.plot_results_sota()</span></code></a></li>
+<li><a class="reference internal" href="#rlberry.manager.AdastopComparator.print_results"><code class="docutils literal notranslate"><span class="pre">AdastopComparator.print_results()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#examples-using-rlberry-manager-adastopcomparator">Examples using <code class="docutils literal notranslate"><span class="pre">rlberry.manager.AdastopComparator</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+            </div>
+      </div>
+    </div>
+    <div id="sk-page-content-wrapper">
+      <div class="sk-page-content container-fluid body px-md-3" role="main">
+        
+  <section id="rlberry-manager-adastopcomparator">
+<h1><code class="xref py py-mod docutils literal notranslate"><span class="pre">rlberry.manager</span></code>.AdastopComparator<a class="headerlink" href="#rlberry-manager-adastopcomparator" title="Permalink to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="rlberry.manager.AdastopComparator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlberry.manager.</span></span><span class="sig-name descname"><span class="pre">AdastopComparator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comparisons</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rlberry/manager/comparison.html#AdastopComparator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.manager.AdastopComparator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">MultipleAgentsComparator</span></code></p>
+<p>Compare sequentially agents, with possible early stopping.
+At maximum, there can be n times K fits done.</p>
+<p>See adastop library for more details (<a class="reference external" href="https://github.com/TimotheeMathieu/adastop">https://github.com/TimotheeMathieu/adastop</a>)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>n: int, or array of ints of size self.n_agents, default=5</strong></dt><dd><p>If int, number of fits before each early stopping check. If array of int, a
+different number of fits is used for each agent.</p>
+</dd>
+<dt><strong>K: int, default=5</strong></dt><dd><p>number of check.</p>
+</dd>
+<dt><strong>B: int, default=None</strong></dt><dd><p>Number of random permutations used to approximate permutation distribution.</p>
+</dd>
+<dt><strong>comparisons: list of tuple of indices or None</strong></dt><dd><p>if None, all the pairwise comparison are done.
+If = [(0,1), (0,2)] for instance, the compare only 0 vs 1  and 0 vs 2</p>
+</dd>
+<dt><strong>alpha: float, default=0.01</strong></dt><dd><p>level of the test</p>
+</dd>
+<dt><strong>beta: float, default=0</strong></dt><dd><p>power spent in early accept.</p>
+</dd>
+<dt><strong>seed: int or None, default = None</strong></dt><dd></dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>agent_names: list of str</strong></dt><dd><p>list of the agents’ names.</p>
+</dd>
+<dt><strong>managers_paths: dictionary</strong></dt><dd><p>managers_paths[agent_name] is a list of the paths to the trained experiment managers. Can be loaded with ExperimentManager.load.</p>
+</dd>
+<dt><strong>decision: dict</strong></dt><dd><p>decision of the tests for each comparison, keys are the comparisons and values are in {“equal”, “larger”, “smaller”}.</p>
+</dd>
+<dt><strong>n_iters: dict</strong></dt><dd><p>number of iterations (i.e. number of fits) used for each agent. Keys are the agents’ names and values are ints.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rlberry.manager.AdastopComparator.compare" title="rlberry.manager.AdastopComparator.compare"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compare</span></code></a>(manager_list[, n_evaluations, verbose])</p></td>
+<td><p>Run Adastop on the managers from manager_list</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#rlberry.manager.AdastopComparator.compute_mean_diffs" title="rlberry.manager.AdastopComparator.compute_mean_diffs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_mean_diffs</span></code></a>(k, Z)</p></td>
+<td><p>Compute the absolute value of the sum differences.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rlberry.manager.AdastopComparator.get_results" title="rlberry.manager.AdastopComparator.get_results"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_results</span></code></a>()</p></td>
+<td><p>Returns a dataframe with the results of the tests.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#rlberry.manager.AdastopComparator.partial_compare" title="rlberry.manager.AdastopComparator.partial_compare"><code class="xref py py-obj docutils literal notranslate"><span class="pre">partial_compare</span></code></a>(eval_values[, verbose])</p></td>
+<td><p>Do the test of the k^th interim.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rlberry.manager.AdastopComparator.plot_results" title="rlberry.manager.AdastopComparator.plot_results"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_results</span></code></a>([agent_names, axes])</p></td>
+<td><p>visual representation of results.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#rlberry.manager.AdastopComparator.plot_results_sota" title="rlberry.manager.AdastopComparator.plot_results_sota"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_results_sota</span></code></a>([agent_names, axes])</p></td>
+<td><p>visual representation of results when the first agent is compared to all the others.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rlberry.manager.AdastopComparator.print_results" title="rlberry.manager.AdastopComparator.print_results"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print_results</span></code></a>()</p></td>
+<td><p>Print the results of the test.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="rlberry.manager.AdastopComparator.compare">
+<span class="sig-name descname"><span class="pre">compare</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">manager_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_evaluations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rlberry/manager/comparison.html#AdastopComparator.compare"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.manager.AdastopComparator.compare" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run Adastop on the managers from manager_list</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>manager_list: list of ExperimentManager kwargs</strong></dt><dd><p>List of manager containing agents we want to compare.</p>
+</dd>
+<dt><strong>n_evaluations: int, default = 50</strong></dt><dd><p>number of evaluations used to estimate the score used for AdaStop.</p>
+</dd>
+<dt><strong>verbose: bool</strong></dt><dd><p>Print Steps.</p>
+</dd>
+<dt><strong>Returns</strong></dt><dd></dd>
+<dt><strong>——-</strong></dt><dd></dd>
+<dt><strong>decisions: dictionary with comparisons as index and with values str in {“equal”, “larger”, “smaller”, “continue”}</strong></dt><dd><p>Decision of the test at this step.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rlberry.manager.AdastopComparator.compute_mean_diffs">
+<span class="sig-name descname"><span class="pre">compute_mean_diffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#rlberry.manager.AdastopComparator.compute_mean_diffs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the absolute value of the sum differences.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rlberry.manager.AdastopComparator.get_results">
+<span class="sig-name descname"><span class="pre">get_results</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rlberry.manager.AdastopComparator.get_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a dataframe with the results of the tests.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rlberry.manager.AdastopComparator.partial_compare">
+<span class="sig-name descname"><span class="pre">partial_compare</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eval_values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#rlberry.manager.AdastopComparator.partial_compare" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do the test of the k^th interim.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>eval_values: dict of agents and evaluations</strong></dt><dd><p>keys are agent names and values are concatenation of evaluations till interim k,
+e.g. {“PP0”: [1,1,1,1,1], “SAC”: [42,42,42,42,42]}</p>
+</dd>
+<dt><strong>verbose: bool</strong></dt><dd><p>print Steps</p>
+</dd>
+<dt><strong>Returns</strong></dt><dd></dd>
+<dt><strong>——-</strong></dt><dd></dd>
+<dt><strong>decisions: dictionary with comparisons as index and with values str in {“equal”, “larger”, “smaller”, “continue”}</strong></dt><dd><p>Decision of the test at this step.</p>
+</dd>
+<dt><strong>id_finished: bool</strong></dt><dd><p>Whether the test is finished or not.</p>
+</dd>
+<dt><strong>T: float</strong></dt><dd><p>Test statistic.</p>
+</dd>
+<dt><strong>bk: float</strong></dt><dd><p>Thresholds of the tests.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rlberry.manager.AdastopComparator.plot_results">
+<span class="sig-name descname"><span class="pre">plot_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">agent_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#rlberry.manager.AdastopComparator.plot_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>visual representation of results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>agent_names</strong><span class="classifier">list of str or None</span></dt><dd></dd>
+<dt><strong>axes</strong><span class="classifier">tuple of two matplotlib axes of None</span></dt><dd><p>if None, use the following:
+<cite>fig, (ax1, ax2) = plt.subplots(2, 1, gridspec_kw={“height_ratios”: [1, 2]}, figsize=(6,5))</cite></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rlberry.manager.AdastopComparator.plot_results_sota">
+<span class="sig-name descname"><span class="pre">plot_results_sota</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">agent_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#rlberry.manager.AdastopComparator.plot_results_sota" title="Permalink to this definition">¶</a></dt>
+<dd><p>visual representation of results when the first agent is compared to all the others.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>agent_names</strong><span class="classifier">list of str or None</span></dt><dd></dd>
+<dt><strong>axes</strong><span class="classifier">tuple of two matplotlib axes of None</span></dt><dd><p>if None, use the following:
+<cite>fig, (ax1, ax2) = plt.subplots(2, 1, gridspec_kw={“height_ratios”: [1, 2]}, figsize=(6,5))</cite></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rlberry.manager.AdastopComparator.print_results">
+<span class="sig-name descname"><span class="pre">print_results</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rlberry/manager/comparison.html#AdastopComparator.print_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.manager.AdastopComparator.print_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print the results of the test.</p>
+</dd></dl>
+
+</dd></dl>
+
+<section id="examples-using-rlberry-manager-adastopcomparator">
+<h2>Examples using <code class="docutils literal notranslate"><span class="pre">rlberry.manager.AdastopComparator</span></code><a class="headerlink" href="#examples-using-rlberry-manager-adastopcomparator" title="Permalink to this heading">¶</a></h2>
+<div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="This example illustrate the use of adastop_comparator which uses adaptive multiple-testing to a..."><img alt="" src="../_images/sphx_glr_adastop_example_thumb.png" />
+<p><a class="reference internal" href="../auto_examples/adastop_example.html#sphx-glr-auto-examples-adastop-example-py"><span class="std std-ref">Compare PPO and A2C on Acrobot with AdaStop</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Compare PPO and A2C on Acrobot with AdaStop</div>
+</div></div><div class="clearer"></div></section>
+</section>
+
+
+      </div>
+    <div class="container">
+      <footer class="sk-content-footer">
+            &copy; 2023, rlberry team.
+          <a href="../_sources/generated/rlberry.manager.AdastopComparator.rst.txt" rel="nofollow">Show this page source</a>
+      </footer>
+    </div>
+  </div>
+</div>
+<script src="../_static/js/vendor/bootstrap.min.js"></script>
+
+<script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-22606712-2', 'auto');
+    ga('set', 'anonymizeIp', true);
+    ga('send', 'pageview');
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+<script>
+$(document).ready(function() {
+    /* Add a [>>>] button on the top-right corner of code samples to hide
+     * the >>> and ... prompts and the output and thus make the code
+     * copyable. */
+    var div = $('.highlight-python .highlight,' +
+                '.highlight-python3 .highlight,' +
+                '.highlight-pycon .highlight,' +
+		'.highlight-default .highlight')
+    var pre = div.find('pre');
+
+    // get the styles from the current theme
+    pre.parent().parent().css('position', 'relative');
+    var hide_text = 'Hide prompts and outputs';
+    var show_text = 'Show prompts and outputs';
+
+    // create and add the button to all the code blocks that contain >>>
+    div.each(function(index) {
+        var jthis = $(this);
+        if (jthis.find('.gp').length > 0) {
+            var button = $('<span class="copybutton">&gt;&gt;&gt;</span>');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+            jthis.prepend(button);
+        }
+        // tracebacks (.gt) contain bare text elements that need to be
+        // wrapped in a span to work with .nextUntil() (see later)
+        jthis.find('pre:has(.gt)').contents().filter(function() {
+            return ((this.nodeType == 3) && (this.data.trim().length > 0));
+        }).wrap('<span>');
+    });
+
+    // define the behavior of the button when it's clicked
+    $('.copybutton').click(function(e){
+        e.preventDefault();
+        var button = $(this);
+        if (button.data('hidden') === 'false') {
+            // hide the code output
+            button.parent().find('.go, .gp, .gt').hide();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'hidden');
+            button.css('text-decoration', 'line-through');
+            button.attr('title', show_text);
+            button.data('hidden', 'true');
+        } else {
+            // show the code output
+            button.parent().find('.go, .gp, .gt').show();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'visible');
+            button.css('text-decoration', 'none');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+        }
+    });
+
+	/*** Add permalink buttons next to glossary terms ***/
+	$('dl.glossary > dt[id]').append(function() {
+		return ('<a class="headerlink" href="#' +
+			    this.getAttribute('id') +
+			    '" title="Permalink to this term">¶</a>');
+	});
+  /*** Hide navbar when scrolling down ***/
+  // Returns true when headerlink target matches hash in url
+  (function() {
+    hashTargetOnTop = function() {
+        var hash = window.location.hash;
+        if ( hash.length < 2 ) { return false; }
+
+        var target = document.getElementById( hash.slice(1) );
+        if ( target === null ) { return false; }
+
+        var top = target.getBoundingClientRect().top;
+        return (top < 2) && (top > -2);
+    };
+
+    // Hide navbar on load if hash target is on top
+    var navBar = document.getElementById("navbar");
+    var navBarToggler = document.getElementById("sk-navbar-toggler");
+    var navBarHeightHidden = "-" + navBar.getBoundingClientRect().height + "px";
+    var $window = $(window);
+
+    hideNavBar = function() {
+        navBar.style.top = navBarHeightHidden;
+    };
+
+    showNavBar = function() {
+        navBar.style.top = "0";
+    }
+
+    if (hashTargetOnTop()) {
+        hideNavBar()
+    }
+
+    var prevScrollpos = window.pageYOffset;
+    hideOnScroll = function(lastScrollTop) {
+        if (($window.width() < 768) && (navBarToggler.getAttribute("aria-expanded") === 'true')) {
+            return;
+        }
+        if (lastScrollTop > 2 && (prevScrollpos <= lastScrollTop) || hashTargetOnTop()){
+            hideNavBar()
+        } else {
+            showNavBar()
+        }
+        prevScrollpos = lastScrollTop;
+    };
+
+    /*** high performance scroll event listener***/
+    var raf = window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        window.oRequestAnimationFrame;
+    var lastScrollTop = $window.scrollTop();
+
+    if (raf) {
+        loop();
+    }
+
+    function loop() {
+        var scrollTop = $window.scrollTop();
+        if (lastScrollTop === scrollTop) {
+            raf(loop);
+            return;
+        } else {
+            lastScrollTop = scrollTop;
+            hideOnScroll(lastScrollTop);
+            raf(loop);
+        }
+    }
+  })();
+});
+
+</script>
+    
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    
+</body>
+</html>
