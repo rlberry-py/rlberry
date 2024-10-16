@@ -277,8 +277,7 @@ Backend tkagg is interactive backend. Turning interactive mode on.
 <section id="how-to-import-data-from-tensorboard">
 <h2>How to import data from tensorboard?<a class="headerlink" href="#how-to-import-data-from-tensorboard" title="Permalink to this heading">¶</a></h2>
 <p>Maybe you want to use other tools to train your agents, but you want to use rlberry tools for visualisation and/or statistical tests.
-If your training is compatible with tensorboard, you can load the data in a pandas dataframes to use them in rlberry.
-Rlberry offer you this tool <a class="reference internal" href="../../generated/rlberry.manager.tensorboard_folder_to_dataframe.html#rlberry.manager.tensorboard_folder_to_dataframe" title="rlberry.manager.tensorboard_folder_to_dataframe"><span class="xref myst py py-func">here</span></a></p>
+If your training is compatible with tensorboard, you can load the data in a pandas dataframes to use them in rlberry. To do that, you can use the tool <a class="reference internal" href="../../generated/rlberry.manager.tensorboard_folder_to_dataframe.html#rlberry.manager.tensorboard_folder_to_dataframe" title="rlberry.manager.tensorboard_folder_to_dataframe"><span class="xref myst py py-func">tensorboard_folder_to_dataframe</span></a>.</p>
 <p>Be careful about this 2 things:</p>
 <ul class="simple">
 <li><p>The folder containing tensorboard results must respect the following tree structure :
@@ -301,13 +300,13 @@ Rlberry offer you this tool <a class="reference internal" href="../../generated/
 <span class="n">model2_seed2</span><span class="o">.</span><span class="n">learn</span><span class="p">(</span><span class="n">total_timesteps</span><span class="o">=</span><span class="mi">5_000</span><span class="p">,</span> <span class="n">tb_log_name</span><span class="o">=</span><span class="s2">&quot;A2C&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Then, if you need to these logs in a pandas dataframe, you can use the tool <a class="reference internal" href="../../generated/rlberry.manager.tensorboard_folder_to_dataframe.html#rlberry.manager.tensorboard_folder_to_dataframe" title="rlberry.manager.tensorboard_folder_to_dataframe"><span class="xref myst py py-func">tensorboard_folder_to_dataframe</span></a>.
+<p>Then, to convert these logs in a pandas dataframe, you can use the tool <a class="reference internal" href="../../generated/rlberry.manager.tensorboard_folder_to_dataframe.html#rlberry.manager.tensorboard_folder_to_dataframe" title="rlberry.manager.tensorboard_folder_to_dataframe"><span class="xref myst py py-func">tensorboard_folder_to_dataframe</span></a>.
 It will give you a <code class="docutils literal notranslate"><span class="pre">Dict</span></code> with all the scalar data from the tensorboad folder.</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>- The `keys` will be the &quot;tag&quot; (the name of the measure)
-- the `values` will be the `dataframe` with 4 columns : [&quot;name&quot;, &quot;n_simu&quot;, &quot;x&quot;, &quot;y&quot;]
-(respectively &quot;name of the algorithm&quot;, &quot;seed number&quot;, &quot;step number&quot;, and &quot;measure value&quot; )
-</pre></div>
-</div>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">keys</span></code> will be the “tag” (the name of the measure)</p></li>
+<li><p>the <code class="docutils literal notranslate"><span class="pre">values</span></code> will be the <code class="docutils literal notranslate"><span class="pre">dataframe</span></code> with 4 columns : [“name”, “n_simu”, “x”, “y”]
+(respectively “name of the algorithm”, “seed number”, “step number”, and “measure value” )</p></li>
+</ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.manager</span> <span class="kn">import</span> <span class="n">tensorboard_folder_to_dataframe</span>
 
 <span class="n">data_in_dataframe</span> <span class="o">=</span> <span class="n">tensorboard_folder_to_dataframe</span><span class="p">(</span><span class="n">log_path</span><span class="p">)</span>
