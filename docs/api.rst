@@ -38,6 +38,8 @@ Evaluation and plot
    manager.plot_synchronized_curves
    manager.compare_agents
 
+   manager.tensorboard_folder_to_dataframe
+
 
 Agents
 ====================
@@ -130,7 +132,6 @@ Manager Utilitis
    :template: function.rst
 
    manager.preset_manager
-   manager.utils
 
 Virtual environment Utilities
 -----------------------------
