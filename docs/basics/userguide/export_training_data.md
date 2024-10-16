@@ -168,8 +168,7 @@ In the default writer you have the following information :
 ## How to import data from tensorboard?
 
 Maybe you want to use other tools to train your agents, but you want to use rlberry tools for visualisation and/or statistical tests.
-If your training is compatible with tensorboard, you can load the data in a pandas dataframes to use them in rlberry.
-Rlberry offer you this tool [here](rlberry.manager.tensorboard_folder_to_dataframe)
+If your training is compatible with tensorboard, you can load the data in a pandas dataframes to use them in rlberry. To do that, you can use the tool [tensorboard_folder_to_dataframe](rlberry.manager.tensorboard_folder_to_dataframe).
 
 Be careful about this 2 things:
 - The folder containing tensorboard results must respect the following tree structure :
@@ -195,7 +194,7 @@ model2_seed2.learn(total_timesteps=5_000, tb_log_name="A2C")
 ```
 
 
-Then, if you need to these logs in a pandas dataframe, you can use the tool [tensorboard_folder_to_dataframe](rlberry.manager.tensorboard_folder_to_dataframe).
+Then, to convert these logs in a pandas dataframe, you can use the tool [tensorboard_folder_to_dataframe](rlberry.manager.tensorboard_folder_to_dataframe).
 It will give you a `Dict` with all the scalar data from the tensorboad folder.
 
     - The `keys` will be the "tag" (the name of the measure)
