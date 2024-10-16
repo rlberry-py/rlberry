@@ -197,9 +197,10 @@ model2_seed2.learn(total_timesteps=5_000, tb_log_name="A2C")
 Then, to convert these logs in a pandas dataframe, you can use the tool [tensorboard_folder_to_dataframe](rlberry.manager.tensorboard_folder_to_dataframe).
 It will give you a `Dict` with all the scalar data from the tensorboad folder.
 
-    - The `keys` will be the "tag" (the name of the measure)
-    - the `values` will be the `dataframe` with 4 columns : ["name", "n_simu", "x", "y"]
-    (respectively "name of the algorithm", "seed number", "step number", and "measure value" )
+
+- The `keys` will be the "tag" (the name of the measure)
+- the `values` will be the `dataframe` with 4 columns : ["name", "n_simu", "x", "y"]
+(respectively "name of the algorithm", "seed number", "step number", and "measure value" )
 
 
 ```python
