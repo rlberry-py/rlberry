@@ -45,32 +45,32 @@ and finally definition of the experiment.
 
  .. code-block:: none
 
-    [INFO] 10:03:        agent_name  worker  reward  action  max_global_step
-                             SH        0     -0.821    2           4 
-    [INFO] 10:03:        agent_name  worker  reward  action  max_global_step
-                             SH        0     -0.465    7           9 
-    [INFO] 10:03:        agent_name  worker  reward  action  max_global_step
-                             SH        0     -0.459    7           17 
-    [INFO] 10:03:        agent_name  worker  reward  action  max_global_step
-                             SH        0     -0.464    7           25 
-    [INFO] 10:03:        agent_name  worker  reward  action  max_global_step
-                             SH        0     -0.314    7           33 
-    [INFO] 10:03:        agent_name  worker  reward  action  max_global_step
-                             SH        0     -0.301    3           43 
-    [INFO] 10:03:        agent_name  worker  reward  action  max_global_step
-                             SH        0     -0.313    6           53 
-    [INFO] 10:03:        agent_name  worker  reward  action  max_global_step
-                             SH        0     -0.306    3           63 
-    [INFO] 10:03:        agent_name  worker  reward  action  max_global_step
-                             SH        0     -0.308    6           73 
-    [INFO] 10:03:        agent_name  worker  reward  action  max_global_step
-                             SH        0     -0.304    6           83 
-    [INFO] 10:03:        agent_name  worker  reward  action  max_global_step
-                             SH        0     -0.307    6           93 
-    [INFO] 10:03: ... trained! 
-    [INFO] 10:03: Saved ExperimentManager(SH) using pickle. 
-    [INFO] 10:03: The ExperimentManager was saved in : 'rlberry_data/temp/manager_data/SH_2024-10-16_10-03-17_feb7766d/manager_obj.pickle' 
-    The optimal action (fastest server) is server number  7
+    [INFO] 12:46:        agent_name  worker  reward  action  max_global_step
+                             SH        0     -0.625    3           5 
+    [INFO] 12:46:        agent_name  worker  reward  action  max_global_step
+                             SH        0     -0.458    1           11 
+    [INFO] 12:46:        agent_name  worker  reward  action  max_global_step
+                             SH        0     -0.306    2           20 
+    [INFO] 12:46:        agent_name  worker  reward  action  max_global_step
+                             SH        0     -0.61     1           27 
+    [INFO] 12:46:        agent_name  worker  reward  action  max_global_step
+                             SH        0     -0.301    6           36 
+    [INFO] 12:46:        agent_name  worker  reward  action  max_global_step
+                             SH        0     -0.309    4           46 
+    [INFO] 12:46:        agent_name  worker  reward  action  max_global_step
+                             SH        0     -0.303    6           56 
+    [INFO] 12:46:        agent_name  worker  reward  action  max_global_step
+                             SH        0     -0.306    7           66 
+    [INFO] 12:46:        agent_name  worker  reward  action  max_global_step
+                             SH        0     -0.303    6           73 
+    [INFO] 12:46:        agent_name  worker  reward  action  max_global_step
+                             SH        0     -0.302    6           83 
+    [INFO] 12:46:        agent_name  worker  reward  action  max_global_step
+                             SH        0     -0.301    6           93 
+    [INFO] 12:46: ... trained! 
+    [INFO] 12:46: Saved ExperimentManager(SH) using pickle. 
+    [INFO] 12:46: The ExperimentManager was saved in : 'rlberry_data/temp/manager_data/SH_2024-10-16_12-46-06_13e762a8/manager_obj.pickle' 
+    The optimal action (fastest server) is server number  8
 
 
 
@@ -251,7 +251,7 @@ and finally definition of the experiment.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 37.576 seconds)
+   **Total running time of the script:** (0 minutes 36.308 seconds)
 
 
 .. _sphx_glr_download_auto_examples_demo_bandits_plot_mirror_bandit.py:

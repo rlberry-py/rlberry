@@ -301,7 +301,7 @@ Rlberry offer you this tool <a class="reference internal" href="../../generated/
 <span class="n">model2_seed2</span><span class="o">.</span><span class="n">learn</span><span class="p">(</span><span class="n">total_timesteps</span><span class="o">=</span><span class="mi">5_000</span><span class="p">,</span> <span class="n">tb_log_name</span><span class="o">=</span><span class="s2">&quot;A2C&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Then, if you need to these logs in a pandas dataframe, you can use the tool <code class="docutils literal notranslate"><span class="pre">tensorboard_folder_to_dataframe</span></code>.
+<p>Then, if you need to these logs in a pandas dataframe, you can use the tool <a class="reference internal" href="../../generated/rlberry.manager.tensorboard_folder_to_dataframe.html#rlberry.manager.tensorboard_folder_to_dataframe" title="rlberry.manager.tensorboard_folder_to_dataframe"><span class="xref myst py py-func">tensorboard_folder_to_dataframe</span></a>.
 It will give you a <code class="docutils literal notranslate"><span class="pre">Dict</span></code> with all the scalar data from the tensorboad folder.</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>- The `keys` will be the &quot;tag&quot; (the name of the measure)
 - the `values` will be the `dataframe` with 4 columns : [&quot;name&quot;, &quot;n_simu&quot;, &quot;x&quot;, &quot;y&quot;]
