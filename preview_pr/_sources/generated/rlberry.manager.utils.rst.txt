@@ -1,0 +1,12 @@
+﻿:mod:`rlberry.manager`.utils
+=========================================
+
+.. currentmodule:: rlberry.manager
+
+.. autofunction:: utils
+
+.. include:: rlberry.manager.utils.examples
+
+.. raw:: html
+
+    <div class="clearer"></div>

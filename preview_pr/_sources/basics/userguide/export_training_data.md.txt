@@ -167,9 +167,9 @@ In the default writer you have the following information :
 
 ## How to import data from tensorboard?
 
-Maybe you want to use other tools to train your agents, but want to use rlberry tools for visualisation or tests.
-If your training is compatible with tensorboard, you can load the data in pandas dataframes to use them in rlberry.
-You can find this tools [here](rlberry.manager.utils)
+Maybe you want to use other tools to train your agents, but you want to use rlberry tools for visualisation and/or statistical tests.
+If your training is compatible with tensorboard, you can load the data in a pandas dataframes to use them in rlberry.
+Rlberry offer you this tool [here](rlberry.manager.utils)
 
 Be careful about this 2 things:
 - The folder containing tensorboard results must respect the following tree structure :

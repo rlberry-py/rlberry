@@ -130,6 +130,7 @@ Manager Utilitis
    :template: function.rst
 
    manager.preset_manager
+   manager.utils
 
 Virtual environment Utilities
 -----------------------------
