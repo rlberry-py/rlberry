@@ -195,7 +195,7 @@ model2_seed2.learn(total_timesteps=5_000, tb_log_name="A2C")
 ```
 
 
-Then, if you need to these logs in a pandas dataframe, you can use the tool `tensorboard_folder_to_dataframe`.
+Then, if you need to these logs in a pandas dataframe, you can use the tool [tensorboard_folder_to_dataframe](rlberry.manager.tensorboard_folder_to_dataframe).
 It will give you a `Dict` with all the scalar data from the tensorboad folder.
 
     - The `keys` will be the "tag" (the name of the measure)
