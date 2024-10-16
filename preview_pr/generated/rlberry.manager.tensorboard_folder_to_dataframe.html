@@ -129,19 +129,19 @@
 <dd><p>Function to convert ‘tensorboard log’ to ‘Panda DataFrames’
 To convert the ‘tensorboard log’, the input must be must be the path to “the parent folder of all the training log” (path_to_tensorboard_data), and the ‘events.out.tfevents’ files have to be in this kind of path :</p>
 <blockquote>
-<div><p>&lt; path_to_tensorboard_data/algo_name/n_simu/events.out.tfevents.xxxxx &gt;</p>
+<div><p>&lt; path_to_tensorboard_data/algo_name/n_simu/events.out.tfevents.xxxxx &gt;.</p>
 </div></blockquote>
-<p>The output format is a dictionary.</p>
+<dl>
+<dt>The output format is a dictionary.</dt><dd><p>key = tag (type of data).
+value = Panda DataFrame with the following structure (4 column) :</p>
 <blockquote>
-<div><p>key = tag (type of data)</p>
-<p>value = Panda DataFrame with the following structure (4 column) :</p>
-<blockquote>
-<div><p>“name” = algo_name</p>
-<p>“n_simu” = n_simu (seed)</p>
-<p>“x” = step number</p>
-<p>“y” = value of the data</p>
+<div><p>“name” = algo_name.
+“n_simu” = n_simu (seed).
+“x” = step number.
+“y” = value of the data.</p>
 </div></blockquote>
-</div></blockquote>
+</dd>
+</dl>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
