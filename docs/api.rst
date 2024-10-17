@@ -38,7 +38,7 @@ Evaluation and plot
    manager.plot_synchronized_curves
    manager.compare_agents
 
-   manager.tensorboard_folder_to_dataframe
+   manager.tensorboard_to_dataframe
 
 
 Agents
