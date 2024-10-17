@@ -126,21 +126,17 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="rlberry.manager.tensorboard_to_dataframe">
 <span class="sig-prename descclassname"><span class="pre">rlberry.manager.</span></span><span class="sig-name descname"><span class="pre">tensorboard_to_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_to_tensorboard_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rlberry/manager/utils.html#tensorboard_to_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.manager.tensorboard_to_dataframe" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function to convert ‘tensorboard log’ to ‘Panda DataFrames’.
-| To convert the ‘tensorboard log’, the input must be must be the path to “the parent folder of all the training log” (path_to_tensorboard_data), and the ‘events.out.tfevents’ files have to be in this kind of path :</p>
-<blockquote>
-<div><div class="line-block">
-<div class="line">&lt; path_to_tensorboard_data/algo_name/n_simu/events.out.tfevents.xxxxx &gt;.</div>
-</div>
-</div></blockquote>
+<dd><p>Function to convert ‘tensorboard log’ to ‘Panda DataFrames’. &lt;br&gt;
+To convert the ‘tensorboard log’, the input must be must be the path to “the parent folder of all the training log” (path_to_tensorboard_data), and the ‘events.out.tfevents’ files have to be in this kind of path :
+&lt; path_to_tensorboard_data/algo_name/n_simu/events.out.tfevents.xxxxx &gt;</p>
 <dl>
 <dt>The output format is a dictionary.</dt><dd><div class="line-block">
 <div class="line">key = tag (type of data)</div>
-<div class="line">value = Panda DataFrame with the following structure (4 column) :
-| “name” = algo_name
-| “n_simu” = n_simu (seed)
-| “x” = step number
-| “y” = value of the data</div>
+<div class="line">value = Panda DataFrame with the following structure (4 column): &lt;br&gt;
+- “name” = algo_name &lt;br&gt;
+- “n_simu” = n_simu (seed) &lt;br&gt;
+- “x” = step number &lt;br&gt;
+- “y” = value of the data &lt;br&gt;</div>
 </div>
 </dd>
 </dl>
