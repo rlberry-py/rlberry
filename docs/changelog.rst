@@ -7,6 +7,9 @@ Changelog
 Dev version
 -----------
 
+ *PR #474*
+
+* Create a new tool to load data from tensorboard logs : https://github.com/rlberry-py/rlberry/issues/472
 
  *PR #470*
 
