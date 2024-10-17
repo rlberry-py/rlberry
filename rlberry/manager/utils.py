@@ -20,17 +20,17 @@ def create_database(db_file):
 
 def tensorboard_to_dataframe(path_to_tensorboard_data):
     """
-    Function to convert 'tensorboard log' to 'Panda DataFrames'.\
-    To convert the 'tensorboard log', the input must be must be the path to "the parent folder of all the training log" (path_to_tensorboard_data), and the 'events.out.tfevents' files have to be in this kind of path :
-      < path_to_tensorboard_data/algo_name/n_simu/events.out.tfevents.xxxxx >.
+    Function to convert 'tensorboard log' to 'Panda DataFrames'.
+    | To convert the 'tensorboard log', the input must be must be the path to "the parent folder of all the training log" (path_to_tensorboard_data), and the 'events.out.tfevents' files have to be in this kind of path :
+      | < path_to_tensorboard_data/algo_name/n_simu/events.out.tfevents.xxxxx >.
 
     The output format is a dictionary.
-        key = tag (type of data).\
-        value = Panda DataFrame with the following structure (4 column) :
-            "name" = algo_name.\
-            "n_simu" = n_simu (seed).\
-            "x" = step number.\
-            "y" = value of the data.
+        | key = tag (type of data)
+        | value = Panda DataFrame with the following structure (4 column) :
+            | "name" = algo_name
+            | "n_simu" = n_simu (seed)
+            | "x" = step number
+            | "y" = value of the data
 
     Parameters
     ----------
