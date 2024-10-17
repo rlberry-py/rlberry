@@ -173,9 +173,9 @@ If your training is compatible with tensorboard, you can load the data in a pand
 Be careful about this 2 things:
 - The folder containing tensorboard results must respect the following tree structure :
     `<tensorboard_log_folder/algo_name/n_simu/events.out.tfevents.xxxxx>`
-- You must have only one file (event.out.tfenvent.xxx) by leaf folder(n_simu), only the first one would be import !
+- You must have only one file (event.out.tfenvent.xxx) by leaf folder(n_simu), only the first one would be imported !
 
-For this tuto you can do these training with stablebaseline, and log with tensorboard :
+For instance, suppose you do the following training with stablebaseline, and log with tensorboard :
 
 ```python
 from stable_baselines3 import PPO
