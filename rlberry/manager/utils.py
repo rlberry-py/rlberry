@@ -18,7 +18,7 @@ def create_database(db_file):
     return False
 
 
-def tensorboard_folder_to_dataframe(path_to_tensorboard_data):
+def tensorboard_to_dataframe(path_to_tensorboard_data):
     """
     Function to convert 'tensorboard log' to 'Panda DataFrames'.\
     To convert the 'tensorboard log', the input must be must be the path to "the parent folder of all the training log" (path_to_tensorboard_data), and the 'events.out.tfevents' files have to be in this kind of path :
