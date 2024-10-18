@@ -45,32 +45,30 @@ and finally definition of the experiment.
 
  .. code-block:: none
 
-    [INFO] 08:30:        agent_name  worker  reward  action  max_global_step
-                             SH        0     -1.053    3           5 
-    [INFO] 08:30:        agent_name  worker  reward  action  max_global_step
-                             SH        0     -0.465    7           9 
-    [INFO] 08:30:        agent_name  worker  reward  action  max_global_step
-                             SH        0     -0.459    7           17 
-    [INFO] 08:30:        agent_name  worker  reward  action  max_global_step
-                             SH        0     -0.469    0           26 
-    [INFO] 08:30:        agent_name  worker  reward  action  max_global_step
-                             SH        0     -1.793    6           32 
-    [INFO] 08:30:        agent_name  worker  reward  action  max_global_step
-                             SH        0     -0.32     2           42 
-    [INFO] 08:30:        agent_name  worker  reward  action  max_global_step
-                             SH        0     -0.169    6           53 
-    [INFO] 08:30:        agent_name  worker  reward  action  max_global_step
-                             SH        0     -0.301    4           63 
-    [INFO] 08:30:        agent_name  worker  reward  action  max_global_step
-                             SH        0     -0.293    2           73 
-    [INFO] 08:30:        agent_name  worker  reward  action  max_global_step
-                             SH        0     -0.297    2           85 
-    [INFO] 08:30:        agent_name  worker  reward  action  max_global_step
-                             SH        0     -0.467    6           96 
-    [INFO] 08:30: ... trained! 
-    [INFO] 08:30: Saved ExperimentManager(SH) using pickle. 
-    [INFO] 08:30: The ExperimentManager was saved in : 'rlberry_data/temp/manager_data/SH_2024-10-18_08-30-08_223112d7/manager_obj.pickle' 
-    The optimal action (fastest server) is server number  3
+    [INFO] 13:04:        agent_name  worker  reward  action  max_global_step
+                             SH        0     -0.543    3           5 
+    [INFO] 13:04:        agent_name  worker  reward  action  max_global_step
+                             SH        0     -0.459    1           11 
+    [INFO] 13:04:        agent_name  worker  reward  action  max_global_step
+                             SH        0     -1.478    1           19 
+    [INFO] 13:04:        agent_name  worker  reward  action  max_global_step
+                             SH        0     -0.296    2           28 
+    [INFO] 13:04:        agent_name  worker  reward  action  max_global_step
+                             SH        0     -0.325    7           37 
+    [INFO] 13:04:        agent_name  worker  reward  action  max_global_step
+                             SH        0     -0.291    3           47 
+    [INFO] 13:04:        agent_name  worker  reward  action  max_global_step
+                             SH        0     -0.307    7           57 
+    [INFO] 13:04:        agent_name  worker  reward  action  max_global_step
+                             SH        0     -0.289    7           67 
+    [INFO] 13:04:        agent_name  worker  reward  action  max_global_step
+                             SH        0     -0.294    7           77 
+    [INFO] 13:04:        agent_name  worker  reward  action  max_global_step
+                             SH        0     -0.303    7           87 
+    [INFO] 13:04: ... trained! 
+    [INFO] 13:04: Saved ExperimentManager(SH) using pickle. 
+    [INFO] 13:04: The ExperimentManager was saved in : 'rlberry_data/temp/manager_data/SH_2024-10-18_13-04-19_8b9f5f3d/manager_obj.pickle' 
+    The optimal action (fastest server) is server number  7
 
 
 
@@ -251,7 +249,7 @@ and finally definition of the experiment.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 37.051 seconds)
+   **Total running time of the script:** (0 minutes 35.542 seconds)
 
 
 .. _sphx_glr_download_auto_examples_demo_bandits_plot_mirror_bandit.py:
