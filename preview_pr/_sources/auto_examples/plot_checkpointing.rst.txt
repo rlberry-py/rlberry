@@ -41,37 +41,37 @@ your agents, and how to restore from a previous checkpoint.
 
  .. code-block:: none
 
-    [INFO] 13:24: ... trained! 
-    [INFO] 13:24: Saved ExperimentManager(my-agent) using pickle. 
-    [INFO] 13:24: The ExperimentManager was saved in : 'rlberry_data/temp/manager_data/my-agent_2024-10-17_13-24-42_9da1c062/manager_obj.pickle' 
-    [INFO] 13:24: Saved ExperimentManager(my-agent) using pickle. 
-    [INFO] 13:24: The ExperimentManager was saved in : 'rlberry_data/temp/manager_data/my-agent_2024-10-17_13-24-42_9da1c062/manager_obj.pickle' 
+    [INFO] 08:28: ... trained! 
+    [INFO] 08:28: Saved ExperimentManager(my-agent) using pickle. 
+    [INFO] 08:28: The ExperimentManager was saved in : 'rlberry_data/temp/manager_data/my-agent_2024-10-18_08-28-55_456163a9/manager_obj.pickle' 
+    [INFO] 08:28: Saved ExperimentManager(my-agent) using pickle. 
+    [INFO] 08:28: The ExperimentManager was saved in : 'rlberry_data/temp/manager_data/my-agent_2024-10-18_08-28-55_456163a9/manager_obj.pickle' 
 
-     Saved manager at rlberry_data/temp/manager_data/my-agent_2024-10-17_13-24-42_9da1c062/manager_obj.pickle.
+     Saved manager at rlberry_data/temp/manager_data/my-agent_2024-10-18_08-28-55_456163a9/manager_obj.pickle.
 
-    [INFO] 13:24: Running ExperimentManager fit() for my-agent with n_fit = 2 and max_workers = None. 
-    checkpoint at rlberry_data/temp/manager_data/my-agent_2024-10-17_13-24-42_9da1c062/output_1/checkpoint.pickle (timestep = 500)
-    checkpoint at rlberry_data/temp/manager_data/my-agent_2024-10-17_13-24-42_9da1c062/output_0/checkpoint.pickle (timestep = 500)
-    checkpoint at rlberry_data/temp/manager_data/my-agent_2024-10-17_13-24-42_9da1c062/output_1/checkpoint.pickle (timestep = 1000)
-    checkpoint at rlberry_data/temp/manager_data/my-agent_2024-10-17_13-24-42_9da1c062/output_0/checkpoint.pickle (timestep = 1000)
-    [INFO] 13:24: ... trained! 
-    [INFO] 13:24: Saved ExperimentManager(my-agent) using pickle. 
-    [INFO] 13:24: The ExperimentManager was saved in : 'rlberry_data/temp/manager_data/my-agent_2024-10-17_13-24-42_9da1c062/manager_obj.pickle' 
+    [INFO] 08:28: Running ExperimentManager fit() for my-agent with n_fit = 2 and max_workers = None. 
+    checkpoint at rlberry_data/temp/manager_data/my-agent_2024-10-18_08-28-55_456163a9/output_1/checkpoint.pickle (timestep = 500)
+    checkpoint at rlberry_data/temp/manager_data/my-agent_2024-10-18_08-28-55_456163a9/output_0/checkpoint.pickle (timestep = 500)
+    checkpoint at rlberry_data/temp/manager_data/my-agent_2024-10-18_08-28-55_456163a9/output_1/checkpoint.pickle (timestep = 1000)
+    checkpoint at rlberry_data/temp/manager_data/my-agent_2024-10-18_08-28-55_456163a9/output_0/checkpoint.pickle (timestep = 1000)
+    [INFO] 08:28: ... trained! 
+    [INFO] 08:28: Saved ExperimentManager(my-agent) using pickle. 
+    [INFO] 08:28: The ExperimentManager was saved in : 'rlberry_data/temp/manager_data/my-agent_2024-10-18_08-28-55_456163a9/manager_obj.pickle' 
 
-     Loading manager from rlberry_data/temp/manager_data/my-agent_2024-10-17_13-24-42_9da1c062/manager_obj.pickle.
+     Loading manager from rlberry_data/temp/manager_data/my-agent_2024-10-18_08-28-55_456163a9/manager_obj.pickle.
 
-    [INFO] 13:24: Running ExperimentManager fit() for my-agent with n_fit = 2 and max_workers = None. 
+    [INFO] 08:28: Running ExperimentManager fit() for my-agent with n_fit = 2 and max_workers = None. 
  
-     --> MyAgent loaded from checkpoint: rlberry_data/temp/manager_data/my-agent_2024-10-17_13-24-42_9da1c062/output_1/checkpoint.pickle 
+     --> MyAgent loaded from checkpoint: rlberry_data/temp/manager_data/my-agent_2024-10-18_08-28-55_456163a9/output_0/checkpoint.pickle 
 
  
-     --> MyAgent loaded from checkpoint: rlberry_data/temp/manager_data/my-agent_2024-10-17_13-24-42_9da1c062/output_0/checkpoint.pickle 
+     --> MyAgent loaded from checkpoint: rlberry_data/temp/manager_data/my-agent_2024-10-18_08-28-55_456163a9/output_1/checkpoint.pickle 
 
-    checkpoint at rlberry_data/temp/manager_data/my-agent_2024-10-17_13-24-42_9da1c062/output_1/checkpoint.pickle (timestep = 1500)
-    checkpoint at rlberry_data/temp/manager_data/my-agent_2024-10-17_13-24-42_9da1c062/output_0/checkpoint.pickle (timestep = 1500)
-    [INFO] 13:24: ... trained! 
-    [INFO] 13:24: Saved ExperimentManager(my-agent) using pickle. 
-    [INFO] 13:24: The ExperimentManager was saved in : 'rlberry_data/temp/manager_data/my-agent_2024-10-17_13-24-42_9da1c062/manager_obj.pickle' 
+    checkpoint at rlberry_data/temp/manager_data/my-agent_2024-10-18_08-28-55_456163a9/output_0/checkpoint.pickle (timestep = 1500)
+    checkpoint at rlberry_data/temp/manager_data/my-agent_2024-10-18_08-28-55_456163a9/output_1/checkpoint.pickle (timestep = 1500)
+    [INFO] 08:28: ... trained! 
+    [INFO] 08:28: Saved ExperimentManager(my-agent) using pickle. 
+    [INFO] 08:28: The ExperimentManager was saved in : 'rlberry_data/temp/manager_data/my-agent_2024-10-18_08-28-55_456163a9/manager_obj.pickle' 
 
 
 
@@ -166,7 +166,7 @@ your agents, and how to restore from a previous checkpoint.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.527 seconds)
+   **Total running time of the script:** (0 minutes 1.314 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_checkpointing.py:

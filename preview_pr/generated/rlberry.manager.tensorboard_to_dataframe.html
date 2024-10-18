@@ -125,12 +125,13 @@
 <h1><code class="xref py py-mod docutils literal notranslate"><span class="pre">rlberry.manager</span></code>.tensorboard_to_dataframe<a class="headerlink" href="#rlberry-manager-tensorboard-to-dataframe" title="Permalink to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="rlberry.manager.tensorboard_to_dataframe">
-<span class="sig-prename descclassname"><span class="pre">rlberry.manager.</span></span><span class="sig-name descname"><span class="pre">tensorboard_to_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_to_tensorboard_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rlberry/manager/utils.html#tensorboard_to_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.manager.tensorboard_to_dataframe" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">rlberry.manager.</span></span><span class="sig-name descname"><span class="pre">tensorboard_to_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tensorboard_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rlberry/manager/utils.html#tensorboard_to_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.manager.tensorboard_to_dataframe" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to convert ‘tensorboard log’ to ‘Panda DataFrames’.</p>
 <div class="line-block">
 <div class="line">To convert the ‘tensorboard log’, the input must be must be the path to “the parent folder of all the training log” (path_to_tensorboard_data), and the ‘events.out.tfevents’ files have to be in this kind of path :</div>
 </div>
 <p>&lt; path_to_tensorboard_data/algo_name/n_simu/events.out.tfevents.xxxxx &gt;</p>
+<p>Or you can specify all the desired ‘events.out.tfevents’ with a Dict. In that case, the key should be the algorithm name, and the value the list of the ‘events.out.tfevents’ path. The  seed/n_simu number wille be the position in the list.</p>
 <p>The output format is a dictionary.</p>
 <div class="line-block">
 <div class="line">key = tag (type of data)</div>
@@ -147,7 +148,9 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>path_to_tensorboard_data</strong><span class="classifier">path to the parent folder of the tensorboard’s data.</span></dt><dd></dd>
+<dt><strong>path_to_tensorboard_data (str or Dict):</strong></dt><dd><p>if str: path to the parent folder of the tensorboard’s data.
+if dict: Key = algo_name , value = list of ‘events.out.tfevents.xxxxx’ path</p>
+</dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
