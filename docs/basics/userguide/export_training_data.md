@@ -1,6 +1,6 @@
 (export_training_data)=
 
-# How to export data about training?
+# How to export/import data (rlberry data, tensorboard data, ...)?
 
 
 ## How to extract data from the WriterData?
@@ -163,3 +163,269 @@ In the default writer you have the following information :
 - dw_time_elapsed : Time elapsed since writer initialization
 - global_step : Step at which the value was added.
 - n_simu : Added by {mod}`rlberry.manager.read_writer_data`, n_simu is an integer identifying the agent (if you use fit>1, you will have information on more than 1 agent in your writer.)
+
+
+## How to import data from tensorboard?
+
+Maybe you want to use other tools to train your agents, but you want to use rlberry tools for visualisation and/or statistical tests.
+If your training is compatible with tensorboard, you can load the data in a pandas dataframes to use them in rlberry. To do that, you can use the tool [tensorboard_to_dataframe](rlberry.manager.tensorboard_to_dataframe).
+
+Be careful about this 2 things:
+- The folder containing tensorboard results must respect the following tree structure :
+    `<tensorboard_log_folder/algo_name/n_simu/events.out.tfevents.xxxxx>`
+- You must have only one file (event.out.tfenvent.xxx) by leaf folder(n_simu), only the first one would be imported !
+
+For instance, suppose you do the following training with stablebaseline, and log with tensorboard :
+
+```python
+from stable_baselines3 import PPO
+from stable_baselines3 import A2C
+
+log_path = "./log"
+path_ppo = str(log_path + "/PPO_cartpole")
+path_a2c = str(log_path + "/A2C_cartpole")
+
+model = PPO("MlpPolicy", "CartPole-v1", tensorboard_log=path_ppo)
+model2 = A2C("MlpPolicy", "CartPole-v1", tensorboard_log=path_a2c)
+model2_seed2 = A2C("MlpPolicy", "CartPole-v1", tensorboard_log=path_a2c)
+model.learn(total_timesteps=5_000, tb_log_name="ppo")
+model2.learn(total_timesteps=5_000, tb_log_name="A2C")
+model2_seed2.learn(total_timesteps=5_000, tb_log_name="A2C")
+```
+
+
+Then, to convert these logs in a pandas dataframe, you can use the tool [tensorboard_to_dataframe](rlberry.manager.tensorboard_to_dataframe).
+It will give you a `Dict` with all the scalar data from the tensorboad folder.
+
+
+- The `keys` will be the "tag" (the name of the measure)
+- the `values` will be the `dataframe` with 4 columns : ["name", "n_simu", "x", "y"]
+(respectively "name of the algorithm", "seed number", "step number", and "measure value" )
+
+
+```python
+from rlberry.manager import tensorboard_to_dataframe
+
+data_in_dataframe = tensorboard_to_dataframe(log_path)
+
+print(data_in_dataframe.keys())
+print("-----------")
+print(data_in_dataframe)
+```
+
+```none
+dict_keys(['rollout/ep_len_mean', 'rollout/ep_rew_mean', 'time/fps', 'train/approx_kl', 'train/clip_fraction', 'train/clip_range', 'train/entropy_loss', 'train/explained_variance', 'train/learning_rate', 'train/loss', 'train/policy_gradient_loss', 'train/value_loss', 'train/policy_loss'])
+-----------
+{'rollout/ep_len_mean':             name n_simu     x          y
+0   PPO_cartpole  ppo_1  2048  22.700001
+1   PPO_cartpole  ppo_1  4096  25.629999
+2   PPO_cartpole  ppo_1  6144  35.410000
+3   A2C_cartpole  A2C_1   500  25.277779
+4   A2C_cartpole  A2C_1  1000  28.823530
+5   A2C_cartpole  A2C_1  1500  31.574469
+6   A2C_cartpole  A2C_1  2000  33.327587
+7   A2C_cartpole  A2C_1  2500  34.885715
+8   A2C_cartpole  A2C_1  3000  36.825001
+9   A2C_cartpole  A2C_1  3500  38.808990
+10  A2C_cartpole  A2C_1  4000  41.757896
+11  A2C_cartpole  A2C_1  4500  43.777779
+12  A2C_cartpole  A2C_1  5000  48.209999
+13  A2C_cartpole  A2C_2   500  22.636364
+14  A2C_cartpole  A2C_2  1000  23.232557
+15  A2C_cartpole  A2C_2  1500  24.583334
+16  A2C_cartpole  A2C_2  2000  27.873240
+17  A2C_cartpole  A2C_2  2500  30.506172
+18  A2C_cartpole  A2C_2  3000  32.413044
+19  A2C_cartpole  A2C_2  3500  35.262627
+20  A2C_cartpole  A2C_2  4000  38.689999
+21  A2C_cartpole  A2C_2  4500  42.650002
+22  A2C_cartpole  A2C_2  5000  45.360001,
+
+ 'rollout/ep_rew_mean':             name n_simu     x          y
+0   PPO_cartpole  ppo_1  2048  22.700001
+1   PPO_cartpole  ppo_1  4096  25.629999
+2   PPO_cartpole  ppo_1  6144  35.410000
+3   A2C_cartpole  A2C_1   500  25.277779
+4   A2C_cartpole  A2C_1  1000  28.823530
+5   A2C_cartpole  A2C_1  1500  31.574469
+6   A2C_cartpole  A2C_1  2000  33.327587
+7   A2C_cartpole  A2C_1  2500  34.885715
+8   A2C_cartpole  A2C_1  3000  36.825001
+9   A2C_cartpole  A2C_1  3500  38.808990
+10  A2C_cartpole  A2C_1  4000  41.757896
+11  A2C_cartpole  A2C_1  4500  43.777779
+12  A2C_cartpole  A2C_1  5000  48.209999
+13  A2C_cartpole  A2C_2   500  22.636364
+14  A2C_cartpole  A2C_2  1000  23.232557
+15  A2C_cartpole  A2C_2  1500  24.583334
+16  A2C_cartpole  A2C_2  2000  27.873240
+17  A2C_cartpole  A2C_2  2500  30.506172
+18  A2C_cartpole  A2C_2  3000  32.413044
+19  A2C_cartpole  A2C_2  3500  35.262627
+20  A2C_cartpole  A2C_2  4000  38.689999
+21  A2C_cartpole  A2C_2  4500  42.650002
+22  A2C_cartpole  A2C_2  5000  45.360001,
+
+ 'time/fps':             name n_simu     x       y
+0   PPO_cartpole  ppo_1  2048  3198.0
+1   PPO_cartpole  ppo_1  4096  2221.0
+2   PPO_cartpole  ppo_1  6144  2019.0
+3   A2C_cartpole  A2C_1   500   945.0
+4   A2C_cartpole  A2C_1  1000  1142.0
+5   A2C_cartpole  A2C_1  1500  1234.0
+6   A2C_cartpole  A2C_1  2000  1285.0
+7   A2C_cartpole  A2C_1  2500  1321.0
+8   A2C_cartpole  A2C_1  3000  1347.0
+9   A2C_cartpole  A2C_1  3500  1355.0
+10  A2C_cartpole  A2C_1  4000  1364.0
+11  A2C_cartpole  A2C_1  4500  1368.0
+12  A2C_cartpole  A2C_1  5000  1378.0
+13  A2C_cartpole  A2C_2   500  1264.0
+14  A2C_cartpole  A2C_2  1000  1244.0
+15  A2C_cartpole  A2C_2  1500  1264.0
+16  A2C_cartpole  A2C_2  2000  1293.0
+17  A2C_cartpole  A2C_2  2500  1290.0
+18  A2C_cartpole  A2C_2  3000  1289.0
+19  A2C_cartpole  A2C_2  3500  1289.0
+20  A2C_cartpole  A2C_2  4000  1302.0
+21  A2C_cartpole  A2C_2  4500  1294.0
+22  A2C_cartpole  A2C_2  5000  1301.0,
+
+ 'train/approx_kl':            name n_simu     x         y
+0  PPO_cartpole  ppo_1  4096  0.008663
+1  PPO_cartpole  ppo_1  6144  0.009923,
+
+ 'train/clip_fraction':            name n_simu     x         y
+0  PPO_cartpole  ppo_1  4096  0.101660
+1  PPO_cartpole  ppo_1  6144  0.074463,
+
+ 'train/clip_range':            name n_simu     x    y
+0  PPO_cartpole  ppo_1  4096  0.2
+1  PPO_cartpole  ppo_1  6144  0.2,
+
+ 'train/entropy_loss':             name n_simu     x         y
+0   PPO_cartpole  ppo_1  4096 -0.686276
+1   PPO_cartpole  ppo_1  6144 -0.664936
+2   A2C_cartpole  A2C_1   500 -0.651475
+3   A2C_cartpole  A2C_1  1000 -0.672893
+4   A2C_cartpole  A2C_1  1500 -0.661015
+5   A2C_cartpole  A2C_1  2000 -0.631399
+6   A2C_cartpole  A2C_1  2500 -0.625408
+7   A2C_cartpole  A2C_1  3000 -0.498326
+8   A2C_cartpole  A2C_1  3500 -0.647573
+9   A2C_cartpole  A2C_1  4000 -0.650927
+10  A2C_cartpole  A2C_1  4500 -0.656332
+11  A2C_cartpole  A2C_1  5000 -0.651405
+12  A2C_cartpole  A2C_2   500 -0.692683
+13  A2C_cartpole  A2C_2  1000 -0.692934
+14  A2C_cartpole  A2C_2  1500 -0.686814
+15  A2C_cartpole  A2C_2  2000 -0.634719
+16  A2C_cartpole  A2C_2  2500 -0.677669
+17  A2C_cartpole  A2C_2  3000 -0.652913
+18  A2C_cartpole  A2C_2  3500 -0.499537
+19  A2C_cartpole  A2C_2  4000 -0.484822
+20  A2C_cartpole  A2C_2  4500 -0.549516
+21  A2C_cartpole  A2C_2  5000 -0.482515,
+
+ 'train/explained_variance':             name n_simu     x         y
+0   PPO_cartpole  ppo_1  4096 -0.001212
+1   PPO_cartpole  ppo_1  6144  0.081996
+2   A2C_cartpole  A2C_1   500  0.095939
+3   A2C_cartpole  A2C_1  1000 -0.208475
+4   A2C_cartpole  A2C_1  1500 -0.029847
+5   A2C_cartpole  A2C_1  2000  0.000831
+6   A2C_cartpole  A2C_1  2500  0.004308
+7   A2C_cartpole  A2C_1  3000  0.004175
+8   A2C_cartpole  A2C_1  3500  0.005913
+9   A2C_cartpole  A2C_1  4000  0.000007
+10  A2C_cartpole  A2C_1  4500  0.002401
+11  A2C_cartpole  A2C_1  5000  0.000916
+12  A2C_cartpole  A2C_2   500 -0.039219
+13  A2C_cartpole  A2C_2  1000  0.051110
+14  A2C_cartpole  A2C_2  1500 -0.000652
+15  A2C_cartpole  A2C_2  2000 -0.005245
+16  A2C_cartpole  A2C_2  2500 -0.003408
+17  A2C_cartpole  A2C_2  3000 -0.000365
+18  A2C_cartpole  A2C_2  3500 -0.000706
+19  A2C_cartpole  A2C_2  4000  0.002783
+20  A2C_cartpole  A2C_2  4500  0.001195
+21  A2C_cartpole  A2C_2  5000 -0.001696,
+
+ 'train/learning_rate':             name n_simu     x       y
+0   PPO_cartpole  ppo_1  4096  0.0003
+1   PPO_cartpole  ppo_1  6144  0.0003
+2   A2C_cartpole  A2C_1   500  0.0007
+3   A2C_cartpole  A2C_1  1000  0.0007
+4   A2C_cartpole  A2C_1  1500  0.0007
+5   A2C_cartpole  A2C_1  2000  0.0007
+6   A2C_cartpole  A2C_1  2500  0.0007
+7   A2C_cartpole  A2C_1  3000  0.0007
+8   A2C_cartpole  A2C_1  3500  0.0007
+9   A2C_cartpole  A2C_1  4000  0.0007
+10  A2C_cartpole  A2C_1  4500  0.0007
+11  A2C_cartpole  A2C_1  5000  0.0007
+12  A2C_cartpole  A2C_2   500  0.0007
+13  A2C_cartpole  A2C_2  1000  0.0007
+14  A2C_cartpole  A2C_2  1500  0.0007
+15  A2C_cartpole  A2C_2  2000  0.0007
+16  A2C_cartpole  A2C_2  2500  0.0007
+17  A2C_cartpole  A2C_2  3000  0.0007
+18  A2C_cartpole  A2C_2  3500  0.0007
+19  A2C_cartpole  A2C_2  4000  0.0007
+20  A2C_cartpole  A2C_2  4500  0.0007
+21  A2C_cartpole  A2C_2  5000  0.0007,
+
+ 'train/loss':            name n_simu     x          y
+0  PPO_cartpole  ppo_1  4096   7.480816
+1  PPO_cartpole  ppo_1  6144  10.223436,
+
+ 'train/policy_gradient_loss':            name n_simu     x         y
+0  PPO_cartpole  ppo_1  4096 -0.015982
+1  PPO_cartpole  ppo_1  6144 -0.019345,
+
+ 'train/value_loss':             name n_simu     x           y
+0   PPO_cartpole  ppo_1  4096   54.725716
+1   PPO_cartpole  ppo_1  6144   34.747597
+2   A2C_cartpole  A2C_1   500    7.320102
+3   A2C_cartpole  A2C_1  1000    8.359019
+4   A2C_cartpole  A2C_1  1500    6.630172
+5   A2C_cartpole  A2C_1  2000    5.897788
+6   A2C_cartpole  A2C_1  2500    5.255545
+7   A2C_cartpole  A2C_1  3000    4.695362
+8   A2C_cartpole  A2C_1  3500    4.219514
+9   A2C_cartpole  A2C_1  4000    3.705819
+10  A2C_cartpole  A2C_1  4500    3.187126
+11  A2C_cartpole  A2C_1  5000    2.731337
+12  A2C_cartpole  A2C_2   500    8.746298
+13  A2C_cartpole  A2C_2  1000    7.542422
+14  A2C_cartpole  A2C_2  1500    6.780604
+15  A2C_cartpole  A2C_2  2000    6.111626
+16  A2C_cartpole  A2C_2  2500    5.474255
+17  A2C_cartpole  A2C_2  3000    4.881795
+18  A2C_cartpole  A2C_2  3500  250.314133
+19  A2C_cartpole  A2C_2  4000    3.822882
+20  A2C_cartpole  A2C_2  4500    3.317883
+21  A2C_cartpole  A2C_2  5000    2.843329,
+
+ 'train/policy_loss':             name n_simu     x         y
+0   A2C_cartpole  A2C_1   500  1.696817
+1   A2C_cartpole  A2C_1  1000  1.671733
+2   A2C_cartpole  A2C_1  1500  1.134330
+3   A2C_cartpole  A2C_1  2000  1.183758
+4   A2C_cartpole  A2C_1  2500  1.330544
+5   A2C_cartpole  A2C_1  3000  2.311981
+6   A2C_cartpole  A2C_1  3500  1.237310
+7   A2C_cartpole  A2C_1  4000  1.108976
+8   A2C_cartpole  A2C_1  4500  0.943576
+9   A2C_cartpole  A2C_1  5000  0.686866
+10  A2C_cartpole  A2C_2   500  1.849832
+11  A2C_cartpole  A2C_2  1000  1.719757
+12  A2C_cartpole  A2C_2  1500  1.522022
+13  A2C_cartpole  A2C_2  2000  1.289798
+14  A2C_cartpole  A2C_2  2500  1.205501
+15  A2C_cartpole  A2C_2  3000  0.955782
+16  A2C_cartpole  A2C_2  3500  0.180321
+17  A2C_cartpole  A2C_2  4000  1.207661
+18  A2C_cartpole  A2C_2  4500  0.637649
+19  A2C_cartpole  A2C_2  5000  1.108529}
+```
