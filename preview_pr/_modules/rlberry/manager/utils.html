@@ -173,7 +173,12 @@
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tensorboard_data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">dataframe_by_tag</span> <span class="o">=</span> <span class="n">_tensorboard_to_dataframe_from_dict_paths</span><span class="p">(</span><span class="n">tensorboard_data</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span>
+            <span class="nb">str</span><span class="p">(</span>
+                <span class="s2">&quot;Input of &#39;tensorboard_to_dataframe&#39; must be a str or a dict... not a &quot;</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">tensorboard_data</span><span class="p">))</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
 
     <span class="c1"># convert the &quot;dict of array&quot; to &quot;dict of panda dataframe&quot;</span>
     <span class="n">df</span> <span class="o">=</span> <span class="p">{}</span>
