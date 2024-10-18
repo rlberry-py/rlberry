@@ -56,7 +56,12 @@ def tensorboard_to_dataframe(tensorboard_data):
     elif isinstance(tensorboard_data, dict):
         dataframe_by_tag = _tensorboard_to_dataframe_from_dict_paths(tensorboard_data)
     else:
-        raise IOError()
+        raise IOError(
+            str(
+                "Input of 'tensorboard_to_dataframe' must be a str or a dict... not a "
+                + str(type(tensorboard_data))
+            )
+        )
 
     # convert the "dict of array" to "dict of panda dataframe"
     df = {}

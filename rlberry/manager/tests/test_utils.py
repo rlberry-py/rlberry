@@ -3,6 +3,7 @@ from stable_baselines3 import PPO, A2C
 import tempfile
 import os
 import pandas as pd
+import pytest
 
 
 def test_tensorboard_to_dataframe():
@@ -65,3 +66,9 @@ def test_tensorboard_to_dataframe():
                 key != "n_simu"
             ):  # don't test n_simu/seed, it is different because one come from the folder name, and the other come for the index in the list
                 assert set(a_dict[key]) == set(a_dict2[key])
+
+
+def test_tensorboard_to_dataframe_errorIO():
+    msg = "Input of 'tensorboard_to_dataframe' must be a str or a dict... not a <class 'int'>"
+    with pytest.raises(IOError, match=msg):
+        tensorboard_to_dataframe(1)
