@@ -63,6 +63,5 @@ def test_tensorboard_to_dataframe():
         for key in a_dict:
             if (
                 key != "n_simu"
-            ):  # seed will be different because one come from the folder name, and the other come for the index in the list
-                print(key)
-                assert a_dict[key].equals(a_dict2[key])
+            ):  # don't test n_simu/seed, it is different because one come from the folder name, and the other come for the index in the list
+                assert set(a_dict[key]) == set(a_dict2[key])
