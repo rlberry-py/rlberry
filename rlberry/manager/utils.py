@@ -18,12 +18,14 @@ def create_database(db_file):
     return False
 
 
-def tensorboard_to_dataframe(path_to_tensorboard_data):
+def tensorboard_to_dataframe(tensorboard_data):
     """
     Function to convert 'tensorboard log' to 'Panda DataFrames'.
 
     | To convert the 'tensorboard log', the input must be must be the path to "the parent folder of all the training log" (path_to_tensorboard_data), and the 'events.out.tfevents' files have to be in this kind of path :
     < path_to_tensorboard_data/algo_name/n_simu/events.out.tfevents.xxxxx >
+
+    Or you can specify all the desired 'events.out.tfevents' with a Dict. In that case, the key should be the algorithm name, and the value the list of the 'events.out.tfevents' path. The  seed/n_simu number wille be the position in the list.
 
     The output format is a dictionary.
 
@@ -37,12 +39,33 @@ def tensorboard_to_dataframe(path_to_tensorboard_data):
 
     Parameters
     ----------
-    path_to_tensorboard_data : path to the parent folder of the tensorboard's data.
+    path_to_tensorboard_data (str or Dict):
+        if str: path to the parent folder of the tensorboard's data.
+        if dict: Key = algo_name , value = list of 'events.out.tfevents.xxxxx' path
+
 
     Returns
     -------
     Dict : dict of Panda DataFrame (key = tag, value = Panda.DataFrame)
     """
+
+    dataframe_by_tag = {}
+
+    if isinstance(tensorboard_data, str):
+        dataframe_by_tag = _tensorboard_to_dataframe_from_parent_path(tensorboard_data)
+    elif isinstance(tensorboard_data, dict):
+        dataframe_by_tag = _tensorboard_to_dataframe_from_dict_paths(tensorboard_data)
+    else:
+        raise IOError()
+
+    # convert the "dict of array" to "dict of panda dataframe"
+    df = {}
+    for tag, value in dataframe_by_tag.items():
+        df[tag] = pd.DataFrame(value, columns=["name", "n_simu", "x", "y"])
+    return df
+
+
+def _tensorboard_to_dataframe_from_parent_path(path_to_tensorboard_data):
     from tensorboard.backend.event_processing import event_accumulator
 
     dataframe_by_tag = {}
@@ -68,9 +91,27 @@ def tensorboard_to_dataframe(path_to_tensorboard_data):
                         dataframe_by_tag[tag] = []
                     new_elements = [(algo_name, seed, e.step, e.value) for e in events]
                     dataframe_by_tag[tag].extend(new_elements)
+    return dataframe_by_tag
 
-    # convert the "dict of array" to "dict of panda dataframe"
-    df = {}
-    for tag, value in dataframe_by_tag.items():
-        df[tag] = pd.DataFrame(value, columns=["name", "n_simu", "x", "y"])
-    return df
+
+def _tensorboard_to_dataframe_from_dict_paths(dict_tensorboard_data):
+    from tensorboard.backend.event_processing import event_accumulator
+
+    dataframe_by_tag = {}
+    for algo_name, current_path_list in dict_tensorboard_data.items():
+        for idx, path in enumerate(current_path_list):
+            # load the event in the file, and get the tags
+            ea = event_accumulator.EventAccumulator(path)
+            ea.Reload()
+            scalar_tags = ea.Tags()["scalars"]
+
+            for tag in scalar_tags:
+                events = ea.Scalars(tag)
+                if tag not in dataframe_by_tag:  # new tag, create new entry in the dict
+                    dataframe_by_tag[tag] = []
+                new_elements = [(algo_name, idx, e.step, e.value) for e in events]
+                dataframe_by_tag[tag].extend(new_elements)
+    return dataframe_by_tag
+
+
+# Faire un test qui vérifie la 2ème fonction, et un test qui vérifie qu'elles donnent les mêmes résultats
