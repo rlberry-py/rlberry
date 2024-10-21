@@ -1,0 +1,12 @@
+﻿:mod:`rlberry.spaces`.MultiDiscrete
+==========================================
+
+.. currentmodule:: rlberry.spaces
+
+.. autoclass:: MultiDiscrete
+
+.. include:: rlberry.spaces.MultiDiscrete.examples
+
+.. raw:: html
+
+    <div class="clearer"></div>

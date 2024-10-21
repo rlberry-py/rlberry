@@ -1,0 +1,388 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  
+  <title>How to log your experiment &mdash; rlberry 0.7.3.post16.dev0+8710009 documentation</title>
+  
+  <link rel="canonical" href="https://rlberry-py.github.io/rlberry/basics/userguide/logging.html" />
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/vendor/bootstrap.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sg_gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sg_gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sg_gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sphinx-design.4cbf315f70debaebd550c87a6162cf0f.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+<script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+<script src="../../_static/js/vendor/jquery-3.6.3.slim.min.js"></script> 
+</head>
+<body>
+
+
+<nav id="navbar" class="sk-docs-navbar navbar navbar-expand-md navbar-light bg-light py-0">
+  <div class="container-fluid sk-docs-container px-0">
+    <button
+      id="sk-navbar-toggler"
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="sk-navbar-collapse collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../index.html">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../installation.html">Install</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../user_guide.html">User Guide</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../auto_examples/index.html">Examples</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../api.html">API</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../changelog.html">Changelog</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../about.html">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="https://github.com/rlberry-py/rlberry">GitHub</a>
+        </li>
+        <!--
+        <li class="nav-item dropdown nav-more-item-dropdown">
+          <a class="sk-nav-link nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">More</a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          </div>
+        </li>-->
+    </ul>
+      <div id="searchbox" role="search">
+          <div class="searchformwrapper">
+            <form action="https://duckduckgo.com/">
+            <input type="hidden" id="sites" name="sites" value="https://rlberry-py.github.io/rlberry/">
+            <input type="search" placeholder="Search &hellip;" value="" name="q" />
+            <input class="sk-search-text-btn" type="submit" value="Go" /></form>
+
+          </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="d-flex" id="sk-doc-wrapper">
+    <input type="checkbox" name="sk-toggle-checkbox" id="sk-toggle-checkbox">
+    <label id="sk-sidemenu-toggle" class="sk-btn-toggle-toc btn sk-btn-primary" for="sk-toggle-checkbox">Toggle Menu</label>
+    <div id="sk-sidebar-wrapper" class="border-right">
+      <div class="sk-sidebar-toc-wrapper">
+        <div class="sk-sidebar-toc-logo">
+        </div>
+	<br>
+        <div class="alert alert-warning p-1 mb-2" role="alert">
+
+          <p class="text-center mb-0">
+          rlberry 0.7.3.post16.dev0+8710009<br/>
+          <a href="../../versions.html">Other versions</a>
+          </p>
+
+        </div>
+            <div class="sk-sidebar-toc">
+              <ul>
+<li><a class="reference internal" href="#">How to log your experiment</a><ul>
+<li><a class="reference internal" href="#set-rlberry-s-logger-level">Set rlberry’s logger level</a></li>
+<li><a class="reference internal" href="#writer">Writer</a></li>
+</ul>
+</li>
+</ul>
+
+            </div>
+      </div>
+    </div>
+    <div id="sk-page-content-wrapper">
+      <div class="sk-page-content container-fluid body px-md-3" role="main">
+        
+  <section id="how-to-log-your-experiment">
+<span id="logging-page"></span><h1>How to log your experiment<a class="headerlink" href="#how-to-log-your-experiment" title="Permalink to this heading">¶</a></h1>
+<p>To get informations and readable results about the training of your algorithm, you can use different loggers.</p>
+<section id="set-rlberry-s-logger-level">
+<h2>Set rlberry’s logger level<a class="headerlink" href="#set-rlberry-s-logger-level" title="Permalink to this heading">¶</a></h2>
+<p>For this example, you will use the “PPO” torch agent from “<a class="reference external" href="https://stable-baselines3.readthedocs.io/en/master/guide/algos.html">StableBaselines3</a>” and wrap it in rlberry Agent. To do that, you need to use <a class="reference internal" href="../../generated/rlberry.agents.stable_baselines.StableBaselinesAgent.html#rlberry.agents.stable_baselines.StableBaselinesAgent" title="rlberry.agents.stable_baselines.StableBaselinesAgent"><span class="xref myst py py-class">StableBaselinesAgent</span></a>. More information <a class="reference internal" href="#stable_baselines"><span class="xref myst">here</span></a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.envs</span> <span class="kn">import</span> <span class="n">gym_make</span>
+<span class="kn">from</span> <span class="nn">rlberry.agents.stable_baselines</span> <span class="kn">import</span> <span class="n">StableBaselinesAgent</span>
+<span class="kn">from</span> <span class="nn">stable_baselines3</span> <span class="kn">import</span> <span class="n">PPO</span>
+<span class="kn">from</span> <span class="nn">rlberry.manager</span> <span class="kn">import</span> <span class="n">ExperimentManager</span><span class="p">,</span> <span class="n">evaluate_agents</span>
+
+
+<span class="n">env_id</span> <span class="o">=</span> <span class="s2">&quot;CartPole-v1&quot;</span>  <span class="c1"># Id of the environment</span>
+
+<span class="n">env_ctor</span> <span class="o">=</span> <span class="n">gym_make</span>  <span class="c1"># constructor for the env</span>
+<span class="n">env_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">env_id</span><span class="p">)</span>  <span class="c1"># give the id of the env inside the kwargs</span>
+
+
+<span class="n">first_experiment</span> <span class="o">=</span> <span class="n">ExperimentManager</span><span class="p">(</span>
+    <span class="n">StableBaselinesAgent</span><span class="p">,</span>  <span class="c1"># Agent Class to manage stableBaselinesAgents</span>
+    <span class="p">(</span><span class="n">env_ctor</span><span class="p">,</span> <span class="n">env_kwargs</span><span class="p">),</span>  <span class="c1"># Environment as Tuple(constructor,kwargs)</span>
+    <span class="n">init_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">algo_cls</span><span class="o">=</span><span class="n">PPO</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>  <span class="c1"># Init value for StableBaselinesAgent</span>
+    <span class="n">fit_budget</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>  <span class="c1"># Budget used to call our agent &quot;fit()&quot;</span>
+    <span class="n">eval_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+        <span class="n">eval_horizon</span><span class="o">=</span><span class="mi">1000</span>
+    <span class="p">),</span>  <span class="c1"># Arguments required to call rlberry.agents.agent.Agent.eval().</span>
+    <span class="n">n_fit</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># Number of agent instances to fit.</span>
+    <span class="n">agent_name</span><span class="o">=</span><span class="s2">&quot;PPO_first_experiment&quot;</span> <span class="o">+</span> <span class="n">env_id</span><span class="p">,</span>  <span class="c1"># Name of the agent</span>
+    <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">first_experiment</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+<span class="n">output</span> <span class="o">=</span> <span class="n">evaluate_agents</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">first_experiment</span><span class="p">],</span> <span class="n">n_simulations</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>  <span class="c1"># evaluate the experiment on 5 simulations</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[INFO] 09:18: Running ExperimentManager fit() for PPO_first_experimentCartPole-v1 with n_fit = 1 and max_workers = None.
+Using cpu device
+Wrapping the env with a `Monitor` wrapper
+Wrapping the env in a DummyVecEnv.
+---------------------------------
+| rollout/           |          |
+|    ep_len_mean     | 23.9     |
+|    ep_rew_mean     | 23.9     |
+| time/              |          |
+|    fps             | 2977     |
+|    iterations      | 1        |
+|    time_elapsed    | 0        |
+|    total_timesteps | 2048     |
+---------------------------------
+[INFO] 09:18: ... trained!
+Using cpu device
+Wrapping the env with a `Monitor` wrapper
+Wrapping the env in a DummyVecEnv.
+[INFO] 09:18: Saved ExperimentManager(PPO_first_experimentCartPole-v1) using pickle.
+[INFO] 09:18: The ExperimentManager was saved in : &#39;rlberry_data/temp/manager_data/PPO_first_experimentCartPole-v1_2024-04-12_09-18-10_3a9fa8ad/manager_obj.pickle&#39;
+[INFO] 09:18: Evaluating PPO_first_experimentCartPole-v1...
+[INFO] Evaluation:Using cpu device
+Wrapping the env with a `Monitor` wrapper
+Wrapping the env in a DummyVecEnv.
+.....  Evaluation finished
+   PPO_first_experimentCartPole-v1
+0                             89.0
+1                             64.0
+2                             82.0
+3                            121.0
+4                             64.0
+</pre></div>
+</div>
+<p>As you can see, on the previous output, you have the “[INFO]” output (from <a class="reference internal" href="../../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager"><span class="xref myst py py-class">ExperimentManager</span></a>)</p>
+<p>You can choose the verbosity of your logger</p>
+<p>But, with <a class="reference internal" href="../../generated/rlberry.utils.logging.set_level.html#rlberry.utils.logging.set_level" title="rlberry.utils.logging.set_level"><span class="xref myst py py-func">rlberry.logging.set_level(level=’…’)</span></a>, you can select the level of your logger to choose what type of information you want.
+For examle, you can have only the “CRITICAL” information, for this add this lines on top of the previous code, then run it again :</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">rlberry</span>
+
+<span class="n">rlberry</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="s2">&quot;CRITICAL&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>   PPO_first_experimentCartPole-v1
+0                             89.0
+1                             64.0
+2                             82.0
+3                            121.0
+4                             64.0
+</pre></div>
+</div>
+<p>As you can see, on the previous output, you don’t have the “INFO” output anymore (because it’s not a “CRITICAL” output)</p>
+</section>
+<section id="writer">
+<h2>Writer<a class="headerlink" href="#writer" title="Permalink to this heading">¶</a></h2>
+<p>To keep information during and after the experiment, rlberry uses a ‘writer’. The writer is stored inside the <a class="reference internal" href="agent.html#agent-page"><span class="std std-ref">Agent</span></a>, and is updated in its fit() function.</p>
+<p>By default (with the <a class="reference internal" href="../../generated/rlberry.agents.Agent.html#rlberry.agents.Agent" title="rlberry.agents.Agent"><span class="xref myst py py-class">Agent interface</span></a>), the writer is <a class="reference internal" href="../../generated/rlberry.utils.writers.DefaultWriter.html#rlberry.utils.writers.DefaultWriter" title="rlberry.utils.writers.DefaultWriter"><span class="xref myst py py-class">DefaultWriter</span></a>.
+You can add information about the environment’s <code class="docutils literal notranslate"><span class="pre">reward</span></code> and <code class="docutils literal notranslate"><span class="pre">action</span></code> with the optional parameter <code class="docutils literal notranslate"><span class="pre">writer_extra</span></code> during the agent initialization.</p>
+<p>In the previous example, to get the reward, this would give (parameter for the ExperimentManager):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">init_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">algo_cls</span><span class="o">=</span><span class="n">PPO</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">writer_extra</span><span class="o">=</span><span class="s2">&quot;reward&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To get the data, saved during an experiment, in a Pandas DataFrame, you can use <a class="reference internal" href="../../generated/rlberry.manager.plot_writer_data.html#rlberry.manager.plot_writer_data" title="rlberry.manager.plot_writer_data"><span class="xref myst py py-func">plot_writer_data</span></a> on the <a class="reference internal" href="../../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager"><span class="xref myst py py-class">ExperimentManager</span></a> (or a list of them).
+Example <a class="reference internal" href="../../auto_examples/demo_bandits/plot_mirror_bandit.html"><span class="doc std std-doc">here</span></a>.</p>
+<p>To plot the data, saved during an experiment, you can use <a class="reference internal" href="../../generated/rlberry.manager.plot_writer_data.html#rlberry.manager.plot_writer_data" title="rlberry.manager.plot_writer_data"><span class="xref myst py py-func">plot_writer_data</span></a> on the <a class="reference internal" href="../../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager"><span class="xref myst py py-class">ExperimentManager</span></a> (or a list of them).
+Example <a class="reference internal" href="../../auto_examples/plot_writer_wrapper.html"><span class="doc std std-doc">here</span></a>.</p>
+</section>
+</section>
+
+
+      </div>
+    <div class="container">
+      <footer class="sk-content-footer">
+            &copy; 2023, rlberry team.
+          <a href="../../_sources/basics/userguide/logging.md.txt" rel="nofollow">Show this page source</a>
+      </footer>
+    </div>
+  </div>
+</div>
+<script src="../../_static/js/vendor/bootstrap.min.js"></script>
+
+<script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-22606712-2', 'auto');
+    ga('set', 'anonymizeIp', true);
+    ga('send', 'pageview');
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+<script>
+$(document).ready(function() {
+    /* Add a [>>>] button on the top-right corner of code samples to hide
+     * the >>> and ... prompts and the output and thus make the code
+     * copyable. */
+    var div = $('.highlight-python .highlight,' +
+                '.highlight-python3 .highlight,' +
+                '.highlight-pycon .highlight,' +
+		'.highlight-default .highlight')
+    var pre = div.find('pre');
+
+    // get the styles from the current theme
+    pre.parent().parent().css('position', 'relative');
+    var hide_text = 'Hide prompts and outputs';
+    var show_text = 'Show prompts and outputs';
+
+    // create and add the button to all the code blocks that contain >>>
+    div.each(function(index) {
+        var jthis = $(this);
+        if (jthis.find('.gp').length > 0) {
+            var button = $('<span class="copybutton">&gt;&gt;&gt;</span>');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+            jthis.prepend(button);
+        }
+        // tracebacks (.gt) contain bare text elements that need to be
+        // wrapped in a span to work with .nextUntil() (see later)
+        jthis.find('pre:has(.gt)').contents().filter(function() {
+            return ((this.nodeType == 3) && (this.data.trim().length > 0));
+        }).wrap('<span>');
+    });
+
+    // define the behavior of the button when it's clicked
+    $('.copybutton').click(function(e){
+        e.preventDefault();
+        var button = $(this);
+        if (button.data('hidden') === 'false') {
+            // hide the code output
+            button.parent().find('.go, .gp, .gt').hide();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'hidden');
+            button.css('text-decoration', 'line-through');
+            button.attr('title', show_text);
+            button.data('hidden', 'true');
+        } else {
+            // show the code output
+            button.parent().find('.go, .gp, .gt').show();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'visible');
+            button.css('text-decoration', 'none');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+        }
+    });
+
+	/*** Add permalink buttons next to glossary terms ***/
+	$('dl.glossary > dt[id]').append(function() {
+		return ('<a class="headerlink" href="#' +
+			    this.getAttribute('id') +
+			    '" title="Permalink to this term">¶</a>');
+	});
+  /*** Hide navbar when scrolling down ***/
+  // Returns true when headerlink target matches hash in url
+  (function() {
+    hashTargetOnTop = function() {
+        var hash = window.location.hash;
+        if ( hash.length < 2 ) { return false; }
+
+        var target = document.getElementById( hash.slice(1) );
+        if ( target === null ) { return false; }
+
+        var top = target.getBoundingClientRect().top;
+        return (top < 2) && (top > -2);
+    };
+
+    // Hide navbar on load if hash target is on top
+    var navBar = document.getElementById("navbar");
+    var navBarToggler = document.getElementById("sk-navbar-toggler");
+    var navBarHeightHidden = "-" + navBar.getBoundingClientRect().height + "px";
+    var $window = $(window);
+
+    hideNavBar = function() {
+        navBar.style.top = navBarHeightHidden;
+    };
+
+    showNavBar = function() {
+        navBar.style.top = "0";
+    }
+
+    if (hashTargetOnTop()) {
+        hideNavBar()
+    }
+
+    var prevScrollpos = window.pageYOffset;
+    hideOnScroll = function(lastScrollTop) {
+        if (($window.width() < 768) && (navBarToggler.getAttribute("aria-expanded") === 'true')) {
+            return;
+        }
+        if (lastScrollTop > 2 && (prevScrollpos <= lastScrollTop) || hashTargetOnTop()){
+            hideNavBar()
+        } else {
+            showNavBar()
+        }
+        prevScrollpos = lastScrollTop;
+    };
+
+    /*** high performance scroll event listener***/
+    var raf = window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        window.oRequestAnimationFrame;
+    var lastScrollTop = $window.scrollTop();
+
+    if (raf) {
+        loop();
+    }
+
+    function loop() {
+        var scrollTop = $window.scrollTop();
+        if (lastScrollTop === scrollTop) {
+            raf(loop);
+            return;
+        } else {
+            lastScrollTop = scrollTop;
+            hideOnScroll(lastScrollTop);
+            raf(loop);
+        }
+    }
+  })();
+});
+
+</script>
+    
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    
+</body>
+</html>

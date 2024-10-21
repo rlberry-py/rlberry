@@ -1,0 +1,552 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  
+  <title>User Guide &mdash; rlberry 0.7.3.post16.dev0+8710009 documentation</title>
+  
+  <link rel="canonical" href="https://rlberry-py.github.io/rlberry/user_guide.html" />
+
+  
+
+  <link rel="stylesheet" href="_static/css/vendor/bootstrap.min.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/sg_gallery.css" type="text/css" />
+  <link rel="stylesheet" href="_static/sg_gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="_static/sg_gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="_static/sg_gallery-rendered-html.css" type="text/css" />
+  <link rel="stylesheet" href="_static/sphinx-design.4cbf315f70debaebd550c87a6162cf0f.min.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+<script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+<script src="_static/js/vendor/jquery-3.6.3.slim.min.js"></script> 
+</head>
+<body>
+
+
+<nav id="navbar" class="sk-docs-navbar navbar navbar-expand-md navbar-light bg-light py-0">
+  <div class="container-fluid sk-docs-container px-0">
+    <button
+      id="sk-navbar-toggler"
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="sk-navbar-collapse collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="index.html">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="installation.html">Install</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="#">User Guide</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="auto_examples/index.html">Examples</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="api.html">API</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="changelog.html">Changelog</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="about.html">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="https://github.com/rlberry-py/rlberry">GitHub</a>
+        </li>
+        <!--
+        <li class="nav-item dropdown nav-more-item-dropdown">
+          <a class="sk-nav-link nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">More</a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          </div>
+        </li>-->
+    </ul>
+      <div id="searchbox" role="search">
+          <div class="searchformwrapper">
+            <form action="https://duckduckgo.com/">
+            <input type="hidden" id="sites" name="sites" value="https://rlberry-py.github.io/rlberry/">
+            <input type="search" placeholder="Search &hellip;" value="" name="q" />
+            <input class="sk-search-text-btn" type="submit" value="Go" /></form>
+
+          </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="d-flex" id="sk-doc-wrapper">
+    <input type="checkbox" name="sk-toggle-checkbox" id="sk-toggle-checkbox">
+    <label id="sk-sidemenu-toggle" class="sk-btn-toggle-toc btn sk-btn-primary" for="sk-toggle-checkbox">Toggle Menu</label>
+    <div id="sk-sidebar-wrapper" class="border-right">
+      <div class="sk-sidebar-toc-wrapper">
+        <div class="sk-sidebar-toc-logo">
+        </div>
+	<br>
+        <div class="alert alert-warning p-1 mb-2" role="alert">
+
+          <p class="text-center mb-0">
+          rlberry 0.7.3.post16.dev0+8710009<br/>
+          <a href="versions.html">Other versions</a>
+          </p>
+
+        </div>
+            <div class="sk-sidebar-toc">
+              <ul>
+<li><a class="reference internal" href="#">User Guide</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#set-up-an-experiment">Set up an experiment</a></li>
+<li><a class="reference internal" href="#experimenting-with-deep-agents">Experimenting with Deep agents</a></li>
+<li><a class="reference internal" href="#reproducibility">Reproducibility</a></li>
+<li><a class="reference internal" href="#advanced-usage">Advanced Usage</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#contributing-to-rlberry">Contributing to rlberry</a></li>
+</ul>
+
+            </div>
+      </div>
+    </div>
+    <div id="sk-page-content-wrapper">
+      <div class="sk-page-content container-fluid body px-md-3" role="main">
+        
+  <section id="user-guide">
+<span id="id1"></span><h1>User Guide<a class="headerlink" href="#user-guide" title="Permalink to this heading">¶</a></h1>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading">¶</a></h2>
+<p>Welcome to rlberry.
+Use rlberry’s <a class="reference internal" href="basics/userguide/experimentManager.html#experimentmanager-page"><span class="std std-ref">ExperimentManager</span></a> to train, evaluate and compare rl agents.
+Like other popular rl libraries, rlberry also provides basic tools for plotting, multiprocessing and logging  <!-- TODO :(add refs)-->. In this user guide, we take you through the core features of rlberry and illustrate them with <a class="reference internal" href="auto_examples/index.html"><span class="doc std std-doc">examples</span></a> and <a class="reference internal" href="api.html"><span class="doc std std-doc">API documentation</span></a> .</p>
+<p>To run all the examples, you will need to install other libraries like “<a class="reference external" href="https://github.com/rlberry-py/rlberry-scool">rlberry-scool</a>” (and others).</p>
+ <!-- TODO : Add some code with the best solution to install them: poetry?, pip?, github link ??? -->
+<p>The easiest way to do it is :</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>pip install rlberry[torch,extras]
+pip install rlberry-scool
+</pre></div>
+</div>
+<p><a class="reference external" href="https://github.com/rlberry-py/rlberry-scool">rlberry-scool</a> :
+It’s the repository used for teaching purposes. These are mainly basic agents and environments, in a version that makes it easier for students to learn.</p>
+<p>You can find more details about installation <a class="reference internal" href="installation.html#installation"><span class="std std-ref">here</span></a>!</p>
+<p>You can find our quick starts here :</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="basics/quick_start_rl/quickstart.html">Quick Start for Reinforcement Learning in rlberry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="basics/quick_start_rl/quickstart.html#importing-required-libraries">Importing required libraries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basics/quick_start_rl/quickstart.html#choosing-an-rl-environment">Choosing an RL environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basics/quick_start_rl/quickstart.html#defining-an-agent-and-a-baseline">Defining an agent and a baseline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basics/quick_start_rl/quickstart.html#experiment-manager">Experiment Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basics/quick_start_rl/quickstart.html#comparing-the-expected-rewards-of-the-final-policies">Comparing the expected rewards of the final policies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basics/quick_start_rl/quickstart.html#comparing-the-agents-during-the-learning-period">Comparing the agents during the learning period</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="basics/DeepRLTutorial/TutorialDeepRL.html">Quickstart for Deep Reinforcement Learning in rlberry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="basics/DeepRLTutorial/TutorialDeepRL.html#imports">Imports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basics/DeepRLTutorial/TutorialDeepRL.html#reminder-of-the-rl-setting">Reminder of the RL setting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basics/DeepRLTutorial/TutorialDeepRL.html#gymnasium-environment">Gymnasium Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basics/DeepRLTutorial/TutorialDeepRL.html#running-a2c-on-acrobot-v1">Running A2C on Acrobot-v1</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="set-up-an-experiment">
+<h2>Set up an experiment<a class="headerlink" href="#set-up-an-experiment" title="Permalink to this heading">¶</a></h2>
+   <script>
+   window.addEventListener('DOMContentLoaded', function() {
+        (function($) {
+   //Function to make the index toctree collapsible
+   $(function () {
+       $('div.body .toctree-l1')
+           .click(function(event){
+               if (event.target.tagName.toLowerCase() != "a") {
+                   if ($(this).children('ul').length > 0) {
+                        $(this).attr('data-content',
+                            (!$(this).children('ul').is(':hidden')) ? '\u25ba' : '\u25bc');
+                       $(this).children('ul').toggle();
+                   }
+                   return true; //Makes links clickable
+               }
+           })
+           .mousedown(function(event){ return false; }) //Firefox highlighting fix
+           .children('ul').hide();
+       // Initialize the values
+       $('div.body li.toctree-l1:not(:has(ul))').attr('data-content', '-');
+       $('div.body li.toctree-l1:has(ul)').attr('data-content', '\u25ba');
+       $('div.body li.toctree-l1:has(ul)').css('cursor', 'pointer');
+   });
+        })(jQuery);
+    });
+   </script>
+  <style type="text/css">
+    div.body li, div.body ul {
+        transition-duration: 0.2s;
+    }
+
+  div.body li, div.body ul {
+      transition-duration: 0.2s;
+  }
+
+
+
+  div.body li.toctree-l1 {
+      padding: 0.25em 0 0.25em 0 ;
+      list-style-type: none;
+      background-color: #FFFFFF;
+      font-size: 85% ;
+      font-weight: normal;
+      margin-left: 0;
+  }
+
+  div.body li.toctree-l1 ul {
+      padding-left: 100px ;
+  }
+
+  div.body li.toctree-l1:before {
+      content: attr(data-content);
+      font-size: 1rem;
+      color: #777;
+      display: inline-block;
+      width: 1.5rem;
+  }
+
+  div.body li.toctree-l3 {
+      font-size: 88% ;
+      list-style-type: square;
+      font-weight: normal;
+      margin-left: 0;
+  }
+
+  div.body li.toctree-l4 {
+      font-size: 93% ;
+      list-style-type: circle;
+      font-weight: normal;
+      margin-left: 0;
+  }
+
+  div.body div.topic li.toctree-l1 {
+      font-size: 100% ;
+      font-weight: bold;
+      background-color: transparent;
+      margin-bottom: 0;
+      margin-left: 1.5em;
+      display:inline;
+  }
+
+  div.body div.topic p {
+      font-size: 90% ;
+      margin: 0.4ex;
+  }
+
+  div.body div.topic p.topic-title {
+      display:inline;
+      font-size: 100% ;
+      margin-bottom: 0;
+  }
+
+  </style>
+   <style type="text/css">
+    div.body div.toctree-wrapper ul {
+        padding-left: 0;
+    }
+
+
+    div.body li.toctree-l1 {
+        padding: 0 1em 0.5em 1em;
+        list-style-type: none;
+        font-size: 130%;
+        font-weight: bold;
+    }
+
+    div.body li.toctree-l2 {
+        font-size: 70%;
+        list-style-type: square;
+        font-weight: normal;
+        margin-left: 40px;
+    }
+
+    div.body li.toctree-l3 {
+        font-size: 85%;
+        list-style-type: circle;
+        font-weight: normal;
+        margin-left: 40px;
+    }
+
+    div.body li.toctree-l4 {
+        margin-left: 40px;
+    }
+  </style>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="basics/userguide/environment.html">How to use an environment</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="basics/userguide/environment.html#use-rlberry-environment">Use rlberry environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basics/userguide/environment.html#use-gymnasium-environment">Use Gymnasium environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basics/userguide/environment.html#use-atari-environment">Use Atari environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basics/userguide/environment.html#create-your-own-environment">Create your own environment</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="basics/userguide/agent.html">How to use an Agent</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="basics/userguide/agent.html#use-rlberry-agent">Use rlberry Agent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basics/userguide/agent.html#use-stablebaselines3-as-rlberry-agent">Use StableBaselines3 as rlberry Agent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basics/userguide/agent.html#create-your-own-agent">Create your own Agent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basics/userguide/agent.html#use-experimentmanager">Use experimentManager</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="basics/userguide/experimentManager.html">How to use the ExperimentManager</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="basics/userguide/experimentManager.html#create-your-experiment">Create your experiment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basics/userguide/experimentManager.html#compare-with-another-agent">Compare with another agent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basics/userguide/experimentManager.html#output-the-video">Output the video</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basics/userguide/experimentManager.html#some-advanced-settings">Some advanced settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basics/userguide/experimentManager.html#other-information">Other information</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="basics/userguide/logging.html">How to log your experiment</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="basics/userguide/logging.html#set-rlberry-s-logger-level">Set rlberry’s logger level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basics/userguide/logging.html#writer">Writer</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="basics/userguide/visualization.html">Visualization of policies and plots of training/evaluation metrics in rlberry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="basics/userguide/visualization.html#generating-videos-and-gif-of-the-policy-of-a-trained-agent">Generating videos and gif of the policy of a trained agent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basics/userguide/visualization.html#plotting-training-data-and-reward-curves-in-rlberry">Plotting training data and reward curves in rlberry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basics/userguide/visualization.html#visualization-of-evaluations-of-trained-agents-in-rlberry">Visualization of evaluations of trained agents in rlberry</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="experimenting-with-deep-agents">
+<h2>Experimenting with Deep agents<a class="headerlink" href="#experimenting-with-deep-agents" title="Permalink to this heading">¶</a></h2>
+<p><a class="reference external" href="https://github.com/rlberry-py/rlberry/issues/459">(In construction)</a></p>
+</section>
+<section id="reproducibility">
+<h2>Reproducibility<a class="headerlink" href="#reproducibility" title="Permalink to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="basics/userguide/seeding.html">How to seed your experiment</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="basics/userguide/seeding.html#why-use-seeding">Why use seeding?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basics/userguide/seeding.html#basics">Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basics/userguide/seeding.html#in-rlberry">In rlberry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basics/userguide/seeding.html#external-libraries">External libraries</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="basics/userguide/save_load.html">How to save/load an experiment</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="basics/userguide/save_load.html#how-to-save-an-experiment">how to save an experiment?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basics/userguide/save_load.html#how-to-load-a-previous-experiment">How to load a previous experiment?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basics/userguide/save_load.html#other-information">Other information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basics/userguide/save_load.html#how-to-save-load-an-agent-only-advanced-users">How to save/load an agent only? (advanced users)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="basics/userguide/export_training_data.html">How to export/import data (rlberry data, tensorboard data, …)?</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="basics/userguide/export_training_data.html#how-to-extract-data-from-the-writerdata">How to extract data from the WriterData?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basics/userguide/export_training_data.html#how-to-import-data-from-tensorboard">How to import data from tensorboard?</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="advanced-usage">
+<h2>Advanced Usage<a class="headerlink" href="#advanced-usage" title="Permalink to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="basics/userguide/adastop.html">Adaptive hypothesis testing for comparison of RL agents with AdaStop</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="basics/userguide/adastop.html#hypothesis-testing-to-compare-rl-agents">Hypothesis testing to compare RL agents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basics/userguide/adastop.html#comparison-of-a2c-and-ppo-from-stable-baselines3">Comparison of A2C and PPO from stable-baselines3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basics/userguide/adastop.html#result-visualisation">Result visualisation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="basics/comparison.html">Comparison of Agents</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="basics/comparison.html#quick-reminder-on-hypothesis-testing">Quick reminder on hypothesis testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basics/comparison.html#multiple-agent-comparison-in-rlberry">Multiple agent comparison in rlberry</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="basics/userguide/external_lib.html">How to use the external libraries</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="basics/userguide/external_lib.html#using-rlberry-and-gymnasium">Using rlberry and Gymnasium</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basics/userguide/external_lib.html#using-rlberry-and-stable-baselines">Using rlberry and Stable Baselines</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<ul class="simple">
+<li><p>Custom Agents (In construction)</p></li>
+<li><p>Custom Environments (In construction)</p></li>
+<li><p>Transfer Learning (In construction)</p></li>
+</ul>
+</section>
+</section>
+<section id="contributing-to-rlberry">
+<h1>Contributing to rlberry<a class="headerlink" href="#contributing-to-rlberry" title="Permalink to this heading">¶</a></h1>
+<p>If you want to contribute to rlberry, check out <a class="reference internal" href="contributing.html#contributing"><span class="std std-ref">the contribution guidelines</span></a>.</p>
+</section>
+
+
+      </div>
+    <div class="container">
+      <footer class="sk-content-footer">
+            &copy; 2023, rlberry team.
+          <a href="_sources/user_guide.md.txt" rel="nofollow">Show this page source</a>
+      </footer>
+    </div>
+  </div>
+</div>
+<script src="_static/js/vendor/bootstrap.min.js"></script>
+
+<script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-22606712-2', 'auto');
+    ga('set', 'anonymizeIp', true);
+    ga('send', 'pageview');
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+<script>
+$(document).ready(function() {
+    /* Add a [>>>] button on the top-right corner of code samples to hide
+     * the >>> and ... prompts and the output and thus make the code
+     * copyable. */
+    var div = $('.highlight-python .highlight,' +
+                '.highlight-python3 .highlight,' +
+                '.highlight-pycon .highlight,' +
+		'.highlight-default .highlight')
+    var pre = div.find('pre');
+
+    // get the styles from the current theme
+    pre.parent().parent().css('position', 'relative');
+    var hide_text = 'Hide prompts and outputs';
+    var show_text = 'Show prompts and outputs';
+
+    // create and add the button to all the code blocks that contain >>>
+    div.each(function(index) {
+        var jthis = $(this);
+        if (jthis.find('.gp').length > 0) {
+            var button = $('<span class="copybutton">&gt;&gt;&gt;</span>');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+            jthis.prepend(button);
+        }
+        // tracebacks (.gt) contain bare text elements that need to be
+        // wrapped in a span to work with .nextUntil() (see later)
+        jthis.find('pre:has(.gt)').contents().filter(function() {
+            return ((this.nodeType == 3) && (this.data.trim().length > 0));
+        }).wrap('<span>');
+    });
+
+    // define the behavior of the button when it's clicked
+    $('.copybutton').click(function(e){
+        e.preventDefault();
+        var button = $(this);
+        if (button.data('hidden') === 'false') {
+            // hide the code output
+            button.parent().find('.go, .gp, .gt').hide();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'hidden');
+            button.css('text-decoration', 'line-through');
+            button.attr('title', show_text);
+            button.data('hidden', 'true');
+        } else {
+            // show the code output
+            button.parent().find('.go, .gp, .gt').show();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'visible');
+            button.css('text-decoration', 'none');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+        }
+    });
+
+	/*** Add permalink buttons next to glossary terms ***/
+	$('dl.glossary > dt[id]').append(function() {
+		return ('<a class="headerlink" href="#' +
+			    this.getAttribute('id') +
+			    '" title="Permalink to this term">¶</a>');
+	});
+  /*** Hide navbar when scrolling down ***/
+  // Returns true when headerlink target matches hash in url
+  (function() {
+    hashTargetOnTop = function() {
+        var hash = window.location.hash;
+        if ( hash.length < 2 ) { return false; }
+
+        var target = document.getElementById( hash.slice(1) );
+        if ( target === null ) { return false; }
+
+        var top = target.getBoundingClientRect().top;
+        return (top < 2) && (top > -2);
+    };
+
+    // Hide navbar on load if hash target is on top
+    var navBar = document.getElementById("navbar");
+    var navBarToggler = document.getElementById("sk-navbar-toggler");
+    var navBarHeightHidden = "-" + navBar.getBoundingClientRect().height + "px";
+    var $window = $(window);
+
+    hideNavBar = function() {
+        navBar.style.top = navBarHeightHidden;
+    };
+
+    showNavBar = function() {
+        navBar.style.top = "0";
+    }
+
+    if (hashTargetOnTop()) {
+        hideNavBar()
+    }
+
+    var prevScrollpos = window.pageYOffset;
+    hideOnScroll = function(lastScrollTop) {
+        if (($window.width() < 768) && (navBarToggler.getAttribute("aria-expanded") === 'true')) {
+            return;
+        }
+        if (lastScrollTop > 2 && (prevScrollpos <= lastScrollTop) || hashTargetOnTop()){
+            hideNavBar()
+        } else {
+            showNavBar()
+        }
+        prevScrollpos = lastScrollTop;
+    };
+
+    /*** high performance scroll event listener***/
+    var raf = window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        window.oRequestAnimationFrame;
+    var lastScrollTop = $window.scrollTop();
+
+    if (raf) {
+        loop();
+    }
+
+    function loop() {
+        var scrollTop = $window.scrollTop();
+        if (lastScrollTop === scrollTop) {
+            raf(loop);
+            return;
+        } else {
+            lastScrollTop = scrollTop;
+            hideOnScroll(lastScrollTop);
+            raf(loop);
+        }
+    }
+  })();
+});
+
+</script>
+    
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    
+</body>
+</html>

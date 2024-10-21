@@ -1,0 +1,12 @@
+﻿:mod:`rlberry.spaces`.MultiBinary
+========================================
+
+.. currentmodule:: rlberry.spaces
+
+.. autoclass:: MultiBinary
+
+.. include:: rlberry.spaces.MultiBinary.examples
+
+.. raw:: html
+
+    <div class="clearer"></div>

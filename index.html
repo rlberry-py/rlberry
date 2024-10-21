@@ -1,0 +1,348 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  
+  <title>An RL Library for Research and Education &mdash; rlberry 0.7.3.post16.dev0+8710009 documentation</title>
+  
+  <link rel="canonical" href="https://rlberry-py.github.io/rlberry/index.html" />
+
+  
+
+  <link rel="stylesheet" href="_static/css/vendor/bootstrap.min.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/sg_gallery.css" type="text/css" />
+  <link rel="stylesheet" href="_static/sg_gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="_static/sg_gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="_static/sg_gallery-rendered-html.css" type="text/css" />
+  <link rel="stylesheet" href="_static/sphinx-design.4cbf315f70debaebd550c87a6162cf0f.min.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+<script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+<script src="_static/js/vendor/jquery-3.6.3.slim.min.js"></script> 
+</head>
+<body>
+
+
+<nav id="navbar" class="sk-landing-navbar navbar navbar-expand-md navbar-light bg-light py-0">
+  <div class="container-fluid sk-landing-container px-0">
+    <button
+      id="sk-navbar-toggler"
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="sk-navbar-collapse collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="#">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="installation.html">Install</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="user_guide.html">User Guide</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="auto_examples/index.html">Examples</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="api.html">API</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="changelog.html">Changelog</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="about.html">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="https://github.com/rlberry-py/rlberry">GitHub</a>
+        </li>
+        <!--
+        <li class="nav-item dropdown nav-more-item-dropdown">
+          <a class="sk-nav-link nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">More</a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          </div>
+        </li>-->
+    </ul>
+      <div id="searchbox" role="search">
+          <div class="searchformwrapper">
+            <form action="https://duckduckgo.com/">
+            <input type="hidden" id="sites" name="sites" value="https://rlberry-py.github.io/rlberry/">
+            <input type="search" placeholder="Search &hellip;" value="" name="q" />
+            <input class="sk-search-text-btn" type="submit" value="Go" /></form>
+
+          </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="d-flex" id="sk-doc-wrapper">
+    <input type="checkbox" name="sk-toggle-checkbox" id="sk-toggle-checkbox">
+    <label id="sk-sidemenu-toggle" class="sk-btn-toggle-toc btn sk-btn-primary" for="sk-toggle-checkbox">Toggle Menu</label>
+    <div id="sk-sidebar-wrapper" class="border-right">
+      <div class="sk-sidebar-toc-wrapper">
+        <div class="sk-sidebar-toc-logo">
+        </div>
+	<br>
+        <div class="alert alert-warning p-1 mb-2" role="alert">
+
+          <p class="text-center mb-0">
+          rlberry 0.7.3.post16.dev0+8710009<br/>
+          <a href="versions.html">Other versions</a>
+          </p>
+
+        </div>
+            <div class="sk-sidebar-toc">
+              <ul>
+<li><a class="reference internal" href="#">An RL Library for Research and Education</a></li>
+<li><a class="reference internal" href="#documentation-contents">Documentation Contents</a></li>
+<li><a class="reference internal" href="#contributing-to-rlberry">Contributing to rlberry</a></li>
+<li><a class="reference internal" href="#rlberry-main-features">rlberry main features</a><ul>
+<li><a class="reference internal" href="#experimentmanager">ExperimentManager</a></li>
+<li><a class="reference internal" href="#seeding-reproducibility">Seeding &amp; Reproducibility</a></li>
+<li><a class="reference internal" href="#statistical-comparison-of-rl-agents">Statistical comparison of RL agents</a><ul>
+<li><a class="reference internal" href="#compare-agents">Compare agents</a></li>
+<li><a class="reference internal" href="#adastop">AdaStop</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#visualization">Visualization</a></li>
+<li><a class="reference internal" href="#and-many-more">And many more !</a></li>
+</ul>
+</li>
+</ul>
+
+            </div>
+      </div>
+    </div>
+    <div id="sk-page-content-wrapper">
+      <div class="sk-page-content container-fluid body px-md-3" role="main">
+        
+  <a class="reference internal image-reference" href="_images/logo_wide.svg" id="index"><img alt="rlberry logo" class="align-center" id="index" src="_images/logo_wide.svg" width="50%" /></a>
+<section id="an-rl-library-for-research-and-education">
+<h1>An RL Library for Research and Education<a class="headerlink" href="#an-rl-library-for-research-and-education" title="Permalink to this heading">¶</a></h1>
+<p><strong>Writing reinforcement learning algorithms is fun!</strong> <em>But after the fun, we have
+lots of boring things to implement</em>: run our agents in parallel, average and plot results,
+optimize hyperparameters, compare to baselines, create tricky environments etc etc!</p>
+<p><a class="reference external" href="https://github.com/rlberry-py/rlberry">rlberry</a> <strong>is here to make your life easier</strong> by doing all these things with a few lines of code, so that you can spend most of your time developing agents.</p>
+<p>We provide you a number of tools to help you achieve <strong>reproducibility</strong>, <strong>statistically comparisons</strong> of RL agents, and <strong>nice visualization</strong>.</p>
+<p>If you begin with <a class="reference external" href="https://github.com/rlberry-py/rlberry">rlberry</a>, <strong>check our</strong> <a class="reference internal" href="basics/quick_start_rl/quickstart.html#quick-start"><span class="std std-ref">RL quickstart</span></a> <strong>and our</strong> <a class="reference internal" href="basics/DeepRLTutorial/TutorialDeepRL.html#tutorialdeeprl"><span class="std std-ref">Deep RL quickstart</span></a>.</p>
+<div class="sd-container-fluid sd-sphinx-override sd-mb-4 docutils">
+<div class="sd-row sd-row-cols-3 sd-row-cols-xs-3 sd-row-cols-sm-3 sd-row-cols-md-3 sd-row-cols-lg-3 sd-g-3 sd-g-xs-3 sd-g-sm-3 sd-g-md-3 sd-g-lg-3 docutils">
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+Comprehensive workflow for RL research</div>
+<p class="sd-card-text">Tools designed to facilitate RL experimentation.</p>
+</div>
+<img alt="" class="sd-card-img-bottom" src="_images/experiment_manager_diagram1.png" />
+<a class="sd-stretched-link sd-hide-link-text reference internal" href="basics/quick_start_rl/quickstart.html#quick-start"><span class="std std-ref">Quick Start for Reinforcement Learning in rlberry</span></a></div>
+</div>
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+Statistical tests</div>
+<p class="sd-card-text">Statistical tools for agent comparison.</p>
+</div>
+<img alt="" class="sd-card-img-bottom" src="_images/adastop_boxplots1.png" />
+<a class="sd-stretched-link sd-hide-link-text reference internal" href="basics/comparison.html#comparison-page"><span class="std std-ref">Comparison of Agents</span></a></div>
+</div>
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+Visualization</div>
+<p class="sd-card-text">Proper smoothing and plot of confidence intervals.</p>
+</div>
+<img alt="" class="sd-card-img-bottom" src="_images/output_9_31.png" />
+<a class="sd-stretched-link sd-hide-link-text reference internal" href="basics/userguide/visualization.html#visu-userguide"><span class="std std-ref">Visualization of policies and plots of training/evaluation metrics in rlberry</span></a></div>
+</div>
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+Teaching tools</div>
+<p class="sd-card-text">Simple environments and tools for use in teaching RL.</p>
+</div>
+<img alt="" class="sd-card-img-bottom" src="_images/chain_thumb.jpg" />
+<a class="sd-stretched-link sd-hide-link-text reference external" href="https://github.com/rlberry-py/rlberry-scool"><span>https://github.com/rlberry-py/rlberry-scool</span></a></div>
+</div>
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+Hackable library</div>
+<p class="sd-card-text">Code is easy to read and easy to change.</p>
+</div>
+<img alt="" class="sd-card-img-bottom" src="_images/code.png" />
+<a class="sd-stretched-link sd-hide-link-text reference external" href="https://rlberry-py.github.io/rlberry/basics/userguide/agent.html#create-your-own-agent"><span>https://rlberry-py.github.io/rlberry/basics/userguide/agent.html#create-your-own-agent</span></a></div>
+</div>
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+Compatible</div>
+<p class="sd-card-text">Uses <em>stable-baselines</em>, <em>tensorboard</em>, <em>gymnasium</em>, and you can easily write your wrapper to use your own RL library. Visualization and statistical tool can be used with dataframes as input/output in order to be library-independent.</p>
+</div>
+<a class="sd-stretched-link sd-hide-link-text reference internal" href="user_guide.html#user-guide"><span class="std std-ref">User Guide</span></a></div>
+</div>
+</div>
+</div>
+</section>
+<section id="documentation-contents">
+<h1>Documentation Contents<a class="headerlink" href="#documentation-contents" title="Permalink to this heading">¶</a></h1>
+<p>You can find main documentation here :</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="installation.html#installation"><span class="std std-ref">Installation</span></a></p></li>
+<li><p><a class="reference internal" href="user_guide.html#user-guide"><span class="std std-ref">User Guide</span></a></p></li>
+<li><p><a class="reference internal" href="auto_examples/index.html#examples"><span class="std std-ref">Examples</span></a></p></li>
+<li><p><a class="reference internal" href="api.html"><span class="doc std std-doc">API</span></a></p></li>
+<li><p><a class="reference internal" href="changelog.html#changelog"><span class="std std-ref">Changelog</span></a></p></li>
+</ul>
+</section>
+<section id="contributing-to-rlberry">
+<h1>Contributing to rlberry<a class="headerlink" href="#contributing-to-rlberry" title="Permalink to this heading">¶</a></h1>
+<p>If you want to contribute to rlberry, check out <a class="reference internal" href="contributing.html#contributing"><span class="std std-ref">the contribution guidelines</span></a>.</p>
+</section>
+<section id="rlberry-main-features">
+<h1>rlberry main features<a class="headerlink" href="#rlberry-main-features" title="Permalink to this heading">¶</a></h1>
+<section id="experimentmanager">
+<h2>ExperimentManager<a class="headerlink" href="#experimentmanager" title="Permalink to this heading">¶</a></h2>
+<p>This is one of the core element in <a class="reference external" href="https://github.com/rlberry-py/rlberry">rlberry</a>. The <a class="reference internal" href="generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.experiment_manager.ExperimentManager"><span class="xref myst py py-class">ExperimentManager</span></a> allow you to easily make an experiment between an <a class="reference internal" href="basics/userguide/agent.html#agent-page"><span class="std std-ref">Agent</span></a> and an <a class="reference internal" href="basics/userguide/environment.html#environment-page"><span class="std std-ref">Environment</span></a>. It’s use to train, optimize hyperparameters, evaluate and gather statistics about an agent. See the <a class="reference internal" href="basics/userguide/experimentManager.html#experimentmanager-page"><span class="std std-ref">ExperimentManager</span></a> page.</p>
+</section>
+<section id="seeding-reproducibility">
+<h2>Seeding &amp; Reproducibility<a class="headerlink" href="#seeding-reproducibility" title="Permalink to this heading">¶</a></h2>
+<p><a class="reference external" href="https://github.com/rlberry-py/rlberry">rlberry</a> has a class <a class="reference internal" href="generated/rlberry.seeding.seeder.Seeder.html#rlberry.seeding.seeder.Seeder" title="rlberry.seeding.seeder.Seeder"><span class="xref myst py py-class">Seeder</span></a> that conveniently wraps a <a class="reference external" href="https://numpy.org/doc/stable/reference/random/parallel.html">NumPy SeedSequence</a>,
+and allows us to create independent random number generators for different objects and threads, using a single
+<a class="reference internal" href="generated/rlberry.seeding.seeder.Seeder.html#rlberry.seeding.seeder.Seeder" title="rlberry.seeding.seeder.Seeder"><span class="xref myst py py-class">Seeder</span></a> instance. See the <a class="reference internal" href="basics/userguide/seeding.html#seeding-page"><span class="std std-ref">Seeding</span></a> page.</p>
+<p>You can also save and load your experiments.
+It could be useful in many way :</p>
+<ul class="simple">
+<li><p>don’t repeat the training part every time.</p></li>
+<li><p>continue a previous training (or doing checkpoint).</p></li>
+</ul>
+<p>See the <a class="reference internal" href="basics/userguide/save_load.html#save-load-page"><span class="std std-ref">Save and Load Experiment</span></a> page.</p>
+</section>
+<section id="statistical-comparison-of-rl-agents">
+<h2>Statistical comparison of RL agents<a class="headerlink" href="#statistical-comparison-of-rl-agents" title="Permalink to this heading">¶</a></h2>
+<p>The principal goal of rlberry is to give tools for proper experimentations in RL. In research, one of the usual tasks is to compare two or more RL agents, and for this one typically uses several seeds to train the agents several times and compare the resulting mean reward. We show here how to make sure that enough data and enough information were acquired to assert that two RL agents are indeed different. We propose two ways to do that: first are classical hypothesis testing and second are sequential testing scheme with AdaStop that aim at saving computation by stopping early if possible.</p>
+<section id="compare-agents">
+<h3>Compare agents<a class="headerlink" href="#compare-agents" title="Permalink to this heading">¶</a></h3>
+<p>We give tools to compare several trained agents using the mean over a specify number of evaluations for each agent. The explanation can be found in the <a class="reference internal" href="basics/comparison.html#comparison-page"><span class="std std-ref">user guide</span></a>.</p>
+</section>
+<section id="adastop">
+<h3>AdaStop<a class="headerlink" href="#adastop" title="Permalink to this heading">¶</a></h3>
+<p>AdaStop is a Sequential testing for efficient and reliable comparison of stochastic algorithms. It has been successfully used to compare efficiently RL agents and an example of such use can be found in the <a class="reference internal" href="basics/userguide/adastop.html#adastop-userguide"><span class="std std-ref">user guide</span></a>.</p>
+<p><a class="reference external" href="https://hal-lara.archives-ouvertes.fr/hal-04132861/">linked paper</a></p>
+<p><a class="reference external" href="https://github.com/TimotheeMathieu/adastop">GitHub</a></p>
+</section>
+</section>
+<section id="visualization">
+<h2>Visualization<a class="headerlink" href="#visualization" title="Permalink to this heading">¶</a></h2>
+<p>TODO :</p>
+</section>
+<section id="and-many-more">
+<h2>And many more !<a class="headerlink" href="#and-many-more" title="Permalink to this heading">¶</a></h2>
+<p>Check the <a class="reference internal" href="user_guide.html#user-guide"><span class="std std-ref">User Guide</span></a> to find more tools !</p>
+</section>
+</section>
+
+
+      </div>
+    <div class="container">
+      <footer class="sk-content-footer">
+      </footer>
+    </div>
+  </div>
+</div>
+<script src="_static/js/vendor/bootstrap.min.js"></script>
+
+<script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-22606712-2', 'auto');
+    ga('set', 'anonymizeIp', true);
+    ga('send', 'pageview');
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+<script>
+$(document).ready(function() {
+    /* Add a [>>>] button on the top-right corner of code samples to hide
+     * the >>> and ... prompts and the output and thus make the code
+     * copyable. */
+    var div = $('.highlight-python .highlight,' +
+                '.highlight-python3 .highlight,' +
+                '.highlight-pycon .highlight,' +
+		'.highlight-default .highlight')
+    var pre = div.find('pre');
+
+    // get the styles from the current theme
+    pre.parent().parent().css('position', 'relative');
+    var hide_text = 'Hide prompts and outputs';
+    var show_text = 'Show prompts and outputs';
+
+    // create and add the button to all the code blocks that contain >>>
+    div.each(function(index) {
+        var jthis = $(this);
+        if (jthis.find('.gp').length > 0) {
+            var button = $('<span class="copybutton">&gt;&gt;&gt;</span>');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+            jthis.prepend(button);
+        }
+        // tracebacks (.gt) contain bare text elements that need to be
+        // wrapped in a span to work with .nextUntil() (see later)
+        jthis.find('pre:has(.gt)').contents().filter(function() {
+            return ((this.nodeType == 3) && (this.data.trim().length > 0));
+        }).wrap('<span>');
+    });
+
+    // define the behavior of the button when it's clicked
+    $('.copybutton').click(function(e){
+        e.preventDefault();
+        var button = $(this);
+        if (button.data('hidden') === 'false') {
+            // hide the code output
+            button.parent().find('.go, .gp, .gt').hide();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'hidden');
+            button.css('text-decoration', 'line-through');
+            button.attr('title', show_text);
+            button.data('hidden', 'true');
+        } else {
+            // show the code output
+            button.parent().find('.go, .gp, .gt').show();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'visible');
+            button.css('text-decoration', 'none');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+        }
+    });
+
+	/*** Add permalink buttons next to glossary terms ***/
+	$('dl.glossary > dt[id]').append(function() {
+		return ('<a class="headerlink" href="#' +
+			    this.getAttribute('id') +
+			    '" title="Permalink to this term">¶</a>');
+	});
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,529 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  
+  <title>Quick Start for Reinforcement Learning in rlberry &mdash; rlberry 0.7.3.post16.dev0+8710009 documentation</title>
+  
+  <link rel="canonical" href="https://rlberry-py.github.io/rlberry/basics/quick_start_rl/quickstart.html" />
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/vendor/bootstrap.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sg_gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sg_gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sg_gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sphinx-design.4cbf315f70debaebd550c87a6162cf0f.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+<script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+<script src="../../_static/js/vendor/jquery-3.6.3.slim.min.js"></script> 
+</head>
+<body>
+
+
+<nav id="navbar" class="sk-docs-navbar navbar navbar-expand-md navbar-light bg-light py-0">
+  <div class="container-fluid sk-docs-container px-0">
+    <button
+      id="sk-navbar-toggler"
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="sk-navbar-collapse collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../index.html">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../installation.html">Install</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../user_guide.html">User Guide</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../auto_examples/index.html">Examples</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../api.html">API</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../changelog.html">Changelog</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../about.html">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="https://github.com/rlberry-py/rlberry">GitHub</a>
+        </li>
+        <!--
+        <li class="nav-item dropdown nav-more-item-dropdown">
+          <a class="sk-nav-link nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">More</a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          </div>
+        </li>-->
+    </ul>
+      <div id="searchbox" role="search">
+          <div class="searchformwrapper">
+            <form action="https://duckduckgo.com/">
+            <input type="hidden" id="sites" name="sites" value="https://rlberry-py.github.io/rlberry/">
+            <input type="search" placeholder="Search &hellip;" value="" name="q" />
+            <input class="sk-search-text-btn" type="submit" value="Go" /></form>
+
+          </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="d-flex" id="sk-doc-wrapper">
+    <input type="checkbox" name="sk-toggle-checkbox" id="sk-toggle-checkbox">
+    <label id="sk-sidemenu-toggle" class="sk-btn-toggle-toc btn sk-btn-primary" for="sk-toggle-checkbox">Toggle Menu</label>
+    <div id="sk-sidebar-wrapper" class="border-right">
+      <div class="sk-sidebar-toc-wrapper">
+        <div class="sk-sidebar-toc-logo">
+        </div>
+	<br>
+        <div class="alert alert-warning p-1 mb-2" role="alert">
+
+          <p class="text-center mb-0">
+          rlberry 0.7.3.post16.dev0+8710009<br/>
+          <a href="../../versions.html">Other versions</a>
+          </p>
+
+        </div>
+            <div class="sk-sidebar-toc">
+              <ul>
+<li><a class="reference internal" href="#">Quick Start for Reinforcement Learning in rlberry</a><ul>
+<li><a class="reference internal" href="#importing-required-libraries">Importing required libraries</a></li>
+<li><a class="reference internal" href="#choosing-an-rl-environment">Choosing an RL environment</a></li>
+<li><a class="reference internal" href="#defining-an-agent-and-a-baseline">Defining an agent and a baseline</a></li>
+<li><a class="reference internal" href="#experiment-manager">Experiment Manager</a></li>
+<li><a class="reference internal" href="#comparing-the-expected-rewards-of-the-final-policies">Comparing the expected rewards of the final policies</a></li>
+<li><a class="reference internal" href="#comparing-the-agents-during-the-learning-period">Comparing the agents during the learning period</a></li>
+</ul>
+</li>
+</ul>
+
+            </div>
+      </div>
+    </div>
+    <div id="sk-page-content-wrapper">
+      <div class="sk-page-content container-fluid body px-md-3" role="main">
+        
+  <section id="quick-start-for-reinforcement-learning-in-rlberry">
+<span id="quick-start"></span><h1>Quick Start for Reinforcement Learning in rlberry<a class="headerlink" href="#quick-start-for-reinforcement-learning-in-rlberry" title="Permalink to this heading">¶</a></h1>
+<p>$$\def\CC{\bf C}
+\def\QQ{\bf Q}
+\def\RR{\bf R}
+\def\ZZ{\bf Z}
+\def\NN{\bf N}$$</p>
+<section id="importing-required-libraries">
+<h2>Importing required libraries<a class="headerlink" href="#importing-required-libraries" title="Permalink to this heading">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">rlberry.agents</span> <span class="kn">import</span> <span class="n">AgentWithSimplePolicy</span>
+<span class="kn">from</span> <span class="nn">rlberry_scool.agents</span> <span class="kn">import</span> <span class="n">UCBVIAgent</span>
+<span class="kn">from</span> <span class="nn">rlberry_scool.envs</span> <span class="kn">import</span> <span class="n">Chain</span>
+<span class="kn">from</span> <span class="nn">rlberry.manager</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ExperimentManager</span><span class="p">,</span>
+    <span class="n">evaluate_agents</span><span class="p">,</span>
+    <span class="n">plot_writer_data</span><span class="p">,</span>
+    <span class="n">read_writer_data</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="choosing-an-rl-environment">
+<h2>Choosing an RL environment<a class="headerlink" href="#choosing-an-rl-environment" title="Permalink to this heading">¶</a></h2>
+<p>In this tutorial, we will use the Chain(from <a class="reference external" href="https://github.com/rlberry-py/rlberry-scool">rlberry_scool</a>)
+environment, which is a very simple environment where the agent has to
+go from one end of a chain to the other end.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">env_ctor</span> <span class="o">=</span> <span class="n">Chain</span>
+<span class="n">env_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">L</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">fail_prob</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="c1"># chain of length 10. With proba 0.1, the agent will not be able to take the action it wants to take.</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">env_ctor</span><span class="p">(</span><span class="o">**</span><span class="n">env_kwargs</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The agent has two actions, going left or going right, but it might
+move in the opposite direction according to a failure probability
+<code class="docutils literal notranslate"><span class="pre">fail_prob=0.1</span></code>.</p>
+<p>Let us see a graphical representation</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">env</span><span class="o">.</span><span class="n">enable_rendering</span><span class="p">()</span>
+<span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">tt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+    <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">done</span> <span class="o">=</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span>
+<span class="n">env</span><span class="o">.</span><span class="n">save_gif</span><span class="p">(</span><span class="s2">&quot;gif_chain.gif&quot;</span><span class="p">)</span>
+<span class="c1"># clear rendering data</span>
+<span class="n">env</span><span class="o">.</span><span class="n">clear_render_buffer</span><span class="p">()</span>
+<span class="n">env</span><span class="o">.</span><span class="n">disable_rendering</span><span class="p">()</span>
+</pre></div>
+</div>
+</br>
+<video controls="controls" style="max-width: 600px;">
+   <source src="../../video_chain_quickstart.mp4" type="video/mp4">
+</video>
+</section>
+<section id="defining-an-agent-and-a-baseline">
+<h2>Defining an agent and a baseline<a class="headerlink" href="#defining-an-agent-and-a-baseline" title="Permalink to this heading">¶</a></h2>
+<p>We will compare a RandomAgent (which select random action) to the
+UCBVIAgent(from <a class="reference external" href="https://github.com/rlberry-py/rlberry-scool">rlberry_scool</a>), which is an algorithm that is designed to perform an
+efficient exploration. Our goal is then to assess the performance of the
+two algorithms.</p>
+<p>This is the code to create your RandomAgent agent :</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create random agent as a baseline</span>
+<span class="k">class</span> <span class="nc">RandomAgent</span><span class="p">(</span><span class="n">AgentWithSimplePolicy</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;RandomAgent&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">AgentWithSimplePolicy</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">budget</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">ep</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">budget</span><span class="p">):</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span>
+            <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">policy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>  <span class="c1"># choose an action at random</span>
+</pre></div>
+</div>
+</section>
+<section id="experiment-manager">
+<h2>Experiment Manager<a class="headerlink" href="#experiment-manager" title="Permalink to this heading">¶</a></h2>
+<p>One of the main feature of rlberry is its
+<a class="reference internal" href="../../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager"><span class="xref myst py py-class">ExperimentManager</span></a>
+class. Here is a diagram to explain briefly what it does.</p>
+<img alt="../../_images/experiment_manager_diagram.png" class="align-center" src="../../_images/experiment_manager_diagram.png" />
+<p>In a few words, ExperimentManager spawns agents and environments for
+training and then once the agents are trained, it uses these agents and
+new environments to evaluate how well the agent perform. All of these
+steps can be done several times to assess the stochasticity of agents and/or of the environment.</p>
+</section>
+<section id="comparing-the-expected-rewards-of-the-final-policies">
+<h2>Comparing the expected rewards of the final policies<a class="headerlink" href="#comparing-the-expected-rewards-of-the-final-policies" title="Permalink to this heading">¶</a></h2>
+<p>We want to assess the expected reward of the policy learned by our
+agents for a time horizon of (say) <span class="math notranslate nohighlight">\(T=20\)</span>.</p>
+<p>To evaluate the agents during the training, we can (arbitrary) use 10 Monte-Carlo simulations (<code class="docutils literal notranslate"><span class="pre">n_simulations</span></code> in eval_kwargs), i.e., we do the evaluation 10 times for each agent and at the end we take the mean of the obtained reward.</p>
+<p>To check variability, we can train many instance of the same agent with
+<code class="docutils literal notranslate"><span class="pre">n_fit</span></code> (here, we use only 1 to be faster). Each instance of agent will train with a specific
+budget <code class="docutils literal notranslate"><span class="pre">fit_budget</span></code> (here 100). Remark that <code class="docutils literal notranslate"><span class="pre">fit_budget</span></code> may not mean
+the same thing among agents.</p>
+<p>In order to manage the agents, we use an Experiment Manager. The manager
+will then spawn agents as desired during the experiment.</p>
+<p>To summarize:
+We will train 1 agent (<code class="docutils literal notranslate"><span class="pre">n_fit</span></code>) with a budget of 100 (<code class="docutils literal notranslate"><span class="pre">fit_budget</span></code>). During the training, the evaluation will be on 10 Monte-Carlo run (<code class="docutils literal notranslate"><span class="pre">n_simulations</span></code>), and we doing it for both Agent (<code class="docutils literal notranslate"><span class="pre">UCBVIAgent</span></code> and <code class="docutils literal notranslate"><span class="pre">RandomAgent</span></code>)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define parameters</span>
+<span class="n">ucbvi_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;gamma&quot;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span> <span class="s2">&quot;horizon&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">}</span>
+
+<span class="c1"># Create ExperimentManager to fit 1 agent</span>
+<span class="n">ucbvi_stats</span> <span class="o">=</span> <span class="n">ExperimentManager</span><span class="p">(</span>
+    <span class="n">UCBVIAgent</span><span class="p">,</span>
+    <span class="p">(</span><span class="n">env_ctor</span><span class="p">,</span> <span class="n">env_kwargs</span><span class="p">),</span>
+    <span class="n">fit_budget</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">eval_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">eval_horizon</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">n_simulations</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+    <span class="n">init_kwargs</span><span class="o">=</span><span class="n">ucbvi_params</span><span class="p">,</span>
+    <span class="n">n_fit</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">ucbvi_stats</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+<span class="c1"># Create ExperimentManager for baseline</span>
+<span class="n">baseline_stats</span> <span class="o">=</span> <span class="n">ExperimentManager</span><span class="p">(</span>
+    <span class="n">RandomAgent</span><span class="p">,</span>
+    <span class="p">(</span><span class="n">env_ctor</span><span class="p">,</span> <span class="n">env_kwargs</span><span class="p">),</span>
+    <span class="n">fit_budget</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">eval_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">eval_horizon</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">n_simulations</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+    <span class="n">n_fit</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">baseline_stats</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>    [INFO] Running ExperimentManager fit() for UCBVI with n_fit = 1 and max_workers = None.
+    [INFO] ... trained!
+    [INFO] Running ExperimentManager fit() for RandomAgent with n_fit = 1 and max_workers = None.
+    [INFO] ... trained!
+</pre></div>
+</div>
+</br>
+<p>Evaluating and comparing the agents :</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">output</span> <span class="o">=</span> <span class="n">evaluate_agents</span><span class="p">([</span><span class="n">ucbvi_stats</span><span class="p">,</span> <span class="n">baseline_stats</span><span class="p">],</span> <span class="n">n_simulations</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>    [INFO] Evaluating UCBVI...
+    [INFO] [eval]... simulation 1/10
+    [INFO] [eval]... simulation 2/10
+    [INFO] [eval]... simulation 3/10
+    [INFO] [eval]... simulation 4/10
+    [INFO] [eval]... simulation 5/10
+    [INFO] [eval]... simulation 6/10
+    [INFO] [eval]... simulation 7/10
+    [INFO] [eval]... simulation 8/10
+    [INFO] [eval]... simulation 9/10
+    [INFO] [eval]... simulation 10/10
+    [INFO] Evaluating RandomAgent...
+    [INFO] [eval]... simulation 1/10
+    [INFO] [eval]... simulation 2/10
+    [INFO] [eval]... simulation 3/10
+    [INFO] [eval]... simulation 4/10
+    [INFO] [eval]... simulation 5/10
+    [INFO] [eval]... simulation 6/10
+    [INFO] [eval]... simulation 7/10
+    [INFO] [eval]... simulation 8/10
+    [INFO] [eval]... simulation 9/10
+    [INFO] [eval]... simulation 10/10
+</pre></div>
+</div>
+</br>
+<img alt="../../_images/Figure_1.png" class="align-center" src="../../_images/Figure_1.png" />
+<p><span>☀</span> : For more in depth methodology to compare agents, you can check <a class="reference internal" href="../comparison.html#comparison-page"><span class="std std-ref">here</span></a></p>
+</section>
+<section id="comparing-the-agents-during-the-learning-period">
+<h2>Comparing the agents during the learning period<a class="headerlink" href="#comparing-the-agents-during-the-learning-period" title="Permalink to this heading">¶</a></h2>
+<p>In the previous section, we compared the performance of the <strong>final</strong>
+policies learned by the agents, <strong>after</strong> the learning period.</p>
+<p>To compare the performance of the agents <strong>during</strong> the learning period
+(in the fit method), we can estimate their cumulative regret, which is
+the difference between the rewards gathered by the agents during
+training and the rewards of an optimal agent. Alternatively, if we
+cannot compute the optimal policy, we could simply compare the rewards
+gathered during learning, instead of the regret.</p>
+<p>First, we have to record the reward during the fit as this is not done
+automatically. To do this, we can use the <code class="docutils literal notranslate"><span class="pre">writer_extra</span></code> optional parameter.</p>
+<p>Then, we fit the two agents.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ucbvi_params</span><span class="p">[</span><span class="s2">&quot;writer_extra&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;reward&quot;</span>
+<span class="n">random_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;writer_extra&quot;</span><span class="p">:</span> <span class="s2">&quot;reward&quot;</span><span class="p">}</span>
+
+<span class="c1"># Create ExperimentManager for UCBI to fit 10 agents</span>
+<span class="n">ucbvi_stats</span> <span class="o">=</span> <span class="n">ExperimentManager</span><span class="p">(</span>
+    <span class="n">UCBVIAgent</span><span class="p">,</span>
+    <span class="p">(</span><span class="n">env_ctor</span><span class="p">,</span> <span class="n">env_kwargs</span><span class="p">),</span>
+    <span class="n">fit_budget</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+    <span class="n">init_kwargs</span><span class="o">=</span><span class="n">ucbvi_params</span><span class="p">,</span>
+    <span class="n">n_fit</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">agent_name</span><span class="o">=</span><span class="s2">&quot;UCBVIAgent2&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">ucbvi_stats</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+<span class="c1"># Create ExperimentManager for baseline to fit 10 agents</span>
+<span class="n">baseline_stats</span> <span class="o">=</span> <span class="n">ExperimentManager</span><span class="p">(</span>
+    <span class="n">RandomAgent</span><span class="p">,</span>
+    <span class="p">(</span><span class="n">env_ctor</span><span class="p">,</span> <span class="n">env_kwargs</span><span class="p">),</span>
+    <span class="n">fit_budget</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span>
+    <span class="n">init_kwargs</span><span class="o">=</span><span class="n">random_params</span><span class="p">,</span>
+    <span class="n">n_fit</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">agent_name</span><span class="o">=</span><span class="s2">&quot;RandomAgent2&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">baseline_stats</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>    [INFO] Running ExperimentManager fit() for UCBVIAgent2 with n_fit = 10 and max_workers = None.
+    [INFO] ... trained!
+    [INFO] Running ExperimentManager fit() for RandomAgent2 with n_fit = 10 and max_workers = None.
+    [INFO] ... trained!
+    [INFO] Running ExperimentManager fit() for OptimalAgent with n_fit = 10 and max_workers = None.
+    [INFO] ... trained!
+</pre></div>
+</div>
+<p>Remark that <code class="docutils literal notranslate"><span class="pre">fit_budget</span></code> may not mean the same thing among agents. For RandomAgent <code class="docutils literal notranslate"><span class="pre">fit_budget</span></code> is the number of steps in the environments that the agent is allowed to take.</p>
+<p>The reward that we recover is recorded every time <code class="docutils literal notranslate"><span class="pre">env.step</span></code> is called.</p>
+<p>For UCBVI this is the number of iterations of the algorithm and in each
+iteration, the environment takes 100 steps (<code class="docutils literal notranslate"><span class="pre">horizon</span></code>) times the
+<code class="docutils literal notranslate"><span class="pre">fit_budget</span></code>. Hence the fit_budget used here</p>
+<p>Finally, we plot the reward. Here you can see the mean value over the 10 fitted agent, with 2 options (raw and smoothed). Note that, to be able to see the smoothed version, you must have installed the extra package <code class="docutils literal notranslate"><span class="pre">scikit-fda</span></code>, (For more information, you can check the options on the <a class="reference internal" href="../../installation.html#options"><span class="std std-ref">install page</span></a>).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot of the reward.</span>
+<span class="n">output</span> <span class="o">=</span> <span class="n">plot_writer_data</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">ucbvi_stats</span><span class="p">,</span> <span class="n">baseline_stats</span><span class="p">],</span>
+    <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;reward&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Episode Reward&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="c1"># Plot of the reward.</span>
+<span class="n">output</span> <span class="o">=</span> <span class="n">plot_writer_data</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">ucbvi_stats</span><span class="p">,</span> <span class="n">baseline_stats</span><span class="p">],</span>
+    <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;reward&quot;</span><span class="p">,</span>
+    <span class="n">smooth</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Episode Reward smoothed&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../_images/Figure_2.png" class="align-center" src="../../_images/Figure_2.png" />
+<img alt="../../_images/Figure_3.png" class="align-center" src="../../_images/Figure_3.png" />
+<p><span>☀</span> : As you can see, different visualizations are possible. For more information on plots and visualization, you can check <a class="reference internal" href="#visualization_page"><span class="xref myst">here (in construction)</span></a></p>
+</section>
+</section>
+
+
+      </div>
+    <div class="container">
+      <footer class="sk-content-footer">
+            &copy; 2023, rlberry team.
+          <a href="../../_sources/basics/quick_start_rl/quickstart.md.txt" rel="nofollow">Show this page source</a>
+      </footer>
+    </div>
+  </div>
+</div>
+<script src="../../_static/js/vendor/bootstrap.min.js"></script>
+
+<script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-22606712-2', 'auto');
+    ga('set', 'anonymizeIp', true);
+    ga('send', 'pageview');
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+<script>
+$(document).ready(function() {
+    /* Add a [>>>] button on the top-right corner of code samples to hide
+     * the >>> and ... prompts and the output and thus make the code
+     * copyable. */
+    var div = $('.highlight-python .highlight,' +
+                '.highlight-python3 .highlight,' +
+                '.highlight-pycon .highlight,' +
+		'.highlight-default .highlight')
+    var pre = div.find('pre');
+
+    // get the styles from the current theme
+    pre.parent().parent().css('position', 'relative');
+    var hide_text = 'Hide prompts and outputs';
+    var show_text = 'Show prompts and outputs';
+
+    // create and add the button to all the code blocks that contain >>>
+    div.each(function(index) {
+        var jthis = $(this);
+        if (jthis.find('.gp').length > 0) {
+            var button = $('<span class="copybutton">&gt;&gt;&gt;</span>');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+            jthis.prepend(button);
+        }
+        // tracebacks (.gt) contain bare text elements that need to be
+        // wrapped in a span to work with .nextUntil() (see later)
+        jthis.find('pre:has(.gt)').contents().filter(function() {
+            return ((this.nodeType == 3) && (this.data.trim().length > 0));
+        }).wrap('<span>');
+    });
+
+    // define the behavior of the button when it's clicked
+    $('.copybutton').click(function(e){
+        e.preventDefault();
+        var button = $(this);
+        if (button.data('hidden') === 'false') {
+            // hide the code output
+            button.parent().find('.go, .gp, .gt').hide();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'hidden');
+            button.css('text-decoration', 'line-through');
+            button.attr('title', show_text);
+            button.data('hidden', 'true');
+        } else {
+            // show the code output
+            button.parent().find('.go, .gp, .gt').show();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'visible');
+            button.css('text-decoration', 'none');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+        }
+    });
+
+	/*** Add permalink buttons next to glossary terms ***/
+	$('dl.glossary > dt[id]').append(function() {
+		return ('<a class="headerlink" href="#' +
+			    this.getAttribute('id') +
+			    '" title="Permalink to this term">¶</a>');
+	});
+  /*** Hide navbar when scrolling down ***/
+  // Returns true when headerlink target matches hash in url
+  (function() {
+    hashTargetOnTop = function() {
+        var hash = window.location.hash;
+        if ( hash.length < 2 ) { return false; }
+
+        var target = document.getElementById( hash.slice(1) );
+        if ( target === null ) { return false; }
+
+        var top = target.getBoundingClientRect().top;
+        return (top < 2) && (top > -2);
+    };
+
+    // Hide navbar on load if hash target is on top
+    var navBar = document.getElementById("navbar");
+    var navBarToggler = document.getElementById("sk-navbar-toggler");
+    var navBarHeightHidden = "-" + navBar.getBoundingClientRect().height + "px";
+    var $window = $(window);
+
+    hideNavBar = function() {
+        navBar.style.top = navBarHeightHidden;
+    };
+
+    showNavBar = function() {
+        navBar.style.top = "0";
+    }
+
+    if (hashTargetOnTop()) {
+        hideNavBar()
+    }
+
+    var prevScrollpos = window.pageYOffset;
+    hideOnScroll = function(lastScrollTop) {
+        if (($window.width() < 768) && (navBarToggler.getAttribute("aria-expanded") === 'true')) {
+            return;
+        }
+        if (lastScrollTop > 2 && (prevScrollpos <= lastScrollTop) || hashTargetOnTop()){
+            hideNavBar()
+        } else {
+            showNavBar()
+        }
+        prevScrollpos = lastScrollTop;
+    };
+
+    /*** high performance scroll event listener***/
+    var raf = window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        window.oRequestAnimationFrame;
+    var lastScrollTop = $window.scrollTop();
+
+    if (raf) {
+        loop();
+    }
+
+    function loop() {
+        var scrollTop = $window.scrollTop();
+        if (lastScrollTop === scrollTop) {
+            raf(loop);
+            return;
+        } else {
+            lastScrollTop = scrollTop;
+            hideOnScroll(lastScrollTop);
+            raf(loop);
+        }
+    }
+  })();
+});
+
+</script>
+    
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    
+</body>
+</html>

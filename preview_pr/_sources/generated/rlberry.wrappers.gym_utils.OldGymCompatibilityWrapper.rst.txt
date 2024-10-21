@@ -1,0 +1,12 @@
+﻿:mod:`rlberry.wrappers.gym_utils`.OldGymCompatibilityWrapper
+===================================================================
+
+.. currentmodule:: rlberry.wrappers.gym_utils
+
+.. autoclass:: OldGymCompatibilityWrapper
+
+.. include:: rlberry.wrappers.gym_utils.OldGymCompatibilityWrapper.examples
+
+.. raw:: html
+
+    <div class="clearer"></div>

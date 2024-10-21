@@ -1,0 +1,628 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  
+  <title>rlberry.agents.Agent &mdash; rlberry 0.7.3.post16.dev0+8710009 documentation</title>
+  
+  <link rel="canonical" href="https://rlberry-py.github.io/rlberry/generated/rlberry.agents.Agent.html" />
+
+  
+
+  <link rel="stylesheet" href="../_static/css/vendor/bootstrap.min.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sg_gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sg_gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sg_gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sphinx-design.4cbf315f70debaebd550c87a6162cf0f.min.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+<script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+<script src="../_static/js/vendor/jquery-3.6.3.slim.min.js"></script> 
+</head>
+<body>
+
+
+<nav id="navbar" class="sk-docs-navbar navbar navbar-expand-md navbar-light bg-light py-0">
+  <div class="container-fluid sk-docs-container px-0">
+    <button
+      id="sk-navbar-toggler"
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="sk-navbar-collapse collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../index.html">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../installation.html">Install</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../user_guide.html">User Guide</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../auto_examples/index.html">Examples</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../api.html">API</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../changelog.html">Changelog</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../about.html">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="https://github.com/rlberry-py/rlberry">GitHub</a>
+        </li>
+        <!--
+        <li class="nav-item dropdown nav-more-item-dropdown">
+          <a class="sk-nav-link nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">More</a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          </div>
+        </li>-->
+    </ul>
+      <div id="searchbox" role="search">
+          <div class="searchformwrapper">
+            <form action="https://duckduckgo.com/">
+            <input type="hidden" id="sites" name="sites" value="https://rlberry-py.github.io/rlberry/">
+            <input type="search" placeholder="Search &hellip;" value="" name="q" />
+            <input class="sk-search-text-btn" type="submit" value="Go" /></form>
+
+          </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="d-flex" id="sk-doc-wrapper">
+    <input type="checkbox" name="sk-toggle-checkbox" id="sk-toggle-checkbox">
+    <label id="sk-sidemenu-toggle" class="sk-btn-toggle-toc btn sk-btn-primary" for="sk-toggle-checkbox">Toggle Menu</label>
+    <div id="sk-sidebar-wrapper" class="border-right">
+      <div class="sk-sidebar-toc-wrapper">
+        <div class="sk-sidebar-toc-logo">
+        </div>
+	<br>
+        <div class="alert alert-warning p-1 mb-2" role="alert">
+
+          <p class="text-center mb-0">
+          rlberry 0.7.3.post16.dev0+8710009<br/>
+          <a href="../versions.html">Other versions</a>
+          </p>
+
+        </div>
+            <div class="sk-sidebar-toc">
+              <ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">rlberry.agents</span></code>.Agent</a><ul>
+<li><a class="reference internal" href="#rlberry.agents.Agent"><code class="docutils literal notranslate"><span class="pre">Agent</span></code></a><ul>
+<li><a class="reference internal" href="#rlberry.agents.Agent.eval"><code class="docutils literal notranslate"><span class="pre">Agent.eval()</span></code></a></li>
+<li><a class="reference internal" href="#rlberry.agents.Agent.fit"><code class="docutils literal notranslate"><span class="pre">Agent.fit()</span></code></a></li>
+<li><a class="reference internal" href="#rlberry.agents.Agent.get_params"><code class="docutils literal notranslate"><span class="pre">Agent.get_params()</span></code></a></li>
+<li><a class="reference internal" href="#rlberry.agents.Agent.load"><code class="docutils literal notranslate"><span class="pre">Agent.load()</span></code></a></li>
+<li><a class="reference internal" href="#rlberry.agents.Agent.output_dir"><code class="docutils literal notranslate"><span class="pre">Agent.output_dir</span></code></a></li>
+<li><a class="reference internal" href="#rlberry.agents.Agent.reseed"><code class="docutils literal notranslate"><span class="pre">Agent.reseed()</span></code></a></li>
+<li><a class="reference internal" href="#rlberry.agents.Agent.rng"><code class="docutils literal notranslate"><span class="pre">Agent.rng</span></code></a></li>
+<li><a class="reference internal" href="#rlberry.agents.Agent.sample_parameters"><code class="docutils literal notranslate"><span class="pre">Agent.sample_parameters()</span></code></a></li>
+<li><a class="reference internal" href="#rlberry.agents.Agent.save"><code class="docutils literal notranslate"><span class="pre">Agent.save()</span></code></a></li>
+<li><a class="reference internal" href="#rlberry.agents.Agent.set_writer"><code class="docutils literal notranslate"><span class="pre">Agent.set_writer()</span></code></a></li>
+<li><a class="reference internal" href="#rlberry.agents.Agent.thread_shared_data"><code class="docutils literal notranslate"><span class="pre">Agent.thread_shared_data</span></code></a></li>
+<li><a class="reference internal" href="#rlberry.agents.Agent.unique_id"><code class="docutils literal notranslate"><span class="pre">Agent.unique_id</span></code></a></li>
+<li><a class="reference internal" href="#rlberry.agents.Agent.writer"><code class="docutils literal notranslate"><span class="pre">Agent.writer</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#examples-using-rlberry-agents-agent">Examples using <code class="docutils literal notranslate"><span class="pre">rlberry.agents.Agent</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+            </div>
+      </div>
+    </div>
+    <div id="sk-page-content-wrapper">
+      <div class="sk-page-content container-fluid body px-md-3" role="main">
+        
+  <section id="rlberry-agents-agent">
+<h1><code class="xref py py-mod docutils literal notranslate"><span class="pre">rlberry.agents</span></code>.Agent<a class="headerlink" href="#rlberry-agents-agent" title="Permalink to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="rlberry.agents.Agent">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlberry.agents.</span></span><span class="sig-name descname"><span class="pre">Agent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Env</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Env</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eval_env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Env</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Env</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy_env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compress_pickle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seeder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="rlberry.seeding.seeder.Seeder.html#rlberry.seeding.seeder.Seeder" title="rlberry.seeding.seeder.Seeder"><span class="pre">Seeder</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">writer_extra</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_execution_metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ExecutionMetadata</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_default_writer_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_thread_shared_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rlberry/agents/agent.html#Agent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.agents.Agent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Basic interface for agents.</p>
+<p>If the ‘inherited class’ from Agent use the torch lib, it is highly recommended to inherit <code class="xref py py-class docutils literal notranslate"><span class="pre">AgentTorch</span></code> instead.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<div class="line-block">
+<div class="line">1 - Abstract Class : cannot be instantiated. The abstract methods have to be overridden by the ‘inherited class’ agent.</div>
+<div class="line">2 - Classes that implements this interface can send <cite>**kwargs</cite> to initiate <code class="code docutils literal notranslate"><span class="pre">Agent.__init__()</span></code>, but the keys must match the parameters.</div>
+</div>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>env</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.Env</span></code> or tuple (constructor, kwargs)</span></dt><dd><p>Environment on which to train the agent.</p>
+</dd>
+<dt><strong>eval_env</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.Env</span></code> or tuple (constructor, kwargs)</span></dt><dd><p>Environment on which to evaluate the agent. If None, copied from env.</p>
+</dd>
+<dt><strong>copy_env</strong><span class="classifier">bool</span></dt><dd><p>If true, makes a deep copy of the environment.</p>
+</dd>
+<dt><strong>compress_pickle</strong><span class="classifier">bool</span></dt><dd><p>If true, compress the save files using bz2.</p>
+</dd>
+<dt><strong>seeder</strong><span class="classifier"><a class="reference internal" href="rlberry.seeding.seeder.Seeder.html#rlberry.seeding.seeder.Seeder" title="rlberry.seeding.seeder.Seeder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Seeder</span></code></a>, int, or None</span></dt><dd><p>Seeder/seed for random number generation.</p>
+</dd>
+<dt><strong>output_dir</strong><span class="classifier">str or Path</span></dt><dd><p>Directory that the agent can use to store data.</p>
+</dd>
+<dt><strong>_execution_metadata</strong><span class="classifier">ExecutionMetadata, optional</span></dt><dd><p>Extra information about agent execution (e.g. about which is the process id where the agent is running).
+Used by <a class="reference internal" href="rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExperimentManager</span></code></a>.</p>
+</dd>
+<dt><strong>_default_writer_kwargs</strong><span class="classifier">dict, optional</span></dt><dd><p>Parameters to initialize <a class="reference internal" href="rlberry.utils.writers.DefaultWriter.html#rlberry.utils.writers.DefaultWriter" title="rlberry.utils.writers.DefaultWriter"><code class="xref py py-class docutils literal notranslate"><span class="pre">DefaultWriter</span></code></a> (attribute self.writer).
+Used by <a class="reference internal" href="rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExperimentManager</span></code></a>.</p>
+</dd>
+<dt><strong>_thread_shared_data</strong><span class="classifier">dict, optional</span></dt><dd><p>Used by <a class="reference internal" href="rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExperimentManager</span></code></a> to share data across Agent
+instances created in different threads.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes<span class="colon">:</span></dt>
+<dd class="field-even"><dl>
+<dt><strong>name</strong><span class="classifier">string</span></dt><dd><p>Agent identifier (not necessarily unique).</p>
+</dd>
+<dt><strong>env</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.Env</span></code> or tuple (constructor, kwargs)</span></dt><dd><p>Environment on which to train the agent.</p>
+</dd>
+<dt><strong>eval_env</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.Env</span></code> or tuple (constructor, kwargs)</span></dt><dd><p>Environment on which to evaluate the agent. If None, copied from env.</p>
+</dd>
+<dt><a class="reference internal" href="#rlberry.agents.Agent.writer" title="rlberry.agents.Agent.writer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">writer</span></code></a><span class="classifier">object, default: None</span></dt><dd><p>Writer object to log the output (e.g.</p>
+</dd>
+<dt><strong>seeder</strong><span class="classifier"><a class="reference internal" href="rlberry.seeding.seeder.Seeder.html#rlberry.seeding.seeder.Seeder" title="rlberry.seeding.seeder.Seeder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Seeder</span></code></a>, int, or None</span></dt><dd><p>Seeder/seed for random number generation.</p>
+</dd>
+<dt><a class="reference internal" href="#rlberry.agents.Agent.rng" title="rlberry.agents.Agent.rng"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rng</span></code></a><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random._generator.Generator</span></code></span></dt><dd><p>Random number generator.</p>
+</dd>
+<dt><a class="reference internal" href="#rlberry.agents.Agent.output_dir" title="rlberry.agents.Agent.output_dir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">output_dir</span></code></a><span class="classifier">str or Path</span></dt><dd><p>Directory that the agent can use to store data.</p>
+</dd>
+<dt><a class="reference internal" href="#rlberry.agents.Agent.unique_id" title="rlberry.agents.Agent.unique_id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unique_id</span></code></a><span class="classifier">str</span></dt><dd><p>Unique identifier for the agent instance.</p>
+</dd>
+<dt><strong>writer_extra</strong><span class="classifier">str in {“reward”, “action”, “action_and_reward”},</span></dt><dd><p>Scalar that will be recorded in the writer.</p>
+</dd>
+<dt><a class="reference internal" href="#rlberry.agents.Agent.thread_shared_data" title="rlberry.agents.Agent.thread_shared_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">thread_shared_data</span></code></a><span class="classifier">dict</span></dt><dd><p>Data shared by agent instances among different threads.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rlberry.agents.Agent.eval" title="rlberry.agents.Agent.eval"><code class="xref py py-obj docutils literal notranslate"><span class="pre">eval</span></code></a>(**kwargs)</p></td>
+<td><p>Abstract method.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#rlberry.agents.Agent.fit" title="rlberry.agents.Agent.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(budget, **kwargs)</p></td>
+<td><p>Abstract method to be overridden by the 'inherited agent'.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rlberry.agents.Agent.get_params" title="rlberry.agents.Agent.get_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code></a>([deep])</p></td>
+<td><p>Get parameters for this agent.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#rlberry.agents.Agent.load" title="rlberry.agents.Agent.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>(filename, **kwargs)</p></td>
+<td><p>Load agent object from filepath.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rlberry.agents.Agent.reseed" title="rlberry.agents.Agent.reseed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reseed</span></code></a>([seed_seq])</p></td>
+<td><p>Get new random number generator for the agent.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#rlberry.agents.Agent.sample_parameters" title="rlberry.agents.Agent.sample_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_parameters</span></code></a>(trial)</p></td>
+<td><p>Sample hyperparameters for hyperparam optimization using Optuna (<a class="reference external" href="https://optuna.org/">https://optuna.org/</a>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rlberry.agents.Agent.save" title="rlberry.agents.Agent.save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code></a>(filename)</p></td>
+<td><p>Save agent object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#rlberry.agents.Agent.set_writer" title="rlberry.agents.Agent.set_writer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_writer</span></code></a>(writer)</p></td>
+<td><p>set self._writer.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="rlberry.agents.Agent.eval">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rlberry/agents/agent.html#Agent.eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.agents.Agent.eval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract method.</p>
+<p>Returns a float measuring the quality of the agent (e.g. MC policy evaluation).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>eval_env: object</strong></dt><dd><p>Environment for evaluation.</p>
+</dd>
+<dt><strong>**kwargs: Keyword Arguments</strong></dt><dd><p>Extra parameters specific to the implemented evaluation.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rlberry.agents.Agent.fit">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">budget</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rlberry/agents/agent.html#Agent.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.agents.Agent.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract method to be overridden by the ‘inherited agent’.</p>
+<p>Train the agent with a fixed budget, using the provided environment.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>budget: int</strong></dt><dd><p>Computational (or sample complexity) budget.
+It can be, for instance:</p>
+<ul class="simple">
+<li><p>The number of timesteps taken by the environment (env.step) or the number of episodes;</p></li>
+<li><p>The number of iterations for algorithms such as value/policy iteration;</p></li>
+<li><p>The number of searches in MCTS (Monte-Carlo Tree Search) algorithms;</p></li>
+</ul>
+<p>among others.</p>
+<p>Ideally, calling</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fit</span><span class="p">(</span><span class="n">budget1</span><span class="p">)</span>
+<span class="n">fit</span><span class="p">(</span><span class="n">budget2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>should be equivalent to one call</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fit</span><span class="p">(</span><span class="n">budget1</span> <span class="o">+</span> <span class="n">budget2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This property is required to reduce the time required for hyperparameter
+optimization (by allowing early stopping), but it is not strictly required
+elsewhere in the library.</p>
+<p>If the agent does not require a budget, set it to -1.</p>
+</dd>
+<dt><strong>**kwargs: Keyword Arguments</strong></dt><dd><p>Extra parameters specific to the implemented fit.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rlberry.agents.Agent.get_params">
+<span class="sig-name descname"><span class="pre">get_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rlberry/agents/agent.html#Agent.get_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.agents.Agent.get_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get parameters for this agent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>deep</strong><span class="classifier">bool, default=True</span></dt><dd><p>If True, will return the parameters for this agent and
+contained subobjects.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>params</strong><span class="classifier">dict</span></dt><dd><p>Parameter names mapped to their values.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rlberry.agents.Agent.load">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rlberry/agents/agent.html#Agent.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.agents.Agent.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load agent object from filepath.</p>
+<p>If overridden, save() method must also be overridden.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>filename: str</strong></dt><dd><p>Path to the object (pickle) to load.</p>
+</dd>
+<dt><strong>**kwargs: Keyword Arguments</strong></dt><dd><p>Arguments required by the __init__ method of the Agent subclass to load.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="rlberry.agents.Agent.output_dir">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_dir</span></span><a class="headerlink" href="#rlberry.agents.Agent.output_dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Directory that the agent can use to store data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rlberry.agents.Agent.reseed">
+<span class="sig-name descname"><span class="pre">reseed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed_seq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rlberry/agents/agent.html#Agent.reseed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.agents.Agent.reseed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get new random number generator for the agent.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>seed_seq</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.SeedSequence</span></code>, <a class="reference internal" href="rlberry.seeding.seeder.Seeder.html#rlberry.seeding.seeder.Seeder" title="rlberry.seeding.seeder.Seeder"><code class="xref py py-class docutils literal notranslate"><span class="pre">rlberry.seeding.seeder.Seeder</span></code></a> or int, default</span><span class="classifier">None</span></dt><dd><p>Seed sequence from which to spawn the random number generator.
+If None, generate random seed.
+If int, use as entropy for SeedSequence.
+If seeder, use seeder.seed_seq</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="rlberry.agents.Agent.rng">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rng</span></span><a class="headerlink" href="#rlberry.agents.Agent.rng" title="Permalink to this definition">¶</a></dt>
+<dd><p>Random number generator.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rlberry.agents.Agent.sample_parameters">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sample_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trial</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rlberry/agents/agent.html#Agent.sample_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.agents.Agent.sample_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sample hyperparameters for hyperparam optimization using
+Optuna (<a class="reference external" href="https://optuna.org/">https://optuna.org/</a>)</p>
+<p>Note: only the kwargs sent to __init__ are optimized. Make sure to
+include in the Agent constructor all “optimizable” parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>trial: optuna.trial</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rlberry.agents.Agent.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rlberry/agents/agent.html#Agent.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.agents.Agent.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save agent object. By default, the agent is pickled.</p>
+<p>If overridden, the load() method must also be overridden.</p>
+<p>Before saving, consider setting writer to None if it can’t be pickled (tensorboard writers
+keep references to files and cannot be pickled).</p>
+<p>Note: dill[R5d46c33e8424-1]_ is used when pickle fails
+(see <a class="reference external" href="https://stackoverflow.com/a/25353243">https://stackoverflow.com/a/25353243</a>, for instance).
+Pickle is tried first, since it is faster.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>filename: Path or str</strong></dt><dd><p>File in which to save the Agent.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>pathlib.Path</dt><dd><p>If save() is successful, a Path object corresponding to the filename is returned.
+Otherwise, None is returned.</p>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The returned filename might differ from the input filename: For instance,
+..</p>
+</div>
+<dl class="simple">
+<dt>the method can append the correct suffix to the name before saving.</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<div role="list" class="citation-list">
+<div class="citation" id="r5d46c33e8424-1" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<p><a class="reference external" href="https://github.com/uqfoundation/dill">https://github.com/uqfoundation/dill</a></p>
+</div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rlberry.agents.Agent.set_writer">
+<span class="sig-name descname"><span class="pre">set_writer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">writer</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rlberry/agents/agent.html#Agent.set_writer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.agents.Agent.set_writer" title="Permalink to this definition">¶</a></dt>
+<dd><p>set self._writer. If is not None, add parameters values to writer.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="rlberry.agents.Agent.thread_shared_data">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">thread_shared_data</span></span><a class="headerlink" href="#rlberry.agents.Agent.thread_shared_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Data shared by agent instances among different threads.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="rlberry.agents.Agent.unique_id">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">unique_id</span></span><a class="headerlink" href="#rlberry.agents.Agent.unique_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unique identifier for the agent instance. Can be used, for example, to create files/directories for the agent to log data safely.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="rlberry.agents.Agent.writer">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">writer</span></span><a class="headerlink" href="#rlberry.agents.Agent.writer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writer object to log the output (e.g. tensorboard SummaryWriter)..</p>
+</dd></dl>
+
+</dd></dl>
+
+<section id="examples-using-rlberry-agents-agent">
+<h2>Examples using <code class="docutils literal notranslate"><span class="pre">rlberry.agents.Agent</span></code><a class="headerlink" href="#examples-using-rlberry-agents-agent" title="Permalink to this heading">¶</a></h2>
+<div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="This script shows how to modify an agent to easily record reward or action during the fit of th..."><img alt="" src="../_images/sphx_glr_plot_writer_wrapper_thumb.png" />
+<p><a class="reference internal" href="../auto_examples/plot_writer_wrapper.html#sphx-glr-auto-examples-plot-writer-wrapper-py"><span class="std std-ref">Record reward during training and then plot it</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Record reward during training and then plot it</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This script shows how to define a bandit environment and an UCB Index-based algorithm."><img alt="" src="../_images/sphx_glr_plot_smooth_thumb.png" />
+<p><a class="reference internal" href="../auto_examples/plot_smooth.html#sphx-glr-auto-examples-plot-smooth-py"><span class="std std-ref">Illustration of plotting tools on Bandits</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Illustration of plotting tools on Bandits</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="First, we initialize a grid world environment with finite state space and actions. A grid world..."><img alt="" src="../_images/sphx_glr_plot_agent_manager_thumb.png" />
+<p><a class="reference internal" href="../auto_examples/plot_agent_manager.html#sphx-glr-auto-examples-plot-agent-manager-py"><span class="std std-ref">A demo of Experiment Manager</span></a></p>
+  <div class="sphx-glr-thumbnail-title">A demo of Experiment Manager</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This is a minimal example of how to create checkpoints while training your agents, and how to r..."><img alt="" src="../_images/sphx_glr_plot_checkpointing_thumb.png" />
+<p><a class="reference internal" href="../auto_examples/plot_checkpointing.html#sphx-glr-auto-examples-plot-checkpointing-py"><span class="std std-ref">Checkpointing</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Checkpointing</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This script shows how to define a bandit environment and an UCB Index-based algorithm."><img alt="" src="../_images/sphx_glr_plot_ucb_bandit_thumb.png" />
+<p><a class="reference internal" href="../auto_examples/demo_bandits/plot_ucb_bandit.html#sphx-glr-auto-examples-demo-bandits-plot-ucb-bandit-py"><span class="std std-ref">UCB Bandit cumulative regret</span></a></p>
+  <div class="sphx-glr-thumbnail-title">UCB Bandit cumulative regret</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This script shows how to define a bandit environment and an EXP3 randomized algorithm."><img alt="" src="../_images/sphx_glr_plot_exp3_bandit_thumb.png" />
+<p><a class="reference internal" href="../auto_examples/demo_bandits/plot_exp3_bandit.html#sphx-glr-auto-examples-demo-bandits-plot-exp3-bandit-py"><span class="std std-ref">EXP3 Bandit cumulative regret</span></a></p>
+  <div class="sphx-glr-thumbnail-title">EXP3 Bandit cumulative regret</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This script shows how to use Thompson sampling on two examples: Bernoulli and Gaussian bandits."><img alt="" src="../_images/sphx_glr_plot_TS_bandit_thumb.png" />
+<p><a class="reference internal" href="../auto_examples/demo_bandits/plot_TS_bandit.html#sphx-glr-auto-examples-demo-bandits-plot-ts-bandit-py"><span class="std std-ref">Comparison of Thompson sampling and UCB on Bernoulli and Gaussian bandits</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Comparison of Thompson sampling and UCB on Bernoulli and Gaussian bandits</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This script Compare several bandits agents and as a sub-product also shows how to use subplots ..."><img alt="" src="../_images/sphx_glr_plot_compare_index_bandits_thumb.png" />
+<p><a class="reference internal" href="../auto_examples/demo_bandits/plot_compare_index_bandits.html#sphx-glr-auto-examples-demo-bandits-plot-compare-index-bandits-py"><span class="std std-ref">Comparison subplots of various index based bandits algorithms</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Comparison subplots of various index based bandits algorithms</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="The quirck of this application is that there is a possible timeout when pinging a server. We ha..."><img alt="" src="../_images/sphx_glr_plot_mirror_bandit_thumb.png" />
+<p><a class="reference internal" href="../auto_examples/demo_bandits/plot_mirror_bandit.html#sphx-glr-auto-examples-demo-bandits-plot-mirror-bandit-py"><span class="std std-ref">A demo of Bandit BAI on a real dataset to select mirrors</span></a></p>
+  <div class="sphx-glr-thumbnail-title">A demo of Bandit BAI on a real dataset to select mirrors</div>
+</div></div><div class="clearer"></div></section>
+</section>
+
+
+      </div>
+    <div class="container">
+      <footer class="sk-content-footer">
+            &copy; 2023, rlberry team.
+          <a href="../_sources/generated/rlberry.agents.Agent.rst.txt" rel="nofollow">Show this page source</a>
+      </footer>
+    </div>
+  </div>
+</div>
+<script src="../_static/js/vendor/bootstrap.min.js"></script>
+
+<script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-22606712-2', 'auto');
+    ga('set', 'anonymizeIp', true);
+    ga('send', 'pageview');
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+<script>
+$(document).ready(function() {
+    /* Add a [>>>] button on the top-right corner of code samples to hide
+     * the >>> and ... prompts and the output and thus make the code
+     * copyable. */
+    var div = $('.highlight-python .highlight,' +
+                '.highlight-python3 .highlight,' +
+                '.highlight-pycon .highlight,' +
+		'.highlight-default .highlight')
+    var pre = div.find('pre');
+
+    // get the styles from the current theme
+    pre.parent().parent().css('position', 'relative');
+    var hide_text = 'Hide prompts and outputs';
+    var show_text = 'Show prompts and outputs';
+
+    // create and add the button to all the code blocks that contain >>>
+    div.each(function(index) {
+        var jthis = $(this);
+        if (jthis.find('.gp').length > 0) {
+            var button = $('<span class="copybutton">&gt;&gt;&gt;</span>');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+            jthis.prepend(button);
+        }
+        // tracebacks (.gt) contain bare text elements that need to be
+        // wrapped in a span to work with .nextUntil() (see later)
+        jthis.find('pre:has(.gt)').contents().filter(function() {
+            return ((this.nodeType == 3) && (this.data.trim().length > 0));
+        }).wrap('<span>');
+    });
+
+    // define the behavior of the button when it's clicked
+    $('.copybutton').click(function(e){
+        e.preventDefault();
+        var button = $(this);
+        if (button.data('hidden') === 'false') {
+            // hide the code output
+            button.parent().find('.go, .gp, .gt').hide();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'hidden');
+            button.css('text-decoration', 'line-through');
+            button.attr('title', show_text);
+            button.data('hidden', 'true');
+        } else {
+            // show the code output
+            button.parent().find('.go, .gp, .gt').show();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'visible');
+            button.css('text-decoration', 'none');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+        }
+    });
+
+	/*** Add permalink buttons next to glossary terms ***/
+	$('dl.glossary > dt[id]').append(function() {
+		return ('<a class="headerlink" href="#' +
+			    this.getAttribute('id') +
+			    '" title="Permalink to this term">¶</a>');
+	});
+  /*** Hide navbar when scrolling down ***/
+  // Returns true when headerlink target matches hash in url
+  (function() {
+    hashTargetOnTop = function() {
+        var hash = window.location.hash;
+        if ( hash.length < 2 ) { return false; }
+
+        var target = document.getElementById( hash.slice(1) );
+        if ( target === null ) { return false; }
+
+        var top = target.getBoundingClientRect().top;
+        return (top < 2) && (top > -2);
+    };
+
+    // Hide navbar on load if hash target is on top
+    var navBar = document.getElementById("navbar");
+    var navBarToggler = document.getElementById("sk-navbar-toggler");
+    var navBarHeightHidden = "-" + navBar.getBoundingClientRect().height + "px";
+    var $window = $(window);
+
+    hideNavBar = function() {
+        navBar.style.top = navBarHeightHidden;
+    };
+
+    showNavBar = function() {
+        navBar.style.top = "0";
+    }
+
+    if (hashTargetOnTop()) {
+        hideNavBar()
+    }
+
+    var prevScrollpos = window.pageYOffset;
+    hideOnScroll = function(lastScrollTop) {
+        if (($window.width() < 768) && (navBarToggler.getAttribute("aria-expanded") === 'true')) {
+            return;
+        }
+        if (lastScrollTop > 2 && (prevScrollpos <= lastScrollTop) || hashTargetOnTop()){
+            hideNavBar()
+        } else {
+            showNavBar()
+        }
+        prevScrollpos = lastScrollTop;
+    };
+
+    /*** high performance scroll event listener***/
+    var raf = window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        window.oRequestAnimationFrame;
+    var lastScrollTop = $window.scrollTop();
+
+    if (raf) {
+        loop();
+    }
+
+    function loop() {
+        var scrollTop = $window.scrollTop();
+        if (lastScrollTop === scrollTop) {
+            raf(loop);
+            return;
+        } else {
+            lastScrollTop = scrollTop;
+            hideOnScroll(lastScrollTop);
+            raf(loop);
+        }
+    }
+  })();
+});
+
+</script>
+    
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    
+</body>
+</html>

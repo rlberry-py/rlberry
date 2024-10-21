@@ -1,0 +1,12 @@
+﻿:mod:`rlberry.spaces`.Tuple
+==================================
+
+.. currentmodule:: rlberry.spaces
+
+.. autoclass:: Tuple
+
+.. include:: rlberry.spaces.Tuple.examples
+
+.. raw:: html
+
+    <div class="clearer"></div>

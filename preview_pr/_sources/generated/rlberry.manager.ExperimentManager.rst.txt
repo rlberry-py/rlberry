@@ -1,0 +1,12 @@
+﻿:mod:`rlberry.manager`.ExperimentManager
+===============================================
+
+.. currentmodule:: rlberry.manager
+
+.. autoclass:: ExperimentManager
+
+.. include:: rlberry.manager.ExperimentManager.examples
+
+.. raw:: html
+
+    <div class="clearer"></div>

@@ -1,0 +1,113 @@
+
+
+.. _sphx_glr_auto_examples_demo_bandits:
+
+Illustration of bandits in rlberry
+==================================
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This script shows how to define a bandit environment and an UCB Index-based algorithm.">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_bandits/images/thumb/sphx_glr_plot_ucb_bandit_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_bandits_plot_ucb_bandit.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">UCB Bandit cumulative regret</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This script shows how to define a bandit environment and an EXP3 randomized algorithm.">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_bandits/images/thumb/sphx_glr_plot_exp3_bandit_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_bandits_plot_exp3_bandit.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">EXP3 Bandit cumulative regret</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This script shows how to use Thompson sampling on two examples: Bernoulli and Gaussian bandits.">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_bandits/images/thumb/sphx_glr_plot_TS_bandit_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_bandits_plot_TS_bandit.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Comparison of Thompson sampling and UCB on Bernoulli and Gaussian bandits</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This script Compare several bandits agents and as a sub-product also shows how to use subplots ...">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_bandits/images/thumb/sphx_glr_plot_compare_index_bandits_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_bandits_plot_compare_index_bandits.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Comparison subplots of various index based bandits algorithms</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The quirck of this application is that there is a possible timeout when pinging a server. We ha...">
+
+.. only:: html
+
+  .. image:: /auto_examples/demo_bandits/images/thumb/sphx_glr_plot_mirror_bandit_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_demo_bandits_plot_mirror_bandit.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A demo of Bandit BAI on a real dataset to select mirrors</div>
+    </div>
+
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/demo_bandits/plot_ucb_bandit
+   /auto_examples/demo_bandits/plot_exp3_bandit
+   /auto_examples/demo_bandits/plot_TS_bandit
+   /auto_examples/demo_bandits/plot_compare_index_bandits
+   /auto_examples/demo_bandits/plot_mirror_bandit
+

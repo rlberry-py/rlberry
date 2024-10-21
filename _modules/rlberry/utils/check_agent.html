@@ -1,0 +1,995 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  
+  <title>rlberry.utils.check_agent &mdash; rlberry 0.7.3.post16.dev0+8710009 documentation</title>
+  
+  <link rel="canonical" href="https://rlberry-py.github.io/rlberry/_modules/rlberry/utils/check_agent.html" />
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/vendor/bootstrap.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/sg_gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/sg_gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/sg_gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/sphinx-design.4cbf315f70debaebd550c87a6162cf0f.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+<script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+<script src="../../../_static/js/vendor/jquery-3.6.3.slim.min.js"></script> 
+</head>
+<body>
+
+
+<nav id="navbar" class="sk-docs-navbar navbar navbar-expand-md navbar-light bg-light py-0">
+  <div class="container-fluid sk-docs-container px-0">
+    <button
+      id="sk-navbar-toggler"
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="sk-navbar-collapse collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../index.html">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../installation.html">Install</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../user_guide.html">User Guide</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../auto_examples/index.html">Examples</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../api.html">API</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../changelog.html">Changelog</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../about.html">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="https://github.com/rlberry-py/rlberry">GitHub</a>
+        </li>
+        <!--
+        <li class="nav-item dropdown nav-more-item-dropdown">
+          <a class="sk-nav-link nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">More</a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          </div>
+        </li>-->
+    </ul>
+      <div id="searchbox" role="search">
+          <div class="searchformwrapper">
+            <form action="https://duckduckgo.com/">
+            <input type="hidden" id="sites" name="sites" value="https://rlberry-py.github.io/rlberry/">
+            <input type="search" placeholder="Search &hellip;" value="" name="q" />
+            <input class="sk-search-text-btn" type="submit" value="Go" /></form>
+
+          </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="d-flex" id="sk-doc-wrapper">
+    <input type="checkbox" name="sk-toggle-checkbox" id="sk-toggle-checkbox">
+    <label id="sk-sidemenu-toggle" class="sk-btn-toggle-toc btn sk-btn-primary" for="sk-toggle-checkbox">Toggle Menu</label>
+    <div id="sk-sidebar-wrapper" class="border-right">
+      <div class="sk-sidebar-toc-wrapper">
+        <div class="sk-sidebar-toc-logo">
+        </div>
+	<br>
+        <div class="alert alert-warning p-1 mb-2" role="alert">
+
+          <p class="text-center mb-0">
+          rlberry 0.7.3.post16.dev0+8710009<br/>
+          <a href="../../../versions.html">Other versions</a>
+          </p>
+
+        </div>
+            <div class="sk-sidebar-toc">
+              
+            </div>
+      </div>
+    </div>
+    <div id="sk-page-content-wrapper">
+      <div class="sk-page-content container-fluid body px-md-3" role="main">
+        
+  <h1>Source code for rlberry.utils.check_agent</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">rlberry.manager</span> <span class="kn">import</span> <span class="n">ExperimentManager</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">rlberry.seeding</span> <span class="kn">import</span> <span class="n">set_external_seed</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">rlberry.envs.gym_make</span> <span class="kn">import</span> <span class="n">gym_make</span>
+<span class="kn">from</span> <span class="nn">rlberry.utils</span> <span class="kn">import</span> <span class="n">loading_tools</span>
+
+
+<span class="n">SEED</span> <span class="o">=</span> <span class="mi">42</span>
+
+
+<span class="k">def</span> <span class="nf">_make_tuple_env</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Help function to get the tuple(ctor,kwargs) corresponding to the env to make.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span>
+        <span class="n">env</span><span class="p">,</span> <span class="nb">str</span>
+    <span class="p">):</span>  <span class="c1"># If env param is a str, we use the corresponding &quot;by default&quot; env, and return it as tuple</span>
+        <span class="k">if</span> <span class="n">env</span> <span class="o">==</span> <span class="s2">&quot;continuous_state&quot;</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">rlberry_research.envs.benchmarks.ball_exploration</span> <span class="kn">import</span> <span class="n">PBall2D</span>
+
+            <span class="n">env_ctor</span> <span class="o">=</span> <span class="n">PBall2D</span>
+            <span class="n">env_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">elif</span> <span class="n">env</span> <span class="o">==</span> <span class="s2">&quot;discrete_state&quot;</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">rlberry_scool.envs</span> <span class="kn">import</span> <span class="n">Chain</span>
+
+            <span class="n">env_ctor</span> <span class="o">=</span> <span class="n">Chain</span>
+            <span class="n">env_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">elif</span> <span class="n">env</span> <span class="o">==</span> <span class="s2">&quot;vectorized_env_continuous&quot;</span><span class="p">:</span>
+            <span class="n">env_ctor</span> <span class="o">=</span> <span class="n">gym_make</span>
+            <span class="n">env_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">env</span> <span class="o">==</span> <span class="s2">&quot;continuous_action&quot;</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">rlberry_research.envs</span> <span class="kn">import</span> <span class="n">Pendulum</span>
+
+            <span class="n">env_ctor</span> <span class="o">=</span> <span class="n">Pendulum</span>
+            <span class="n">env_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The env given in parameter is not implemented&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>  <span class="c1"># If env param is a tuple, return it</span>
+        <span class="n">env_ctor</span> <span class="o">=</span> <span class="n">env</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">env_kwargs</span> <span class="o">=</span> <span class="n">env</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The env given in parameter is not implemented&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">env_ctor</span><span class="p">,</span> <span class="n">env_kwargs</span>
+
+
+<span class="k">def</span> <span class="nf">_fit_experiment_manager</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="s2">&quot;continuous_state&quot;</span><span class="p">,</span> <span class="n">init_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check that the agent is compatible with :class:`~rlberry.manager.ExperimentManager`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    agent: rlberry agent module</span>
+<span class="sd">        Agent class to test.</span>
+<span class="sd">    env: tuple (env_ctor, env_kwargs) or str in {&quot;continuous_state&quot;, &quot;discrete_state&quot;}, default=&quot;continuous_state&quot;</span>
+<span class="sd">        if tuple, env is the constructor and keywords of the env on which to test.</span>
+<span class="sd">        if str in {&quot;continuous_state&quot;, &quot;discrete_state&quot;,&quot;vectorized_env_continuous&quot;}, we use a default Benchmark environment.</span>
+<span class="sd">    init_kwargs : dict</span>
+<span class="sd">        Arguments required by the agent&#39;s constructor.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">init_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">init_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">train_env</span> <span class="o">=</span> <span class="n">_make_tuple_env</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">xp_manager</span> <span class="o">=</span> <span class="n">ExperimentManager</span><span class="p">(</span>
+            <span class="n">agent</span><span class="p">,</span>
+            <span class="n">train_env</span><span class="p">,</span>
+            <span class="n">agent_name</span><span class="o">=</span><span class="s2">&quot;test_agent&quot;</span><span class="p">,</span>
+            <span class="n">fit_budget</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+            <span class="n">n_fit</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">seed</span><span class="o">=</span><span class="n">SEED</span><span class="p">,</span>
+            <span class="n">init_kwargs</span><span class="o">=</span><span class="n">init_kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">xp_manager</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Agent not compatible with ExperimentManager&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">exc</span>
+
+    <span class="k">return</span> <span class="n">xp_manager</span>
+
+
+<span class="k">def</span> <span class="nf">_fit_agent</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="s2">&quot;continuous_state&quot;</span><span class="p">,</span> <span class="n">init_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check that the agent can fit without ExperimentManager.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    agent: rlberry agent module</span>
+<span class="sd">        Agent class to test.</span>
+<span class="sd">    env: tuple (env_ctor, env_kwargs) or str in {&quot;continuous_state&quot;, &quot;discrete_state&quot;}, default=&quot;continuous_state&quot;</span>
+<span class="sd">        if tuple, env is the constructor and keywords of the env on which to test.</span>
+<span class="sd">        if str in {&quot;continuous_state&quot;, &quot;discrete_state&quot;,&quot;vectorized_env_continuous&quot;}, we use a default Benchmark environment.</span>
+<span class="sd">    init_kwargs : dict</span>
+<span class="sd">        Arguments required by the agent&#39;s constructor.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">init_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">init_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">train_env</span> <span class="o">=</span> <span class="n">_make_tuple_env</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">train_env</span><span class="p">[</span><span class="mi">0</span><span class="p">](</span><span class="o">**</span><span class="n">train_env</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">my_agent</span> <span class="o">=</span> <span class="n">agent</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="o">**</span><span class="n">init_kwargs</span><span class="p">)</span>
+        <span class="n">my_agent</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Agent can not fit without ExperimentManager&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">exc</span>
+
+    <span class="k">return</span> <span class="n">my_agent</span>
+
+
+<div class="viewcode-block" id="check_experiment_manager"><a class="viewcode-back" href="../../../generated/rlberry.utils.check_experiment_manager.html#rlberry.utils.check_experiment_manager">[docs]</a><span class="k">def</span> <span class="nf">check_experiment_manager</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="s2">&quot;continuous_state&quot;</span><span class="p">,</span> <span class="n">init_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check that the agent is compatible with :class:`~rlberry.manager.ExperimentManager`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    agent: rlberry agent module</span>
+<span class="sd">        Agent class to test.</span>
+<span class="sd">    env: tuple (env_ctor, env_kwargs) or str in {&quot;continuous_state&quot;, &quot;discrete_state&quot;}, default=&quot;continuous_state&quot;</span>
+<span class="sd">        if tuple, env is the constructor and keywords of the env on which to test.</span>
+<span class="sd">        if str in {&quot;continuous_state&quot;, &quot;discrete_state&quot;}, we use a default Benchmark environment.</span>
+<span class="sd">    init_kwargs : dict</span>
+<span class="sd">        Arguments required by the agent&#39;s constructor.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">manager</span> <span class="o">=</span> <span class="n">_fit_experiment_manager</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">init_kwargs</span><span class="o">=</span><span class="n">init_kwargs</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">manager</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
+
+
+<span class="k">def</span> <span class="nf">check_agent_base</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="s2">&quot;continuous_state&quot;</span><span class="p">,</span> <span class="n">init_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check that the agent is compatible with :class:`~rlberry.manager.ExperimentManager`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    agent: rlberry agent module</span>
+<span class="sd">        Agent class to test.</span>
+<span class="sd">    env: tuple (env_ctor, env_kwargs) or str in {&quot;continuous_state&quot;, &quot;discrete_state&quot;}, default=&quot;continuous_state&quot;</span>
+<span class="sd">        if tuple, env is the constructor and keywords of the env on which to test.</span>
+<span class="sd">        if str in {&quot;continuous_state&quot;, &quot;discrete_state&quot;}, we use a default Benchmark environment.</span>
+<span class="sd">    init_kwargs : dict</span>
+<span class="sd">        Arguments required by the agent&#39;s constructor.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">agent</span> <span class="o">=</span> <span class="n">_fit_agent</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">init_kwargs</span><span class="o">=</span><span class="n">init_kwargs</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">agent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+
+<span class="k">def</span> <span class="nf">check_agents_almost_equal</span><span class="p">(</span><span class="n">agent1</span><span class="p">,</span> <span class="n">agent2</span><span class="p">,</span> <span class="n">compare_using</span><span class="o">=</span><span class="s2">&quot;policy&quot;</span><span class="p">,</span> <span class="n">n_checks</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check that two agents with a fixed global seed are almost equal in the</span>
+<span class="sd">    sense that their agents give the same actions n_checks times on a given state.</span>
+
+<span class="sd">    WARNING: we set a global seed in this check. Ideally an agent should be</span>
+<span class="sd">    reproducible when rlberry seed is fixed but this is hard to do, in particular</span>
+<span class="sd">    when using torch.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    agent1: rlberry Agent instance</span>
+<span class="sd">        first agent to be compared</span>
+<span class="sd">    agent2: rlberry Agent instance</span>
+<span class="sd">        second agent to be compared</span>
+<span class="sd">    compare_using: str, default = &quot;policy&quot;</span>
+<span class="sd">        method that we use to compare the agents. Can be &quot;policy&quot; or &quot;eval&quot; or</span>
+<span class="sd">        the name of any method implemented by an agent that we can call</span>
+<span class="sd">        and that return a real number.</span>
+<span class="sd">    n_checks : int, default=5</span>
+<span class="sd">        number of checks to do.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">set_external_seed</span><span class="p">(</span><span class="n">SEED</span><span class="p">)</span>
+    <span class="n">results1</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">compare_using</span> <span class="o">==</span> <span class="s2">&quot;policy&quot;</span><span class="p">:</span>
+        <span class="n">state</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">agent1</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_checks</span><span class="p">):</span>
+        <span class="c1"># do several tests if there is some randomness.</span>
+        <span class="k">if</span> <span class="n">compare_using</span> <span class="o">==</span> <span class="s2">&quot;policy&quot;</span><span class="p">:</span>
+            <span class="n">results1</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">agent1</span><span class="o">.</span><span class="n">policy</span><span class="p">(</span><span class="n">state</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">method_to_call</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">agent1</span><span class="p">,</span> <span class="n">compare_using</span><span class="p">)</span>
+            <span class="n">results1</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">method_to_call</span><span class="p">())</span>
+    <span class="n">set_external_seed</span><span class="p">(</span><span class="n">SEED</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_checks</span><span class="p">):</span>
+        <span class="c1"># do several tests if there is some randomness.</span>
+        <span class="k">if</span> <span class="n">compare_using</span> <span class="o">==</span> <span class="s2">&quot;policy&quot;</span><span class="p">:</span>
+            <span class="n">result2</span> <span class="o">=</span> <span class="n">agent2</span><span class="o">.</span><span class="n">policy</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">method_to_call</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">agent2</span><span class="p">,</span> <span class="n">compare_using</span><span class="p">)</span>
+            <span class="n">result2</span> <span class="o">=</span> <span class="n">method_to_call</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">results1</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">==</span> <span class="n">result2</span><span class="p">):</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<div class="viewcode-block" id="check_fit_additive"><a class="viewcode-back" href="../../../generated/rlberry.utils.check_fit_additive.html#rlberry.utils.check_fit_additive">[docs]</a><span class="k">def</span> <span class="nf">check_fit_additive</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="s2">&quot;continuous_state&quot;</span><span class="p">,</span> <span class="n">init_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check that fitting two times with 10 fit budget is the same as fitting</span>
+<span class="sd">    one time with 20 fit budget.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    agent: rlberry agent module</span>
+<span class="sd">        Agent class to test.</span>
+<span class="sd">    env: tuple (env_ctor, env_kwargs) or str in [&quot;continuous_state&quot;, &quot;discrete_state&quot;], default=&quot;continuous_state&quot;</span>
+<span class="sd">        if tuple, env is the constructor and keywords of the env on which to test.</span>
+<span class="sd">        if str in [&quot;continuous_state&quot;, &quot;discrete_state&quot;], we use a default Benchmark environment.</span>
+<span class="sd">    init_kwargs : dict</span>
+<span class="sd">        Arguments required by the agent&#39;s constructor.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">init_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">init_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">init_kwargs</span><span class="p">[</span><span class="s2">&quot;seeder&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">SEED</span>
+    <span class="n">train_env</span> <span class="o">=</span> <span class="n">_make_tuple_env</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+
+    <span class="n">set_external_seed</span><span class="p">(</span><span class="n">SEED</span><span class="p">)</span>
+    <span class="n">agent1</span> <span class="o">=</span> <span class="n">agent</span><span class="p">(</span><span class="n">train_env</span><span class="p">,</span> <span class="o">**</span><span class="n">init_kwargs</span><span class="p">)</span>
+    <span class="n">agent1</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">agent1</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+    <span class="n">set_external_seed</span><span class="p">(</span><span class="n">SEED</span><span class="p">)</span>
+    <span class="n">agent2</span> <span class="o">=</span> <span class="n">agent</span><span class="p">(</span><span class="n">train_env</span><span class="p">,</span> <span class="o">**</span><span class="n">init_kwargs</span><span class="p">)</span>
+    <span class="n">agent2</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">check_agents_almost_equal</span><span class="p">(</span><span class="n">agent1</span><span class="p">,</span> <span class="n">agent2</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="n">result</span>
+    <span class="p">),</span> <span class="s2">&quot;Error: fitting the agent two times for 10 steps is not equivalent to fitting it one time for 20 steps.&quot;</span></div>
+
+
+<div class="viewcode-block" id="check_save_load"><a class="viewcode-back" href="../../../generated/rlberry.utils.check_save_load.html#rlberry.utils.check_save_load">[docs]</a><span class="k">def</span> <span class="nf">check_save_load</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="s2">&quot;continuous_state&quot;</span><span class="p">,</span> <span class="n">init_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">_check_save_load_with_manager</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">init_kwargs</span><span class="p">)</span>
+    <span class="n">_check_save_load_without_manager</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">init_kwargs</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_check_save_load_with_manager</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="s2">&quot;continuous_state&quot;</span><span class="p">,</span> <span class="n">init_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check that the agent save a non-empty file and can load.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    agent: rlberry agent module</span>
+<span class="sd">        Agent class to test.</span>
+<span class="sd">    env: tuple (env_ctor, env_kwargs) or str in {&quot;continuous_state&quot;, &quot;discrete_state&quot;}, default=&quot;continuous_state&quot;</span>
+<span class="sd">        if tuple, env is the constructor and keywords of the env on which to test.</span>
+<span class="sd">        if str in {&quot;continuous_state&quot;, &quot;discrete_state&quot;}, we use a default Benchmark environment.</span>
+<span class="sd">    init_kwargs : dict</span>
+<span class="sd">        Arguments required by the agent&#39;s constructor.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">init_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">init_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">train_env_tuple</span> <span class="o">=</span> <span class="n">_make_tuple_env</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">tmpdirname</span><span class="p">:</span>
+        <span class="n">manager</span> <span class="o">=</span> <span class="n">ExperimentManager</span><span class="p">(</span>
+            <span class="n">agent</span><span class="p">,</span>
+            <span class="n">train_env_tuple</span><span class="p">,</span>
+            <span class="n">fit_budget</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+            <span class="n">n_fit</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">seed</span><span class="o">=</span><span class="n">SEED</span><span class="p">,</span>
+            <span class="n">init_kwargs</span><span class="o">=</span><span class="n">init_kwargs</span><span class="p">,</span>
+            <span class="n">output_dir</span><span class="o">=</span><span class="n">tmpdirname</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">test_env</span> <span class="o">=</span> <span class="n">train_env_tuple</span><span class="p">[</span><span class="mi">0</span><span class="p">](</span><span class="o">**</span><span class="n">train_env_tuple</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="n">manager</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+        <span class="c1"># test individual agents save and load</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">manager</span><span class="o">.</span><span class="n">output_dir_</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/agent_handlers/idx_0.pickle&quot;</span><span class="p">)</span>
+            <span class="o">&gt;</span> <span class="mi">1</span>
+        <span class="p">),</span> <span class="s2">&quot;The saved file is empty.&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">params_for_loader</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">env</span><span class="o">=</span><span class="n">test_env</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">agent</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">==</span> <span class="s2">&quot;rlberry.agents.stable_baselines.stable_baselines&quot;</span><span class="p">:</span>
+                <span class="c1"># StableBaselinesAgent need to add some params to load</span>
+                <span class="n">params_for_loader</span><span class="p">[</span><span class="s2">&quot;algo_cls&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">init_kwargs</span><span class="p">[</span><span class="s2">&quot;algo_cls&quot;</span><span class="p">]</span>
+
+            <span class="n">agent</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">manager</span><span class="o">.</span><span class="n">output_dir_</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/agent_handlers/idx_0.pickle&quot;</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">params_for_loader</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Failed to load the agent file.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># test ExperimentManager save and load</span>
+        <span class="n">manager</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">tmpdirname</span><span class="p">)</span>
+
+        <span class="n">path_to_load</span> <span class="o">=</span> <span class="n">loading_tools</span><span class="o">.</span><span class="n">get_single_path_of_most_recently_trained_experiment_manager_obj_from_path</span><span class="p">(</span>
+            <span class="n">tmpdirname</span>
+        <span class="p">)</span>
+        <span class="n">loaded_experiment_manager</span> <span class="o">=</span> <span class="n">ExperimentManager</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path_to_load</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">loaded_experiment_manager</span>
+
+        <span class="c1"># test with first agent of the manager</span>
+        <span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">test_env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">tt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">50</span><span class="p">):</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="n">loaded_experiment_manager</span><span class="o">.</span><span class="n">get_agent_instances</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">policy</span><span class="p">(</span>
+                <span class="n">observation</span>
+            <span class="p">)</span>
+            <span class="n">next_observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">test_env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span>
+                <span class="n">action</span>
+            <span class="p">)</span>
+            <span class="n">done</span> <span class="o">=</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span>
+            <span class="k">if</span> <span class="n">done</span><span class="p">:</span>
+                <span class="n">next_observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">test_env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+            <span class="n">observation</span> <span class="o">=</span> <span class="n">next_observation</span>
+
+
+<span class="k">def</span> <span class="nf">_check_save_load_without_manager</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="s2">&quot;continuous_state&quot;</span><span class="p">,</span> <span class="n">init_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check that the agent save a non-empty file and can load.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    agent: rlberry agent module</span>
+<span class="sd">        Agent class to test.</span>
+<span class="sd">    env: tuple (env_ctor, env_kwargs) or str in {&quot;continuous_state&quot;, &quot;discrete_state&quot;}, default=&quot;continuous_state&quot;</span>
+<span class="sd">        if tuple, env is the constructor and keywords of the env on which to test.</span>
+<span class="sd">        if str in {&quot;continuous_state&quot;, &quot;discrete_state&quot;}, we use a default Benchmark environment.</span>
+<span class="sd">    init_kwargs : dict</span>
+<span class="sd">        Arguments required by the agent&#39;s constructor.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">init_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">init_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">train_env_tuple</span> <span class="o">=</span> <span class="n">_make_tuple_env</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">tmpdirname</span><span class="p">:</span>
+        <span class="n">my_agent</span> <span class="o">=</span> <span class="n">_fit_agent</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">train_env_tuple</span><span class="p">,</span> <span class="n">init_kwargs</span><span class="p">)</span>
+        <span class="n">train_env</span> <span class="o">=</span> <span class="n">my_agent</span><span class="o">.</span><span class="n">env</span>
+        <span class="n">test_env</span> <span class="o">=</span> <span class="n">train_env_tuple</span><span class="p">[</span><span class="mi">0</span><span class="p">](</span><span class="o">**</span><span class="n">train_env_tuple</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="n">my_agent</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+        <span class="n">saving_path</span> <span class="o">=</span> <span class="n">tmpdirname</span> <span class="o">+</span> <span class="s2">&quot;/agent_test.pickle&quot;</span>
+
+        <span class="c1"># test agent save and load</span>
+        <span class="n">my_agent</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">saving_path</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">tmpdirname</span><span class="p">)</span>
+
+        <span class="n">params_for_loader</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">env</span><span class="o">=</span><span class="n">train_env</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">agent</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">==</span> <span class="s2">&quot;rlberry.agents.stable_baselines.stable_baselines&quot;</span><span class="p">:</span>
+            <span class="c1"># StableBaselinesAgent need to add some params to load</span>
+            <span class="n">params_for_loader</span><span class="p">[</span><span class="s2">&quot;algo_cls&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">init_kwargs</span><span class="p">[</span><span class="s2">&quot;algo_cls&quot;</span><span class="p">]</span>
+
+        <span class="n">loaded_agent</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">saving_path</span><span class="p">,</span> <span class="o">**</span><span class="n">params_for_loader</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">loaded_agent</span>
+
+        <span class="c1"># test the agent</span>
+        <span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">test_env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">tt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">50</span><span class="p">):</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="n">loaded_agent</span><span class="o">.</span><span class="n">policy</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span>
+            <span class="n">next_observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">test_env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span>
+                <span class="n">action</span>
+            <span class="p">)</span>
+            <span class="n">done</span> <span class="o">=</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span>
+            <span class="k">if</span> <span class="n">done</span><span class="p">:</span>
+                <span class="n">next_observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">test_env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+            <span class="n">observation</span> <span class="o">=</span> <span class="n">next_observation</span>
+
+
+<div class="viewcode-block" id="check_seeding_agent"><a class="viewcode-back" href="../../../generated/rlberry.utils.check_seeding_agent.html#rlberry.utils.check_seeding_agent">[docs]</a><span class="k">def</span> <span class="nf">check_seeding_agent</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">continuous_state</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">init_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check that the agent is reproducible.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    agent: rlberry agent module</span>
+<span class="sd">        Agent class to test.</span>
+<span class="sd">    env: tuple (env_ctor, env_kwargs) or str in {&quot;continuous_state&quot;, &quot;discrete_state&quot;}, default=&quot;continuous_state&quot;</span>
+<span class="sd">        if tuple, env is the constructor and keywords of the env on which to test.</span>
+<span class="sd">        if str in {&quot;continuous_state&quot;, &quot;discrete_state&quot;}, we use a default Benchmark environment.</span>
+<span class="sd">    init_kwargs : dict</span>
+<span class="sd">        Arguments required by the agent&#39;s constructor.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">agent1</span> <span class="o">=</span> <span class="n">_fit_experiment_manager</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">init_kwargs</span><span class="o">=</span><span class="n">init_kwargs</span><span class="p">)</span>
+    <span class="n">agent2</span> <span class="o">=</span> <span class="n">_fit_experiment_manager</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">init_kwargs</span><span class="o">=</span><span class="n">init_kwargs</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">check_agents_almost_equal</span><span class="p">(</span>
+        <span class="n">agent1</span><span class="o">.</span><span class="n">agent_handlers</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">agent2</span><span class="o">.</span><span class="n">agent_handlers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">result</span><span class="p">,</span> <span class="s2">&quot;Agent not reproducible (same seed give different results)&quot;</span></div>
+
+
+<span class="k">def</span> <span class="nf">check_multi_fit</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="s2">&quot;continuous_state&quot;</span><span class="p">,</span> <span class="n">init_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check that fitting two times with budget greater than n_step (buffer size) is working.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    agent: rlberry agent module</span>
+<span class="sd">        Agent class to test.</span>
+<span class="sd">    env: tuple (env_ctor, env_kwargs) or str in [&quot;continuous_state&quot;, &quot;discrete_state&quot;], default=&quot;continuous_state&quot;</span>
+<span class="sd">        if tuple, env is the constructor and keywords of the env on which to test.</span>
+<span class="sd">        if str in [&quot;continuous_state&quot;, &quot;discrete_state&quot;], we use a default Benchmark environment.</span>
+<span class="sd">    init_kwargs : dict</span>
+<span class="sd">        Arguments required by the agent&#39;s constructor.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">init_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">init_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">init_kwargs</span><span class="p">[</span><span class="s2">&quot;seeder&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">SEED</span>
+    <span class="n">train_env_d</span> <span class="o">=</span> <span class="n">_make_tuple_env</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">train_env</span> <span class="o">=</span> <span class="n">train_env_d</span><span class="p">[</span><span class="mi">0</span><span class="p">](</span><span class="o">**</span><span class="n">train_env_d</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">test_load_env_d</span> <span class="o">=</span> <span class="n">_make_tuple_env</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">test_load_env</span> <span class="o">=</span> <span class="n">test_load_env_d</span><span class="p">[</span><span class="mi">0</span><span class="p">](</span><span class="o">**</span><span class="n">test_load_env_d</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">agent1</span> <span class="o">=</span> <span class="n">agent</span><span class="p">(</span><span class="n">train_env</span><span class="p">,</span> <span class="o">**</span><span class="n">init_kwargs</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>  <span class="c1"># stableBaselines don&#39;t have get_params()</span>
+        <span class="k">if</span> <span class="s2">&quot;n_steps&quot;</span> <span class="ow">in</span> <span class="n">agent1</span><span class="o">.</span><span class="n">get_params</span><span class="p">():</span>
+            <span class="n">agent1</span><span class="o">.</span><span class="n">n_steps</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">agent1</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="mi">13</span><span class="p">)</span>
+    <span class="n">agent1</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="mi">13</span><span class="p">)</span>
+
+    <span class="c1"># test</span>
+    <span class="n">state</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">test_load_env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">tt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">50</span><span class="p">):</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="n">agent1</span><span class="o">.</span><span class="n">policy</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        <span class="n">next_s</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">test</span> <span class="o">=</span> <span class="n">test_load_env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+        <span class="n">done</span> <span class="o">=</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span>
+
+        <span class="k">if</span> <span class="n">done</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">next_s</span>
+
+
+<span class="k">def</span> <span class="nf">check_vectorized_env_agent</span><span class="p">(</span>
+    <span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="s2">&quot;vectorized_env_continuous&quot;</span><span class="p">,</span> <span class="n">agent_init_kwargs</span><span class="o">=</span><span class="kc">None</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check that (multi-)fitting vectorized_env is working.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    agent: rlberry agent module</span>
+<span class="sd">        Agent class to test.</span>
+<span class="sd">    env: tuple (env_ctor, env_kwargs) or str &quot;vectorized_env_continuous (default=&quot;vectorized_env_continuous&quot;)</span>
+<span class="sd">        if tuple, env is the constructor and keywords of the env on which to test.</span>
+<span class="sd">        if str in {&quot;continuous_state&quot;, &quot;discrete_state&quot;,&quot;vectorized&quot;}, we use a default Benchmark environment.</span>
+<span class="sd">    agent_init_kwargs : dict</span>
+<span class="sd">        Arguments required by the agent&#39;s constructor.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">agent_init_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">agent_init_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">learning_rate</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span> <span class="n">optimizer_type</span><span class="o">=</span><span class="s2">&quot;ADAM&quot;</span><span class="p">,</span> <span class="n">n_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">n_steps</span><span class="o">=</span><span class="mi">30</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="s2">&quot;n_steps&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">agent_init_kwargs</span> <span class="ow">or</span> <span class="n">agent_init_kwargs</span><span class="p">[</span><span class="s2">&quot;n_envs&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">agent_init_kwargs</span><span class="p">[</span><span class="s2">&quot;n_envs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="k">if</span> <span class="s2">&quot;n_steps&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">agent_init_kwargs</span> <span class="ow">or</span> <span class="n">agent_init_kwargs</span><span class="p">[</span><span class="s2">&quot;n_steps&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">agent_init_kwargs</span><span class="p">[</span><span class="s2">&quot;n_steps&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+
+    <span class="n">agent_init_kwargs</span><span class="p">[</span><span class="s2">&quot;seeder&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">SEED</span>
+
+    <span class="n">env_d</span> <span class="o">=</span> <span class="n">_make_tuple_env</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">train_env</span> <span class="o">=</span> <span class="n">env_d</span><span class="p">[</span><span class="mi">0</span><span class="p">](</span><span class="o">**</span><span class="n">env_d</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">test_env</span> <span class="o">=</span> <span class="n">env_d</span><span class="p">[</span><span class="mi">0</span><span class="p">](</span><span class="o">**</span><span class="n">env_d</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">agent1</span> <span class="o">=</span> <span class="n">agent</span><span class="p">(</span><span class="n">train_env</span><span class="p">,</span> <span class="o">**</span><span class="n">agent_init_kwargs</span><span class="p">)</span>
+    <span class="n">agent1</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="mi">13</span><span class="p">)</span>
+    <span class="n">agent1</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="mi">13</span><span class="p">)</span>
+
+    <span class="c1"># test the agent</span>
+    <span class="n">state</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">test_env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">tt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">50</span><span class="p">):</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="n">agent1</span><span class="o">.</span><span class="n">policy</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        <span class="n">next_s</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">test</span> <span class="o">=</span> <span class="n">test_env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+        <span class="n">done</span> <span class="o">=</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span>
+
+        <span class="k">if</span> <span class="n">done</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">next_s</span>
+
+
+<div class="viewcode-block" id="check_rl_agent"><a class="viewcode-back" href="../../../generated/rlberry.utils.check_rl_agent.html#rlberry.utils.check_rl_agent">[docs]</a><span class="k">def</span> <span class="nf">check_rl_agent</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="s2">&quot;continuous_state&quot;</span><span class="p">,</span> <span class="n">init_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check ExperimentManager compatibility and check reproducibility/seeding.</span>
+<span class="sd">    Raises an exception if a check fails.</span>
+
+<span class="sd">    Warning</span>
+<span class="sd">    ----------</span>
+<span class="sd">    To use this function you need to install rlberry_research via : pip install git+https://github.com/rlberry-py/rlberry-research.git</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    agent: rlberry agent module</span>
+<span class="sd">        Agent class to test.</span>
+<span class="sd">    env: tuple (env_ctor, env_kwargs) or str in {&quot;continuous_state&quot;, &quot;discrete_state&quot;}, default=&quot;continuous_state&quot;</span>
+<span class="sd">        if tuple, env is the constructor and keywords of the env on which to test.</span>
+<span class="sd">        if str in {&quot;continuous_state&quot;, &quot;discrete_state&quot;}, we use a default Benchmark environment.</span>
+<span class="sd">    init_kwargs : dict</span>
+<span class="sd">        Arguments required by the agent&#39;s constructor.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from rlberry_scool.agents import UCBVIAgent</span>
+<span class="sd">    &gt;&gt;&gt; from rlberry.utils import check_rl_agent</span>
+<span class="sd">    &gt;&gt;&gt; check_rl_agent(UCBVIAgent) # which does not return an error.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">check_experiment_manager</span><span class="p">(</span>
+        <span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">init_kwargs</span><span class="o">=</span><span class="n">init_kwargs</span>
+    <span class="p">)</span>  <span class="c1"># check manager compatible.</span>
+    <span class="n">check_agent_base</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">init_kwargs</span><span class="o">=</span><span class="n">init_kwargs</span><span class="p">)</span>  <span class="c1"># check without manager</span>
+    <span class="n">check_seeding_agent</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">init_kwargs</span><span class="o">=</span><span class="n">init_kwargs</span><span class="p">)</span>  <span class="c1"># check reproducibility</span>
+    <span class="n">check_fit_additive</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">init_kwargs</span><span class="o">=</span><span class="n">init_kwargs</span><span class="p">)</span>
+    <span class="n">check_save_load</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">init_kwargs</span><span class="o">=</span><span class="n">init_kwargs</span><span class="p">)</span>
+    <span class="n">check_multi_fit</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">init_kwargs</span><span class="o">=</span><span class="n">init_kwargs</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">check_rlberry_agent</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="s2">&quot;continuous_state&quot;</span><span class="p">,</span> <span class="n">init_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Companion to check_rl_agent, contains additional tests. It is not mandatory</span>
+<span class="sd">    for an agent to satisfy this check but satisfying this check give access to</span>
+<span class="sd">    additional features in rlberry.</span>
+
+<span class="sd">    Warning</span>
+<span class="sd">    ----------</span>
+<span class="sd">    To use this function you need to install rlberry_research via : pip install git+https://github.com/rlberry-py/rlberry-research.git</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    agent: rlberry agent module</span>
+<span class="sd">        Agent class to test.</span>
+<span class="sd">    env: tuple (env_ctor, env_kwargs) or str in {&quot;continuous_state&quot;, &quot;discrete_state&quot;}, default=&quot;continuous_state&quot;</span>
+<span class="sd">        if tuple, env is the constructor and keywords of the env on which to test.</span>
+<span class="sd">        if str in {&quot;continuous_state&quot;, &quot;discrete_state&quot;}, we use a default Benchmark environment.</span>
+<span class="sd">    init_kwargs : dict</span>
+<span class="sd">        Arguments required by the agent&#39;s constructor.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from rlberry_scool.agents import UCBVIAgent</span>
+<span class="sd">    &gt;&gt;&gt; from rlberry.utils import check_rl_agent</span>
+<span class="sd">    &gt;&gt;&gt; check_rl_agent(UCBVIAgent) #</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">manager</span> <span class="o">=</span> <span class="n">_fit_experiment_manager</span><span class="p">(</span>
+        <span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">init_kwargs</span><span class="o">=</span><span class="n">init_kwargs</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">agent_handlers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">get_params</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Fail to call get_params on the agent.&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">check_hyperparam_optimisation_agent</span><span class="p">(</span>
+    <span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="s2">&quot;continuous_state&quot;</span><span class="p">,</span> <span class="n">init_kwargs</span><span class="o">=</span><span class="kc">None</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check hyperparameter optimisation compatibility with manager</span>
+<span class="sd">    Raises an exception if a check fails.</span>
+
+<span class="sd">    Warning</span>
+<span class="sd">    ----------</span>
+<span class="sd">    To use this function you need to install rlberry_research via : pip install git+https://github.com/rlberry-py/rlberry-research.git</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    agent: rlberry agent module</span>
+<span class="sd">        Agent class to test.</span>
+<span class="sd">    env: tuple (env_ctor, env_kwargs) or str in {&quot;continuous_state&quot;, &quot;discrete_state&quot;}, default=&quot;continuous_state&quot;</span>
+<span class="sd">        if tuple, env is the constructor and keywords of the env on which to test.</span>
+<span class="sd">        if str in {&quot;continuous_state&quot;, &quot;discrete_state&quot;}, we use a default Benchmark environment.</span>
+<span class="sd">    init_kwargs : dict</span>
+<span class="sd">        Arguments required by the agent&#39;s constructor.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_test_hyperparam_optim_tpe</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">init_kwargs</span><span class="o">=</span><span class="n">init_kwargs</span><span class="p">)</span>
+    <span class="n">_test_hyperparam_optim_grid</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">init_kwargs</span><span class="o">=</span><span class="n">init_kwargs</span><span class="p">)</span>
+    <span class="n">_test_hyperparam_optim_cmaes</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">init_kwargs</span><span class="o">=</span><span class="n">init_kwargs</span><span class="p">)</span>
+    <span class="n">_test_discount_optimization</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">init_kwargs</span><span class="o">=</span><span class="n">init_kwargs</span><span class="p">)</span>
+    <span class="n">_test_hyperparam_optim_random</span><span class="p">(</span>
+        <span class="s2">&quot;thread&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">init_kwargs</span><span class="o">=</span><span class="n">init_kwargs</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_test_hyperparam_optim_tpe</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="s2">&quot;continuous_state&quot;</span><span class="p">,</span> <span class="n">init_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">optuna.samplers</span> <span class="kn">import</span> <span class="n">TPESampler</span>
+
+    <span class="c1"># Define trainenv</span>
+    <span class="k">if</span> <span class="n">init_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">init_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">init_kwargs</span><span class="p">[</span><span class="s2">&quot;seeder&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">SEED</span>
+    <span class="n">train_env</span> <span class="o">=</span> <span class="n">_make_tuple_env</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+
+    <span class="c1"># Run ExperimentManager</span>
+    <span class="n">stats_agent</span> <span class="o">=</span> <span class="n">ExperimentManager</span><span class="p">(</span>
+        <span class="n">agent</span><span class="p">,</span>
+        <span class="n">train_env</span><span class="p">,</span>
+        <span class="n">fit_budget</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">init_kwargs</span><span class="o">=</span><span class="p">{},</span>
+        <span class="n">eval_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;eval_horizon&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
+        <span class="n">n_fit</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># test hyperparameter optimization with TPE sampler</span>
+    <span class="c1"># using hyperopt default values</span>
+    <span class="n">sampler_kwargs</span> <span class="o">=</span> <span class="n">TPESampler</span><span class="o">.</span><span class="n">hyperopt_parameters</span><span class="p">()</span>
+    <span class="n">stats_agent</span><span class="o">.</span><span class="n">optimize_hyperparams</span><span class="p">(</span><span class="n">sampler_kwargs</span><span class="o">=</span><span class="n">sampler_kwargs</span><span class="p">,</span> <span class="n">n_trials</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">stats_agent</span><span class="o">.</span><span class="n">clear_output_dir</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">_test_hyperparam_optim_grid</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="s2">&quot;continuous_state&quot;</span><span class="p">,</span> <span class="n">init_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="c1"># Define trainenv</span>
+    <span class="k">if</span> <span class="n">init_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">init_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">init_kwargs</span><span class="p">[</span><span class="s2">&quot;seeder&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">SEED</span>
+    <span class="n">train_env</span> <span class="o">=</span> <span class="n">_make_tuple_env</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+
+    <span class="c1"># Run ExperimentManager</span>
+    <span class="n">stats_agent</span> <span class="o">=</span> <span class="n">ExperimentManager</span><span class="p">(</span>
+        <span class="n">agent</span><span class="p">,</span>
+        <span class="n">train_env</span><span class="p">,</span>
+        <span class="n">init_kwargs</span><span class="o">=</span><span class="p">{},</span>
+        <span class="n">fit_budget</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">eval_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;eval_horizon&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
+        <span class="n">n_fit</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># test hyperparameter optimization with grid sampler</span>
+    <span class="n">search_space</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;hyperparameter1&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="s2">&quot;hyperparameter2&quot;</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">]}</span>
+    <span class="n">sampler_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;search_space&quot;</span><span class="p">:</span> <span class="n">search_space</span><span class="p">}</span>
+    <span class="n">stats_agent</span><span class="o">.</span><span class="n">optimize_hyperparams</span><span class="p">(</span>
+        <span class="n">n_trials</span><span class="o">=</span><span class="mi">3</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="n">sampler_method</span><span class="o">=</span><span class="s2">&quot;grid&quot;</span><span class="p">,</span> <span class="n">sampler_kwargs</span><span class="o">=</span><span class="n">sampler_kwargs</span>
+    <span class="p">)</span>
+    <span class="n">stats_agent</span><span class="o">.</span><span class="n">clear_output_dir</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">_test_hyperparam_optim_cmaes</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="s2">&quot;continuous_state&quot;</span><span class="p">,</span> <span class="n">init_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="c1"># Define trainenv</span>
+    <span class="k">if</span> <span class="n">init_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">init_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">init_kwargs</span><span class="p">[</span><span class="s2">&quot;seeder&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">SEED</span>
+    <span class="n">train_env</span> <span class="o">=</span> <span class="n">_make_tuple_env</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+
+    <span class="c1"># Run ExperimentManager</span>
+    <span class="n">stats_agent</span> <span class="o">=</span> <span class="n">ExperimentManager</span><span class="p">(</span>
+        <span class="n">agent</span><span class="p">,</span>
+        <span class="n">train_env</span><span class="p">,</span>
+        <span class="n">init_kwargs</span><span class="o">=</span><span class="p">{},</span>
+        <span class="n">fit_budget</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">eval_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;eval_horizon&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
+        <span class="n">n_fit</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># test hyperparameter optimization with CMA-ES sampler</span>
+    <span class="n">stats_agent</span><span class="o">.</span><span class="n">optimize_hyperparams</span><span class="p">(</span><span class="n">sampler_method</span><span class="o">=</span><span class="s2">&quot;cmaes&quot;</span><span class="p">,</span> <span class="n">n_trials</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">stats_agent</span><span class="o">.</span><span class="n">clear_output_dir</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">_test_discount_optimization</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="s2">&quot;continuous_state&quot;</span><span class="p">,</span> <span class="n">init_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="c1"># Define trainenv</span>
+    <span class="k">if</span> <span class="n">init_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">init_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">init_kwargs</span><span class="p">[</span><span class="s2">&quot;seeder&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">SEED</span>
+    <span class="n">train_env</span> <span class="o">=</span> <span class="n">_make_tuple_env</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+
+    <span class="n">vi_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;gamma&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s2">&quot;epsilon&quot;</span><span class="p">:</span> <span class="mf">1e-3</span><span class="p">}</span>
+
+    <span class="n">vi_stats</span> <span class="o">=</span> <span class="n">ExperimentManager</span><span class="p">(</span>
+        <span class="n">agent</span><span class="p">,</span>
+        <span class="n">train_env</span><span class="p">,</span>
+        <span class="n">fit_budget</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">eval_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">eval_horizon</span><span class="o">=</span><span class="mi">20</span><span class="p">),</span>
+        <span class="n">init_kwargs</span><span class="o">=</span><span class="n">vi_params</span><span class="p">,</span>
+        <span class="n">n_fit</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">vi_stats</span><span class="o">.</span><span class="n">optimize_hyperparams</span><span class="p">(</span>
+        <span class="n">n_trials</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">n_fit</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">sampler_method</span><span class="o">=</span><span class="s2">&quot;random&quot;</span><span class="p">,</span> <span class="n">pruner_method</span><span class="o">=</span><span class="s2">&quot;none&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">vi_stats</span><span class="o">.</span><span class="n">optuna_study</span>
+    <span class="n">vi_stats</span><span class="o">.</span><span class="n">clear_output_dir</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">_test_hyperparam_optim_random</span><span class="p">(</span>
+    <span class="n">parallelization</span><span class="p">,</span>
+    <span class="n">custom_eval_function</span><span class="p">,</span>
+    <span class="n">fit_fraction</span><span class="p">,</span>
+    <span class="n">agent</span><span class="p">,</span>
+    <span class="n">env</span><span class="o">=</span><span class="s2">&quot;continuous_state&quot;</span><span class="p">,</span>
+    <span class="n">init_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="c1"># Define trainenv</span>
+    <span class="k">if</span> <span class="n">init_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">init_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">init_kwargs</span><span class="p">[</span><span class="s2">&quot;seeder&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">SEED</span>
+    <span class="n">train_env</span> <span class="o">=</span> <span class="n">_make_tuple_env</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+
+    <span class="c1"># Run ExperimentManager</span>
+    <span class="n">stats_agent</span> <span class="o">=</span> <span class="n">ExperimentManager</span><span class="p">(</span>
+        <span class="n">agent</span><span class="p">,</span>
+        <span class="n">train_env</span><span class="p">,</span>
+        <span class="n">init_kwargs</span><span class="o">=</span><span class="p">{},</span>
+        <span class="n">fit_budget</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">eval_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;eval_horizon&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
+        <span class="n">n_fit</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">parallelization</span><span class="o">=</span><span class="n">parallelization</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># test hyperparameter optimization with random sampler</span>
+    <span class="n">stats_agent</span><span class="o">.</span><span class="n">optimize_hyperparams</span><span class="p">(</span>
+        <span class="n">sampler_method</span><span class="o">=</span><span class="s2">&quot;random&quot;</span><span class="p">,</span>
+        <span class="n">n_trials</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="n">optuna_parallelization</span><span class="o">=</span><span class="n">parallelization</span><span class="p">,</span>
+        <span class="n">custom_eval_function</span><span class="o">=</span><span class="n">custom_eval_function</span><span class="p">,</span>
+        <span class="n">fit_fraction</span><span class="o">=</span><span class="n">fit_fraction</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">stats_agent</span><span class="o">.</span><span class="n">clear_output_dir</span><span class="p">()</span>
+</pre></div>
+
+      </div>
+    <div class="container">
+      <footer class="sk-content-footer">
+            &copy; 2023, rlberry team.
+      </footer>
+    </div>
+  </div>
+</div>
+<script src="../../../_static/js/vendor/bootstrap.min.js"></script>
+
+<script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-22606712-2', 'auto');
+    ga('set', 'anonymizeIp', true);
+    ga('send', 'pageview');
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+<script>
+$(document).ready(function() {
+    /* Add a [>>>] button on the top-right corner of code samples to hide
+     * the >>> and ... prompts and the output and thus make the code
+     * copyable. */
+    var div = $('.highlight-python .highlight,' +
+                '.highlight-python3 .highlight,' +
+                '.highlight-pycon .highlight,' +
+		'.highlight-default .highlight')
+    var pre = div.find('pre');
+
+    // get the styles from the current theme
+    pre.parent().parent().css('position', 'relative');
+    var hide_text = 'Hide prompts and outputs';
+    var show_text = 'Show prompts and outputs';
+
+    // create and add the button to all the code blocks that contain >>>
+    div.each(function(index) {
+        var jthis = $(this);
+        if (jthis.find('.gp').length > 0) {
+            var button = $('<span class="copybutton">&gt;&gt;&gt;</span>');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+            jthis.prepend(button);
+        }
+        // tracebacks (.gt) contain bare text elements that need to be
+        // wrapped in a span to work with .nextUntil() (see later)
+        jthis.find('pre:has(.gt)').contents().filter(function() {
+            return ((this.nodeType == 3) && (this.data.trim().length > 0));
+        }).wrap('<span>');
+    });
+
+    // define the behavior of the button when it's clicked
+    $('.copybutton').click(function(e){
+        e.preventDefault();
+        var button = $(this);
+        if (button.data('hidden') === 'false') {
+            // hide the code output
+            button.parent().find('.go, .gp, .gt').hide();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'hidden');
+            button.css('text-decoration', 'line-through');
+            button.attr('title', show_text);
+            button.data('hidden', 'true');
+        } else {
+            // show the code output
+            button.parent().find('.go, .gp, .gt').show();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'visible');
+            button.css('text-decoration', 'none');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+        }
+    });
+
+	/*** Add permalink buttons next to glossary terms ***/
+	$('dl.glossary > dt[id]').append(function() {
+		return ('<a class="headerlink" href="#' +
+			    this.getAttribute('id') +
+			    '" title="Permalink to this term">¶</a>');
+	});
+  /*** Hide navbar when scrolling down ***/
+  // Returns true when headerlink target matches hash in url
+  (function() {
+    hashTargetOnTop = function() {
+        var hash = window.location.hash;
+        if ( hash.length < 2 ) { return false; }
+
+        var target = document.getElementById( hash.slice(1) );
+        if ( target === null ) { return false; }
+
+        var top = target.getBoundingClientRect().top;
+        return (top < 2) && (top > -2);
+    };
+
+    // Hide navbar on load if hash target is on top
+    var navBar = document.getElementById("navbar");
+    var navBarToggler = document.getElementById("sk-navbar-toggler");
+    var navBarHeightHidden = "-" + navBar.getBoundingClientRect().height + "px";
+    var $window = $(window);
+
+    hideNavBar = function() {
+        navBar.style.top = navBarHeightHidden;
+    };
+
+    showNavBar = function() {
+        navBar.style.top = "0";
+    }
+
+    if (hashTargetOnTop()) {
+        hideNavBar()
+    }
+
+    var prevScrollpos = window.pageYOffset;
+    hideOnScroll = function(lastScrollTop) {
+        if (($window.width() < 768) && (navBarToggler.getAttribute("aria-expanded") === 'true')) {
+            return;
+        }
+        if (lastScrollTop > 2 && (prevScrollpos <= lastScrollTop) || hashTargetOnTop()){
+            hideNavBar()
+        } else {
+            showNavBar()
+        }
+        prevScrollpos = lastScrollTop;
+    };
+
+    /*** high performance scroll event listener***/
+    var raf = window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        window.oRequestAnimationFrame;
+    var lastScrollTop = $window.scrollTop();
+
+    if (raf) {
+        loop();
+    }
+
+    function loop() {
+        var scrollTop = $window.scrollTop();
+        if (lastScrollTop === scrollTop) {
+            raf(loop);
+            return;
+        } else {
+            lastScrollTop = scrollTop;
+            hideOnScroll(lastScrollTop);
+            raf(loop);
+        }
+    }
+  })();
+});
+
+</script>
+    
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    
+</body>
+</html>
