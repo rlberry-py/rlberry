@@ -169,7 +169,9 @@ In the default writer you have the following information :
 
 Maybe you want to use other tools to train your agents, but you want to use rlberry tools for visualisation and/or statistical tests.
 If your training is compatible with tensorboard, you can load the data in a pandas dataframes to use them in rlberry. To do that, you can use the tool [tensorboard_to_dataframe](rlberry.manager.tensorboard_to_dataframe).
+There are two input formats for the tensorboard data :
 
+### Option 1: via a directory
 Be careful about this 2 things:
 - The folder containing tensorboard results must respect the following tree structure :
     `<tensorboard_log_folder/algo_name/n_simu/events.out.tfevents.xxxxx>`
@@ -430,11 +432,10 @@ dict_keys(['rollout/ep_len_mean', 'rollout/ep_rew_mean', 'time/fps', 'train/appr
 19  A2C_cartpole  A2C_2  5000   0.700427}
 ```
 
+### Option 2: via a Dict
 
-**Option 2:**
-
-[tensorboard_to_dataframe](rlberry.manager.tensorboard_to_dataframe) give you another input option by `Dict`.
-The Dict must have the `algo_name` in keys, and a list of `path` in values (path to the `events.out.tfevents` file). In the list, the position of the past will be consider as the `seed`
+In [tensorboard_to_dataframe](rlberry.manager.tensorboard_to_dataframe), you can also use a `Dict` as input.
+The Dict must have the `algo_name` in **keys**, and a list of `path` in **values** (path to the `events.out.tfevents` file). In the list, the position of the path will be consider as the `n_simu`
 
 ```python
 # creating the dic
