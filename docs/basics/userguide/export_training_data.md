@@ -431,7 +431,8 @@ dict_keys(['rollout/ep_len_mean', 'rollout/ep_rew_mean', 'time/fps', 'train/appr
 ```
 
 
-Option 2:
+** Option 2: **
+
 [tensorboard_to_dataframe](rlberry.manager.tensorboard_to_dataframe) give you another input option by `Dict`.
 The Dict must have the `algo_name` in keys, and a list of `path` in values (path to the `events.out.tfevents` file). In the list, the position of the past will be consider as the `seed`
 
