@@ -431,6 +431,7 @@ dict_keys(['rollout/ep_len_mean', 'rollout/ep_rew_mean', 'time/fps', 'train/appr
 18  A2C_cartpole  A2C_2  4500   1.198329
 19  A2C_cartpole  A2C_2  5000   0.700427}
 ```
+</br>
 
 ### Option 2: via a Dict
 
