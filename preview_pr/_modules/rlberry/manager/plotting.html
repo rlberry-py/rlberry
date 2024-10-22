@@ -475,7 +475,7 @@
             <span class="k">except</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;non-finite (or non float) data detected.&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">X</span><span class="p">)):</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                     <span class="s2">&quot;Some of the values are not finite. Not plotting the associated curves.&quot;</span>
                 <span class="p">)</span>
                 <span class="n">Xhat</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
@@ -536,7 +536,7 @@
 
             <span class="k">elif</span> <span class="n">error_representation</span> <span class="o">==</span> <span class="s2">&quot;cb&quot;</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">n_tot_simu</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">level</span><span class="p">):</span>
-                    <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                         <span class="s2">&quot;Computing a cb that cannot achieve the level prescribed because there are not enough seeds.&quot;</span>
                     <span class="p">)</span>
 
@@ -562,7 +562,7 @@
                     <span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">y_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">xplot</span><span class="p">))</span>
-                    <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                         <span class="s2">&quot;The variance of the curve was 0, the confidence bound is very biased&quot;</span>
                     <span class="p">)</span>
 
@@ -663,7 +663,7 @@
                 <span class="nb">float</span>
             <span class="p">)</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_simu</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_simu_0</span><span class="p">):</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;x axis is not the same for all the runs, truncating.&quot;</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;x axis is not the same for all the runs, truncating.&quot;</span><span class="p">)</span>
             <span class="n">x_simu_0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">intersect1d</span><span class="p">(</span><span class="n">x_simu_0</span><span class="p">,</span> <span class="n">x_simu</span><span class="p">)</span>
         <span class="n">df_name</span> <span class="o">=</span> <span class="n">df_name</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_name</span><span class="p">[</span><span class="n">xlabel</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_simu_0</span><span class="p">)]</span>
         <span class="k">assert</span> <span class="p">(</span>
