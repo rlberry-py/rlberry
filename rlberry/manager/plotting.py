@@ -358,7 +358,7 @@ def plot_smoothed_curves(
             except:
                 raise ValueError("non-finite (or non float) data detected.")
             if not np.all(np.isfinite(X)):
-                logger.warn(
+                logger.warning(
                     "Some of the values are not finite. Not plotting the associated curves."
                 )
                 Xhat[f] = np.nan
@@ -419,7 +419,7 @@ def plot_smoothed_curves(
 
             elif error_representation == "cb":
                 if n_tot_simu < 1 / (1 - level):
-                    logger.warn(
+                    logger.warning(
                         "Computing a cb that cannot achieve the level prescribed because there are not enough seeds."
                     )
 
@@ -445,7 +445,7 @@ def plot_smoothed_curves(
                     )
                 else:
                     y_err = np.zeros(len(xplot))
-                    logger.warn(
+                    logger.warning(
                         "The variance of the curve was 0, the confidence bound is very biased"
                     )
 
@@ -546,7 +546,7 @@ def plot_synchronized_curves(
                 float
             )
             if len(x_simu) != len(x_simu_0):
-                logger.warn("x axis is not the same for all the runs, truncating.")
+                logger.warning("x axis is not the same for all the runs, truncating.")
             x_simu_0 = np.intersect1d(x_simu_0, x_simu)
         df_name = df_name.loc[df_name[xlabel].apply(lambda x: x in x_simu_0)]
         assert (
