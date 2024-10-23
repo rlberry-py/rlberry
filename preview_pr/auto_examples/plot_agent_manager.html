@@ -133,18 +133,18 @@ we can test simple algorithms. The reward function can be accessed by: <code cla
 <div class="math notranslate nohighlight">
 \[Q(s, a) \leftarrow \sum_{s^{\prime}} p(s'|a, s)\left( R(s, a)+\gamma \max _{a^{\prime}} Q(s^{\prime}, a^{\prime}) \right).\]</div>
 <p>Finally, we compare with a baseline provided by a random policy using the ExperimentManager class which trains, evaluates and gathers statistics about the two agents.</p>
-<img src="../_images/sphx_glr_plot_agent_manager_001.png" srcset="../_images/sphx_glr_plot_agent_manager_001.png" alt="plot agent manager" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[INFO] 12:53: ... trained!
-[INFO] 12:53: Saved ExperimentManager(ValueIterationAgent) using pickle.
-[INFO] 12:53: The ExperimentManager was saved in : &#39;rlberry_data/temp/manager_data/ValueIterationAgent_2024-10-22_12-53-25_13a28291/manager_obj.pickle&#39;
-[INFO] 12:53: Running ExperimentManager fit() for RandomAgent with n_fit = 1 and max_workers = None.
-[INFO] 12:53: ... trained!
-[INFO] 12:53: Saved ExperimentManager(RandomAgent) using pickle.
-[INFO] 12:53: The ExperimentManager was saved in : &#39;rlberry_data/temp/manager_data/RandomAgent_2024-10-22_12-53-26_df4aa5c1/manager_obj.pickle&#39;
-[INFO] 12:53: Evaluating ValueIterationAgent...
-[INFO] 12:53: Computing 10 evaluations.
+<img src="../_images/sphx_glr_plot_agent_manager_001.png" srcset="../_images/sphx_glr_plot_agent_manager_001.png" alt="plot agent manager" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[INFO] 13:07: ... trained!
+[INFO] 13:07: Saved ExperimentManager(ValueIterationAgent) using pickle.
+[INFO] 13:07: The ExperimentManager was saved in : &#39;rlberry_data/temp/manager_data/ValueIterationAgent_2024-10-23_13-07-04_4a83d932/manager_obj.pickle&#39;
+[INFO] 13:07: Running ExperimentManager fit() for RandomAgent with n_fit = 1 and max_workers = None.
+[INFO] 13:07: ... trained!
+[INFO] 13:07: Saved ExperimentManager(RandomAgent) using pickle.
+[INFO] 13:07: The ExperimentManager was saved in : &#39;rlberry_data/temp/manager_data/RandomAgent_2024-10-23_13-07-05_fea02746/manager_obj.pickle&#39;
+[INFO] 13:07: Evaluating ValueIterationAgent...
+[INFO] 13:07: Computing 10 evaluations.
 [INFO] Evaluation:..........  Evaluation finished
-[INFO] 12:53: Evaluating RandomAgent...
-[INFO] 12:53: Computing 10 evaluations.
+[INFO] 13:07: Evaluating RandomAgent...
+[INFO] 13:07: Computing 10 evaluations.
 [INFO] Evaluation:..........  Evaluation finished
 </pre></div>
 </div>
@@ -262,7 +262,7 @@ we can test simple algorithms. The reward function can be accessed by: <code cla
 <span class="n">output</span> <span class="o">=</span> <a href="../generated/rlberry.manager.evaluate_agents.html#rlberry.manager.evaluate_agents" title="rlberry.manager.evaluate_agents" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-function"><span class="n">evaluate_agents</span></a><span class="p">([</span><a href="../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">vi_stats</span></a><span class="p">,</span> <a href="../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">baseline_stats</span></a><span class="p">],</span> <span class="n">n_simulations</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.174 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.013 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-plot-agent-manager-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/5b2e10dcc28b048e84f30bd6901649ed/plot_agent_manager.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_agent_manager.py</span></code></a></p>
