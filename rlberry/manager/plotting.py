@@ -332,7 +332,9 @@ def plot_smoothed_curves(
         # with cross validation bandwidth selection
         if not isinstance(smoothing_bandwidth, numbers.Number):
             if smoothing_bandwidth is None:
-                bandwidth = np.linspace(min_bandwidth_x, (max_x - min_x) / 100, 10)
+                bandwidth = np.linspace(
+                    min_bandwidth_x, max((max_x - min_x) / 100, min_bandwidth_x * 3), 10
+                )
             else:
                 bandwidth = smoothing_bandwidth
             nw = SmoothingParameterSearch(
