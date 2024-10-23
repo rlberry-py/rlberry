@@ -96,7 +96,7 @@ def test_rendering_with_atari_make():
             ),  # The number of interactions between the agent and the environment during evaluations.
             n_fit=1,  # The number of agents to train. Usually, it is good to do more than 1 because the training is stochastic.
             agent_name="PPO_tuned",  # The agent's name.
-            output_dir=str(tmpdirname) + r"/PPO_for_breakout",
+            output_dir=str(tmpdirname) + "/PPO_for_breakout",
         )
 
         tuned_xp.fit()
