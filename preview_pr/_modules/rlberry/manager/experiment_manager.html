@@ -764,7 +764,9 @@
 <div class="viewcode-block" id="ExperimentManager.clear_output_dir"><a class="viewcode-back" href="../../../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager.clear_output_dir">[docs]</a>    <span class="k">def</span> <span class="nf">clear_output_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete output_dir and all its data.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">optuna_study</span><span class="p">:</span>
-            <span class="n">optuna</span><span class="o">.</span><span class="n">delete_study</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optuna_study</span><span class="o">.</span><span class="n">study_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">optuna_storage_url</span><span class="p">)</span>
+            <span class="n">optuna</span><span class="o">.</span><span class="n">delete_study</span><span class="p">(</span>
+                <span class="n">study_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optuna_study</span><span class="o">.</span><span class="n">study_name</span><span class="p">,</span> <span class="n">storage</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optuna_storage_url</span>
+            <span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dir_</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
