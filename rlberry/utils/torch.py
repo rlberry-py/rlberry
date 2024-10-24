@@ -78,7 +78,7 @@ def get_memory(pid=None):
         command, stdout=PIPE, stderr=PIPE, universal_newlines=True, shell=True
     ).stdout
     m = re.findall(
-        r"\| *[0-9] *" + str(pid) + " *C *.*python.*? +([0-9]+).*\|",
+        r"\| *[0-9] *" + str(pid) + r" *C *.*python.*? +([0-9]+).*\|",
         result,
         re.MULTILINE,
     )
