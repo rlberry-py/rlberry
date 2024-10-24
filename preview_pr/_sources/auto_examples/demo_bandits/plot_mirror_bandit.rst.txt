@@ -45,21 +45,29 @@ and finally definition of the experiment.
 
  .. code-block:: none
 
-    [INFO] 07:02:        agent_name  worker  reward  action  max_global_step
-                             SH        0     -2.376    4           6 
-    [INFO] 07:02:        agent_name  worker  reward  action  max_global_step
-                             SH        0     -0.28     0           18 
-    [INFO] 07:02:        agent_name  worker  reward  action  max_global_step
-                             SH        0     -0.17     6           32 
-    [INFO] 07:02:        agent_name  worker  reward  action  max_global_step
-                             SH        0     -0.173    4           50 
-    [INFO] 07:02:        agent_name  worker  reward  action  max_global_step
-                             SH        0     -0.168    7           68 
-    [INFO] 07:02:        agent_name  worker  reward  action  max_global_step
-                             SH        0     -0.167    7           86 
-    [INFO] 07:02: ... trained! 
-    [INFO] 07:02: Saved ExperimentManager(SH) using pickle. 
-    [INFO] 07:02: The ExperimentManager was saved in : 'rlberry_data/temp/manager_data/SH_2024-10-24_07-02-21_93e95205/manager_obj.pickle' 
+    [INFO] 07:55:        agent_name  worker  reward  action  max_global_step
+                             SH        0     -0.667    3           5 
+    [INFO] 07:55:        agent_name  worker  reward  action  max_global_step
+                             SH        0     -0.452    1           11 
+    [INFO] 07:55:        agent_name  worker  reward  action  max_global_step
+                             SH        0     -0.456    1           19 
+    [INFO] 07:55:        agent_name  worker  reward  action  max_global_step
+                             SH        0     -0.312    2           28 
+    [INFO] 07:55:        agent_name  worker  reward  action  max_global_step
+                             SH        0     -0.324    6           37 
+    [INFO] 07:55:        agent_name  worker  reward  action  max_global_step
+                             SH        0     -0.311    7           47 
+    [INFO] 07:55:        agent_name  worker  reward  action  max_global_step
+                             SH        0     -0.323    6           57 
+    [INFO] 07:55:        agent_name  worker  reward  action  max_global_step
+                             SH        0     -0.317    6           67 
+    [INFO] 07:55:        agent_name  worker  reward  action  max_global_step
+                             SH        0     -0.311    6           77 
+    [INFO] 07:55:        agent_name  worker  reward  action  max_global_step
+                             SH        0     -0.308    6           87 
+    [INFO] 07:55: ... trained! 
+    [INFO] 07:55: Saved ExperimentManager(SH) using pickle. 
+    [INFO] 07:55: The ExperimentManager was saved in : 'rlberry_data/temp/manager_data/SH_2024-10-24_07-55-02_c4bfc9cd/manager_obj.pickle' 
     The optimal action (fastest server) is server number  7
 
 
@@ -241,7 +249,7 @@ and finally definition of the experiment.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 21.875 seconds)
+   **Total running time of the script:** (0 minutes 34.889 seconds)
 
 
 .. _sphx_glr_download_auto_examples_demo_bandits_plot_mirror_bandit.py:
