@@ -127,37 +127,37 @@ to download the full example code</p>
 <span id="checkpointing-example"></span><span id="sphx-glr-auto-examples-plot-checkpointing-py"></span><h1>Checkpointing<a class="headerlink" href="#checkpointing" title="Permalink to this heading">¶</a></h1>
 <p>This is a minimal example of how to create checkpoints while training
 your agents, and how to restore from a previous checkpoint.</p>
-<img src="../_images/sphx_glr_plot_checkpointing_001.png" srcset="../_images/sphx_glr_plot_checkpointing_001.png" alt="y(t)" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[INFO] 09:27: ... trained!
-[INFO] 09:27: Saved ExperimentManager(my-agent) using pickle.
-[INFO] 09:27: The ExperimentManager was saved in : &#39;rlberry_data/temp/manager_data/my-agent_2024-10-24_09-27-19_f57f8d8d/manager_obj.pickle&#39;
-[INFO] 09:27: Saved ExperimentManager(my-agent) using pickle.
-[INFO] 09:27: The ExperimentManager was saved in : &#39;rlberry_data/temp/manager_data/my-agent_2024-10-24_09-27-19_f57f8d8d/manager_obj.pickle&#39;
+<img src="../_images/sphx_glr_plot_checkpointing_001.png" srcset="../_images/sphx_glr_plot_checkpointing_001.png" alt="y(t)" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[INFO] 15:10: ... trained!
+[INFO] 15:10: Saved ExperimentManager(my-agent) using pickle.
+[INFO] 15:10: The ExperimentManager was saved in : &#39;rlberry_data/temp/manager_data/my-agent_2024-10-24_15-10-36_33662490/manager_obj.pickle&#39;
+[INFO] 15:10: Saved ExperimentManager(my-agent) using pickle.
+[INFO] 15:10: The ExperimentManager was saved in : &#39;rlberry_data/temp/manager_data/my-agent_2024-10-24_15-10-36_33662490/manager_obj.pickle&#39;
 
- Saved manager at rlberry_data/temp/manager_data/my-agent_2024-10-24_09-27-19_f57f8d8d/manager_obj.pickle.
+ Saved manager at rlberry_data/temp/manager_data/my-agent_2024-10-24_15-10-36_33662490/manager_obj.pickle.
 
-[INFO] 09:27: Running ExperimentManager fit() for my-agent with n_fit = 2 and max_workers = None.
-checkpoint at rlberry_data/temp/manager_data/my-agent_2024-10-24_09-27-19_f57f8d8d/output_1/checkpoint.pickle (timestep = 500)
-checkpoint at rlberry_data/temp/manager_data/my-agent_2024-10-24_09-27-19_f57f8d8d/output_0/checkpoint.pickle (timestep = 500)
-checkpoint at rlberry_data/temp/manager_data/my-agent_2024-10-24_09-27-19_f57f8d8d/output_1/checkpoint.pickle (timestep = 1000)
-checkpoint at rlberry_data/temp/manager_data/my-agent_2024-10-24_09-27-19_f57f8d8d/output_0/checkpoint.pickle (timestep = 1000)
-[INFO] 09:27: ... trained!
-[INFO] 09:27: Saved ExperimentManager(my-agent) using pickle.
-[INFO] 09:27: The ExperimentManager was saved in : &#39;rlberry_data/temp/manager_data/my-agent_2024-10-24_09-27-19_f57f8d8d/manager_obj.pickle&#39;
+[INFO] 15:10: Running ExperimentManager fit() for my-agent with n_fit = 2 and max_workers = None.
+checkpoint at rlberry_data/temp/manager_data/my-agent_2024-10-24_15-10-36_33662490/output_0/checkpoint.pickle (timestep = 500)
+checkpoint at rlberry_data/temp/manager_data/my-agent_2024-10-24_15-10-36_33662490/output_1/checkpoint.pickle (timestep = 500)
+checkpoint at rlberry_data/temp/manager_data/my-agent_2024-10-24_15-10-36_33662490/output_0/checkpoint.pickle (timestep = 1000)
+checkpoint at rlberry_data/temp/manager_data/my-agent_2024-10-24_15-10-36_33662490/output_1/checkpoint.pickle (timestep = 1000)
+[INFO] 15:10: ... trained!
+[INFO] 15:10: Saved ExperimentManager(my-agent) using pickle.
+[INFO] 15:10: The ExperimentManager was saved in : &#39;rlberry_data/temp/manager_data/my-agent_2024-10-24_15-10-36_33662490/manager_obj.pickle&#39;
 
- Loading manager from rlberry_data/temp/manager_data/my-agent_2024-10-24_09-27-19_f57f8d8d/manager_obj.pickle.
+ Loading manager from rlberry_data/temp/manager_data/my-agent_2024-10-24_15-10-36_33662490/manager_obj.pickle.
 
-[INFO] 09:27: Running ExperimentManager fit() for my-agent with n_fit = 2 and max_workers = None.
+[INFO] 15:10: Running ExperimentManager fit() for my-agent with n_fit = 2 and max_workers = None.
 
- --&gt; MyAgent loaded from checkpoint: rlberry_data/temp/manager_data/my-agent_2024-10-24_09-27-19_f57f8d8d/output_1/checkpoint.pickle
+ --&gt; MyAgent loaded from checkpoint: rlberry_data/temp/manager_data/my-agent_2024-10-24_15-10-36_33662490/output_0/checkpoint.pickle
 
 
- --&gt; MyAgent loaded from checkpoint: rlberry_data/temp/manager_data/my-agent_2024-10-24_09-27-19_f57f8d8d/output_0/checkpoint.pickle
+ --&gt; MyAgent loaded from checkpoint: rlberry_data/temp/manager_data/my-agent_2024-10-24_15-10-36_33662490/output_1/checkpoint.pickle
 
-checkpoint at rlberry_data/temp/manager_data/my-agent_2024-10-24_09-27-19_f57f8d8d/output_1/checkpoint.pickle (timestep = 1500)
-checkpoint at rlberry_data/temp/manager_data/my-agent_2024-10-24_09-27-19_f57f8d8d/output_0/checkpoint.pickle (timestep = 1500)
-[INFO] 09:27: ... trained!
-[INFO] 09:27: Saved ExperimentManager(my-agent) using pickle.
-[INFO] 09:27: The ExperimentManager was saved in : &#39;rlberry_data/temp/manager_data/my-agent_2024-10-24_09-27-19_f57f8d8d/manager_obj.pickle&#39;
+checkpoint at rlberry_data/temp/manager_data/my-agent_2024-10-24_15-10-36_33662490/output_0/checkpoint.pickle (timestep = 1500)
+checkpoint at rlberry_data/temp/manager_data/my-agent_2024-10-24_15-10-36_33662490/output_1/checkpoint.pickle (timestep = 1500)
+[INFO] 15:10: ... trained!
+[INFO] 15:10: Saved ExperimentManager(my-agent) using pickle.
+[INFO] 15:10: The ExperimentManager was saved in : &#39;rlberry_data/temp/manager_data/my-agent_2024-10-24_15-10-36_33662490/manager_obj.pickle&#39;
 </pre></div>
 </div>
 <div class="line-block">
@@ -245,7 +245,7 @@ checkpoint at rlberry_data/temp/manager_data/my-agent_2024-10-24_09-27-19_f57f8d
     <a href="../generated/rlberry.manager.plot_writer_data.html#rlberry.manager.plot_writer_data" title="rlberry.manager.plot_writer_data" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-function"><span class="n">plot_writer_data</span></a><span class="p">(</span><a href="../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">loaded_manager</span></a><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;y(t)&quot;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.512 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.276 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-plot-checkpointing-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/ce48de95bcbfa35be204f76edd32bcbf/plot_checkpointing.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_checkpointing.py</span></code></a></p>
