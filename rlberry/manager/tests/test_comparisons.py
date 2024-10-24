@@ -76,7 +76,7 @@ def test_compare(method, source):
             {
                 "agent": (["Agent 1"] * 10) + (["Agent 2"] * 10),
                 # "mean_eval": ([0] * 10) + ([10] * 10),
-                "mean_eval": [range(12, 21)],
+                "mean_eval": [range(10, 21)],
             }
         )
 
