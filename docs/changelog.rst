@@ -7,6 +7,12 @@ Changelog
 Dev version
 -----------
 
+
+
+ *PR #476*
+
+* Update lib versions and remove warnings from tests/CI : https://github.com/rlberry-py/rlberry/issues/471
+
  *PR #474*
 
 * Create a new tool to load data from tensorboard logs : https://github.com/rlberry-py/rlberry/issues/472
