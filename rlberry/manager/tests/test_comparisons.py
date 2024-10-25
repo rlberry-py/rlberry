@@ -6,12 +6,18 @@ from rlberry.manager import compare_agents, AdastopComparator
 import pandas as pd
 
 
+it = 1
+
+
 class DummyAgent(AgentWithSimplePolicy):
     def __init__(self, env, eval_val=0, **kwargs):
+        global it
         AgentWithSimplePolicy.__init__(self, env, **kwargs)
         self.name = "DummyAgent"
         self.fitted = False
-        self.eval_val = eval_val
+        # self.eval_val = eval_val
+        self.eval_val = it
+        it += 1
 
         self.total_budget = 0.0
 
@@ -69,7 +75,7 @@ def test_compare(method, source):
         data_source = pd.DataFrame(
             {
                 "agent": (["Agent 1"] * 10) + (["Agent 2"] * 10),
-                "mean_eval": ([0] * 10) + ([10] * 10),
+                "mean_eval": range(0, 20),
             }
         )
 
