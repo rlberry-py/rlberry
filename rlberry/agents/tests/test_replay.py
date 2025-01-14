@@ -4,12 +4,15 @@ from rlberry.agents.utils import replay
 from rlberry_research.envs.finite import GridWorld
 from gymnasium.wrappers import TimeLimit
 
+from rlberry.wrappers.utils import get_base_env
+
 
 def _get_filled_replay(max_replay_size):
     """runs env for ~ 2 * max_replay_size timesteps."""
     env = GridWorld(terminal_states=None)
     env = TimeLimit(env, max_episode_steps=200)
-    env.reseed(123)
+    base_env = get_base_env(env)
+    base_env.reseed(123)
 
     rng = np.random.default_rng(456)
     buffer = replay.ReplayBuffer(
