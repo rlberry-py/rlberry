@@ -121,8 +121,8 @@ def atari_make(id, seed=None, **kwargs):
     if clip_reward:
         env = ClipRewardEnv(env)
     env = gym.wrappers.ResizeObservation(env, (screen_size, screen_size))
-    env = gym.wrappers.GrayScaleObservation(env)
-    env = gym.wrappers.FrameStack(env, n_frame_stack)
+    env = gym.wrappers.GrayscaleObservation(env)
+    env = gym.wrappers.FrameStackObservation(env, n_frame_stack)
     if seed:
         env.seed(seed)
         env.action_space.seed(seed)
