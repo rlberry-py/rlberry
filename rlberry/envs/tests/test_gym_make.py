@@ -1,5 +1,16 @@
 from rlberry.envs.gym_make import atari_make
 
+import gymnasium as gym
+
+
+_ALE_INSTALLED = True
+try:
+    import ale_py
+
+    gym.register_envs(ale_py)
+except Exception:
+    _ALE_INSTALLED = False
+
 
 def test_atari_make():
     wrappers_dict = dict(terminal_on_life_loss=True, frame_skip=8)
@@ -24,7 +35,7 @@ def test_atari_make():
 def test_rendering_with_atari_make():
     from rlberry.manager import ExperimentManager
     from rlberry_research.agents.torch import PPOAgent
-    from gymnasium.wrappers.record_video import RecordVideo
+    from gymnasium.wrappers.rendering import RecordVideo
     import os
     from rlberry.envs.gym_make import atari_make
     from rlberry_research.agents.torch.utils.training import model_factory_from_env

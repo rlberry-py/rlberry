@@ -19,6 +19,18 @@ import gymnasium as gym
 import numpy as np
 from typing import Tuple
 
+_ALE_INSTALLED = True
+try:
+    import ale_py
+
+    gym.register_envs(ale_py)
+except Exception:
+    _ALE_INSTALLED = False
+
+import ale_py
+
+gym.register_envs(ale_py)
+
 
 class CustomDummyEnv(gym.Env):
     def __init__(self):

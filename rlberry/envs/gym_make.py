@@ -4,6 +4,14 @@ from rlberry.envs.basewrapper import Wrapper
 import numpy as np
 from numpy import ndarray
 
+_ALE_INSTALLED = True
+try:
+    import ale_py
+
+    gym.register_envs(ale_py)
+except Exception:
+    _ALE_INSTALLED = False
+
 
 def gym_make(id, wrap_spaces=False, **kwargs):
     """
