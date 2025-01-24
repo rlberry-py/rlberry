@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 import dill
 import pickle
 import bz2
-import _pickle as cPickle
+import cloudpickle
 import numpy as np
 from inspect import signature
 from pathlib import Path
@@ -317,7 +317,7 @@ class Agent(ABC):
                     pickle.dump(dict_to_save, ff)
             else:
                 with bz2.BZ2File(filename, "wb") as ff:
-                    cPickle.dump(dict_to_save, ff)
+                    cloudpickle.dump(dict_to_save, ff)
         except Exception as ex:
             try:
                 if not self.compress_pickle:
@@ -356,7 +356,7 @@ class Agent(ABC):
                     tmp_dict = pickle.load(ff)
             else:
                 with bz2.BZ2File(filename, "rb") as ff:
-                    tmp_dict = cPickle.load(ff)
+                    tmp_dict = cloudpickle.load(ff)
         except Exception as ex:
             if not obj.compress_pickle:
                 with filename.open("rb") as ff:
@@ -673,7 +673,7 @@ class AgentTorch(Agent):
                     torch.save(dict_to_save, ff, pickle)
             else:
                 with bz2.BZ2File(filename, "wb") as ff:
-                    torch.save(dict_to_save, ff, cPickle)
+                    torch.save(dict_to_save, ff, cloudpickle)
         except Exception as ex:
             try:
                 if not self.compress_pickle:
@@ -722,7 +722,7 @@ class AgentTorch(Agent):
             else:
                 with bz2.BZ2File(filename, "rb") as ff:
                     tmp_dict = torch.load(
-                        ff, map_location=device, pickle_module=cPickle
+                        ff, map_location=device, pickle_module=cloudpickle
                     )
         except Exception as ex:
             if not obj.compress_pickle:
