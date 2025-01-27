@@ -48,13 +48,16 @@ def test_rendering_with_atari_make():
             PPO,
         )  # https://stable-baselines3.readthedocs.io/en/master/modules/ppo.html
 
+        from rlberry.agents.stable_baselines import StableBaselinesAgent
+
         tuned_xp = ExperimentManager(
-            PPO,  # The Agent class.
+            StableBaselinesAgent,  # The Agent class.
             (
                 atari_make,
                 dict(id="ALE/Breakout-v5"),
             ),  # The Environment to solve.
             init_kwargs=dict(  # Where to put the agent's hyperparameters
+                algo_cls=PPO,
                 policy="MlpPolicy",
             ),
             fit_budget=1000,  # The number of interactions between the agent and the environment during training.

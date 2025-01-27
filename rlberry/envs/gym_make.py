@@ -149,7 +149,8 @@ class CompatibleWrapper(Wrapper):
 
     def step(self, action):
         if type(action) is ndarray and action.size == 1:
-            action = action[0]
+            # action = action[0]
+            int(action)
 
         next_observations, rewards, terminated, truncated, infos = self.env.step(action)
         return (
