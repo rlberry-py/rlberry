@@ -20,11 +20,11 @@ classifiers=[
 
 [tool.poetry.dependencies]
 python = "^3.9, <3.13"
-numpy = "<2.0.0"
+numpy = ">=2"
 scipy = "*"
 pygame-ce = "*"
 matplotlib = "*"
-gymnasium = {version="^0.29.1",  extras=["atari", "accept-rom-license"]}
+gymnasium = {version="^1",  extras=["atari", "accept-rom-license"]}
 dill = "*"
 docopt-ng = "*"
 pyyaml = "*"
@@ -36,13 +36,9 @@ optuna ={version="*", optional=true}
 ffmpeg-python = {version="*", optional=true}
 opencv-python = {version="*", optional=true}
 ale-py = {version="*", optional=true}
-stable-baselines3 = {version=">=2.3", optional=true}
+stable-baselines3 = {version=">=2.4.1", optional=true}
 tensorboard = {version="*", optional=true}
-torch = [
-    { version = ">=2.0.0,<2.3", platform = "darwin", optional=true },
-    { version = ">=2.0.0,<2.3", platform = "linux", optional=true },
-    { version = ">=2.0.0,<2.3", platform = "win32", optional=true },
-]
+torch = {version=">=2.3", optional=true}
 pandas = "*"
 scikit-fda = {version="^0.9", optional=true}
 nox = {version="*", optional=true}
