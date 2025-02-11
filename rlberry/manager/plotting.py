@@ -14,7 +14,7 @@ try:
     from skfda.preprocessing.smoothing.validation import SmoothingParameterSearch
 
     SKFDA_INSTALLED = True
-except:
+except Exception as ex:
     SKFDA_INSTALLED = False
 
 import rlberry
