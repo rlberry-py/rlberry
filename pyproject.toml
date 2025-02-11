@@ -38,11 +38,11 @@ opencv-contrib-python = {version="*", optional=true}
 ale-py = {version="*", optional=true}
 stable-baselines3 = {version=">=2.4.1", optional=true}
 tensorboard = {version="*", optional=true}
-torch = [
-    { version = ">=2.0.0,<2.3", markers = "sys_platform == 'darwin'", optional=true },
-    { version = ">=2.3", markers = "sys_platform == 'linux'", optional=true },
-    { version = ">=2.3", markers = "sys_platform == 'win32'", optional=true },
-]
+
+torch-macos = { version = ">=2.0.0,<2.3", markers = "sys_platform == 'darwin'", optional=true}
+torch = {version=">=2.3", markers = "sys_platform == 'linux'", optional=true}
+torch = {version=">=2.3", markers = "sys_platform == 'win32'", optional=true}
+
 pandas = "*"
 scikit-fda = {git = "https://github.com/GAA-UAM/scikit-fda.git", branch = "develop", optional=true}
 nox = {version="*", optional=true}
