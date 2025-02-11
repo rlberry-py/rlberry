@@ -90,7 +90,7 @@ jobs:
   strategy:
     matrix:
       Python311:
-        python.version: '3.11'
+        python.version: '3.13'
 
   steps:
   - task: UsePythonVersion@0
