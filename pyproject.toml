@@ -61,7 +61,7 @@ multimethod = {version="1.10", optional=true}     # new version 1.11 : crash our
 
 [[tool.poetry.source]]
 name = "pytorch"
-url = "https://download.pytorch.org/whl/cpu"
+url = "https://download.pytorch.org/whl/torch"
 priority = "explicit"
 
 
