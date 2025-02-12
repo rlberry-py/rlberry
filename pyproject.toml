@@ -42,6 +42,12 @@ tensorboard = {version="*", optional=true}
 
 torch = [{version=">=2.3", markers = "sys_platform != 'darwin'", optional=true},{version=">=2.0.0, !=2.0.1, !=2.1.0, !=2.3.0, !=2.3.1, <2.3.0", markers = "sys_platform == 'darwin'", optional=true}]
 
+torch = [
+    {platform = "darwin", version=">=2.0.0, !=2.0.1, !=2.1.0, !=2.3.0, !=2.3.1, <2.3.0"},
+    {platform = "linux", version >= "2.3"}
+    {platform = "win32", version >= "2.3"}
+]
+
 pandas = "*"
 scikit-fda = {git = "https://github.com/GAA-UAM/scikit-fda.git", branch = "develop", optional=true}
 nox = {version="*", optional=true}
