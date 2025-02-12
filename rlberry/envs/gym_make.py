@@ -4,13 +4,10 @@ from rlberry.envs.basewrapper import Wrapper
 import numpy as np
 from numpy import ndarray
 
-_ALE_INSTALLED = True
-try:
-    import ale_py
 
-    gym.register_envs(ale_py)
-except Exception:
-    _ALE_INSTALLED = False
+import ale_py
+
+gym.register_envs(ale_py)
 
 
 def gym_make(id, wrap_spaces=False, **kwargs):
@@ -149,7 +146,6 @@ class CompatibleWrapper(Wrapper):
 
     def step(self, action):
         if type(action) is ndarray and action.size == 1:
-            # action = action[0]
             int(action)
 
         next_observations, rewards, terminated, truncated, infos = self.env.step(action)
