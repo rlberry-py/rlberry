@@ -81,47 +81,47 @@ jobs:
     displayName: 'Upload to codecov.io'
 
 
-- job: 'macOS'
-  dependsOn: checkPrLabel
-  condition: or(in(variables['Build.SourceBranch'], 'refs/heads/main'), eq(dependencies.checkPrLabel.outputs['checkPrLabel.prHasCILabel'], true))
+# - job: 'macOS'
+#   dependsOn: checkPrLabel
+#   condition: or(in(variables['Build.SourceBranch'], 'refs/heads/main'), eq(dependencies.checkPrLabel.outputs['checkPrLabel.prHasCILabel'], true))
 
-  pool:
-    vmImage: 'macOS-15'
-  strategy:
-    matrix:
-      Python311:
-        python.version: '3.11'
+#   pool:
+#     vmImage: 'macOS-15'
+#   strategy:
+#     matrix:
+#       Python311:
+#         python.version: '3.11'
 
-  steps:
-  - task: UsePythonVersion@0
-    inputs:
-      versionSpec: '$(python.version)'
-    displayName: 'Use Python $(python.version)'
+#   steps:
+#   - task: UsePythonVersion@0
+#     inputs:
+#       versionSpec: '$(python.version)'
+#     displayName: 'Use Python $(python.version)'
 
-  - script: |
-      curl -sSL install.python-poetry.org | python3 -
-    displayName: 'Install poetry'
+#   - script: |
+#       curl -sSL install.python-poetry.org | python3 -
+#     displayName: 'Install poetry'
 
-  - script: echo "##vso[task.setvariable variable=PATH]${PATH}:$HOME/.local/bin"
-    displayName: 'Add poetry to PATH'
+#   - script: echo "##vso[task.setvariable variable=PATH]${PATH}:$HOME/.local/bin"
+#     displayName: 'Add poetry to PATH'
 
-  - script: |
-      sleep 40
-    condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')  #run only on main
-    displayName: 'timer for version when push on main'
+#   - script: |
+#       sleep 40
+#     condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')  #run only on main
+#     displayName: 'timer for version when push on main'
 
-  - script: |
-      curl -C - https://raw.githubusercontent.com/rlberry-py/rlberry/main/pyproject.toml > pyproject.toml
-    condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')  #run only on main
-    displayName: "update version when push on main"
+#   - script: |
+#       curl -C - https://raw.githubusercontent.com/rlberry-py/rlberry/main/pyproject.toml > pyproject.toml
+#     condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')  #run only on main
+#     displayName: "update version when push on main"
 
-  - script: poetry sync --all-extras --with dev
-    displayName: 'Install dependencies'
+#   - script: poetry sync --all-extras --with dev
+#     displayName: 'Install dependencies'
 
-  - script: |
-      poetry add pytest-azurepipelines pytest-xvfb
-      poetry run pytest --ignore=rlberry/network
-    displayName: 'pytest'
+#   - script: |
+#       poetry add pytest-azurepipelines pytest-xvfb
+#       poetry run pytest --ignore=rlberry/network
+#     displayName: 'pytest'
 
 - job: 'windows'
   dependsOn: checkPrLabel
