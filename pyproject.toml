@@ -59,6 +59,14 @@ multimethod = {version="1.10", optional=true}     # new version 1.11 : crash our
 ###############################################################
 
 
+[[tool.poetry.source]]
+name = "pytorch"
+url = "https://download.pytorch.org/whl/cpu"
+priority = "explicit"
+
+
+
+
 [tool.poetry.extras]
 torch = ["opencv-contrib-python", "ale-py", "stable-baselines3", "tensorboard", "torch"]
 extras = ["optuna", "ffmpeg-python", "scikit-fda","nox"]
