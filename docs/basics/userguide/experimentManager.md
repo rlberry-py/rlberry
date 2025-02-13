@@ -143,7 +143,7 @@ If you want to see the output video of the trained Agent, you need to use the Re
 
 ```python
 from rlberry.envs import PipelineEnv
-from gymnasium.wrappers.record_video import RecordVideo
+from gymnasium.wrappers.rendering import RecordVideo
 
 env_id = "CartPole-v1"
 env_ctor = gym_make  # constructor for training env

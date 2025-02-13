@@ -26,7 +26,7 @@ from torch.utils.tensorboard import SummaryWriter
 from rlberry_research.agents.torch.dqn import DQNAgent
 from rlberry.utils.logging import configure_logging
 
-from gymnasium.wrappers.record_video import RecordVideo
+from gymnasium.wrappers.rendering import RecordVideo
 import shutil
 import os
 
