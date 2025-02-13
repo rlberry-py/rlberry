@@ -31,7 +31,7 @@ jobs:
       - name: Install dependencies
         run: |
           curl -C - https://raw.githubusercontent.com/rlberry-py/rlberry/main/pyproject.toml > pyproject.toml
-          poetry install --all-extras --with dev --sync
+          poetry sync --all-extras --with dev
       - name: Sphinx build
         run: |
           poetry run sphinx-build docs _build
