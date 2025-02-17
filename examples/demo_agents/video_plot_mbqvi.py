@@ -9,6 +9,7 @@ A demo of MBQVI algorithm in Gridworld environment
    :width: 600
 
 """
+
 # sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_mbqvi.jpg'
 from rlberry_scool.agents.mbqvi import MBQVIAgent
 from rlberry_research.envs.finite import GridWorld
