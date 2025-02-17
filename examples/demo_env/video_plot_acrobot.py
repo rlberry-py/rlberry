@@ -9,6 +9,7 @@ environment.
    :width: 600
 
 """
+
 # sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_acrobot.jpg'
 
 from rlberry_research.envs import Acrobot

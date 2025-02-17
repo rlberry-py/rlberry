@@ -11,6 +11,7 @@ Agent is slightly tuned, but not optimal. This is just for illustration purpose.
    :width: 600
 
 """
+
 # sphinx_gallery_thumbnail_path = 'thumbnails/example_plot_atari_atlantis_vectorized_ppo.jpg'
 
 

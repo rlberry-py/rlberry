@@ -9,6 +9,7 @@ A demo of RSUCBVI algorithm in MountainCar environment
    :width: 600
 
 """
+
 # sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_rsucbvi.jpg'
 
 from rlberry_research.agents import RSUCBVIAgent
