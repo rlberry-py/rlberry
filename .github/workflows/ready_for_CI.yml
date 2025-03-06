@@ -1,4 +1,4 @@
-name: ready_for_review
+name: ready_for_CI
 
 on:
   pull_request:
