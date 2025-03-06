@@ -23,7 +23,7 @@ def __func_to_script(func):
     name = fun_source.split("\n")[1]  # skip decorator
 
     m = re.search(
-        "(?<= )\w+", name
+        r"(?<= )\w+", name
     )  # isolate the name of function to use as script name
 
     source = "\n"
