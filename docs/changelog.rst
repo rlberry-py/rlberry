@@ -7,6 +7,10 @@ Changelog
 Dev version
 -----------
 
+ *PR #478*
+
+* Update the current "ready for review" to "ready for CI". And add a new "ready for review" that don't trigger the CI.
+
  *PR #474*
 
 * Create a new tool to load data from tensorboard logs : https://github.com/rlberry-py/rlberry/issues/472
