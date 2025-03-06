@@ -16,7 +16,7 @@ To check :
 - \[ ] I have made corresponding changes to the documentation,
 - \[ ] I have added tests that prove my fix is effective or that my feature works,
 - \[ ] New and existing unit tests pass locally with my changes,
-- \[ ] If updated the changelog if necessary,
+- \[ ] I have updated updated the changelog if necessary,
 - \[ ] I have set the label "ready for CI" and the checks are all green.
 - \[ ] I have set the label "ready for review"
 - \[ ] I have made corresponding changes based on the reviews
