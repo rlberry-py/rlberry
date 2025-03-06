@@ -19,10 +19,10 @@ jobs:
   steps:
   - bash: |
      echo "Looking for label at https://api.github.com/repos/$BUILD_REPOSITORY_ID/issues/$SYSTEM_PULLREQUEST_PULLREQUESTNUMBER/labels"
-     if curl -s "https://api.github.com/repos/$BUILD_REPOSITORY_ID/issues/$SYSTEM_PULLREQUEST_PULLREQUESTNUMBER/labels" | grep '"name": "ready for review"'
+     if curl -s "https://api.github.com/repos/$BUILD_REPOSITORY_ID/issues/$SYSTEM_PULLREQUEST_PULLREQUESTNUMBER/labels" | grep '"name": "ready for CI"'
      then
        echo "##vso[task.setvariable variable=prHasCILabel;isOutput=true]true"
-       echo "[INFO] ready for review label found!"
+       echo "[INFO] ready for CI label found!"
      fi
     displayName: Check for CI label build on PR
     condition: eq(variables['Build.Reason'], 'PullRequest') # only run step if it is a PR
@@ -30,7 +30,7 @@ jobs:
 
 - job: 'linux'
   dependsOn: checkPrLabel
-  # Condition: have ready for review label or on the main branch.
+  # Condition: have ready for CI label or on the main branch.
   condition: or(in(variables['Build.SourceBranch'], 'refs/heads/main'), eq(dependencies.checkPrLabel.outputs['checkPrLabel.prHasCILabel'], true))
   pool:
     vmImage: ubuntu-latest
@@ -159,7 +159,7 @@ jobs:
 
 - job: 'linux_non_editable'
   dependsOn: checkPrLabel
-  # Condition: have ready for review label or on the main branch.
+  # Condition: have ready for CI label or on the main branch.
   condition: or(in(variables['Build.SourceBranch'], 'refs/heads/main'), eq(dependencies.checkPrLabel.outputs['checkPrLabel.prHasCILabel'], true))
   pool:
     vmImage: ubuntu-latest

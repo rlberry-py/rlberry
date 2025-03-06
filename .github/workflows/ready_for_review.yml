@@ -6,13 +6,13 @@ on:
 
 jobs:
   build:
-    if: contains( github.event.pull_request.labels.*.name, 'ready for review')
+    if: contains( github.event.pull_request.labels.*.name, 'ready for CI')
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
     - name: Run a one-line script
-      run: echo ready for review!
+      run: echo ready for CI!
     - name: Save the PR number in an artifact
       shell: bash
       env:
