@@ -20,6 +20,11 @@ import numpy as np
 from typing import Tuple
 
 
+import ale_py
+
+gym.register_envs(ale_py)
+
+
 class CustomDummyEnv(gym.Env):
     def __init__(self):
         obs_dict = dict(

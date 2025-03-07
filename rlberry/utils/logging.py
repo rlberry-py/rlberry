@@ -107,6 +107,3 @@ def configure_logging(
         config["loggers"]["rlberry_logger"]["handlers"].append(file_path.name)
 
     logging.config.dictConfig(config)
-    gym.logger.set_level(
-        logging.getLevelName(level) + 10
-    )  # If info -> go to warning gym level. If debug, go to info.

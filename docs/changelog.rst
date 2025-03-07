@@ -8,8 +8,21 @@ Dev version
 -----------
 
  *PR #478*
-
+ 
 * Update the current "ready for review" to "ready for CI". And add a new "ready for review" that don't trigger the CI.
+
+ *PR #477*
+
+* Update to gymnasium>=1.0
+* Moving to numpy>=2.0 (for compatibility with gymnasium )
+* Moving to stable-baselines3>=2.4.1 (for compatibility with gymnasium )
+* Moving to "develop" branch of 'scikit-fda' (for compatibility with numpy 2)
+* Moving from cpickle to cloudpickle (for compatibility with gymnasium )
+
+* Add a tools in wrapper to get the "base environment" (useful to reseed gymnasium>=1.0 envs)
+
+* update CI with new poetry syntax (poetry sync)
+* Update CI with removing MacOS  (incompatibility : Azure MacOS VM / pytorch>=2.3)
 
  *PR #476*
 

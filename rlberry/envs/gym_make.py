@@ -5,6 +5,11 @@ import numpy as np
 from numpy import ndarray
 
 
+import ale_py
+
+gym.register_envs(ale_py)
+
+
 def gym_make(id, wrap_spaces=False, **kwargs):
     """
     Same as gym.make, but wraps the environment
@@ -121,8 +126,8 @@ def atari_make(id, seed=None, **kwargs):
     if clip_reward:
         env = ClipRewardEnv(env)
     env = gym.wrappers.ResizeObservation(env, (screen_size, screen_size))
-    env = gym.wrappers.GrayScaleObservation(env)
-    env = gym.wrappers.FrameStack(env, n_frame_stack)
+    env = gym.wrappers.GrayscaleObservation(env)
+    env = gym.wrappers.FrameStackObservation(env, n_frame_stack)
     if seed:
         env.seed(seed)
         env.action_space.seed(seed)
@@ -141,7 +146,7 @@ class CompatibleWrapper(Wrapper):
 
     def step(self, action):
         if type(action) is ndarray and action.size == 1:
-            action = action[0]
+            int(action)
 
         next_observations, rewards, terminated, truncated, infos = self.env.step(action)
         return (

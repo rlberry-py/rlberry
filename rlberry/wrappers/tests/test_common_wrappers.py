@@ -14,6 +14,7 @@ from rlberry.wrappers.rescale_reward import RescaleRewardWrapper
 from rlberry.wrappers.uncertainty_estimator_wrapper import UncertaintyEstimatorWrapper
 from rlberry_research.wrappers.vis2d import Vis2dWrapper
 from rlberry.wrappers.gym_utils import OldGymCompatibilityWrapper
+from rlberry.wrappers.utils import get_base_env
 
 
 from rlberry.wrappers.tests.old_env.old_acrobot import Old_Acrobot
@@ -199,7 +200,8 @@ def test_vis2dwrapper():
 
 def test_discrete2onehot():
     env = DiscreteToOneHotWrapper(GridWorld())
-    env.reseed(123)
+    base_env = get_base_env(env)
+    base_env.reseed(123)
     assert isinstance(env.observation_space, spaces.Box)
     for ii in range(env.unwrapped.observation_space.n):
         initial_distr = np.zeros(env.unwrapped.observation_space.n)
