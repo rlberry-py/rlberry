@@ -8,7 +8,7 @@ Dev version
 -----------
 
  *PR #478*
- 
+
 * Update the current "ready for review" to "ready for CI". And add a new "ready for review" that don't trigger the CI.
 
  *PR #477*
