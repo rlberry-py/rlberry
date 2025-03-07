@@ -1,0 +1,713 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  
+  <title>Libraries &mdash; rlberry 0.7.3.post16.dev0+8710009 documentation</title>
+  
+  <link rel="canonical" href="https://rlberry-py.github.io/rlberry/basics/rlberry how to.html" />
+
+  
+
+  <link rel="stylesheet" href="../_static/css/vendor/bootstrap.min.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sg_gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sg_gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sg_gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sphinx-design.4cbf315f70debaebd550c87a6162cf0f.min.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+<script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+<script src="../_static/js/vendor/jquery-3.6.3.slim.min.js"></script> 
+</head>
+<body>
+
+
+<nav id="navbar" class="sk-docs-navbar navbar navbar-expand-md navbar-light bg-light py-0">
+  <div class="container-fluid sk-docs-container px-0">
+    <button
+      id="sk-navbar-toggler"
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="sk-navbar-collapse collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../index.html">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../installation.html">Install</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../user_guide.html">User Guide</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../auto_examples/index.html">Examples</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../api.html">API</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../changelog.html">Changelog</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../about.html">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="https://github.com/rlberry-py/rlberry">GitHub</a>
+        </li>
+        <!--
+        <li class="nav-item dropdown nav-more-item-dropdown">
+          <a class="sk-nav-link nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">More</a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          </div>
+        </li>-->
+    </ul>
+      <div id="searchbox" role="search">
+          <div class="searchformwrapper">
+            <form action="https://duckduckgo.com/">
+            <input type="hidden" id="sites" name="sites" value="https://rlberry-py.github.io/rlberry/">
+            <input type="search" placeholder="Search &hellip;" value="" name="q" />
+            <input class="sk-search-text-btn" type="submit" value="Go" /></form>
+
+          </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="d-flex" id="sk-doc-wrapper">
+    <input type="checkbox" name="sk-toggle-checkbox" id="sk-toggle-checkbox">
+    <label id="sk-sidemenu-toggle" class="sk-btn-toggle-toc btn sk-btn-primary" for="sk-toggle-checkbox">Toggle Menu</label>
+    <div id="sk-sidebar-wrapper" class="border-right">
+      <div class="sk-sidebar-toc-wrapper">
+        <div class="sk-sidebar-toc-logo">
+        </div>
+	<br>
+        <div class="alert alert-warning p-1 mb-2" role="alert">
+
+          <p class="text-center mb-0">
+          rlberry 0.7.3.post16.dev0+8710009<br/>
+          <a href="../versions.html">Other versions</a>
+          </p>
+
+        </div>
+            <div class="sk-sidebar-toc">
+              <ul>
+<li><a class="reference internal" href="#">Libraries</a></li>
+<li><a class="reference internal" href="#environment-definition">Environment definition</a></li>
+<li><a class="reference internal" href="#agents-definition">Agents definition</a><ul>
+<li><a class="reference internal" href="#comparisons">Comparisons</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#comparison-of-expected-rewards">Comparison of expected rewards.</a><ul>
+<li><a class="reference internal" href="#comparison-of-cumulative-regret-as-iterations-increase">Comparison of cumulative regret as iterations increase</a></li>
+</ul>
+</li>
+</ul>
+
+            </div>
+      </div>
+    </div>
+    <div id="sk-page-content-wrapper">
+      <div class="sk-page-content container-fluid body px-md-3" role="main">
+        
+  <section id="libraries">
+<h1>Libraries<a class="headerlink" href="#libraries" title="Permalink to this heading">¶</a></h1>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import numpy as np
+import pandas as pd
+from rlberry.agents import ValueIterationAgent, AgentWithSimplePolicy
+from rlberry_research.envs import GridWorld
+from rlberry.manager import ExperimentManager, evaluate_agents
+</pre></div>
+</div>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="n">No</span> <span class="n">OpenGL_accelerate</span> <span class="n">module</span> <span class="n">loaded</span><span class="p">:</span> <span class="n">No</span> <span class="n">module</span> <span class="n">named</span> <span class="s1">&#39;OpenGL_accelerate&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="environment-definition">
+<h1>Environment definition<a class="headerlink" href="#environment-definition" title="Permalink to this heading">¶</a></h1>
+<p>A grid world is a simple environment with finite states and actions, on
+which we can test simple algorithms. * The reward function can be
+accessed by: env.R[state, action] * And the transitions: env.P[state,
+action, next_state]</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>env_ctor = GridWorld
+env_kwargs =dict(nrows=3, ncols=10,
+                reward_at = {(1,1):0.1, (2, 9):1.0},
+                walls=((1,4),(2,4), (1,5)),
+                success_probability=0.7)
+env = env_ctor(**env_kwargs)
+</pre></div>
+</div>
+<p>As an indication :</p>
+<ul class="simple">
+<li><p>nrows: number of rows</p></li>
+<li><p>ncols: number of columns</p></li>
+<li><p>reward_at: definition of the reward function</p></li>
+<li><p>walls: position of the walls</p></li>
+<li><p>success_probability: probability of moving in the chosen direction</p></li>
+</ul>
+</section>
+<section id="agents-definition">
+<h1>Agents definition<a class="headerlink" href="#agents-definition" title="Permalink to this heading">¶</a></h1>
+<p>We will compare a RandomAgent (which play random action) to a
+ValueIterationAgent. Our goal is then to assess the performance of the
+two algorithms.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># Create random agent as a baseline
+class RandomAgent(AgentWithSimplePolicy):
+    name = &#39;RandomAgent&#39;
+    def __init__(self, env, **kwargs):
+        AgentWithSimplePolicy.__init__(self, env, **kwargs)
+
+    def fit(self, budget=None, **kwargs):
+        pass
+
+    def policy(self, observation):
+        return self.env.action_space.sample()
+
+# We will compare this agent to V
+
+
+# Define parameters
+vi_params = {&#39;gamma&#39;:0.1, &#39;epsilon&#39;:1e-3}
+</pre></div>
+</div>
+<section id="comparisons">
+<h2>Comparisons<a class="headerlink" href="#comparisons" title="Permalink to this heading">¶</a></h2>
+</section>
+</section>
+<section id="comparison-of-expected-rewards">
+<h1>Comparison of expected rewards.<a class="headerlink" href="#comparison-of-expected-rewards" title="Permalink to this heading">¶</a></h1>
+<p>We want to assess the expected reward of our agents at a horizon of
+(say) <span class="math notranslate nohighlight">\(T=20\)</span>.</p>
+<p>To do that we use 10 Monte-Carlo simulations, i.e. we do the experiment
+10 times for each agent and at the end we take the mean of the 10
+obtained reward.</p>
+<p>This gives us 1 value per agent. We do this 10 times (so 10 times 10
+equal 100 simulations) in order to have an idea of the variability of
+our estimation.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># Create ExperimentManager to fit 4 agents using 1 job
+vi_stats = ExperimentManager(
+    ValueIterationAgent,
+    (env_ctor, env_kwargs),
+    fit_budget=0,
+    eval_kwargs=dict(eval_horizon=20,n_simimulations=10),
+    init_kwargs=vi_params,
+    n_fit=1)
+vi_stats.fit()
+
+# Create ExperimentManager for baseline
+baseline_stats = ExperimentManager(
+    RandomAgent,
+    (env_ctor, env_kwargs),
+    fit_budget=0,
+    eval_kwargs=dict(eval_horizon=20,n_simimulations=10),
+    n_fit=1)
+baseline_stats.fit()
+</pre></div>
+</div>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span>[INFO] Running ExperimentManager fit() for ValueIteration...
+[INFO] ... trained!
+[INFO] Running ExperimentManager fit() for RandomAgent...
+[INFO] ... trained!
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>output = evaluate_agents([vi_stats, baseline_stats], n_simulations=10, plot=True)
+</pre></div>
+</div>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="n">Evaluating</span> <span class="n">ValueIteration</span><span class="o">...</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">1</span><span class="o">/</span><span class="mi">10</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">2</span><span class="o">/</span><span class="mi">10</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">3</span><span class="o">/</span><span class="mi">10</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">4</span><span class="o">/</span><span class="mi">10</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">5</span><span class="o">/</span><span class="mi">10</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">6</span><span class="o">/</span><span class="mi">10</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">7</span><span class="o">/</span><span class="mi">10</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">8</span><span class="o">/</span><span class="mi">10</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">9</span><span class="o">/</span><span class="mi">10</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">10</span><span class="o">/</span><span class="mi">10</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="n">Evaluating</span> <span class="n">RandomAgent</span><span class="o">...</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">1</span><span class="o">/</span><span class="mi">10</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">2</span><span class="o">/</span><span class="mi">10</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">3</span><span class="o">/</span><span class="mi">10</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">4</span><span class="o">/</span><span class="mi">10</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">5</span><span class="o">/</span><span class="mi">10</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">6</span><span class="o">/</span><span class="mi">10</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">7</span><span class="o">/</span><span class="mi">10</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">8</span><span class="o">/</span><span class="mi">10</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">9</span><span class="o">/</span><span class="mi">10</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">10</span><span class="o">/</span><span class="mi">10</span>
+</pre></div>
+</div>
+<img alt="basics/output_11_1.png" src="basics/output_11_1.png" />
+<section id="comparison-of-cumulative-regret-as-iterations-increase">
+<h2>Comparison of cumulative regret as iterations increase<a class="headerlink" href="#comparison-of-cumulative-regret-as-iterations-increase" title="Permalink to this heading">¶</a></h2>
+<p>To get the regret at each iteration, we have to redefine the <code class="docutils literal notranslate"><span class="pre">eval</span></code>
+function of our agents that tells us what evaluation is returned. The
+default is the final reward, we want to retreive all the rewards, an
+array</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>class RandomAgent2(RandomAgent):
+    name = &#39;RandomAgent2&#39;
+    def __init__(self, env, **kwargs):
+        super().__init__(env, **kwargs)
+
+    def eval(self,
+             eval_horizon=10 ** 5,
+             **kwargs):
+        del kwargs  # unused
+        episode_regret = np.zeros(eval_horizon)
+        observation,info = self.eval_env.reset()
+        for tt in range(eval_horizon):
+            action = self.policy(observation)
+            observation, reward, terminated, truncated, info = self.eval_env.step(action)
+            done = terminated or truncated
+            episode_regret[tt] = 1-reward # Optimal reward is 1
+        return episode_regret
+
+
+class ValueIterationAgent2(ValueIterationAgent):
+    name = &#39;ValueIterationAgent2&#39;
+    def __init__(self, env, gamma=0.95, horizon=None, epsilon=1e-6, **kwargs):
+        super().__init__( env, gamma=0.95, horizon=None, epsilon=1e-6, **kwargs)
+
+    def eval(self,
+             eval_horizon=10 ** 5,
+             gamma=1,
+             **kwargs):
+        del kwargs  # unused
+        episode_regret = np.zeros(eval_horizon)
+        observation,info = self.eval_env.reset()
+        for tt in range(eval_horizon):
+            action = self.policy(observation)
+            observation, reward, terminated, truncated, info = self.eval_env.step(action)
+            done = terminated or truncated
+            episode_regret[tt] = 1-reward # Optimal reward is 1
+
+        return episode_regret
+</pre></div>
+</div>
+<p>Then, we do the Monte-Carlo simulations. This time, we directly do 100
+simulations and we don’t need the additional 10 simulations because we
+won’t compare the expected regret on several runs (i.e. we won’t assess
+the variability of our estimation).</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># Create ExperimentManager to fit 4 agents using 1 job
+vi_stats = ExperimentManager(
+    ValueIterationAgent2,
+    (env_ctor, env_kwargs),
+    fit_budget=1,
+    eval_kwargs=dict(eval_horizon=100),
+    init_kwargs=vi_params,
+    n_fit=4)
+vi_stats.fit()
+
+# Create ExperimentManager for baseline
+baseline_stats = ExperimentManager(
+    RandomAgent2,
+    (env_ctor, env_kwargs),
+    fit_budget=1,
+    eval_kwargs=dict(eval_horizon=100),
+    n_fit=1)
+baseline_stats.fit()
+</pre></div>
+</div>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span>[INFO] Running ExperimentManager fit() for ValueIterationAgent2...
+[INFO] ... trained!
+[INFO] Running ExperimentManager fit() for RandomAgent2...
+[INFO] ... trained!
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>output = evaluate_agents([vi_stats, baseline_stats], n_simulations=100, plot=False)
+</pre></div>
+</div>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="n">Evaluating</span> <span class="n">ValueIterationAgent2</span><span class="o">...</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">1</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">2</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">3</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">4</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">5</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">6</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">7</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">8</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">9</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">10</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">11</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">12</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">13</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">14</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">15</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">16</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">17</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">18</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">19</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">20</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">21</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">22</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">23</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">24</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">25</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">26</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">27</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">28</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">29</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">30</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">31</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">32</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">33</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">34</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">35</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">36</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">37</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">38</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">39</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">40</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">41</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">42</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">43</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">44</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">45</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">46</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">47</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">48</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">49</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">50</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">51</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">52</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">53</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">54</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">55</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">56</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">57</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">58</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">59</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">60</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">61</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">62</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">63</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">64</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">65</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">66</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">67</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">68</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">69</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">70</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">71</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">72</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">73</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">74</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">75</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">76</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">77</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">78</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">79</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">80</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">81</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">82</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">83</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">84</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">85</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">86</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">87</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">88</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">89</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">90</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">91</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">92</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">93</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">94</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">95</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">96</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">97</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">98</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">99</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">100</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="n">Evaluating</span> <span class="n">RandomAgent2</span><span class="o">...</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">1</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">2</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">3</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">4</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">5</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">6</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">7</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">8</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">9</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">10</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">11</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">12</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">13</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">14</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">15</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">16</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">17</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">18</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">19</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">20</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">21</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">22</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">23</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">24</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">25</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">26</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">27</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">28</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">29</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">30</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">31</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">32</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">33</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">34</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">35</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">36</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">37</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">38</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">39</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">40</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">41</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">42</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">43</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">44</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">45</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">46</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">47</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">48</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">49</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">50</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">51</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">52</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">53</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">54</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">55</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">56</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">57</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">58</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">59</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">60</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">61</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">62</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">63</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">64</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">65</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">66</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">67</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">68</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">69</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">70</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">71</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">72</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">73</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">74</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">75</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">76</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">77</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">78</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">79</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">80</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">81</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">82</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">83</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">84</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">85</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">86</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">87</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">88</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">89</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">90</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">91</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">92</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">93</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">94</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">95</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">96</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">97</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">98</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">99</span><span class="o">/</span><span class="mi">100</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="p">[</span><span class="nb">eval</span><span class="p">]</span><span class="o">...</span> <span class="n">simulation</span> <span class="mi">100</span><span class="o">/</span><span class="mi">100</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>regret = pd.DataFrame(np.array([np.array(output[agent].values.tolist()).cumsum(axis=1).mean(axis=0) for agent in output.columns]).T, columns=output.columns)
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>regret.plot(xlabel = &#39;timestep&#39;, ylabel = &#39;Regret&#39;, title=&quot;Mean cumulative regret as a function of iterations&quot;)
+</pre></div>
+</div>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">AxesSubplot</span><span class="p">:</span><span class="n">title</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;center&#39;</span><span class="p">:</span><span class="s1">&#39;Mean cumulative regret as a function of iterations&#39;</span><span class="p">},</span> <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;timestep&#39;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;Regret&#39;</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<img alt="basics/output_18_1.png" src="basics/output_18_1.png" />
+<p>The regret of the Random agent is linear, and the ValueIteration agent
+has a sub-linear regret, it seems that it takes around 20 iterations to
+get to the intended target.</p>
+</section>
+</section>
+
+
+      </div>
+    <div class="container">
+      <footer class="sk-content-footer">
+            &copy; 2023, rlberry team.
+          <a href="../_sources/basics/rlberry how to.rst.txt" rel="nofollow">Show this page source</a>
+      </footer>
+    </div>
+  </div>
+</div>
+<script src="../_static/js/vendor/bootstrap.min.js"></script>
+
+<script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-22606712-2', 'auto');
+    ga('set', 'anonymizeIp', true);
+    ga('send', 'pageview');
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+<script>
+$(document).ready(function() {
+    /* Add a [>>>] button on the top-right corner of code samples to hide
+     * the >>> and ... prompts and the output and thus make the code
+     * copyable. */
+    var div = $('.highlight-python .highlight,' +
+                '.highlight-python3 .highlight,' +
+                '.highlight-pycon .highlight,' +
+		'.highlight-default .highlight')
+    var pre = div.find('pre');
+
+    // get the styles from the current theme
+    pre.parent().parent().css('position', 'relative');
+    var hide_text = 'Hide prompts and outputs';
+    var show_text = 'Show prompts and outputs';
+
+    // create and add the button to all the code blocks that contain >>>
+    div.each(function(index) {
+        var jthis = $(this);
+        if (jthis.find('.gp').length > 0) {
+            var button = $('<span class="copybutton">&gt;&gt;&gt;</span>');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+            jthis.prepend(button);
+        }
+        // tracebacks (.gt) contain bare text elements that need to be
+        // wrapped in a span to work with .nextUntil() (see later)
+        jthis.find('pre:has(.gt)').contents().filter(function() {
+            return ((this.nodeType == 3) && (this.data.trim().length > 0));
+        }).wrap('<span>');
+    });
+
+    // define the behavior of the button when it's clicked
+    $('.copybutton').click(function(e){
+        e.preventDefault();
+        var button = $(this);
+        if (button.data('hidden') === 'false') {
+            // hide the code output
+            button.parent().find('.go, .gp, .gt').hide();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'hidden');
+            button.css('text-decoration', 'line-through');
+            button.attr('title', show_text);
+            button.data('hidden', 'true');
+        } else {
+            // show the code output
+            button.parent().find('.go, .gp, .gt').show();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'visible');
+            button.css('text-decoration', 'none');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+        }
+    });
+
+	/*** Add permalink buttons next to glossary terms ***/
+	$('dl.glossary > dt[id]').append(function() {
+		return ('<a class="headerlink" href="#' +
+			    this.getAttribute('id') +
+			    '" title="Permalink to this term">¶</a>');
+	});
+  /*** Hide navbar when scrolling down ***/
+  // Returns true when headerlink target matches hash in url
+  (function() {
+    hashTargetOnTop = function() {
+        var hash = window.location.hash;
+        if ( hash.length < 2 ) { return false; }
+
+        var target = document.getElementById( hash.slice(1) );
+        if ( target === null ) { return false; }
+
+        var top = target.getBoundingClientRect().top;
+        return (top < 2) && (top > -2);
+    };
+
+    // Hide navbar on load if hash target is on top
+    var navBar = document.getElementById("navbar");
+    var navBarToggler = document.getElementById("sk-navbar-toggler");
+    var navBarHeightHidden = "-" + navBar.getBoundingClientRect().height + "px";
+    var $window = $(window);
+
+    hideNavBar = function() {
+        navBar.style.top = navBarHeightHidden;
+    };
+
+    showNavBar = function() {
+        navBar.style.top = "0";
+    }
+
+    if (hashTargetOnTop()) {
+        hideNavBar()
+    }
+
+    var prevScrollpos = window.pageYOffset;
+    hideOnScroll = function(lastScrollTop) {
+        if (($window.width() < 768) && (navBarToggler.getAttribute("aria-expanded") === 'true')) {
+            return;
+        }
+        if (lastScrollTop > 2 && (prevScrollpos <= lastScrollTop) || hashTargetOnTop()){
+            hideNavBar()
+        } else {
+            showNavBar()
+        }
+        prevScrollpos = lastScrollTop;
+    };
+
+    /*** high performance scroll event listener***/
+    var raf = window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        window.oRequestAnimationFrame;
+    var lastScrollTop = $window.scrollTop();
+
+    if (raf) {
+        loop();
+    }
+
+    function loop() {
+        var scrollTop = $window.scrollTop();
+        if (lastScrollTop === scrollTop) {
+            raf(loop);
+            return;
+        } else {
+            lastScrollTop = scrollTop;
+            hideOnScroll(lastScrollTop);
+            raf(loop);
+        }
+    }
+  })();
+});
+
+</script>
+    
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    
+</body>
+</html>

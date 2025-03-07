@@ -1,0 +1,559 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  
+  <title>rlberry API &mdash; rlberry 0.7.3.post16.dev0+8710009 documentation</title>
+  
+  <link rel="canonical" href="https://rlberry-py.github.io/rlberry/api.html" />
+
+  
+
+  <link rel="stylesheet" href="_static/css/vendor/bootstrap.min.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/sg_gallery.css" type="text/css" />
+  <link rel="stylesheet" href="_static/sg_gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="_static/sg_gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="_static/sg_gallery-rendered-html.css" type="text/css" />
+  <link rel="stylesheet" href="_static/sphinx-design.4cbf315f70debaebd550c87a6162cf0f.min.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+<script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+<script src="_static/js/vendor/jquery-3.6.3.slim.min.js"></script> 
+</head>
+<body>
+
+
+<nav id="navbar" class="sk-docs-navbar navbar navbar-expand-md navbar-light bg-light py-0">
+  <div class="container-fluid sk-docs-container px-0">
+    <button
+      id="sk-navbar-toggler"
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="sk-navbar-collapse collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="index.html">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="installation.html">Install</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="user_guide.html">User Guide</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="auto_examples/index.html">Examples</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="#">API</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="changelog.html">Changelog</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="about.html">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="https://github.com/rlberry-py/rlberry">GitHub</a>
+        </li>
+        <!--
+        <li class="nav-item dropdown nav-more-item-dropdown">
+          <a class="sk-nav-link nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">More</a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          </div>
+        </li>-->
+    </ul>
+      <div id="searchbox" role="search">
+          <div class="searchformwrapper">
+            <form action="https://duckduckgo.com/">
+            <input type="hidden" id="sites" name="sites" value="https://rlberry-py.github.io/rlberry/">
+            <input type="search" placeholder="Search &hellip;" value="" name="q" />
+            <input class="sk-search-text-btn" type="submit" value="Go" /></form>
+
+          </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="d-flex" id="sk-doc-wrapper">
+    <input type="checkbox" name="sk-toggle-checkbox" id="sk-toggle-checkbox">
+    <label id="sk-sidemenu-toggle" class="sk-btn-toggle-toc btn sk-btn-primary" for="sk-toggle-checkbox">Toggle Menu</label>
+    <div id="sk-sidebar-wrapper" class="border-right">
+      <div class="sk-sidebar-toc-wrapper">
+        <div class="sk-sidebar-toc-logo">
+        </div>
+	<br>
+        <div class="alert alert-warning p-1 mb-2" role="alert">
+
+          <p class="text-center mb-0">
+          rlberry 0.7.3.post16.dev0+8710009<br/>
+          <a href="versions.html">Other versions</a>
+          </p>
+
+        </div>
+            <div class="sk-sidebar-toc">
+              <ul>
+<li><a class="reference internal" href="#">rlberry API</a><ul>
+<li><a class="reference internal" href="#manager">Manager</a><ul>
+<li><a class="reference internal" href="#main-classes">Main classes</a></li>
+<li><a class="reference internal" href="#evaluation-and-plot">Evaluation and plot</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#agents">Agents</a><ul>
+<li><a class="reference internal" href="#base-classes">Base classes</a></li>
+<li><a class="reference internal" href="#agent-importation-tools">Agent importation tools</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#environments">Environments</a><ul>
+<li><a class="reference internal" href="#base-class">Base class</a></li>
+<li><a class="reference internal" href="#spaces">Spaces</a></li>
+<li><a class="reference internal" href="#environment-tools">Environment tools</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#seeding">Seeding</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#utilities-logging-typing">Utilities, Logging &amp; Typing</a><ul>
+<li><a class="reference internal" href="#manager-utilitis">Manager Utilitis</a></li>
+<li><a class="reference internal" href="#virtual-environment-utilities">Virtual environment Utilities</a></li>
+<li><a class="reference internal" href="#writer-utilities">Writer Utilities</a></li>
+<li><a class="reference internal" href="#check-utilities">Check Utilities</a></li>
+<li><a class="reference internal" href="#logging-utilities">Logging Utilities</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#environment-wrappers">Environment Wrappers</a></li>
+</ul>
+</li>
+</ul>
+
+            </div>
+      </div>
+    </div>
+    <div id="sk-page-content-wrapper">
+      <div class="sk-page-content container-fluid body px-md-3" role="main">
+        
+  <section id="rlberry-api">
+<h1>rlberry API<a class="headerlink" href="#rlberry-api" title="Permalink to this heading">¶</a></h1>
+<section id="manager">
+<h2>Manager<a class="headerlink" href="#manager" title="Permalink to this heading">¶</a></h2>
+<section id="main-classes">
+<h3>Main classes<a class="headerlink" href="#main-classes" title="Permalink to this heading">¶</a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager"><code class="xref py py-obj docutils literal notranslate"><span class="pre">manager.ExperimentManager</span></code></a>(agent_class[, ...])</p></td>
+<td><p>Class to train, optimize hyperparameters, evaluate and gather statistics about an agent.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/rlberry.manager.MultipleManagers.html#rlberry.manager.MultipleManagers" title="rlberry.manager.MultipleManagers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">manager.MultipleManagers</span></code></a>([max_workers, ...])</p></td>
+<td><p>Class to fit multiple ExperimentManager instances in parallel with multiple threads.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="evaluation-and-plot">
+<h3>Evaluation and plot<a class="headerlink" href="#evaluation-and-plot" title="Permalink to this heading">¶</a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/rlberry.manager.AdastopComparator.html#rlberry.manager.AdastopComparator" title="rlberry.manager.AdastopComparator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">manager.AdastopComparator</span></code></a>([n, K, B, ...])</p></td>
+<td><p>Compare sequentially agents, with possible early stopping.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/rlberry.manager.evaluate_agents.html#rlberry.manager.evaluate_agents" title="rlberry.manager.evaluate_agents"><code class="xref py py-obj docutils literal notranslate"><span class="pre">manager.evaluate_agents</span></code></a>(experiment_manager_list)</p></td>
+<td><p>Evaluate and compare each of the agents in experiment_manager_list.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/rlberry.manager.read_writer_data.html#rlberry.manager.read_writer_data" title="rlberry.manager.read_writer_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">manager.read_writer_data</span></code></a>(data_source[, ...])</p></td>
+<td><p>Given a list of ExperimentManager or a folder, read data (corresponding to info) obtained in each episode.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/rlberry.manager.plot_writer_data.html#rlberry.manager.plot_writer_data" title="rlberry.manager.plot_writer_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">manager.plot_writer_data</span></code></a>(data_source, tag[, ...])</p></td>
+<td><p>Given a list of ExperimentManager or a folder, plot data (corresponding to info) obtained in each episode.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/rlberry.manager.plot_smoothed_curves.html#rlberry.manager.plot_smoothed_curves" title="rlberry.manager.plot_smoothed_curves"><code class="xref py py-obj docutils literal notranslate"><span class="pre">manager.plot_smoothed_curves</span></code></a>(data, x, y[, ...])</p></td>
+<td><p>Plot the performances contained in the data (see data parameter to learn what format it should be).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/rlberry.manager.plot_synchronized_curves.html#rlberry.manager.plot_synchronized_curves" title="rlberry.manager.plot_synchronized_curves"><code class="xref py py-obj docutils literal notranslate"><span class="pre">manager.plot_synchronized_curves</span></code></a>(data, x, y)</p></td>
+<td><p>Plot the performances contained in the data (see data parameter to learn what format it should be).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/rlberry.manager.compare_agents.html#rlberry.manager.compare_agents" title="rlberry.manager.compare_agents"><code class="xref py py-obj docutils literal notranslate"><span class="pre">manager.compare_agents</span></code></a>(agent_source[, ...])</p></td>
+<td><p>Compare several trained agents using the mean over n_simulations evaluations for each agent.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/rlberry.manager.tensorboard_to_dataframe.html#rlberry.manager.tensorboard_to_dataframe" title="rlberry.manager.tensorboard_to_dataframe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">manager.tensorboard_to_dataframe</span></code></a>(...)</p></td>
+<td><p>Function to convert 'tensorboard log' to 'Panda DataFrames'.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="agents">
+<h2>Agents<a class="headerlink" href="#agents" title="Permalink to this heading">¶</a></h2>
+<section id="base-classes">
+<h3>Base classes<a class="headerlink" href="#base-classes" title="Permalink to this heading">¶</a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/rlberry.agents.Agent.html#rlberry.agents.Agent" title="rlberry.agents.Agent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">agents.Agent</span></code></a>([env, eval_env, copy_env, ...])</p></td>
+<td><p>Basic interface for agents.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">agents.AgentWithSimplePolicy</span></code></a>([env, ...])</p></td>
+<td><p>Interface for agents whose policy is a function of observations only.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="agent-importation-tools">
+<h3>Agent importation tools<a class="headerlink" href="#agent-importation-tools" title="Permalink to this heading">¶</a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/rlberry.agents.stable_baselines.StableBaselinesAgent.html#rlberry.agents.stable_baselines.StableBaselinesAgent" title="rlberry.agents.stable_baselines.StableBaselinesAgent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">agents.stable_baselines.StableBaselinesAgent</span></code></a>(env)</p></td>
+<td><p>Wraps an StableBaselines3 Algorithm with a rlberry Agent.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="environments">
+<h2>Environments<a class="headerlink" href="#environments" title="Permalink to this heading">¶</a></h2>
+<section id="base-class">
+<h3>Base class<a class="headerlink" href="#base-class" title="Permalink to this heading">¶</a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/rlberry.envs.interface.Model.html#rlberry.envs.interface.Model" title="rlberry.envs.interface.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">envs.interface.Model</span></code></a>()</p></td>
+<td><p>Base class for an environment model.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/rlberry.envs.basewrapper.Wrapper.html#rlberry.envs.basewrapper.Wrapper" title="rlberry.envs.basewrapper.Wrapper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">envs.basewrapper.Wrapper</span></code></a>(env[, wrap_spaces])</p></td>
+<td><p>Wraps a given environment, similar to OpenAI gym's wrapper [1,2] (now updated to gymnasium).</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="spaces">
+<h3>Spaces<a class="headerlink" href="#spaces" title="Permalink to this heading">¶</a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/rlberry.spaces.Discrete.html#rlberry.spaces.Discrete" title="rlberry.spaces.Discrete"><code class="xref py py-obj docutils literal notranslate"><span class="pre">spaces.Discrete</span></code></a>(n)</p></td>
+<td><p>Class that represents discrete spaces.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/rlberry.spaces.Box.html#rlberry.spaces.Box" title="rlberry.spaces.Box"><code class="xref py py-obj docutils literal notranslate"><span class="pre">spaces.Box</span></code></a>(low, high[, shape, dtype])</p></td>
+<td><p>Class that represents a space that is a cartesian product in R^n:</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/rlberry.spaces.Tuple.html#rlberry.spaces.Tuple" title="rlberry.spaces.Tuple"><code class="xref py py-obj docutils literal notranslate"><span class="pre">spaces.Tuple</span></code></a>(spaces)</p></td>
+<td><p>Inherited from gymnasium.spaces.Tuple for compatibility with gym.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/rlberry.spaces.MultiDiscrete.html#rlberry.spaces.MultiDiscrete" title="rlberry.spaces.MultiDiscrete"><code class="xref py py-obj docutils literal notranslate"><span class="pre">spaces.MultiDiscrete</span></code></a>(nvec[, dtype])</p></td>
+<td><p>Inherited from gymnasium.spaces.MultiDiscrete for compatibility with gym.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/rlberry.spaces.MultiBinary.html#rlberry.spaces.MultiBinary" title="rlberry.spaces.MultiBinary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">spaces.MultiBinary</span></code></a>(n)</p></td>
+<td><p>Inherited from gymnasium.spaces.MultiBinary for compatibility with gym.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/rlberry.spaces.Dict.html#rlberry.spaces.Dict" title="rlberry.spaces.Dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">spaces.Dict</span></code></a>([spaces])</p></td>
+<td><p>Inherited from gymnasium.spaces.Dict for compatibility with gym.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="environment-tools">
+<h3>Environment tools<a class="headerlink" href="#environment-tools" title="Permalink to this heading">¶</a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/rlberry.envs.gym_make.html#rlberry.envs.gym_make" title="rlberry.envs.gym_make"><code class="xref py py-obj docutils literal notranslate"><span class="pre">envs.gym_make</span></code></a>(id[, wrap_spaces])</p></td>
+<td><p>Same as gym.make, but wraps the environment to ensure unified seeding with rlberry.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/rlberry.envs.atari_make.html#rlberry.envs.atari_make" title="rlberry.envs.atari_make"><code class="xref py py-obj docutils literal notranslate"><span class="pre">envs.atari_make</span></code></a>(id[, seed])</p></td>
+<td><p>Adaptor to manage Atari Env</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/rlberry.envs.PipelineEnv.html#rlberry.envs.PipelineEnv" title="rlberry.envs.PipelineEnv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">envs.PipelineEnv</span></code></a>(env_ctor, env_kwargs, wrappers)</p></td>
+<td><p>Environment defined as a pipeline of wrappers and an environment to wrap.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="seeding">
+<h2>Seeding<a class="headerlink" href="#seeding" title="Permalink to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/rlberry.seeding.seeder.Seeder.html#rlberry.seeding.seeder.Seeder" title="rlberry.seeding.seeder.Seeder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seeding.seeder.Seeder</span></code></a>([seed_seq, spawn_seed_seq])</p></td>
+<td><p>Base class to define objects that use random number generators.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/rlberry.seeding.safe_reseed.html#rlberry.seeding.safe_reseed" title="rlberry.seeding.safe_reseed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seeding.safe_reseed</span></code></a>(obj, seeder[, reseed_spaces])</p></td>
+<td><p>Calls obj.reseed(seed_seq) method if available; If a obj.seed() method is available, call obj.seed(seed_val), where seed_val is generated by the seeder.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/rlberry.seeding.set_external_seed.html#rlberry.seeding.set_external_seed" title="rlberry.seeding.set_external_seed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seeding.set_external_seed</span></code></a>(seeder)</p></td>
+<td><p>Set seeds of external libraries.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="utilities-logging-typing">
+<h2>Utilities, Logging &amp; Typing<a class="headerlink" href="#utilities-logging-typing" title="Permalink to this heading">¶</a></h2>
+<section id="manager-utilitis">
+<h3>Manager Utilitis<a class="headerlink" href="#manager-utilitis" title="Permalink to this heading">¶</a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/rlberry.manager.preset_manager.html#rlberry.manager.preset_manager" title="rlberry.manager.preset_manager"><code class="xref py py-obj docutils literal notranslate"><span class="pre">manager.preset_manager</span></code></a>(*args, **kwds)</p></td>
+<td><p>Preset an ExperimentManager to some fixed keywords.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="virtual-environment-utilities">
+<h3>Virtual environment Utilities<a class="headerlink" href="#virtual-environment-utilities" title="Permalink to this heading">¶</a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/rlberry.manager.with_venv.html#rlberry.manager.with_venv" title="rlberry.manager.with_venv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">manager.with_venv</span></code></a>([import_libs, ...])</p></td>
+<td><p>Decorator to run the script in a function using a virtual environment.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/rlberry.manager.run_venv_xp.html#rlberry.manager.run_venv_xp" title="rlberry.manager.run_venv_xp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">manager.run_venv_xp</span></code></a>([venv_dir_name, verbose])</p></td>
+<td><p>Function to launch experiments in the current script file in virtual environments.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="writer-utilities">
+<h3>Writer Utilities<a class="headerlink" href="#writer-utilities" title="Permalink to this heading">¶</a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/rlberry.utils.writers.DefaultWriter.html#rlberry.utils.writers.DefaultWriter" title="rlberry.utils.writers.DefaultWriter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">utils.writers.DefaultWriter</span></code></a>(name[, ...])</p></td>
+<td><p>Default writer to be used by the agents, optionally wraps an instance of tensorboard.SummaryWriter.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/rlberry.agents.utils.replay.ReplayBuffer.html#rlberry.agents.utils.replay.ReplayBuffer" title="rlberry.agents.utils.replay.ReplayBuffer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">agents.utils.replay.ReplayBuffer</span></code></a>(...[, ...])</p></td>
+<td><p>Replay buffer that allows sampling data with shape (batch_size, time_size, ...).</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="check-utilities">
+<h3>Check Utilities<a class="headerlink" href="#check-utilities" title="Permalink to this heading">¶</a></h3>
+<blockquote>
+<div><table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/rlberry.utils.check_rl_agent.html#rlberry.utils.check_rl_agent" title="rlberry.utils.check_rl_agent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">utils.check_rl_agent</span></code></a>(agent[, env, init_kwargs])</p></td>
+<td><p>Check ExperimentManager compatibility and check reproducibility/seeding.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/rlberry.utils.check_env.html#rlberry.utils.check_env" title="rlberry.utils.check_env"><code class="xref py py-obj docutils literal notranslate"><span class="pre">utils.check_env</span></code></a>(env)</p></td>
+<td><p>Check that the environment is (almost) gym-compatible and that it is reproducible in the sense that it returns the same states when given the same seed.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/rlberry.utils.check_save_load.html#rlberry.utils.check_save_load" title="rlberry.utils.check_save_load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">utils.check_save_load</span></code></a>(agent[, env, init_kwargs])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/rlberry.utils.check_fit_additive.html#rlberry.utils.check_fit_additive" title="rlberry.utils.check_fit_additive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">utils.check_fit_additive</span></code></a>(agent[, env, ...])</p></td>
+<td><p>Check that fitting two times with 10 fit budget is the same as fitting one time with 20 fit budget.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/rlberry.utils.check_seeding_agent.html#rlberry.utils.check_seeding_agent" title="rlberry.utils.check_seeding_agent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">utils.check_seeding_agent</span></code></a>(agent[, env, ...])</p></td>
+<td><p>Check that the agent is reproducible.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/rlberry.utils.check_experiment_manager.html#rlberry.utils.check_experiment_manager" title="rlberry.utils.check_experiment_manager"><code class="xref py py-obj docutils literal notranslate"><span class="pre">utils.check_experiment_manager</span></code></a>(agent[, env, ...])</p></td>
+<td><p>Check that the agent is compatible with <a class="reference internal" href="generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExperimentManager</span></code></a>.</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</section>
+<section id="logging-utilities">
+<h3>Logging Utilities<a class="headerlink" href="#logging-utilities" title="Permalink to this heading">¶</a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/rlberry.utils.logging.set_level.html#rlberry.utils.logging.set_level" title="rlberry.utils.logging.set_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">utils.logging.set_level</span></code></a>([level])</p></td>
+<td><p>Set rlberry's logger level.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="environment-wrappers">
+<h2>Environment Wrappers<a class="headerlink" href="#environment-wrappers" title="Permalink to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/rlberry.wrappers.discretize_state.DiscretizeStateWrapper.html#rlberry.wrappers.discretize_state.DiscretizeStateWrapper" title="rlberry.wrappers.discretize_state.DiscretizeStateWrapper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrappers.discretize_state.DiscretizeStateWrapper</span></code></a>(...)</p></td>
+<td><p>Discretize an environment with continuous states and discrete actions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/rlberry.wrappers.gym_utils.OldGymCompatibilityWrapper.html#rlberry.wrappers.gym_utils.OldGymCompatibilityWrapper" title="rlberry.wrappers.gym_utils.OldGymCompatibilityWrapper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrappers.gym_utils.OldGymCompatibilityWrapper</span></code></a>(env)</p></td>
+<td><p>Allow to use old gym env (V0.21) with rlberry (gymnasium).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/rlberry.wrappers.RescaleRewardWrapper.html#rlberry.wrappers.RescaleRewardWrapper" title="rlberry.wrappers.RescaleRewardWrapper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrappers.RescaleRewardWrapper</span></code></a>(env, reward_range)</p></td>
+<td><p>Rescale the reward function to a bounded range.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+      </div>
+    <div class="container">
+      <footer class="sk-content-footer">
+            &copy; 2023, rlberry team.
+          <a href="_sources/api.rst.txt" rel="nofollow">Show this page source</a>
+      </footer>
+    </div>
+  </div>
+</div>
+<script src="_static/js/vendor/bootstrap.min.js"></script>
+
+<script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-22606712-2', 'auto');
+    ga('set', 'anonymizeIp', true);
+    ga('send', 'pageview');
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+<script>
+$(document).ready(function() {
+    /* Add a [>>>] button on the top-right corner of code samples to hide
+     * the >>> and ... prompts and the output and thus make the code
+     * copyable. */
+    var div = $('.highlight-python .highlight,' +
+                '.highlight-python3 .highlight,' +
+                '.highlight-pycon .highlight,' +
+		'.highlight-default .highlight')
+    var pre = div.find('pre');
+
+    // get the styles from the current theme
+    pre.parent().parent().css('position', 'relative');
+    var hide_text = 'Hide prompts and outputs';
+    var show_text = 'Show prompts and outputs';
+
+    // create and add the button to all the code blocks that contain >>>
+    div.each(function(index) {
+        var jthis = $(this);
+        if (jthis.find('.gp').length > 0) {
+            var button = $('<span class="copybutton">&gt;&gt;&gt;</span>');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+            jthis.prepend(button);
+        }
+        // tracebacks (.gt) contain bare text elements that need to be
+        // wrapped in a span to work with .nextUntil() (see later)
+        jthis.find('pre:has(.gt)').contents().filter(function() {
+            return ((this.nodeType == 3) && (this.data.trim().length > 0));
+        }).wrap('<span>');
+    });
+
+    // define the behavior of the button when it's clicked
+    $('.copybutton').click(function(e){
+        e.preventDefault();
+        var button = $(this);
+        if (button.data('hidden') === 'false') {
+            // hide the code output
+            button.parent().find('.go, .gp, .gt').hide();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'hidden');
+            button.css('text-decoration', 'line-through');
+            button.attr('title', show_text);
+            button.data('hidden', 'true');
+        } else {
+            // show the code output
+            button.parent().find('.go, .gp, .gt').show();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'visible');
+            button.css('text-decoration', 'none');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+        }
+    });
+
+	/*** Add permalink buttons next to glossary terms ***/
+	$('dl.glossary > dt[id]').append(function() {
+		return ('<a class="headerlink" href="#' +
+			    this.getAttribute('id') +
+			    '" title="Permalink to this term">¶</a>');
+	});
+  /*** Hide navbar when scrolling down ***/
+  // Returns true when headerlink target matches hash in url
+  (function() {
+    hashTargetOnTop = function() {
+        var hash = window.location.hash;
+        if ( hash.length < 2 ) { return false; }
+
+        var target = document.getElementById( hash.slice(1) );
+        if ( target === null ) { return false; }
+
+        var top = target.getBoundingClientRect().top;
+        return (top < 2) && (top > -2);
+    };
+
+    // Hide navbar on load if hash target is on top
+    var navBar = document.getElementById("navbar");
+    var navBarToggler = document.getElementById("sk-navbar-toggler");
+    var navBarHeightHidden = "-" + navBar.getBoundingClientRect().height + "px";
+    var $window = $(window);
+
+    hideNavBar = function() {
+        navBar.style.top = navBarHeightHidden;
+    };
+
+    showNavBar = function() {
+        navBar.style.top = "0";
+    }
+
+    if (hashTargetOnTop()) {
+        hideNavBar()
+    }
+
+    var prevScrollpos = window.pageYOffset;
+    hideOnScroll = function(lastScrollTop) {
+        if (($window.width() < 768) && (navBarToggler.getAttribute("aria-expanded") === 'true')) {
+            return;
+        }
+        if (lastScrollTop > 2 && (prevScrollpos <= lastScrollTop) || hashTargetOnTop()){
+            hideNavBar()
+        } else {
+            showNavBar()
+        }
+        prevScrollpos = lastScrollTop;
+    };
+
+    /*** high performance scroll event listener***/
+    var raf = window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        window.oRequestAnimationFrame;
+    var lastScrollTop = $window.scrollTop();
+
+    if (raf) {
+        loop();
+    }
+
+    function loop() {
+        var scrollTop = $window.scrollTop();
+        if (lastScrollTop === scrollTop) {
+            raf(loop);
+            return;
+        } else {
+            lastScrollTop = scrollTop;
+            hideOnScroll(lastScrollTop);
+            raf(loop);
+        }
+    }
+  })();
+});
+
+</script>
+    
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    
+</body>
+</html>

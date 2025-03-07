@@ -1,0 +1,665 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  
+  <title>rlberry.agents.utils.replay &mdash; rlberry 0.7.3.post16.dev0+8710009 documentation</title>
+  
+  <link rel="canonical" href="https://rlberry-py.github.io/rlberry/_modules/rlberry/agents/utils/replay.html" />
+
+  
+
+  <link rel="stylesheet" href="../../../../_static/css/vendor/bootstrap.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/sg_gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/sg_gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/sg_gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/sphinx-design.4cbf315f70debaebd550c87a6162cf0f.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+<script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+<script src="../../../../_static/js/vendor/jquery-3.6.3.slim.min.js"></script> 
+</head>
+<body>
+
+
+<nav id="navbar" class="sk-docs-navbar navbar navbar-expand-md navbar-light bg-light py-0">
+  <div class="container-fluid sk-docs-container px-0">
+    <button
+      id="sk-navbar-toggler"
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="sk-navbar-collapse collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../../index.html">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../../installation.html">Install</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../../user_guide.html">User Guide</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../../auto_examples/index.html">Examples</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../../api.html">API</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../../changelog.html">Changelog</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../../about.html">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="https://github.com/rlberry-py/rlberry">GitHub</a>
+        </li>
+        <!--
+        <li class="nav-item dropdown nav-more-item-dropdown">
+          <a class="sk-nav-link nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">More</a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          </div>
+        </li>-->
+    </ul>
+      <div id="searchbox" role="search">
+          <div class="searchformwrapper">
+            <form action="https://duckduckgo.com/">
+            <input type="hidden" id="sites" name="sites" value="https://rlberry-py.github.io/rlberry/">
+            <input type="search" placeholder="Search &hellip;" value="" name="q" />
+            <input class="sk-search-text-btn" type="submit" value="Go" /></form>
+
+          </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="d-flex" id="sk-doc-wrapper">
+    <input type="checkbox" name="sk-toggle-checkbox" id="sk-toggle-checkbox">
+    <label id="sk-sidemenu-toggle" class="sk-btn-toggle-toc btn sk-btn-primary" for="sk-toggle-checkbox">Toggle Menu</label>
+    <div id="sk-sidebar-wrapper" class="border-right">
+      <div class="sk-sidebar-toc-wrapper">
+        <div class="sk-sidebar-toc-logo">
+        </div>
+	<br>
+        <div class="alert alert-warning p-1 mb-2" role="alert">
+
+          <p class="text-center mb-0">
+          rlberry 0.7.3.post16.dev0+8710009<br/>
+          <a href="../../../../versions.html">Other versions</a>
+          </p>
+
+        </div>
+            <div class="sk-sidebar-toc">
+              
+            </div>
+      </div>
+    </div>
+    <div id="sk-page-content-wrapper">
+      <div class="sk-page-content container-fluid body px-md-3" role="main">
+        
+  <h1>Source code for rlberry.agents.utils.replay</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">New module aiming to replace memories.py</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">NamedTuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.agents.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">replay_utils</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">rlberry</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">rlberry</span><span class="o">.</span><span class="n">logger</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Batch</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
+    <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span>
+    <span class="n">info</span><span class="p">:</span> <span class="nb">dict</span>
+
+
+<div class="viewcode-block" id="ReplayBuffer"><a class="viewcode-back" href="../../../../generated/rlberry.agents.utils.replay.ReplayBuffer.html#rlberry.agents.utils.replay.ReplayBuffer">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ReplayBuffer</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Replay buffer that allows sampling data with shape (batch_size, time_size, ...).</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    For prioritized experience replay, code was adapted from</span>
+<span class="sd">    https://github.com/openai/baselines/blob/master/baselines/deepq/replay_buffer.py</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    max_replay_size: int</span>
+<span class="sd">        Maximum number of transitions that can be stored</span>
+<span class="sd">    rng: numpy.random.Generator</span>
+<span class="sd">        Numpy random number generator.</span>
+<span class="sd">        See https://numpy.org/doc/stable/reference/random/generator.html</span>
+<span class="sd">    max_episode_steps: int, optional</span>
+<span class="sd">        Maximum length of an episode</span>
+<span class="sd">    enable_prioritized: bool, default = False</span>
+<span class="sd">        If True, enable sampling with prioritized experience replay,</span>
+<span class="sd">        by setting sampling_mode=&quot;prioritized&quot; in the :meth:`sample` method.</span>
+<span class="sd">    alpha: float, default = 0.5</span>
+<span class="sd">        How much prioritization is used, if prioritized=True,</span>
+<span class="sd">        (0 - no prioritization, 1 - full prioritization).</span>
+<span class="sd">    beta: float, default = 0.5</span>
+<span class="sd">        To what degree to use importance weights, if prioritized=True,</span>
+<span class="sd">        (0 - no corrections, 1 - full correction).</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; from rlberry.agents.utils import replay</span>
+<span class="sd">    &gt;&gt;&gt; from rlberry.envs import gym_make</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; rng = np.random.default_rng()</span>
+<span class="sd">    &gt;&gt;&gt; buffer = replay.ReplayBuffer(100_000, rng)</span>
+<span class="sd">    &gt;&gt;&gt; buffer.setup_entry(&quot;observations&quot;, np.float32)</span>
+<span class="sd">    &gt;&gt;&gt; buffer.setup_entry(&quot;actions&quot;, np.uint32)</span>
+<span class="sd">    &gt;&gt;&gt; buffer.setup_entry(&quot;rewards&quot;, np.float32)</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # Store data in the replay</span>
+<span class="sd">    &gt;&gt;&gt; env = gym_make(&quot;CartPole-v1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; for _ in range(500):</span>
+<span class="sd">    &gt;&gt;&gt;     done = False</span>
+<span class="sd">    &gt;&gt;&gt;     obs,info = env.reset()</span>
+<span class="sd">    &gt;&gt;&gt;     while not done:</span>
+<span class="sd">    &gt;&gt;&gt;         action = env.action_space.sample()</span>
+<span class="sd">    &gt;&gt;&gt;         next_observation, reward, terminated, truncated, info = env.step(action)</span>
+<span class="sd">    &gt;&gt;&gt;         done = terminated or truncated</span>
+<span class="sd">    &gt;&gt;&gt;         buffer.append(</span>
+<span class="sd">    &gt;&gt;&gt;             {</span>
+<span class="sd">    &gt;&gt;&gt;                 &quot;observations&quot;: obs,</span>
+<span class="sd">    &gt;&gt;&gt;                 &quot;actions&quot;: action,</span>
+<span class="sd">    &gt;&gt;&gt;                 &quot;rewards&quot;: reward</span>
+<span class="sd">    &gt;&gt;&gt;             }</span>
+<span class="sd">    &gt;&gt;&gt;         )</span>
+<span class="sd">    &gt;&gt;&gt;         obs = next_observation</span>
+<span class="sd">    &gt;&gt;&gt;         if done:</span>
+<span class="sd">    &gt;&gt;&gt;             buffer.end_episode()</span>
+<span class="sd">    &gt;&gt;&gt; # Sample a batch of 32 sub-trajectories of length 100.</span>
+<span class="sd">    &gt;&gt;&gt; # Note: a sub-trajectory may include transitions from more than one episode!</span>
+<span class="sd">    &gt;&gt;&gt; batch = buffer.sample(batch_size=32, chunk_size=100)</span>
+<span class="sd">    &gt;&gt;&gt; for tag in buffer.tags:</span>
+<span class="sd">    &gt;&gt;&gt;     print(tag, batch.data[tag].shape)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">max_replay_size</span><span class="p">,</span>
+        <span class="n">rng</span><span class="p">,</span>
+        <span class="n">max_episode_steps</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">enable_prioritized</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">beta</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rng</span> <span class="o">=</span> <span class="n">rng</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_replay_size</span> <span class="o">=</span> <span class="n">max_replay_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tags</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dtypes</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_episode_steps</span> <span class="o">=</span> <span class="n">max_episode_steps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_episodes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_episode</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_position</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_enable_prioritized</span> <span class="o">=</span> <span class="n">enable_prioritized</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_alpha</span> <span class="o">=</span> <span class="n">alpha</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_beta</span> <span class="o">=</span> <span class="n">beta</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_enable_prioritized</span><span class="p">:</span>
+            <span class="n">it_capacity</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">while</span> <span class="n">it_capacity</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_replay_size</span><span class="p">:</span>
+                <span class="n">it_capacity</span> <span class="o">*=</span> <span class="mi">2</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_it_sum</span> <span class="o">=</span> <span class="n">replay_utils</span><span class="o">.</span><span class="n">SumSegmentTree</span><span class="p">(</span><span class="n">it_capacity</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_it_min</span> <span class="o">=</span> <span class="n">replay_utils</span><span class="o">.</span><span class="n">MinSegmentTree</span><span class="p">(</span><span class="n">it_capacity</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_max_priority</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Dict containing all stored data.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">tags</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Tags identifying the entries in the replay buffer.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tags</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dtypes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Dict containing the data types for each tag.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dtypes</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">max_episode_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Maximum length of an episode.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_episode_steps</span>
+
+<div class="viewcode-block" id="ReplayBuffer.clear"><a class="viewcode-back" href="../../../../generated/rlberry.agents.utils.replay.ReplayBuffer.html#rlberry.agents.utils.replay.ReplayBuffer.clear">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear data in replay.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span></div>
+
+<div class="viewcode-block" id="ReplayBuffer.setup_entry"><a class="viewcode-back" href="../../../../generated/rlberry.agents.utils.replay.ReplayBuffer.html#rlberry.agents.utils.replay.ReplayBuffer.setup_entry">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">setup_entry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Configure replay buffer to store data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        tag : str</span>
+<span class="sd">            Tag that identifies the entry (e.g &quot;observation&quot;, &quot;reward&quot;)</span>
+<span class="sd">        dtype : obj</span>
+<span class="sd">            Data type of the entry (e.g. `np.float32`). Type is not</span>
+<span class="sd">            checked in :meth:`append`, but it is used to construct the numpy</span>
+<span class="sd">            arrays returned by the :meth:`sample`method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Entry </span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2"> already added to replay buffer.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tags</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dtypes</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="n">dtype</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span></div>
+
+<div class="viewcode-block" id="ReplayBuffer.append"><a class="viewcode-back" href="../../../../generated/rlberry.agents.utils.replay.ReplayBuffer.html#rlberry.agents.utils.replay.ReplayBuffer.append">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Store data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : dict</span>
+<span class="sd">            Dictionary containing scalar values, whose keys must be in self.tags.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Append data</span>
+        <span class="k">assert</span> <span class="nb">set</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_replay_size</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_episodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_episode</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">tag</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_position</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_episodes</span><span class="p">[</span><span class="n">position</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_episode</span>
+            <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">tag</span><span class="p">][</span><span class="n">position</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span>
+
+        <span class="c1"># Priorities</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_enable_prioritized</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_it_sum</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_position</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_priority</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_alpha</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_it_min</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_position</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_priority</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_alpha</span>
+
+        <span class="c1"># Faster than append and pop</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_position</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_position</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_replay_size</span></div>
+
+<div class="viewcode-block" id="ReplayBuffer.end_episode"><a class="viewcode-back" href="../../../../generated/rlberry.agents.utils.replay.ReplayBuffer.html#rlberry.agents.utils.replay.ReplayBuffer.end_episode">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">end_episode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Call this method to indicate the end of an episode.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_episode</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_sample_proportional_and_compute_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Used for prioritized replay.&quot;&quot;&quot;</span>
+        <span class="c1"># sample indices</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">p_total</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_it_sum</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">every_range_len</span> <span class="o">=</span> <span class="n">p_total</span> <span class="o">/</span> <span class="n">batch_size</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">batch_size</span><span class="p">):</span>
+            <span class="n">mass</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">()</span> <span class="o">*</span> <span class="n">every_range_len</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">every_range_len</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_it_sum</span><span class="o">.</span><span class="n">find_prefixsum_idx</span><span class="p">(</span><span class="n">mass</span><span class="p">)</span>
+            <span class="n">indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
+
+        <span class="c1"># importance weights</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">p_min</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_it_min</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_it_sum</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">max_weight</span> <span class="o">=</span> <span class="p">(</span><span class="n">p_min</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_beta</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">:</span>
+            <span class="n">p_sample</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_it_sum</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_it_sum</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="n">weight</span> <span class="o">=</span> <span class="p">(</span><span class="n">p_sample</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_beta</span><span class="p">)</span>
+            <span class="n">weights</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">weight</span> <span class="o">/</span> <span class="n">max_weight</span><span class="p">)</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">indices</span><span class="p">,</span> <span class="n">weights</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_sample_batch_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">chunk_size</span><span class="p">,</span> <span class="n">sampling_mode</span><span class="p">):</span>
+        <span class="n">current_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sampling_mode</span> <span class="o">==</span> <span class="s2">&quot;uniform&quot;</span><span class="p">:</span>
+            <span class="n">end_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rng</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span>
+                <span class="n">chunk_size</span><span class="p">,</span> <span class="n">current_size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">batch_size</span>
+            <span class="p">)</span>
+            <span class="n">end_indices</span> <span class="o">=</span> <span class="p">(</span><span class="n">end_indices</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_position</span><span class="p">)</span> <span class="o">%</span> <span class="n">current_size</span>
+            <span class="n">start_indices</span> <span class="o">=</span> <span class="n">end_indices</span> <span class="o">-</span> <span class="n">chunk_size</span>
+            <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">start_indices</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">sampling_mode</span> <span class="o">==</span> <span class="s2">&quot;prioritized&quot;</span><span class="p">:</span>
+            <span class="n">end_indices</span><span class="p">,</span> <span class="n">weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_proportional_and_compute_weights</span><span class="p">(</span>
+                <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span>
+            <span class="p">)</span>
+            <span class="n">start_indices</span> <span class="o">=</span> <span class="n">end_indices</span> <span class="o">-</span> <span class="n">chunk_size</span>
+
+            <span class="c1"># Handle invalid sub-trajectories: those containing a transition</span>
+            <span class="c1"># corresponding to self._position. That is, we need to handle</span>
+            <span class="c1"># the fact that we&#39;re sampling sub-trajectories from a circular buffer</span>
+            <span class="c1"># and that we cannot cross the &#39;boundary&#39; defined by self._position.</span>
+            <span class="c1">#</span>
+            <span class="c1"># What we do here is to move the start_index to the most recent</span>
+            <span class="c1"># index (with respect to self._position) that allows sampling</span>
+            <span class="c1"># a sub-trajectory of length chunk_size.</span>
+            <span class="c1"># Note that this can result in a negative start_index,</span>
+            <span class="c1"># which is handled in the _get_chunk method.</span>
+
+            <span class="c1"># Case 1: start indices are &gt;= 0</span>
+            <span class="n">bad_indices_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_position</span> <span class="o">&gt;</span> <span class="n">start_indices</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_position</span> <span class="o">&lt;</span> <span class="n">end_indices</span>
+            <span class="p">)</span>
+            <span class="n">bad_indices_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">bad_indices_pos</span><span class="p">,</span> <span class="n">start_indices</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
+
+            <span class="c1"># Case 2: start indices are &lt; 0</span>
+            <span class="c1"># -&gt; self._position cannot be between start_indices+len(buffer) and len(buffer)-1</span>
+            <span class="c1"># -&gt; self._position cannot be between 0 and end_indices-1</span>
+            <span class="n">bad_indices_neg</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">start_indices</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_position</span><span class="p">,</span>
+                <span class="n">end_indices</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_position</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">bad_indices_neg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">bad_indices_neg</span><span class="p">,</span> <span class="n">start_indices</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span>
+
+            <span class="c1"># Fix bad indices</span>
+            <span class="n">bad_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">bad_indices_pos</span><span class="p">,</span> <span class="n">bad_indices_neg</span><span class="p">)</span>
+            <span class="n">start_boundary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_position</span> <span class="o">-</span> <span class="n">chunk_size</span>
+            <span class="n">start_indices</span><span class="p">[</span><span class="n">bad_indices</span><span class="p">]</span> <span class="o">=</span> <span class="n">start_boundary</span>
+            <span class="n">end_indices</span><span class="p">[</span><span class="n">bad_indices</span><span class="p">]</span> <span class="o">=</span> <span class="n">start_boundary</span> <span class="o">+</span> <span class="n">chunk_size</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid sampling_mode: &#39;</span><span class="si">{</span><span class="n">sampling_mode</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">start_indices</span><span class="p">,</span> <span class="n">end_indices</span><span class="p">,</span> <span class="n">weights</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_chunk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_index</span><span class="p">,</span> <span class="n">end_index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Note: start_index can be negative!&quot;&quot;&quot;</span>
+        <span class="n">chunk</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">start_index</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">tag</span><span class="p">][</span><span class="n">start_index</span><span class="p">:</span><span class="n">end_index</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">tag</span><span class="p">][</span><span class="n">start_index</span><span class="p">:]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">tag</span><span class="p">][:</span><span class="n">end_index</span><span class="p">]</span>
+            <span class="n">chunk</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">start_index</span><span class="p">,</span> <span class="n">end_index</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">chunk</span><span class="p">,</span> <span class="n">indices</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+
+<div class="viewcode-block" id="ReplayBuffer.sample"><a class="viewcode-back" href="../../../../generated/rlberry.agents.utils.replay.ReplayBuffer.html#rlberry.agents.utils.replay.ReplayBuffer.sample">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">chunk_size</span><span class="p">,</span> <span class="n">sampling_mode</span><span class="o">=</span><span class="s2">&quot;uniform&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sample a batch.</span>
+
+<span class="sd">        Data have shape (B, T, ...), where</span>
+<span class="sd">        B = batch_size</span>
+<span class="sd">        T = chunk_size</span>
+<span class="sd">        and represents a batch of sub-trajectories.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        batch_size: int</span>
+<span class="sd">            Number of sub-trajectories to sample.</span>
+<span class="sd">        chunk_size: int</span>
+<span class="sd">            Length of each sub-trajectory. A sub-trajectory may include</span>
+<span class="sd">            transitions from more than one episode.</span>
+<span class="sd">        sampling_mode: {&quot;uniform&quot;, &quot;prioritized&quot;}, default = &quot;uniform&quot;</span>
+<span class="sd">            &quot;uniform&quot;: sample batch uniformly at random;</span>
+<span class="sd">            &quot;prioritized&quot;: use prioritized experience replay (requires</span>
+<span class="sd">            enable_prioritized=True in the constructor).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        If the number of stored transitions is smaller than chunk_size, returns None.</span>
+
+<span class="sd">        Otherwise, returns a NamedTuple :code:`batch` where:</span>
+
+<span class="sd">        * :code:`batch.data` is a dict such that `batch.data[tag]` is a numpy array</span>
+<span class="sd">        containing data stored for a given tag.</span>
+
+<span class="sd">        * :code:`batch.data` is a dict where</span>
+<span class="sd">            :code:`batch.data[&quot;indices&quot;]` contains the indices of the sampled transitions in the buffer, and</span>
+<span class="sd">            :code:`batch.data[&quot;weights&quot;]` contains the importance sampling weights associeated</span>
+<span class="sd">            to the prioritized experience replay.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">chunk_size</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">sampling_mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;uniform&quot;</span><span class="p">,</span> <span class="s2">&quot;prioritized&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid sampling_mode: </span><span class="si">{</span><span class="n">sampling_mode</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sampling_mode</span> <span class="o">==</span> <span class="s2">&quot;prioritized&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_enable_prioritized</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s2">&quot;To sample from the replay with the &#39;prioritized&#39; mode, &quot;</span>
+                <span class="s2">&quot;you need to set enable_prioritized=True in the constructor.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">chunk_size</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;Cannot sample from ReplayBuffer &quot;</span>
+                <span class="s2">&quot;if the number of stored transitions is smaller than chunk_size.&quot;</span>
+                <span class="s2">&quot;chunk_size, returning None&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Current replay size = </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;requested chunk_size = </span><span class="si">{</span><span class="n">chunk_size</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># sample start/end indices for sub-trajectories</span>
+        <span class="n">start_indices</span><span class="p">,</span> <span class="n">end_indices</span><span class="p">,</span> <span class="n">weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_batch_indices</span><span class="p">(</span>
+            <span class="n">batch_size</span><span class="p">,</span> <span class="n">chunk_size</span><span class="p">,</span> <span class="n">sampling_mode</span>
+        <span class="p">)</span>
+
+        <span class="n">batch_data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">batch_info</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="n">trajectories</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">all_indices</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">:</span>
+            <span class="n">trajectories</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">batch_size</span><span class="p">):</span>
+            <span class="n">chunk</span><span class="p">,</span> <span class="n">indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_chunk</span><span class="p">(</span><span class="n">start_indices</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">end_indices</span><span class="p">[</span><span class="n">ii</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">:</span>
+                <span class="n">trajectories</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chunk</span><span class="p">[</span><span class="n">tag</span><span class="p">])</span>
+            <span class="n">all_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">:</span>
+            <span class="n">batch_data</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">trajectories</span><span class="p">[</span><span class="n">tag</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_dtypes</span><span class="p">[</span><span class="n">tag</span><span class="p">])</span>
+
+        <span class="n">batch_info</span><span class="p">[</span><span class="s2">&quot;indices&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">all_indices</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+        <span class="n">batch_info</span><span class="p">[</span><span class="s2">&quot;weights&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">weights</span>
+
+        <span class="n">batch</span> <span class="o">=</span> <span class="n">Batch</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">batch_data</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="n">batch_info</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">batch</span></div>
+
+<div class="viewcode-block" id="ReplayBuffer.update_priorities"><a class="viewcode-back" href="../../../../generated/rlberry.agents.utils.replay.ReplayBuffer.html#rlberry.agents.utils.replay.ReplayBuffer.update_priorities">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_priorities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">new_priorities</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update priorities in the replay buffer.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        indices : array of shape (batch, time)</span>
+<span class="sd">            Numpy array containing indices of transitions to be updated.</span>
+<span class="sd">            From a sampled batch, you can set it to batch.info[&quot;indices&quot;].</span>
+<span class="sd">        new_priorities : array of shape (batch, time)</span>
+<span class="sd">            Numpy array containing the new priorities. Must have the same</span>
+<span class="sd">            shape as the indices array.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_enable_prioritized</span>
+
+        <span class="k">if</span> <span class="n">indices</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">new_priorities</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s2">&quot;Shape of &#39;indices&#39; does not match shape of `new_priorities`&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">batch_dim</span><span class="p">,</span> <span class="n">time_dim</span> <span class="o">=</span> <span class="n">indices</span><span class="o">.</span><span class="n">shape</span>
+        <span class="k">for</span> <span class="n">bb</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">batch_dim</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">tt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">time_dim</span><span class="p">):</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">indices</span><span class="p">[</span><span class="n">bb</span><span class="p">,</span> <span class="n">tt</span><span class="p">]</span>
+                <span class="n">priority</span> <span class="o">=</span> <span class="n">new_priorities</span><span class="p">[</span><span class="n">bb</span><span class="p">,</span> <span class="n">tt</span><span class="p">]</span>
+                <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_it_sum</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">priority</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_alpha</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_it_min</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">priority</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_alpha</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_max_priority</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_priority</span><span class="p">,</span> <span class="n">priority</span><span class="p">)</span></div></div>
+</pre></div>
+
+      </div>
+    <div class="container">
+      <footer class="sk-content-footer">
+            &copy; 2023, rlberry team.
+      </footer>
+    </div>
+  </div>
+</div>
+<script src="../../../../_static/js/vendor/bootstrap.min.js"></script>
+
+<script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-22606712-2', 'auto');
+    ga('set', 'anonymizeIp', true);
+    ga('send', 'pageview');
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+<script>
+$(document).ready(function() {
+    /* Add a [>>>] button on the top-right corner of code samples to hide
+     * the >>> and ... prompts and the output and thus make the code
+     * copyable. */
+    var div = $('.highlight-python .highlight,' +
+                '.highlight-python3 .highlight,' +
+                '.highlight-pycon .highlight,' +
+		'.highlight-default .highlight')
+    var pre = div.find('pre');
+
+    // get the styles from the current theme
+    pre.parent().parent().css('position', 'relative');
+    var hide_text = 'Hide prompts and outputs';
+    var show_text = 'Show prompts and outputs';
+
+    // create and add the button to all the code blocks that contain >>>
+    div.each(function(index) {
+        var jthis = $(this);
+        if (jthis.find('.gp').length > 0) {
+            var button = $('<span class="copybutton">&gt;&gt;&gt;</span>');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+            jthis.prepend(button);
+        }
+        // tracebacks (.gt) contain bare text elements that need to be
+        // wrapped in a span to work with .nextUntil() (see later)
+        jthis.find('pre:has(.gt)').contents().filter(function() {
+            return ((this.nodeType == 3) && (this.data.trim().length > 0));
+        }).wrap('<span>');
+    });
+
+    // define the behavior of the button when it's clicked
+    $('.copybutton').click(function(e){
+        e.preventDefault();
+        var button = $(this);
+        if (button.data('hidden') === 'false') {
+            // hide the code output
+            button.parent().find('.go, .gp, .gt').hide();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'hidden');
+            button.css('text-decoration', 'line-through');
+            button.attr('title', show_text);
+            button.data('hidden', 'true');
+        } else {
+            // show the code output
+            button.parent().find('.go, .gp, .gt').show();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'visible');
+            button.css('text-decoration', 'none');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+        }
+    });
+
+	/*** Add permalink buttons next to glossary terms ***/
+	$('dl.glossary > dt[id]').append(function() {
+		return ('<a class="headerlink" href="#' +
+			    this.getAttribute('id') +
+			    '" title="Permalink to this term">¶</a>');
+	});
+  /*** Hide navbar when scrolling down ***/
+  // Returns true when headerlink target matches hash in url
+  (function() {
+    hashTargetOnTop = function() {
+        var hash = window.location.hash;
+        if ( hash.length < 2 ) { return false; }
+
+        var target = document.getElementById( hash.slice(1) );
+        if ( target === null ) { return false; }
+
+        var top = target.getBoundingClientRect().top;
+        return (top < 2) && (top > -2);
+    };
+
+    // Hide navbar on load if hash target is on top
+    var navBar = document.getElementById("navbar");
+    var navBarToggler = document.getElementById("sk-navbar-toggler");
+    var navBarHeightHidden = "-" + navBar.getBoundingClientRect().height + "px";
+    var $window = $(window);
+
+    hideNavBar = function() {
+        navBar.style.top = navBarHeightHidden;
+    };
+
+    showNavBar = function() {
+        navBar.style.top = "0";
+    }
+
+    if (hashTargetOnTop()) {
+        hideNavBar()
+    }
+
+    var prevScrollpos = window.pageYOffset;
+    hideOnScroll = function(lastScrollTop) {
+        if (($window.width() < 768) && (navBarToggler.getAttribute("aria-expanded") === 'true')) {
+            return;
+        }
+        if (lastScrollTop > 2 && (prevScrollpos <= lastScrollTop) || hashTargetOnTop()){
+            hideNavBar()
+        } else {
+            showNavBar()
+        }
+        prevScrollpos = lastScrollTop;
+    };
+
+    /*** high performance scroll event listener***/
+    var raf = window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        window.oRequestAnimationFrame;
+    var lastScrollTop = $window.scrollTop();
+
+    if (raf) {
+        loop();
+    }
+
+    function loop() {
+        var scrollTop = $window.scrollTop();
+        if (lastScrollTop === scrollTop) {
+            raf(loop);
+            return;
+        } else {
+            lastScrollTop = scrollTop;
+            hideOnScroll(lastScrollTop);
+            raf(loop);
+        }
+    }
+  })();
+});
+
+</script>
+    
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    
+</body>
+</html>

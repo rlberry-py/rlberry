@@ -1,0 +1,12 @@
+﻿:mod:`rlberry.seeding`.set_external_seed
+=====================================================
+
+.. currentmodule:: rlberry.seeding
+
+.. autofunction:: set_external_seed
+
+.. include:: rlberry.seeding.set_external_seed.examples
+
+.. raw:: html
+
+    <div class="clearer"></div>

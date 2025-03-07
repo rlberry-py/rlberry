@@ -1,0 +1,12 @@
+﻿:mod:`rlberry.agents.utils.replay`.ReplayBuffer
+======================================================
+
+.. currentmodule:: rlberry.agents.utils.replay
+
+.. autoclass:: ReplayBuffer
+
+.. include:: rlberry.agents.utils.replay.ReplayBuffer.examples
+
+.. raw:: html
+
+    <div class="clearer"></div>

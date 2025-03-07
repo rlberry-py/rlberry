@@ -1,0 +1,713 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  
+  <title>rlberry.manager.evaluation &mdash; rlberry 0.7.3.post16.dev0+8710009 documentation</title>
+  
+  <link rel="canonical" href="https://rlberry-py.github.io/rlberry/_modules/rlberry/manager/evaluation.html" />
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/vendor/bootstrap.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/sg_gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/sg_gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/sg_gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/sphinx-design.4cbf315f70debaebd550c87a6162cf0f.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+<script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+<script src="../../../_static/js/vendor/jquery-3.6.3.slim.min.js"></script> 
+</head>
+<body>
+
+
+<nav id="navbar" class="sk-docs-navbar navbar navbar-expand-md navbar-light bg-light py-0">
+  <div class="container-fluid sk-docs-container px-0">
+    <button
+      id="sk-navbar-toggler"
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="sk-navbar-collapse collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../index.html">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../installation.html">Install</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../user_guide.html">User Guide</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../auto_examples/index.html">Examples</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../api.html">API</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../changelog.html">Changelog</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../about.html">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="https://github.com/rlberry-py/rlberry">GitHub</a>
+        </li>
+        <!--
+        <li class="nav-item dropdown nav-more-item-dropdown">
+          <a class="sk-nav-link nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">More</a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          </div>
+        </li>-->
+    </ul>
+      <div id="searchbox" role="search">
+          <div class="searchformwrapper">
+            <form action="https://duckduckgo.com/">
+            <input type="hidden" id="sites" name="sites" value="https://rlberry-py.github.io/rlberry/">
+            <input type="search" placeholder="Search &hellip;" value="" name="q" />
+            <input class="sk-search-text-btn" type="submit" value="Go" /></form>
+
+          </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="d-flex" id="sk-doc-wrapper">
+    <input type="checkbox" name="sk-toggle-checkbox" id="sk-toggle-checkbox">
+    <label id="sk-sidemenu-toggle" class="sk-btn-toggle-toc btn sk-btn-primary" for="sk-toggle-checkbox">Toggle Menu</label>
+    <div id="sk-sidebar-wrapper" class="border-right">
+      <div class="sk-sidebar-toc-wrapper">
+        <div class="sk-sidebar-toc-logo">
+        </div>
+	<br>
+        <div class="alert alert-warning p-1 mb-2" role="alert">
+
+          <p class="text-center mb-0">
+          rlberry 0.7.3.post16.dev0+8710009<br/>
+          <a href="../../../versions.html">Other versions</a>
+          </p>
+
+        </div>
+            <div class="sk-sidebar-toc">
+              
+            </div>
+      </div>
+    </div>
+    <div id="sk-page-content-wrapper">
+      <div class="sk-page-content container-fluid body px-md-3" role="main">
+        
+  <h1>Source code for rlberry.manager.evaluation</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="c1"># import numpy as np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="c1"># from pathlib import Path</span>
+<span class="c1"># from datetime import datetime</span>
+<span class="c1"># import pickle</span>
+<span class="c1"># import bz2</span>
+<span class="c1"># import _pickle as cPickle</span>
+<span class="c1"># import dill</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExperimentManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">loading_tools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">rlberry</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">rlberry</span><span class="o">.</span><span class="n">logger</span>
+
+
+<div class="viewcode-block" id="evaluate_agents"><a class="viewcode-back" href="../../../generated/rlberry.manager.evaluate_agents.html#rlberry.manager.evaluate_agents">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">evaluate_agents</span><span class="p">(</span>
+    <span class="n">experiment_manager_list</span><span class="p">,</span>
+    <span class="n">n_simulations</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">choose_random_agents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">fignum</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Evaluate and compare each of the agents in experiment_manager_list.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    experiment_manager_list: list of ExperimentManager objects.</span>
+<span class="sd">    n_simulations: int</span>
+<span class="sd">        Number of calls to the eval() method of each ExperimentManager instance.</span>
+<span class="sd">    choose_random_agents: bool</span>
+<span class="sd">        If true and n_fit&gt;1, use a random fitted agent from each ExperimentManager at each evaluation.</span>
+<span class="sd">        Otherwise, each fitted agent of each ExperimentManager is evaluated n_simulations times.</span>
+<span class="sd">    fignum: string or int</span>
+<span class="sd">        Identifier of plot figure.</span>
+<span class="sd">    show: bool</span>
+<span class="sd">        If true, calls plt.show().</span>
+<span class="sd">    plot: bool</span>
+<span class="sd">        If false, do not plot.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dataframe with the evaluation results.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from rlberry.agents.stable_baselines import StableBaselinesAgent</span>
+<span class="sd">    &gt;&gt;&gt; from stable_baselines3 import PPO, A2C</span>
+<span class="sd">    &gt;&gt;&gt; from rlberry.manager import ExperimentManager, evaluate_agents</span>
+<span class="sd">    &gt;&gt;&gt; from rlberry.envs import gym_make</span>
+<span class="sd">    &gt;&gt;&gt; import matplotlib.pyplot as plt</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; if __name__==&quot;__main__&quot;:</span>
+<span class="sd">    &gt;&gt;&gt;     names = [&quot;A2C&quot;, &quot;PPO&quot;]</span>
+<span class="sd">    &gt;&gt;&gt;     managers = [ ExperimentManager(</span>
+<span class="sd">    &gt;&gt;&gt;         StableBaselinesAgent,</span>
+<span class="sd">    &gt;&gt;&gt;         (gym_make, dict(id=&quot;Acrobot-v1&quot;)),</span>
+<span class="sd">    &gt;&gt;&gt;         fit_budget=1e5,</span>
+<span class="sd">    &gt;&gt;&gt;         agent_name = names[i],</span>
+<span class="sd">    &gt;&gt;&gt;         eval_kwargs=dict(eval_horizon=500),</span>
+<span class="sd">    &gt;&gt;&gt;         init_kwargs= {&quot;algo_cls&quot;: algo_cls, &quot;policy&quot;: &quot;MlpPolicy&quot;, &quot;verbose&quot;: 0},</span>
+<span class="sd">    &gt;&gt;&gt;         n_fit=1,</span>
+<span class="sd">    &gt;&gt;&gt;         seed=42,</span>
+<span class="sd">    &gt;&gt;&gt;          ) for i, algo_cls in enumerate([A2C, PPO])]</span>
+<span class="sd">    &gt;&gt;&gt;     for manager in managers:</span>
+<span class="sd">    &gt;&gt;&gt;         manager.fit()</span>
+<span class="sd">    &gt;&gt;&gt;     data = evaluate_agents(managers, n_simulations=50)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1">#</span>
+    <span class="c1"># evaluation</span>
+    <span class="c1">#</span>
+
+    <span class="n">eval_outputs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">experiment_manager</span> <span class="ow">in</span> <span class="n">experiment_manager_list</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Evaluating </span><span class="si">{</span><span class="n">experiment_manager</span><span class="o">.</span><span class="n">agent_name</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">choose_random_agents</span><span class="p">:</span>
+            <span class="n">outputs</span> <span class="o">=</span> <span class="n">experiment_manager</span><span class="o">.</span><span class="n">eval_agents</span><span class="p">(</span><span class="n">n_simulations</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">outputs</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">experiment_manager</span><span class="o">.</span><span class="n">agent_handlers</span><span class="p">)):</span>
+                <span class="n">outputs</span> <span class="o">+=</span> <span class="nb">list</span><span class="p">(</span>
+                    <span class="n">experiment_manager</span><span class="o">.</span><span class="n">eval_agents</span><span class="p">(</span><span class="n">n_simulations</span><span class="p">,</span> <span class="n">agent_id</span><span class="o">=</span><span class="n">idx</span><span class="p">)</span>
+                <span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">eval_outputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">eval_outputs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+            <span class="s2">&quot;[evaluate_agents]: No evaluation data. Make sure ExperimentManager.fit() has been called.&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="c1">#</span>
+    <span class="c1"># plot</span>
+    <span class="c1">#</span>
+
+    <span class="c1"># build unique agent IDs (in case there are two agents with the same ID)</span>
+    <span class="n">unique_ids</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">id_count</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">experiment_manager</span> <span class="ow">in</span> <span class="n">experiment_manager_list</span><span class="p">:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">experiment_manager</span><span class="o">.</span><span class="n">agent_name</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">id_count</span><span class="p">:</span>
+            <span class="n">id_count</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">id_count</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">unique_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="p">(</span><span class="n">id_count</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+
+    <span class="c1"># convert output to DataFrame</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">agent_id</span><span class="p">,</span> <span class="n">out</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">unique_ids</span><span class="p">,</span> <span class="n">eval_outputs</span><span class="p">):</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">agent_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">out</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="c1"># plot</span>
+    <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">fignum</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">tick_labels</span><span class="o">=</span><span class="n">output</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;agent&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;evaluation output&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">show</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">output</span></div>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_preprocess_list_datasource_str</span><span class="p">(</span><span class="n">data_source</span><span class="p">,</span> <span class="n">many_agent_by_str_datasource</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get a list of ExperimentManager from a data_source that is a list of &#39;str&#39;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data_source:</span>
+<span class="sd">        check &#39;read_writer_data&#39; doc below</span>
+<span class="sd">    many_agent_by_str_datasource: bool (False by default)</span>
+<span class="sd">        check &#39;read_writer_data&#39; doc below</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">experiment_manager_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">many_agent_by_str_datasource</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">data_source</span><span class="p">:</span>
+            <span class="n">paths_to_load</span> <span class="o">=</span> <span class="n">loading_tools</span><span class="o">.</span><span class="n">get_all_path_of_most_recently_trained_experiments_manager_obj_from_path</span><span class="p">(</span>
+                <span class="n">path</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">current_path</span> <span class="ow">in</span> <span class="n">paths_to_load</span><span class="p">:</span>
+                <span class="n">experiment_manager_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ExperimentManager</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">current_path</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">data_source</span><span class="p">:</span>
+            <span class="c1"># find the path to the latest &quot;manager_obj.pickle&quot;</span>
+            <span class="n">path_to_load</span> <span class="o">=</span> <span class="n">loading_tools</span><span class="o">.</span><span class="n">get_single_path_of_most_recently_trained_experiment_manager_obj_from_path</span><span class="p">(</span>
+                <span class="n">path</span>
+            <span class="p">)</span>
+            <span class="n">experiment_manager_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ExperimentManager</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path_to_load</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">experiment_manager_list</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_preprocess_not_a_list_datasource_str</span><span class="p">(</span><span class="n">data_source</span><span class="p">,</span> <span class="n">many_agent_by_str_datasource</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get a list of ExperimentManager from a data_source that is a &#39;str&#39;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data_source:</span>
+<span class="sd">        check &#39;read_writer_data&#39; doc below</span>
+<span class="sd">    many_agent_by_str_datasource: bool (False by default)</span>
+<span class="sd">        check &#39;read_writer_data&#39; doc below</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">many_agent_by_str_datasource</span><span class="p">:</span>
+        <span class="n">paths_to_load</span> <span class="o">=</span> <span class="n">loading_tools</span><span class="o">.</span><span class="n">get_all_path_of_most_recently_trained_experiments_manager_obj_from_path</span><span class="p">(</span>
+            <span class="n">data_source</span>
+        <span class="p">)</span>
+        <span class="n">experiment_manager_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">current_path</span> <span class="ow">in</span> <span class="n">paths_to_load</span><span class="p">:</span>
+            <span class="n">experiment_manager_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ExperimentManager</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">current_path</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># find the path to the latest &quot;manager_obj.pickle&quot;</span>
+        <span class="n">paths_to_load</span> <span class="o">=</span> <span class="n">loading_tools</span><span class="o">.</span><span class="n">get_single_path_of_most_recently_trained_experiment_manager_obj_from_path</span><span class="p">(</span>
+            <span class="n">data_source</span>
+        <span class="p">)</span>
+        <span class="n">experiment_manager_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">ExperimentManager</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">paths_to_load</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">experiment_manager_list</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_preprocess_list_datasource</span><span class="p">(</span><span class="n">data_source</span><span class="p">,</span> <span class="n">many_agent_by_str_datasource</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get a list of ExperimentManager from a data_source that is a list (so a list of &#39;str&#39; or a list of &#39;ExperimentManager&#39;)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data_source:</span>
+<span class="sd">        check &#39;read_writer_data&#39; doc below</span>
+<span class="sd">    many_agent_by_str_datasource: bool (False by default)</span>
+<span class="sd">        check &#39;read_writer_data&#39; doc below</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_source</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ExperimentManager</span><span class="p">):</span>
+        <span class="n">experiment_manager_list</span> <span class="o">=</span> <span class="n">data_source</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">experiment_manager_list</span> <span class="o">=</span> <span class="n">_preprocess_list_datasource_str</span><span class="p">(</span>
+            <span class="n">data_source</span><span class="p">,</span> <span class="n">many_agent_by_str_datasource</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">experiment_manager_list</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_preprocess_not_a_list_datasource</span><span class="p">(</span><span class="n">data_source</span><span class="p">,</span> <span class="n">many_agent_by_str_datasource</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get a list of ExperimentManager from a data_source that is not a list (so a &#39;str&#39; or an &#39;ExperimentManager&#39;)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data_source:</span>
+<span class="sd">        check &#39;read_writer_data&#39; doc below</span>
+<span class="sd">    many_agent_by_str_datasource: bool (False by default)</span>
+<span class="sd">        check &#39;read_writer_data&#39; doc below</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_source</span><span class="p">,</span> <span class="n">ExperimentManager</span><span class="p">):</span>
+        <span class="n">experiment_manager_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">data_source</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">experiment_manager_list</span> <span class="o">=</span> <span class="n">_preprocess_not_a_list_datasource_str</span><span class="p">(</span>
+            <span class="n">data_source</span><span class="p">,</span> <span class="n">many_agent_by_str_datasource</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">experiment_manager_list</span>
+
+
+<div class="viewcode-block" id="read_writer_data"><a class="viewcode-back" href="../../../generated/rlberry.manager.read_writer_data.html#rlberry.manager.read_writer_data">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">read_writer_data</span><span class="p">(</span>
+    <span class="n">data_source</span><span class="p">,</span>
+    <span class="n">many_agent_by_str_datasource</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">preprocess_tag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">preprocess_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">id_agent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given a list of ExperimentManager or a folder, read data (corresponding to info) obtained in each episode.</span>
+<span class="sd">    The dictionary returned by agents&#39; .fit() method must contain a key equal to `info`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data_source: :class:`~rlberry.manager.ExperimentManager`, or list of :class:`~rlberry.manager.ExperimentManager` or str or list of str</span>
+<span class="sd">        - If ExperimentManager or list of ExperimentManager, load data from it (the agents must be fitted).</span>
+
+<span class="sd">        - If str, the string must be the string path of a directory,  each</span>
+<span class="sd">        subdirectory of this directory must contain pickle files.</span>
+<span class="sd">        Load the data from the directory of the latest experiment in date.</span>
+<span class="sd">        This str should be equal to the value of the `output_dir` parameter in</span>
+<span class="sd">        :class:`~rlberry.manager.ExperimentManager`.</span>
+
+<span class="sd">        - If list of str, each string must be a directory containing pickle files.</span>
+<span class="sd">        Load the data from these pickle files.</span>
+
+<span class="sd">        Note: the agent&#39;s save function must save its writer at the key `_writer`.</span>
+<span class="sd">        This is the default for rlberry agents.</span>
+
+<span class="sd">    many_agent_by_str_datasource: bool (False by default)</span>
+<span class="sd">        (only useful if the datasource is a str or a list of str)</span>
+<span class="sd">        If True, select many agent: the last agent of every different agent name inside the folder</span>
+<span class="sd">        If False, select only one agent: the most recently trained agent from the directory (whatever its name)</span>
+
+<span class="sd">    preprocess_tag:  str or list of str or None</span>
+<span class="sd">        Tag of data that we want to preprocess.</span>
+
+<span class="sd">    preprocess_func: Callable or None or list of Callable or None</span>
+<span class="sd">        Function to apply to &#39;preprocess_tag&#39; column before returning data.</span>
+<span class="sd">        For instance, if preprocess_tag=episode_rewards,setting preprocess_func=np.cumsum</span>
+<span class="sd">        will return cumulative rewards</span>
+<span class="sd">        If None, do not preprocess.</span>
+<span class="sd">        If preprocess_tag is a list, preprocess_func must be None or a list of Callable or</span>
+<span class="sd">        None that matches the length of preprocess_tag.</span>
+
+<span class="sd">    id_agent: int or None, default=None</span>
+<span class="sd">        If not None, returns the data only for agent &#39;id_agent&#39;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Pandas DataFrame with data from writers.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from rlberry.agents.torch import A2CAgent, DQNAgent</span>
+<span class="sd">    &gt;&gt;&gt; from rlberry.manager import ExperimentManager, read_writer_data</span>
+<span class="sd">    &gt;&gt;&gt; from rlberry.envs import gym_make</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; if __name__==&quot;__main__&quot;:</span>
+<span class="sd">    &gt;&gt;&gt;     managers = [ ExperimentManager(</span>
+<span class="sd">    &gt;&gt;&gt;         agent_class,</span>
+<span class="sd">    &gt;&gt;&gt;         (gym_make, dict(id=&quot;CartPole-v1&quot;)),</span>
+<span class="sd">    &gt;&gt;&gt;         fit_budget=1e4,</span>
+<span class="sd">    &gt;&gt;&gt;         eval_kwargs=dict(eval_horizon=500),</span>
+<span class="sd">    &gt;&gt;&gt;         n_fit=1,</span>
+<span class="sd">    &gt;&gt;&gt;         parallelization=&quot;process&quot;,</span>
+<span class="sd">    &gt;&gt;&gt;         mp_context=&quot;spawn&quot;,</span>
+<span class="sd">    &gt;&gt;&gt;         seed=42,</span>
+<span class="sd">    &gt;&gt;&gt;          ) for agent_class in [A2CAgent, DQNAgent]]</span>
+<span class="sd">    &gt;&gt;&gt;     for manager in managers:</span>
+<span class="sd">    &gt;&gt;&gt;         manager.fit()</span>
+<span class="sd">    &gt;&gt;&gt;     data = read_writer_data(managers)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_source</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">experiment_manager_list</span> <span class="o">=</span> <span class="n">_preprocess_list_datasource</span><span class="p">(</span>
+            <span class="n">data_source</span><span class="p">,</span> <span class="n">many_agent_by_str_datasource</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">experiment_manager_list</span> <span class="o">=</span> <span class="n">_preprocess_not_a_list_datasource</span><span class="p">(</span>
+            <span class="n">data_source</span><span class="p">,</span> <span class="n">many_agent_by_str_datasource</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">preprocess_tag</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">tags</span> <span class="o">=</span> <span class="p">[</span><span class="n">preprocess_tag</span><span class="p">]</span>
+        <span class="n">preprocess_funcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">preprocess_func</span> <span class="ow">or</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">)]</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">preprocess_tag</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">tags</span> <span class="o">=</span> <span class="n">preprocess_tag</span>
+        <span class="k">if</span> <span class="n">preprocess_func</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">preprocess_funcs</span> <span class="o">=</span> <span class="p">[</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tags</span><span class="p">))]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">preprocess_func</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">tags</span><span class="p">)</span>
+            <span class="n">preprocess_funcs</span> <span class="o">=</span> <span class="n">preprocess_func</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">tags</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">writer_datas</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">manager</span> <span class="ow">in</span> <span class="n">experiment_manager_list</span><span class="p">:</span>
+        <span class="n">writer_datas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">manager</span><span class="o">.</span><span class="n">get_writer_data</span><span class="p">())</span>
+    <span class="n">agent_name_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">manager</span><span class="o">.</span><span class="n">agent_name</span> <span class="k">for</span> <span class="n">manager</span> <span class="ow">in</span> <span class="n">experiment_manager_list</span><span class="p">]</span>
+    <span class="c1"># preprocess agent stats</span>
+    <span class="n">data_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">id_agent</span><span class="p">,</span> <span class="n">agent_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">agent_name_list</span><span class="p">):</span>
+        <span class="n">writer_data</span> <span class="o">=</span> <span class="n">writer_datas</span><span class="p">[</span><span class="n">id_agent</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">writer_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">writer_data</span><span class="p">:</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">writer_data</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">tags</span><span class="p">:</span>
+                    <span class="c1"># add the column that don&#39;t need to be preprocessed</span>
+                    <span class="n">processed_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="o">~</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;tag&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">tags</span><span class="p">)])</span>
+
+                    <span class="c1"># add the preprocessed column</span>
+                    <span class="k">for</span> <span class="n">id_tag</span><span class="p">,</span> <span class="n">tag</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tags</span><span class="p">):</span>
+                        <span class="n">new_column</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;tag&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">tag</span><span class="p">])</span>
+                        <span class="n">new_column</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">preprocess_funcs</span><span class="p">[</span><span class="n">id_tag</span><span class="p">](</span>
+                            <span class="n">new_column</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+                        <span class="p">)</span>
+                        <span class="n">processed_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+                            <span class="p">[</span><span class="n">processed_df</span><span class="p">,</span> <span class="n">new_column</span><span class="p">],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span>
+                        <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">processed_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+                <span class="c1"># update name according to ExperimentManager name and n_simulation</span>
+                <span class="n">processed_df</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">agent_name</span>
+                <span class="n">processed_df</span><span class="p">[</span><span class="s2">&quot;n_simu&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">idx</span>
+                <span class="n">data_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">processed_df</span><span class="p">)</span>
+
+    <span class="n">all_writer_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">data_list</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">all_writer_data</span></div>
+
+
+<span class="c1">######## old code to remove ?</span>
+<span class="c1"># def _get_last_xp(input_dir, name):</span>
+<span class="c1">#     dir_name = Path(input_dir) / &quot;manager_data&quot;</span>
+
+<span class="c1">#     # list all of the experiments for this particular agent</span>
+<span class="c1">#     agent_xp = list(dir_name.glob(name + &quot;*&quot;))</span>
+
+<span class="c1">#     # get the times at which the experiment have been made</span>
+<span class="c1">#     times = [str(p).split(&quot;_&quot;)[-2] for p in agent_xp]</span>
+<span class="c1">#     days = [str(p).split(&quot;_&quot;)[-3] for p in agent_xp]</span>
+<span class="c1">#     hashs = [str(p).split(&quot;_&quot;)[-1] for p in agent_xp]</span>
+<span class="c1">#     datetimes = [</span>
+<span class="c1">#         datetime.strptime(days[i] + &quot;_&quot; + times[i], &quot;%Y-%m-%d_%H-%M-%S&quot;)</span>
+<span class="c1">#         for i in range(len(days))</span>
+<span class="c1">#     ]</span>
+
+<span class="c1">#     if len(datetimes) == 0:</span>
+<span class="c1">#         raise ValueError(</span>
+<span class="c1">#             &quot;input dir not found, verify that the agent are trained &quot;</span>
+<span class="c1">#             &#39;and that ExperimentManager.outdir_id_style=&quot;timestamp&quot;&#39;</span>
+<span class="c1">#         )</span>
+
+<span class="c1">#     # get the date of last experiment</span>
+<span class="c1">#     max_date = np.max(datetimes)</span>
+<span class="c1">#     id_max = np.argmax(datetimes)</span>
+<span class="c1">#     hash = hashs[id_max]</span>
+<span class="c1">#     agent_folder = (</span>
+<span class="c1">#         name + &quot;_&quot; + datetime.strftime(max_date, &quot;%Y-%m-%d_%H-%M-%S&quot;) + &quot;_&quot; + hash</span>
+<span class="c1">#     )</span>
+<span class="c1">#     return agent_folder, dir_name</span>
+
+
+<span class="c1"># ######## old code to remove ?</span>
+<span class="c1"># def is_bz_file(filepath):</span>
+<span class="c1">#     with open(filepath, &quot;rb&quot;) as test_f:</span>
+<span class="c1">#         return test_f.read(2) == b&quot;BZ&quot;</span>
+
+
+<span class="c1">######## old code to remove ?</span>
+<span class="c1"># def _load_data(agent_folder, dir_name, id_agent):</span>
+<span class="c1">#     writer_data = {}</span>
+
+<span class="c1">#     agent_dir = Path(dir_name) / agent_folder</span>
+<span class="c1">#     # list all the fits of this experiment</span>
+<span class="c1">#     exp_files = (agent_dir / Path(&quot;agent_handlers&quot;)).iterdir()</span>
+<span class="c1">#     nfit = len(</span>
+<span class="c1">#         [1 for a_ in [str(e).split(&quot;.&quot;) for e in exp_files] if a_[-1] == &quot;pickle&quot;]</span>
+<span class="c1">#     )</span>
+<span class="c1">#     # nfit = len(list(exp_files))</span>
+<span class="c1">#     if nfit == 0:</span>
+<span class="c1">#         raise ValueError(&quot;Folders do not contain pickle files&quot;)</span>
+
+<span class="c1">#     if id_agent is not None:</span>
+<span class="c1">#         id_fits = [id_agent]</span>
+<span class="c1">#     else:</span>
+<span class="c1">#         id_fits = range(nfit)</span>
+
+<span class="c1">#     for ii in id_fits:</span>
+<span class="c1">#         # For each fit, load the writer data</span>
+<span class="c1">#         handler_name = agent_dir / Path(f&quot;agent_handlers/idx_{ii}.pickle&quot;)</span>
+<span class="c1">#         try:</span>
+<span class="c1">#             if is_bz_file(handler_name):</span>
+<span class="c1">#                 with bz2.BZ2File(handler_name, &quot;rb&quot;) as ff:</span>
+<span class="c1">#                     tmp_dict = cPickle.load(ff)</span>
+<span class="c1">#             else:</span>
+<span class="c1">#                 with handler_name.open(&quot;rb&quot;) as ff:</span>
+<span class="c1">#                     tmp_dict = pickle.load(ff)</span>
+<span class="c1">#         except Exception:</span>
+<span class="c1">#             if not is_bz_file(handler_name):</span>
+<span class="c1">#                 with handler_name.open(&quot;rb&quot;) as ff:</span>
+<span class="c1">#                     tmp_dict = dill.load(ff)</span>
+<span class="c1">#             else:</span>
+<span class="c1">#                 with bz2.BZ2File(handler_name, &quot;rb&quot;) as ff:</span>
+<span class="c1">#                     tmp_dict = dill.load(ff)</span>
+<span class="c1">#         writer_data[str(ii)] = tmp_dict.get(&quot;_writer&quot;).data</span>
+
+<span class="c1">#     return writer_data</span>
+</pre></div>
+
+      </div>
+    <div class="container">
+      <footer class="sk-content-footer">
+            &copy; 2023, rlberry team.
+      </footer>
+    </div>
+  </div>
+</div>
+<script src="../../../_static/js/vendor/bootstrap.min.js"></script>
+
+<script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-22606712-2', 'auto');
+    ga('set', 'anonymizeIp', true);
+    ga('send', 'pageview');
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+<script>
+$(document).ready(function() {
+    /* Add a [>>>] button on the top-right corner of code samples to hide
+     * the >>> and ... prompts and the output and thus make the code
+     * copyable. */
+    var div = $('.highlight-python .highlight,' +
+                '.highlight-python3 .highlight,' +
+                '.highlight-pycon .highlight,' +
+		'.highlight-default .highlight')
+    var pre = div.find('pre');
+
+    // get the styles from the current theme
+    pre.parent().parent().css('position', 'relative');
+    var hide_text = 'Hide prompts and outputs';
+    var show_text = 'Show prompts and outputs';
+
+    // create and add the button to all the code blocks that contain >>>
+    div.each(function(index) {
+        var jthis = $(this);
+        if (jthis.find('.gp').length > 0) {
+            var button = $('<span class="copybutton">&gt;&gt;&gt;</span>');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+            jthis.prepend(button);
+        }
+        // tracebacks (.gt) contain bare text elements that need to be
+        // wrapped in a span to work with .nextUntil() (see later)
+        jthis.find('pre:has(.gt)').contents().filter(function() {
+            return ((this.nodeType == 3) && (this.data.trim().length > 0));
+        }).wrap('<span>');
+    });
+
+    // define the behavior of the button when it's clicked
+    $('.copybutton').click(function(e){
+        e.preventDefault();
+        var button = $(this);
+        if (button.data('hidden') === 'false') {
+            // hide the code output
+            button.parent().find('.go, .gp, .gt').hide();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'hidden');
+            button.css('text-decoration', 'line-through');
+            button.attr('title', show_text);
+            button.data('hidden', 'true');
+        } else {
+            // show the code output
+            button.parent().find('.go, .gp, .gt').show();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'visible');
+            button.css('text-decoration', 'none');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+        }
+    });
+
+	/*** Add permalink buttons next to glossary terms ***/
+	$('dl.glossary > dt[id]').append(function() {
+		return ('<a class="headerlink" href="#' +
+			    this.getAttribute('id') +
+			    '" title="Permalink to this term">¶</a>');
+	});
+  /*** Hide navbar when scrolling down ***/
+  // Returns true when headerlink target matches hash in url
+  (function() {
+    hashTargetOnTop = function() {
+        var hash = window.location.hash;
+        if ( hash.length < 2 ) { return false; }
+
+        var target = document.getElementById( hash.slice(1) );
+        if ( target === null ) { return false; }
+
+        var top = target.getBoundingClientRect().top;
+        return (top < 2) && (top > -2);
+    };
+
+    // Hide navbar on load if hash target is on top
+    var navBar = document.getElementById("navbar");
+    var navBarToggler = document.getElementById("sk-navbar-toggler");
+    var navBarHeightHidden = "-" + navBar.getBoundingClientRect().height + "px";
+    var $window = $(window);
+
+    hideNavBar = function() {
+        navBar.style.top = navBarHeightHidden;
+    };
+
+    showNavBar = function() {
+        navBar.style.top = "0";
+    }
+
+    if (hashTargetOnTop()) {
+        hideNavBar()
+    }
+
+    var prevScrollpos = window.pageYOffset;
+    hideOnScroll = function(lastScrollTop) {
+        if (($window.width() < 768) && (navBarToggler.getAttribute("aria-expanded") === 'true')) {
+            return;
+        }
+        if (lastScrollTop > 2 && (prevScrollpos <= lastScrollTop) || hashTargetOnTop()){
+            hideNavBar()
+        } else {
+            showNavBar()
+        }
+        prevScrollpos = lastScrollTop;
+    };
+
+    /*** high performance scroll event listener***/
+    var raf = window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        window.oRequestAnimationFrame;
+    var lastScrollTop = $window.scrollTop();
+
+    if (raf) {
+        loop();
+    }
+
+    function loop() {
+        var scrollTop = $window.scrollTop();
+        if (lastScrollTop === scrollTop) {
+            raf(loop);
+            return;
+        } else {
+            lastScrollTop = scrollTop;
+            hideOnScroll(lastScrollTop);
+            raf(loop);
+        }
+    }
+  })();
+});
+
+</script>
+    
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    
+</body>
+</html>

@@ -1,0 +1,12 @@
+﻿:mod:`rlberry.wrappers`.RescaleRewardWrapper
+===================================================
+
+.. currentmodule:: rlberry.wrappers
+
+.. autoclass:: RescaleRewardWrapper
+
+.. include:: rlberry.wrappers.RescaleRewardWrapper.examples
+
+.. raw:: html
+
+    <div class="clearer"></div>

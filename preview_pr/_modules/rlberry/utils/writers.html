@@ -1,0 +1,750 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  
+  <title>rlberry.utils.writers &mdash; rlberry 0.7.3.post16.dev0+8710009 documentation</title>
+  
+  <link rel="canonical" href="https://rlberry-py.github.io/rlberry/_modules/rlberry/utils/writers.html" />
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/vendor/bootstrap.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/sg_gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/sg_gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/sg_gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/sphinx-design.4cbf315f70debaebd550c87a6162cf0f.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+<script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+<script src="../../../_static/js/vendor/jquery-3.6.3.slim.min.js"></script> 
+</head>
+<body>
+
+
+<nav id="navbar" class="sk-docs-navbar navbar navbar-expand-md navbar-light bg-light py-0">
+  <div class="container-fluid sk-docs-container px-0">
+    <button
+      id="sk-navbar-toggler"
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="sk-navbar-collapse collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../index.html">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../installation.html">Install</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../user_guide.html">User Guide</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../auto_examples/index.html">Examples</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../api.html">API</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../changelog.html">Changelog</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../about.html">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="https://github.com/rlberry-py/rlberry">GitHub</a>
+        </li>
+        <!--
+        <li class="nav-item dropdown nav-more-item-dropdown">
+          <a class="sk-nav-link nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">More</a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          </div>
+        </li>-->
+    </ul>
+      <div id="searchbox" role="search">
+          <div class="searchformwrapper">
+            <form action="https://duckduckgo.com/">
+            <input type="hidden" id="sites" name="sites" value="https://rlberry-py.github.io/rlberry/">
+            <input type="search" placeholder="Search &hellip;" value="" name="q" />
+            <input class="sk-search-text-btn" type="submit" value="Go" /></form>
+
+          </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="d-flex" id="sk-doc-wrapper">
+    <input type="checkbox" name="sk-toggle-checkbox" id="sk-toggle-checkbox">
+    <label id="sk-sidemenu-toggle" class="sk-btn-toggle-toc btn sk-btn-primary" for="sk-toggle-checkbox">Toggle Menu</label>
+    <div id="sk-sidebar-wrapper" class="border-right">
+      <div class="sk-sidebar-toc-wrapper">
+        <div class="sk-sidebar-toc-logo">
+        </div>
+	<br>
+        <div class="alert alert-warning p-1 mb-2" role="alert">
+
+          <p class="text-center mb-0">
+          rlberry 0.7.3.post16.dev0+8710009<br/>
+          <a href="../../../versions.html">Other versions</a>
+          </p>
+
+        </div>
+            <div class="sk-sidebar-toc">
+              
+            </div>
+      </div>
+    </div>
+    <div id="sk-page-content-wrapper">
+      <div class="sk-page-content container-fluid body px-md-3" role="main">
+        
+  <h1>Source code for rlberry.utils.writers</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">deque</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">timeit</span> <span class="kn">import</span> <span class="n">default_timer</span> <span class="k">as</span> <span class="n">timer</span>
+<span class="kn">from</span> <span class="nn">rlberry</span> <span class="kn">import</span> <span class="n">check_packages</span>
+<span class="kn">from</span> <span class="nn">rlberry</span> <span class="kn">import</span> <span class="n">metadata_utils</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span> <span class="nn">tqdm.utils</span> <span class="kn">import</span> <span class="n">_screen_shape_wrapper</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+
+<span class="k">if</span> <span class="n">check_packages</span><span class="o">.</span><span class="n">TENSORBOARD_INSTALLED</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">torch.utils.tensorboard</span> <span class="kn">import</span> <span class="n">SummaryWriter</span>
+
+<span class="kn">import</span> <span class="nn">rlberry</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">rlberry</span><span class="o">.</span><span class="n">logger</span>
+
+
+<div class="viewcode-block" id="DefaultWriter"><a class="viewcode-back" href="../../../generated/rlberry.utils.writers.DefaultWriter.html#rlberry.utils.writers.DefaultWriter">[docs]</a><span class="k">class</span> <span class="nc">DefaultWriter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Default writer to be used by the agents, optionally wraps an instance of tensorboard.SummaryWriter.</span>
+
+<span class="sd">    Can be used in the fit() method of the agents, so</span>
+<span class="sd">    that training data can be handled by ExperimentManager and RemoteExperimentManager.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        Name of the writer.</span>
+<span class="sd">    print_log : bool, default=True</span>
+<span class="sd">        If True, print logs to stderr.</span>
+<span class="sd">    log_interval : int</span>
+<span class="sd">        Minimum number of seconds between consecutive logs (with logging module).</span>
+<span class="sd">    style_log: str</span>
+<span class="sd">        Possible values are &quot;multi_line&quot;, &quot;one_line&quot; and &quot;progressbar&quot;. Define the style of the logs.</span>
+<span class="sd">    tensorboard_kwargs : Optional[dict]</span>
+<span class="sd">        Parameters for tensorboard SummaryWriter. If provided, DefaultWriter</span>
+<span class="sd">        will behave as tensorboard.SummaryWriter, and will keep utilities to handle</span>
+<span class="sd">        data added with the add_scalar method.</span>
+<span class="sd">    execution_metadata : metadata_utils.ExecutionMetadata</span>
+<span class="sd">        Execution metadata about the object that is using the writer.</span>
+<span class="sd">    maxlen : Optional[int], default: None</span>
+<span class="sd">        If given, data stored by self._data (accessed through the property self.data) is limited</span>
+<span class="sd">        to `maxlen` entries.</span>
+<span class="sd">    maxlen_by_tag: Optional[dict], default: {}</span>
+<span class="sd">        If given, applies the maxlen logic tag by tag, using the above maxlen as default.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">print_log</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">style_log</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;multi_line&quot;</span><span class="p">,</span>
+        <span class="n">log_interval</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="n">tensorboard_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">execution_metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">metadata_utils</span><span class="o">.</span><span class="n">ExecutionMetadata</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">maxlen</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">maxlen_by_tag</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_print_log</span> <span class="o">=</span> <span class="n">print_log</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_interval</span> <span class="o">=</span> <span class="n">log_interval</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_execution_metadata</span> <span class="o">=</span> <span class="n">execution_metadata</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_last_log</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_time</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">assert</span> <span class="n">style_log</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="s2">&quot;multi_line&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;one_line&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;progressbar&quot;</span><span class="p">,</span>
+        <span class="p">],</span> <span class="s2">&quot;Style log for writer unknown.&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_style_log</span> <span class="o">=</span> <span class="n">style_log</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_maxlen</span> <span class="o">=</span> <span class="n">maxlen</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_maxlen_by_tag</span> <span class="o">=</span> <span class="n">maxlen_by_tag</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+        <span class="c1"># initialize tensorboard</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">tensorboard_kwargs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
+            <span class="ow">not</span> <span class="n">check_packages</span><span class="o">.</span><span class="n">TENSORBOARD_INSTALLED</span>
+        <span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;[DefaultWriter]: received tensorboard_kwargs, but tensorboard is not installed.&quot;</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tensorboard_kwargs</span> <span class="o">=</span> <span class="n">tensorboard_kwargs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tensorboard_logdir</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_summary_writer</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">tensorboard_kwargs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="n">check_packages</span><span class="o">.</span><span class="n">TENSORBOARD_INSTALLED</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_summary_writer</span> <span class="o">=</span> <span class="n">SummaryWriter</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_tensorboard_kwargs</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_tensorboard_logdir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_summary_writer</span><span class="o">.</span><span class="n">get_logdir</span><span class="p">()</span>
+
+<div class="viewcode-block" id="DefaultWriter.reset"><a class="viewcode-back" href="../../../generated/rlberry.utils.writers.DefaultWriter.html#rlberry.utils.writers.DefaultWriter.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear data.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initial_time</span> <span class="o">=</span> <span class="n">timer</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_last_log</span> <span class="o">=</span> <span class="n">timer</span><span class="p">()</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">summary_writer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_summary_writer</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">df</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">tag</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+                    <span class="p">[</span><span class="n">df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">tag</span><span class="p">])],</span>
+                    <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="p">)</span>
+        <span class="k">if</span> <span class="n">df</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># if there are no data, return empty dataframe</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">df</span>
+
+    <span class="k">def</span> <span class="nf">set_max_global_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_global_step</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_global_step</span> <span class="o">=</span> <span class="n">max_global_step</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pbar</span> <span class="o">=</span> <span class="n">extending_tqdm</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">max_global_step</span><span class="p">),</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">leave</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">progressbar_current_step</span> <span class="o">=</span> <span class="mi">0</span>
+
+<div class="viewcode-block" id="DefaultWriter.read_tag_value"><a class="viewcode-back" href="../../../generated/rlberry.utils.writers.DefaultWriter.html#rlberry.utils.writers.DefaultWriter.read_tag_value">[docs]</a>    <span class="k">def</span> <span class="nf">read_tag_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">main_tag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads the values for the tag `tag`.</span>
+<span class="sd">        If a `main_tag` is given, the tag will be a concatenation of</span>
+<span class="sd">        `main_tag`, underscore and `tag`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        tag: string</span>
+<span class="sd">            Tag to be searched</span>
+<span class="sd">        main_tag: string, default=&quot;&quot;</span>
+<span class="sd">            Main tag. If `main_tag == &quot;&quot;`  then use only `tag`.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        The writer values for the tag, a pandas Series.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">full_tag</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">main_tag</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span> <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">main_tag</span><span class="p">)</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">full_tag</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="DefaultWriter.read_first_tag_value"><a class="viewcode-back" href="../../../generated/rlberry.utils.writers.DefaultWriter.html#rlberry.utils.writers.DefaultWriter.read_first_tag_value">[docs]</a>    <span class="k">def</span> <span class="nf">read_first_tag_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">main_tag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads the first value for the tag `tag`.</span>
+<span class="sd">        If a `main_tag` is given, the tag will be a concatenation of `main_tag`, underscore and `tag`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        tag: string</span>
+<span class="sd">            Tag to be searched</span>
+<span class="sd">        main_tag: string, default=&quot;&quot;</span>
+<span class="sd">            Main tag. If `main_tag == &quot;&quot;`  then use only `tag`.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        The first value encountered with tag `tag`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">full_tag</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">main_tag</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span> <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">main_tag</span><span class="p">)</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">full_tag</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="DefaultWriter.read_last_tag_value"><a class="viewcode-back" href="../../../generated/rlberry.utils.writers.DefaultWriter.html#rlberry.utils.writers.DefaultWriter.read_last_tag_value">[docs]</a>    <span class="k">def</span> <span class="nf">read_last_tag_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">main_tag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads the last value for the tag `tag`.</span>
+<span class="sd">        If a `main_tag` is given, the tag will be a concatenation of `main_tag`, underscore and `tag`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        tag: string</span>
+<span class="sd">            Tag to be searched</span>
+<span class="sd">        main_tag: string, default=&quot;&quot;</span>
+<span class="sd">            Main tag. If `main_tag == &quot;&quot;`  then use only `tag`.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        The last value with tag `tag` encountered by the writer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">full_tag</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">main_tag</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span> <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">main_tag</span><span class="p">)</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">full_tag</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="DefaultWriter.add_scalar"><a class="viewcode-back" href="../../../generated/rlberry.utils.writers.DefaultWriter.html#rlberry.utils.writers.DefaultWriter.add_scalar">[docs]</a>    <span class="k">def</span> <span class="nf">add_scalar</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">scalar_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">global_step</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">walltime</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">new_style</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Behaves as SummaryWriter.add_scalar().</span>
+
+<span class="sd">        WARNING: &#39;global_step&#39; can be confusing when a scalar is written at each episode</span>
+<span class="sd">        and another is written at each iteration. The global step 1 may be associated to</span>
+<span class="sd">        first episode and first step in environment.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        tag : str</span>
+<span class="sd">            Tag for the scalar.</span>
+<span class="sd">        scalar_value : float</span>
+<span class="sd">            Value of the scalar.</span>
+<span class="sd">        global_step : int</span>
+<span class="sd">            Step where scalar was added. If None, global steps will no longer be stored</span>
+<span class="sd">            for the current tag.</span>
+<span class="sd">        walltime : float</span>
+<span class="sd">            Optional override default walltime (time.time()) with seconds after epoch of event</span>
+<span class="sd">        new_style : bool</span>
+<span class="sd">            Whether to use new style (tensor field) or old</span>
+<span class="sd">            style (simple_value field). New style could lead to faster data loading.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_summary_writer</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_summary_writer</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span>
+                <span class="n">tag</span><span class="p">,</span> <span class="n">scalar_value</span><span class="p">,</span> <span class="n">global_step</span><span class="p">,</span> <span class="n">walltime</span><span class="p">,</span> <span class="n">new_style</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_scalar</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">scalar_value</span><span class="p">,</span> <span class="n">global_step</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_add_scalar</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">scalar_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">global_step</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Store scalar value in self._data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Update data structures</span>
+        <span class="k">if</span> <span class="n">tag</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">tag</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">deque</span><span class="p">(</span>
+                <span class="n">maxlen</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_maxlen_by_tag</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maxlen</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">tag</span><span class="p">][</span><span class="s2">&quot;tag&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">deque</span><span class="p">(</span>
+                <span class="n">maxlen</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_maxlen_by_tag</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maxlen</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">tag</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">deque</span><span class="p">(</span>
+                <span class="n">maxlen</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_maxlen_by_tag</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maxlen</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">tag</span><span class="p">][</span><span class="s2">&quot;dw_time_elapsed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">deque</span><span class="p">(</span>
+                <span class="n">maxlen</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_maxlen_by_tag</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maxlen</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">tag</span><span class="p">][</span><span class="s2">&quot;global_step&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">deque</span><span class="p">(</span>
+                <span class="n">maxlen</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_maxlen_by_tag</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maxlen</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">tag</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
+        <span class="p">)</span>  <span class="c1"># used in plots, when aggregating several writers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">tag</span><span class="p">][</span><span class="s2">&quot;tag&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">tag</span>
+        <span class="p">)</span>  <span class="c1"># useful to convert all data to a single DataFrame</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">tag</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scalar_value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">tag</span><span class="p">][</span><span class="s2">&quot;dw_time_elapsed&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">timer</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_initial_time</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">global_step</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">tag</span><span class="p">][</span><span class="s2">&quot;global_step&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">tag</span><span class="p">][</span><span class="s2">&quot;global_step&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">global_step</span><span class="p">)</span>
+
+        <span class="c1"># change _log_time</span>
+        <span class="k">if</span> <span class="n">global_step</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_time</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_log_time</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># Log</span>
+        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_time</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_print_log</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_log</span><span class="p">()</span>
+
+<div class="viewcode-block" id="DefaultWriter.add_scalars"><a class="viewcode-back" href="../../../generated/rlberry.utils.writers.DefaultWriter.html#rlberry.utils.writers.DefaultWriter.add_scalars">[docs]</a>    <span class="k">def</span> <span class="nf">add_scalars</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">main_tag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">tag_scalar_dict</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(),</span>
+        <span class="n">global_step</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">walltime</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Behaves as add_scalar, but for a list instead of a single scalar value.</span>
+
+<span class="sd">        WARNING: &#39;global_step&#39; can be confusing when a scalar is written at each episode</span>
+<span class="sd">        and another is written at each iteration. The global step 1 may be associated to</span>
+<span class="sd">        first episode and first step in environment.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        main_tag : string</span>
+<span class="sd">            The parent name for the tags.</span>
+<span class="sd">        tag_scalar_dict : dict</span>
+<span class="sd">            Key-value pair storing the tag and corresponding values.</span>
+<span class="sd">        global_step : int</span>
+<span class="sd">            Step where scalar was added. If None, global steps will no longer be stored for the current tag.</span>
+<span class="sd">        walltime : float</span>
+<span class="sd">            Optional override default walltime (time.time()) with seconds after epoch of event</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_summary_writer</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_summary_writer</span><span class="o">.</span><span class="n">add_scalars</span><span class="p">(</span>
+                <span class="n">main_tag</span><span class="p">,</span> <span class="n">tag_scalar_dict</span><span class="p">,</span> <span class="n">global_step</span><span class="p">,</span> <span class="n">walltime</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_scalars</span><span class="p">(</span><span class="n">main_tag</span><span class="p">,</span> <span class="n">tag_scalar_dict</span><span class="p">,</span> <span class="n">global_step</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_add_scalars</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">main_tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tag_scalar_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">global_step</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Store scalar values in self._data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">tag</span><span class="p">,</span> <span class="n">scalar_value</span> <span class="ow">in</span> <span class="n">tag_scalar_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">full_tag</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">main_tag</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span> <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">main_tag</span><span class="p">)</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_add_scalar</span><span class="p">(</span><span class="n">full_tag</span><span class="p">,</span> <span class="n">scalar_value</span><span class="p">,</span> <span class="n">global_step</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_log</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># time since last log</span>
+        <span class="n">t_now</span> <span class="o">=</span> <span class="n">timer</span><span class="p">()</span>
+        <span class="n">time_elapsed</span> <span class="o">=</span> <span class="n">t_now</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_last_log</span>
+        <span class="c1"># log if enough time has passed since the last log</span>
+        <span class="n">max_global_step</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">time_elapsed</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_interval</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_time_last_log</span> <span class="o">=</span> <span class="n">t_now</span>
+            <span class="n">size_term</span> <span class="o">=</span> <span class="n">shutil</span><span class="o">.</span><span class="n">get_terminal_size</span><span class="p">()</span><span class="o">.</span><span class="n">columns</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_style_log</span> <span class="o">==</span> <span class="s2">&quot;multi_line&quot;</span><span class="p">:</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+                <span class="n">df</span><span class="p">[</span><span class="s2">&quot;agent_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">]</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execution_metadata</span><span class="p">:</span>
+                    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;worker&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_execution_metadata</span><span class="o">.</span><span class="n">obj_worker_id</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
+                    <span class="n">df</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">tag</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="mi">3</span><span class="p">)]</span>
+                    <span class="n">gstep</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">tag</span><span class="p">][</span><span class="s2">&quot;global_step&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">gstep</span><span class="p">):</span>
+                        <span class="n">max_global_step</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">max_global_step</span><span class="p">,</span> <span class="n">gstep</span><span class="p">)</span>
+                <span class="n">df</span><span class="p">[</span><span class="s2">&quot;max_global_step&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">max_global_step</span><span class="p">]</span>
+
+                <span class="n">data_message</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">justify</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data_message</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">size_term</span> <span class="o">-</span> <span class="mi">14</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
+                    <span class="nb">len</span><span class="p">(</span><span class="n">data_message</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">size_term</span> <span class="o">-</span> <span class="mi">14</span>
+                <span class="p">):</span>
+                    <span class="n">message</span> <span class="o">=</span> <span class="n">data_message</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="n">size_term</span> <span class="o">-</span> <span class="mi">14</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="n">message</span> <span class="o">+=</span> <span class="p">(</span>
+                        <span class="s2">&quot; &quot;</span> <span class="o">*</span> <span class="mi">14</span> <span class="o">+</span> <span class="n">data_message</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="n">size_term</span> <span class="o">-</span> <span class="mi">14</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+                    <span class="p">)</span>
+                    <span class="c1"># The -14 comes from the info  message</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_style_log</span> <span class="o">=</span> <span class="s2">&quot;one_line&quot;</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_style_log</span> <span class="o">==</span> <span class="s2">&quot;one_line&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_time_last_log</span> <span class="o">=</span> <span class="n">t_now</span>
+                <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
+                    <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">tag</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">gstep</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">tag</span><span class="p">][</span><span class="s2">&quot;global_step&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">message</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2"> | &quot;</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">gstep</span><span class="p">):</span>
+                        <span class="n">max_global_step</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">max_global_step</span><span class="p">,</span> <span class="n">gstep</span><span class="p">)</span>
+
+                <span class="n">header</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execution_metadata</span><span class="p">:</span>
+                    <span class="n">header</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;[worker: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_execution_metadata</span><span class="o">.</span><span class="n">obj_worker_id</span><span class="si">}</span><span class="s2">]&quot;</span>
+                <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">header</span><span class="si">}</span><span class="s2">] | max_global_step = </span><span class="si">{</span><span class="n">max_global_step</span><span class="si">}</span><span class="s2"> | &quot;</span> <span class="o">+</span> <span class="n">message</span>
+                <span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_style_log</span> <span class="o">==</span> <span class="s2">&quot;progressbar&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_time_last_log</span> <span class="o">=</span> <span class="n">t_now</span>
+                <span class="n">messages</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
+                    <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">tag</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">gstep</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">tag</span><span class="p">][</span><span class="s2">&quot;global_step&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">my_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">tag</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">my_data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">20</span><span class="p">:</span>
+                        <span class="n">improvement_lag</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">my_data</span><span class="p">)</span> <span class="o">//</span> <span class="mi">20</span>
+                        <span class="n">improvement</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">my_data</span><span class="p">[</span><span class="o">-</span><span class="n">improvement_lag</span><span class="p">:])</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span>
+                            <span class="n">my_data</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">improvement_lag</span> <span class="p">:</span> <span class="o">-</span><span class="n">improvement_lag</span><span class="p">]</span>
+                        <span class="p">)</span>
+                        <span class="n">windowed_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">my_data</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">improvement_lag</span> <span class="p">:])</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">improvement</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                        <span class="n">windowed_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                    <span class="n">messages</span> <span class="o">+=</span> <span class="p">[</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2"> (improvement over last 10%: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">improvement</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span><span class="si">}</span><span class="s2">, std over last 10%: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">windowed_std</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span>
+                    <span class="p">]</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">gstep</span><span class="p">):</span>
+                        <span class="n">max_global_step</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">max_global_step</span><span class="p">,</span> <span class="n">gstep</span><span class="p">)</span>
+
+                <span class="n">header</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execution_metadata</span><span class="p">:</span>
+                    <span class="n">header</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;[worker: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_execution_metadata</span><span class="o">.</span><span class="n">obj_worker_id</span><span class="si">}</span><span class="s2">]&quot;</span>
+                <span class="n">header_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">header</span><span class="si">}</span><span class="s2">] | max_global_step = </span><span class="si">{</span><span class="n">max_global_step</span><span class="si">}</span><span class="s2"> |&quot;</span>
+                <span class="n">messages</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">header_msg</span><span class="p">),</span>
+                    <span class="n">header_msg</span><span class="p">,</span>
+                    <span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">header_msg</span><span class="p">),</span>
+                <span class="p">]</span> <span class="o">+</span> <span class="n">messages</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="n">messages</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">max_global_step</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">progressbar_current_step</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">progressbar_current_step</span> <span class="o">=</span> <span class="n">max_global_step</span>
+
+    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calls SummaryWriter methods, if self._summary_writer is not None.</span>
+<span class="sd">        Otherwise, does nothing.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">attr</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;__&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_summary_writer</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_summary_writer</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">method</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">pass</span>
+
+        <span class="k">return</span> <span class="n">method</span>
+
+    <span class="c1">#</span>
+    <span class="c1"># For pickle</span>
+    <span class="c1">#</span>
+    <span class="k">def</span> <span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_summary_writer</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_summary_writer</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">state</span>
+
+    <span class="k">def</span> <span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">newstate</span><span class="p">):</span>
+        <span class="c1"># Re-create summary writer with the same logdir</span>
+        <span class="k">if</span> <span class="n">newstate</span><span class="p">[</span><span class="s2">&quot;_summary_writer&quot;</span><span class="p">]:</span>
+            <span class="n">newstate</span><span class="p">[</span><span class="s2">&quot;_tensorboard_kwargs&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="nb">dict</span><span class="p">(</span><span class="n">log_dir</span><span class="o">=</span><span class="n">newstate</span><span class="p">[</span><span class="s2">&quot;_tensorboard_logdir&quot;</span><span class="p">])</span>
+            <span class="p">)</span>
+            <span class="n">newstate</span><span class="p">[</span><span class="s2">&quot;_summary_writer&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">SummaryWriter</span><span class="p">(</span>
+                <span class="o">**</span><span class="n">newstate</span><span class="p">[</span><span class="s2">&quot;_tensorboard_kwargs&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">newstate</span><span class="p">)</span></div>
+
+
+<span class="k">class</span> <span class="nc">extending_tqdm</span><span class="p">(</span><span class="n">tqdm</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subbar</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="n">desc</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">set_description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">refresh</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">screen_width</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_screen_shape_wrapper</span><span class="p">()(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">screen_width</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">screen_width</span> <span class="o">=</span> <span class="mi">600</span>
+        <span class="n">max_len</span> <span class="o">=</span> <span class="n">screen_width</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">desc</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">subbar</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">subbar</span> <span class="o">=</span> <span class="n">extending_tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">subbar</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">default_bar_format</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bar_format</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">bar_format</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{desc}</span><span class="s2">&quot;</span>
+            <span class="n">desc_now</span> <span class="o">=</span> <span class="n">desc</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">set_description_str</span><span class="p">(</span>
+                <span class="n">desc</span><span class="o">=</span><span class="n">desc_now</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">*</span> <span class="p">(</span><span class="n">screen_width</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">desc_now</span><span class="p">)),</span> <span class="n">refresh</span><span class="o">=</span><span class="n">refresh</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">subbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="n">desc</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">subbar</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">bar_format</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_bar_format</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">subbar</span><span class="o">.</span><span class="n">leave</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">subbar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="n">desc</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">refresh</span><span class="o">=</span><span class="n">refresh</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">subbar</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">subbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">last_print_n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subbar</span><span class="o">.</span><span class="n">last_print_n</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subbar</span><span class="o">.</span><span class="n">n</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">subbar</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">subbar</span><span class="o">.</span><span class="n">leave</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">leave</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">subbar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+
+      </div>
+    <div class="container">
+      <footer class="sk-content-footer">
+            &copy; 2023, rlberry team.
+      </footer>
+    </div>
+  </div>
+</div>
+<script src="../../../_static/js/vendor/bootstrap.min.js"></script>
+
+<script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-22606712-2', 'auto');
+    ga('set', 'anonymizeIp', true);
+    ga('send', 'pageview');
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+<script>
+$(document).ready(function() {
+    /* Add a [>>>] button on the top-right corner of code samples to hide
+     * the >>> and ... prompts and the output and thus make the code
+     * copyable. */
+    var div = $('.highlight-python .highlight,' +
+                '.highlight-python3 .highlight,' +
+                '.highlight-pycon .highlight,' +
+		'.highlight-default .highlight')
+    var pre = div.find('pre');
+
+    // get the styles from the current theme
+    pre.parent().parent().css('position', 'relative');
+    var hide_text = 'Hide prompts and outputs';
+    var show_text = 'Show prompts and outputs';
+
+    // create and add the button to all the code blocks that contain >>>
+    div.each(function(index) {
+        var jthis = $(this);
+        if (jthis.find('.gp').length > 0) {
+            var button = $('<span class="copybutton">&gt;&gt;&gt;</span>');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+            jthis.prepend(button);
+        }
+        // tracebacks (.gt) contain bare text elements that need to be
+        // wrapped in a span to work with .nextUntil() (see later)
+        jthis.find('pre:has(.gt)').contents().filter(function() {
+            return ((this.nodeType == 3) && (this.data.trim().length > 0));
+        }).wrap('<span>');
+    });
+
+    // define the behavior of the button when it's clicked
+    $('.copybutton').click(function(e){
+        e.preventDefault();
+        var button = $(this);
+        if (button.data('hidden') === 'false') {
+            // hide the code output
+            button.parent().find('.go, .gp, .gt').hide();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'hidden');
+            button.css('text-decoration', 'line-through');
+            button.attr('title', show_text);
+            button.data('hidden', 'true');
+        } else {
+            // show the code output
+            button.parent().find('.go, .gp, .gt').show();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'visible');
+            button.css('text-decoration', 'none');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+        }
+    });
+
+	/*** Add permalink buttons next to glossary terms ***/
+	$('dl.glossary > dt[id]').append(function() {
+		return ('<a class="headerlink" href="#' +
+			    this.getAttribute('id') +
+			    '" title="Permalink to this term">¶</a>');
+	});
+  /*** Hide navbar when scrolling down ***/
+  // Returns true when headerlink target matches hash in url
+  (function() {
+    hashTargetOnTop = function() {
+        var hash = window.location.hash;
+        if ( hash.length < 2 ) { return false; }
+
+        var target = document.getElementById( hash.slice(1) );
+        if ( target === null ) { return false; }
+
+        var top = target.getBoundingClientRect().top;
+        return (top < 2) && (top > -2);
+    };
+
+    // Hide navbar on load if hash target is on top
+    var navBar = document.getElementById("navbar");
+    var navBarToggler = document.getElementById("sk-navbar-toggler");
+    var navBarHeightHidden = "-" + navBar.getBoundingClientRect().height + "px";
+    var $window = $(window);
+
+    hideNavBar = function() {
+        navBar.style.top = navBarHeightHidden;
+    };
+
+    showNavBar = function() {
+        navBar.style.top = "0";
+    }
+
+    if (hashTargetOnTop()) {
+        hideNavBar()
+    }
+
+    var prevScrollpos = window.pageYOffset;
+    hideOnScroll = function(lastScrollTop) {
+        if (($window.width() < 768) && (navBarToggler.getAttribute("aria-expanded") === 'true')) {
+            return;
+        }
+        if (lastScrollTop > 2 && (prevScrollpos <= lastScrollTop) || hashTargetOnTop()){
+            hideNavBar()
+        } else {
+            showNavBar()
+        }
+        prevScrollpos = lastScrollTop;
+    };
+
+    /*** high performance scroll event listener***/
+    var raf = window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        window.oRequestAnimationFrame;
+    var lastScrollTop = $window.scrollTop();
+
+    if (raf) {
+        loop();
+    }
+
+    function loop() {
+        var scrollTop = $window.scrollTop();
+        if (lastScrollTop === scrollTop) {
+            raf(loop);
+            return;
+        } else {
+            lastScrollTop = scrollTop;
+            hideOnScroll(lastScrollTop);
+            raf(loop);
+        }
+    }
+  })();
+});
+
+</script>
+    
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    
+</body>
+</html>

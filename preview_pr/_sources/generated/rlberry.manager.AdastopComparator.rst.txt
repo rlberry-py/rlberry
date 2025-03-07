@@ -1,0 +1,12 @@
+﻿:mod:`rlberry.manager`.AdastopComparator
+===============================================
+
+.. currentmodule:: rlberry.manager
+
+.. autoclass:: AdastopComparator
+
+.. include:: rlberry.manager.AdastopComparator.examples
+
+.. raw:: html
+
+    <div class="clearer"></div>

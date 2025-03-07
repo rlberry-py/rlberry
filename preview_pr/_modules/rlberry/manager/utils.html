@@ -1,0 +1,396 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  
+  <title>rlberry.manager.utils &mdash; rlberry 0.7.3.post16.dev0+8710009 documentation</title>
+  
+  <link rel="canonical" href="https://rlberry-py.github.io/rlberry/_modules/rlberry/manager/utils.html" />
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/vendor/bootstrap.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/sg_gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/sg_gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/sg_gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/sphinx-design.4cbf315f70debaebd550c87a6162cf0f.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+<script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+<script src="../../../_static/js/vendor/jquery-3.6.3.slim.min.js"></script> 
+</head>
+<body>
+
+
+<nav id="navbar" class="sk-docs-navbar navbar navbar-expand-md navbar-light bg-light py-0">
+  <div class="container-fluid sk-docs-container px-0">
+    <button
+      id="sk-navbar-toggler"
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="sk-navbar-collapse collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../index.html">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../installation.html">Install</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../user_guide.html">User Guide</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../auto_examples/index.html">Examples</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../api.html">API</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../changelog.html">Changelog</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../about.html">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="https://github.com/rlberry-py/rlberry">GitHub</a>
+        </li>
+        <!--
+        <li class="nav-item dropdown nav-more-item-dropdown">
+          <a class="sk-nav-link nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">More</a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          </div>
+        </li>-->
+    </ul>
+      <div id="searchbox" role="search">
+          <div class="searchformwrapper">
+            <form action="https://duckduckgo.com/">
+            <input type="hidden" id="sites" name="sites" value="https://rlberry-py.github.io/rlberry/">
+            <input type="search" placeholder="Search &hellip;" value="" name="q" />
+            <input class="sk-search-text-btn" type="submit" value="Go" /></form>
+
+          </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="d-flex" id="sk-doc-wrapper">
+    <input type="checkbox" name="sk-toggle-checkbox" id="sk-toggle-checkbox">
+    <label id="sk-sidemenu-toggle" class="sk-btn-toggle-toc btn sk-btn-primary" for="sk-toggle-checkbox">Toggle Menu</label>
+    <div id="sk-sidebar-wrapper" class="border-right">
+      <div class="sk-sidebar-toc-wrapper">
+        <div class="sk-sidebar-toc-logo">
+        </div>
+	<br>
+        <div class="alert alert-warning p-1 mb-2" role="alert">
+
+          <p class="text-center mb-0">
+          rlberry 0.7.3.post16.dev0+8710009<br/>
+          <a href="../../../versions.html">Other versions</a>
+          </p>
+
+        </div>
+            <div class="sk-sidebar-toc">
+              
+            </div>
+      </div>
+    </div>
+    <div id="sk-page-content-wrapper">
+      <div class="sk-page-content container-fluid body px-md-3" role="main">
+        
+  <h1>Source code for rlberry.manager.utils</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">sqlite3</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+
+<span class="k">def</span> <span class="nf">create_database</span><span class="p">(</span><span class="n">db_file</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a connection to a SQLite database.&quot;&quot;&quot;</span>
+    <span class="n">connection</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">connection</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_file</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Connected to </span><span class="si">{</span><span class="n">db_file</span><span class="si">}</span><span class="s2"> (sqlite3 version = </span><span class="si">{</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">connection</span><span class="p">:</span>
+        <span class="n">connection</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="kc">False</span>
+
+
+<div class="viewcode-block" id="tensorboard_to_dataframe"><a class="viewcode-back" href="../../../generated/rlberry.manager.tensorboard_to_dataframe.html#rlberry.manager.tensorboard_to_dataframe">[docs]</a><span class="k">def</span> <span class="nf">tensorboard_to_dataframe</span><span class="p">(</span><span class="n">tensorboard_data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function to convert &#39;tensorboard log&#39; to &#39;Panda DataFrames&#39;.</span>
+
+<span class="sd">    | To convert the &#39;tensorboard log&#39;, the input must be must be the path to &quot;the parent folder of all the training log&quot; (path_to_tensorboard_data), and the &#39;events.out.tfevents&#39; files have to be in this kind of path :</span>
+<span class="sd">    &lt; path_to_tensorboard_data/algo_name/n_simu/events.out.tfevents.xxxxx &gt;</span>
+
+<span class="sd">    Or you can specify all the desired &#39;events.out.tfevents&#39; with a Dict. In that case, the key should be the algorithm name, and the value the list of the &#39;events.out.tfevents&#39; path. The  seed/n_simu number wille be the position in the list.</span>
+
+<span class="sd">    The output format is a dictionary.</span>
+
+<span class="sd">    | key = tag (type of data)</span>
+<span class="sd">    | value = Panda DataFrame with the following structure (4 column):</span>
+
+<span class="sd">        * &quot;name&quot; = algo_name</span>
+<span class="sd">        * &quot;n_simu&quot; = n_simu (seed)</span>
+<span class="sd">        * &quot;x&quot; = step number</span>
+<span class="sd">        * &quot;y&quot; = value of the data</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path_to_tensorboard_data (str or Dict):</span>
+<span class="sd">        if str: path to the parent folder of the tensorboard&#39;s data.</span>
+<span class="sd">        if dict: Key = algo_name , value = list of &#39;events.out.tfevents.xxxxx&#39; path</span>
+
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Dict : dict of Panda DataFrame (key = tag, value = Panda.DataFrame)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">dataframe_by_tag</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tensorboard_data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">dataframe_by_tag</span> <span class="o">=</span> <span class="n">_tensorboard_to_dataframe_from_parent_path</span><span class="p">(</span><span class="n">tensorboard_data</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tensorboard_data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">dataframe_by_tag</span> <span class="o">=</span> <span class="n">_tensorboard_to_dataframe_from_dict_paths</span><span class="p">(</span><span class="n">tensorboard_data</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span>
+            <span class="nb">str</span><span class="p">(</span>
+                <span class="s2">&quot;Input of &#39;tensorboard_to_dataframe&#39; must be a str or a dict... not a &quot;</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">tensorboard_data</span><span class="p">))</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="c1"># convert the &quot;dict of array&quot; to &quot;dict of panda dataframe&quot;</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">tag</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">dataframe_by_tag</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">df</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;n_simu&quot;</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+<span class="k">def</span> <span class="nf">_tensorboard_to_dataframe_from_parent_path</span><span class="p">(</span><span class="n">path_to_tensorboard_data</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">tensorboard.backend.event_processing</span> <span class="kn">import</span> <span class="n">event_accumulator</span>
+
+    <span class="n">dataframe_by_tag</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">algo_name</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path_to_tensorboard_data</span><span class="p">):</span>
+        <span class="n">path_for_this_algo</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path_to_tensorboard_data</span><span class="p">,</span> <span class="n">algo_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path_for_this_algo</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">seed</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path_for_this_algo</span><span class="p">):</span>
+                <span class="n">current_seed_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path_for_this_algo</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span>
+                <span class="n">content</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">current_seed_path</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">content</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>  <span class="c1"># should be &quot;events.out.tfevents.xxxxxxxxx&quot;</span>
+                <span class="n">content_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">current_seed_path</span><span class="p">,</span> <span class="n">content</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+                <span class="c1"># load the event in the file, and get the tags</span>
+                <span class="n">ea</span> <span class="o">=</span> <span class="n">event_accumulator</span><span class="o">.</span><span class="n">EventAccumulator</span><span class="p">(</span><span class="n">content_path</span><span class="p">)</span>
+                <span class="n">ea</span><span class="o">.</span><span class="n">Reload</span><span class="p">()</span>
+                <span class="n">scalar_tags</span> <span class="o">=</span> <span class="n">ea</span><span class="o">.</span><span class="n">Tags</span><span class="p">()[</span><span class="s2">&quot;scalars&quot;</span><span class="p">]</span>
+
+                <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">scalar_tags</span><span class="p">:</span>
+                    <span class="n">events</span> <span class="o">=</span> <span class="n">ea</span><span class="o">.</span><span class="n">Scalars</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="p">(</span>
+                        <span class="n">tag</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dataframe_by_tag</span>
+                    <span class="p">):</span>  <span class="c1"># new tag, create new entry in the dict</span>
+                        <span class="n">dataframe_by_tag</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="n">new_elements</span> <span class="o">=</span> <span class="p">[(</span><span class="n">algo_name</span><span class="p">,</span> <span class="n">seed</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">step</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">events</span><span class="p">]</span>
+                    <span class="n">dataframe_by_tag</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">new_elements</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dataframe_by_tag</span>
+
+
+<span class="k">def</span> <span class="nf">_tensorboard_to_dataframe_from_dict_paths</span><span class="p">(</span><span class="n">dict_tensorboard_data</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">tensorboard.backend.event_processing</span> <span class="kn">import</span> <span class="n">event_accumulator</span>
+
+    <span class="n">dataframe_by_tag</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">algo_name</span><span class="p">,</span> <span class="n">current_path_list</span> <span class="ow">in</span> <span class="n">dict_tensorboard_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">path</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">current_path_list</span><span class="p">):</span>
+            <span class="c1"># load the event in the file, and get the tags</span>
+            <span class="n">ea</span> <span class="o">=</span> <span class="n">event_accumulator</span><span class="o">.</span><span class="n">EventAccumulator</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+            <span class="n">ea</span><span class="o">.</span><span class="n">Reload</span><span class="p">()</span>
+            <span class="n">scalar_tags</span> <span class="o">=</span> <span class="n">ea</span><span class="o">.</span><span class="n">Tags</span><span class="p">()[</span><span class="s2">&quot;scalars&quot;</span><span class="p">]</span>
+
+            <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">scalar_tags</span><span class="p">:</span>
+                <span class="n">events</span> <span class="o">=</span> <span class="n">ea</span><span class="o">.</span><span class="n">Scalars</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">tag</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dataframe_by_tag</span><span class="p">:</span>  <span class="c1"># new tag, create new entry in the dict</span>
+                    <span class="n">dataframe_by_tag</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">new_elements</span> <span class="o">=</span> <span class="p">[(</span><span class="n">algo_name</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">step</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">events</span><span class="p">]</span>
+                <span class="n">dataframe_by_tag</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">new_elements</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dataframe_by_tag</span>
+
+
+<span class="c1"># Faire un test qui vérifie la 2ème fonction, et un test qui vérifie qu&#39;elles donnent les mêmes résultats</span>
+</pre></div>
+
+      </div>
+    <div class="container">
+      <footer class="sk-content-footer">
+            &copy; 2023, rlberry team.
+      </footer>
+    </div>
+  </div>
+</div>
+<script src="../../../_static/js/vendor/bootstrap.min.js"></script>
+
+<script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-22606712-2', 'auto');
+    ga('set', 'anonymizeIp', true);
+    ga('send', 'pageview');
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+<script>
+$(document).ready(function() {
+    /* Add a [>>>] button on the top-right corner of code samples to hide
+     * the >>> and ... prompts and the output and thus make the code
+     * copyable. */
+    var div = $('.highlight-python .highlight,' +
+                '.highlight-python3 .highlight,' +
+                '.highlight-pycon .highlight,' +
+		'.highlight-default .highlight')
+    var pre = div.find('pre');
+
+    // get the styles from the current theme
+    pre.parent().parent().css('position', 'relative');
+    var hide_text = 'Hide prompts and outputs';
+    var show_text = 'Show prompts and outputs';
+
+    // create and add the button to all the code blocks that contain >>>
+    div.each(function(index) {
+        var jthis = $(this);
+        if (jthis.find('.gp').length > 0) {
+            var button = $('<span class="copybutton">&gt;&gt;&gt;</span>');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+            jthis.prepend(button);
+        }
+        // tracebacks (.gt) contain bare text elements that need to be
+        // wrapped in a span to work with .nextUntil() (see later)
+        jthis.find('pre:has(.gt)').contents().filter(function() {
+            return ((this.nodeType == 3) && (this.data.trim().length > 0));
+        }).wrap('<span>');
+    });
+
+    // define the behavior of the button when it's clicked
+    $('.copybutton').click(function(e){
+        e.preventDefault();
+        var button = $(this);
+        if (button.data('hidden') === 'false') {
+            // hide the code output
+            button.parent().find('.go, .gp, .gt').hide();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'hidden');
+            button.css('text-decoration', 'line-through');
+            button.attr('title', show_text);
+            button.data('hidden', 'true');
+        } else {
+            // show the code output
+            button.parent().find('.go, .gp, .gt').show();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'visible');
+            button.css('text-decoration', 'none');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+        }
+    });
+
+	/*** Add permalink buttons next to glossary terms ***/
+	$('dl.glossary > dt[id]').append(function() {
+		return ('<a class="headerlink" href="#' +
+			    this.getAttribute('id') +
+			    '" title="Permalink to this term">¶</a>');
+	});
+  /*** Hide navbar when scrolling down ***/
+  // Returns true when headerlink target matches hash in url
+  (function() {
+    hashTargetOnTop = function() {
+        var hash = window.location.hash;
+        if ( hash.length < 2 ) { return false; }
+
+        var target = document.getElementById( hash.slice(1) );
+        if ( target === null ) { return false; }
+
+        var top = target.getBoundingClientRect().top;
+        return (top < 2) && (top > -2);
+    };
+
+    // Hide navbar on load if hash target is on top
+    var navBar = document.getElementById("navbar");
+    var navBarToggler = document.getElementById("sk-navbar-toggler");
+    var navBarHeightHidden = "-" + navBar.getBoundingClientRect().height + "px";
+    var $window = $(window);
+
+    hideNavBar = function() {
+        navBar.style.top = navBarHeightHidden;
+    };
+
+    showNavBar = function() {
+        navBar.style.top = "0";
+    }
+
+    if (hashTargetOnTop()) {
+        hideNavBar()
+    }
+
+    var prevScrollpos = window.pageYOffset;
+    hideOnScroll = function(lastScrollTop) {
+        if (($window.width() < 768) && (navBarToggler.getAttribute("aria-expanded") === 'true')) {
+            return;
+        }
+        if (lastScrollTop > 2 && (prevScrollpos <= lastScrollTop) || hashTargetOnTop()){
+            hideNavBar()
+        } else {
+            showNavBar()
+        }
+        prevScrollpos = lastScrollTop;
+    };
+
+    /*** high performance scroll event listener***/
+    var raf = window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        window.oRequestAnimationFrame;
+    var lastScrollTop = $window.scrollTop();
+
+    if (raf) {
+        loop();
+    }
+
+    function loop() {
+        var scrollTop = $window.scrollTop();
+        if (lastScrollTop === scrollTop) {
+            raf(loop);
+            return;
+        } else {
+            lastScrollTop = scrollTop;
+            hideOnScroll(lastScrollTop);
+            raf(loop);
+        }
+    }
+  })();
+});
+
+</script>
+    
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    
+</body>
+</html>

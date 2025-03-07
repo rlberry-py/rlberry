@@ -1,0 +1,657 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  
+  <title>How to seed your experiment &mdash; rlberry 0.7.3.post16.dev0+8710009 documentation</title>
+  
+  <link rel="canonical" href="https://rlberry-py.github.io/rlberry/basics/userguide/seeding.html" />
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/vendor/bootstrap.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sg_gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sg_gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sg_gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sphinx-design.4cbf315f70debaebd550c87a6162cf0f.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+<script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+<script src="../../_static/js/vendor/jquery-3.6.3.slim.min.js"></script> 
+</head>
+<body>
+
+
+<nav id="navbar" class="sk-docs-navbar navbar navbar-expand-md navbar-light bg-light py-0">
+  <div class="container-fluid sk-docs-container px-0">
+    <button
+      id="sk-navbar-toggler"
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="sk-navbar-collapse collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../index.html">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../installation.html">Install</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../user_guide.html">User Guide</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../auto_examples/index.html">Examples</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../api.html">API</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../changelog.html">Changelog</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../about.html">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="https://github.com/rlberry-py/rlberry">GitHub</a>
+        </li>
+        <!--
+        <li class="nav-item dropdown nav-more-item-dropdown">
+          <a class="sk-nav-link nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">More</a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          </div>
+        </li>-->
+    </ul>
+      <div id="searchbox" role="search">
+          <div class="searchformwrapper">
+            <form action="https://duckduckgo.com/">
+            <input type="hidden" id="sites" name="sites" value="https://rlberry-py.github.io/rlberry/">
+            <input type="search" placeholder="Search &hellip;" value="" name="q" />
+            <input class="sk-search-text-btn" type="submit" value="Go" /></form>
+
+          </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="d-flex" id="sk-doc-wrapper">
+    <input type="checkbox" name="sk-toggle-checkbox" id="sk-toggle-checkbox">
+    <label id="sk-sidemenu-toggle" class="sk-btn-toggle-toc btn sk-btn-primary" for="sk-toggle-checkbox">Toggle Menu</label>
+    <div id="sk-sidebar-wrapper" class="border-right">
+      <div class="sk-sidebar-toc-wrapper">
+        <div class="sk-sidebar-toc-logo">
+        </div>
+	<br>
+        <div class="alert alert-warning p-1 mb-2" role="alert">
+
+          <p class="text-center mb-0">
+          rlberry 0.7.3.post16.dev0+8710009<br/>
+          <a href="../../versions.html">Other versions</a>
+          </p>
+
+        </div>
+            <div class="sk-sidebar-toc">
+              <ul>
+<li><a class="reference internal" href="#">How to seed your experiment</a><ul>
+<li><a class="reference internal" href="#why-use-seeding">Why use seeding?</a></li>
+<li><a class="reference internal" href="#basics">Basics</a></li>
+<li><a class="reference internal" href="#in-rlberry">In rlberry</a><ul>
+<li><a class="reference internal" href="#classic-usage">classic usage</a></li>
+<li><a class="reference internal" href="#with-experimentmanager">With ExperimentManager</a></li>
+<li><a class="reference internal" href="#multi-threading">multi-threading</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#external-libraries">External libraries</a></li>
+</ul>
+</li>
+</ul>
+
+            </div>
+      </div>
+    </div>
+    <div id="sk-page-content-wrapper">
+      <div class="sk-page-content container-fluid body px-md-3" role="main">
+        
+  <section id="how-to-seed-your-experiment">
+<span id="seeding-page"></span><h1>How to seed your experiment<a class="headerlink" href="#how-to-seed-your-experiment" title="Permalink to this heading">¶</a></h1>
+<section id="why-use-seeding">
+<h2>Why use seeding?<a class="headerlink" href="#why-use-seeding" title="Permalink to this heading">¶</a></h2>
+<p>First, maybe you don’t know what seeding are, and why you should use it.</p>
+<p>The seeding is the process of initializing a random number generator with a specific value (the seed) to ensure that the sequence of random numbers it produces is repeatable.</p>
+<p>Here are 3 reasons why seeding is important</p>
+<ol class="arabic simple">
+<li><p>Reproducibility</p></li>
+</ol>
+<p>Seeding ensures that the sequence of random numbers (or any other stochastic process) generated by your algorithm is repeatable. This is essential for debugging, testing, and validating your algorithm.
+When testing an algorithm that uses random sampling, if you encounter an issue, you need to reproduce the exact sequence of operations that led to the issue. By using a fixed seed, you can guarantee that the same random numbers are generated each time, allowing you to trace and fix the problem consistently.</p>
+<p>Another use of this reproducibility is to have a third party (e.g. reviewer at a conference) independently reproduce your work to assert that it indeed works as advertised.</p>
+<ol class="arabic simple" start="2">
+<li><p>Predictability</p></li>
+</ol>
+<p>Predictability is important in scenarios where the behavior of your algorithm needs to be understood or communicated to stakeholders.
+If you’re developing a machine learning model that relies on randomized initialization, setting a seed ensures that every time you initialize the model, it starts with the same weights. This predictability helps in consistently evaluating model performance across different runs.</p>
+<ol class="arabic simple" start="3">
+<li><p>Fairness and Comparability</p></li>
+</ol>
+<p>In research and competitive environments, it’s essential to ensure that all comparisons are fair. By using the same seed, different algorithms or models can be compared under identical conditions.</p>
+<p>Example:
+When comparing the performance of different machine learning models, using a fixed seed ensures that each model is trained and tested on the same data splits, leading to fair and comparable performance metrics.</p>
+<p>One good practice is to always document the seed value used in your experiments, tests, or production code. This helps in future debugging and verification.</p>
+</section>
+<section id="basics">
+<h2>Basics<a class="headerlink" href="#basics" title="Permalink to this heading">¶</a></h2>
+<p>Rlberry has a class <a class="reference internal" href="../../generated/rlberry.seeding.seeder.Seeder.html#rlberry.seeding.seeder.Seeder" title="rlberry.seeding.seeder.Seeder"><span class="xref myst py py-class">Seeder</span></a> that conveniently wraps a <a class="reference external" href="https://numpy.org/doc/stable/reference/random/parallel.html">NumPy SeedSequence</a>, and allows you to create independent random number generators for different objects and threads, using a single <a class="reference internal" href="../../generated/rlberry.seeding.seeder.Seeder.html#rlberry.seeding.seeder.Seeder" title="rlberry.seeding.seeder.Seeder"><span class="xref myst py py-class">Seeder</span></a> instance. It works as follows:</p>
+<p>Suppose you want generate 5 random Integer between 0 and 9.</p>
+<p>If you run this code many time, you should have different outputs.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.seeding</span><span class="w"> </span><span class="kn">import</span> <span class="n">Seeder</span>
+
+<span class="n">seeder</span> <span class="o">=</span> <span class="n">Seeder</span><span class="p">()</span>
+
+<span class="n">result_list</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+    <span class="n">result_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">seeder</span><span class="o">.</span><span class="n">rng</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result_list</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>run 1 :</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[9, 3, 4, 8, 4]
+</pre></div>
+</div>
+<p>run 2 :</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[2, 0, 6, 3, 9]
+</pre></div>
+</div>
+<p>run 3 :</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[7, 3, 8, 1, 1]
+</pre></div>
+</div>
+<p>But if you fix the seed as follow, and run it many time… You should have the same ‘random’ numbers every time :</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.seeding</span><span class="w"> </span><span class="kn">import</span> <span class="n">Seeder</span>
+
+<span class="n">seeder</span> <span class="o">=</span> <span class="n">Seeder</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+
+<span class="n">result_list</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+    <span class="n">result_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">seeder</span><span class="o">.</span><span class="n">rng</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result_list</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>run 1 :</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[9, 1, 0, 7, 4]
+</pre></div>
+</div>
+<p>run 2 :</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[9, 1, 0, 7, 4]
+</pre></div>
+</div>
+<p>run 3 :</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[9, 1, 0, 7, 4]
+</pre></div>
+</div>
+</br>
+</section>
+<section id="in-rlberry">
+<h2>In rlberry<a class="headerlink" href="#in-rlberry" title="Permalink to this heading">¶</a></h2>
+<section id="classic-usage">
+<h3>classic usage<a class="headerlink" href="#classic-usage" title="Permalink to this heading">¶</a></h3>
+<p>Each <a class="reference internal" href="../../generated/rlberry.seeding.seeder.Seeder.html#rlberry.seeding.seeder.Seeder" title="rlberry.seeding.seeder.Seeder"><span class="xref myst py py-class">Seeder</span></a> instance has a random number generator (rng), see <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html">here</a> to check the methods available in rng.</p>
+<p><a class="reference internal" href="agent.html#agent-page"><span class="std std-ref">Agent</span></a> and <a class="reference internal" href="environment.html#environment-page"><span class="std std-ref">Environment</span></a> <code class="docutils literal notranslate"><span class="pre">reseed(seeder)</span></code> functions should use <code class="docutils literal notranslate"><span class="pre">seeder.spawn()</span></code> that allow to create new independent child generators from the same seeder. So it’s a good practice to use single seeder to reseed the Agent or Environment, and they will have their own seeder and rng.</p>
+<p>When writing your own agents and inheriting from the Agent class, you should use agent.rng whenever you need to generate random numbers; the same applies to your environments.
+This is necessary to ensure reproducibility.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.seeding</span><span class="w"> </span><span class="kn">import</span> <span class="n">Seeder</span>
+
+<span class="n">seeder</span> <span class="o">=</span> <span class="n">Seeder</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>  <span class="c1"># seeder initialization</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.envs</span><span class="w"> </span><span class="kn">import</span> <span class="n">gym_make</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry_scool.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">UCBVIAgent</span>
+
+
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym_make</span><span class="p">(</span><span class="s2">&quot;MountainCar-v0&quot;</span><span class="p">)</span>
+<span class="n">env</span><span class="o">.</span><span class="n">reseed</span><span class="p">(</span><span class="n">seeder</span><span class="p">)</span>  <span class="c1"># seeder first use</span>
+
+<span class="n">agent</span> <span class="o">=</span> <span class="n">UCBVIAgent</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+<span class="n">agent</span><span class="o">.</span><span class="n">reseed</span><span class="p">(</span><span class="n">seeder</span><span class="p">)</span>  <span class="c1"># same seeder</span>
+
+<span class="c1"># check that the generated numbers are different</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;env seeder: &quot;</span><span class="p">,</span> <span class="n">env</span><span class="o">.</span><span class="n">seeder</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;random sample 1 from env rng: &quot;</span><span class="p">,</span> <span class="n">env</span><span class="o">.</span><span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;random sample 2 from env rng: &quot;</span><span class="p">,</span> <span class="n">env</span><span class="o">.</span><span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;agent seeder: &quot;</span><span class="p">,</span> <span class="n">agent</span><span class="o">.</span><span class="n">seeder</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;random sample 1 from agent rng: &quot;</span><span class="p">,</span> <span class="n">agent</span><span class="o">.</span><span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;random sample 2 from agent rng: &quot;</span><span class="p">,</span> <span class="n">agent</span><span class="o">.</span><span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">())</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>env seeder:  Seeder object with: SeedSequence(
+    entropy=123,
+    spawn_key=(0, 0),
+)
+random sample 1 from env rng:  -1.567498838741829
+random sample 2 from env rng:  0.6356604305460527
+agent seeder:  Seeder object with: SeedSequence(
+    entropy=123,
+    spawn_key=(0, 1),
+    n_children_spawned=2,
+)
+random sample 1 from agent rng:  1.2466559261185188
+random sample 2 from agent rng:  0.8402527193117317
+
+</pre></div>
+</div>
+</br>
+</section>
+<section id="with-experimentmanager">
+<h3>With ExperimentManager<a class="headerlink" href="#with-experimentmanager" title="Permalink to this heading">¶</a></h3>
+<p>For this part we will use the same code from the <a class="reference internal" href="experimentManager.html#experimentmanager-page"><span class="std std-ref">ExperimentManager</span></a> part.
+3 runs without the seeder :</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.envs</span><span class="w"> </span><span class="kn">import</span> <span class="n">gym_make</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.agents.stable_baselines</span><span class="w"> </span><span class="kn">import</span> <span class="n">StableBaselinesAgent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">stable_baselines3</span><span class="w"> </span><span class="kn">import</span> <span class="n">PPO</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExperimentManager</span><span class="p">,</span> <span class="n">evaluate_agents</span>
+
+
+<span class="n">env_id</span> <span class="o">=</span> <span class="s2">&quot;CartPole-v1&quot;</span>  <span class="c1"># Id of the environment</span>
+
+<span class="n">env_ctor</span> <span class="o">=</span> <span class="n">gym_make</span>  <span class="c1"># constructor for the env</span>
+<span class="n">env_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">env_id</span><span class="p">)</span>  <span class="c1"># give the id of the env inside the kwargs</span>
+
+
+<span class="n">first_experiment</span> <span class="o">=</span> <span class="n">ExperimentManager</span><span class="p">(</span>
+    <span class="n">StableBaselinesAgent</span><span class="p">,</span>  <span class="c1"># Agent Class</span>
+    <span class="p">(</span><span class="n">env_ctor</span><span class="p">,</span> <span class="n">env_kwargs</span><span class="p">),</span>  <span class="c1"># Environment as Tuple(constructor,kwargs)</span>
+    <span class="n">fit_budget</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>  <span class="c1"># Budget used to call our agent &quot;fit()&quot;</span>
+    <span class="n">init_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">algo_cls</span><span class="o">=</span><span class="n">PPO</span><span class="p">),</span>  <span class="c1"># Init value for StableBaselinesAgent</span>
+    <span class="n">eval_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+        <span class="n">eval_horizon</span><span class="o">=</span><span class="mi">1000</span>
+    <span class="p">),</span>  <span class="c1"># Arguments required to call rlberry.agents.agent.Agent.eval().</span>
+    <span class="n">n_fit</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># Number of agent instances to fit.</span>
+    <span class="n">agent_name</span><span class="o">=</span><span class="s2">&quot;PPO_first_experiment&quot;</span> <span class="o">+</span> <span class="n">env_id</span><span class="p">,</span>  <span class="c1"># Name of the agent</span>
+<span class="p">)</span>
+
+<span class="n">first_experiment</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+<span class="n">output</span> <span class="o">=</span> <span class="n">evaluate_agents</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">first_experiment</span><span class="p">],</span> <span class="n">n_simulations</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>  <span class="c1"># evaluate the experiment on 5 simulations</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Run 1:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[INFO] 14:47: Running ExperimentManager fit() for PPO_first_experimentCartPole-v1 with n_fit = 1 and max_workers = None.
+[INFO] 14:47: ... trained!
+[INFO] 14:47: Evaluating PPO_first_experimentCartPole-v1...
+[INFO] Evaluation:.....  Evaluation finished
+   PPO_first_experimentCartPole-v1
+0                             20.8
+1                             20.8
+2                             21.4
+3                             24.3
+4                             28.8
+</pre></div>
+</div>
+<p>Run 2 :</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[INFO] 14:47: Running ExperimentManager fit() for PPO_first_experimentCartPole-v1 with n_fit = 1 and max_workers = None.
+[INFO] 14:47: ... trained!
+[INFO] 14:47: Evaluating PPO_first_experimentCartPole-v1...
+[INFO] Evaluation:.....  Evaluation finished
+   PPO_first_experimentCartPole-v1
+0                             25.0
+1                             19.3
+2                             28.5
+3                             26.1
+4                             19.0
+</pre></div>
+</div>
+<p>Run 3 :</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[INFO] 14:47: Running ExperimentManager fit() for PPO_first_experimentCartPole-v1 with n_fit = 1 and max_workers = None.
+[INFO] 14:47: ... trained!
+[INFO] 14:47: Evaluating PPO_first_experimentCartPole-v1...
+[INFO] Evaluation:.....  Evaluation finished
+   PPO_first_experimentCartPole-v1
+0                             23.6
+1                             19.2
+2                             20.5
+3                             19.8
+4                             16.5
+</pre></div>
+</div>
+</br>
+<p><strong>Without the seeder, the outputs are different (non-reproducible).</strong></p>
+</br>
+<p>3 runs with the seeder :</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.envs</span><span class="w"> </span><span class="kn">import</span> <span class="n">gym_make</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.agents.stable_baselines</span><span class="w"> </span><span class="kn">import</span> <span class="n">StableBaselinesAgent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">stable_baselines3</span><span class="w"> </span><span class="kn">import</span> <span class="n">PPO</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExperimentManager</span><span class="p">,</span> <span class="n">evaluate_agents</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.seeding</span><span class="w"> </span><span class="kn">import</span> <span class="n">Seeder</span>
+
+<span class="n">seeder</span> <span class="o">=</span> <span class="n">Seeder</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="n">env_id</span> <span class="o">=</span> <span class="s2">&quot;CartPole-v1&quot;</span>  <span class="c1"># Id of the environment</span>
+
+<span class="n">env_ctor</span> <span class="o">=</span> <span class="n">gym_make</span>  <span class="c1"># constructor for the env</span>
+<span class="n">env_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">env_id</span><span class="p">)</span>  <span class="c1"># give the id of the env inside the kwargs</span>
+
+
+<span class="n">first_experiment</span> <span class="o">=</span> <span class="n">ExperimentManager</span><span class="p">(</span>
+    <span class="n">StableBaselinesAgent</span><span class="p">,</span>  <span class="c1"># Agent Class</span>
+    <span class="p">(</span><span class="n">env_ctor</span><span class="p">,</span> <span class="n">env_kwargs</span><span class="p">),</span>  <span class="c1"># Environment as Tuple(constructor,kwargs)</span>
+    <span class="n">fit_budget</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>  <span class="c1"># Budget used to call our agent &quot;fit()&quot;</span>
+    <span class="n">init_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">algo_cls</span><span class="o">=</span><span class="n">PPO</span><span class="p">),</span>  <span class="c1"># Init value for StableBaselinesAgent</span>
+    <span class="n">eval_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+        <span class="n">eval_horizon</span><span class="o">=</span><span class="mi">1000</span>
+    <span class="p">),</span>  <span class="c1"># Arguments required to call rlberry.agents.agent.Agent.eval().</span>
+    <span class="n">n_fit</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># Number of agent instances to fit.</span>
+    <span class="n">agent_name</span><span class="o">=</span><span class="s2">&quot;PPO_first_experiment&quot;</span> <span class="o">+</span> <span class="n">env_id</span><span class="p">,</span>  <span class="c1"># Name of the agent</span>
+    <span class="n">seed</span><span class="o">=</span><span class="n">seeder</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">first_experiment</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+<span class="n">output</span> <span class="o">=</span> <span class="n">evaluate_agents</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">first_experiment</span><span class="p">],</span> <span class="n">n_simulations</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>  <span class="c1"># evaluate the experiment on 5 simulations</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Run 1:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[INFO] 14:46: Running ExperimentManager fit() for PPO_first_experimentCartPole-v1 with n_fit = 1 and max_workers = None.
+[INFO] 14:46: ... trained!
+[INFO] 14:46: Evaluating PPO_first_experimentCartPole-v1...
+[INFO] Evaluation:.....  Evaluation finished
+   PPO_first_experimentCartPole-v1
+0                             23.3
+1                             19.7
+2                             23.0
+3                             18.8
+4                             19.7
+</pre></div>
+</div>
+<p>Run 2 :</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[INFO] 14:46: Running ExperimentManager fit() for PPO_first_experimentCartPole-v1 with n_fit = 1 and max_workers = None.
+[INFO] 14:46: ... trained!
+[INFO] 14:46: Evaluating PPO_first_experimentCartPole-v1...
+[INFO] Evaluation:.....  Evaluation finished
+   PPO_first_experimentCartPole-v1
+0                             23.3
+1                             19.7
+2                             23.0
+3                             18.8
+4                             19.7
+</pre></div>
+</div>
+<p>Run 3 :</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[INFO] 14:46: Running ExperimentManager fit() for PPO_first_experimentCartPole-v1 with n_fit = 1 and max_workers = None.
+[INFO] 14:46: ... trained!
+[INFO] 14:46: Evaluating PPO_first_experimentCartPole-v1...
+[INFO] Evaluation:.....  Evaluation finished
+   PPO_first_experimentCartPole-v1
+0                             23.3
+1                             19.7
+2                             23.0
+3                             18.8
+4                             19.7
+</pre></div>
+</div>
+</br>
+<p><strong>With the seeder, the outputs are the same (reproducible).</strong></p>
+</br>
+</section>
+<section id="multi-threading">
+<h3>multi-threading<a class="headerlink" href="#multi-threading" title="Permalink to this heading">¶</a></h3>
+<p>If you want use multi-threading, a seeder can spawn other seeders that are independent from it.
+This is useful to seed two different threads, using seeder1 in the first thread, and seeder2 in the second thread.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.seeding</span><span class="w"> </span><span class="kn">import</span> <span class="n">Seeder</span>
+
+<span class="n">seeder</span> <span class="o">=</span> <span class="n">Seeder</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+<span class="n">seeder1</span><span class="p">,</span> <span class="n">seeder2</span> <span class="o">=</span> <span class="n">seeder</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;random sample 1 from seeder1 rng: &quot;</span><span class="p">,</span> <span class="n">seeder1</span><span class="o">.</span><span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;random sample 2 from seeder1 rng: &quot;</span><span class="p">,</span> <span class="n">seeder1</span><span class="o">.</span><span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-----&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;random sample 1 from seeder2 rng: &quot;</span><span class="p">,</span> <span class="n">seeder2</span><span class="o">.</span><span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;random sample 2 from seeder2 rng: &quot;</span><span class="p">,</span> <span class="n">seeder2</span><span class="o">.</span><span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">())</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>random sample 1 from seeder1 rng:  -0.4732958445958833
+random sample 2 from seeder1 rng:  0.5863995575997462
+-----
+random sample 1 from seeder2 rng:  -0.1722486099076424
+random sample 2 from seeder2 rng:  -0.1930990650226178
+</pre></div>
+</div>
+</br>
+</section>
+</section>
+<section id="external-libraries">
+<h2>External libraries<a class="headerlink" href="#external-libraries" title="Permalink to this heading">¶</a></h2>
+<p>You can also use a tool to seed some external libraries using the method <code class="docutils literal notranslate"><span class="pre">set_external_seed</span></code>.
+(currently only <a class="reference external" href="https://pytorch.org/tutorials/beginner/deep_learning_60min_blitz.html">torch</a>)</p>
+<p>It will be useful if you want reproducibility with external libraries. In this example, we will use <code class="docutils literal notranslate"><span class="pre">torch</span></code> to generate random numbers.</p>
+<p>If you run this code many time, you should have different outputs.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+
+<span class="n">result_list</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+    <span class="n">result_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="mi">32</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,))[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">result_list</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>run 1 :</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[3817148928, 671396126, 2950680447, 791815335, 3335786391]
+</pre></div>
+</div>
+<p>run 2 :</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[82990446, 2463687945, 1829003305, 647811387, 3543380778]
+</pre></div>
+</div>
+<p>run 3 :</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[3887070615, 363268341, 3607514851, 3881090947, 1018754931]
+</pre></div>
+</div>
+<p>If you add to this code a <a class="reference internal" href="../../generated/rlberry.seeding.seeder.Seeder.html#rlberry.seeding.seeder.Seeder" title="rlberry.seeding.seeder.Seeder"><span class="xref myst py py-class">Seeder</span></a>, use the <code class="docutils literal notranslate"><span class="pre">set_external_seed</span></code> method, and re-run it, you should have the same ‘random’ numbers every time.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.seeding</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_external_seed</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.seeding</span><span class="w"> </span><span class="kn">import</span> <span class="n">Seeder</span>
+
+<span class="n">seeder</span> <span class="o">=</span> <span class="n">Seeder</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+
+<span class="n">set_external_seed</span><span class="p">(</span><span class="n">seeder</span><span class="p">)</span>
+<span class="n">result_list</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+    <span class="n">result_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="mi">32</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,))[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">result_list</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>run 1 :</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[693246422, 3606543353, 433394544, 2194426398, 3928404622]
+</pre></div>
+</div>
+<p>run 2 :</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[693246422, 3606543353, 433394544, 2194426398, 3928404622]
+</pre></div>
+</div>
+<p>run 3 :</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[693246422, 3606543353, 433394544, 2194426398, 3928404622]
+</pre></div>
+</div>
+<p><span>⚠</span> <strong>warning :</strong> If you fit an <a class="reference internal" href="../../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager"><span class="xref myst py py-class">ExperimentManager</span></a> with a <a class="reference external" href="https://pytorch.org/tutorials/beginner/deep_learning_60min_blitz.html">torch</a> agent, you don’t need to use the <code class="docutils literal notranslate"><span class="pre">set_external_seed</span></code>, rlberry does it for you.<span>⚠</span></p>
+</section>
+</section>
+
+
+      </div>
+    <div class="container">
+      <footer class="sk-content-footer">
+            &copy; 2023, rlberry team.
+          <a href="../../_sources/basics/userguide/seeding.md.txt" rel="nofollow">Show this page source</a>
+      </footer>
+    </div>
+  </div>
+</div>
+<script src="../../_static/js/vendor/bootstrap.min.js"></script>
+
+<script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-22606712-2', 'auto');
+    ga('set', 'anonymizeIp', true);
+    ga('send', 'pageview');
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+<script>
+$(document).ready(function() {
+    /* Add a [>>>] button on the top-right corner of code samples to hide
+     * the >>> and ... prompts and the output and thus make the code
+     * copyable. */
+    var div = $('.highlight-python .highlight,' +
+                '.highlight-python3 .highlight,' +
+                '.highlight-pycon .highlight,' +
+		'.highlight-default .highlight')
+    var pre = div.find('pre');
+
+    // get the styles from the current theme
+    pre.parent().parent().css('position', 'relative');
+    var hide_text = 'Hide prompts and outputs';
+    var show_text = 'Show prompts and outputs';
+
+    // create and add the button to all the code blocks that contain >>>
+    div.each(function(index) {
+        var jthis = $(this);
+        if (jthis.find('.gp').length > 0) {
+            var button = $('<span class="copybutton">&gt;&gt;&gt;</span>');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+            jthis.prepend(button);
+        }
+        // tracebacks (.gt) contain bare text elements that need to be
+        // wrapped in a span to work with .nextUntil() (see later)
+        jthis.find('pre:has(.gt)').contents().filter(function() {
+            return ((this.nodeType == 3) && (this.data.trim().length > 0));
+        }).wrap('<span>');
+    });
+
+    // define the behavior of the button when it's clicked
+    $('.copybutton').click(function(e){
+        e.preventDefault();
+        var button = $(this);
+        if (button.data('hidden') === 'false') {
+            // hide the code output
+            button.parent().find('.go, .gp, .gt').hide();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'hidden');
+            button.css('text-decoration', 'line-through');
+            button.attr('title', show_text);
+            button.data('hidden', 'true');
+        } else {
+            // show the code output
+            button.parent().find('.go, .gp, .gt').show();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'visible');
+            button.css('text-decoration', 'none');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+        }
+    });
+
+	/*** Add permalink buttons next to glossary terms ***/
+	$('dl.glossary > dt[id]').append(function() {
+		return ('<a class="headerlink" href="#' +
+			    this.getAttribute('id') +
+			    '" title="Permalink to this term">¶</a>');
+	});
+  /*** Hide navbar when scrolling down ***/
+  // Returns true when headerlink target matches hash in url
+  (function() {
+    hashTargetOnTop = function() {
+        var hash = window.location.hash;
+        if ( hash.length < 2 ) { return false; }
+
+        var target = document.getElementById( hash.slice(1) );
+        if ( target === null ) { return false; }
+
+        var top = target.getBoundingClientRect().top;
+        return (top < 2) && (top > -2);
+    };
+
+    // Hide navbar on load if hash target is on top
+    var navBar = document.getElementById("navbar");
+    var navBarToggler = document.getElementById("sk-navbar-toggler");
+    var navBarHeightHidden = "-" + navBar.getBoundingClientRect().height + "px";
+    var $window = $(window);
+
+    hideNavBar = function() {
+        navBar.style.top = navBarHeightHidden;
+    };
+
+    showNavBar = function() {
+        navBar.style.top = "0";
+    }
+
+    if (hashTargetOnTop()) {
+        hideNavBar()
+    }
+
+    var prevScrollpos = window.pageYOffset;
+    hideOnScroll = function(lastScrollTop) {
+        if (($window.width() < 768) && (navBarToggler.getAttribute("aria-expanded") === 'true')) {
+            return;
+        }
+        if (lastScrollTop > 2 && (prevScrollpos <= lastScrollTop) || hashTargetOnTop()){
+            hideNavBar()
+        } else {
+            showNavBar()
+        }
+        prevScrollpos = lastScrollTop;
+    };
+
+    /*** high performance scroll event listener***/
+    var raf = window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        window.oRequestAnimationFrame;
+    var lastScrollTop = $window.scrollTop();
+
+    if (raf) {
+        loop();
+    }
+
+    function loop() {
+        var scrollTop = $window.scrollTop();
+        if (lastScrollTop === scrollTop) {
+            raf(loop);
+            return;
+        } else {
+            lastScrollTop = scrollTop;
+            hideOnScroll(lastScrollTop);
+            raf(loop);
+        }
+    }
+  })();
+});
+
+</script>
+    
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    
+</body>
+</html>

@@ -1,0 +1,550 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  
+  <title>How to save/load an experiment &mdash; rlberry 0.7.3.post16.dev0+8710009 documentation</title>
+  
+  <link rel="canonical" href="https://rlberry-py.github.io/rlberry/basics/userguide/save_load.html" />
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/vendor/bootstrap.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sg_gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sg_gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sg_gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sphinx-design.4cbf315f70debaebd550c87a6162cf0f.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+<script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+<script src="../../_static/js/vendor/jquery-3.6.3.slim.min.js"></script> 
+</head>
+<body>
+
+
+<nav id="navbar" class="sk-docs-navbar navbar navbar-expand-md navbar-light bg-light py-0">
+  <div class="container-fluid sk-docs-container px-0">
+    <button
+      id="sk-navbar-toggler"
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="sk-navbar-collapse collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../index.html">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../installation.html">Install</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../user_guide.html">User Guide</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../auto_examples/index.html">Examples</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../api.html">API</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../changelog.html">Changelog</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../about.html">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="https://github.com/rlberry-py/rlberry">GitHub</a>
+        </li>
+        <!--
+        <li class="nav-item dropdown nav-more-item-dropdown">
+          <a class="sk-nav-link nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">More</a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          </div>
+        </li>-->
+    </ul>
+      <div id="searchbox" role="search">
+          <div class="searchformwrapper">
+            <form action="https://duckduckgo.com/">
+            <input type="hidden" id="sites" name="sites" value="https://rlberry-py.github.io/rlberry/">
+            <input type="search" placeholder="Search &hellip;" value="" name="q" />
+            <input class="sk-search-text-btn" type="submit" value="Go" /></form>
+
+          </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="d-flex" id="sk-doc-wrapper">
+    <input type="checkbox" name="sk-toggle-checkbox" id="sk-toggle-checkbox">
+    <label id="sk-sidemenu-toggle" class="sk-btn-toggle-toc btn sk-btn-primary" for="sk-toggle-checkbox">Toggle Menu</label>
+    <div id="sk-sidebar-wrapper" class="border-right">
+      <div class="sk-sidebar-toc-wrapper">
+        <div class="sk-sidebar-toc-logo">
+        </div>
+	<br>
+        <div class="alert alert-warning p-1 mb-2" role="alert">
+
+          <p class="text-center mb-0">
+          rlberry 0.7.3.post16.dev0+8710009<br/>
+          <a href="../../versions.html">Other versions</a>
+          </p>
+
+        </div>
+            <div class="sk-sidebar-toc">
+              <ul>
+<li><a class="reference internal" href="#">How to save/load an experiment</a><ul>
+<li><a class="reference internal" href="#how-to-save-an-experiment">how to save an experiment?</a></li>
+<li><a class="reference internal" href="#how-to-load-a-previous-experiment">How to load a previous experiment?</a></li>
+<li><a class="reference internal" href="#other-information">Other information</a></li>
+<li><a class="reference internal" href="#how-to-save-load-an-agent-only-advanced-users">How to save/load an agent only? (advanced users)</a><ul>
+<li><a class="reference internal" href="#save-the-agent">Save the agent</a></li>
+<li><a class="reference internal" href="#load-the-agent">Load the agent</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            </div>
+      </div>
+    </div>
+    <div id="sk-page-content-wrapper">
+      <div class="sk-page-content container-fluid body px-md-3" role="main">
+        
+  <section id="how-to-save-load-an-experiment">
+<span id="save-load-page"></span><h1>How to save/load an experiment<a class="headerlink" href="#how-to-save-load-an-experiment" title="Permalink to this heading">¶</a></h1>
+<p>For this example, we’ll use the same code as <a class="reference internal" href="experimentManager.html#experimentmanager-page"><span class="std std-ref">ExperimentManager</span></a> (from User Guide), and use the save and load functions.</p>
+<section id="how-to-save-an-experiment">
+<h2>how to save an experiment?<a class="headerlink" href="#how-to-save-an-experiment" title="Permalink to this heading">¶</a></h2>
+<p>To save your experiment, you have to train it first (with <code class="docutils literal notranslate"><span class="pre">fit()</span></code>), then you just have to use the <code class="docutils literal notranslate"><span class="pre">save()</span></code> function.</p>
+<p>Train the Agent :</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.envs</span> <span class="kn">import</span> <span class="n">gym_make</span>
+<span class="kn">from</span> <span class="nn">rlberry_scool.agents.tabular_rl</span> <span class="kn">import</span> <span class="n">QLAgent</span>
+<span class="kn">from</span> <span class="nn">rlberry.manager</span> <span class="kn">import</span> <span class="n">ExperimentManager</span>
+
+<span class="kn">from</span> <span class="nn">rlberry.seeding</span> <span class="kn">import</span> <span class="n">Seeder</span>
+
+<span class="n">seeder</span> <span class="o">=</span> <span class="n">Seeder</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>  <span class="c1"># seeder initialization</span>
+
+<span class="n">env_id</span> <span class="o">=</span> <span class="s2">&quot;FrozenLake-v1&quot;</span>  <span class="c1"># Id of the environment</span>
+<span class="n">env_ctor</span> <span class="o">=</span> <span class="n">gym_make</span>  <span class="c1"># constructor for the env</span>
+<span class="n">env_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="nb">id</span><span class="o">=</span><span class="n">env_id</span><span class="p">,</span> <span class="n">is_slippery</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>  <span class="c1"># give the id of the env inside the kwargs</span>
+
+
+<span class="n">experiment_to_save</span> <span class="o">=</span> <span class="n">ExperimentManager</span><span class="p">(</span>
+    <span class="n">QLAgent</span><span class="p">,</span>  <span class="c1"># Agent Class</span>
+    <span class="p">(</span><span class="n">env_ctor</span><span class="p">,</span> <span class="n">env_kwargs</span><span class="p">),</span>  <span class="c1"># Environment as Tuple(constructor,kwargs)</span>
+    <span class="n">init_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+        <span class="n">gamma</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">exploration_type</span><span class="o">=</span><span class="s2">&quot;epsilon&quot;</span><span class="p">,</span> <span class="n">exploration_rate</span><span class="o">=</span><span class="mf">0.25</span>
+    <span class="p">),</span>  <span class="c1"># agent args</span>
+    <span class="n">fit_budget</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mi">300000</span><span class="p">),</span>  <span class="c1"># Budget used to call our agent &quot;fit()&quot;</span>
+    <span class="n">n_fit</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># Number of agent instances to fit.</span>
+    <span class="n">seed</span><span class="o">=</span><span class="n">seeder</span><span class="p">,</span>  <span class="c1"># to be reproducible</span>
+    <span class="n">agent_name</span><span class="o">=</span><span class="s2">&quot;QL&quot;</span> <span class="o">+</span> <span class="n">env_id</span><span class="p">,</span>  <span class="c1"># Name of the agent</span>
+    <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;./results/&quot;</span><span class="p">,</span>  <span class="c1"># where to store the outputs</span>
+<span class="p">)</span>
+
+<span class="n">experiment_to_save</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">experiment_to_save</span><span class="o">.</span><span class="n">get_agent_instances</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">Q</span><span class="p">)</span>  <span class="c1"># print the content of the Q-table</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[INFO] 11:11: Running ExperimentManager fit() for QLFrozenLake-v1 with n_fit = 1 and max_workers = None.
+[INFO] 11:11:                                    agent_name     worker  episode_rewards  max_global_step
+                                              QLFrozenLake-v1    0          0.0             178711
+[INFO] 11:11: ... trained!
+writers.py:108: FutureWarning: The behavior of DataFrame concatenation with empty or all-NA entries is deprecated. In a future version, this will no longer exclude empty or all-NA columns when determining the result dtypes. To retain the old behavior, exclude the relevant entries before the concat operation.
+  df = pd.concat([df, pd.DataFrame(self._data[tag])], ignore_index=True)
+[[0.73509189 0.77378094 0.77378094 0.73509189]
+ [0.73509189 0.         0.81450625 0.77378094]
+ [0.77378094 0.857375   0.77378094 0.81450625]
+ [0.81450625 0.         0.77377103 0.77378092]
+ [0.77378094 0.81450625 0.         0.73509189]
+ [0.         0.         0.         0.        ]
+ [0.         0.9025     0.         0.81450625]
+ [0.         0.         0.         0.        ]
+ [0.81450625 0.         0.857375   0.77378094]
+ [0.81450625 0.9025     0.9025     0.        ]
+ [0.857375   0.95       0.         0.857375  ]
+ [0.         0.         0.         0.        ]
+ [0.         0.         0.         0.        ]
+ [0.         0.9025     0.95       0.857375  ]
+ [0.9025     0.95       1.         0.9025    ]
+ [0.         0.         0.         0.        ]]
+[INFO] 11:11: Saved ExperimentManager(QLFrozenLake-v1) using pickle.
+</pre></div>
+</div>
+<p>After this run, you can see the ‘print’ of the q-table.
+At the end of the fit, the data of this experiment are saved automatically. It will be saved according to the <code class="docutils literal notranslate"><span class="pre">output_dir</span></code> parameter (here <code class="docutils literal notranslate"><span class="pre">./results/</span></code>). If you don’t specify the <code class="docutils literal notranslate"><span class="pre">output_dir</span></code> parameter, it will saved by default inside the <code class="docutils literal notranslate"><span class="pre">rlberry_data/temp/</span></code> folder.
+(Or you can use temporary folder by importing <a class="reference external" href="https://docs.python.org/3/library/tempfile.html">tempfile</a> library and using <code class="docutils literal notranslate"><span class="pre">with</span> <span class="pre">tempfile.TemporaryDirectory()</span> <span class="pre">as</span> <span class="pre">tmpdir:</span></code>)</p>
+<p>In this folder, you should find :</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">manager_obj.pickle</span></code> and folder <code class="docutils literal notranslate"><span class="pre">agent_handler</span></code>, the save of your experiment and your agent.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">data.csv</span></code>, the episodes result during the training process</p></li>
+</ul>
+</section>
+<section id="how-to-load-a-previous-experiment">
+<h2>How to load a previous experiment?<a class="headerlink" href="#how-to-load-a-previous-experiment" title="Permalink to this heading">¶</a></h2>
+<p>In this example you will load the experiment saved in the part 1.</p>
+<p>To load an experiment previously saved, you need to :</p>
+<ul class="simple">
+<li><p>Locate the file you want to load (you can use the tool function <code class="docutils literal notranslate"><span class="pre">get_single_path_of_most_recently_trained_experiment_manager_obj_from_path</span></code> to get the most recently saved <code class="docutils literal notranslate"><span class="pre">manager_obj.pickle</span></code> from a folder)</p></li>
+<li><p>use the function <code class="docutils literal notranslate"><span class="pre">load()</span></code> from the class <a class="reference internal" href="../../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager.load" title="rlberry.manager.ExperimentManager.load"><span class="xref myst py py-meth">ExperimentManager</span></a>.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.envs</span> <span class="kn">import</span> <span class="n">gym_make</span>
+<span class="kn">from</span> <span class="nn">rlberry.manager.experiment_manager</span> <span class="kn">import</span> <span class="n">ExperimentManager</span>
+<span class="kn">from</span> <span class="nn">rlberry.utils</span> <span class="kn">import</span> <span class="n">loading_tools</span>
+
+
+<span class="n">path_to_load</span> <span class="o">=</span> <span class="n">loading_tools</span><span class="o">.</span><span class="n">get_single_path_of_most_recently_trained_experiment_manager_obj_from_path</span><span class="p">(</span>
+    <span class="s2">&quot;results&quot;</span>
+<span class="p">)</span>  <span class="c1"># find the path to the &quot;manager_obj.pickle&quot;</span>
+
+<span class="n">loaded_experiment_manager</span> <span class="o">=</span> <span class="n">ExperimentManager</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path_to_load</span><span class="p">)</span>  <span class="c1"># load the experiment</span>
+
+<span class="nb">print</span><span class="p">(</span>
+    <span class="n">loaded_experiment_manager</span><span class="o">.</span><span class="n">get_agent_instances</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">Q</span>
+<span class="p">)</span>  <span class="c1"># print the content of the Q-table</span>
+</pre></div>
+</div>
+<p>If you want to test the agent from the loaded Experiment, you can add :</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">env_id</span> <span class="o">=</span> <span class="s2">&quot;FrozenLake-v1&quot;</span>  <span class="c1"># Id of the environment</span>
+<span class="n">env_ctor</span> <span class="o">=</span> <span class="n">gym_make</span>  <span class="c1"># constructor for the env</span>
+<span class="n">env_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="nb">id</span><span class="o">=</span><span class="n">env_id</span><span class="p">,</span> <span class="n">is_slippery</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>  <span class="c1"># give the id of the env inside the kwargs</span>
+<span class="n">test_env</span> <span class="o">=</span> <span class="n">env_ctor</span><span class="p">(</span><span class="o">**</span><span class="n">env_kwargs</span><span class="p">)</span>  <span class="c1"># create the Environment</span>
+
+<span class="c1"># test the agent of the experiment on the test environment</span>
+<span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">test_env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">tt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">50</span><span class="p">):</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="n">loaded_experiment_manager</span><span class="o">.</span><span class="n">get_agent_instances</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">policy</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span>
+    <span class="n">next_observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">test_env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+    <span class="n">done</span> <span class="o">=</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span>
+    <span class="k">if</span> <span class="n">done</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">reward</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Success!&quot;</span><span class="p">)</span>
+            <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Fail! Retry!&quot;</span><span class="p">)</span>
+            <span class="n">next_observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">test_env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+    <span class="n">observation</span> <span class="o">=</span> <span class="n">next_observation</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[[0.73509189 0.77378094 0.77378094 0.73509189]
+ [0.73509189 0.         0.81450625 0.77378094]
+ [0.77378094 0.857375   0.77378094 0.81450625]
+ [0.81450625 0.         0.77377103 0.77378092]
+ [0.77378094 0.81450625 0.         0.73509189]
+ [0.         0.         0.         0.        ]
+ [0.         0.9025     0.         0.81450625]
+ [0.         0.         0.         0.        ]
+ [0.81450625 0.         0.857375   0.77378094]
+ [0.81450625 0.9025     0.9025     0.        ]
+ [0.857375   0.95       0.         0.857375  ]
+ [0.         0.         0.         0.        ]
+ [0.         0.         0.         0.        ]
+ [0.         0.9025     0.95       0.857375  ]
+ [0.9025     0.95       1.         0.9025    ]
+ [0.         0.         0.         0.        ]]
+Success!
+</pre></div>
+</div>
+<p>As you can see, we haven’t re-fit the experiment, and the q-table is the same as the one previously saved (and the Agent can finish the environment).</p>
+</section>
+<section id="other-information">
+<h2>Other information<a class="headerlink" href="#other-information" title="Permalink to this heading">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">save</span></code> and <code class="docutils literal notranslate"><span class="pre">load</span></code> can be useful for :</p>
+<ul class="simple">
+<li><p>you want to train your agent on a computer, and test/use it on others.</p></li>
+<li><p>you have a long training, and you want to do some ‘checkpoints’.</p></li>
+<li><p>you want to do the training in more than once (only if your agent has “fit(x) then fit(y), is the same as fit(x+y)”)</p></li>
+</ul>
+</section>
+<section id="how-to-save-load-an-agent-only-advanced-users">
+<h2>How to save/load an agent only? (advanced users)<a class="headerlink" href="#how-to-save-load-an-agent-only-advanced-users" title="Permalink to this heading">¶</a></h2>
+<p><span>⚠</span> We highly recommend to use the save/load with the <code class="docutils literal notranslate"><span class="pre">ExperimentManager</span></code> to have all the information (as above). But if you need to save only the agent for a specific case, you can do so : <span>⚠</span></p>
+<section id="save-the-agent">
+<h3>Save the agent<a class="headerlink" href="#save-the-agent" title="Permalink to this heading">¶</a></h3>
+<p>To save an agent, you just have to call the method <code class="docutils literal notranslate"><span class="pre">save(&quot;output_dir_path&quot;)</span></code> of your train agent. Be careful, only the agent is save (not the training env)!</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.envs</span> <span class="kn">import</span> <span class="n">gym_make</span>
+<span class="kn">from</span> <span class="nn">rlberry_scool.agents.tabular_rl</span> <span class="kn">import</span> <span class="n">QLAgent</span>
+<span class="kn">from</span> <span class="nn">rlberry.seeding</span> <span class="kn">import</span> <span class="n">Seeder</span>
+
+<span class="n">seeder</span> <span class="o">=</span> <span class="n">Seeder</span><span class="p">(</span><span class="mi">500</span><span class="p">)</span>  <span class="c1"># seeder initialization</span>
+<span class="n">env_seed_max_value</span> <span class="o">=</span> <span class="mi">500</span>
+
+<span class="n">env_id</span> <span class="o">=</span> <span class="s2">&quot;FrozenLake-v1&quot;</span>  <span class="c1"># Id of the environment</span>
+
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym_make</span><span class="p">(</span><span class="n">env_id</span><span class="p">)</span>
+<span class="n">env</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">seeder</span><span class="o">.</span><span class="n">rng</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="n">env_seed_max_value</span><span class="p">)))</span>
+<span class="n">agent_to_train_and_save</span> <span class="o">=</span> <span class="n">QLAgent</span><span class="p">(</span>
+    <span class="n">env</span><span class="p">,</span>
+    <span class="n">gamma</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+    <span class="n">exploration_type</span><span class="o">=</span><span class="s2">&quot;epsilon&quot;</span><span class="p">,</span>
+    <span class="n">exploration_rate</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
+    <span class="n">seeder</span><span class="o">=</span><span class="n">seeder</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">agent_to_train_and_save</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="mi">300000</span><span class="p">)</span>  <span class="c1"># Agent&#39;s training</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">agent_to_train_and_save</span><span class="o">.</span><span class="n">Q</span><span class="p">)</span>  <span class="c1"># print the content of the Q-table</span>
+
+<span class="n">agent_to_train_and_save</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;./results/&quot;</span><span class="p">)</span>  <span class="c1"># save the agent</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[INFO] 11:28:                                 agent_name  worker  episode_rewards  max_global_step
+                                                  QL        -1         0.0             195540
+[[0.1830874  0.15802259 0.12087594 0.16358512]
+ [0.         0.         0.         0.16674384]
+ [0.10049071 0.09517673 0.11326436 0.07236883]
+ [0.10552007 0.06660356 0.07020302 0.1104349 ]
+ [0.23065463 0.         0.19028937 0.20689438]
+ [0.         0.         0.         0.        ]
+ [0.08408004 0.         0.         0.        ]
+ [0.         0.         0.         0.        ]
+ [0.         0.17382279 0.         0.2417443 ]
+ [0.         0.29498867 0.         0.        ]
+ [0.46487572 0.         0.         0.        ]
+ [0.         0.         0.         0.        ]
+ [0.         0.         0.         0.        ]
+ [0.         0.52043878 0.56986596 0.19259904]
+ [0.57831479 0.6858159  0.22998936 0.39350426]
+ [0.         0.         0.         0.        ]]
+</pre></div>
+</div>
+</section>
+<section id="load-the-agent">
+<h3>Load the agent<a class="headerlink" href="#load-the-agent" title="Permalink to this heading">¶</a></h3>
+<p>To load an agent, you should use its <code class="docutils literal notranslate"><span class="pre">load()</span></code> function. But be careful, you have to add some not-saved parameters (in this case, the environment). This parameters should be given through a <code class="docutils literal notranslate"><span class="pre">dict</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># create a seeded env</span>
+<span class="n">env_for_loader</span> <span class="o">=</span> <span class="n">gym_make</span><span class="p">(</span><span class="n">env_id</span><span class="p">)</span>
+<span class="n">env_for_loader</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">seeder</span><span class="o">.</span><span class="n">rng</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="n">env_seed_max_value</span><span class="p">)))</span>
+
+<span class="c1"># create the &#39;not-saved parameters&#39; dict</span>
+<span class="n">params_for_loader</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">env</span><span class="o">=</span><span class="n">env_for_loader</span><span class="p">)</span>
+
+<span class="c1"># load the agent</span>
+<span class="n">loaded_agent</span> <span class="o">=</span> <span class="n">QLAgent</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;./results/&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">params_for_loader</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">loaded_agent</span><span class="o">.</span><span class="n">Q</span><span class="p">)</span>  <span class="c1"># print the content of the Q-table</span>
+
+<span class="c1"># create a seeded test env</span>
+<span class="n">test_env</span> <span class="o">=</span> <span class="n">gym_make</span><span class="p">(</span><span class="n">env_id</span><span class="p">)</span>
+<span class="n">test_env</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">seeder</span><span class="o">.</span><span class="n">rng</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="n">env_seed_max_value</span><span class="p">)))</span>
+
+<span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">test_env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">tt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">50</span><span class="p">):</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="n">loaded_agent</span><span class="o">.</span><span class="n">policy</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span>
+    <span class="n">next_observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">test_env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+    <span class="n">done</span> <span class="o">=</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span>
+    <span class="k">if</span> <span class="n">done</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">reward</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Success!&quot;</span><span class="p">)</span>
+            <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Fail! Retry!&quot;</span><span class="p">)</span>
+            <span class="n">next_observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">test_env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+    <span class="n">observation</span> <span class="o">=</span> <span class="n">next_observation</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[[0.1830874  0.15802259 0.12087594 0.16358512]
+ [0.         0.         0.         0.16674384]
+ [0.10049071 0.09517673 0.11326436 0.07236883]
+ [0.10552007 0.06660356 0.07020302 0.1104349 ]
+ [0.23065463 0.         0.19028937 0.20689438]
+ [0.         0.         0.         0.        ]
+ [0.08408004 0.         0.         0.        ]
+ [0.         0.         0.         0.        ]
+ [0.         0.17382279 0.         0.2417443 ]
+ [0.         0.29498867 0.         0.        ]
+ [0.46487572 0.         0.         0.        ]
+ [0.         0.         0.         0.        ]
+ [0.         0.         0.         0.        ]
+ [0.         0.52043878 0.56986596 0.19259904]
+ [0.57831479 0.6858159  0.22998936 0.39350426]
+ [0.         0.         0.         0.        ]]
+
+Success!
+
+</pre></div>
+</div>
+<p>This code show that the loaded agent contains all the necessary component needed to reuse the agent.
+(As you can see, we haven’t re-fit the agent, and the q-table is the same as the one previously saved)</p>
+</section>
+</section>
+</section>
+
+
+      </div>
+    <div class="container">
+      <footer class="sk-content-footer">
+            &copy; 2023, rlberry team.
+          <a href="../../_sources/basics/userguide/save_load.md.txt" rel="nofollow">Show this page source</a>
+      </footer>
+    </div>
+  </div>
+</div>
+<script src="../../_static/js/vendor/bootstrap.min.js"></script>
+
+<script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-22606712-2', 'auto');
+    ga('set', 'anonymizeIp', true);
+    ga('send', 'pageview');
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+<script>
+$(document).ready(function() {
+    /* Add a [>>>] button on the top-right corner of code samples to hide
+     * the >>> and ... prompts and the output and thus make the code
+     * copyable. */
+    var div = $('.highlight-python .highlight,' +
+                '.highlight-python3 .highlight,' +
+                '.highlight-pycon .highlight,' +
+		'.highlight-default .highlight')
+    var pre = div.find('pre');
+
+    // get the styles from the current theme
+    pre.parent().parent().css('position', 'relative');
+    var hide_text = 'Hide prompts and outputs';
+    var show_text = 'Show prompts and outputs';
+
+    // create and add the button to all the code blocks that contain >>>
+    div.each(function(index) {
+        var jthis = $(this);
+        if (jthis.find('.gp').length > 0) {
+            var button = $('<span class="copybutton">&gt;&gt;&gt;</span>');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+            jthis.prepend(button);
+        }
+        // tracebacks (.gt) contain bare text elements that need to be
+        // wrapped in a span to work with .nextUntil() (see later)
+        jthis.find('pre:has(.gt)').contents().filter(function() {
+            return ((this.nodeType == 3) && (this.data.trim().length > 0));
+        }).wrap('<span>');
+    });
+
+    // define the behavior of the button when it's clicked
+    $('.copybutton').click(function(e){
+        e.preventDefault();
+        var button = $(this);
+        if (button.data('hidden') === 'false') {
+            // hide the code output
+            button.parent().find('.go, .gp, .gt').hide();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'hidden');
+            button.css('text-decoration', 'line-through');
+            button.attr('title', show_text);
+            button.data('hidden', 'true');
+        } else {
+            // show the code output
+            button.parent().find('.go, .gp, .gt').show();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'visible');
+            button.css('text-decoration', 'none');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+        }
+    });
+
+	/*** Add permalink buttons next to glossary terms ***/
+	$('dl.glossary > dt[id]').append(function() {
+		return ('<a class="headerlink" href="#' +
+			    this.getAttribute('id') +
+			    '" title="Permalink to this term">¶</a>');
+	});
+  /*** Hide navbar when scrolling down ***/
+  // Returns true when headerlink target matches hash in url
+  (function() {
+    hashTargetOnTop = function() {
+        var hash = window.location.hash;
+        if ( hash.length < 2 ) { return false; }
+
+        var target = document.getElementById( hash.slice(1) );
+        if ( target === null ) { return false; }
+
+        var top = target.getBoundingClientRect().top;
+        return (top < 2) && (top > -2);
+    };
+
+    // Hide navbar on load if hash target is on top
+    var navBar = document.getElementById("navbar");
+    var navBarToggler = document.getElementById("sk-navbar-toggler");
+    var navBarHeightHidden = "-" + navBar.getBoundingClientRect().height + "px";
+    var $window = $(window);
+
+    hideNavBar = function() {
+        navBar.style.top = navBarHeightHidden;
+    };
+
+    showNavBar = function() {
+        navBar.style.top = "0";
+    }
+
+    if (hashTargetOnTop()) {
+        hideNavBar()
+    }
+
+    var prevScrollpos = window.pageYOffset;
+    hideOnScroll = function(lastScrollTop) {
+        if (($window.width() < 768) && (navBarToggler.getAttribute("aria-expanded") === 'true')) {
+            return;
+        }
+        if (lastScrollTop > 2 && (prevScrollpos <= lastScrollTop) || hashTargetOnTop()){
+            hideNavBar()
+        } else {
+            showNavBar()
+        }
+        prevScrollpos = lastScrollTop;
+    };
+
+    /*** high performance scroll event listener***/
+    var raf = window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        window.oRequestAnimationFrame;
+    var lastScrollTop = $window.scrollTop();
+
+    if (raf) {
+        loop();
+    }
+
+    function loop() {
+        var scrollTop = $window.scrollTop();
+        if (lastScrollTop === scrollTop) {
+            raf(loop);
+            return;
+        } else {
+            lastScrollTop = scrollTop;
+            hideOnScroll(lastScrollTop);
+            raf(loop);
+        }
+    }
+  })();
+});
+
+</script>
+    
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    
+</body>
+</html>

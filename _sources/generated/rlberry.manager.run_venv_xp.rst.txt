@@ -1,0 +1,12 @@
+﻿:mod:`rlberry.manager`.run_venv_xp
+===============================================
+
+.. currentmodule:: rlberry.manager
+
+.. autofunction:: run_venv_xp
+
+.. include:: rlberry.manager.run_venv_xp.examples
+
+.. raw:: html
+
+    <div class="clearer"></div>

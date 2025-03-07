@@ -1,0 +1,1058 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  
+  <title>rlberry.agents.agent &mdash; rlberry 0.7.3.post16.dev0+8710009 documentation</title>
+  
+  <link rel="canonical" href="https://rlberry-py.github.io/rlberry/_modules/rlberry/agents/agent.html" />
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/vendor/bootstrap.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/sg_gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/sg_gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/sg_gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/sphinx-design.4cbf315f70debaebd550c87a6162cf0f.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+<script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+<script src="../../../_static/js/vendor/jquery-3.6.3.slim.min.js"></script> 
+</head>
+<body>
+
+
+<nav id="navbar" class="sk-docs-navbar navbar navbar-expand-md navbar-light bg-light py-0">
+  <div class="container-fluid sk-docs-container px-0">
+    <button
+      id="sk-navbar-toggler"
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="sk-navbar-collapse collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../index.html">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../installation.html">Install</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../user_guide.html">User Guide</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../auto_examples/index.html">Examples</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../api.html">API</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../changelog.html">Changelog</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../about.html">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="https://github.com/rlberry-py/rlberry">GitHub</a>
+        </li>
+        <!--
+        <li class="nav-item dropdown nav-more-item-dropdown">
+          <a class="sk-nav-link nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">More</a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          </div>
+        </li>-->
+    </ul>
+      <div id="searchbox" role="search">
+          <div class="searchformwrapper">
+            <form action="https://duckduckgo.com/">
+            <input type="hidden" id="sites" name="sites" value="https://rlberry-py.github.io/rlberry/">
+            <input type="search" placeholder="Search &hellip;" value="" name="q" />
+            <input class="sk-search-text-btn" type="submit" value="Go" /></form>
+
+          </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="d-flex" id="sk-doc-wrapper">
+    <input type="checkbox" name="sk-toggle-checkbox" id="sk-toggle-checkbox">
+    <label id="sk-sidemenu-toggle" class="sk-btn-toggle-toc btn sk-btn-primary" for="sk-toggle-checkbox">Toggle Menu</label>
+    <div id="sk-sidebar-wrapper" class="border-right">
+      <div class="sk-sidebar-toc-wrapper">
+        <div class="sk-sidebar-toc-logo">
+        </div>
+	<br>
+        <div class="alert alert-warning p-1 mb-2" role="alert">
+
+          <p class="text-center mb-0">
+          rlberry 0.7.3.post16.dev0+8710009<br/>
+          <a href="../../../versions.html">Other versions</a>
+          </p>
+
+        </div>
+            <div class="sk-sidebar-toc">
+              
+            </div>
+      </div>
+    </div>
+    <div id="sk-page-content-wrapper">
+      <div class="sk-page-content container-fluid body px-md-3" role="main">
+        
+  <h1>Source code for rlberry.agents.agent</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">dill</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pickle</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">bz2</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cloudpickle</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">inspect</span><span class="w"> </span><span class="kn">import</span> <span class="n">signature</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry</span><span class="w"> </span><span class="kn">import</span> <span class="n">metadata_utils</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry</span><span class="w"> </span><span class="kn">import</span> <span class="n">types</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.seeding.seeder</span><span class="w"> </span><span class="kn">import</span> <span class="n">Seeder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.seeding</span><span class="w"> </span><span class="kn">import</span> <span class="n">safe_reseed</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.envs.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">process_env</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.utils.writers</span><span class="w"> </span><span class="kn">import</span> <span class="n">DefaultWriter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">rlberry</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">rlberry</span><span class="o">.</span><span class="n">logger</span>
+
+
+<div class="viewcode-block" id="Agent"><a class="viewcode-back" href="../../../generated/rlberry.agents.Agent.html#rlberry.agents.Agent">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Agent</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Basic interface for agents.</span>
+
+<span class="sd">    If the &#39;inherited class&#39; from Agent use the torch lib, it is highly recommended to inherit :class:`~rlberry.agents.AgentTorch` instead.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        | 1 - Abstract Class : cannot be instantiated. The abstract methods have to be overridden by the &#39;inherited class&#39; agent.</span>
+<span class="sd">        | 2 - Classes that implements this interface can send `**kwargs` to initiate :code:`Agent.__init__()`, but the keys must match the parameters.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    env : :class:`gymnasium.Env` or tuple (constructor, kwargs)</span>
+<span class="sd">        Environment on which to train the agent.</span>
+<span class="sd">    eval_env : :class:`gymnasium.Env` or tuple (constructor, kwargs)</span>
+<span class="sd">        Environment on which to evaluate the agent. If None, copied from env.</span>
+<span class="sd">    copy_env : bool</span>
+<span class="sd">        If true, makes a deep copy of the environment.</span>
+<span class="sd">    compress_pickle : bool</span>
+<span class="sd">        If true, compress the save files using bz2.</span>
+<span class="sd">    seeder : :class:`~rlberry.seeding.seeder.Seeder`, int, or None</span>
+<span class="sd">        Seeder/seed for random number generation.</span>
+<span class="sd">    output_dir : str or Path</span>
+<span class="sd">        Directory that the agent can use to store data.</span>
+<span class="sd">    _execution_metadata : ExecutionMetadata, optional</span>
+<span class="sd">        Extra information about agent execution (e.g. about which is the process id where the agent is running).</span>
+<span class="sd">        Used by :class:`~rlberry.manager.ExperimentManager`.</span>
+<span class="sd">    _default_writer_kwargs : dict, optional</span>
+<span class="sd">        Parameters to initialize :class:`~rlberry.utils.writers.DefaultWriter` (attribute self.writer).</span>
+<span class="sd">        Used by :class:`~rlberry.manager.ExperimentManager`.</span>
+<span class="sd">    _thread_shared_data : dict, optional</span>
+<span class="sd">        Used by :class:`~rlberry.manager.ExperimentManager` to share data across Agent</span>
+<span class="sd">        instances created in different threads.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : string</span>
+<span class="sd">        Agent identifier (not necessarily unique).</span>
+<span class="sd">    env : :class:`gymnasium.Env` or tuple (constructor, kwargs)</span>
+<span class="sd">        Environment on which to train the agent.</span>
+<span class="sd">    eval_env : :class:`gymnasium.Env` or tuple (constructor, kwargs)</span>
+<span class="sd">        Environment on which to evaluate the agent. If None, copied from env.</span>
+<span class="sd">    writer : object, default: None</span>
+<span class="sd">        Writer object to log the output (e.g. tensorboard SummaryWriter).</span>
+<span class="sd">    seeder : :class:`~rlberry.seeding.seeder.Seeder`, int, or None</span>
+<span class="sd">        Seeder/seed for random number generation.</span>
+<span class="sd">    rng : :class:`numpy.random._generator.Generator`</span>
+<span class="sd">        Random number generator. If you use random numbers in your agent, this</span>
+<span class="sd">        attribute must be used in order to ensure reproducibility. See `numpy&#39;s</span>
+<span class="sd">        documentation &lt;https://numpy.org/doc/stable/reference/random/generator.html&gt;`_.</span>
+<span class="sd">    output_dir : str or Path</span>
+<span class="sd">        Directory that the agent can use to store data.</span>
+<span class="sd">    unique_id : str</span>
+<span class="sd">        Unique identifier for the agent instance. Can be used, for example,</span>
+<span class="sd">        to create files/directories for the agent to log data safely.</span>
+<span class="sd">    writer_extra : str in {&quot;reward&quot;, &quot;action&quot;, &quot;action_and_reward&quot;},</span>
+<span class="sd">        Scalar that will be recorded in the writer.</span>
+<span class="sd">    thread_shared_data : dict</span>
+<span class="sd">        Data shared by agent instances among different threads.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">env</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">Env</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">eval_env</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">types</span><span class="o">.</span><span class="n">Env</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">copy_env</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">compress_pickle</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">seeder</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">types</span><span class="o">.</span><span class="n">Seed</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">output_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">writer_extra</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">_execution_metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">metadata_utils</span><span class="o">.</span><span class="n">ExecutionMetadata</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">_default_writer_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">_thread_shared_data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seeder</span> <span class="o">=</span> <span class="n">Seeder</span><span class="p">(</span><span class="n">seeder</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span> <span class="o">=</span> <span class="n">process_env</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">seeder</span><span class="p">,</span> <span class="n">copy_env</span><span class="o">=</span><span class="n">copy_env</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">compress_pickle</span> <span class="o">=</span> <span class="n">compress_pickle</span>
+        <span class="c1"># evaluation environment</span>
+        <span class="n">eval_env</span> <span class="o">=</span> <span class="n">eval_env</span> <span class="ow">or</span> <span class="n">env</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eval_env</span> <span class="o">=</span> <span class="n">process_env</span><span class="p">(</span><span class="n">eval_env</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">seeder</span><span class="p">,</span> <span class="n">copy_env</span><span class="o">=</span><span class="n">copy_env</span><span class="p">)</span>
+
+        <span class="c1"># metadata</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_execution_metadata</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">_execution_metadata</span> <span class="ow">or</span> <span class="n">metadata_utils</span><span class="o">.</span><span class="n">ExecutionMetadata</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_unique_id</span> <span class="o">=</span> <span class="n">metadata_utils</span><span class="o">.</span><span class="n">get_unique_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_unique_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unique_id</span>
+
+        <span class="c1"># create writer</span>
+        <span class="n">_default_writer_kwargs</span> <span class="o">=</span> <span class="n">_default_writer_kwargs</span> <span class="ow">or</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">execution_metadata</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_execution_metadata</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span> <span class="o">=</span> <span class="n">DefaultWriter</span><span class="p">(</span><span class="o">**</span><span class="n">_default_writer_kwargs</span><span class="p">)</span>
+
+        <span class="c1"># output directory for the agent instance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_output_dir</span> <span class="o">=</span> <span class="n">output_dir</span> <span class="ow">or</span> <span class="sa">f</span><span class="s2">&quot;output_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_unique_id</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_output_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_output_dir</span><span class="p">)</span>
+
+        <span class="c1"># shared data among threads</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_thread_shared_data</span> <span class="o">=</span> <span class="n">_thread_shared_data</span>
+
+        <span class="k">if</span> <span class="n">writer_extra</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">env</span> <span class="o">=</span> <span class="n">_WriterWrapper</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">writer</span><span class="p">,</span> <span class="n">write_scalar</span><span class="o">=</span><span class="n">writer_extra</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">writer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Writer object to log the output (e.g. tensorboard SummaryWriter)..</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">unique_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Unique identifier for the agent instance. Can be used, for example, to create files/directories for the agent to log data safely.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unique_id</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">output_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Directory that the agent can use to store data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_dir</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rng</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Random number generator.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">seeder</span><span class="o">.</span><span class="n">rng</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">thread_shared_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Data shared by agent instances among different threads.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_thread_shared_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_thread_shared_data</span>
+
+<div class="viewcode-block" id="Agent.fit"><a class="viewcode-back" href="../../../generated/rlberry.agents.Agent.html#rlberry.agents.Agent.fit">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">budget</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Abstract method to be overridden by the &#39;inherited agent&#39;.</span>
+
+<span class="sd">        Train the agent with a fixed budget, using the provided environment.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        budget: int</span>
+<span class="sd">            Computational (or sample complexity) budget.</span>
+<span class="sd">            It can be, for instance:</span>
+
+<span class="sd">            * The number of timesteps taken by the environment (env.step) or the number of episodes;</span>
+
+<span class="sd">            * The number of iterations for algorithms such as value/policy iteration;</span>
+
+<span class="sd">            * The number of searches in MCTS (Monte-Carlo Tree Search) algorithms;</span>
+
+<span class="sd">            among others.</span>
+
+<span class="sd">            Ideally, calling</span>
+
+<span class="sd">            .. code-block:: python</span>
+
+<span class="sd">                fit(budget1)</span>
+<span class="sd">                fit(budget2)</span>
+
+<span class="sd">            should be equivalent to one call</span>
+
+<span class="sd">            .. code-block:: python</span>
+
+<span class="sd">                fit(budget1 + budget2)</span>
+
+<span class="sd">            This property is required to reduce the time required for hyperparameter</span>
+<span class="sd">            optimization (by allowing early stopping), but it is not strictly required</span>
+<span class="sd">            elsewhere in the library.</span>
+
+<span class="sd">            If the agent does not require a budget, set it to -1.</span>
+<span class="sd">        **kwargs: Keyword Arguments</span>
+<span class="sd">            Extra parameters specific to the implemented fit.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Agent.eval"><a class="viewcode-back" href="../../../generated/rlberry.agents.Agent.html#rlberry.agents.Agent.eval">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Abstract method.</span>
+
+<span class="sd">        Returns a float measuring the quality of the agent (e.g. MC policy evaluation).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        eval_env: object</span>
+<span class="sd">            Environment for evaluation.</span>
+<span class="sd">        **kwargs: Keyword Arguments</span>
+<span class="sd">            Extra parameters specific to the implemented evaluation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Agent.set_writer"><a class="viewcode-back" href="../../../generated/rlberry.agents.Agent.html#rlberry.agents.Agent.set_writer">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">set_writer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">writer</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;set self._writer. If is not None, add parameters values to writer.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span> <span class="o">=</span> <span class="n">writer</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="p">:</span>
+            <span class="n">init_args</span> <span class="o">=</span> <span class="n">signature</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="fm">__init__</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span>
+            <span class="n">kwargs</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;| </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="w"> </span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="kc">None</span><span class="p">)</span><span class="si">}</span><span class="s2"> |&quot;</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">init_args</span><span class="p">]</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">add_text</span><span class="p">(</span>
+                <span class="s2">&quot;Hyperparameters&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;| Parameter | Value |</span><span class="se">\n</span><span class="s2">|-------|-------|</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">kwargs</span><span class="p">),</span>
+            <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Agent.sample_parameters"><a class="viewcode-back" href="../../../generated/rlberry.agents.Agent.html#rlberry.agents.Agent.sample_parameters">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sample_parameters</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">trial</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sample hyperparameters for hyperparam optimization using</span>
+<span class="sd">        Optuna (https://optuna.org/)</span>
+
+<span class="sd">        Note: only the kwargs sent to __init__ are optimized. Make sure to</span>
+<span class="sd">        include in the Agent constructor all &quot;optimizable&quot; parameters.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trial: optuna.trial</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;agent.sample_parameters() not implemented.&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Agent.reseed"><a class="viewcode-back" href="../../../generated/rlberry.agents.Agent.html#rlberry.agents.Agent.reseed">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">reseed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed_seq</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get new random number generator for the agent.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        seed_seq : :class:`numpy.random.SeedSequence`, :class:`rlberry.seeding.seeder.Seeder` or int, default : None</span>
+<span class="sd">            Seed sequence from which to spawn the random number generator.</span>
+<span class="sd">            If None, generate random seed.</span>
+<span class="sd">            If int, use as entropy for SeedSequence.</span>
+<span class="sd">            If seeder, use seeder.seed_seq</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># self.seeder</span>
+        <span class="k">if</span> <span class="n">seed_seq</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">seeder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">seeder</span><span class="o">.</span><span class="n">spawn</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">seeder</span> <span class="o">=</span> <span class="n">Seeder</span><span class="p">(</span><span class="n">seed_seq</span><span class="p">)</span>
+        <span class="n">safe_reseed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">seeder</span><span class="p">)</span>
+        <span class="n">safe_reseed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eval_env</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">seeder</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Agent.save"><a class="viewcode-back" href="../../../generated/rlberry.agents.Agent.html#rlberry.agents.Agent.save">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save agent object. By default, the agent is pickled.</span>
+
+<span class="sd">        If overridden, the load() method must also be overridden.</span>
+
+<span class="sd">        Before saving, consider setting writer to None if it can&#39;t be pickled (tensorboard writers</span>
+<span class="sd">        keep references to files and cannot be pickled).</span>
+
+<span class="sd">        Note: dill[1]_ is used when pickle fails</span>
+<span class="sd">        (see https://stackoverflow.com/a/25353243, for instance).</span>
+<span class="sd">        Pickle is tried first, since it is faster.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        filename: Path or str</span>
+<span class="sd">            File in which to save the Agent.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pathlib.Path</span>
+<span class="sd">            If save() is successful, a Path object corresponding to the filename is returned.</span>
+<span class="sd">            Otherwise, None is returned.</span>
+
+<span class="sd">        .. warning:: The returned filename might differ from the input filename: For instance,</span>
+<span class="sd">        the method can append the correct suffix to the name before saving.</span>
+
+<span class="sd">        References</span>
+<span class="sd">        ----------</span>
+<span class="sd">        .. [1] https://github.com/uqfoundation/dill</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># remove writer if not pickleable</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">dill</span><span class="o">.</span><span class="n">pickles</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">writer</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_writer</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="c1"># save</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">&quot;.pickle&quot;</span><span class="p">)</span>
+        <span class="n">filename</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">dict_to_save</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">compress_pickle</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">filename</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ff</span><span class="p">:</span>
+                    <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">dict_to_save</span><span class="p">,</span> <span class="n">ff</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">bz2</span><span class="o">.</span><span class="n">BZ2File</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ff</span><span class="p">:</span>
+                    <span class="n">cloudpickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">dict_to_save</span><span class="p">,</span> <span class="n">ff</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">compress_pickle</span><span class="p">:</span>
+                    <span class="k">with</span> <span class="n">filename</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ff</span><span class="p">:</span>
+                        <span class="n">dill</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">dict_to_save</span><span class="p">,</span> <span class="n">ff</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">with</span> <span class="n">bz2</span><span class="o">.</span><span class="n">BZ2File</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ff</span><span class="p">:</span>
+                        <span class="n">dill</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">dict_to_save</span><span class="p">,</span> <span class="n">ff</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Agent instance cannot be pickled: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">))</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="n">filename</span></div>
+
+<div class="viewcode-block" id="Agent.load"><a class="viewcode-back" href="../../../generated/rlberry.agents.Agent.html#rlberry.agents.Agent.load">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># If overridden, save() method must also be override.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load agent object from filepath.</span>
+
+<span class="sd">        If overridden, save() method must also be overridden.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        filename: str</span>
+<span class="sd">            Path to the object (pickle) to load.</span>
+<span class="sd">        **kwargs: Keyword Arguments</span>
+<span class="sd">            Arguments required by the __init__ method of the Agent subclass to load.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">&quot;.pickle&quot;</span><span class="p">)</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">obj</span><span class="o">.</span><span class="n">compress_pickle</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">filename</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ff</span><span class="p">:</span>
+                    <span class="n">tmp_dict</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ff</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">bz2</span><span class="o">.</span><span class="n">BZ2File</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ff</span><span class="p">:</span>
+                    <span class="n">tmp_dict</span> <span class="o">=</span> <span class="n">cloudpickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ff</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">obj</span><span class="o">.</span><span class="n">compress_pickle</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">filename</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ff</span><span class="p">:</span>
+                    <span class="n">tmp_dict</span> <span class="o">=</span> <span class="n">dill</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ff</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">bz2</span><span class="o">.</span><span class="n">BZ2File</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ff</span><span class="p">:</span>
+                    <span class="n">tmp_dict</span> <span class="o">=</span> <span class="n">dill</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ff</span><span class="p">)</span>
+
+        <span class="n">obj</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">obj</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">tmp_dict</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">obj</span></div>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_param_names</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get parameter names for the Agent&quot;&quot;&quot;</span>
+        <span class="c1"># fetch the constructor or the original constructor before</span>
+        <span class="c1"># deprecation wrapping if any</span>
+        <span class="n">init</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="fm">__init__</span><span class="p">,</span> <span class="s2">&quot;deprecated_original&quot;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="fm">__init__</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">init</span> <span class="ow">is</span> <span class="nb">object</span><span class="o">.</span><span class="fm">__init__</span><span class="p">:</span>
+            <span class="c1"># No explicit constructor to introspect</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+        <span class="c1"># introspect the constructor arguments to find the Agent parameters</span>
+        <span class="c1"># to represent</span>
+        <span class="n">init_signature</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">init</span><span class="p">)</span>
+        <span class="c1"># Consider the constructor parameters excluding &#39;self&#39;</span>
+        <span class="n">parameters</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">p</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">init_signature</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s2">&quot;self&quot;</span> <span class="ow">and</span> <span class="n">p</span><span class="o">.</span><span class="n">kind</span> <span class="o">!=</span> <span class="n">p</span><span class="o">.</span><span class="n">VAR_KEYWORD</span>
+        <span class="p">]</span>
+
+        <span class="c1"># Extract and sort argument names excluding &#39;self&#39;</span>
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">])</span>
+
+<div class="viewcode-block" id="Agent.get_params"><a class="viewcode-back" href="../../../generated/rlberry.agents.Agent.html#rlberry.agents.Agent.get_params">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get parameters for this agent.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        deep : bool, default=True</span>
+<span class="sd">            If True, will return the parameters for this agent and</span>
+<span class="sd">            contained subobjects.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        params : dict</span>
+<span class="sd">            Parameter names mapped to their values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_param_names</span><span class="p">():</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">deep</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s2">&quot;get_params&quot;</span><span class="p">):</span>
+                <span class="n">deep_items</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">get_params</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="n">out</span><span class="o">.</span><span class="n">update</span><span class="p">((</span><span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;__&quot;</span> <span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">deep_items</span><span class="p">)</span>
+            <span class="n">out</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">return</span> <span class="n">out</span></div></div>
+
+
+<div class="viewcode-block" id="AgentWithSimplePolicy"><a class="viewcode-back" href="../../../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">AgentWithSimplePolicy</span><span class="p">(</span><span class="n">Agent</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Interface for agents whose policy is a function of observations only.</span>
+
+<span class="sd">    Requires a :meth:`policy` method, and a simple evaluation method (Monte-Carlo policy evaluation).</span>
+
+<span class="sd">    The :meth:`policy` method takes an observation as input and returns an action.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        | 1 - Abstract Class : cannot be instantiated. The abstract methods have to be Overwritten by the &#39;inherited class&#39; agent.</span>
+<span class="sd">        | 2 - Classes that implements this interface can send `**kwargs` to initiate :code:`Agent.__init__()` (:class:`~rlberry.agents.Agent`), but the keys must match the parameters.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    env : gymnasium.Env or tuple (constructor, kwargs)</span>
+<span class="sd">        Environment used to fit the agent.</span>
+<span class="sd">    eval_env : gymnasium.Env or tuple (constructor, kwargs)</span>
+<span class="sd">        Environment on which to evaluate the agent. If None, copied from env.</span>
+<span class="sd">    copy_env : bool</span>
+<span class="sd">        If true, makes a deep copy of the environment.</span>
+<span class="sd">    compress_pickle : bool</span>
+<span class="sd">        If true, compress the save files using bz2.</span>
+<span class="sd">    seeder : :class:`~rlberry.seeding.seeder.Seeder`, int, or None</span>
+<span class="sd">        Seeder/seed for random number generation.</span>
+<span class="sd">    output_dir : str or Path</span>
+<span class="sd">        Directory that the agent can use to store data.</span>
+<span class="sd">    _execution_metadata : ExecutionMetadata, optional</span>
+<span class="sd">        Extra information about agent execution (e.g. about which is the process id where the agent is running).</span>
+<span class="sd">        Used by :class:`~rlberry.manager.ExperimentManager`.</span>
+<span class="sd">    _default_writer_kwargs : dict, optional</span>
+<span class="sd">        Parameters to initialize :class:`~rlberry.utils.writers.DefaultWriter` (attribute self.writer).</span>
+<span class="sd">        Used by :class:`~rlberry.manager.ExperimentManager`.</span>
+<span class="sd">    _thread_shared_data : dict, optional</span>
+<span class="sd">        Used by :class:`~rlberry.manager.ExperimentManager` to share data across Agent instances created in different threads.</span>
+<span class="sd">    **kwargs : dict</span>
+<span class="sd">        Classes that implement this interface must send ``**kwargs``</span>
+<span class="sd">        to :code:`AgentWithSimplePolicy.__init__()`.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : string</span>
+<span class="sd">        Agent identifier (not necessarily unique).</span>
+<span class="sd">    env : :class:`gymnasium.Env` or tuple (constructor, kwargs)</span>
+<span class="sd">        Environment on which to train the agent.</span>
+<span class="sd">    eval_env : :class:`gymnasium.Env` or tuple (constructor, kwargs)</span>
+<span class="sd">        Environment on which to evaluate the agent. If None, copied from env.</span>
+<span class="sd">    writer : object, default: None</span>
+<span class="sd">        Writer object to log the output(e.g. tensorboard SummaryWriter).</span>
+<span class="sd">    seeder : :class:`~rlberry.seeding.seeder.Seeder`, int, or None</span>
+<span class="sd">        Seeder/seed for random number generation.</span>
+<span class="sd">    rng : :class:`numpy.random._generator.Generator`</span>
+<span class="sd">        Random number generator. If you use random numbers in your agent, this</span>
+<span class="sd">        attribute must be used in order to ensure reproducibility. See `numpy&#39;s</span>
+<span class="sd">        documentation &lt;https://numpy.org/doc/stable/reference/random/generator.html&gt;`_.</span>
+<span class="sd">    output_dir : str or Path</span>
+<span class="sd">        Directory that the agent can use to store data.</span>
+<span class="sd">    unique_id : str</span>
+<span class="sd">        Unique identifier for the agent instance. Can be used, for example,</span>
+<span class="sd">        to create files/directories for the agent to log data safely..</span>
+<span class="sd">    thread_shared_data : dict</span>
+<span class="sd">        Data shared by agent instances among different threads.</span>
+<span class="sd">    writer_extra (through class Agent) : str in {&quot;reward&quot;, &quot;action&quot;, &quot;action_and_reward&quot;},</span>
+<span class="sd">        Scalar that will be recorded in the writer.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; class RandomAgent(AgentWithSimplePolicy):</span>
+<span class="sd">    &gt;&gt;&gt;     name = &quot;RandomAgent&quot;</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt;     def __init__(self, env, **kwargs):</span>
+<span class="sd">    &gt;&gt;&gt;         AgentWithSimplePolicy.__init__(self, env, **kwargs)</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt;         def fit(self, budget=100, **kwargs):</span>
+<span class="sd">    &gt;&gt;&gt;             observation,info = self.env.reset()</span>
+<span class="sd">    &gt;&gt;&gt;             for ep in range(budget):</span>
+<span class="sd">    &gt;&gt;&gt;                 action = self.policy(observation)</span>
+<span class="sd">    &gt;&gt;&gt;                 observation, reward, terminated, truncated, info = self.env.step(action)</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt;         def policy(self, observation):</span>
+<span class="sd">    &gt;&gt;&gt;             return self.env.action_space.sample()  # choose an action at random</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AgentWithSimplePolicy.policy"><a class="viewcode-back" href="../../../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy.policy">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">policy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Abstract method.</span>
+<span class="sd">        The policy function takes an observation from the environment and returns an action.</span>
+<span class="sd">        The specific implementation of the policy function depends on the agent&#39;s learning algorithm</span>
+<span class="sd">        or strategy, which can be deterministic or stochastic.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        observation (any): An observation from the environment.</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        action (any): The action to be taken based on the provided observation.</span>
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The data type of &#39;observation&#39; and &#39;action&#39; can vary depending on the specific agent</span>
+<span class="sd">        and the environment it interacts with.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="AgentWithSimplePolicy.eval"><a class="viewcode-back" href="../../../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy.eval">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">eval_horizon</span><span class="o">=</span><span class="mi">10</span><span class="o">**</span><span class="mi">5</span><span class="p">,</span> <span class="n">n_simulations</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Monte-Carlo policy evaluation [1]_ method to estimate the mean discounted reward</span>
+<span class="sd">        using the current policy on the evaluation environment.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        eval_horizon : int, optional, default: 10**5</span>
+<span class="sd">            Maximum episode length, representing the horizon for each simulation.</span>
+<span class="sd">        n_simulations : int, optional, default: 10</span>
+<span class="sd">            Number of Monte Carlo simulations to perform for the evaluation.</span>
+<span class="sd">        gamma : float, optional, default: 1.0</span>
+<span class="sd">            Discount factor for future rewards.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The mean value over &#39;n_simulations&#39; of the sum of rewards obtained in each simulation.</span>
+
+<span class="sd">        References</span>
+<span class="sd">        ----------</span>
+<span class="sd">        .. [1] Sutton, R. S., &amp; Barto, A. G. (2018). Reinforcement Learning: An Introduction.</span>
+<span class="sd">            MIT Press.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">episode_rewards</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_simulations</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">sim</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_simulations</span><span class="p">):</span>
+            <span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval_env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+            <span class="n">tt</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">while</span> <span class="n">tt</span> <span class="o">&lt;</span> <span class="n">eval_horizon</span><span class="p">:</span>
+                <span class="n">action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span>
+                <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval_env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span>
+                    <span class="n">action</span>
+                <span class="p">)</span>
+                <span class="n">done</span> <span class="o">=</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span>
+                <span class="n">episode_rewards</span><span class="p">[</span><span class="n">sim</span><span class="p">]</span> <span class="o">+=</span> <span class="n">reward</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">tt</span><span class="p">)</span>
+                <span class="n">tt</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">done</span><span class="p">:</span>
+                    <span class="k">break</span>
+        <span class="k">return</span> <span class="n">episode_rewards</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span></div></div>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">AgentTorch</span><span class="p">(</span><span class="n">Agent</span><span class="p">):</span>
+    <span class="c1"># Need a specific save and load to manage torch.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract Class to inherit for torch agents.</span>
+
+<span class="sd">    This class use the &#39;torch&#39; functions to save/load agents.</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">        | 1 - Abstract Class : cannot be instantiated. The abstract methods (from Agent) have to be Overwritten by the &#39;inherited class&#39; agent.</span>
+<span class="sd">        | 2 - Classes that implements this interface can send `**kwargs` to initiate :code:`Agent.__init__()`(:class:`~rlberry.agents.Agent`), but the keys must match the parameters.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    env : gymnasium.Env or tuple (constructor, kwargs)</span>
+<span class="sd">        Environment used to fit the agent.</span>
+<span class="sd">    eval_env : gymnasium.Env or tuple (constructor, kwargs)</span>
+<span class="sd">        Environment on which to evaluate the agent. If None, copied from env.</span>
+<span class="sd">    copy_env : bool</span>
+<span class="sd">        If true, makes a deep copy of the environment.</span>
+<span class="sd">    compress_pickle : bool</span>
+<span class="sd">        If true, compress the save files using bz2.</span>
+<span class="sd">    seeder : :class:`~rlberry.seeding.seeder.Seeder`, int, or None</span>
+<span class="sd">        Seeder/seed for random number generation.</span>
+<span class="sd">    output_dir : str or Path</span>
+<span class="sd">        Directory that the agent can use to store data.</span>
+<span class="sd">    _execution_metadata : ExecutionMetadata, optional</span>
+<span class="sd">        Extra information about agent execution (e.g. about which is the process id where the agent is running).</span>
+<span class="sd">        Used by :class:`~rlberry.manager.ExperimentManager`.</span>
+<span class="sd">    _default_writer_kwargs : dict, optional</span>
+<span class="sd">        Parameters to initialize :class:`~rlberry.utils.writers.DefaultWriter` (attribute self.writer).</span>
+<span class="sd">        Used by :class:`~rlberry.manager.ExperimentManager`.</span>
+<span class="sd">    _thread_shared_data : dict, optional</span>
+<span class="sd">        Used by :class:`~rlberry.manager.ExperimentManager` to share data across Agent</span>
+<span class="sd">        instances created in different threads.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : string</span>
+<span class="sd">        Agent identifier (not necessarily unique).</span>
+<span class="sd">    env : :class:`gymnasium.Env` or tuple (constructor, kwargs)</span>
+<span class="sd">        Environment on which to train the agent.</span>
+<span class="sd">    eval_env : :class:`gymnasium.Env` or tuple (constructor, kwargs)</span>
+<span class="sd">        Environment on which to evaluate the agent. If None, copied from env.</span>
+<span class="sd">    writer : object, default: None</span>
+<span class="sd">        Writer object (e.g. tensorboard SummaryWriter).</span>
+<span class="sd">    seeder : :class:`~rlberry.seeding.seeder.Seeder`, int, or None</span>
+<span class="sd">        Seeder/seed for random number generation.</span>
+<span class="sd">    rng : :class:`numpy.random._generator.Generator`</span>
+<span class="sd">        Random number generator. If you use random numbers in your agent, this</span>
+<span class="sd">        attribute must be used in order to ensure reproducibility. See `numpy&#39;s</span>
+<span class="sd">        documentation &lt;https://numpy.org/doc/stable/reference/random/generator.html&gt;`_.</span>
+<span class="sd">    output_dir : str or Path</span>
+<span class="sd">        Directory that the agent can use to store data.</span>
+<span class="sd">    unique_id : str</span>
+<span class="sd">        Unique identifier for the agent instance. Can be used, for example,</span>
+<span class="sd">        to create files/directories for the agent to log data safely.</span>
+<span class="sd">    thread_shared_data : dict</span>
+<span class="sd">        Data shared by agent instances among different threads.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="c1"># Overwrite the &#39;save&#39; method to manage CPU and GPU with torch agent</span>
+        <span class="c1"># If overridden, the load() method must also be override.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        ----- documentation from original save -----</span>
+
+<span class="sd">        Save agent object. By default, the agent is pickled.</span>
+
+<span class="sd">        Before saving, consider setting writer to None if it can&#39;t be pickled (tensorboard writers</span>
+<span class="sd">        keep references to files and cannot be pickled).</span>
+
+<span class="sd">        Note: dill[1]_ is used when pickle fails</span>
+<span class="sd">        (see https://stackoverflow.com/a/25353243, for instance).</span>
+<span class="sd">        Pickle is tried first, since it is faster.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        filename: Path or str</span>
+<span class="sd">            File in which to save the Agent.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pathlib.Path</span>
+<span class="sd">            If save() is successful, a Path object corresponding to the filename is returned.</span>
+<span class="sd">            Otherwise, None is returned.</span>
+
+<span class="sd">        .. warning:: The returned filename might differ from the input filename: For instance,</span>
+<span class="sd">        the method can append the correct suffix to the name before saving.</span>
+
+<span class="sd">        References</span>
+<span class="sd">        ----------</span>
+<span class="sd">        .. [1] https://github.com/uqfoundation/dill</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+
+        <span class="c1"># remove writer if not pickleable</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">dill</span><span class="o">.</span><span class="n">pickles</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">writer</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_writer</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="c1"># save</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">&quot;.pickle&quot;</span><span class="p">)</span>
+        <span class="n">filename</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">dict_to_save</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">compress_pickle</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">filename</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ff</span><span class="p">:</span>
+                    <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">dict_to_save</span><span class="p">,</span> <span class="n">ff</span><span class="p">,</span> <span class="n">pickle</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">bz2</span><span class="o">.</span><span class="n">BZ2File</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ff</span><span class="p">:</span>
+                    <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">dict_to_save</span><span class="p">,</span> <span class="n">ff</span><span class="p">,</span> <span class="n">cloudpickle</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">compress_pickle</span><span class="p">:</span>
+                    <span class="k">with</span> <span class="n">filename</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ff</span><span class="p">:</span>
+                        <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">dict_to_save</span><span class="p">,</span> <span class="n">ff</span><span class="p">,</span> <span class="n">dill</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">with</span> <span class="n">bz2</span><span class="o">.</span><span class="n">BZ2File</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ff</span><span class="p">:</span>
+                        <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">dict_to_save</span><span class="p">,</span> <span class="n">ff</span><span class="p">,</span> <span class="n">dill</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Agent instance cannot be pickled: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">))</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="n">filename</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># Overwrite &#39;load&#39; method to manage CPU vs GPU with torch agent.</span>
+        <span class="c1"># If overridden, save() method must also be override.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        ----- documentation from original load -----</span>
+<span class="sd">        Load agent object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        filename: str</span>
+<span class="sd">            Path to the object (pickle) to load.</span>
+<span class="sd">        **kwargs: Keyword Arguments</span>
+<span class="sd">            Arguments required by the __init__ method of the Agent subclass to load.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.utils.torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">choose_device</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+
+        <span class="n">device_str</span> <span class="o">=</span> <span class="s2">&quot;cuda:best&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;device&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">device_str</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;device&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">device</span> <span class="o">=</span> <span class="n">choose_device</span><span class="p">(</span><span class="n">device_str</span><span class="p">)</span>
+
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">&quot;.pickle&quot;</span><span class="p">)</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">obj</span><span class="o">.</span><span class="n">compress_pickle</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">filename</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ff</span><span class="p">:</span>
+                    <span class="n">tmp_dict</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ff</span><span class="p">,</span> <span class="n">map_location</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">pickle_module</span><span class="o">=</span><span class="n">pickle</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">bz2</span><span class="o">.</span><span class="n">BZ2File</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ff</span><span class="p">:</span>
+                    <span class="n">tmp_dict</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
+                        <span class="n">ff</span><span class="p">,</span> <span class="n">map_location</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">pickle_module</span><span class="o">=</span><span class="n">cloudpickle</span>
+                    <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">obj</span><span class="o">.</span><span class="n">compress_pickle</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">filename</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ff</span><span class="p">:</span>
+                    <span class="n">tmp_dict</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ff</span><span class="p">,</span> <span class="n">map_location</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">pickle_module</span><span class="o">=</span><span class="n">dill</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">bz2</span><span class="o">.</span><span class="n">BZ2File</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ff</span><span class="p">:</span>
+                    <span class="n">tmp_dict</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ff</span><span class="p">,</span> <span class="n">map_location</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">pickle_module</span><span class="o">=</span><span class="n">dill</span><span class="p">)</span>
+
+        <span class="n">obj</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">obj</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">tmp_dict</span><span class="p">)</span>
+
+        <span class="n">obj</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">device</span>
+        <span class="k">return</span> <span class="n">obj</span>
+
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.envs</span><span class="w"> </span><span class="kn">import</span> <span class="n">Wrapper</span>
+
+
+<span class="c1"># copy of the WriterWrapper class, but in private</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_WriterWrapper</span><span class="p">(</span><span class="n">Wrapper</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper for environment to automatically record reward or action in writer.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    env : gymnasium.Env or tuple (constructor, kwargs)</span>
+<span class="sd">        Environment used to fit the agent.</span>
+
+<span class="sd">    writer : object, default: None</span>
+<span class="sd">        Writer object (e.g. tensorboard SummaryWriter).</span>
+
+<span class="sd">    write_scalar : string in {&quot;reward&quot;, &quot;action&quot;, &quot;action_and_reward&quot;},</span>
+<span class="sd">                    default = &quot;reward&quot;</span>
+<span class="sd">        Scalar that will be recorded in the writer.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">writer</span><span class="p">,</span> <span class="n">write_scalar</span><span class="o">=</span><span class="s2">&quot;reward&quot;</span><span class="p">):</span>
+        <span class="n">Wrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">writer</span> <span class="o">=</span> <span class="n">writer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write_scalar</span> <span class="o">=</span> <span class="n">write_scalar</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">iteration_</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">iteration_</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">write_scalar</span> <span class="o">==</span> <span class="s2">&quot;reward&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">writer</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span><span class="s2">&quot;reward&quot;</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">iteration_</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">write_scalar</span> <span class="o">==</span> <span class="s2">&quot;action&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">writer</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span><span class="s2">&quot;action&quot;</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">iteration_</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">write_scalar</span> <span class="o">==</span> <span class="s2">&quot;action_and_reward&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">writer</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span><span class="s2">&quot;reward&quot;</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">iteration_</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">writer</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span><span class="s2">&quot;action&quot;</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">iteration_</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;write_scalar </span><span class="si">%s</span><span class="s2"> is not known&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">write_scalar</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span>
+</pre></div>
+
+      </div>
+    <div class="container">
+      <footer class="sk-content-footer">
+            &copy; 2023, rlberry team.
+      </footer>
+    </div>
+  </div>
+</div>
+<script src="../../../_static/js/vendor/bootstrap.min.js"></script>
+
+<script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-22606712-2', 'auto');
+    ga('set', 'anonymizeIp', true);
+    ga('send', 'pageview');
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+<script>
+$(document).ready(function() {
+    /* Add a [>>>] button on the top-right corner of code samples to hide
+     * the >>> and ... prompts and the output and thus make the code
+     * copyable. */
+    var div = $('.highlight-python .highlight,' +
+                '.highlight-python3 .highlight,' +
+                '.highlight-pycon .highlight,' +
+		'.highlight-default .highlight')
+    var pre = div.find('pre');
+
+    // get the styles from the current theme
+    pre.parent().parent().css('position', 'relative');
+    var hide_text = 'Hide prompts and outputs';
+    var show_text = 'Show prompts and outputs';
+
+    // create and add the button to all the code blocks that contain >>>
+    div.each(function(index) {
+        var jthis = $(this);
+        if (jthis.find('.gp').length > 0) {
+            var button = $('<span class="copybutton">&gt;&gt;&gt;</span>');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+            jthis.prepend(button);
+        }
+        // tracebacks (.gt) contain bare text elements that need to be
+        // wrapped in a span to work with .nextUntil() (see later)
+        jthis.find('pre:has(.gt)').contents().filter(function() {
+            return ((this.nodeType == 3) && (this.data.trim().length > 0));
+        }).wrap('<span>');
+    });
+
+    // define the behavior of the button when it's clicked
+    $('.copybutton').click(function(e){
+        e.preventDefault();
+        var button = $(this);
+        if (button.data('hidden') === 'false') {
+            // hide the code output
+            button.parent().find('.go, .gp, .gt').hide();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'hidden');
+            button.css('text-decoration', 'line-through');
+            button.attr('title', show_text);
+            button.data('hidden', 'true');
+        } else {
+            // show the code output
+            button.parent().find('.go, .gp, .gt').show();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'visible');
+            button.css('text-decoration', 'none');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+        }
+    });
+
+	/*** Add permalink buttons next to glossary terms ***/
+	$('dl.glossary > dt[id]').append(function() {
+		return ('<a class="headerlink" href="#' +
+			    this.getAttribute('id') +
+			    '" title="Permalink to this term">¶</a>');
+	});
+  /*** Hide navbar when scrolling down ***/
+  // Returns true when headerlink target matches hash in url
+  (function() {
+    hashTargetOnTop = function() {
+        var hash = window.location.hash;
+        if ( hash.length < 2 ) { return false; }
+
+        var target = document.getElementById( hash.slice(1) );
+        if ( target === null ) { return false; }
+
+        var top = target.getBoundingClientRect().top;
+        return (top < 2) && (top > -2);
+    };
+
+    // Hide navbar on load if hash target is on top
+    var navBar = document.getElementById("navbar");
+    var navBarToggler = document.getElementById("sk-navbar-toggler");
+    var navBarHeightHidden = "-" + navBar.getBoundingClientRect().height + "px";
+    var $window = $(window);
+
+    hideNavBar = function() {
+        navBar.style.top = navBarHeightHidden;
+    };
+
+    showNavBar = function() {
+        navBar.style.top = "0";
+    }
+
+    if (hashTargetOnTop()) {
+        hideNavBar()
+    }
+
+    var prevScrollpos = window.pageYOffset;
+    hideOnScroll = function(lastScrollTop) {
+        if (($window.width() < 768) && (navBarToggler.getAttribute("aria-expanded") === 'true')) {
+            return;
+        }
+        if (lastScrollTop > 2 && (prevScrollpos <= lastScrollTop) || hashTargetOnTop()){
+            hideNavBar()
+        } else {
+            showNavBar()
+        }
+        prevScrollpos = lastScrollTop;
+    };
+
+    /*** high performance scroll event listener***/
+    var raf = window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        window.oRequestAnimationFrame;
+    var lastScrollTop = $window.scrollTop();
+
+    if (raf) {
+        loop();
+    }
+
+    function loop() {
+        var scrollTop = $window.scrollTop();
+        if (lastScrollTop === scrollTop) {
+            raf(loop);
+            return;
+        } else {
+            lastScrollTop = scrollTop;
+            hideOnScroll(lastScrollTop);
+            raf(loop);
+        }
+    }
+  })();
+});
+
+</script>
+    
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    
+</body>
+</html>

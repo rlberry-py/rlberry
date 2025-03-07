@@ -1,0 +1,12 @@
+﻿:mod:`rlberry.utils`.check_fit_additive
+====================================================
+
+.. currentmodule:: rlberry.utils
+
+.. autofunction:: check_fit_additive
+
+.. include:: rlberry.utils.check_fit_additive.examples
+
+.. raw:: html
+
+    <div class="clearer"></div>

@@ -1,0 +1,473 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  
+  <title>How to contribute &mdash; rlberry 0.7.3.post16.dev0+8710009 documentation</title>
+  
+  <link rel="canonical" href="https://rlberry-py.github.io/rlberry/beginner_dev_guide.html" />
+
+  
+
+  <link rel="stylesheet" href="_static/css/vendor/bootstrap.min.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/sg_gallery.css" type="text/css" />
+  <link rel="stylesheet" href="_static/sg_gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="_static/sg_gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="_static/sg_gallery-rendered-html.css" type="text/css" />
+  <link rel="stylesheet" href="_static/sphinx-design.4cbf315f70debaebd550c87a6162cf0f.min.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+<script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+<script src="_static/js/vendor/jquery-3.6.3.slim.min.js"></script> 
+</head>
+<body>
+
+
+<nav id="navbar" class="sk-docs-navbar navbar navbar-expand-md navbar-light bg-light py-0">
+  <div class="container-fluid sk-docs-container px-0">
+    <button
+      id="sk-navbar-toggler"
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="sk-navbar-collapse collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="index.html">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="installation.html">Install</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="user_guide.html">User Guide</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="auto_examples/index.html">Examples</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="api.html">API</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="changelog.html">Changelog</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="about.html">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="https://github.com/rlberry-py/rlberry">GitHub</a>
+        </li>
+        <!--
+        <li class="nav-item dropdown nav-more-item-dropdown">
+          <a class="sk-nav-link nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">More</a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          </div>
+        </li>-->
+    </ul>
+      <div id="searchbox" role="search">
+          <div class="searchformwrapper">
+            <form action="https://duckduckgo.com/">
+            <input type="hidden" id="sites" name="sites" value="https://rlberry-py.github.io/rlberry/">
+            <input type="search" placeholder="Search &hellip;" value="" name="q" />
+            <input class="sk-search-text-btn" type="submit" value="Go" /></form>
+
+          </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="d-flex" id="sk-doc-wrapper">
+    <input type="checkbox" name="sk-toggle-checkbox" id="sk-toggle-checkbox">
+    <label id="sk-sidemenu-toggle" class="sk-btn-toggle-toc btn sk-btn-primary" for="sk-toggle-checkbox">Toggle Menu</label>
+    <div id="sk-sidebar-wrapper" class="border-right">
+      <div class="sk-sidebar-toc-wrapper">
+        <div class="sk-sidebar-toc-logo">
+        </div>
+	<br>
+        <div class="alert alert-warning p-1 mb-2" role="alert">
+
+          <p class="text-center mb-0">
+          rlberry 0.7.3.post16.dev0+8710009<br/>
+          <a href="versions.html">Other versions</a>
+          </p>
+
+        </div>
+            <div class="sk-sidebar-toc">
+              <ul>
+<li><a class="reference internal" href="#">How to contribute</a><ul>
+<li><a class="reference internal" href="#forking-and-installing-rl-berry">Forking and installing rl-berry</a></li>
+<li><a class="reference internal" href="#pre-commit-optional">Pre-commit (optional)</a></li>
+<li><a class="reference internal" href="#pull-request-checklist">Pull request checklist</a></li>
+<li><a class="reference internal" href="#continuous-integration-ci">Continuous integration (CI)</a></li>
+<li><a class="reference internal" href="#building-examples">Building examples</a></li>
+<li><a class="reference internal" href="#markdown-and-link-between-documentation-pages">Markdown and link between documentation pages.</a></li>
+<li><a class="reference internal" href="#have-a-video-for-an-example-in-the-documentation">Have a video for an example in the documentation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#acknowledgements">Acknowledgements</a></li>
+</ul>
+
+            </div>
+      </div>
+    </div>
+    <div id="sk-page-content-wrapper">
+      <div class="sk-page-content container-fluid body px-md-3" role="main">
+        
+  <section id="how-to-contribute">
+<span id="dev-guide"></span><h1>How to contribute<a class="headerlink" href="#how-to-contribute" title="Permalink to this heading">¶</a></h1>
+<section id="forking-and-installing-rl-berry">
+<h2>Forking and installing rl-berry<a class="headerlink" href="#forking-and-installing-rl-berry" title="Permalink to this heading">¶</a></h2>
+<p>The preferred way to contribute to rlberry is to fork the main repository on GitHub, then submit a “pull request” (PR).</p>
+<p>In the first few steps, we explain how to locally install rlberry, and how to set up your git repository:</p>
+<ol class="arabic">
+<li><p><a class="reference external" href="https://github.com/join">Create an account</a> on GitHub if you do not already have one.</p></li>
+<li><p>Fork the <a class="reference external" href="https://github.com/rlberry-py/rlberry">project repository</a>: click on the ‘Fork’ button near the top of the page. This creates a copy of the code under your account on the GitHub user account. For more details on how to fork a repository see <a class="reference external" href="https://help.github.com/articles/fork-a-repo/">this guide</a>.</p></li>
+<li><p>Clone your fork of rlberry repo from your GitHub account to your local disk:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/YOUR_LOGIN/rlberry<span class="w">  </span><span class="c1"># add --depth 1 if your connection is slow</span>
+<span class="nb">cd</span><span class="w"> </span>rlberry
+</pre></div>
+</div>
+</li>
+<li><p>Install poetry (a better version of pip needed to dev on the package). Please refer to the <a class="reference external" href="https://python-poetry.org/docs/basic-usage/">doc</a> if needed.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-sSL<span class="w"> </span>https://install.python-poetry.org<span class="w"> </span><span class="p">|</span><span class="w"> </span>python3<span class="w"> </span>-
+</pre></div>
+</div>
+</li>
+<li><p>Install the development dependencies and activate the venv</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>sync<span class="w"> </span>--with<span class="w"> </span>dev,doc,torch,extras
+poetry<span class="w"> </span>shell<span class="w"> </span><span class="c1">#this will activate the venv, all the following commands will be executed in it.</span>
+</pre></div>
+</div>
+<p>alternatively you can also use</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>sync<span class="w"> </span>--with<span class="w"> </span>dev,doc,torch,extras
+poetry<span class="w"> </span>run<span class="w"> </span>yourcommandhere<span class="w"> </span><span class="c1">#e.g. poetry run python script.py</span>
+</pre></div>
+</div>
+</li>
+<li><p>Add the upstream remote. This saves a reference to the main rlberry repository, which you can use to keep your repository synchronized with the latest changes:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>remote<span class="w"> </span>add<span class="w"> </span>upstream<span class="w"> </span>https://github.com/rlberry-py/rlberry
+</pre></div>
+</div>
+<p>You should now have a working installation of rlberry, and your git repository properly configured. The next steps now describe the process of modifying code and submitting a PR:</p>
+</li>
+<li><p>Synchronize your main branch with the upstream/main branch, more details on <a class="reference external" href="https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/syncing-a-fork">GitHub Docs</a>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>checkout<span class="w"> </span>main
+git<span class="w"> </span>fetch<span class="w"> </span>upstream
+git<span class="w"> </span>merge<span class="w"> </span>upstream/main
+</pre></div>
+</div>
+</li>
+<li><p>Create a feature branch to hold your development changes:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>my_feature
+</pre></div>
+</div>
+<p>and start making changes. Always use a feature branch. It’s good practice to never work on the main branch!</p>
+</li>
+<li><p>Develop the feature on your feature branch on your computer, using Git to do the version control. When you’re done editing, add changed files using git add and then git commit:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>add<span class="w"> </span>modified_files
+git<span class="w"> </span>commit
+</pre></div>
+</div>
+<p>to record your changes in Git, then push the changes to your GitHub account with:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>push<span class="w"> </span>-u<span class="w"> </span>origin<span class="w"> </span>my_feature
+</pre></div>
+</div>
+</li>
+<li><p>Follow <a class="reference external" href="https://help.github.com/articles/creating-a-pull-request-from-a-fork">these</a> instructions to create a pull request from your fork. This will send an email to the committers.</p></li>
+</ol>
+<div class="admonition-note admonition">
+<p class="admonition-title">Note</p>
+<p>It is often helpful to keep your local feature branch synchronized with the latest changes of the main rlberry repository:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>fetch<span class="w"> </span>upstream
+git<span class="w"> </span>merge<span class="w"> </span>upstream/main
+</pre></div>
+</div>
+<p>Subsequently, you might need to solve the conflicts. You can refer to the <a class="reference external" href="https://help.github.com/articles/resolving-a-merge-conflict-using-the-command-line/">Git documentation related to resolving merge conflict using the command line</a>. You may also want to use</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>rebase<span class="w"> </span>upstream/main
+</pre></div>
+</div>
+<p>to have the same commit has the main repo.</p>
+</div>
+</section>
+<section id="pre-commit-optional">
+<h2>Pre-commit (optional)<a class="headerlink" href="#pre-commit-optional" title="Permalink to this heading">¶</a></h2>
+<p>You may want to use <a class="reference external" href="https://pre-commit.com/">pre-commit</a> to check some issues
+with your code. pre-commit is a software that will automatically run every time you
+do <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">commit</span></code> and it will do some style changes (black, flake8…) before the commit.</p>
+<p>To use, do</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">pre</span><span class="o">-</span><span class="n">commit</span>
+</pre></div>
+</div>
+<p>Then, in the rlberry folder,</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">pre</span><span class="o">-</span><span class="n">commit</span> <span class="n">install</span>
+</pre></div>
+</div>
+<p>and then you are done. When next you do a commit, some checks will be run on the
+changes you made and if your code need some reformatting, it will automatically
+be done for you, you will only need to recommit to add the changes made by pre-commit.
+Once pre-commit is installed, if you want to skip it you can with
+<code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">commit</span> <span class="pre">.</span> <span class="pre">-m</span> <span class="pre">'quick</span> <span class="pre">fix'</span> <span class="pre">--no-verify</span></code>.</p>
+<p>It can also be useful to use <code class="docutils literal notranslate"><span class="pre">autopep8</span> <span class="pre">-a</span> <span class="pre">-a</span> <span class="pre">-i</span> <span class="pre">yourfile</span></code> to fix flake8 issues.</p>
+</section>
+<section id="pull-request-checklist">
+<h2>Pull request checklist<a class="headerlink" href="#pull-request-checklist" title="Permalink to this heading">¶</a></h2>
+<p>Before a PR can be merged, it needs to be approved. Please prefix the title of your pull request with [MRG] if the contribution is complete and should be subjected to a detailed review. An incomplete contribution – where you expect to do more work before receiving a full review – should be prefixed [WIP] (to indicate a work in progress) and changed to [MRG] when it matures. WIPs may be useful to: indicate you are working on something to avoid duplicated work, request broad review of functionality or API, or seek collaborators. WIPs often benefit from the inclusion of a <a class="reference external" href="https://github.com/blog/1375-task-lists-in-gfm-issues-pulls-comments">task list</a> in the PR description.</p>
+<ol class="arabic">
+<li><p>Give your PR a helpful title</p></li>
+<li><p>Make sure your PR passes the test. You can check this by typing <code class="docutils literal notranslate"><span class="pre">pytest</span></code> from the main folder <code class="docutils literal notranslate"><span class="pre">rlberry</span></code>, or you can run a particular test by running for instance <code class="docutils literal notranslate"><span class="pre">pytest</span> <span class="pre">rlberry/agents/tests/</span></code> for instance, replacing <code class="docutils literal notranslate"><span class="pre">rlberry/agents/tests/</span></code> by the folder of the test you want to run.</p></li>
+<li><p>Make sure your code is properly commented and documented, and make sure the documentation renders properly. To build the documentation, please refer to our <a class="reference internal" href="contributing.html#documentation"><span class="std std-ref">Documentation guidelines</span></a>. The CI will also build the docs: please refer to Generated documentation at PR time.</p></li>
+<li><p>Tests are necessary for enhancements to be accepted. You must include tests to verify the correct behavior of the fix or feature.</p></li>
+<li><p>Run black to auto-format your code.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>black<span class="w"> </span>.
+</pre></div>
+</div>
+</li>
+<li><p>Make sure that your PR does not add PEP8 violations. To check the code that you changed, you can use</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>diff<span class="w"> </span>upstream/main<span class="w"> </span>-u<span class="w"> </span>--<span class="w"> </span><span class="s2">&quot;*.py&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>flake8<span class="w"> </span>--diff
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="continuous-integration-ci">
+<h2>Continuous integration (CI)<a class="headerlink" href="#continuous-integration-ci" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Azure pipelines are used for testing rlberry on Linux, Mac and Windows, with different dependencies and settings.</p></li>
+<li><p>github page are used to build the docs for viewing.</p></li>
+</ul>
+<p>Please note that if you want to skip the CI (azure pipeline is long to run), use <code class="docutils literal notranslate"><span class="pre">[ci</span> <span class="pre">skip]</span></code> in the description of the commit.</p>
+</section>
+<section id="building-examples">
+<h2>Building examples<a class="headerlink" href="#building-examples" title="Permalink to this heading">¶</a></h2>
+<p>The examples gallery is constructed using sphinx-gallery, see its <a class="reference external" href="https://sphinx-gallery.readthedocs.io/en/latest/">documentation</a> for more information.</p>
+</section>
+<section id="markdown-and-link-between-documentation-pages">
+<h2>Markdown and link between documentation pages.<a class="headerlink" href="#markdown-and-link-between-documentation-pages" title="Permalink to this heading">¶</a></h2>
+<p>The documentation is done using sphinx, each article can be written either in reStructuredText (rst) format or in markdown. For markdown support, we use myst-parser (see its <a class="reference external" href="https://myst-parser.readthedocs.io/en/latest/using/intro.html">documentation</a>). The examples and docstrings on the other hand use only rst.</p>
+<p>If you need to cross-reference your documentations, you can use
+for rst:</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="o">..</span> <span class="n">_nameref</span><span class="p">:</span>
+
+<span class="n">some</span> <span class="n">text</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>and for markdown:</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">namered</span><span class="p">)</span><span class="o">=</span>
+
+<span class="n">some</span> <span class="n">text</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>If you want to look at some examples, you can look at docs/index.rst file for rst file example and the present file (contributing.md) for example of markdown syntax.</p>
+</section>
+<section id="have-a-video-for-an-example-in-the-documentation">
+<h2>Have a video for an example in the documentation<a class="headerlink" href="#have-a-video-for-an-example-in-the-documentation" title="Permalink to this heading">¶</a></h2>
+<p>To generate the videos for the examples, cd to the docs folder  and then use <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">video</span></code>.</p>
+<p>Here is a template of the python script of a video example:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">===============</span>
+<span class="s2">Some good title</span>
+<span class="s2">===============</span>
+<span class="s2">Some explanation text of what you are doing</span>
+
+<span class="s2">.. video:: ../video_plot_my_experiment.mp4</span>
+<span class="s2">   :width: 600</span>
+
+<span class="s2">.. In the path for the video described before, use an additional &quot;</span>..<span class="s2">&quot; if your</span>
+<span class="s2">    experiment is in a sub-folder of the examples folder.</span>
+<span class="s2">&quot;&quot;&quot;</span>
+<span class="c1"># sphinx_gallery_thumbnail_path = &#39;thumbnails/video_plot_my_experiment.jpg&#39;</span>
+
+<span class="c1"># Write here the code that generates the video</span>
+
+
+<span class="c1"># Save the video</span>
+<span class="nv">video</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>env.save_video<span class="o">(</span><span class="s2">&quot;../docs/_video/video_plot_my_experiment.mp4&quot;</span>,<span class="w"> </span><span class="nv">framerate</span><span class="o">=</span><span class="m">10</span><span class="o">)</span>
+</pre></div>
+</div>
+<p>For a video to be automatically compiled with <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">video</span></code>, you must follow this
+template replacing the “my_experiment” with the name of your example. It may be
+useful to change the framerate in the last line of the code to have a faster or
+slower frame rate depending on your environment.</p>
+<p>After running <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">video</span></code>, you should have your video available in <code class="docutils literal notranslate"><span class="pre">docs/_video</span></code>
+you should add this video to the git repo with <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">add</span> <span class="pre">docs/_video/video_plot_my_experiment.mp4</span></code>
+and <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">add</span> <span class="pre">docs/thumbnails/video_plot_my_experiment.jpg</span></code> to add the associated thumbnail.</p>
+<p>Then just push the new examples, the mp4 and the jpg files, they should be included in the doc.</p>
+</section>
+</section>
+<section id="acknowledgements">
+<h1>Acknowledgements<a class="headerlink" href="#acknowledgements" title="Permalink to this heading">¶</a></h1>
+<p>Part of this page was copied from <a class="reference external" href="https://scikit-learn.org/dev/developers/contributing.html#documentation">scikit-learn contributing guideling</a>.</p>
+</section>
+
+
+      </div>
+    <div class="container">
+      <footer class="sk-content-footer">
+            &copy; 2023, rlberry team.
+          <a href="_sources/beginner_dev_guide.md.txt" rel="nofollow">Show this page source</a>
+      </footer>
+    </div>
+  </div>
+</div>
+<script src="_static/js/vendor/bootstrap.min.js"></script>
+
+<script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-22606712-2', 'auto');
+    ga('set', 'anonymizeIp', true);
+    ga('send', 'pageview');
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+<script>
+$(document).ready(function() {
+    /* Add a [>>>] button on the top-right corner of code samples to hide
+     * the >>> and ... prompts and the output and thus make the code
+     * copyable. */
+    var div = $('.highlight-python .highlight,' +
+                '.highlight-python3 .highlight,' +
+                '.highlight-pycon .highlight,' +
+		'.highlight-default .highlight')
+    var pre = div.find('pre');
+
+    // get the styles from the current theme
+    pre.parent().parent().css('position', 'relative');
+    var hide_text = 'Hide prompts and outputs';
+    var show_text = 'Show prompts and outputs';
+
+    // create and add the button to all the code blocks that contain >>>
+    div.each(function(index) {
+        var jthis = $(this);
+        if (jthis.find('.gp').length > 0) {
+            var button = $('<span class="copybutton">&gt;&gt;&gt;</span>');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+            jthis.prepend(button);
+        }
+        // tracebacks (.gt) contain bare text elements that need to be
+        // wrapped in a span to work with .nextUntil() (see later)
+        jthis.find('pre:has(.gt)').contents().filter(function() {
+            return ((this.nodeType == 3) && (this.data.trim().length > 0));
+        }).wrap('<span>');
+    });
+
+    // define the behavior of the button when it's clicked
+    $('.copybutton').click(function(e){
+        e.preventDefault();
+        var button = $(this);
+        if (button.data('hidden') === 'false') {
+            // hide the code output
+            button.parent().find('.go, .gp, .gt').hide();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'hidden');
+            button.css('text-decoration', 'line-through');
+            button.attr('title', show_text);
+            button.data('hidden', 'true');
+        } else {
+            // show the code output
+            button.parent().find('.go, .gp, .gt').show();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'visible');
+            button.css('text-decoration', 'none');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+        }
+    });
+
+	/*** Add permalink buttons next to glossary terms ***/
+	$('dl.glossary > dt[id]').append(function() {
+		return ('<a class="headerlink" href="#' +
+			    this.getAttribute('id') +
+			    '" title="Permalink to this term">¶</a>');
+	});
+  /*** Hide navbar when scrolling down ***/
+  // Returns true when headerlink target matches hash in url
+  (function() {
+    hashTargetOnTop = function() {
+        var hash = window.location.hash;
+        if ( hash.length < 2 ) { return false; }
+
+        var target = document.getElementById( hash.slice(1) );
+        if ( target === null ) { return false; }
+
+        var top = target.getBoundingClientRect().top;
+        return (top < 2) && (top > -2);
+    };
+
+    // Hide navbar on load if hash target is on top
+    var navBar = document.getElementById("navbar");
+    var navBarToggler = document.getElementById("sk-navbar-toggler");
+    var navBarHeightHidden = "-" + navBar.getBoundingClientRect().height + "px";
+    var $window = $(window);
+
+    hideNavBar = function() {
+        navBar.style.top = navBarHeightHidden;
+    };
+
+    showNavBar = function() {
+        navBar.style.top = "0";
+    }
+
+    if (hashTargetOnTop()) {
+        hideNavBar()
+    }
+
+    var prevScrollpos = window.pageYOffset;
+    hideOnScroll = function(lastScrollTop) {
+        if (($window.width() < 768) && (navBarToggler.getAttribute("aria-expanded") === 'true')) {
+            return;
+        }
+        if (lastScrollTop > 2 && (prevScrollpos <= lastScrollTop) || hashTargetOnTop()){
+            hideNavBar()
+        } else {
+            showNavBar()
+        }
+        prevScrollpos = lastScrollTop;
+    };
+
+    /*** high performance scroll event listener***/
+    var raf = window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        window.oRequestAnimationFrame;
+    var lastScrollTop = $window.scrollTop();
+
+    if (raf) {
+        loop();
+    }
+
+    function loop() {
+        var scrollTop = $window.scrollTop();
+        if (lastScrollTop === scrollTop) {
+            raf(loop);
+            return;
+        } else {
+            lastScrollTop = scrollTop;
+            hideOnScroll(lastScrollTop);
+            raf(loop);
+        }
+    }
+  })();
+});
+
+</script>
+    
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    
+</body>
+</html>

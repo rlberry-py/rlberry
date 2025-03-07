@@ -1,0 +1,12 @@
+﻿:mod:`rlberry.seeding.seeder`.Seeder
+===========================================
+
+.. currentmodule:: rlberry.seeding.seeder
+
+.. autoclass:: Seeder
+
+.. include:: rlberry.seeding.seeder.Seeder.examples
+
+.. raw:: html
+
+    <div class="clearer"></div>

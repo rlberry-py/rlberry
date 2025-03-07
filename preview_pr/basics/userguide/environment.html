@@ -1,0 +1,452 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  
+  <title>How to use an environment &mdash; rlberry 0.7.3.post16.dev0+8710009 documentation</title>
+  
+  <link rel="canonical" href="https://rlberry-py.github.io/rlberry/basics/userguide/environment.html" />
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/vendor/bootstrap.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sg_gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sg_gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sg_gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sphinx-design.4cbf315f70debaebd550c87a6162cf0f.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+<script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+<script src="../../_static/js/vendor/jquery-3.6.3.slim.min.js"></script> 
+</head>
+<body>
+
+
+<nav id="navbar" class="sk-docs-navbar navbar navbar-expand-md navbar-light bg-light py-0">
+  <div class="container-fluid sk-docs-container px-0">
+    <button
+      id="sk-navbar-toggler"
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="sk-navbar-collapse collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../index.html">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../installation.html">Install</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../user_guide.html">User Guide</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../auto_examples/index.html">Examples</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../api.html">API</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../changelog.html">Changelog</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../about.html">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="https://github.com/rlberry-py/rlberry">GitHub</a>
+        </li>
+        <!--
+        <li class="nav-item dropdown nav-more-item-dropdown">
+          <a class="sk-nav-link nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">More</a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          </div>
+        </li>-->
+    </ul>
+      <div id="searchbox" role="search">
+          <div class="searchformwrapper">
+            <form action="https://duckduckgo.com/">
+            <input type="hidden" id="sites" name="sites" value="https://rlberry-py.github.io/rlberry/">
+            <input type="search" placeholder="Search &hellip;" value="" name="q" />
+            <input class="sk-search-text-btn" type="submit" value="Go" /></form>
+
+          </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="d-flex" id="sk-doc-wrapper">
+    <input type="checkbox" name="sk-toggle-checkbox" id="sk-toggle-checkbox">
+    <label id="sk-sidemenu-toggle" class="sk-btn-toggle-toc btn sk-btn-primary" for="sk-toggle-checkbox">Toggle Menu</label>
+    <div id="sk-sidebar-wrapper" class="border-right">
+      <div class="sk-sidebar-toc-wrapper">
+        <div class="sk-sidebar-toc-logo">
+        </div>
+	<br>
+        <div class="alert alert-warning p-1 mb-2" role="alert">
+
+          <p class="text-center mb-0">
+          rlberry 0.7.3.post16.dev0+8710009<br/>
+          <a href="../../versions.html">Other versions</a>
+          </p>
+
+        </div>
+            <div class="sk-sidebar-toc">
+              <ul>
+<li><a class="reference internal" href="#">How to use an environment</a><ul>
+<li><a class="reference internal" href="#use-rlberry-environment">Use rlberry environment</a></li>
+<li><a class="reference internal" href="#use-gymnasium-environment">Use Gymnasium environment</a></li>
+<li><a class="reference internal" href="#use-atari-environment">Use Atari environment</a></li>
+<li><a class="reference internal" href="#create-your-own-environment">Create your own environment</a></li>
+</ul>
+</li>
+</ul>
+
+            </div>
+      </div>
+    </div>
+    <div id="sk-page-content-wrapper">
+      <div class="sk-page-content container-fluid body px-md-3" role="main">
+        
+  <section id="how-to-use-an-environment">
+<span id="environment-page"></span><h1>How to use an environment<a class="headerlink" href="#how-to-use-an-environment" title="Permalink to this heading">¶</a></h1>
+<p>This is the world with which the agent interacts. The agent can observe this environment, and can perform actions to modify it (but cannot change its rules). With rlberry, you can use an existing environment, or create your own custom environment.</p>
+<section id="use-rlberry-environment">
+<h2>Use rlberry environment<a class="headerlink" href="#use-rlberry-environment" title="Permalink to this heading">¶</a></h2>
+<p>You can find some environments in our other projects “<a class="reference external" href="https://github.com/rlberry-py/rlberry-research">rlberry-research</a>” and “<a class="reference external" href="https://github.com/rlberry-py/rlberry-scool">rlberry-scool</a>”.
+For this example, you can use “Chain” environment from “<a class="reference external" href="https://github.com/rlberry-py/rlberry-scool">rlberry-scool</a>”</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry_scool.envs.finite</span> <span class="kn">import</span> <span class="n">Chain</span>
+
+<span class="n">env</span> <span class="o">=</span> <span class="n">Chain</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+<span class="n">env</span><span class="o">.</span><span class="n">enable_rendering</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">tt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span>
+    <span class="c1"># Force to go right every 4 steps to have a better video render.</span>
+    <span class="k">if</span> <span class="n">tt</span> <span class="o">%</span> <span class="mi">4</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span>
+<span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">loop</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># env.save_video is only available for rlberry envs and custom env (with &#39;RenderInterface&#39; as parent class)</span>
+<span class="n">video</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">save_video</span><span class="p">(</span><span class="s2">&quot;_env_page_chain.mp4&quot;</span><span class="p">)</span>
+<span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>ffmpeg version 4.4.2-0ubuntu0.22.04.1 Copyright (c) 2000-2021 the FFmpeg developers
+  built with gcc 11 (Ubuntu 11.2.0-19ubuntu1)
+  configuration: --prefix=/usr --extra-version=0ubuntu0.22.04.1 --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --arch=amd64 --enable-gpl --disable-stripping --enable-gnutls --enable-ladspa --enable-libaom --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libcodec2 --enable-libdav1d --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libjack --enable-libmp3lame --enable-libmysofa --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librabbitmq --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libsrt --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvidstab --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx265 --enable-libxml2 --enable-libxvid --enable-libzimg --enable-libzmq --enable-libzvbi --enable-lv2 --enable-omx --enable-openal --enable-opencl --enable-opengl --enable-sdl2 --enable-pocketsphinx --enable-librsvg --enable-libmfx --enable-libdc1394 --enable-libdrm --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-libx264 --enable-shared
+  libavutil      56. 70.100 / 56. 70.100
+  libavcodec     58.134.100 / 58.134.100
+  libavformat    58. 76.100 / 58. 76.100
+  libavdevice    58. 13.100 / 58. 13.100
+  libavfilter     7.110.100 /  7.110.100
+  libswscale      5.  9.100 /  5.  9.100
+  libswresample   3.  9.100 /  3.  9.100
+  libpostproc    55.  9.100 / 55.  9.100
+Input #0, rawvideo, from &#39;pipe:&#39;:
+  Duration: N/A, start: 0.000000, bitrate: 38400 kb/s
+  Stream #0:0: Video: rawvideo (RGB[24] / 0x18424752), rgb24, 800x80, 38400 kb/s, 25 tbr, 25 tbn, 25 tbc
+Stream mapping:
+  Stream #0:0 -&gt; #0:0 (rawvideo (native) -&gt; h264 (libx264))
+[libx264 @ 0x5644b31f07c0] using cpu capabilities: MMX2 SSE2Fast SSSE3 SSE4.2 AVX FMA3 BMI2 AVX2 AVX512
+[libx264 @ 0x5644b31f07c0] profile High, level 1.3, 4:2:0, 8-bit
+[libx264 @ 0x5644b31f07c0] 264 - core 163 r3060 5db6aa6 - H.264/MPEG-4 AVC codec - Copyleft 2003-2021 - http://www.videolan.org/x264.html - options: cabac=1 ref=3 deblock=1:0:0 analyse=0x3:0x113 me=hex subme=7 psy=1 psy_rd=1.00:0.00 mixed_ref=1 me_range=16 chroma_me=1 trellis=1 8x8dct=1 cqm=0 deadzone=21,11 fast_pskip=1 chroma_qp_offset=-2 threads=2 lookahead_threads=1 sliced_threads=0 nr=0 decimate=1 interlaced=0 bluray_compat=0 constrained_intra=0 bframes=3 b_pyramid=2 b_adapt=1 b_bias=0 direct=1 weightb=1 open_gop=0 weightp=2 keyint=250 keyint_min=25 scenecut=40 intra_refresh=0 rc_lookahead=40 rc=crf mbtree=1 crf=23.0 qcomp=0.60 qpmin=0 qpmax=69 qpstep=4 ip_ratio=1.40 aq=1:1.00
+Output #0, mp4, to &#39;_env_page_chain.mp4&#39;:
+  Metadata:
+    encoder         : Lavf58.76.100
+  Stream #0:0: Video: h264 (avc1 / 0x31637661), yuv420p(tv, progressive), 800x80, q=2-31, 25 fps, 12800 tbn
+    Metadata:
+      encoder         : Lavc58.134.100 libx264
+    Side data:
+      cpb: bitrate max/min/avg: 0/0/0 buffer size: 0 vbv_delay: N/A
+frame=   21 fps=0.0 q=-1.0 Lsize=      11kB time=00:00:00.72 bitrate= 128.4kbits/s speed=29.6x
+video:10kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 10.128633%
+[libx264 @ 0x5644b31f07c0] frame I:1     Avg QP:29.04  size:  6175
+[libx264 @ 0x5644b31f07c0] frame P:12    Avg QP:24.07  size:   220
+[libx264 @ 0x5644b31f07c0] frame B:8     Avg QP:22.19  size:   124
+[libx264 @ 0x5644b31f07c0] consecutive B-frames: 33.3% 38.1% 28.6%  0.0%
+[libx264 @ 0x5644b31f07c0] mb I  I16..4: 56.0%  0.0% 44.0%
+[libx264 @ 0x5644b31f07c0] mb P  I16..4:  8.4%  1.6%  1.7%  P16..4:  1.1%  0.0%  0.0%  0.0%  0.0%    skip:87.3%
+[libx264 @ 0x5644b31f07c0] mb B  I16..4:  0.2%  0.5%  0.9%  B16..8:  4.1%  0.0%  0.0%  direct: 0.1%  skip:94.3%  L0:48.8% L1:51.2% BI: 0.0%
+[libx264 @ 0x5644b31f07c0] 8x8 transform intra:9.0% inter:23.5%
+[libx264 @ 0x5644b31f07c0] coded y,uvDC,uvAC intra: 45.6% 37.1% 36.1% inter: 0.2% 0.0% 0.0%
+[libx264 @ 0x5644b31f07c0] i16 v,h,dc,p: 51% 13% 35%  1%
+[libx264 @ 0x5644b31f07c0] i8 v,h,dc,ddl,ddr,vr,hd,vl,hu:  0%  0% 100%  0%  0%  0%  0%  0%  0%
+[libx264 @ 0x5644b31f07c0] i4 v,h,dc,ddl,ddr,vr,hd,vl,hu: 33% 16% 40%  1%  4%  2%  2%  1%  0%
+[libx264 @ 0x5644b31f07c0] i8c dc,h,v,p: 91%  5%  4%  0%
+[libx264 @ 0x5644b31f07c0] Weighted P-Frames: Y:8.3% UV:8.3%
+[libx264 @ 0x5644b31f07c0] ref P L0: 21.9%  0.0% 65.6% 12.5%
+[libx264 @ 0x5644b31f07c0] ref B L0: 52.5% 47.5%
+[libx264 @ 0x5644b31f07c0] kb/s:93.39
+</pre></div>
+</div>
+</br>
+<video controls="controls" style="max-width: 600px;">
+   <source src="../../user_guide_video/_env_page_chain.mp4" type="video/mp4">
+</video>
+</section>
+<section id="use-gymnasium-environment">
+<h2>Use Gymnasium environment<a class="headerlink" href="#use-gymnasium-environment" title="Permalink to this heading">¶</a></h2>
+<p>Gymnasium is a project that provides an API for all single agent reinforcement learning environments, and includes implementations of common environments: cartpole, pendulum, mountain-car, mujoco, atari, and more.More information <a class="reference external" href="https://gymnasium.farama.org/environments/classic_control/">here</a>.</p>
+<p>In rlberry, you can use Gymnasium environment with <a class="reference internal" href="../../generated/rlberry.envs.gym_make.html#rlberry.envs.gym_make" title="rlberry.envs.gym_make"><span class="xref myst py py-func">gym_make</span></a>. Here, we will use <code class="docutils literal notranslate"><span class="pre">MountainCar-v0</span></code>, one of the “Classic Control environments”.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.envs</span> <span class="kn">import</span> <span class="n">gym_make</span>
+<span class="kn">from</span> <span class="nn">gymnasium.wrappers.record_video</span> <span class="kn">import</span> <span class="n">RecordVideo</span>
+
+<span class="c1"># If you want an output video of your Gymnasium env, you have to :</span>
+<span class="c1"># - add a &#39;render_mode&#39; parameter at your gym_make</span>
+<span class="c1"># - add a &#39;RecordVideo&#39; wrapper around the gymnasium environment.</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym_make</span><span class="p">(</span><span class="s2">&quot;MountainCar-v0&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;rgb_array&quot;</span><span class="p">)</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">RecordVideo</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">video_folder</span><span class="o">=</span><span class="s2">&quot;./&quot;</span><span class="p">,</span> <span class="n">name_prefix</span><span class="o">=</span><span class="s2">&quot;MountainCar&quot;</span><span class="p">)</span>
+<span class="c1"># else, this line is enough:</span>
+<span class="c1"># env = gym_make(&quot;MountainCar-v0&quot;)</span>
+
+<span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">tt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">50</span><span class="p">):</span>
+    <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span>
+<span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[your path]/.conda/lib/python3.10/site-packages/gymnasium/wrappers/record_video.py:94: UserWarning: WARN: Overwriting existing videos at [your path] folder (try specifying a different `video_folder` for the `RecordVideo` wrapper if this is not desired)
+  logger.warn(
+[your path]/.conda/lib/python3.10/site-packages/gymnasium/core.py:311: UserWarning: WARN: env.is_vector_env to get variables from other wrappers is deprecated and will be removed in v1.0, to get this variable you can do `env.unwrapped.is_vector_env` for environment variables or `env.get_wrapper_attr(&#39;is_vector_env&#39;)` that will search the reminding wrappers.
+  logger.warn(
+Moviepy - Building video [your path]/MountainCar-episode-0.mp4.
+Moviepy - Writing video [your path]/MountainCar-episode-0.mp4
+
+Moviepy - Done !
+Moviepy - video ready [your path]/MountainCar-episode-0.mp4
+</pre></div>
+</div>
+</br>
+<video controls="controls" style="max-width: 600px;">
+   <source src="../../user_guide_video/_env_page_MountainCar.mp4" type="video/mp4">
+</video>
+<p>To customize the environments, you can use some wrappers. You can find the rlberry’s wrappers and more information <a class="reference internal" href="#wrappers_page"><span class="xref myst">here (in construction)</span></a>, or you can use <a class="reference external" href="https://gymnasium.farama.org/api/wrappers/">Gymnasium wrappers</a> (or create your own).</p>
+</section>
+<section id="use-atari-environment">
+<h2>Use Atari environment<a class="headerlink" href="#use-atari-environment" title="Permalink to this heading">¶</a></h2>
+<p>A set of Atari 2600 environment simulated through Stella and the Arcade Learning Environment. More information <a class="reference external" href="https://gymnasium.farama.org/environments/atari/">here</a>.</p>
+<p>The function “<a class="reference internal" href="../../generated/rlberry.envs.atari_make.html#rlberry.envs.atari_make" title="rlberry.envs.atari_make"><span class="xref myst py py-func">atari_make()</span></a>” add wrappers on gym.make, to make it easier to use on Atari games.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.envs</span> <span class="kn">import</span> <span class="n">atari_make</span>
+<span class="kn">from</span> <span class="nn">gymnasium.wrappers.record_video</span> <span class="kn">import</span> <span class="n">RecordVideo</span>
+
+
+<span class="c1"># If you want an output video of your Atari env, you have to :</span>
+<span class="c1"># - add a &#39;render_mode&#39; parameter at your atari_make</span>
+<span class="c1"># - add a &#39;RecordVideo&#39; wrapper around the gymnasium environment.</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">atari_make</span><span class="p">(</span><span class="s2">&quot;ALE/Breakout-v5&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;rgb_array&quot;</span><span class="p">)</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">RecordVideo</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">video_folder</span><span class="o">=</span><span class="s2">&quot;./&quot;</span><span class="p">,</span> <span class="n">name_prefix</span><span class="o">=</span><span class="s2">&quot;Breakout&quot;</span><span class="p">)</span>
+<span class="c1"># else, this line is enough:</span>
+<span class="c1"># env = atari_make(&quot;ALE/Breakout-v5&quot;)</span>
+
+<span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">tt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">50</span><span class="p">):</span>
+    <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span>
+        <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="c1"># if the environment is terminated or truncated (no more life), it need to be reset</span>
+    <span class="k">if</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span><span class="p">:</span>
+        <span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>A.L.E: Arcade Learning Environment (version 0.8.1+53f58b7)
+[Powered by Stella]
+[your path]/.conda/lib/python3.10/site-packages/gymnasium/core.py:311: UserWarning: WARN: env.is_vector_env to get variables from other wrappers is deprecated and will be removed in v1.0, to get this variable you can do `env.unwrapped.is_vector_env` for environment variables or `env.get_wrapper_attr(&#39;is_vector_env&#39;)` that will search the reminding wrappers.
+  logger.warn(
+[your path]/.conda/lib/python3.10/site-packages/gymnasium/utils/passive_env_checker.py:335: UserWarning: WARN: No render fps was declared in the environment (env.metadata[&#39;render_fps&#39;] is None or not defined), rendering may occur at inconsistent fps.
+  logger.warn(
+Moviepy - Building video [your path]/Breakout-episode-0.mp4.
+Moviepy - Writing video [your path]/Breakout-episode-0.mp4
+
+Moviepy - Done !
+Moviepy - video ready [your path]/Breakout-episode-0.mp4
+</pre></div>
+</div>
+</br>
+<video controls="controls" style="max-width: 600px;">
+   <source src="../../user_guide_video/_env_page_Breakout.mp4" type="video/mp4">
+</video>
+</section>
+<section id="create-your-own-environment">
+<h2>Create your own environment<a class="headerlink" href="#create-your-own-environment" title="Permalink to this heading">¶</a></h2>
+<p><span>⚠</span> <strong>warning :</strong> For advanced users only <span>⚠</span></p>
+<p>You need to create a new class that inherits from <a class="reference external" href="https://gymnasium.farama.org/api/env/">gymnasium.Env</a> or one of it child class like <a class="reference internal" href="../../generated/rlberry.envs.interface.Model.html#rlberry.envs.interface.Model" title="rlberry.envs.interface.Model"><span class="xref myst py py-class">Model</span></a> (and RenderInterface/one of it child class, if you want an environment with rendering).</p>
+<p>Then you need to make the specific functions that respect gymnasium template (as step, reset, …). More information <a class="reference external" href="https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/">here</a></p>
+<p>You can find examples in our other github project “<a class="reference external" href="https://github.com/rlberry-py/rlberry-research">rlberry-research</a>” with <a class="reference external" href="https://github.com/rlberry-py/rlberry-research/blob/main/rlberry_research/envs/classic_control/acrobot.py">Acrobot</a>, <a class="reference external" href="https://github.com/rlberry-py/rlberry-research/blob/main/rlberry_research/envs/classic_control/mountain_car.py">MountainCar</a> or <a class="reference external" href="https://github.com/rlberry-py/rlberry-research/blob/main/rlberry_research/envs/finite/chain.py">Chain</a> (and their parent classes).</p>
+</section>
+</section>
+
+
+      </div>
+    <div class="container">
+      <footer class="sk-content-footer">
+            &copy; 2023, rlberry team.
+          <a href="../../_sources/basics/userguide/environment.md.txt" rel="nofollow">Show this page source</a>
+      </footer>
+    </div>
+  </div>
+</div>
+<script src="../../_static/js/vendor/bootstrap.min.js"></script>
+
+<script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-22606712-2', 'auto');
+    ga('set', 'anonymizeIp', true);
+    ga('send', 'pageview');
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+<script>
+$(document).ready(function() {
+    /* Add a [>>>] button on the top-right corner of code samples to hide
+     * the >>> and ... prompts and the output and thus make the code
+     * copyable. */
+    var div = $('.highlight-python .highlight,' +
+                '.highlight-python3 .highlight,' +
+                '.highlight-pycon .highlight,' +
+		'.highlight-default .highlight')
+    var pre = div.find('pre');
+
+    // get the styles from the current theme
+    pre.parent().parent().css('position', 'relative');
+    var hide_text = 'Hide prompts and outputs';
+    var show_text = 'Show prompts and outputs';
+
+    // create and add the button to all the code blocks that contain >>>
+    div.each(function(index) {
+        var jthis = $(this);
+        if (jthis.find('.gp').length > 0) {
+            var button = $('<span class="copybutton">&gt;&gt;&gt;</span>');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+            jthis.prepend(button);
+        }
+        // tracebacks (.gt) contain bare text elements that need to be
+        // wrapped in a span to work with .nextUntil() (see later)
+        jthis.find('pre:has(.gt)').contents().filter(function() {
+            return ((this.nodeType == 3) && (this.data.trim().length > 0));
+        }).wrap('<span>');
+    });
+
+    // define the behavior of the button when it's clicked
+    $('.copybutton').click(function(e){
+        e.preventDefault();
+        var button = $(this);
+        if (button.data('hidden') === 'false') {
+            // hide the code output
+            button.parent().find('.go, .gp, .gt').hide();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'hidden');
+            button.css('text-decoration', 'line-through');
+            button.attr('title', show_text);
+            button.data('hidden', 'true');
+        } else {
+            // show the code output
+            button.parent().find('.go, .gp, .gt').show();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'visible');
+            button.css('text-decoration', 'none');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+        }
+    });
+
+	/*** Add permalink buttons next to glossary terms ***/
+	$('dl.glossary > dt[id]').append(function() {
+		return ('<a class="headerlink" href="#' +
+			    this.getAttribute('id') +
+			    '" title="Permalink to this term">¶</a>');
+	});
+  /*** Hide navbar when scrolling down ***/
+  // Returns true when headerlink target matches hash in url
+  (function() {
+    hashTargetOnTop = function() {
+        var hash = window.location.hash;
+        if ( hash.length < 2 ) { return false; }
+
+        var target = document.getElementById( hash.slice(1) );
+        if ( target === null ) { return false; }
+
+        var top = target.getBoundingClientRect().top;
+        return (top < 2) && (top > -2);
+    };
+
+    // Hide navbar on load if hash target is on top
+    var navBar = document.getElementById("navbar");
+    var navBarToggler = document.getElementById("sk-navbar-toggler");
+    var navBarHeightHidden = "-" + navBar.getBoundingClientRect().height + "px";
+    var $window = $(window);
+
+    hideNavBar = function() {
+        navBar.style.top = navBarHeightHidden;
+    };
+
+    showNavBar = function() {
+        navBar.style.top = "0";
+    }
+
+    if (hashTargetOnTop()) {
+        hideNavBar()
+    }
+
+    var prevScrollpos = window.pageYOffset;
+    hideOnScroll = function(lastScrollTop) {
+        if (($window.width() < 768) && (navBarToggler.getAttribute("aria-expanded") === 'true')) {
+            return;
+        }
+        if (lastScrollTop > 2 && (prevScrollpos <= lastScrollTop) || hashTargetOnTop()){
+            hideNavBar()
+        } else {
+            showNavBar()
+        }
+        prevScrollpos = lastScrollTop;
+    };
+
+    /*** high performance scroll event listener***/
+    var raf = window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        window.oRequestAnimationFrame;
+    var lastScrollTop = $window.scrollTop();
+
+    if (raf) {
+        loop();
+    }
+
+    function loop() {
+        var scrollTop = $window.scrollTop();
+        if (lastScrollTop === scrollTop) {
+            raf(loop);
+            return;
+        } else {
+            lastScrollTop = scrollTop;
+            hideOnScroll(lastScrollTop);
+            raf(loop);
+        }
+    }
+  })();
+});
+
+</script>
+    
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    
+</body>
+</html>

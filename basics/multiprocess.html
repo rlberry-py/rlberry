@@ -1,0 +1,335 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  
+  <title>Parallelization in rlberry &mdash; rlberry 0.7.3.post16.dev0+8710009 documentation</title>
+  
+  <link rel="canonical" href="https://rlberry-py.github.io/rlberry/basics/multiprocess.html" />
+
+  
+
+  <link rel="stylesheet" href="../_static/css/vendor/bootstrap.min.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sg_gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sg_gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sg_gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sphinx-design.4cbf315f70debaebd550c87a6162cf0f.min.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+<script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+<script src="../_static/js/vendor/jquery-3.6.3.slim.min.js"></script> 
+</head>
+<body>
+
+
+<nav id="navbar" class="sk-docs-navbar navbar navbar-expand-md navbar-light bg-light py-0">
+  <div class="container-fluid sk-docs-container px-0">
+    <button
+      id="sk-navbar-toggler"
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="sk-navbar-collapse collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../index.html">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../installation.html">Install</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../user_guide.html">User Guide</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../auto_examples/index.html">Examples</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../api.html">API</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../changelog.html">Changelog</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../about.html">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="https://github.com/rlberry-py/rlberry">GitHub</a>
+        </li>
+        <!--
+        <li class="nav-item dropdown nav-more-item-dropdown">
+          <a class="sk-nav-link nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">More</a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          </div>
+        </li>-->
+    </ul>
+      <div id="searchbox" role="search">
+          <div class="searchformwrapper">
+            <form action="https://duckduckgo.com/">
+            <input type="hidden" id="sites" name="sites" value="https://rlberry-py.github.io/rlberry/">
+            <input type="search" placeholder="Search &hellip;" value="" name="q" />
+            <input class="sk-search-text-btn" type="submit" value="Go" /></form>
+
+          </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="d-flex" id="sk-doc-wrapper">
+    <input type="checkbox" name="sk-toggle-checkbox" id="sk-toggle-checkbox">
+    <label id="sk-sidemenu-toggle" class="sk-btn-toggle-toc btn sk-btn-primary" for="sk-toggle-checkbox">Toggle Menu</label>
+    <div id="sk-sidebar-wrapper" class="border-right">
+      <div class="sk-sidebar-toc-wrapper">
+        <div class="sk-sidebar-toc-logo">
+        </div>
+	<br>
+        <div class="alert alert-warning p-1 mb-2" role="alert">
+
+          <p class="text-center mb-0">
+          rlberry 0.7.3.post16.dev0+8710009<br/>
+          <a href="../versions.html">Other versions</a>
+          </p>
+
+        </div>
+            <div class="sk-sidebar-toc">
+              <ul>
+<li><a class="reference internal" href="#">Parallelization in rlberry</a><ul>
+<li><a class="reference internal" href="#threading">Threading</a></li>
+<li><a class="reference internal" href="#process-spawn-or-forkserver">Process: spawn or forkserver</a></li>
+<li><a class="reference internal" href="#process-fork">Process: fork</a></li>
+</ul>
+</li>
+</ul>
+
+            </div>
+      </div>
+    </div>
+    <div id="sk-page-content-wrapper">
+      <div class="sk-page-content container-fluid body px-md-3" role="main">
+        
+  <section id="parallelization-in-rlberry">
+<span id="multiprocess"></span><h1>Parallelization in rlberry<a class="headerlink" href="#parallelization-in-rlberry" title="Permalink to this heading">¶</a></h1>
+<p>rlberry use python’s standard multiprocessing library to execute the fit of agents in parallel on cpus. The parallelization is done via
+<a class="reference internal" href="../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExperimentManager</span></code></a> and via <a class="reference internal" href="../generated/rlberry.manager.MultipleManagers.html#rlberry.manager.MultipleManagers" title="rlberry.manager.MultipleManagers"><code class="xref py py-class docutils literal notranslate"><span class="pre">MultipleManagers</span></code></a>.</p>
+<p>If a user wants to use a third-party parallelization library like joblib, the user must be aware of where the seeding is done so as not to bias the results. rlberry automatically handles seeding when the native parallelization scheme are used.</p>
+<p>Several multiprocessing scheme are implemented in rlberry.</p>
+<section id="threading">
+<h2>Threading<a class="headerlink" href="#threading" title="Permalink to this heading">¶</a></h2>
+<p>Thread multiprocessing “constructs higher-level threading interfaces on top of the lower level _thread module” (see the doc on <a class="reference external" href="https://docs.python.org/fr/3/library/threading.html#module-threading">python’s website</a>). This is the default scheme in rlberry, most of the time it will result in
+having practically no parallelization except if the code executed in each thread (i.e. each fit) is executed without GIL (example: cython code or numpy code).</p>
+</section>
+<section id="process-spawn-or-forkserver">
+<h2>Process: spawn or forkserver<a class="headerlink" href="#process-spawn-or-forkserver" title="Permalink to this heading">¶</a></h2>
+<p>To have an efficient parallelization, it is often better to use processes (see the doc on <a class="reference external" href="https://docs.python.org/3/library/multiprocessing.html#module-multiprocessing">python’s website</a>) using the parameter <code class="code docutils literal notranslate"><span class="pre">parallelization=&quot;process&quot;</span></code> in <a class="reference internal" href="../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExperimentManager</span></code></a> or <a class="reference internal" href="../generated/rlberry.manager.MultipleManagers.html#rlberry.manager.MultipleManagers" title="rlberry.manager.MultipleManagers"><code class="xref py py-class docutils literal notranslate"><span class="pre">MultipleManagers</span></code></a>.</p>
+<p>This implies that a new process will be launched for each fit of the ExperimentManager.</p>
+<p>The advised method of parallelization is spawn (parameter <code class="code docutils literal notranslate"><span class="pre">mp_context=&quot;spawn&quot;</span></code>), however spawn method has several drawbacks:</p>
+<ul class="simple">
+<li><p>The fit code needs to be encapsulated in a <code class="code docutils literal notranslate"><span class="pre">if</span> <span class="pre">__name__</span> <span class="pre">==</span> <span class="pre">'__main__'</span></code> directive. Example :</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry_research.agents.torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">A2CAgent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExperimentManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry_research.envs.benchmarks.ball_exploration</span><span class="w"> </span><span class="kn">import</span> <span class="n">PBall2D</span>
+
+<span class="n">n_steps</span> <span class="o">=</span> <span class="mf">1e5</span>
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">256</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">manager</span> <span class="o">=</span> <span class="n">ExperimentManager</span><span class="p">(</span>
+        <span class="n">A2CAgent</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">PBall2D</span><span class="p">,</span> <span class="p">{}),</span>
+        <span class="n">init_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.001</span><span class="p">),</span>
+        <span class="n">n_fit</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+        <span class="n">fit_budget</span><span class="o">=</span><span class="n">n_steps</span><span class="p">,</span>
+        <span class="n">parallelization</span><span class="o">=</span><span class="s2">&quot;process&quot;</span><span class="p">,</span>
+        <span class="n">mp_context</span><span class="o">=</span><span class="s2">&quot;spawn&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>As a consequence, <code class="code docutils literal notranslate"><span class="pre">spawn</span></code> parallelization only works if called from the main script.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">spawn</span></code> does not work when called from a notebook. To work in a notebook, use <code class="code docutils literal notranslate"><span class="pre">fork</span></code> instead.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">forkserver</span></code> is an alternative to <code class="code docutils literal notranslate"><span class="pre">spawn</span></code> that performs sometimes faster than <code class="code docutils literal notranslate"><span class="pre">spawn</span></code>. <code class="code docutils literal notranslate"><span class="pre">forkserver</span></code> parallelization must also be encapsulated into a  <code class="code docutils literal notranslate"><span class="pre">if</span> <span class="pre">__name__</span> <span class="pre">==</span> <span class="pre">'__main__'</span></code> directive and for now it is available only on Unix systems (MacOS, Linux, …).</p></li>
+</ul>
+</section>
+<section id="process-fork">
+<h2>Process: fork<a class="headerlink" href="#process-fork" title="Permalink to this heading">¶</a></h2>
+<p>Fork multiprocessing is only possible on Unix systems.
+It is available through the parameter <code class="code docutils literal notranslate"><span class="pre">mp_context=&quot;fork&quot;</span></code> when <code class="code docutils literal notranslate"><span class="pre">parallelization=&quot;process&quot;</span></code>.
+Remark that there could be some logging error and hanging when using <code class="code docutils literal notranslate"><span class="pre">fork</span></code>. The usage of fork in rlberry is still experimental and may be unstable.</p>
+</section>
+</section>
+
+
+      </div>
+    <div class="container">
+      <footer class="sk-content-footer">
+            &copy; 2023, rlberry team.
+          <a href="../_sources/basics/multiprocess.rst.txt" rel="nofollow">Show this page source</a>
+      </footer>
+    </div>
+  </div>
+</div>
+<script src="../_static/js/vendor/bootstrap.min.js"></script>
+
+<script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-22606712-2', 'auto');
+    ga('set', 'anonymizeIp', true);
+    ga('send', 'pageview');
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+<script>
+$(document).ready(function() {
+    /* Add a [>>>] button on the top-right corner of code samples to hide
+     * the >>> and ... prompts and the output and thus make the code
+     * copyable. */
+    var div = $('.highlight-python .highlight,' +
+                '.highlight-python3 .highlight,' +
+                '.highlight-pycon .highlight,' +
+		'.highlight-default .highlight')
+    var pre = div.find('pre');
+
+    // get the styles from the current theme
+    pre.parent().parent().css('position', 'relative');
+    var hide_text = 'Hide prompts and outputs';
+    var show_text = 'Show prompts and outputs';
+
+    // create and add the button to all the code blocks that contain >>>
+    div.each(function(index) {
+        var jthis = $(this);
+        if (jthis.find('.gp').length > 0) {
+            var button = $('<span class="copybutton">&gt;&gt;&gt;</span>');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+            jthis.prepend(button);
+        }
+        // tracebacks (.gt) contain bare text elements that need to be
+        // wrapped in a span to work with .nextUntil() (see later)
+        jthis.find('pre:has(.gt)').contents().filter(function() {
+            return ((this.nodeType == 3) && (this.data.trim().length > 0));
+        }).wrap('<span>');
+    });
+
+    // define the behavior of the button when it's clicked
+    $('.copybutton').click(function(e){
+        e.preventDefault();
+        var button = $(this);
+        if (button.data('hidden') === 'false') {
+            // hide the code output
+            button.parent().find('.go, .gp, .gt').hide();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'hidden');
+            button.css('text-decoration', 'line-through');
+            button.attr('title', show_text);
+            button.data('hidden', 'true');
+        } else {
+            // show the code output
+            button.parent().find('.go, .gp, .gt').show();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'visible');
+            button.css('text-decoration', 'none');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+        }
+    });
+
+	/*** Add permalink buttons next to glossary terms ***/
+	$('dl.glossary > dt[id]').append(function() {
+		return ('<a class="headerlink" href="#' +
+			    this.getAttribute('id') +
+			    '" title="Permalink to this term">¶</a>');
+	});
+  /*** Hide navbar when scrolling down ***/
+  // Returns true when headerlink target matches hash in url
+  (function() {
+    hashTargetOnTop = function() {
+        var hash = window.location.hash;
+        if ( hash.length < 2 ) { return false; }
+
+        var target = document.getElementById( hash.slice(1) );
+        if ( target === null ) { return false; }
+
+        var top = target.getBoundingClientRect().top;
+        return (top < 2) && (top > -2);
+    };
+
+    // Hide navbar on load if hash target is on top
+    var navBar = document.getElementById("navbar");
+    var navBarToggler = document.getElementById("sk-navbar-toggler");
+    var navBarHeightHidden = "-" + navBar.getBoundingClientRect().height + "px";
+    var $window = $(window);
+
+    hideNavBar = function() {
+        navBar.style.top = navBarHeightHidden;
+    };
+
+    showNavBar = function() {
+        navBar.style.top = "0";
+    }
+
+    if (hashTargetOnTop()) {
+        hideNavBar()
+    }
+
+    var prevScrollpos = window.pageYOffset;
+    hideOnScroll = function(lastScrollTop) {
+        if (($window.width() < 768) && (navBarToggler.getAttribute("aria-expanded") === 'true')) {
+            return;
+        }
+        if (lastScrollTop > 2 && (prevScrollpos <= lastScrollTop) || hashTargetOnTop()){
+            hideNavBar()
+        } else {
+            showNavBar()
+        }
+        prevScrollpos = lastScrollTop;
+    };
+
+    /*** high performance scroll event listener***/
+    var raf = window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        window.oRequestAnimationFrame;
+    var lastScrollTop = $window.scrollTop();
+
+    if (raf) {
+        loop();
+    }
+
+    function loop() {
+        var scrollTop = $window.scrollTop();
+        if (lastScrollTop === scrollTop) {
+            raf(loop);
+            return;
+        } else {
+            lastScrollTop = scrollTop;
+            hideOnScroll(lastScrollTop);
+            raf(loop);
+        }
+    }
+  })();
+});
+
+</script>
+    
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    
+</body>
+</html>

@@ -1,0 +1,775 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  
+  <title>rlberry.manager.ExperimentManager &mdash; rlberry 0.7.3.post16.dev0+8710009 documentation</title>
+  
+  <link rel="canonical" href="https://rlberry-py.github.io/rlberry/generated/rlberry.manager.ExperimentManager.html" />
+
+  
+
+  <link rel="stylesheet" href="../_static/css/vendor/bootstrap.min.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sg_gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sg_gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sg_gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sphinx-design.4cbf315f70debaebd550c87a6162cf0f.min.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+<script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+<script src="../_static/js/vendor/jquery-3.6.3.slim.min.js"></script> 
+</head>
+<body>
+
+
+<nav id="navbar" class="sk-docs-navbar navbar navbar-expand-md navbar-light bg-light py-0">
+  <div class="container-fluid sk-docs-container px-0">
+    <button
+      id="sk-navbar-toggler"
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="sk-navbar-collapse collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../index.html">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../installation.html">Install</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../user_guide.html">User Guide</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../auto_examples/index.html">Examples</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../api.html">API</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../changelog.html">Changelog</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../about.html">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="https://github.com/rlberry-py/rlberry">GitHub</a>
+        </li>
+        <!--
+        <li class="nav-item dropdown nav-more-item-dropdown">
+          <a class="sk-nav-link nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">More</a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          </div>
+        </li>-->
+    </ul>
+      <div id="searchbox" role="search">
+          <div class="searchformwrapper">
+            <form action="https://duckduckgo.com/">
+            <input type="hidden" id="sites" name="sites" value="https://rlberry-py.github.io/rlberry/">
+            <input type="search" placeholder="Search &hellip;" value="" name="q" />
+            <input class="sk-search-text-btn" type="submit" value="Go" /></form>
+
+          </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="d-flex" id="sk-doc-wrapper">
+    <input type="checkbox" name="sk-toggle-checkbox" id="sk-toggle-checkbox">
+    <label id="sk-sidemenu-toggle" class="sk-btn-toggle-toc btn sk-btn-primary" for="sk-toggle-checkbox">Toggle Menu</label>
+    <div id="sk-sidebar-wrapper" class="border-right">
+      <div class="sk-sidebar-toc-wrapper">
+        <div class="sk-sidebar-toc-logo">
+        </div>
+	<br>
+        <div class="alert alert-warning p-1 mb-2" role="alert">
+
+          <p class="text-center mb-0">
+          rlberry 0.7.3.post16.dev0+8710009<br/>
+          <a href="../versions.html">Other versions</a>
+          </p>
+
+        </div>
+            <div class="sk-sidebar-toc">
+              <ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">rlberry.manager</span></code>.ExperimentManager</a><ul>
+<li><a class="reference internal" href="#rlberry.manager.ExperimentManager"><code class="docutils literal notranslate"><span class="pre">ExperimentManager</span></code></a><ul>
+<li><a class="reference internal" href="#rlberry.manager.ExperimentManager.build_eval_env"><code class="docutils literal notranslate"><span class="pre">ExperimentManager.build_eval_env()</span></code></a></li>
+<li><a class="reference internal" href="#rlberry.manager.ExperimentManager.clear_handlers"><code class="docutils literal notranslate"><span class="pre">ExperimentManager.clear_handlers()</span></code></a></li>
+<li><a class="reference internal" href="#rlberry.manager.ExperimentManager.clear_output_dir"><code class="docutils literal notranslate"><span class="pre">ExperimentManager.clear_output_dir()</span></code></a></li>
+<li><a class="reference internal" href="#rlberry.manager.ExperimentManager.eval_agents"><code class="docutils literal notranslate"><span class="pre">ExperimentManager.eval_agents()</span></code></a></li>
+<li><a class="reference internal" href="#rlberry.manager.ExperimentManager.fit"><code class="docutils literal notranslate"><span class="pre">ExperimentManager.fit()</span></code></a></li>
+<li><a class="reference internal" href="#rlberry.manager.ExperimentManager.generate_profile"><code class="docutils literal notranslate"><span class="pre">ExperimentManager.generate_profile()</span></code></a></li>
+<li><a class="reference internal" href="#rlberry.manager.ExperimentManager.get_agent_instances"><code class="docutils literal notranslate"><span class="pre">ExperimentManager.get_agent_instances()</span></code></a></li>
+<li><a class="reference internal" href="#rlberry.manager.ExperimentManager.get_writer_data"><code class="docutils literal notranslate"><span class="pre">ExperimentManager.get_writer_data()</span></code></a></li>
+<li><a class="reference internal" href="#rlberry.manager.ExperimentManager.load"><code class="docutils literal notranslate"><span class="pre">ExperimentManager.load()</span></code></a></li>
+<li><a class="reference internal" href="#rlberry.manager.ExperimentManager.optimize_hyperparams"><code class="docutils literal notranslate"><span class="pre">ExperimentManager.optimize_hyperparams()</span></code></a></li>
+<li><a class="reference internal" href="#rlberry.manager.ExperimentManager.save"><code class="docutils literal notranslate"><span class="pre">ExperimentManager.save()</span></code></a></li>
+<li><a class="reference internal" href="#rlberry.manager.ExperimentManager.set_writer"><code class="docutils literal notranslate"><span class="pre">ExperimentManager.set_writer()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#examples-using-rlberry-manager-experimentmanager">Examples using <code class="docutils literal notranslate"><span class="pre">rlberry.manager.ExperimentManager</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+            </div>
+      </div>
+    </div>
+    <div id="sk-page-content-wrapper">
+      <div class="sk-page-content container-fluid body px-md-3" role="main">
+        
+  <section id="rlberry-manager-experimentmanager">
+<h1><code class="xref py py-mod docutils literal notranslate"><span class="pre">rlberry.manager</span></code>.ExperimentManager<a class="headerlink" href="#rlberry-manager-experimentmanager" title="Permalink to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="rlberry.manager.ExperimentManager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlberry.manager.</span></span><span class="sig-name descname"><span class="pre">ExperimentManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">agent_class</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_env</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(None,</span> <span class="pre">None)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit_budget</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eval_env</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eval_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agent_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallelization</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'thread'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_workers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mp_context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'spawn'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">worker_logging_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_tensorboard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir_id_style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'timestamp'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_writer_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_kwargs_per_instance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_shared_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rlberry/manager/experiment_manager.html#ExperimentManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.manager.ExperimentManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class to train, optimize hyperparameters, evaluate and gather
+statistics about an agent.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>agent_class</strong></dt><dd><p>Class of the agent.</p>
+</dd>
+<dt><strong>train_env</strong><span class="classifier">tuple (constructor, kwargs)</span></dt><dd><p>Environment used to initialize/train the agent.</p>
+</dd>
+<dt><strong>fit_budget</strong><span class="classifier">int</span></dt><dd><p>Budget used to call <code class="xref py py-meth docutils literal notranslate"><span class="pre">rlberry.agents.agent.Agent.fit()</span></code>.
+If None, must be given in <code class="docutils literal notranslate"><span class="pre">fit_kwargs['fit_budget']</span></code>.</p>
+</dd>
+<dt><strong>eval_env</strong><span class="classifier">Tuple (constructor, kwargs)</span></dt><dd><p>Environment used to evaluate the agent. If None, set to <code class="docutils literal notranslate"><span class="pre">train_env</span></code>.</p>
+</dd>
+<dt><strong>init_kwargs</strong><span class="classifier">dict</span></dt><dd><p>Arguments required by the agent’s constructor. Shared across all n_fit instances.</p>
+</dd>
+<dt><strong>fit_kwargs</strong><span class="classifier">dict</span></dt><dd><p>Extra arguments to call <code class="xref py py-meth docutils literal notranslate"><span class="pre">rlberry.agents.agent.Agent.fit()</span></code>.</p>
+</dd>
+<dt><strong>eval_kwargs</strong><span class="classifier">dict</span></dt><dd><p>Arguments required to call <code class="xref py py-meth docutils literal notranslate"><span class="pre">rlberry.agents.agent.Agent.eval()</span></code>.
+if eval was not overwritten it’s (<a class="reference internal" href="rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy"><code class="xref py py-class docutils literal notranslate"><span class="pre">AgentWithSimplePolicy</span></code></a>) :
+eval_horizon : int, default: 10**5</p>
+<blockquote>
+<div><p>Horizon, maximum episode length.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>n_simulations<span class="classifier">int, default: 10</span></dt><dd><p>Number of Monte Carlo simulations.</p>
+</dd>
+<dt>gamma<span class="classifier">double, default: 1.0</span></dt><dd><p>Discount factor.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>agent_name</strong><span class="classifier">str</span></dt><dd><p>Name of the agent. If None, set to agent_class.name</p>
+</dd>
+<dt><strong>n_fit</strong><span class="classifier">int</span></dt><dd><p>Number of agent instances to fit.</p>
+</dd>
+<dt><strong>output_dir</strong><span class="classifier">str or <code class="xref py py-class docutils literal notranslate"><span class="pre">pathlib.Path</span></code></span></dt><dd><p>Directory where to store data.</p>
+</dd>
+<dt><strong>parallelization: {‘thread’, ‘process’}, default: ‘thread’</strong></dt><dd><p>Whether to parallelize  agent training using threads or processes.</p>
+</dd>
+<dt><strong>max_workers: None or int, default: None</strong></dt><dd><p>Number of processes/threads used in a call to fit().
+If None and parallelization=’process’, it will default to the
+number of processors on the machine.
+If None and parallelization=’thread’, it will default to the
+number of processors on the machine, multiplied by 5.</p>
+</dd>
+<dt><strong>mp_context: {‘spawn’, ‘fork’, ‘forkserver}, default: ‘spawn’.</strong></dt><dd><p>Context for python multiprocessing module.
+Warning: If you’re using JAX or PyTorch, it only works with ‘spawn’.</p>
+<blockquote>
+<div><p>If running code on a notebook or interpreter, use ‘fork’.
+forkserver and fork are available on Unix OS only.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>worker_logging_level<span class="classifier">str, default: None</span></dt><dd><p>Logging level in each of the threads/processes used to fit agents.
+If None, use default logger level.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>seed</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.SeedSequence</span></code>, <a class="reference internal" href="rlberry.seeding.seeder.Seeder.html#rlberry.seeding.seeder.Seeder" title="rlberry.seeding.seeder.Seeder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Seeder</span></code></a> or int, default</span><span class="classifier">None</span></dt><dd><p>Seed sequence from which to spawn the random number generator.
+If None, generate random seed.
+If int, use as entropy for SeedSequence.
+If seeder, use seeder.seed_seq</p>
+</dd>
+<dt><strong>enable_tensorboard</strong><span class="classifier">bool, default</span><span class="classifier">False</span></dt><dd><p>If True, enable tensorboard logging in Agent’s <a class="reference internal" href="rlberry.utils.writers.DefaultWriter.html#rlberry.utils.writers.DefaultWriter" title="rlberry.utils.writers.DefaultWriter"><code class="xref py py-class docutils literal notranslate"><span class="pre">DefaultWriter</span></code></a>.</p>
+</dd>
+<dt><strong>outdir_id_style: {None, ‘unique’, ‘timestamp’}, default = ‘timestamp’</strong></dt><dd><p>If None, data is saved to output_dir/manager_data/&lt;<a href="#id3"><span class="problematic" id="id4">AGENT_NAME_</span></a>&gt;
+If ‘unique’, data is saved to <code class="docutils literal notranslate"><span class="pre">output_dir/manager_data/&lt;AGENT_NAME_UNIQUE_ID&gt;</span></code>
+If ‘timestamp’, data is saved to <code class="docutils literal notranslate"><span class="pre">output_dir/manager_data/&lt;AGENT_NAME_TIMESTAMP_SHORT_ID&gt;</span></code></p>
+</dd>
+<dt><strong>default_writer_kwargs</strong><span class="classifier">dict</span></dt><dd><p>Optional arguments for <a class="reference internal" href="rlberry.utils.writers.DefaultWriter.html#rlberry.utils.writers.DefaultWriter" title="rlberry.utils.writers.DefaultWriter"><code class="xref py py-class docutils literal notranslate"><span class="pre">DefaultWriter</span></code></a>. Typically one may
+want to change the log style with default_writer_kwargs set to {“style_log”:”progressbar”} or</p>
+<blockquote>
+<div><p>{“style_log”:”one_line”}</p>
+</div></blockquote>
+</dd>
+<dt><strong>init_kwargs_per_instance</strong><span class="classifier">List[dict] (optional)</span></dt><dd><p>List of length <code class="docutils literal notranslate"><span class="pre">n_fit</span></code> containing the params to initialize each of
+the <code class="docutils literal notranslate"><span class="pre">n_fit</span></code> agent instances. It can be useful if different instances
+require different parameters. If the same parameter is defined by
+<code class="docutils literal notranslate"><span class="pre">init_kwargs</span></code> and <code class="docutils literal notranslate"><span class="pre">init_kwargs_per_instance</span></code>, the value given by
+<code class="docutils literal notranslate"><span class="pre">init_kwargs_per_instance</span></code> will be used.
+Attention: parameters that are passed individually to each agent instance
+cannot be optimized in the method optimize_hyperparams().</p>
+</dd>
+<dt><strong>thread_shared_data</strong><span class="classifier">dict, optional</span></dt><dd><p>Data to be shared among agent instances in different threads.
+If parallelization=’process’, data will be copied instead of shared.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes<span class="colon">:</span></dt>
+<dd class="field-even"><dl>
+<dt><strong>output_dir</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">pathlib.Path</span></code></span></dt><dd><p>Directory where the manager saves data.</p>
+</dd>
+<dt><strong>rlberry_version: str</strong></dt><dd><p>Current version of rlberry. This is saved when calling experiment_manager.save()
+and it is then used in load() to warn if the version of the agent is not a
+match with current rlberry version.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If parallelization=”process” and mp_context=”spawn” or mp_context=”forkserver”, make sure your main code
+has a guard <cite>if __name__ == ‘__main__’</cite>. See <a class="reference external" href="https://docs.python.org/3/library/multiprocessing.html#multiprocessing-programming">https://docs.python.org/3/library/multiprocessing.html#multiprocessing-programming</a>.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.agents.torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">A2CAgent</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.envs</span><span class="w"> </span><span class="kn">import</span> <span class="n">gym_make</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExperimentManager</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">manager</span> <span class="o">=</span> <span class="n">ExperimentManager</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>     <span class="n">A2CAgent</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>     <span class="p">(</span><span class="n">env_ctor</span><span class="p">,</span> <span class="n">env_kwargs</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>     <span class="n">fit_budget</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>     <span class="n">eval_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">eval_horizon</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>     <span class="n">n_fit</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>     <span class="n">parallelization</span><span class="o">=</span><span class="s2">&quot;spawn&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>       <span class="n">manager</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="mf">1e4</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rlberry.manager.ExperimentManager.build_eval_env" title="rlberry.manager.ExperimentManager.build_eval_env"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_eval_env</span></code></a>()</p></td>
+<td><p>Return an instantiated and reseeded evaluation environment.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#rlberry.manager.ExperimentManager.clear_handlers" title="rlberry.manager.ExperimentManager.clear_handlers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_handlers</span></code></a>()</p></td>
+<td><p>Delete files from output_dir/agent_handlers that are managed by this class.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rlberry.manager.ExperimentManager.clear_output_dir" title="rlberry.manager.ExperimentManager.clear_output_dir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_output_dir</span></code></a>()</p></td>
+<td><p>Delete output_dir and all its data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#rlberry.manager.ExperimentManager.eval_agents" title="rlberry.manager.ExperimentManager.eval_agents"><code class="xref py py-obj docutils literal notranslate"><span class="pre">eval_agents</span></code></a>([n_simulations, eval_kwargs, ...])</p></td>
+<td><p>Evaluate managed agents using their 'eval' method and return a list with the results.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rlberry.manager.ExperimentManager.fit" title="rlberry.manager.ExperimentManager.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>([budget])</p></td>
+<td><p>Fit the agent instances in parallel.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#rlberry.manager.ExperimentManager.generate_profile" title="rlberry.manager.ExperimentManager.generate_profile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_profile</span></code></a>([budget, fname])</p></td>
+<td><p>Do a fit to produce a profile (i.e.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rlberry.manager.ExperimentManager.get_agent_instances" title="rlberry.manager.ExperimentManager.get_agent_instances"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_agent_instances</span></code></a>()</p></td>
+<td><p>Returns a list containing <code class="docutils literal notranslate"><span class="pre">n_fit</span></code> agent instances.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#rlberry.manager.ExperimentManager.get_writer_data" title="rlberry.manager.ExperimentManager.get_writer_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_writer_data</span></code></a>()</p></td>
+<td><p>Return a dataframe containing data from the writer of the agents.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rlberry.manager.ExperimentManager.load" title="rlberry.manager.ExperimentManager.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>(filename)</p></td>
+<td><p>Loads an ExperimentManager instance from a file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#rlberry.manager.ExperimentManager.optimize_hyperparams" title="rlberry.manager.ExperimentManager.optimize_hyperparams"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optimize_hyperparams</span></code></a>([n_trials, timeout, ...])</p></td>
+<td><p>Run hyperparameter optimization and updates init_kwargs with the best hyperparameters found.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rlberry.manager.ExperimentManager.save" title="rlberry.manager.ExperimentManager.save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code></a>()</p></td>
+<td><p>Save ExperimentManager data to <code class="xref py py-attr docutils literal notranslate"><span class="pre">output_dir</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#rlberry.manager.ExperimentManager.set_writer" title="rlberry.manager.ExperimentManager.set_writer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_writer</span></code></a>(idx, writer_fn[, writer_kwargs])</p></td>
+<td><p>Defines the writer for one of the managed agents.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="rlberry.manager.ExperimentManager.build_eval_env">
+<span class="sig-name descname"><span class="pre">build_eval_env</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Env</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Env</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/rlberry/manager/experiment_manager.html#ExperimentManager.build_eval_env"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.manager.ExperimentManager.build_eval_env" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an instantiated and reseeded evaluation environment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">types.Env</span></code></dt><dd><p>Instance of evaluation environment.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rlberry.manager.ExperimentManager.clear_handlers">
+<span class="sig-name descname"><span class="pre">clear_handlers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rlberry/manager/experiment_manager.html#ExperimentManager.clear_handlers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.manager.ExperimentManager.clear_handlers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete files from output_dir/agent_handlers that are managed by this class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rlberry.manager.ExperimentManager.clear_output_dir">
+<span class="sig-name descname"><span class="pre">clear_output_dir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rlberry/manager/experiment_manager.html#ExperimentManager.clear_output_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.manager.ExperimentManager.clear_output_dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete output_dir and all its data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rlberry.manager.ExperimentManager.eval_agents">
+<span class="sig-name descname"><span class="pre">eval_agents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_simulations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eval_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agent_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/rlberry/manager/experiment_manager.html#ExperimentManager.eval_agents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.manager.ExperimentManager.eval_agents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate managed agents using their ‘eval’ method and return a list with the results.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>n_simulations</strong><span class="classifier">int, optional</span></dt><dd><p>The total number of agent evaluations (‘eval’ calls) to perform. If None, set to 2*(number of agents).</p>
+</dd>
+<dt><strong>eval_kwargs</strong><span class="classifier">dict, optional</span></dt><dd><p>A dictionary containing arguments to be passed to the ‘eval’ method of each trained instance.
+If None, the default set of evaluation arguments will be used (self.eval_kwargs).</p>
+<blockquote>
+<div><dl class="simple">
+<dt>eval_horizon<span class="classifier">int, default: 10**5</span></dt><dd><p>Horizon, maximum episode length.</p>
+</dd>
+<dt>n_simulations<span class="classifier">int, default: 10</span></dt><dd><p>Number of Monte Carlo simulations.</p>
+</dd>
+<dt>gamma<span class="classifier">double, default: 1.0</span></dt><dd><p>Discount factor.</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd>
+<dt><strong>agent_id: int, optional</strong></dt><dd><p>The index of the agent to be evaluated. If None, an agent will be chosen randomly for evaluation.</p>
+</dd>
+<dt><strong>verbose: bool, optional</strong></dt><dd><p>Determines whether to print a progress report during the evaluation.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>list of float</dt><dd><p>A list of length ‘n_simulations’, containing the evaluation results
+obtained from each call to the <code class="xref py py-meth docutils literal notranslate"><span class="pre">eval()</span></code> method.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This method facilitates the evaluation of multiple managed agents by calling their ‘eval’
+method with the specified evaluation parameters.</p>
+<p>The ‘n_simulations’ parameter specifies the total number of evaluations to perform. Each
+evaluation will be conducted on one of the managed agents.</p>
+<p>The ‘eval_kwargs’ parameter allows you to customize the evaluation by passing specific arguments
+to the ‘eval’ method of each agent. If not provided, the default evaluation arguments
+(self.eval_kwargs) will be used.</p>
+<p>The ‘agent_id’ parameter is used to specify a particular agent for evaluation. If None, an agent
+will be chosen randomly for evaluation.</p>
+<p>The ‘verbose’ parameter determines whether a progress report will be printed during the
+evaluation process.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExperimentManager</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">eval_kwargs</span> <span class="o">=</span> <span class="p">{</span>
+<span class="go">    &#39;horizon&#39;: 1000,</span>
+<span class="go">    &#39;n_simulations&#39;: 10,</span>
+<span class="go">    &#39;gamma&#39;: 0.99</span>
+<span class="go">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">agent_manager</span> <span class="o">=</span> <span class="n">ExperimentManager</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">eval_kwargs</span><span class="o">=</span><span class="n">eval_kwargs</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># evaluation_results will return 5 values (n_simulations=5) where each value is the Monte-Carlo</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># evaluation over 10 simulations ((eval_kwargs[&quot;n_simulation&quot;]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">evaluation_results</span> <span class="o">=</span> <span class="n">agent_manager</span><span class="o">.</span><span class="n">eval_agents</span><span class="p">(</span><span class="n">n_simulations</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rlberry.manager.ExperimentManager.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">budget</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rlberry/manager/experiment_manager.html#ExperimentManager.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.manager.ExperimentManager.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the agent instances in parallel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>budget: int or None</strong></dt><dd><p>Computational or sample complexity budget.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rlberry.manager.ExperimentManager.generate_profile">
+<span class="sig-name descname"><span class="pre">generate_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">budget</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rlberry/manager/experiment_manager.html#ExperimentManager.generate_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.manager.ExperimentManager.generate_profile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do a fit to produce a profile (i.e. the cumulative time spent on each operation done during a fit).
+The 20 first lines are printed out and the whole profile is saved in a file.
+See <a href="#id5"><span class="problematic" id="id6">`https://docs.python.org/3/library/profile.html`_</span></a> for more information on python profiler.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>budget: int or None, default=None</strong></dt><dd><p>budget of the fit done to generate the profile</p>
+</dd>
+<dt><strong>fname: string or None, default=None</strong></dt><dd><p>name of the file where we save the profile. If None, the file is saved in self.output_dir/self.agent_name_profile.prof.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rlberry.manager.ExperimentManager.get_agent_instances">
+<span class="sig-name descname"><span class="pre">get_agent_instances</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rlberry/manager/experiment_manager.html#ExperimentManager.get_agent_instances"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.manager.ExperimentManager.get_agent_instances" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list containing <code class="docutils literal notranslate"><span class="pre">n_fit</span></code> agent instances.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>list of <a class="reference internal" href="rlberry.agents.Agent.html#rlberry.agents.Agent" title="rlberry.agents.agent.Agent"><code class="xref py py-class docutils literal notranslate"><span class="pre">Agent</span></code></a></dt><dd><p><code class="docutils literal notranslate"><span class="pre">n_fit</span></code> instances of the managed agents.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rlberry.manager.ExperimentManager.get_writer_data">
+<span class="sig-name descname"><span class="pre">get_writer_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rlberry/manager/experiment_manager.html#ExperimentManager.get_writer_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.manager.ExperimentManager.get_writer_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a dataframe containing data from the writer of the agents.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></dt><dd><p>Data from the agents’ writers.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rlberry.manager.ExperimentManager.load">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rlberry/manager/experiment_manager.html#ExperimentManager.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.manager.ExperimentManager.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads an ExperimentManager instance from a file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>filename: str or :class:`pathlib.Path`</strong></dt><dd></dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference internal" href="#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">rlberry.manager.ExperimentManager</span></code></a></dt><dd><p>Loaded instance of ExperimentManager.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rlberry.manager.ExperimentManager.optimize_hyperparams">
+<span class="sig-name descname"><span class="pre">optimize_hyperparams</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_trials</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">256</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_optuna_workers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optuna_parallelization</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'thread'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampler_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'optuna_default'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pruner_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'halving'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">continue_previous</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit_fraction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampler_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_evaluation_writers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_eval_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rlberry/manager/experiment_manager.html#ExperimentManager.optimize_hyperparams"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.manager.ExperimentManager.optimize_hyperparams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run hyperparameter optimization and updates init_kwargs with the best hyperparameters found.</p>
+<dl class="simple">
+<dt>Currently supported sampler_method:</dt><dd><p>‘random’ -&gt; Random Search
+‘optuna_default’ -&gt; TPE
+‘grid’ -&gt; Grid Search
+‘cmaes’ -&gt; CMA-ES</p>
+</dd>
+<dt>Currently supported pruner_method:</dt><dd><p>‘none’
+‘halving’</p>
+</dd>
+</dl>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>n_trials: int</strong></dt><dd><p>Number of agent evaluations</p>
+</dd>
+<dt><strong>timeout: int</strong></dt><dd><p>Stop study after the given number of second(s).
+Set to None for unlimited time.</p>
+</dd>
+<dt><strong>n_fit: int</strong></dt><dd><p>Number of agents to fit for each hyperparam evaluation.</p>
+</dd>
+<dt><strong>n_optuna_workers: int</strong></dt><dd><p>Number of workers used by optuna for optimization.</p>
+</dd>
+<dt><strong>optuna_parallelization</strong><span class="classifier">‘thread’ or ‘process’</span></dt><dd><p>Whether to use threads or processes for optuna parallelization.</p>
+</dd>
+<dt><strong>sampler_method</strong><span class="classifier">str</span></dt><dd><p>Optuna sampling method.</p>
+</dd>
+<dt><strong>pruner_method</strong><span class="classifier">str</span></dt><dd><p>Optuna pruner method.</p>
+</dd>
+<dt><strong>continue_previous</strong><span class="classifier">bool</span></dt><dd><p>Set to true to continue previous Optuna study. If true,
+sampler_method and pruner_method will be
+the same as in the previous study.</p>
+</dd>
+<dt><strong>fit_fraction</strong><span class="classifier">double, in ]0, 1]</span></dt><dd><p>Fraction of the agent to fit for partial evaluation
+(allows pruning of trials).</p>
+</dd>
+<dt><strong>sampler_kwargs</strong><span class="classifier">dict or None</span></dt><dd><p>Allows users to use different Optuna samplers with
+personalized arguments.</p>
+</dd>
+<dt><strong>evaluation_function</strong><span class="classifier">callable(agent_list, eval_env, <a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs)-&gt;double, default: None</span></dt><dd><p>Function to maximize, that takes a list of agents and an environment as input, and returns a double.
+If None, search for hyperparameters that maximize the mean reward.</p>
+</dd>
+<dt><strong>evaluation_function_kwargs</strong><span class="classifier">dict or None</span></dt><dd><p>kwargs for evaluation_function</p>
+</dd>
+<dt><strong>disable_evaluation_writers</strong><span class="classifier">bool, default: True</span></dt><dd><p>If true, disable writers of agents used in the hyperparameter evaluation.</p>
+</dd>
+<dt><strong>custom_eval_function</strong><span class="classifier">Callable</span></dt><dd><p>Takes as input a list of trained agents and output a scalar.
+If given, the value of custom_eval_funct(trained_agents) is
+optimized instead of mean([agent.eval() for agent in trained_agents]).</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>dict</dt><dd><p>Optimized hyperparameters.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rlberry.manager.ExperimentManager.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rlberry/manager/experiment_manager.html#ExperimentManager.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.manager.ExperimentManager.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save ExperimentManager data to <code class="xref py py-attr docutils literal notranslate"><span class="pre">output_dir</span></code>.</p>
+<p>Saves object so that the data can be later loaded to recreate an ExperimentManager instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">pathlib.Path</span></code></dt><dd><p>Filename where the ExperimentManager object was saved.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rlberry.manager.ExperimentManager.set_writer">
+<span class="sig-name descname"><span class="pre">set_writer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">writer_fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">writer_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rlberry/manager/experiment_manager.html#ExperimentManager.set_writer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.manager.ExperimentManager.set_writer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the writer for one of the managed agents.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>writer_fn</strong><span class="classifier">callable, None or ‘default’</span></dt><dd><p>Returns a writer for an agent, e.g. tensorboard SummaryWriter,
+rlberry DefaultWriter.
+If ‘default’, use the default writer in the Agent class.
+If None, disable any writer</p>
+</dd>
+<dt><strong>writer_kwargs</strong><span class="classifier">dict or None</span></dt><dd><p>kwargs for writer_fn</p>
+</dd>
+<dt><strong>idx</strong><span class="classifier">int</span></dt><dd><p>Index of the agent to set the writer (0 &lt;= idx &lt; <cite>n_fit</cite>).
+ExperimentManager fits <cite>n_fit</cite> agents, the writer of each one of them
+needs to be set separately.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<section id="examples-using-rlberry-manager-experimentmanager">
+<h2>Examples using <code class="docutils literal notranslate"><span class="pre">rlberry.manager.ExperimentManager</span></code><a class="headerlink" href="#examples-using-rlberry-manager-experimentmanager" title="Permalink to this heading">¶</a></h2>
+<div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="This script shows how to modify an agent to easily record reward or action during the fit of th..."><img alt="" src="../_images/sphx_glr_plot_writer_wrapper_thumb.png" />
+<p><a class="reference internal" href="../auto_examples/plot_writer_wrapper.html#sphx-glr-auto-examples-plot-writer-wrapper-py"><span class="std std-ref">Record reward during training and then plot it</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Record reward during training and then plot it</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This script shows how to define a bandit environment and an UCB Index-based algorithm."><img alt="" src="../_images/sphx_glr_plot_smooth_thumb.png" />
+<p><a class="reference internal" href="../auto_examples/plot_smooth.html#sphx-glr-auto-examples-plot-smooth-py"><span class="std std-ref">Illustration of plotting tools on Bandits</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Illustration of plotting tools on Bandits</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="First, we initialize a grid world environment with finite state space and actions. A grid world..."><img alt="" src="../_images/sphx_glr_plot_agent_manager_thumb.png" />
+<p><a class="reference internal" href="../auto_examples/plot_agent_manager.html#sphx-glr-auto-examples-plot-agent-manager-py"><span class="std std-ref">A demo of Experiment Manager</span></a></p>
+  <div class="sphx-glr-thumbnail-title">A demo of Experiment Manager</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This is a minimal example of how to create checkpoints while training your agents, and how to r..."><img alt="" src="../_images/sphx_glr_plot_checkpointing_thumb.png" />
+<p><a class="reference internal" href="../auto_examples/plot_checkpointing.html#sphx-glr-auto-examples-plot-checkpointing-py"><span class="std std-ref">Checkpointing</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Checkpointing</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Agent is slightly tuned, but not optimal. This is just for illustration purpose."><img alt="" src="../_images/sphx_glr_video_plot_atari_freeway_thumb.jpg" />
+<p><a class="reference internal" href="../auto_examples/demo_env/video_plot_atari_freeway.html#sphx-glr-auto-examples-demo-env-video-plot-atari-freeway-py"><span class="std std-ref">A demo of ATARI Freeway environment with DQNAgent</span></a></p>
+  <div class="sphx-glr-thumbnail-title">A demo of ATARI Freeway environment with DQNAgent</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Agent is slightly tuned, but not optimal. This is just for illustration purpose."><img alt="" src="../_images/sphx_glr_example_atari_atlantis_vectorized_ppo_thumb.jpg" />
+<p><a class="reference internal" href="../auto_examples/demo_env/example_atari_atlantis_vectorized_ppo.html#sphx-glr-auto-examples-demo-env-example-atari-atlantis-vectorized-ppo-py"><span class="std std-ref">A demo of ATARI Atlantis environment with vectorized PPOAgent</span></a></p>
+  <div class="sphx-glr-thumbnail-title">A demo of ATARI Atlantis environment with vectorized PPOAgent</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Agent is slightly tuned, but not optimal. This is just for illustration purpose."><img alt="" src="../_images/sphx_glr_example_atari_breakout_vectorized_ppo_thumb.jpg" />
+<p><a class="reference internal" href="../auto_examples/demo_env/example_atari_breakout_vectorized_ppo.html#sphx-glr-auto-examples-demo-env-example-atari-breakout-vectorized-ppo-py"><span class="std std-ref">A demo of ATARI Breakout environment with vectorized PPOAgent</span></a></p>
+  <div class="sphx-glr-thumbnail-title">A demo of ATARI Breakout environment with vectorized PPOAgent</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This script shows how to train a SAC agent on a Pendulum environment."><img alt="" src="../_images/sphx_glr_demo_SAC_thumb.png" />
+<p><a class="reference internal" href="../auto_examples/demo_agents/demo_SAC.html#sphx-glr-auto-examples-demo-agents-demo-sac-py"><span class="std std-ref">SAC Soft Actor-Critic</span></a></p>
+  <div class="sphx-glr-thumbnail-title">SAC Soft Actor-Critic</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This script shows how to define a bandit environment and an UCB Index-based algorithm."><img alt="" src="../_images/sphx_glr_plot_ucb_bandit_thumb.png" />
+<p><a class="reference internal" href="../auto_examples/demo_bandits/plot_ucb_bandit.html#sphx-glr-auto-examples-demo-bandits-plot-ucb-bandit-py"><span class="std std-ref">UCB Bandit cumulative regret</span></a></p>
+  <div class="sphx-glr-thumbnail-title">UCB Bandit cumulative regret</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This script shows how to define a bandit environment and an EXP3 randomized algorithm."><img alt="" src="../_images/sphx_glr_plot_exp3_bandit_thumb.png" />
+<p><a class="reference internal" href="../auto_examples/demo_bandits/plot_exp3_bandit.html#sphx-glr-auto-examples-demo-bandits-plot-exp3-bandit-py"><span class="std std-ref">EXP3 Bandit cumulative regret</span></a></p>
+  <div class="sphx-glr-thumbnail-title">EXP3 Bandit cumulative regret</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This script shows how to use Thompson sampling on two examples: Bernoulli and Gaussian bandits."><img alt="" src="../_images/sphx_glr_plot_TS_bandit_thumb.png" />
+<p><a class="reference internal" href="../auto_examples/demo_bandits/plot_TS_bandit.html#sphx-glr-auto-examples-demo-bandits-plot-ts-bandit-py"><span class="std std-ref">Comparison of Thompson sampling and UCB on Bernoulli and Gaussian bandits</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Comparison of Thompson sampling and UCB on Bernoulli and Gaussian bandits</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This script Compare several bandits agents and as a sub-product also shows how to use subplots ..."><img alt="" src="../_images/sphx_glr_plot_compare_index_bandits_thumb.png" />
+<p><a class="reference internal" href="../auto_examples/demo_bandits/plot_compare_index_bandits.html#sphx-glr-auto-examples-demo-bandits-plot-compare-index-bandits-py"><span class="std std-ref">Comparison subplots of various index based bandits algorithms</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Comparison subplots of various index based bandits algorithms</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="The quirck of this application is that there is a possible timeout when pinging a server. We ha..."><img alt="" src="../_images/sphx_glr_plot_mirror_bandit_thumb.png" />
+<p><a class="reference internal" href="../auto_examples/demo_bandits/plot_mirror_bandit.html#sphx-glr-auto-examples-demo-bandits-plot-mirror-bandit-py"><span class="std std-ref">A demo of Bandit BAI on a real dataset to select mirrors</span></a></p>
+  <div class="sphx-glr-thumbnail-title">A demo of Bandit BAI on a real dataset to select mirrors</div>
+</div></div><div class="clearer"></div></section>
+</section>
+
+
+      </div>
+    <div class="container">
+      <footer class="sk-content-footer">
+            &copy; 2023, rlberry team.
+          <a href="../_sources/generated/rlberry.manager.ExperimentManager.rst.txt" rel="nofollow">Show this page source</a>
+      </footer>
+    </div>
+  </div>
+</div>
+<script src="../_static/js/vendor/bootstrap.min.js"></script>
+
+<script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-22606712-2', 'auto');
+    ga('set', 'anonymizeIp', true);
+    ga('send', 'pageview');
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+<script>
+$(document).ready(function() {
+    /* Add a [>>>] button on the top-right corner of code samples to hide
+     * the >>> and ... prompts and the output and thus make the code
+     * copyable. */
+    var div = $('.highlight-python .highlight,' +
+                '.highlight-python3 .highlight,' +
+                '.highlight-pycon .highlight,' +
+		'.highlight-default .highlight')
+    var pre = div.find('pre');
+
+    // get the styles from the current theme
+    pre.parent().parent().css('position', 'relative');
+    var hide_text = 'Hide prompts and outputs';
+    var show_text = 'Show prompts and outputs';
+
+    // create and add the button to all the code blocks that contain >>>
+    div.each(function(index) {
+        var jthis = $(this);
+        if (jthis.find('.gp').length > 0) {
+            var button = $('<span class="copybutton">&gt;&gt;&gt;</span>');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+            jthis.prepend(button);
+        }
+        // tracebacks (.gt) contain bare text elements that need to be
+        // wrapped in a span to work with .nextUntil() (see later)
+        jthis.find('pre:has(.gt)').contents().filter(function() {
+            return ((this.nodeType == 3) && (this.data.trim().length > 0));
+        }).wrap('<span>');
+    });
+
+    // define the behavior of the button when it's clicked
+    $('.copybutton').click(function(e){
+        e.preventDefault();
+        var button = $(this);
+        if (button.data('hidden') === 'false') {
+            // hide the code output
+            button.parent().find('.go, .gp, .gt').hide();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'hidden');
+            button.css('text-decoration', 'line-through');
+            button.attr('title', show_text);
+            button.data('hidden', 'true');
+        } else {
+            // show the code output
+            button.parent().find('.go, .gp, .gt').show();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'visible');
+            button.css('text-decoration', 'none');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+        }
+    });
+
+	/*** Add permalink buttons next to glossary terms ***/
+	$('dl.glossary > dt[id]').append(function() {
+		return ('<a class="headerlink" href="#' +
+			    this.getAttribute('id') +
+			    '" title="Permalink to this term">¶</a>');
+	});
+  /*** Hide navbar when scrolling down ***/
+  // Returns true when headerlink target matches hash in url
+  (function() {
+    hashTargetOnTop = function() {
+        var hash = window.location.hash;
+        if ( hash.length < 2 ) { return false; }
+
+        var target = document.getElementById( hash.slice(1) );
+        if ( target === null ) { return false; }
+
+        var top = target.getBoundingClientRect().top;
+        return (top < 2) && (top > -2);
+    };
+
+    // Hide navbar on load if hash target is on top
+    var navBar = document.getElementById("navbar");
+    var navBarToggler = document.getElementById("sk-navbar-toggler");
+    var navBarHeightHidden = "-" + navBar.getBoundingClientRect().height + "px";
+    var $window = $(window);
+
+    hideNavBar = function() {
+        navBar.style.top = navBarHeightHidden;
+    };
+
+    showNavBar = function() {
+        navBar.style.top = "0";
+    }
+
+    if (hashTargetOnTop()) {
+        hideNavBar()
+    }
+
+    var prevScrollpos = window.pageYOffset;
+    hideOnScroll = function(lastScrollTop) {
+        if (($window.width() < 768) && (navBarToggler.getAttribute("aria-expanded") === 'true')) {
+            return;
+        }
+        if (lastScrollTop > 2 && (prevScrollpos <= lastScrollTop) || hashTargetOnTop()){
+            hideNavBar()
+        } else {
+            showNavBar()
+        }
+        prevScrollpos = lastScrollTop;
+    };
+
+    /*** high performance scroll event listener***/
+    var raf = window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        window.oRequestAnimationFrame;
+    var lastScrollTop = $window.scrollTop();
+
+    if (raf) {
+        loop();
+    }
+
+    function loop() {
+        var scrollTop = $window.scrollTop();
+        if (lastScrollTop === scrollTop) {
+            raf(loop);
+            return;
+        } else {
+            lastScrollTop = scrollTop;
+            hideOnScroll(lastScrollTop);
+            raf(loop);
+        }
+    }
+  })();
+});
+
+</script>
+    
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    
+</body>
+</html>

@@ -1,0 +1,571 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  
+  <title>rlberry.agents.stable_baselines.stable_baselines &mdash; rlberry 0.7.3.post16.dev0+8710009 documentation</title>
+  
+  <link rel="canonical" href="https://rlberry-py.github.io/rlberry/_modules/rlberry/agents/stable_baselines/stable_baselines.html" />
+
+  
+
+  <link rel="stylesheet" href="../../../../_static/css/vendor/bootstrap.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/sg_gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/sg_gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/sg_gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/sphinx-design.4cbf315f70debaebd550c87a6162cf0f.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+<script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+<script src="../../../../_static/js/vendor/jquery-3.6.3.slim.min.js"></script> 
+</head>
+<body>
+
+
+<nav id="navbar" class="sk-docs-navbar navbar navbar-expand-md navbar-light bg-light py-0">
+  <div class="container-fluid sk-docs-container px-0">
+    <button
+      id="sk-navbar-toggler"
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="sk-navbar-collapse collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../../index.html">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../../installation.html">Install</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../../user_guide.html">User Guide</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../../auto_examples/index.html">Examples</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../../api.html">API</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../../changelog.html">Changelog</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../../about.html">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="https://github.com/rlberry-py/rlberry">GitHub</a>
+        </li>
+        <!--
+        <li class="nav-item dropdown nav-more-item-dropdown">
+          <a class="sk-nav-link nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">More</a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          </div>
+        </li>-->
+    </ul>
+      <div id="searchbox" role="search">
+          <div class="searchformwrapper">
+            <form action="https://duckduckgo.com/">
+            <input type="hidden" id="sites" name="sites" value="https://rlberry-py.github.io/rlberry/">
+            <input type="search" placeholder="Search &hellip;" value="" name="q" />
+            <input class="sk-search-text-btn" type="submit" value="Go" /></form>
+
+          </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="d-flex" id="sk-doc-wrapper">
+    <input type="checkbox" name="sk-toggle-checkbox" id="sk-toggle-checkbox">
+    <label id="sk-sidemenu-toggle" class="sk-btn-toggle-toc btn sk-btn-primary" for="sk-toggle-checkbox">Toggle Menu</label>
+    <div id="sk-sidebar-wrapper" class="border-right">
+      <div class="sk-sidebar-toc-wrapper">
+        <div class="sk-sidebar-toc-logo">
+        </div>
+	<br>
+        <div class="alert alert-warning p-1 mb-2" role="alert">
+
+          <p class="text-center mb-0">
+          rlberry 0.7.3.post16.dev0+8710009<br/>
+          <a href="../../../../versions.html">Other versions</a>
+          </p>
+
+        </div>
+            <div class="sk-sidebar-toc">
+              
+            </div>
+      </div>
+    </div>
+    <div id="sk-page-content-wrapper">
+      <div class="sk-page-content container-fluid body px-md-3" role="main">
+        
+  <h1>Source code for rlberry.agents.stable_baselines.stable_baselines</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">dill</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">stable_baselines3.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">stable_baselines3.common.logger</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sb_logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">stable_baselines3.common.base_class</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseAlgorithm</span> <span class="k">as</span> <span class="n">SB3Algorithm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">stable_baselines3.common.policies</span><span class="w"> </span><span class="kn">import</span> <span class="n">BasePolicy</span> <span class="k">as</span> <span class="n">SB3Policy</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry</span><span class="w"> </span><span class="kn">import</span> <span class="n">metadata_utils</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry</span><span class="w"> </span><span class="kn">import</span> <span class="n">types</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">AgentWithSimplePolicy</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">rlberry</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">rlberry</span><span class="o">.</span><span class="n">logger</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">is_recordable</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">sb_logging</span><span class="o">.</span><span class="n">Video</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">sb_logging</span><span class="o">.</span><span class="n">Figure</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">sb_logging</span><span class="o">.</span><span class="n">Image</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">AgentWriter</span><span class="p">(</span><span class="n">sb_logging</span><span class="o">.</span><span class="n">KVWriter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wraps rlberry&#39;s writer to be compatible with stable_baselines3&#39;s Logger.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    -----------</span>
+<span class="sd">    writer: Agent&#39;s writer</span>
+<span class="sd">        rlberry&#39;s writer to be wrapped.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">writer</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">writer</span> <span class="o">=</span> <span class="n">writer</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">key_values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="n">key_excluded</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]],</span>
+        <span class="n">step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">writer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="c1"># Exclude entries with unsupported formats</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">key_values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_recordable</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+                <span class="n">key_excluded</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;rlberry&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Filter excluded entries</span>
+        <span class="n">key_values</span> <span class="o">=</span> <span class="n">sb_logging</span><span class="o">.</span><span class="n">filter_excluded_keys</span><span class="p">(</span>
+            <span class="n">key_values</span><span class="p">,</span> <span class="n">key_excluded</span><span class="p">,</span> <span class="s2">&quot;rlberry&quot;</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Log to writer</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">key_values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">writer</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">step</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+
+<div class="viewcode-block" id="StableBaselinesAgent"><a class="viewcode-back" href="../../../../generated/rlberry.agents.stable_baselines.StableBaselinesAgent.html#rlberry.agents.stable_baselines.StableBaselinesAgent">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">StableBaselinesAgent</span><span class="p">(</span><span class="n">AgentWithSimplePolicy</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wraps an StableBaselines3 Algorithm with a rlberry Agent.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Other keyword arguments are passed to the algorithm&#39;s constructor.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    -----------</span>
+<span class="sd">    env: gymnasium.Env</span>
+<span class="sd">        Environment</span>
+<span class="sd">    algo_cls: stable_baselines3 Algorithm class</span>
+<span class="sd">        Class of the algorithm to wrap (e.g. A2C)</span>
+<span class="sd">    policy: str or stable_baselines3 Policy class</span>
+<span class="sd">        Policy to use (e.g. MlpPolicy)</span>
+<span class="sd">    verbose: int</span>
+<span class="sd">        Verbosity level: 0 none, 1 training information, 2 tensorflow debug</span>
+<span class="sd">    tensorboard_log: str</span>
+<span class="sd">        Path to the directory where to save the tensorboard logs (if None, no logging)</span>
+<span class="sd">    eval_env : gymnasium.Env or tuple (constructor, kwargs)</span>
+<span class="sd">        Environment on which to evaluate the agent. If None, copied from env.</span>
+<span class="sd">    copy_env : bool</span>
+<span class="sd">        If true, makes a deep copy of the environment.</span>
+<span class="sd">    seeder : :class:`~rlberry.seeding.seeder.Seeder`, int, or None</span>
+<span class="sd">        Seeder/seed for random number generation.</span>
+<span class="sd">    output_dir : str or Path</span>
+<span class="sd">        Directory that the agent can use to store data.</span>
+<span class="sd">    writer_extra (through class Agent) : str in {&quot;reward&quot;, &quot;action&quot;, &quot;action_and_reward&quot;},</span>
+<span class="sd">        Scalar that will be recorded in the writer.</span>
+<span class="sd">    _execution_metadata : ExecutionMetadata, optional</span>
+<span class="sd">        Extra information about agent execution (e.g. about which is the process id where the agent is running).</span>
+<span class="sd">        Used by :class:`~rlberry.manager.ExperimentManager`.</span>
+<span class="sd">    _default_writer_kwargs : dict, optional</span>
+<span class="sd">        Parameters to initialize :class:`~rlberry.utils.writers.DefaultWriter` (attribute self.writer).</span>
+<span class="sd">        Used by :class:`~rlberry.manager.ExperimentManager`.</span>
+<span class="sd">    **kwargs : Keyword Arguments</span>
+<span class="sd">        Arguments to be passed to the `algo_cls` constructor. (Class of algorithm to wrap)</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from rlberry.envs import gym_make</span>
+<span class="sd">    &gt;&gt;&gt; from stable_baselines3 import A2C</span>
+<span class="sd">    &gt;&gt;&gt; from rlberry.agents import StableBaselinesAgent</span>
+<span class="sd">    &gt;&gt;&gt; env_ctor, env_kwargs = gym_make, dict(id=&quot;CartPole-v1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; env = env_ctor(**env_kwargs)</span>
+<span class="sd">    &gt;&gt;&gt; agent = StableBaselinesAgent(env, A2C, &quot;MlpPolicy&quot;, verbose=1)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">__rlberry_kwargs</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;env&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;eval_env&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;copy_env&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;seeder&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;output_dir&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_execution_metadata&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_default_writer_kwargs&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_thread_shared_data&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;writer_extra&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">env</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">Env</span><span class="p">,</span>
+        <span class="n">algo_cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">SB3Algorithm</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">policy</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">SB3Policy</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;MlpPolicy&quot;</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">tensorboard_log</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">eval_env</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">types</span><span class="o">.</span><span class="n">Env</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">copy_env</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">seeder</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">types</span><span class="o">.</span><span class="n">Seeder</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">output_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">_execution_metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">metadata_utils</span><span class="o">.</span><span class="n">ExecutionMetadata</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">_default_writer_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">_thread_shared_data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="n">writer_extra</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;writer_extra&quot;</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">StableBaselinesAgent</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">env</span><span class="p">,</span>
+            <span class="n">eval_env</span><span class="o">=</span><span class="n">eval_env</span><span class="p">,</span>
+            <span class="n">copy_env</span><span class="o">=</span><span class="n">copy_env</span><span class="p">,</span>
+            <span class="n">seeder</span><span class="o">=</span><span class="n">seeder</span><span class="p">,</span>
+            <span class="n">output_dir</span><span class="o">=</span><span class="n">output_dir</span><span class="p">,</span>
+            <span class="n">writer_extra</span><span class="o">=</span><span class="n">writer_extra</span><span class="p">,</span>
+            <span class="n">_execution_metadata</span><span class="o">=</span><span class="n">_execution_metadata</span><span class="p">,</span>
+            <span class="n">_default_writer_kwargs</span><span class="o">=</span><span class="n">_default_writer_kwargs</span><span class="p">,</span>
+            <span class="n">_thread_shared_data</span><span class="o">=</span><span class="n">_thread_shared_data</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span> <span class="o">=</span> <span class="n">verbose</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tb_log</span> <span class="o">=</span> <span class="n">tensorboard_log</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_custom_logger</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># Remove rlberry&#39;s kwargs and add logging kwargs</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__rlberry_kwargs</span><span class="p">}</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;verbose&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;tensorboard_log&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tb_log</span>
+
+        <span class="c1"># Generate seed for the algorithm using rlberry&#39;s seeding</span>
+        <span class="n">seed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rng</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="mi">32</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+
+        <span class="c1"># Initialize the algorithm</span>
+        <span class="k">assert</span> <span class="n">algo_cls</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;algo_cls must be provided&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">algo_cls</span> <span class="o">=</span> <span class="n">algo_cls</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">set_random_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wrapped</span> <span class="o">=</span> <span class="n">algo_cls</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="StableBaselinesAgent.set_logger"><a class="viewcode-back" href="../../../../generated/rlberry.agents.stable_baselines.StableBaselinesAgent.html#rlberry.agents.stable_baselines.StableBaselinesAgent.set_logger">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">set_logger</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logger</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the logger to a custom SB3 logger.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        logger: stable_baselines3.common.logger.Logger</span>
+<span class="sd">            The logger to use.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">logger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">output_formats</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">AgentWriter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">writer</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wrapped</span><span class="o">.</span><span class="n">set_logger</span><span class="p">(</span><span class="n">logger</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_custom_logger</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="StableBaselinesAgent.reseed"><a class="viewcode-back" href="../../../../generated/rlberry.agents.stable_baselines.StableBaselinesAgent.html#rlberry.agents.stable_baselines.StableBaselinesAgent.reseed">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">reseed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed_seq</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reseed the agent.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reseed</span><span class="p">(</span><span class="n">seed_seq</span><span class="p">)</span>
+        <span class="n">seed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rng</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="mi">32</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wrapped</span><span class="o">.</span><span class="n">set_random_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="StableBaselinesAgent.save"><a class="viewcode-back" href="../../../../generated/rlberry.agents.stable_baselines.StableBaselinesAgent.html#rlberry.agents.stable_baselines.StableBaselinesAgent.save">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save the agent to a file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        filename: Path or str</span>
+<span class="sd">            File in which to save the Agent.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pathlib.Path</span>
+<span class="sd">            If save() is successful, a Path object corresponding to the filename is returned.</span>
+<span class="sd">            Otherwise, None is returned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Save wrapped RL algorithm</span>
+        <span class="n">sb3_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">&quot;.zip&quot;</span><span class="p">)</span>
+        <span class="n">sb3_file</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wrapped</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">sb3_file</span><span class="p">)</span>
+
+        <span class="c1"># Remove the wrapped algorithm if necessary and save the agent</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">dill</span><span class="o">.</span><span class="n">pickles</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wrapped</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wrapped</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">StableBaselinesAgent</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="StableBaselinesAgent.load"><a class="viewcode-back" href="../../../../generated/rlberry.agents.stable_baselines.StableBaselinesAgent.html#rlberry.agents.stable_baselines.StableBaselinesAgent.load">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load agent object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        filename: str</span>
+<span class="sd">            Path to the object (pickle) to load.</span>
+<span class="sd">        **kwargs: Keyword Arguments</span>
+<span class="sd">            Arguments required by the __init__ method of the Agent subclass to load.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">agent</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">StableBaselinesAgent</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Load the wrapped RL algorithm if necessary</span>
+        <span class="k">if</span> <span class="n">agent</span><span class="o">.</span><span class="n">wrapped</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">sb3_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">&quot;.zip&quot;</span><span class="p">)</span>
+            <span class="n">agent</span><span class="o">.</span><span class="n">wrapped</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">algo_cls</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">sb3_file</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">agent</span></div>
+
+<div class="viewcode-block" id="StableBaselinesAgent.fit"><a class="viewcode-back" href="../../../../generated/rlberry.agents.stable_baselines.StableBaselinesAgent.html#rlberry.agents.stable_baselines.StableBaselinesAgent.fit">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">budget</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">tb_log_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">reset_num_timesteps</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit the agent.</span>
+
+<span class="sd">        Note</span>
+<span class="sd">        ----</span>
+<span class="sd">        This method wraps the :code:`learn` method of the algorithm.</span>
+<span class="sd">        Logging parameters are processed by rlberry in order to use the</span>
+<span class="sd">        agent.writer.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        budget: int</span>
+<span class="sd">            Number of timesteps to train the agent for.</span>
+<span class="sd">        tb_log_name: str</span>
+<span class="sd">            Name of the log to use in tensorboard.</span>
+<span class="sd">        reset_num_timesteps: bool</span>
+<span class="sd">            Whether to reset or not the :code: `num_timesteps` attribute</span>
+<span class="sd">        **kwargs: Keyword Arguments</span>
+<span class="sd">            Extra arguments required by the &#39;learn&#39; method of the Wrapped Agent.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># If a logger is not provided, use StableBaselines3&#39;s default logger</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_custom_logger</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">tb_log_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">tb_log_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrapped</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+            <span class="n">sb_logger</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">configure_logger</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tb_log</span><span class="p">,</span> <span class="n">tb_log_name</span><span class="p">,</span> <span class="n">reset_num_timesteps</span>
+            <span class="p">)</span>
+            <span class="n">sb_logger</span><span class="o">.</span><span class="n">output_formats</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">AgentWriter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">writer</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wrapped</span><span class="o">.</span><span class="n">set_logger</span><span class="p">(</span><span class="n">sb_logger</span><span class="p">)</span>
+
+        <span class="c1"># Fit the algorithm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wrapped</span><span class="o">.</span><span class="n">learn</span><span class="p">(</span>
+            <span class="n">total_timesteps</span><span class="o">=</span><span class="n">budget</span><span class="p">,</span>
+            <span class="n">tb_log_name</span><span class="o">=</span><span class="n">tb_log_name</span><span class="p">,</span>
+            <span class="n">reset_num_timesteps</span><span class="o">=</span><span class="n">reset_num_timesteps</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="StableBaselinesAgent.policy"><a class="viewcode-back" href="../../../../generated/rlberry.agents.stable_baselines.StableBaselinesAgent.html#rlberry.agents.stable_baselines.StableBaselinesAgent.policy">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">policy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">,</span> <span class="n">deterministic</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the policy for the given observation.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        observation:</span>
+<span class="sd">            Observation to get the policy for.</span>
+<span class="sd">        deterministic: bool</span>
+<span class="sd">            Whether to return a deterministic policy or not.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        The chosen action.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">action</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrapped</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">observation</span><span class="p">,</span> <span class="n">deterministic</span><span class="o">=</span><span class="n">deterministic</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">action</span></div></div>
+</pre></div>
+
+      </div>
+    <div class="container">
+      <footer class="sk-content-footer">
+            &copy; 2023, rlberry team.
+      </footer>
+    </div>
+  </div>
+</div>
+<script src="../../../../_static/js/vendor/bootstrap.min.js"></script>
+
+<script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-22606712-2', 'auto');
+    ga('set', 'anonymizeIp', true);
+    ga('send', 'pageview');
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+<script>
+$(document).ready(function() {
+    /* Add a [>>>] button on the top-right corner of code samples to hide
+     * the >>> and ... prompts and the output and thus make the code
+     * copyable. */
+    var div = $('.highlight-python .highlight,' +
+                '.highlight-python3 .highlight,' +
+                '.highlight-pycon .highlight,' +
+		'.highlight-default .highlight')
+    var pre = div.find('pre');
+
+    // get the styles from the current theme
+    pre.parent().parent().css('position', 'relative');
+    var hide_text = 'Hide prompts and outputs';
+    var show_text = 'Show prompts and outputs';
+
+    // create and add the button to all the code blocks that contain >>>
+    div.each(function(index) {
+        var jthis = $(this);
+        if (jthis.find('.gp').length > 0) {
+            var button = $('<span class="copybutton">&gt;&gt;&gt;</span>');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+            jthis.prepend(button);
+        }
+        // tracebacks (.gt) contain bare text elements that need to be
+        // wrapped in a span to work with .nextUntil() (see later)
+        jthis.find('pre:has(.gt)').contents().filter(function() {
+            return ((this.nodeType == 3) && (this.data.trim().length > 0));
+        }).wrap('<span>');
+    });
+
+    // define the behavior of the button when it's clicked
+    $('.copybutton').click(function(e){
+        e.preventDefault();
+        var button = $(this);
+        if (button.data('hidden') === 'false') {
+            // hide the code output
+            button.parent().find('.go, .gp, .gt').hide();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'hidden');
+            button.css('text-decoration', 'line-through');
+            button.attr('title', show_text);
+            button.data('hidden', 'true');
+        } else {
+            // show the code output
+            button.parent().find('.go, .gp, .gt').show();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'visible');
+            button.css('text-decoration', 'none');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+        }
+    });
+
+	/*** Add permalink buttons next to glossary terms ***/
+	$('dl.glossary > dt[id]').append(function() {
+		return ('<a class="headerlink" href="#' +
+			    this.getAttribute('id') +
+			    '" title="Permalink to this term">¶</a>');
+	});
+  /*** Hide navbar when scrolling down ***/
+  // Returns true when headerlink target matches hash in url
+  (function() {
+    hashTargetOnTop = function() {
+        var hash = window.location.hash;
+        if ( hash.length < 2 ) { return false; }
+
+        var target = document.getElementById( hash.slice(1) );
+        if ( target === null ) { return false; }
+
+        var top = target.getBoundingClientRect().top;
+        return (top < 2) && (top > -2);
+    };
+
+    // Hide navbar on load if hash target is on top
+    var navBar = document.getElementById("navbar");
+    var navBarToggler = document.getElementById("sk-navbar-toggler");
+    var navBarHeightHidden = "-" + navBar.getBoundingClientRect().height + "px";
+    var $window = $(window);
+
+    hideNavBar = function() {
+        navBar.style.top = navBarHeightHidden;
+    };
+
+    showNavBar = function() {
+        navBar.style.top = "0";
+    }
+
+    if (hashTargetOnTop()) {
+        hideNavBar()
+    }
+
+    var prevScrollpos = window.pageYOffset;
+    hideOnScroll = function(lastScrollTop) {
+        if (($window.width() < 768) && (navBarToggler.getAttribute("aria-expanded") === 'true')) {
+            return;
+        }
+        if (lastScrollTop > 2 && (prevScrollpos <= lastScrollTop) || hashTargetOnTop()){
+            hideNavBar()
+        } else {
+            showNavBar()
+        }
+        prevScrollpos = lastScrollTop;
+    };
+
+    /*** high performance scroll event listener***/
+    var raf = window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        window.oRequestAnimationFrame;
+    var lastScrollTop = $window.scrollTop();
+
+    if (raf) {
+        loop();
+    }
+
+    function loop() {
+        var scrollTop = $window.scrollTop();
+        if (lastScrollTop === scrollTop) {
+            raf(loop);
+            return;
+        } else {
+            lastScrollTop = scrollTop;
+            hideOnScroll(lastScrollTop);
+            raf(loop);
+        }
+    }
+  })();
+});
+
+</script>
+    
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    
+</body>
+</html>

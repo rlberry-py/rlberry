@@ -1,0 +1,12 @@
+﻿:mod:`rlberry.spaces`.Discrete
+=====================================
+
+.. currentmodule:: rlberry.spaces
+
+.. autoclass:: Discrete
+
+.. include:: rlberry.spaces.Discrete.examples
+
+.. raw:: html
+
+    <div class="clearer"></div>

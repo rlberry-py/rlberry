@@ -1,0 +1,416 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  
+  <title>Checkpointing &mdash; rlberry 0.7.3.post16.dev0+8710009 documentation</title>
+  
+  <link rel="canonical" href="https://rlberry-py.github.io/rlberry/auto_examples/plot_checkpointing.html" />
+
+  
+
+  <link rel="stylesheet" href="../_static/css/vendor/bootstrap.min.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sg_gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sg_gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sg_gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sphinx-design.4cbf315f70debaebd550c87a6162cf0f.min.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+<script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+<script src="../_static/js/vendor/jquery-3.6.3.slim.min.js"></script> 
+</head>
+<body>
+
+
+<nav id="navbar" class="sk-docs-navbar navbar navbar-expand-md navbar-light bg-light py-0">
+  <div class="container-fluid sk-docs-container px-0">
+    <button
+      id="sk-navbar-toggler"
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="sk-navbar-collapse collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../index.html">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../installation.html">Install</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../user_guide.html">User Guide</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="index.html">Examples</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../api.html">API</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../changelog.html">Changelog</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../about.html">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="https://github.com/rlberry-py/rlberry">GitHub</a>
+        </li>
+        <!--
+        <li class="nav-item dropdown nav-more-item-dropdown">
+          <a class="sk-nav-link nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">More</a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          </div>
+        </li>-->
+    </ul>
+      <div id="searchbox" role="search">
+          <div class="searchformwrapper">
+            <form action="https://duckduckgo.com/">
+            <input type="hidden" id="sites" name="sites" value="https://rlberry-py.github.io/rlberry/">
+            <input type="search" placeholder="Search &hellip;" value="" name="q" />
+            <input class="sk-search-text-btn" type="submit" value="Go" /></form>
+
+          </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="d-flex" id="sk-doc-wrapper">
+    <input type="checkbox" name="sk-toggle-checkbox" id="sk-toggle-checkbox">
+    <label id="sk-sidemenu-toggle" class="sk-btn-toggle-toc btn sk-btn-primary" for="sk-toggle-checkbox">Toggle Menu</label>
+    <div id="sk-sidebar-wrapper" class="border-right">
+      <div class="sk-sidebar-toc-wrapper">
+        <div class="sk-sidebar-toc-logo">
+        </div>
+	<br>
+        <div class="alert alert-warning p-1 mb-2" role="alert">
+
+          <p class="text-center mb-0">
+          rlberry 0.7.3.post16.dev0+8710009<br/>
+          <a href="../versions.html">Other versions</a>
+          </p>
+
+        </div>
+            <div class="sk-sidebar-toc">
+              <ul>
+<li><a class="reference internal" href="#">Checkpointing</a></li>
+</ul>
+
+            </div>
+      </div>
+    </div>
+    <div id="sk-page-content-wrapper">
+      <div class="sk-page-content container-fluid body px-md-3" role="main">
+        
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-plot-checkpointing-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code</p>
+</div>
+<section class="sphx-glr-example-title" id="checkpointing">
+<span id="checkpointing-example"></span><span id="sphx-glr-auto-examples-plot-checkpointing-py"></span><h1>Checkpointing<a class="headerlink" href="#checkpointing" title="Permalink to this heading">¶</a></h1>
+<p>This is a minimal example of how to create checkpoints while training
+your agents, and how to restore from a previous checkpoint.</p>
+<img src="../_images/sphx_glr_plot_checkpointing_001.png" srcset="../_images/sphx_glr_plot_checkpointing_001.png" alt="y(t)" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[INFO] 08:26: ... trained!
+[INFO] 08:26: Saved ExperimentManager(my-agent) using pickle.
+[INFO] 08:26: The ExperimentManager was saved in : &#39;rlberry_data/temp/manager_data/my-agent_2024-10-25_08-26-40_86b9b422/manager_obj.pickle&#39;
+[INFO] 08:26: Saved ExperimentManager(my-agent) using pickle.
+[INFO] 08:26: The ExperimentManager was saved in : &#39;rlberry_data/temp/manager_data/my-agent_2024-10-25_08-26-40_86b9b422/manager_obj.pickle&#39;
+
+ Saved manager at rlberry_data/temp/manager_data/my-agent_2024-10-25_08-26-40_86b9b422/manager_obj.pickle.
+
+[INFO] 08:26: Running ExperimentManager fit() for my-agent with n_fit = 2 and max_workers = None.
+checkpoint at rlberry_data/temp/manager_data/my-agent_2024-10-25_08-26-40_86b9b422/output_1/checkpoint.pickle (timestep = 500)
+checkpoint at rlberry_data/temp/manager_data/my-agent_2024-10-25_08-26-40_86b9b422/output_0/checkpoint.pickle (timestep = 500)
+checkpoint at rlberry_data/temp/manager_data/my-agent_2024-10-25_08-26-40_86b9b422/output_1/checkpoint.pickle (timestep = 1000)
+checkpoint at rlberry_data/temp/manager_data/my-agent_2024-10-25_08-26-40_86b9b422/output_0/checkpoint.pickle (timestep = 1000)
+[INFO] 08:26: ... trained!
+[INFO] 08:26: Saved ExperimentManager(my-agent) using pickle.
+[INFO] 08:26: The ExperimentManager was saved in : &#39;rlberry_data/temp/manager_data/my-agent_2024-10-25_08-26-40_86b9b422/manager_obj.pickle&#39;
+
+ Loading manager from rlberry_data/temp/manager_data/my-agent_2024-10-25_08-26-40_86b9b422/manager_obj.pickle.
+
+[INFO] 08:26: Running ExperimentManager fit() for my-agent with n_fit = 2 and max_workers = None.
+
+ --&gt; MyAgent loaded from checkpoint: rlberry_data/temp/manager_data/my-agent_2024-10-25_08-26-40_86b9b422/output_1/checkpoint.pickle
+
+
+ --&gt; MyAgent loaded from checkpoint: rlberry_data/temp/manager_data/my-agent_2024-10-25_08-26-40_86b9b422/output_0/checkpoint.pickle
+
+checkpoint at rlberry_data/temp/manager_data/my-agent_2024-10-25_08-26-40_86b9b422/output_1/checkpoint.pickle (timestep = 1500)
+checkpoint at rlberry_data/temp/manager_data/my-agent_2024-10-25_08-26-40_86b9b422/output_0/checkpoint.pickle (timestep = 1500)
+[INFO] 08:26: ... trained!
+[INFO] 08:26: Saved ExperimentManager(my-agent) using pickle.
+[INFO] 08:26: The ExperimentManager was saved in : &#39;rlberry_data/temp/manager_data/my-agent_2024-10-25_08-26-40_86b9b422/manager_obj.pickle&#39;
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.agents</span> <span class="kn">import</span> <a href="../generated/rlberry.agents.Agent.html#rlberry.agents.Agent" title="rlberry.agents.Agent" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">Agent</span></a>
+<span class="kn">from</span> <span class="nn">rlberry.manager</span> <span class="kn">import</span> <a href="../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-class"><span class="n">ExperimentManager</span></a>
+<span class="kn">from</span> <span class="nn">rlberry.manager</span> <span class="kn">import</span> <a href="../generated/rlberry.manager.plot_writer_data.html#rlberry.manager.plot_writer_data" title="rlberry.manager.plot_writer_data" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-function"><span class="n">plot_writer_data</span></a>
+
+
+<span class="k">class</span> <span class="nc">MyAgent</span><span class="p">(</span><a href="../generated/rlberry.agents.Agent.html#rlberry.agents.Agent" title="rlberry.agents.Agent" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">Agent</span></a><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;my-agent&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <a href="../generated/rlberry.agents.Agent.html#rlberry.agents.Agent" title="rlberry.agents.Agent" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">Agent</span></a><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_file</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_timesteps</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">budget</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This agent is solving a simple difference equation,</span>
+<span class="sd">        just to illustrate checkpoints :D&quot;&quot;&quot;</span>
+        <span class="k">del</span> <span class="n">kwargs</span>
+
+        <span class="c1"># check if there is a checkpoint to be loaded</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">loaded_checkpoint</span> <span class="o">=</span> <a href="../generated/rlberry.agents.Agent.html#rlberry.agents.Agent.load" title="rlberry.agents.Agent.load" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-method"><span class="n">MyAgent</span><span class="o">.</span><span class="n">load</span></a><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_file</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">get_params</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">loaded_checkpoint</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; </span><span class="se">\n</span><span class="s2"> --&gt; MyAgent loaded from checkpoint: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_file</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># run training loop</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">budget</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">total_timesteps</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">yt</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">0.01</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">yt</span> <span class="o">+=</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">yt</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">writer</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">writer</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span><span class="s2">&quot;y(t)&quot;</span><span class="p">,</span> <span class="n">yt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_timesteps</span><span class="p">)</span>
+
+            <span class="c1"># Checkpoint every 500 timesteps</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_timesteps</span> <span class="o">%</span> <span class="mi">500</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dir</span> <span class="o">/</span> <span class="s2">&quot;checkpoint.pickle&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;checkpoint at </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_file</span><span class="si">}</span><span class="s2"> (timestep = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">total_timesteps</span><span class="si">}</span><span class="s2">)&quot;</span>
+                <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">del</span> <span class="n">kwargs</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">manager</span> <span class="o">=</span> <a href="../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-class"><span class="n">ExperimentManager</span></a><span class="p">(</span>
+        <a href="../generated/rlberry.agents.Agent.html#rlberry.agents.Agent" title="rlberry.agents.Agent" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">MyAgent</span></a><span class="p">,</span>
+        <span class="n">fit_budget</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">n_fit</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="c1"># Save manager **before** fit for several timesteps! So that we can see why checkpoints are useful:</span>
+    <span class="c1"># even if ExperimentManager is interrupted, it can be loaded and continue training</span>
+    <span class="c1"># from last checkpoint.</span>
+    <span class="c1"># But first, we need an initial call to ExperimentManager.fit() (for zero or a small number of timesteps),</span>
+    <span class="c1"># so that ExperimentManager can instantiate MyAgent and it can start checkpointing itself.</span>
+    <span class="c1"># This is because the __init__ method of MyAgent is only executed</span>
+    <span class="c1"># after the first call to ExperimentManager.fit().</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">manager_file</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> Saved manager at </span><span class="si">{</span><span class="n">manager_file</span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Fit for a 1000 timesteps</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+
+    <span class="c1"># Delete manager. This simulates a situation where we couldn&#39;t call</span>
+    <span class="c1"># manager.save() after calling manager.fit(), e.g. when your process is interrupted</span>
+    <span class="c1"># before .fit() returns.</span>
+    <span class="k">del</span> <span class="n">manager</span>
+
+    <span class="c1"># Load manager and continue training from last checkpoint</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> Loading manager from </span><span class="si">{</span><span class="n">manager_file</span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <a href="../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">loaded_manager</span></a> <span class="o">=</span> <a href="../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager.load" title="rlberry.manager.ExperimentManager.load" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-method"><span class="n">ExperimentManager</span><span class="o">.</span><span class="n">load</span></a><span class="p">(</span><span class="n">manager_file</span><span class="p">)</span>
+    <span class="c1"># Fit for 500 more timesteps</span>
+    <a href="../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager.fit" title="rlberry.manager.ExperimentManager.fit" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-method"><span class="n">loaded_manager</span><span class="o">.</span><span class="n">fit</span></a><span class="p">(</span><span class="mi">500</span><span class="p">)</span>
+
+    <span class="c1"># The plot shows a total of 1500 timesteps!</span>
+    <a href="../generated/rlberry.manager.plot_writer_data.html#rlberry.manager.plot_writer_data" title="rlberry.manager.plot_writer_data" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-function"><span class="n">plot_writer_data</span></a><span class="p">(</span><a href="../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">loaded_manager</span></a><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;y(t)&quot;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.453 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-plot-checkpointing-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/ce48de95bcbfa35be204f76edd32bcbf/plot_checkpointing.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_checkpointing.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/5b903c838ce97baf150b547017c71356/plot_checkpointing.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_checkpointing.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+
+
+      </div>
+    <div class="container">
+      <footer class="sk-content-footer">
+            &copy; 2023, rlberry team.
+          <a href="../_sources/auto_examples/plot_checkpointing.rst.txt" rel="nofollow">Show this page source</a>
+      </footer>
+    </div>
+  </div>
+</div>
+<script src="../_static/js/vendor/bootstrap.min.js"></script>
+
+<script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-22606712-2', 'auto');
+    ga('set', 'anonymizeIp', true);
+    ga('send', 'pageview');
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+<script>
+$(document).ready(function() {
+    /* Add a [>>>] button on the top-right corner of code samples to hide
+     * the >>> and ... prompts and the output and thus make the code
+     * copyable. */
+    var div = $('.highlight-python .highlight,' +
+                '.highlight-python3 .highlight,' +
+                '.highlight-pycon .highlight,' +
+		'.highlight-default .highlight')
+    var pre = div.find('pre');
+
+    // get the styles from the current theme
+    pre.parent().parent().css('position', 'relative');
+    var hide_text = 'Hide prompts and outputs';
+    var show_text = 'Show prompts and outputs';
+
+    // create and add the button to all the code blocks that contain >>>
+    div.each(function(index) {
+        var jthis = $(this);
+        if (jthis.find('.gp').length > 0) {
+            var button = $('<span class="copybutton">&gt;&gt;&gt;</span>');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+            jthis.prepend(button);
+        }
+        // tracebacks (.gt) contain bare text elements that need to be
+        // wrapped in a span to work with .nextUntil() (see later)
+        jthis.find('pre:has(.gt)').contents().filter(function() {
+            return ((this.nodeType == 3) && (this.data.trim().length > 0));
+        }).wrap('<span>');
+    });
+
+    // define the behavior of the button when it's clicked
+    $('.copybutton').click(function(e){
+        e.preventDefault();
+        var button = $(this);
+        if (button.data('hidden') === 'false') {
+            // hide the code output
+            button.parent().find('.go, .gp, .gt').hide();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'hidden');
+            button.css('text-decoration', 'line-through');
+            button.attr('title', show_text);
+            button.data('hidden', 'true');
+        } else {
+            // show the code output
+            button.parent().find('.go, .gp, .gt').show();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'visible');
+            button.css('text-decoration', 'none');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+        }
+    });
+
+	/*** Add permalink buttons next to glossary terms ***/
+	$('dl.glossary > dt[id]').append(function() {
+		return ('<a class="headerlink" href="#' +
+			    this.getAttribute('id') +
+			    '" title="Permalink to this term">¶</a>');
+	});
+  /*** Hide navbar when scrolling down ***/
+  // Returns true when headerlink target matches hash in url
+  (function() {
+    hashTargetOnTop = function() {
+        var hash = window.location.hash;
+        if ( hash.length < 2 ) { return false; }
+
+        var target = document.getElementById( hash.slice(1) );
+        if ( target === null ) { return false; }
+
+        var top = target.getBoundingClientRect().top;
+        return (top < 2) && (top > -2);
+    };
+
+    // Hide navbar on load if hash target is on top
+    var navBar = document.getElementById("navbar");
+    var navBarToggler = document.getElementById("sk-navbar-toggler");
+    var navBarHeightHidden = "-" + navBar.getBoundingClientRect().height + "px";
+    var $window = $(window);
+
+    hideNavBar = function() {
+        navBar.style.top = navBarHeightHidden;
+    };
+
+    showNavBar = function() {
+        navBar.style.top = "0";
+    }
+
+    if (hashTargetOnTop()) {
+        hideNavBar()
+    }
+
+    var prevScrollpos = window.pageYOffset;
+    hideOnScroll = function(lastScrollTop) {
+        if (($window.width() < 768) && (navBarToggler.getAttribute("aria-expanded") === 'true')) {
+            return;
+        }
+        if (lastScrollTop > 2 && (prevScrollpos <= lastScrollTop) || hashTargetOnTop()){
+            hideNavBar()
+        } else {
+            showNavBar()
+        }
+        prevScrollpos = lastScrollTop;
+    };
+
+    /*** high performance scroll event listener***/
+    var raf = window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        window.oRequestAnimationFrame;
+    var lastScrollTop = $window.scrollTop();
+
+    if (raf) {
+        loop();
+    }
+
+    function loop() {
+        var scrollTop = $window.scrollTop();
+        if (lastScrollTop === scrollTop) {
+            raf(loop);
+            return;
+        } else {
+            lastScrollTop = scrollTop;
+            hideOnScroll(lastScrollTop);
+            raf(loop);
+        }
+    }
+  })();
+});
+
+</script>
+    
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    
+</body>
+</html>

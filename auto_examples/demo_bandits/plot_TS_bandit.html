@@ -1,0 +1,466 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  
+  <title>Comparison of Thompson sampling and UCB on Bernoulli and Gaussian bandits &mdash; rlberry 0.7.3.post16.dev0+8710009 documentation</title>
+  
+  <link rel="canonical" href="https://rlberry-py.github.io/rlberry/auto_examples/demo_bandits/plot_TS_bandit.html" />
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/vendor/bootstrap.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sg_gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sg_gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sg_gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/sphinx-design.4cbf315f70debaebd550c87a6162cf0f.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+<script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+<script src="../../_static/js/vendor/jquery-3.6.3.slim.min.js"></script> 
+</head>
+<body>
+
+
+<nav id="navbar" class="sk-docs-navbar navbar navbar-expand-md navbar-light bg-light py-0">
+  <div class="container-fluid sk-docs-container px-0">
+    <button
+      id="sk-navbar-toggler"
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="sk-navbar-collapse collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../index.html">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../installation.html">Install</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../user_guide.html">User Guide</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../index.html">Examples</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../api.html">API</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../changelog.html">Changelog</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../about.html">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="https://github.com/rlberry-py/rlberry">GitHub</a>
+        </li>
+        <!--
+        <li class="nav-item dropdown nav-more-item-dropdown">
+          <a class="sk-nav-link nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">More</a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          </div>
+        </li>-->
+    </ul>
+      <div id="searchbox" role="search">
+          <div class="searchformwrapper">
+            <form action="https://duckduckgo.com/">
+            <input type="hidden" id="sites" name="sites" value="https://rlberry-py.github.io/rlberry/">
+            <input type="search" placeholder="Search &hellip;" value="" name="q" />
+            <input class="sk-search-text-btn" type="submit" value="Go" /></form>
+
+          </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="d-flex" id="sk-doc-wrapper">
+    <input type="checkbox" name="sk-toggle-checkbox" id="sk-toggle-checkbox">
+    <label id="sk-sidemenu-toggle" class="sk-btn-toggle-toc btn sk-btn-primary" for="sk-toggle-checkbox">Toggle Menu</label>
+    <div id="sk-sidebar-wrapper" class="border-right">
+      <div class="sk-sidebar-toc-wrapper">
+        <div class="sk-sidebar-toc-logo">
+        </div>
+	<br>
+        <div class="alert alert-warning p-1 mb-2" role="alert">
+
+          <p class="text-center mb-0">
+          rlberry 0.7.3.post16.dev0+8710009<br/>
+          <a href="../../versions.html">Other versions</a>
+          </p>
+
+        </div>
+            <div class="sk-sidebar-toc">
+              <ul>
+<li><a class="reference internal" href="#">Comparison of Thompson sampling and UCB on Bernoulli and Gaussian bandits</a></li>
+</ul>
+
+            </div>
+      </div>
+    </div>
+    <div id="sk-page-content-wrapper">
+      <div class="sk-page-content container-fluid body px-md-3" role="main">
+        
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-demo-bandits-plot-ts-bandit-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code</p>
+</div>
+<section class="sphx-glr-example-title" id="comparison-of-thompson-sampling-and-ucb-on-bernoulli-and-gaussian-bandits">
+<span id="sphx-glr-auto-examples-demo-bandits-plot-ts-bandit-py"></span><h1>Comparison of Thompson sampling and UCB on Bernoulli and Gaussian bandits<a class="headerlink" href="#comparison-of-thompson-sampling-and-ucb-on-bernoulli-and-gaussian-bandits" title="Permalink to this heading">¶</a></h1>
+<p>This script shows how to use Thompson sampling on two examples: Bernoulli and Gaussian bandits.</p>
+<p>In the Bernoulli case, we use Thompson sampling with a Beta prior. We compare it to a UCB for
+bounded rewards with support in [0,1].
+For the Gaussian case, we use a Gaussian prior and compare it to a sub-Gaussian UCB.</p>
+<ul class="sphx-glr-horizontal">
+<li><img src="../../_images/sphx_glr_plot_TS_bandit_001.png" srcset="../../_images/sphx_glr_plot_TS_bandit_001.png" alt="Cumulative Pseudo-Regret" class = "sphx-glr-multi-img"/></li>
+<li><img src="../../_images/sphx_glr_plot_TS_bandit_002.png" srcset="../../_images/sphx_glr_plot_TS_bandit_002.png" alt="Cumulative Pseudo-Regret" class = "sphx-glr-multi-img"/></li>
+</ul>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[INFO] 13:52: ... trained!
+[INFO] 13:52: Saved ExperimentManager(Bounded UCB Agent) using pickle.
+[INFO] 13:52: The ExperimentManager was saved in : &#39;rlberry_data/temp/manager_data/Bounded UCB Agent_2025-03-07_13-52-33_d74cdaf3/manager_obj.pickle&#39;
+[INFO] 13:52: Running ExperimentManager fit() for Bernoulli TS Agent with n_fit = 10 and max_workers = None.
+[INFO] 13:52: ... trained!
+[INFO] 13:52: Saved ExperimentManager(Bernoulli TS Agent) using pickle.
+[INFO] 13:52: The ExperimentManager was saved in : &#39;rlberry_data/temp/manager_data/Bernoulli TS Agent_2025-03-07_13-52-33_58d6754d/manager_obj.pickle&#39;
+[INFO] 13:52: Running ExperimentManager fit() for Gaussian UCB Agent with n_fit = 10 and max_workers = None.
+[INFO] 13:52: ... trained!
+[INFO] 13:52: Saved ExperimentManager(Gaussian UCB Agent) using pickle.
+[INFO] 13:52: The ExperimentManager was saved in : &#39;rlberry_data/temp/manager_data/Gaussian UCB Agent_2025-03-07_13-52-43_2a03ec25/manager_obj.pickle&#39;
+[INFO] 13:52: Running ExperimentManager fit() for Gaussian TS Agent with n_fit = 10 and max_workers = None.
+[INFO] 13:52: ... trained!
+[INFO] 13:52: Saved ExperimentManager(Gaussian TS Agent) using pickle.
+[INFO] 13:52: The ExperimentManager was saved in : &#39;rlberry_data/temp/manager_data/Gaussian TS Agent_2025-03-07_13-52-43_ae3ef6e8/manager_obj.pickle&#39;
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry_research.envs.bandits</span><span class="w"> </span><span class="kn">import</span> <span class="n">BernoulliBandit</span><span class="p">,</span> <span class="n">NormalBandit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry_research.agents.bandits</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <a href="../../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">IndexAgent</span></a><span class="p">,</span>
+    <a href="../../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">TSAgent</span></a><span class="p">,</span>
+    <span class="n">makeBoundedUCBIndex</span><span class="p">,</span>
+    <span class="n">makeSubgaussianUCBIndex</span><span class="p">,</span>
+    <span class="n">makeBetaPrior</span><span class="p">,</span>
+    <span class="n">makeGaussianPrior</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.manager</span><span class="w"> </span><span class="kn">import</span> <a href="../../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-class"><span class="n">ExperimentManager</span></a><span class="p">,</span> <a href="../../generated/rlberry.manager.plot_writer_data.html#rlberry.manager.plot_writer_data" title="rlberry.manager.plot_writer_data" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-function"><span class="n">plot_writer_data</span></a>
+
+
+<span class="c1"># Bernoulli</span>
+
+<span class="c1"># Agents definition</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">BernoulliTSAgent</span><span class="p">(</span><a href="../../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">TSAgent</span></a><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Thompson sampling for Bernoulli bandit&quot;&quot;&quot;</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Bernoulli TS Agent&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">prior</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">makeBetaPrior</span><span class="p">()</span>
+        <a href="../../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">TSAgent</span></a><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">prior</span><span class="p">,</span> <span class="n">writer_extra</span><span class="o">=</span><span class="s2">&quot;action&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">BoundedUCBAgent</span><span class="p">(</span><a href="../../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">IndexAgent</span></a><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;UCB agent for bounded bandits&quot;&quot;&quot;</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Bounded UCB Agent&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">index</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">makeBoundedUCBIndex</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <a href="../../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">IndexAgent</span></a><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">writer_extra</span><span class="o">=</span><span class="s2">&quot;action&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="c1"># Parameters of the problem</span>
+<span class="n">means</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>  <span class="c1"># means of the arms</span>
+<span class="n">A</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">means</span><span class="p">)</span>
+<span class="n">T</span> <span class="o">=</span> <span class="mi">2000</span>  <span class="c1"># Horizon</span>
+<span class="n">M</span> <span class="o">=</span> <span class="mi">10</span>  <span class="c1"># number of MC simu</span>
+
+<span class="c1"># Construction of the experiment</span>
+
+<span class="n">env_ctor</span> <span class="o">=</span> <span class="n">BernoulliBandit</span>
+<span class="n">env_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;p&quot;</span><span class="p">:</span> <span class="n">means</span><span class="p">}</span>
+
+<span class="n">agents</span> <span class="o">=</span> <span class="p">[</span>
+    <a href="../../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-class"><span class="n">ExperimentManager</span></a><span class="p">(</span>
+        <span class="n">Agent</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">env_ctor</span><span class="p">,</span> <span class="n">env_kwargs</span><span class="p">),</span>
+        <span class="n">fit_budget</span><span class="o">=</span><span class="n">T</span><span class="p">,</span>
+        <span class="n">n_fit</span><span class="o">=</span><span class="n">M</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">Agent</span> <span class="ow">in</span> <span class="p">[</span><a href="../../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">BoundedUCBAgent</span></a><span class="p">,</span> <a href="../../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">BernoulliTSAgent</span></a><span class="p">]</span>
+<span class="p">]</span>
+
+<span class="c1"># Agent training</span>
+
+<span class="k">for</span> <a href="../../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">agent</span></a> <span class="ow">in</span> <span class="n">agents</span><span class="p">:</span>
+    <a href="../../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager.fit" title="rlberry.manager.ExperimentManager.fit" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-method"><span class="n">agent</span><span class="o">.</span><span class="n">fit</span></a><span class="p">()</span>
+
+
+<span class="c1"># Compute and plot (pseudo-)regret</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_pseudo_regret</span><span class="p">(</span><span class="n">actions</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">means</span><span class="p">)</span> <span class="o">-</span> <span class="n">means</span><span class="p">[</span><span class="n">actions</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)])</span>
+
+
+<span class="n">output</span> <span class="o">=</span> <a href="../../generated/rlberry.manager.plot_writer_data.html#rlberry.manager.plot_writer_data" title="rlberry.manager.plot_writer_data" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-function"><span class="n">plot_writer_data</span></a><span class="p">(</span>
+    <span class="n">agents</span><span class="p">,</span>
+    <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;action&quot;</span><span class="p">,</span>
+    <span class="n">preprocess_func</span><span class="o">=</span><span class="n">compute_pseudo_regret</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Cumulative Pseudo-Regret&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="c1"># Gaussian</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">GaussianTSAgent</span><span class="p">(</span><a href="../../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">TSAgent</span></a><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Thompson sampling for Gaussian bandit&quot;&quot;&quot;</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Gaussian TS Agent&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">prior</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">makeGaussianPrior</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
+        <a href="../../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">TSAgent</span></a><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">prior</span><span class="p">,</span> <span class="n">writer_extra</span><span class="o">=</span><span class="s2">&quot;action&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">GaussianUCBAgent</span><span class="p">(</span><a href="../../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">IndexAgent</span></a><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;UCB agent for Gaussian bandits&quot;&quot;&quot;</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Gaussian UCB Agent&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">index</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">makeSubgaussianUCBIndex</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
+        <a href="../../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">IndexAgent</span></a><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">writer_extra</span><span class="o">=</span><span class="s2">&quot;action&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="c1"># Parameters of the problem</span>
+<span class="n">means</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>  <span class="c1"># means of the arms</span>
+<span class="n">sigma</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># means of the arms</span>
+<span class="n">A</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">means</span><span class="p">)</span>
+<span class="n">T</span> <span class="o">=</span> <span class="mi">2000</span>  <span class="c1"># Horizon</span>
+<span class="n">M</span> <span class="o">=</span> <span class="mi">10</span>  <span class="c1"># number of MC simu</span>
+
+<span class="c1"># Construction of the experiment</span>
+
+<span class="n">env_ctor</span> <span class="o">=</span> <span class="n">NormalBandit</span>
+<span class="n">env_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;means&quot;</span><span class="p">:</span> <span class="n">means</span><span class="p">,</span> <span class="s2">&quot;stds&quot;</span><span class="p">:</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">A</span><span class="p">)}</span>
+
+<span class="n">agents</span> <span class="o">=</span> <span class="p">[</span>
+    <a href="../../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-class"><span class="n">ExperimentManager</span></a><span class="p">(</span>
+        <span class="n">Agent</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">env_ctor</span><span class="p">,</span> <span class="n">env_kwargs</span><span class="p">),</span>
+        <span class="n">fit_budget</span><span class="o">=</span><span class="n">T</span><span class="p">,</span>
+        <span class="n">n_fit</span><span class="o">=</span><span class="n">M</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">Agent</span> <span class="ow">in</span> <span class="p">[</span><a href="../../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">GaussianUCBAgent</span></a><span class="p">,</span> <a href="../../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">GaussianTSAgent</span></a><span class="p">]</span>
+<span class="p">]</span>
+
+<span class="c1"># Agent training</span>
+
+<span class="k">for</span> <a href="../../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">agent</span></a> <span class="ow">in</span> <span class="n">agents</span><span class="p">:</span>
+    <a href="../../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager.fit" title="rlberry.manager.ExperimentManager.fit" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-method"><span class="n">agent</span><span class="o">.</span><span class="n">fit</span></a><span class="p">()</span>
+
+
+<span class="c1"># Compute and plot (pseudo-)regret</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_pseudo_regret</span><span class="p">(</span><span class="n">actions</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">means</span><span class="p">)</span> <span class="o">-</span> <span class="n">means</span><span class="p">[</span><span class="n">actions</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)])</span>
+
+
+<span class="n">output</span> <span class="o">=</span> <a href="../../generated/rlberry.manager.plot_writer_data.html#rlberry.manager.plot_writer_data" title="rlberry.manager.plot_writer_data" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-function"><span class="n">plot_writer_data</span></a><span class="p">(</span>
+    <span class="n">agents</span><span class="p">,</span>
+    <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;action&quot;</span><span class="p">,</span>
+    <span class="n">preprocess_func</span><span class="o">=</span><span class="n">compute_pseudo_regret</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Cumulative Pseudo-Regret&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 19.826 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-demo-bandits-plot-ts-bandit-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/32023c981124e8ab371ee1ea95c685b3/plot_TS_bandit.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_TS_bandit.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/17eaa60d740f201a5f49ef97a8999352/plot_TS_bandit.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_TS_bandit.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+
+
+      </div>
+    <div class="container">
+      <footer class="sk-content-footer">
+            &copy; 2023, rlberry team.
+          <a href="../../_sources/auto_examples/demo_bandits/plot_TS_bandit.rst.txt" rel="nofollow">Show this page source</a>
+      </footer>
+    </div>
+  </div>
+</div>
+<script src="../../_static/js/vendor/bootstrap.min.js"></script>
+
+<script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-22606712-2', 'auto');
+    ga('set', 'anonymizeIp', true);
+    ga('send', 'pageview');
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+<script>
+$(document).ready(function() {
+    /* Add a [>>>] button on the top-right corner of code samples to hide
+     * the >>> and ... prompts and the output and thus make the code
+     * copyable. */
+    var div = $('.highlight-python .highlight,' +
+                '.highlight-python3 .highlight,' +
+                '.highlight-pycon .highlight,' +
+		'.highlight-default .highlight')
+    var pre = div.find('pre');
+
+    // get the styles from the current theme
+    pre.parent().parent().css('position', 'relative');
+    var hide_text = 'Hide prompts and outputs';
+    var show_text = 'Show prompts and outputs';
+
+    // create and add the button to all the code blocks that contain >>>
+    div.each(function(index) {
+        var jthis = $(this);
+        if (jthis.find('.gp').length > 0) {
+            var button = $('<span class="copybutton">&gt;&gt;&gt;</span>');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+            jthis.prepend(button);
+        }
+        // tracebacks (.gt) contain bare text elements that need to be
+        // wrapped in a span to work with .nextUntil() (see later)
+        jthis.find('pre:has(.gt)').contents().filter(function() {
+            return ((this.nodeType == 3) && (this.data.trim().length > 0));
+        }).wrap('<span>');
+    });
+
+    // define the behavior of the button when it's clicked
+    $('.copybutton').click(function(e){
+        e.preventDefault();
+        var button = $(this);
+        if (button.data('hidden') === 'false') {
+            // hide the code output
+            button.parent().find('.go, .gp, .gt').hide();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'hidden');
+            button.css('text-decoration', 'line-through');
+            button.attr('title', show_text);
+            button.data('hidden', 'true');
+        } else {
+            // show the code output
+            button.parent().find('.go, .gp, .gt').show();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'visible');
+            button.css('text-decoration', 'none');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+        }
+    });
+
+	/*** Add permalink buttons next to glossary terms ***/
+	$('dl.glossary > dt[id]').append(function() {
+		return ('<a class="headerlink" href="#' +
+			    this.getAttribute('id') +
+			    '" title="Permalink to this term">¶</a>');
+	});
+  /*** Hide navbar when scrolling down ***/
+  // Returns true when headerlink target matches hash in url
+  (function() {
+    hashTargetOnTop = function() {
+        var hash = window.location.hash;
+        if ( hash.length < 2 ) { return false; }
+
+        var target = document.getElementById( hash.slice(1) );
+        if ( target === null ) { return false; }
+
+        var top = target.getBoundingClientRect().top;
+        return (top < 2) && (top > -2);
+    };
+
+    // Hide navbar on load if hash target is on top
+    var navBar = document.getElementById("navbar");
+    var navBarToggler = document.getElementById("sk-navbar-toggler");
+    var navBarHeightHidden = "-" + navBar.getBoundingClientRect().height + "px";
+    var $window = $(window);
+
+    hideNavBar = function() {
+        navBar.style.top = navBarHeightHidden;
+    };
+
+    showNavBar = function() {
+        navBar.style.top = "0";
+    }
+
+    if (hashTargetOnTop()) {
+        hideNavBar()
+    }
+
+    var prevScrollpos = window.pageYOffset;
+    hideOnScroll = function(lastScrollTop) {
+        if (($window.width() < 768) && (navBarToggler.getAttribute("aria-expanded") === 'true')) {
+            return;
+        }
+        if (lastScrollTop > 2 && (prevScrollpos <= lastScrollTop) || hashTargetOnTop()){
+            hideNavBar()
+        } else {
+            showNavBar()
+        }
+        prevScrollpos = lastScrollTop;
+    };
+
+    /*** high performance scroll event listener***/
+    var raf = window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        window.oRequestAnimationFrame;
+    var lastScrollTop = $window.scrollTop();
+
+    if (raf) {
+        loop();
+    }
+
+    function loop() {
+        var scrollTop = $window.scrollTop();
+        if (lastScrollTop === scrollTop) {
+            raf(loop);
+            return;
+        } else {
+            lastScrollTop = scrollTop;
+            hideOnScroll(lastScrollTop);
+            raf(loop);
+        }
+    }
+  })();
+});
+
+</script>
+    
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    
+</body>
+</html>

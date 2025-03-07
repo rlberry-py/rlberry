@@ -1,0 +1,924 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  
+  <title>rlberry.manager.plotting &mdash; rlberry 0.7.3.post16.dev0+8710009 documentation</title>
+  
+  <link rel="canonical" href="https://rlberry-py.github.io/rlberry/_modules/rlberry/manager/plotting.html" />
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/vendor/bootstrap.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/sg_gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/sg_gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/sg_gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/sphinx-design.4cbf315f70debaebd550c87a6162cf0f.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+<script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+<script src="../../../_static/js/vendor/jquery-3.6.3.slim.min.js"></script> 
+</head>
+<body>
+
+
+<nav id="navbar" class="sk-docs-navbar navbar navbar-expand-md navbar-light bg-light py-0">
+  <div class="container-fluid sk-docs-container px-0">
+    <button
+      id="sk-navbar-toggler"
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="sk-navbar-collapse collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../index.html">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../installation.html">Install</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../user_guide.html">User Guide</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../auto_examples/index.html">Examples</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../api.html">API</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../changelog.html">Changelog</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../about.html">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="https://github.com/rlberry-py/rlberry">GitHub</a>
+        </li>
+        <!--
+        <li class="nav-item dropdown nav-more-item-dropdown">
+          <a class="sk-nav-link nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">More</a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          </div>
+        </li>-->
+    </ul>
+      <div id="searchbox" role="search">
+          <div class="searchformwrapper">
+            <form action="https://duckduckgo.com/">
+            <input type="hidden" id="sites" name="sites" value="https://rlberry-py.github.io/rlberry/">
+            <input type="search" placeholder="Search &hellip;" value="" name="q" />
+            <input class="sk-search-text-btn" type="submit" value="Go" /></form>
+
+          </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="d-flex" id="sk-doc-wrapper">
+    <input type="checkbox" name="sk-toggle-checkbox" id="sk-toggle-checkbox">
+    <label id="sk-sidemenu-toggle" class="sk-btn-toggle-toc btn sk-btn-primary" for="sk-toggle-checkbox">Toggle Menu</label>
+    <div id="sk-sidebar-wrapper" class="border-right">
+      <div class="sk-sidebar-toc-wrapper">
+        <div class="sk-sidebar-toc-logo">
+        </div>
+	<br>
+        <div class="alert alert-warning p-1 mb-2" role="alert">
+
+          <p class="text-center mb-0">
+          rlberry 0.7.3.post16.dev0+8710009<br/>
+          <a href="../../../versions.html">Other versions</a>
+          </p>
+
+        </div>
+            <div class="sk-sidebar-toc">
+              
+            </div>
+      </div>
+    </div>
+    <div id="sk-page-content-wrapper">
+      <div class="sk-page-content container-fluid body px-md-3" role="main">
+        
+  <h1>Source code for rlberry.manager.plotting</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">cycle</span>
+<span class="kn">import</span> <span class="nn">numbers</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">norm</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">rlberry.manager</span> <span class="kn">import</span> <span class="n">read_writer_data</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">skfda.representation.grid</span> <span class="kn">import</span> <span class="n">FDataGrid</span>
+    <span class="kn">from</span> <span class="nn">skfda.misc.hat_matrix</span> <span class="kn">import</span> <span class="n">NadarayaWatsonHatMatrix</span>
+    <span class="kn">from</span> <span class="nn">skfda.preprocessing.smoothing</span> <span class="kn">import</span> <span class="n">KernelSmoother</span>
+    <span class="kn">from</span> <span class="nn">skfda.preprocessing.smoothing.validation</span> <span class="kn">import</span> <span class="n">SmoothingParameterSearch</span>
+
+    <span class="n">SKFDA_INSTALLED</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">SKFDA_INSTALLED</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="kn">import</span> <span class="nn">rlberry</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">rlberry</span><span class="o">.</span><span class="n">logger</span>
+
+
+<div class="viewcode-block" id="plot_writer_data"><a class="viewcode-back" href="../../../generated/rlberry.manager.plot_writer_data.html#rlberry.manager.plot_writer_data">[docs]</a><span class="k">def</span> <span class="nf">plot_writer_data</span><span class="p">(</span>
+    <span class="n">data_source</span><span class="p">,</span>
+    <span class="n">tag</span><span class="p">,</span>
+    <span class="n">xtag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">smooth</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">smoothing_bandwidth</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">id_agent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">error_representation</span><span class="o">=</span><span class="s2">&quot;ci&quot;</span><span class="p">,</span>
+    <span class="n">n_boot</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+    <span class="n">level</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+    <span class="n">sub_sample</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">preprocess_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">savefig_fname</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">linestyles</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given a list of ExperimentManager or a folder, plot data (corresponding to info) obtained in each episode.</span>
+<span class="sd">    The dictionary returned by agents&#39; .fit() method must contain a key equal to `info`.</span>
+
+<span class="sd">    If there are several simulations, a confidence interval is plotted. In all cases a smoothing is performed</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data_source : :class:`~rlberry.manager.ExperimentManager`, or list of :class:`~rlberry.manager.ExperimentManager` or str or list of str</span>
+<span class="sd">        - If ExperimentManager or list of ExperimentManager, load data from it (the agents must be fitted).</span>
+
+<span class="sd">        - If str, the string must be the string path of a directory,  each</span>
+<span class="sd">        subdirectory of this directory must contain pickle files.</span>
+<span class="sd">        load the data from the directory of the latest experiment in date.</span>
+<span class="sd">        This str should be equal to the value of the `output_dir` parameter in</span>
+<span class="sd">        :class:`~rlberry.manager.ExperimentManager`.</span>
+
+<span class="sd">        - If list of str, each string must be a directory containing pickle files</span>
+<span class="sd">        load the data from these pickle files.</span>
+
+<span class="sd">        Note: the agent&#39;s save function must save its writer at the key `_writer`.</span>
+<span class="sd">        This is the default for rlberry agents.</span>
+<span class="sd">    tag : str</span>
+<span class="sd">        Tag of data to plot on y-axis.</span>
+<span class="sd">    xtag : str or None, default=None</span>
+<span class="sd">        Tag of data to plot on x-axis. If None, use &#39;global_step&#39;. Another often-used x-axis is</span>
+<span class="sd">        the time elapsed `dw_time_elapsed`, in which case smooth needs to be set to True or there must be only one run.</span>
+<span class="sd">    smooth : boolean, default=False</span>
+<span class="sd">        Whether to smooth the curve with a Nadaraya-Watson Kernel smoothing.</span>
+<span class="sd">        Remark that this also allow for an xtag which is not synchronized on all the simulations (e.g. time for instance).</span>
+<span class="sd">    smoothing_bandwidth: float or array of floats or None</span>
+<span class="sd">        How to choose the bandwidth parameter.</span>
+<span class="sd">        If float, then smoothing_bandwidth is used directly as a bandwidth.</span>
+<span class="sd">        If is an array, a parameter search using smoothing_bandwidth is used.</span>
+<span class="sd">        If None, a parameter search from a range of 20 possible values choosen by heuristics is performed.</span>
+<span class="sd">    id_agent : int or None, default=None</span>
+<span class="sd">        id of the agent to plot, if not None plot only the results for the agent whose id is id_agent.</span>
+<span class="sd">    ax: matplotlib axis or None, default=None</span>
+<span class="sd">        Matplotlib axis on which we plot. If None, create one. Can be used to</span>
+<span class="sd">        customize the plot.</span>
+<span class="sd">    error_representation: str in {&quot;cb&quot;, &quot;raw_curves&quot;, &quot;ci&quot;,  &quot;pi&quot;}</span>
+<span class="sd">        How to represent multiple simulations. The &quot;ci&quot; and &quot;pi&quot; do not take into account the need for simultaneous inference, it is then harder to draw conclusion from them than with &quot;cb&quot; and &quot;pb&quot; but they are the most widely used.</span>
+
+<span class="sd">        - &quot;cb&quot; is a confidence band on the mean curve using functional data analysis (band in which the mean curve is with probability larger than 1-level).</span>
+
+<span class="sd">        - &quot;raw curves&quot; is a plot of the raw curves.</span>
+
+<span class="sd">        - &quot;pi&quot; is a plot of a non-simultaneous prediction interval with gaussian model around the mean smoothed curve (e.g. we do curve plus/minus gaussian quantile times std).</span>
+
+<span class="sd">        - &quot;ci&quot; is a confidence interval with gaussian model around the mean smoothed curve (e.g. we do curve plus/minus gaussian quantile times std divided by sqrt of number of seeds).</span>
+<span class="sd">    n_boot: int, default=500,</span>
+
+<span class="sd">        Number of bootstrap evaluations used for confidence interval estimation.</span>
+<span class="sd">        Only used if error_representation = &quot;ci&quot;.</span>
+<span class="sd">    level: float, default=0.95,</span>
+<span class="sd">        Level of the confidence interval. Only used if error_representation = &quot;ci&quot;</span>
+<span class="sd">    sub_sample, boolean, default = True,</span>
+<span class="sd">        If True, use up to 1000 points for one given seed of one agent to reduce computational cost.</span>
+<span class="sd">    show: bool, default=True</span>
+<span class="sd">        If True, calls plt.show().</span>
+<span class="sd">    preprocess_func: Callable, default=None</span>
+<span class="sd">        Function to apply to &#39;tag&#39; column before plot. For instance, if tag=episode_rewards,</span>
+<span class="sd">        setting preprocess_func=np.cumsum will plot cumulative rewards. If None, do nothing.</span>
+<span class="sd">        Warning: this function should return an array of the same size as the input.</span>
+<span class="sd">    title: str (Optional)</span>
+<span class="sd">        Optional title to plot. If None, set to tag.</span>
+<span class="sd">    savefig_fname: str (Optional)</span>
+<span class="sd">        Name of the figure in which the plot is saved with figure.savefig. If None,</span>
+<span class="sd">        the figure is not saved.</span>
+<span class="sd">    linestyles: boolean, default=False</span>
+<span class="sd">        Whether to use different linestyles for each curve.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Pandas DataFrame with processed data.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from rlberry_research.agents.torch import A2CAgent, DQNAgent</span>
+<span class="sd">    &gt;&gt;&gt; from rlberry.manager import ExperimentManager, plot_writer_data</span>
+<span class="sd">    &gt;&gt;&gt; from rlberry.envs import gym_make</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; if __name__==&quot;__main__&quot;:</span>
+<span class="sd">    &gt;&gt;&gt;     managers = [ ExperimentManager(</span>
+<span class="sd">    &gt;&gt;&gt;         agent_class,</span>
+<span class="sd">    &gt;&gt;&gt;         (gym_make, dict(id=&quot;CartPole-v1&quot;)),</span>
+<span class="sd">    &gt;&gt;&gt;         fit_budget=4e4,</span>
+<span class="sd">    &gt;&gt;&gt;         eval_kwargs=dict(eval_horizon=500),</span>
+<span class="sd">    &gt;&gt;&gt;         n_fit=1,</span>
+<span class="sd">    &gt;&gt;&gt;         parallelization=&quot;process&quot;,</span>
+<span class="sd">    &gt;&gt;&gt;         mp_context=&quot;spawn&quot;,</span>
+<span class="sd">    &gt;&gt;&gt;         seed=42,</span>
+<span class="sd">    &gt;&gt;&gt;          ) for agent_class in [A2CAgent, DQNAgent]]</span>
+<span class="sd">    &gt;&gt;&gt;     for manager in managers:</span>
+<span class="sd">    &gt;&gt;&gt;         manager.fit()</span>
+<span class="sd">    &gt;&gt;&gt;     # We have only one seed (n_fit=1) hence the curves are automatically smoothed</span>
+<span class="sd">    &gt;&gt;&gt;     data = plot_writer_data(managers, &quot;episode_rewards&quot;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">title</span> <span class="ow">or</span> <span class="n">tag</span>
+    <span class="k">if</span> <span class="n">preprocess_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ylabel</span> <span class="o">=</span> <span class="s2">&quot;value&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ylabel</span> <span class="o">=</span> <span class="n">tag</span>
+    <span class="n">processed_df</span> <span class="o">=</span> <span class="n">read_writer_data</span><span class="p">(</span>
+        <span class="n">data_source</span><span class="p">,</span>
+        <span class="n">many_agent_by_str_datasource</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">preprocess_tag</span><span class="o">=</span><span class="n">tag</span><span class="p">,</span>
+        <span class="n">preprocess_func</span><span class="o">=</span><span class="n">preprocess_func</span><span class="p">,</span>
+        <span class="n">id_agent</span><span class="o">=</span><span class="n">id_agent</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">processed_df</span><span class="p">[</span><span class="n">processed_df</span><span class="p">[</span><span class="s2">&quot;tag&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">tag</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;[plot_writer_data]: No data to be plotted.&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">if</span> <span class="n">xtag</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">xtag</span> <span class="o">=</span> <span class="s2">&quot;global_step&quot;</span>
+
+    <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="n">xtag</span><span class="p">]</span><span class="o">.</span><span class="n">notnull</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="n">xtag</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Plotting </span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2"> vs </span><span class="si">{</span><span class="n">xtag</span><span class="si">}</span><span class="s2">, but </span><span class="si">{</span><span class="n">xtag</span><span class="si">}</span><span class="s2"> might be missing for some agents.&quot;</span>
+            <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">xtag</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">index</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;n_simu&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;n_simu&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">sub_sample</span><span class="p">:</span>
+        <span class="n">new_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">():</span>
+            <span class="n">n_simu_tot</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">name</span><span class="p">,</span> <span class="s2">&quot;n_simu&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">for</span> <span class="n">simu</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_simu_tot</span><span class="p">):</span>
+                <span class="n">df_name_simu</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+                    <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;n_simu&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">simu</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">name</span><span class="p">)</span>
+                <span class="p">]</span>
+                <span class="n">step</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_name_simu</span><span class="p">)</span> <span class="o">//</span> <span class="mi">1000</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_name_simu</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">step</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">df_sub</span> <span class="o">=</span> <span class="n">df_name_simu</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="n">xtag</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span>
+                            <span class="p">::</span><span class="n">step</span>
+                        <span class="p">]</span>  <span class="c1"># do the sub-sampling</span>
+                        <span class="n">new_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">new_df</span><span class="p">,</span> <span class="n">df_sub</span><span class="p">],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">new_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">new_df</span><span class="p">,</span> <span class="n">df_name_simu</span><span class="p">],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">new_df</span>
+
+    <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">figure</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">smooth</span><span class="p">:</span>
+        <span class="n">plot_smoothed_curves</span><span class="p">(</span>
+            <span class="n">data</span><span class="p">[[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">xtag</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="s2">&quot;n_simu&quot;</span><span class="p">]],</span>
+            <span class="n">xtag</span><span class="p">,</span>
+            <span class="s2">&quot;value&quot;</span><span class="p">,</span>
+            <span class="n">smoothing_bandwidth</span><span class="p">,</span>
+            <span class="n">ax</span><span class="p">,</span>
+            <span class="n">error_representation</span><span class="p">,</span>
+            <span class="n">n_boot</span><span class="p">,</span>
+            <span class="n">level</span><span class="p">,</span>
+            <span class="kc">False</span><span class="p">,</span>
+            <span class="kc">None</span><span class="p">,</span>
+            <span class="n">linestyles</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">plot_synchronized_curves</span><span class="p">(</span>
+            <span class="n">data</span><span class="p">[[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">xtag</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="s2">&quot;n_simu&quot;</span><span class="p">]],</span>
+            <span class="n">xtag</span><span class="p">,</span>
+            <span class="s2">&quot;value&quot;</span><span class="p">,</span>
+            <span class="n">ax</span><span class="p">,</span>
+            <span class="n">error_representation</span><span class="p">,</span>
+            <span class="n">level</span><span class="p">,</span>
+            <span class="kc">False</span><span class="p">,</span>
+            <span class="kc">None</span><span class="p">,</span>
+            <span class="n">linestyles</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xtag</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">title</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">savefig_fname</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">savefig_fname</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">show</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="plot_smoothed_curves"><a class="viewcode-back" href="../../../generated/rlberry.manager.plot_smoothed_curves.html#rlberry.manager.plot_smoothed_curves">[docs]</a><span class="k">def</span> <span class="nf">plot_smoothed_curves</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">,</span>
+    <span class="n">x</span><span class="p">,</span>
+    <span class="n">y</span><span class="p">,</span>
+    <span class="n">smoothing_bandwidth</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">error_representation</span><span class="o">=</span><span class="s2">&quot;ci&quot;</span><span class="p">,</span>
+    <span class="n">n_boot</span><span class="o">=</span><span class="mi">2500</span><span class="p">,</span>
+    <span class="n">level</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+    <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">savefig_fname</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">linestyles</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot the performances contained in the data (see data parameter to learn what format it should be).</span>
+
+<span class="sd">    If there are several simulations, a confidence interval is plotted.</span>
+
+<span class="sd">    In all cases a smoothing is performed.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data: a pandas dataframe</span>
+<span class="sd">        data must contain the columns &quot;name&quot;, &quot;n_simu&quot;, an x column and a y column.</span>
+
+<span class="sd">        - &quot;n_simu&quot; contain the simulation number (e.g. the seed) for which the raw is computed (beginning at 0 until the total number of seeds).</span>
+
+<span class="sd">        - &quot;name&quot; is the name of the algorithm for which the raw is computed.</span>
+
+<span class="sd">        - x column is named according to x parameter and contain values to have in x axis.</span>
+
+<span class="sd">        - y column is named according to y parameter and contain values to have in y axis.</span>
+
+
+<span class="sd">    smoothing_bandwidth: float or array of floats or None</span>
+<span class="sd">        How to choose the bandwidth parameter. If float, then smoothing_bandwidth is used</span>
+<span class="sd">        directly as a bandwidth and if is an array, a parameter search using smoothing_bandwidth is</span>
+<span class="sd">        used if None, a parameter search from a range of 20 possible values choosen by heuristics is performed.</span>
+<span class="sd">    ax: matplotlib axis or None, default=None</span>
+<span class="sd">        Matplotlib axis on which we plot. If None, create one. Can be used to</span>
+<span class="sd">        customize the plot.</span>
+<span class="sd">    error_representation: str in {&quot;cb&quot;, &quot;raw_curves&quot;, &quot;ci&quot;,  &quot;pi&quot;}</span>
+<span class="sd">        How to represent multiple simulations. The &quot;ci&quot; and &quot;pi&quot; do not take into account the need for simultaneous inference, it is then harder to draw conclusion from them than with &quot;cb&quot; but they are the most widely used.</span>
+
+<span class="sd">        - &quot;cb&quot; is a confidence band on the mean curve using functional data analysis (band in which the mean curve is with probability larger than 1-level). Method from [1], using scikit-fda [2] library.</span>
+
+<span class="sd">        - &quot;raw curves&quot; is a plot of the raw curves.</span>
+
+<span class="sd">        - &quot;pi&quot; is a plot of a non-simultaneous prediction interval with gaussian model around the mean smoothed curve (e.g. we do curve plus/minus gaussian quantile times std).</span>
+
+<span class="sd">        - &quot;ci&quot; is a confidence interval with gaussian model around the mean smoothed curve (e.g. we do curve plus/minus gaussian quantile times std divided by sqrt of number of seeds).</span>
+
+<span class="sd">    n_boot: int, default=2500,</span>
+<span class="sd">        Number of bootstrap evaluations used for confidence interval estimation.</span>
+<span class="sd">        Only used if error_representation = &quot;ci&quot;.</span>
+<span class="sd">    level: float, default=0.95,</span>
+<span class="sd">        Level of the confidence (or prediction) interval. Only used if error_representation is not &quot;raw_curves&quot;.</span>
+<span class="sd">    show: bool, default=True</span>
+<span class="sd">        If true, calls plt.show().</span>
+<span class="sd">    savefig_fname: str (Optional)</span>
+<span class="sd">        Name of the figure in which the plot is saved with figure.savefig. If None,</span>
+<span class="sd">        the figure is not saved.</span>
+<span class="sd">    linestyles: boolean, default=False</span>
+<span class="sd">        Whether to use different linestyles for each curve.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import pandas as pd</span>
+<span class="sd">    &gt;&gt;&gt; from rlberry.manager import plot_smoothed_curve</span>
+<span class="sd">    &gt;&gt;&gt;  df = pd.DataFrame(</span>
+<span class="sd">        {&quot;name&quot;: [&quot;a&quot;, &quot;a&quot;, &quot;a&quot;], &quot;x&quot;: [1, 2, 3], &quot;y&quot;: [3, 4, 5], &quot;n_simu&quot;: [0, 0, 0]}</span>
+<span class="sd">    )</span>
+<span class="sd">    &gt;&gt;&gt; plot_smoothed_curve(df, &quot;x&quot;, &quot;y&quot;)</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">        [1] Degras, D. (2017). Simultaneous confidence bands for the mean of functional data. Wiley Interdisciplinary Reviews: Computational Statistics, 9(3), e1397.</span>
+<span class="sd">        [2] scikit-fda, Carlos Ramos Carreño, hzzhyj, mellamansanchez, Pablo Marcos, pedrorponga, David del Val, Pablo, David García Fernández, Martín, Miguel Carbajo Berrocal, ElenaPetrunina, Pablo Cuesta Sierra, Rafa Hidalgo, Clément Lejeune, amandaher, dSerna4, ego-thales, pedrog99, Jorge Duque, … Álvaro Castillo. (2023). GAA-UAM/scikit-fda: Version 0.9 (0.9). Zenodo. https://doi.org/10.5281/zenodo.10016930</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="n">SKFDA_INSTALLED</span>
+    <span class="p">),</span> <span class="s2">&quot;please install scikit-fda to use the smoothing functionality in rlberry&quot;</span>
+    <span class="n">xlabel</span> <span class="o">=</span> <span class="n">x</span>
+    <span class="n">ylabel</span> <span class="o">=</span> <span class="n">y</span>
+    <span class="n">x_values</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">xlabel</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">min_x</span><span class="p">,</span> <span class="n">max_x</span> <span class="o">=</span> <span class="n">x_values</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">x_values</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    <span class="n">n_tot_simu</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;n_simu&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">smoothing_bandwidth</span><span class="p">,</span> <span class="n">numbers</span><span class="o">.</span><span class="n">Number</span><span class="p">):</span>
+        <span class="n">sorted_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">x_values</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sorted_x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="n">min_bandwidth_x</span> <span class="o">=</span> <span class="p">(</span><span class="n">sorted_x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">sorted_x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="mi">3</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">min_bandwidth_x</span> <span class="o">=</span> <span class="n">sorted_x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">sorted_x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">xplot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">min_x</span><span class="p">,</span> <span class="n">max_x</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="p">,</span> <span class="n">styles</span><span class="p">,</span> <span class="n">cmap</span> <span class="o">=</span> <span class="n">_prepare_ax</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">linestyles</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Change shape and smooth the curves contained in the dataset df if necessary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Nadaraya-Watson kernel smoothing</span>
+        <span class="c1"># with cross validation bandwidth selection</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">smoothing_bandwidth</span><span class="p">,</span> <span class="n">numbers</span><span class="o">.</span><span class="n">Number</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">smoothing_bandwidth</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">bandwidth</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
+                    <span class="n">min_bandwidth_x</span><span class="p">,</span> <span class="nb">max</span><span class="p">((</span><span class="n">max_x</span> <span class="o">-</span> <span class="n">min_x</span><span class="p">)</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span> <span class="n">min_bandwidth_x</span> <span class="o">*</span> <span class="mi">3</span><span class="p">),</span> <span class="mi">10</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">bandwidth</span> <span class="o">=</span> <span class="n">smoothing_bandwidth</span>
+            <span class="n">nw</span> <span class="o">=</span> <span class="n">SmoothingParameterSearch</span><span class="p">(</span>
+                <span class="n">KernelSmoother</span><span class="p">(</span>
+                    <span class="n">kernel_estimator</span><span class="o">=</span><span class="n">NadarayaWatsonHatMatrix</span><span class="p">(),</span> <span class="n">output_points</span><span class="o">=</span><span class="n">xplot</span>
+                <span class="p">),</span>
+                <span class="n">bandwidth</span><span class="p">,</span>
+                <span class="n">param_name</span><span class="o">=</span><span class="s2">&quot;kernel_estimator__bandwidth&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">bw</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">nw</span> <span class="o">=</span> <span class="n">KernelSmoother</span><span class="p">(</span>
+                <span class="n">kernel_estimator</span><span class="o">=</span><span class="n">NadarayaWatsonHatMatrix</span><span class="p">(</span><span class="n">bandwidth</span><span class="o">=</span><span class="n">smoothing_bandwidth</span><span class="p">),</span>
+                <span class="n">output_points</span><span class="o">=</span><span class="n">xplot</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">bw</span> <span class="o">=</span> <span class="n">smoothing_bandwidth</span>
+
+        <span class="n">Xhat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">n_tot_simu</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">xplot</span><span class="p">)])</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_tot_simu</span><span class="p">):</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="n">df_name</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;n_simu&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">f</span><span class="p">,</span> <span class="n">ylabel</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;non-finite (or non float) data detected.&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">X</span><span class="p">)):</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;Some of the values are not finite. Not plotting the associated curves.&quot;</span>
+                <span class="p">)</span>
+                <span class="n">Xhat</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">X_grid</span> <span class="o">=</span> <span class="n">df_name</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;n_simu&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">f</span><span class="p">,</span> <span class="n">xlabel</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+                <span class="n">fd</span> <span class="o">=</span> <span class="n">FDataGrid</span><span class="p">([</span><span class="n">X</span><span class="p">],</span> <span class="n">X_grid</span><span class="p">,</span> <span class="n">domain_range</span><span class="o">=</span><span class="p">((</span><span class="n">min_x</span><span class="p">,</span> <span class="n">max_x</span><span class="p">),))</span>
+
+                <span class="k">if</span> <span class="n">bw</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>  <span class="c1"># Find the smoothing bandwidth once</span>
+                    <span class="n">nw</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">fd</span><span class="p">)</span>
+                    <span class="n">bw</span> <span class="o">=</span> <span class="n">nw</span><span class="o">.</span><span class="n">best_params_</span><span class="p">[</span>
+                        <span class="s2">&quot;kernel_estimator__bandwidth&quot;</span>
+                    <span class="p">]</span>  <span class="c1"># don&#39;t search for bandwidth in futur run, reuse</span>
+                <span class="k">else</span><span class="p">:</span>  <span class="c1"># after the first one, just apply smoothing with the given smoothing</span>
+                    <span class="n">nw</span> <span class="o">=</span> <span class="n">KernelSmoother</span><span class="p">(</span>
+                        <span class="n">kernel_estimator</span><span class="o">=</span><span class="n">NadarayaWatsonHatMatrix</span><span class="p">(</span><span class="n">bandwidth</span><span class="o">=</span><span class="n">bw</span><span class="p">),</span>
+                        <span class="n">output_points</span><span class="o">=</span><span class="n">xplot</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="n">nw</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">fd</span><span class="p">)</span>
+                <span class="n">Xhat</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">=</span> <span class="n">nw</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">fd</span><span class="p">)</span><span class="o">.</span><span class="n">data_matrix</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>  <span class="c1"># apply smoothing</span>
+        <span class="k">return</span> <span class="n">Xhat</span>
+
+    <span class="n">names</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])</span>
+
+    <span class="k">for</span> <span class="n">id_c</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">names</span><span class="p">):</span>
+        <span class="n">df_name</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">name</span><span class="p">]</span>
+        <span class="n">Xhat</span> <span class="o">=</span> <span class="n">process</span><span class="p">(</span><span class="n">df_name</span><span class="p">)</span>
+        <span class="n">mu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Xhat</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">id_plot</span> <span class="o">=</span> <span class="n">xplot</span> <span class="o">&lt;=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">df_name</span><span class="p">[</span><span class="n">xlabel</span><span class="p">])</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="n">xplot</span><span class="p">[</span><span class="n">id_plot</span><span class="p">],</span>
+            <span class="n">mu</span><span class="p">[</span><span class="n">id_plot</span><span class="p">],</span>
+            <span class="n">label</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">cmap</span><span class="p">[</span><span class="n">id_c</span><span class="p">],</span>
+            <span class="n">linestyle</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">styles</span><span class="p">[</span><span class="n">id_c</span><span class="p">]),</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">error_representation</span> <span class="o">==</span> <span class="s2">&quot;raw_curves&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">n_tot_simu</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">n_simu</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_tot_simu</span><span class="p">):</span>
+                <span class="n">x_simu</span> <span class="o">=</span> <span class="n">df_name</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_name</span><span class="p">[</span><span class="s2">&quot;n_simu&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">n_simu</span><span class="p">,</span> <span class="n">xlabel</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span>
+                    <span class="nb">float</span>
+                <span class="p">)</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="n">df_name</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_name</span><span class="p">[</span><span class="s2">&quot;n_simu&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">n_simu</span><span class="p">,</span> <span class="n">ylabel</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+                <span class="k">if</span> <span class="n">n_simu</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_simu</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;raw &quot;</span> <span class="o">+</span> <span class="n">name</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">cmap</span><span class="p">[</span><span class="n">id_c</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_simu</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">cmap</span><span class="p">[</span><span class="n">id_c</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">n_tot_simu</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">sigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">Xhat</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Xhat</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="n">error_representation</span> <span class="o">==</span> <span class="s2">&quot;ci&quot;</span><span class="p">:</span>
+                <span class="n">quantile</span> <span class="o">=</span> <span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">level</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="n">y_err</span> <span class="o">=</span> <span class="n">quantile</span> <span class="o">*</span> <span class="n">sigma</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n_tot_simu</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">error_representation</span> <span class="o">==</span> <span class="s2">&quot;pi&quot;</span><span class="p">:</span>
+                <span class="n">quantile</span> <span class="o">=</span> <span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">level</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="n">y_err</span> <span class="o">=</span> <span class="n">quantile</span> <span class="o">*</span> <span class="n">sigma</span>
+
+            <span class="k">elif</span> <span class="n">error_representation</span> <span class="o">==</span> <span class="s2">&quot;cb&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">n_tot_simu</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">level</span><span class="p">):</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="s2">&quot;Computing a cb that cannot achieve the level prescribed because there are not enough seeds.&quot;</span>
+                    <span class="p">)</span>
+
+                <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="c1"># Bootstrap estimation of confidence interval</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">sigma</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)):</span>
+                    <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_boot</span><span class="p">):</span>
+                        <span class="n">id_b</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">n_tot_simu</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n_tot_simu</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                            <span class="o">-</span> <span class="mi">1</span>
+                        <span class="p">)</span>
+                        <span class="n">mustar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Xhat</span><span class="p">[</span><span class="n">id_b</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                        <span class="n">residus</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">xplot</span><span class="p">[</span><span class="n">sigma</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]))</span>
+                            <span class="o">/</span> <span class="n">sigma</span><span class="p">[</span><span class="n">sigma</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>
+                            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">mustar</span><span class="p">[</span><span class="n">sigma</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">mu</span><span class="p">[</span><span class="n">sigma</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">])</span>
+                        <span class="p">)</span>
+                        <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">residus</span><span class="p">))</span>
+                    <span class="n">y_err</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="n">sigma</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+                        <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">xplot</span><span class="p">))</span>
+                        <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">level</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">y_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">xplot</span><span class="p">))</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="s2">&quot;The variance of the curve was 0, the confidence bound is very biased&quot;</span>
+                    <span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;error_representation not implemented&quot;</span><span class="p">)</span>
+
+            <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+                <span class="n">xplot</span><span class="p">[</span><span class="n">id_plot</span><span class="p">],</span>
+                <span class="n">mu</span><span class="o">.</span><span class="n">ravel</span><span class="p">()[</span><span class="n">id_plot</span><span class="p">]</span> <span class="o">-</span> <span class="n">y_err</span><span class="p">[</span><span class="n">id_plot</span><span class="p">],</span>
+                <span class="n">mu</span><span class="o">.</span><span class="n">ravel</span><span class="p">()[</span><span class="n">id_plot</span><span class="p">]</span> <span class="o">+</span> <span class="n">y_err</span><span class="p">[</span><span class="n">id_plot</span><span class="p">],</span>
+                <span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
+                <span class="n">color</span><span class="o">=</span><span class="n">cmap</span><span class="p">[</span><span class="n">id_c</span><span class="p">],</span>
+            <span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">show</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">savefig_fname</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">savefig_fname</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="plot_synchronized_curves"><a class="viewcode-back" href="../../../generated/rlberry.manager.plot_synchronized_curves.html#rlberry.manager.plot_synchronized_curves">[docs]</a><span class="k">def</span> <span class="nf">plot_synchronized_curves</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">,</span>
+    <span class="n">x</span><span class="p">,</span>
+    <span class="n">y</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">error_representation</span><span class="o">=</span><span class="s2">&quot;pi&quot;</span><span class="p">,</span>
+    <span class="n">level</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+    <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">savefig_fname</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">linestyles</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot the performances contained in the data (see data parameter to learn what format it should be).</span>
+
+<span class="sd">    If there are several simulations, a confidence interval is plotted.</span>
+
+<span class="sd">    In all cases a smoothing is performed</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data: a pandas dataframe</span>
+<span class="sd">        data must contain the columns &quot;name&quot;, &quot;n_simu&quot;, an x column and a y column.</span>
+
+<span class="sd">        - &quot;n_simu&quot; contain the simulation number (e.g. the seed) for which the raw is computed.</span>
+
+<span class="sd">        - &quot;name&quot; is the name of the algorithm for which the raw is computed.</span>
+
+<span class="sd">        - x column is named according to x parameter and contain values to have in x axis.</span>
+
+<span class="sd">        - y column is named according to y parameter and contain values to have in y axis.</span>
+
+<span class="sd">    ax: matplotlib axis or None, default=None</span>
+<span class="sd">        Matplotlib axis on which we plot. If None, create one. Can be used to</span>
+<span class="sd">        customize the plot.</span>
+<span class="sd">    error_representation: str in {&quot;raw_curves&quot;, &quot;ci&quot;,  &quot;pi&quot;}, default=&quot;pi&quot;</span>
+<span class="sd">        How to represent multiple simulations.</span>
+
+<span class="sd">        - &quot;raw curves&quot; is a plot of the raw curves.</span>
+
+<span class="sd">        - &quot;pi&quot; is a plot of a non-simultaneous prediction interval with gaussian model around the mean curve (e.g. we do curve plus/minus gaussian quantile times std).</span>
+
+<span class="sd">        - &quot;ci&quot; is a confidence interval on the prediction interval with gaussian model around the mean curve (e.g. we do curve plus/minus gaussian quantile times std divided by sqrt of number of seeds).</span>
+
+<span class="sd">    level: float, default=0.95,</span>
+<span class="sd">        Level of the confidence (or prediction) interval. Only used if error_representation is not &quot;raw_curves&quot;.</span>
+<span class="sd">    show: bool, default=True</span>
+<span class="sd">        If true, calls plt.show().</span>
+<span class="sd">    savefig_fname: str (Optional)</span>
+<span class="sd">        Name of the figure in which the plot is saved with figure.savefig. If None,</span>
+<span class="sd">        the figure is not saved.</span>
+<span class="sd">    linestyles: boolean, default=False</span>
+<span class="sd">        Whether to use different linestyles for each curve.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">        [1] Degras, D. (2017). Simultaneous confidence bands for the mean of functional data. Wiley Interdisciplinary Reviews: Computational Statistics, 9(3), e1397.</span>
+<span class="sd">        [2] scikit-fda, Carlos Ramos Carreño, hzzhyj, mellamansanchez, Pablo Marcos, pedrorponga, David del Val, Pablo, David García Fernández, Martín, Miguel Carbajo Berrocal, ElenaPetrunina, Pablo Cuesta Sierra, Rafa Hidalgo, Clément Lejeune, amandaher, dSerna4, ego-thales, pedrog99, Jorge Duque, … Álvaro Castillo. (2023). GAA-UAM/scikit-fda: Version 0.9 (0.9). Zenodo. https://doi.org/10.5281/zenodo.10016930</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">xlabel</span> <span class="o">=</span> <span class="n">x</span>
+    <span class="n">ylabel</span> <span class="o">=</span> <span class="n">y</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;dataset is empty&quot;</span>
+    <span class="n">n_tot_simu</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;n_simu&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+
+    <span class="c1"># check that every simulation have the same xs or truncate</span>
+    <span class="n">processed_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]):</span>
+        <span class="n">df_name</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">name</span><span class="p">]</span>
+        <span class="n">x_simu_0</span> <span class="o">=</span> <span class="n">df_name</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_name</span><span class="p">[</span><span class="s2">&quot;n_simu&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="n">xlabel</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">n_simu</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_tot_simu</span><span class="p">)):</span>
+            <span class="n">x_simu</span> <span class="o">=</span> <span class="n">df_name</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_name</span><span class="p">[</span><span class="s2">&quot;n_simu&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">n_simu</span><span class="p">,</span> <span class="n">xlabel</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span>
+                <span class="nb">float</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_simu</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_simu_0</span><span class="p">):</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;x axis is not the same for all the runs, truncating.&quot;</span><span class="p">)</span>
+            <span class="n">x_simu_0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">intersect1d</span><span class="p">(</span><span class="n">x_simu_0</span><span class="p">,</span> <span class="n">x_simu</span><span class="p">)</span>
+        <span class="n">df_name</span> <span class="o">=</span> <span class="n">df_name</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_name</span><span class="p">[</span><span class="n">xlabel</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_simu_0</span><span class="p">)]</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">df_name</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="p">),</span> <span class="s2">&quot;x_axis are incompatible across runs, you should use smoothing&quot;</span>
+        <span class="n">processed_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">processed_df</span><span class="p">,</span> <span class="n">df_name</span><span class="p">],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">processed_df</span>
+
+    <span class="n">ax</span><span class="p">,</span> <span class="n">styles</span><span class="p">,</span> <span class="n">cmap</span> <span class="o">=</span> <span class="n">_prepare_ax</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">linestyles</span><span class="p">)</span>
+
+    <span class="n">names</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">id_c</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">names</span><span class="p">):</span>
+        <span class="n">df_name</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">name</span><span class="p">,</span> <span class="p">[</span><span class="n">xlabel</span><span class="p">,</span> <span class="n">ylabel</span><span class="p">,</span> <span class="s2">&quot;n_simu&quot;</span><span class="p">]]</span>
+        <span class="n">x_plot</span> <span class="o">=</span> <span class="n">df_name</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_name</span><span class="p">[</span><span class="s2">&quot;n_simu&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="n">xlabel</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="n">y_mean</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">df_name</span><span class="p">[[</span><span class="n">xlabel</span><span class="p">,</span> <span class="n">ylabel</span><span class="p">]]</span>
+            <span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="n">xlabel</span><span class="p">])</span>
+            <span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="n">y_std</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">df_name</span><span class="p">[[</span><span class="n">xlabel</span><span class="p">,</span> <span class="n">ylabel</span><span class="p">]]</span>
+            <span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="n">xlabel</span><span class="p">])</span>
+            <span class="o">.</span><span class="n">std</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+        <span class="p">)</span>
+
+        <span class="n">quantile</span> <span class="o">=</span> <span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">level</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_plot</span><span class="p">,</span> <span class="n">y_mean</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">cmap</span><span class="p">[</span><span class="n">id_c</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">error_representation</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;ci&quot;</span><span class="p">,</span> <span class="s2">&quot;pi&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">error_representation</span> <span class="o">==</span> <span class="s2">&quot;pi&quot;</span><span class="p">:</span>
+                <span class="n">y_err</span> <span class="o">=</span> <span class="n">quantile</span> <span class="o">*</span> <span class="n">y_std</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">y_err</span> <span class="o">=</span> <span class="n">quantile</span> <span class="o">*</span> <span class="n">y_std</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n_tot_simu</span><span class="p">)</span>
+
+            <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+                <span class="n">x_plot</span><span class="p">,</span>
+                <span class="n">y_mean</span> <span class="o">-</span> <span class="n">y_err</span><span class="p">,</span>
+                <span class="n">y_mean</span> <span class="o">+</span> <span class="n">y_err</span><span class="p">,</span>
+                <span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
+                <span class="n">color</span><span class="o">=</span><span class="n">cmap</span><span class="p">[</span><span class="n">id_c</span><span class="p">],</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">error_representation</span> <span class="o">==</span> <span class="s2">&quot;raw_curves&quot;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">n_simu</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_tot_simu</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">x_simu</span> <span class="o">=</span> <span class="n">df_name</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_name</span><span class="p">[</span><span class="s2">&quot;n_simu&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">n_simu</span><span class="p">,</span> <span class="n">xlabel</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span>
+                    <span class="nb">float</span>
+                <span class="p">)</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="n">df_name</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_name</span><span class="p">[</span><span class="s2">&quot;n_simu&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">n_simu</span><span class="p">,</span> <span class="n">ylabel</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+                <span class="k">if</span> <span class="n">n_simu</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_simu</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">cmap</span><span class="p">[</span><span class="n">id_c</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_simu</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">cmap</span><span class="p">[</span><span class="n">id_c</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Error representation </span><span class="si">{}</span><span class="s2"> not known for non-smoothed plots&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">error_representation</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">show</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">savefig_fname</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">savefig_fname</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+<span class="k">def</span> <span class="nf">_prepare_ax</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">linestyles</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">figure</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Customizing linestyle</span>
+    <span class="k">if</span> <span class="n">linestyles</span><span class="p">:</span>
+        <span class="c1"># Number of unique dash styles. Default: 4 styles max.</span>
+        <span class="n">linestyles</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">)]</span>
+        <span class="c1"># Cycle through default linestyles.</span>
+        <span class="n">dash_cycler</span> <span class="o">=</span> <span class="n">cycle</span><span class="p">(</span><span class="n">linestyles</span><span class="p">)</span>
+        <span class="n">styles</span> <span class="o">=</span> <span class="p">[</span><span class="nb">next</span><span class="p">(</span><span class="n">dash_cycler</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">size</span><span class="p">)]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">styles</span> <span class="o">=</span> <span class="p">[()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">size</span><span class="p">)]</span>
+
+    <span class="n">n_tot_simu</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;n_simu&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">10</span><span class="p">:</span>
+        <span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">tab10</span><span class="o">.</span><span class="n">colors</span><span class="p">[:</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cmap</span> <span class="o">=</span> <span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">gist_rainbow</span><span class="p">(</span><span class="n">i</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">))]</span>
+
+    <span class="k">return</span> <span class="n">ax</span><span class="p">,</span> <span class="n">styles</span><span class="p">,</span> <span class="n">cmap</span>
+</pre></div>
+
+      </div>
+    <div class="container">
+      <footer class="sk-content-footer">
+            &copy; 2023, rlberry team.
+      </footer>
+    </div>
+  </div>
+</div>
+<script src="../../../_static/js/vendor/bootstrap.min.js"></script>
+
+<script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-22606712-2', 'auto');
+    ga('set', 'anonymizeIp', true);
+    ga('send', 'pageview');
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+<script>
+$(document).ready(function() {
+    /* Add a [>>>] button on the top-right corner of code samples to hide
+     * the >>> and ... prompts and the output and thus make the code
+     * copyable. */
+    var div = $('.highlight-python .highlight,' +
+                '.highlight-python3 .highlight,' +
+                '.highlight-pycon .highlight,' +
+		'.highlight-default .highlight')
+    var pre = div.find('pre');
+
+    // get the styles from the current theme
+    pre.parent().parent().css('position', 'relative');
+    var hide_text = 'Hide prompts and outputs';
+    var show_text = 'Show prompts and outputs';
+
+    // create and add the button to all the code blocks that contain >>>
+    div.each(function(index) {
+        var jthis = $(this);
+        if (jthis.find('.gp').length > 0) {
+            var button = $('<span class="copybutton">&gt;&gt;&gt;</span>');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+            jthis.prepend(button);
+        }
+        // tracebacks (.gt) contain bare text elements that need to be
+        // wrapped in a span to work with .nextUntil() (see later)
+        jthis.find('pre:has(.gt)').contents().filter(function() {
+            return ((this.nodeType == 3) && (this.data.trim().length > 0));
+        }).wrap('<span>');
+    });
+
+    // define the behavior of the button when it's clicked
+    $('.copybutton').click(function(e){
+        e.preventDefault();
+        var button = $(this);
+        if (button.data('hidden') === 'false') {
+            // hide the code output
+            button.parent().find('.go, .gp, .gt').hide();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'hidden');
+            button.css('text-decoration', 'line-through');
+            button.attr('title', show_text);
+            button.data('hidden', 'true');
+        } else {
+            // show the code output
+            button.parent().find('.go, .gp, .gt').show();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'visible');
+            button.css('text-decoration', 'none');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+        }
+    });
+
+	/*** Add permalink buttons next to glossary terms ***/
+	$('dl.glossary > dt[id]').append(function() {
+		return ('<a class="headerlink" href="#' +
+			    this.getAttribute('id') +
+			    '" title="Permalink to this term">¶</a>');
+	});
+  /*** Hide navbar when scrolling down ***/
+  // Returns true when headerlink target matches hash in url
+  (function() {
+    hashTargetOnTop = function() {
+        var hash = window.location.hash;
+        if ( hash.length < 2 ) { return false; }
+
+        var target = document.getElementById( hash.slice(1) );
+        if ( target === null ) { return false; }
+
+        var top = target.getBoundingClientRect().top;
+        return (top < 2) && (top > -2);
+    };
+
+    // Hide navbar on load if hash target is on top
+    var navBar = document.getElementById("navbar");
+    var navBarToggler = document.getElementById("sk-navbar-toggler");
+    var navBarHeightHidden = "-" + navBar.getBoundingClientRect().height + "px";
+    var $window = $(window);
+
+    hideNavBar = function() {
+        navBar.style.top = navBarHeightHidden;
+    };
+
+    showNavBar = function() {
+        navBar.style.top = "0";
+    }
+
+    if (hashTargetOnTop()) {
+        hideNavBar()
+    }
+
+    var prevScrollpos = window.pageYOffset;
+    hideOnScroll = function(lastScrollTop) {
+        if (($window.width() < 768) && (navBarToggler.getAttribute("aria-expanded") === 'true')) {
+            return;
+        }
+        if (lastScrollTop > 2 && (prevScrollpos <= lastScrollTop) || hashTargetOnTop()){
+            hideNavBar()
+        } else {
+            showNavBar()
+        }
+        prevScrollpos = lastScrollTop;
+    };
+
+    /*** high performance scroll event listener***/
+    var raf = window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        window.oRequestAnimationFrame;
+    var lastScrollTop = $window.scrollTop();
+
+    if (raf) {
+        loop();
+    }
+
+    function loop() {
+        var scrollTop = $window.scrollTop();
+        if (lastScrollTop === scrollTop) {
+            raf(loop);
+            return;
+        } else {
+            lastScrollTop = scrollTop;
+            hideOnScroll(lastScrollTop);
+            raf(loop);
+        }
+    }
+  })();
+});
+
+</script>
+    
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    
+</body>
+</html>

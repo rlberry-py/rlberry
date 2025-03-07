@@ -1,0 +1,12 @@
+﻿:mod:`rlberry.agents`.AgentWithSimplePolicy
+==================================================
+
+.. currentmodule:: rlberry.agents
+
+.. autoclass:: AgentWithSimplePolicy
+
+.. include:: rlberry.agents.AgentWithSimplePolicy.examples
+
+.. raw:: html
+
+    <div class="clearer"></div>

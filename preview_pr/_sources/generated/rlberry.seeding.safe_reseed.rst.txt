@@ -1,0 +1,12 @@
+﻿:mod:`rlberry.seeding`.safe_reseed
+===============================================
+
+.. currentmodule:: rlberry.seeding
+
+.. autofunction:: safe_reseed
+
+.. include:: rlberry.seeding.safe_reseed.examples
+
+.. raw:: html
+
+    <div class="clearer"></div>

@@ -1,0 +1,413 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  
+  <title>Gallery of examples &mdash; rlberry 0.7.3.post16.dev0+8710009 documentation</title>
+  
+  <link rel="canonical" href="https://rlberry-py.github.io/rlberry/auto_examples/index.html" />
+
+  
+
+  <link rel="stylesheet" href="../_static/css/vendor/bootstrap.min.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sg_gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sg_gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sg_gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sphinx-design.4cbf315f70debaebd550c87a6162cf0f.min.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+<script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+<script src="../_static/js/vendor/jquery-3.6.3.slim.min.js"></script> 
+</head>
+<body>
+
+
+<nav id="navbar" class="sk-docs-navbar navbar navbar-expand-md navbar-light bg-light py-0">
+  <div class="container-fluid sk-docs-container px-0">
+    <button
+      id="sk-navbar-toggler"
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="sk-navbar-collapse collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../index.html">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../installation.html">Install</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../user_guide.html">User Guide</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="#">Examples</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../api.html">API</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../changelog.html">Changelog</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../about.html">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="https://github.com/rlberry-py/rlberry">GitHub</a>
+        </li>
+        <!--
+        <li class="nav-item dropdown nav-more-item-dropdown">
+          <a class="sk-nav-link nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">More</a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          </div>
+        </li>-->
+    </ul>
+      <div id="searchbox" role="search">
+          <div class="searchformwrapper">
+            <form action="https://duckduckgo.com/">
+            <input type="hidden" id="sites" name="sites" value="https://rlberry-py.github.io/rlberry/">
+            <input type="search" placeholder="Search &hellip;" value="" name="q" />
+            <input class="sk-search-text-btn" type="submit" value="Go" /></form>
+
+          </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="d-flex" id="sk-doc-wrapper">
+    <input type="checkbox" name="sk-toggle-checkbox" id="sk-toggle-checkbox">
+    <label id="sk-sidemenu-toggle" class="sk-btn-toggle-toc btn sk-btn-primary" for="sk-toggle-checkbox">Toggle Menu</label>
+    <div id="sk-sidebar-wrapper" class="border-right">
+      <div class="sk-sidebar-toc-wrapper">
+        <div class="sk-sidebar-toc-logo">
+        </div>
+	<br>
+        <div class="alert alert-warning p-1 mb-2" role="alert">
+
+          <p class="text-center mb-0">
+          rlberry 0.7.3.post16.dev0+8710009<br/>
+          <a href="../versions.html">Other versions</a>
+          </p>
+
+        </div>
+            <div class="sk-sidebar-toc">
+              <ul>
+<li><a class="reference internal" href="#">Gallery of examples</a><ul>
+<li><a class="reference internal" href="#illustration-of-rlberry-environments">Illustration of rlberry environments</a></li>
+<li><a class="reference internal" href="#illustration-of-rlberry-agents">Illustration of rlberry agents</a></li>
+<li><a class="reference internal" href="#illustration-of-bandits-in-rlberry">Illustration of bandits in rlberry</a></li>
+</ul>
+</li>
+</ul>
+
+            </div>
+      </div>
+    </div>
+    <div id="sk-page-content-wrapper">
+      <div class="sk-page-content container-fluid body px-md-3" role="main">
+        
+  <section id="gallery-of-examples">
+<span id="examples"></span><h1>Gallery of examples<a class="headerlink" href="#gallery-of-examples" title="Permalink to this heading">¶</a></h1>
+<div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="This script requires matplotlib"><img alt="" src="../_images/sphx_glr_plot_kernels_thumb.png" />
+<p><a class="reference internal" href="plot_kernels.html#sphx-glr-auto-examples-plot-kernels-py"><span class="std std-ref">Plot kernel functions</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Plot kernel functions</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This example illustrate the use of adastop_comparator which uses adaptive multiple-testing to a..."><img alt="" src="../_images/sphx_glr_adastop_example_thumb.png" />
+<p><a class="reference internal" href="adastop_example.html#sphx-glr-auto-examples-adastop-example-py"><span class="std std-ref">Compare PPO and A2C on Acrobot with AdaStop</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Compare PPO and A2C on Acrobot with AdaStop</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This script shows how to modify an agent to easily record reward or action during the fit of th..."><img alt="" src="../_images/sphx_glr_plot_writer_wrapper_thumb.png" />
+<p><a class="reference internal" href="plot_writer_wrapper.html#sphx-glr-auto-examples-plot-writer-wrapper-py"><span class="std std-ref">Record reward during training and then plot it</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Record reward during training and then plot it</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This example illustrate the use of compare_agents, a function that uses multiple-testing to ass..."><img alt="" src="../_images/sphx_glr_comparison_agents_thumb.png" />
+<p><a class="reference internal" href="comparison_agents.html#sphx-glr-auto-examples-comparison-agents-py"><span class="std std-ref">Compare Bandit Algorithms</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Compare Bandit Algorithms</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This example illustrate how to use the &quot;with_venv&quot; decorator in order to automatically construc..."><img alt="" src="../_images/sphx_glr_example_venv_thumb.png" />
+<p><a class="reference internal" href="example_venv.html#sphx-glr-auto-examples-example-venv-py"><span class="std std-ref">Using multiple virtual environments with rlberry</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Using multiple virtual environments with rlberry</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This script shows how to define a bandit environment and an UCB Index-based algorithm."><img alt="" src="../_images/sphx_glr_plot_smooth_thumb.png" />
+<p><a class="reference internal" href="plot_smooth.html#sphx-glr-auto-examples-plot-smooth-py"><span class="std std-ref">Illustration of plotting tools on Bandits</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Illustration of plotting tools on Bandits</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="First, we initialize a grid world environment with finite state space and actions. A grid world..."><img alt="" src="../_images/sphx_glr_plot_agent_manager_thumb.png" />
+<p><a class="reference internal" href="plot_agent_manager.html#sphx-glr-auto-examples-plot-agent-manager-py"><span class="std std-ref">A demo of Experiment Manager</span></a></p>
+  <div class="sphx-glr-thumbnail-title">A demo of Experiment Manager</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This is a minimal example of how to create checkpoints while training your agents, and how to r..."><img alt="" src="../_images/sphx_glr_plot_checkpointing_thumb.png" />
+<p><a class="reference internal" href="plot_checkpointing.html#sphx-glr-auto-examples-plot-checkpointing-py"><span class="std std-ref">Checkpointing</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Checkpointing</div>
+</div></div><div class="toctree-wrapper compound">
+</div>
+<section id="illustration-of-rlberry-environments">
+<h2>Illustration of rlberry environments<a class="headerlink" href="#illustration-of-rlberry-environments" title="Permalink to this heading">¶</a></h2>
+<div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="A demo of Chain environment"><img alt="" src="../_images/sphx_glr_video_plot_chain_thumb.jpg" />
+<p><a class="reference internal" href="demo_env/video_plot_chain.html#sphx-glr-auto-examples-demo-env-video-plot-chain-py"><span class="std std-ref">A demo of Chain environment</span></a></p>
+  <div class="sphx-glr-thumbnail-title">A demo of Chain environment</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="A demo of MountainCar environment"><img alt="" src="../_images/sphx_glr_video_plot_mountain_car_thumb.jpg" />
+<p><a class="reference internal" href="demo_env/video_plot_mountain_car.html#sphx-glr-auto-examples-demo-env-video-plot-mountain-car-py"><span class="std std-ref">A demo of MountainCar environment</span></a></p>
+  <div class="sphx-glr-thumbnail-title">A demo of MountainCar environment</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="A demo of AppleGold environment"><img alt="" src="../_images/sphx_glr_video_plot_apple_gold_thumb.jpg" />
+<p><a class="reference internal" href="demo_env/video_plot_apple_gold.html#sphx-glr-auto-examples-demo-env-video-plot-apple-gold-py"><span class="std std-ref">A demo of AppleGold environment</span></a></p>
+  <div class="sphx-glr-thumbnail-title">A demo of AppleGold environment</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="A demo of Acrobot environment with RSUCBVIAgent"><img alt="" src="../_images/sphx_glr_video_plot_acrobot_thumb.jpg" />
+<p><a class="reference internal" href="demo_env/video_plot_acrobot.html#sphx-glr-auto-examples-demo-env-video-plot-acrobot-py"><span class="std std-ref">A demo of Acrobot environment with RSUCBVIAgent</span></a></p>
+  <div class="sphx-glr-thumbnail-title">A demo of Acrobot environment with RSUCBVIAgent</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="A demo of Gridworld environment with ValueIterationAgent"><img alt="" src="../_images/sphx_glr_video_plot_gridworld_thumb.jpg" />
+<p><a class="reference internal" href="demo_env/video_plot_gridworld.html#sphx-glr-auto-examples-demo-env-video-plot-gridworld-py"><span class="std std-ref">A demo of Gridworld environment with ValueIterationAgent</span></a></p>
+  <div class="sphx-glr-thumbnail-title">A demo of Gridworld environment with ValueIterationAgent</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="A demo of twinrooms environment"><img alt="" src="../_images/sphx_glr_video_plot_twinrooms_thumb.jpg" />
+<p><a class="reference internal" href="demo_env/video_plot_twinrooms.html#sphx-glr-auto-examples-demo-env-video-plot-twinrooms-py"><span class="std std-ref">A demo of twinrooms environment</span></a></p>
+  <div class="sphx-glr-thumbnail-title">A demo of twinrooms environment</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="A demo of OldGymCompatibilityWrapper with old_Acrobot environment"><img alt="" src="../_images/sphx_glr_video_plot_old_gym_compatibility_wrapper_old_acrobot_thumb.jpg" />
+<p><a class="reference internal" href="demo_env/video_plot_old_gym_compatibility_wrapper_old_acrobot.html#sphx-glr-auto-examples-demo-env-video-plot-old-gym-compatibility-wrapper-old-acrobot-py"><span class="std std-ref">A demo of OldGymCompatibilityWrapper with old_Acrobot environment</span></a></p>
+  <div class="sphx-glr-thumbnail-title">A demo of OldGymCompatibilityWrapper with old_Acrobot environment</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="A demo of rooms environment"><img alt="" src="../_images/sphx_glr_video_plot_rooms_thumb.jpg" />
+<p><a class="reference internal" href="demo_env/video_plot_rooms.html#sphx-glr-auto-examples-demo-env-video-plot-rooms-py"><span class="std std-ref">A demo of rooms environment</span></a></p>
+  <div class="sphx-glr-thumbnail-title">A demo of rooms environment</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="A demo of PBALL2D environment"><img alt="" src="../_images/sphx_glr_video_plot_pball_thumb.jpg" />
+<p><a class="reference internal" href="demo_env/video_plot_pball.html#sphx-glr-auto-examples-demo-env-video-plot-pball-py"><span class="std std-ref">A demo of PBALL2D environment</span></a></p>
+  <div class="sphx-glr-thumbnail-title">A demo of PBALL2D environment</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Agent is slightly tuned, but not optimal. This is just for illustration purpose."><img alt="" src="../_images/sphx_glr_video_plot_springcartpole_thumb.jpg" />
+<p><a class="reference internal" href="demo_env/video_plot_springcartpole.html#sphx-glr-auto-examples-demo-env-video-plot-springcartpole-py"><span class="std std-ref">A demo of SpringCartPole environment with DQNAgent</span></a></p>
+  <div class="sphx-glr-thumbnail-title">A demo of SpringCartPole environment with DQNAgent</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Agent is slightly tuned, but not optimal. This is just for illustration purpose."><img alt="" src="../_images/sphx_glr_video_plot_atari_freeway_thumb.jpg" />
+<p><a class="reference internal" href="demo_env/video_plot_atari_freeway.html#sphx-glr-auto-examples-demo-env-video-plot-atari-freeway-py"><span class="std std-ref">A demo of ATARI Freeway environment with DQNAgent</span></a></p>
+  <div class="sphx-glr-thumbnail-title">A demo of ATARI Freeway environment with DQNAgent</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Agent is slightly tuned, but not optimal. This is just for illustration purpose."><img alt="" src="../_images/sphx_glr_example_atari_atlantis_vectorized_ppo_thumb.jpg" />
+<p><a class="reference internal" href="demo_env/example_atari_atlantis_vectorized_ppo.html#sphx-glr-auto-examples-demo-env-example-atari-atlantis-vectorized-ppo-py"><span class="std std-ref">A demo of ATARI Atlantis environment with vectorized PPOAgent</span></a></p>
+  <div class="sphx-glr-thumbnail-title">A demo of ATARI Atlantis environment with vectorized PPOAgent</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Agent is slightly tuned, but not optimal. This is just for illustration purpose."><img alt="" src="../_images/sphx_glr_example_atari_breakout_vectorized_ppo_thumb.jpg" />
+<p><a class="reference internal" href="demo_env/example_atari_breakout_vectorized_ppo.html#sphx-glr-auto-examples-demo-env-example-atari-breakout-vectorized-ppo-py"><span class="std std-ref">A demo of ATARI Breakout environment with vectorized PPOAgent</span></a></p>
+  <div class="sphx-glr-thumbnail-title">A demo of ATARI Breakout environment with vectorized PPOAgent</div>
+</div></div></section>
+<section id="illustration-of-rlberry-agents">
+<h2>Illustration of rlberry agents<a class="headerlink" href="#illustration-of-rlberry-agents" title="Permalink to this heading">¶</a></h2>
+<div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="A demo of PPO algorithm in PBall2D environment"><img alt="" src="../_images/sphx_glr_video_plot_ppo_thumb.jpg" />
+<p><a class="reference internal" href="demo_agents/video_plot_ppo.html#sphx-glr-auto-examples-demo-agents-video-plot-ppo-py"><span class="std std-ref">A demo of PPO algorithm in PBall2D environment</span></a></p>
+  <div class="sphx-glr-thumbnail-title">A demo of PPO algorithm in PBall2D environment</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="A demo of ValueIteration algorithm in Chain environment"><img alt="" src="../_images/sphx_glr_video_plot_vi_thumb.jpg" />
+<p><a class="reference internal" href="demo_agents/video_plot_vi.html#sphx-glr-auto-examples-demo-agents-video-plot-vi-py"><span class="std std-ref">A demo of ValueIteration algorithm in Chain environment</span></a></p>
+  <div class="sphx-glr-thumbnail-title">A demo of ValueIteration algorithm in Chain environment</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="A demo of RSUCBVI algorithm in MountainCar environment"><img alt="" src="../_images/sphx_glr_video_plot_rsucbvi_thumb.jpg" />
+<p><a class="reference internal" href="demo_agents/video_plot_rsucbvi.html#sphx-glr-auto-examples-demo-agents-video-plot-rsucbvi-py"><span class="std std-ref">A demo of RSUCBVI algorithm in MountainCar environment</span></a></p>
+  <div class="sphx-glr-thumbnail-title">A demo of RSUCBVI algorithm in MountainCar environment</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="A demo of A2C algorithm in PBall2D environment"><img alt="" src="../_images/sphx_glr_video_plot_a2c_thumb.jpg" />
+<p><a class="reference internal" href="demo_agents/video_plot_a2c.html#sphx-glr-auto-examples-demo-agents-video-plot-a2c-py"><span class="std std-ref">A demo of A2C algorithm in PBall2D environment</span></a></p>
+  <div class="sphx-glr-thumbnail-title">A demo of A2C algorithm in PBall2D environment</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This script shows how to train a SAC agent on a Pendulum environment."><img alt="" src="../_images/sphx_glr_demo_SAC_thumb.png" />
+<p><a class="reference internal" href="demo_agents/demo_SAC.html#sphx-glr-auto-examples-demo-agents-demo-sac-py"><span class="std std-ref">SAC Soft Actor-Critic</span></a></p>
+  <div class="sphx-glr-thumbnail-title">SAC Soft Actor-Critic</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="A demo of MBQVI algorithm in Gridworld environment"><img alt="" src="../_images/sphx_glr_video_plot_mbqvi_thumb.jpg" />
+<p><a class="reference internal" href="demo_agents/video_plot_mbqvi.html#sphx-glr-auto-examples-demo-agents-video-plot-mbqvi-py"><span class="std std-ref">A demo of MBQVI algorithm in Gridworld environment</span></a></p>
+  <div class="sphx-glr-thumbnail-title">A demo of MBQVI algorithm in Gridworld environment</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="A demo of RSKernelUCBVIAgent algorithm in Acrobot environment"><img alt="" src="../_images/sphx_glr_video_plot_rs_kernel_ucbvi_thumb.jpg" />
+<p><a class="reference internal" href="demo_agents/video_plot_rs_kernel_ucbvi.html#sphx-glr-auto-examples-demo-agents-video-plot-rs-kernel-ucbvi-py"><span class="std std-ref">A demo of RSKernelUCBVIAgent algorithm in Acrobot environment</span></a></p>
+  <div class="sphx-glr-thumbnail-title">A demo of RSKernelUCBVIAgent algorithm in Acrobot environment</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="As DQN can be computationally intensive and hard to tune, one can use tensorboard to visualize ..."><img alt="" src="../_images/sphx_glr_video_plot_dqn_thumb.jpg" />
+<p><a class="reference internal" href="demo_agents/video_plot_dqn.html#sphx-glr-auto-examples-demo-agents-video-plot-dqn-py"><span class="std std-ref">A demo of DQN algorithm in CartPole environment</span></a></p>
+  <div class="sphx-glr-thumbnail-title">A demo of DQN algorithm in CartPole environment</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="As DQN can be computationally intensive and hard to tune, one can use tensorboard to visualize ..."><img alt="" src="../_images/sphx_glr_video_plot_mdqn_thumb.jpg" />
+<p><a class="reference internal" href="demo_agents/video_plot_mdqn.html#sphx-glr-auto-examples-demo-agents-video-plot-mdqn-py"><span class="std std-ref">A demo of M-DQN algorithm in CartPole environment</span></a></p>
+  <div class="sphx-glr-thumbnail-title">A demo of M-DQN algorithm in CartPole environment</div>
+</div></div></section>
+<section id="illustration-of-bandits-in-rlberry">
+<h2>Illustration of bandits in rlberry<a class="headerlink" href="#illustration-of-bandits-in-rlberry" title="Permalink to this heading">¶</a></h2>
+<div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="This script shows how to define a bandit environment and an UCB Index-based algorithm."><img alt="" src="../_images/sphx_glr_plot_ucb_bandit_thumb.png" />
+<p><a class="reference internal" href="demo_bandits/plot_ucb_bandit.html#sphx-glr-auto-examples-demo-bandits-plot-ucb-bandit-py"><span class="std std-ref">UCB Bandit cumulative regret</span></a></p>
+  <div class="sphx-glr-thumbnail-title">UCB Bandit cumulative regret</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This script shows how to define a bandit environment and an EXP3 randomized algorithm."><img alt="" src="../_images/sphx_glr_plot_exp3_bandit_thumb.png" />
+<p><a class="reference internal" href="demo_bandits/plot_exp3_bandit.html#sphx-glr-auto-examples-demo-bandits-plot-exp3-bandit-py"><span class="std std-ref">EXP3 Bandit cumulative regret</span></a></p>
+  <div class="sphx-glr-thumbnail-title">EXP3 Bandit cumulative regret</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This script shows how to use Thompson sampling on two examples: Bernoulli and Gaussian bandits."><img alt="" src="../_images/sphx_glr_plot_TS_bandit_thumb.png" />
+<p><a class="reference internal" href="demo_bandits/plot_TS_bandit.html#sphx-glr-auto-examples-demo-bandits-plot-ts-bandit-py"><span class="std std-ref">Comparison of Thompson sampling and UCB on Bernoulli and Gaussian bandits</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Comparison of Thompson sampling and UCB on Bernoulli and Gaussian bandits</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This script Compare several bandits agents and as a sub-product also shows how to use subplots ..."><img alt="" src="../_images/sphx_glr_plot_compare_index_bandits_thumb.png" />
+<p><a class="reference internal" href="demo_bandits/plot_compare_index_bandits.html#sphx-glr-auto-examples-demo-bandits-plot-compare-index-bandits-py"><span class="std std-ref">Comparison subplots of various index based bandits algorithms</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Comparison subplots of various index based bandits algorithms</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="The quirck of this application is that there is a possible timeout when pinging a server. We ha..."><img alt="" src="../_images/sphx_glr_plot_mirror_bandit_thumb.png" />
+<p><a class="reference internal" href="demo_bandits/plot_mirror_bandit.html#sphx-glr-auto-examples-demo-bandits-plot-mirror-bandit-py"><span class="std std-ref">A demo of Bandit BAI on a real dataset to select mirrors</span></a></p>
+  <div class="sphx-glr-thumbnail-title">A demo of Bandit BAI on a real dataset to select mirrors</div>
+</div></div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-footer sphx-glr-footer-gallery docutils container">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/07fcc19ba03226cd3d83d4e40ec44385/auto_examples_python.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">all</span> <span class="pre">examples</span> <span class="pre">in</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">auto_examples_python.zip</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/6f1e7a639e0699d6164445b55e6c116d/auto_examples_jupyter.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">all</span> <span class="pre">examples</span> <span class="pre">in</span> <span class="pre">Jupyter</span> <span class="pre">notebooks:</span> <span class="pre">auto_examples_jupyter.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+      </div>
+    <div class="container">
+      <footer class="sk-content-footer">
+            &copy; 2023, rlberry team.
+          <a href="../_sources/auto_examples/index.rst.txt" rel="nofollow">Show this page source</a>
+      </footer>
+    </div>
+  </div>
+</div>
+<script src="../_static/js/vendor/bootstrap.min.js"></script>
+
+<script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-22606712-2', 'auto');
+    ga('set', 'anonymizeIp', true);
+    ga('send', 'pageview');
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+<script>
+$(document).ready(function() {
+    /* Add a [>>>] button on the top-right corner of code samples to hide
+     * the >>> and ... prompts and the output and thus make the code
+     * copyable. */
+    var div = $('.highlight-python .highlight,' +
+                '.highlight-python3 .highlight,' +
+                '.highlight-pycon .highlight,' +
+		'.highlight-default .highlight')
+    var pre = div.find('pre');
+
+    // get the styles from the current theme
+    pre.parent().parent().css('position', 'relative');
+    var hide_text = 'Hide prompts and outputs';
+    var show_text = 'Show prompts and outputs';
+
+    // create and add the button to all the code blocks that contain >>>
+    div.each(function(index) {
+        var jthis = $(this);
+        if (jthis.find('.gp').length > 0) {
+            var button = $('<span class="copybutton">&gt;&gt;&gt;</span>');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+            jthis.prepend(button);
+        }
+        // tracebacks (.gt) contain bare text elements that need to be
+        // wrapped in a span to work with .nextUntil() (see later)
+        jthis.find('pre:has(.gt)').contents().filter(function() {
+            return ((this.nodeType == 3) && (this.data.trim().length > 0));
+        }).wrap('<span>');
+    });
+
+    // define the behavior of the button when it's clicked
+    $('.copybutton').click(function(e){
+        e.preventDefault();
+        var button = $(this);
+        if (button.data('hidden') === 'false') {
+            // hide the code output
+            button.parent().find('.go, .gp, .gt').hide();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'hidden');
+            button.css('text-decoration', 'line-through');
+            button.attr('title', show_text);
+            button.data('hidden', 'true');
+        } else {
+            // show the code output
+            button.parent().find('.go, .gp, .gt').show();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'visible');
+            button.css('text-decoration', 'none');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+        }
+    });
+
+	/*** Add permalink buttons next to glossary terms ***/
+	$('dl.glossary > dt[id]').append(function() {
+		return ('<a class="headerlink" href="#' +
+			    this.getAttribute('id') +
+			    '" title="Permalink to this term">¶</a>');
+	});
+  /*** Hide navbar when scrolling down ***/
+  // Returns true when headerlink target matches hash in url
+  (function() {
+    hashTargetOnTop = function() {
+        var hash = window.location.hash;
+        if ( hash.length < 2 ) { return false; }
+
+        var target = document.getElementById( hash.slice(1) );
+        if ( target === null ) { return false; }
+
+        var top = target.getBoundingClientRect().top;
+        return (top < 2) && (top > -2);
+    };
+
+    // Hide navbar on load if hash target is on top
+    var navBar = document.getElementById("navbar");
+    var navBarToggler = document.getElementById("sk-navbar-toggler");
+    var navBarHeightHidden = "-" + navBar.getBoundingClientRect().height + "px";
+    var $window = $(window);
+
+    hideNavBar = function() {
+        navBar.style.top = navBarHeightHidden;
+    };
+
+    showNavBar = function() {
+        navBar.style.top = "0";
+    }
+
+    if (hashTargetOnTop()) {
+        hideNavBar()
+    }
+
+    var prevScrollpos = window.pageYOffset;
+    hideOnScroll = function(lastScrollTop) {
+        if (($window.width() < 768) && (navBarToggler.getAttribute("aria-expanded") === 'true')) {
+            return;
+        }
+        if (lastScrollTop > 2 && (prevScrollpos <= lastScrollTop) || hashTargetOnTop()){
+            hideNavBar()
+        } else {
+            showNavBar()
+        }
+        prevScrollpos = lastScrollTop;
+    };
+
+    /*** high performance scroll event listener***/
+    var raf = window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        window.oRequestAnimationFrame;
+    var lastScrollTop = $window.scrollTop();
+
+    if (raf) {
+        loop();
+    }
+
+    function loop() {
+        var scrollTop = $window.scrollTop();
+        if (lastScrollTop === scrollTop) {
+            raf(loop);
+            return;
+        } else {
+            lastScrollTop = scrollTop;
+            hideOnScroll(lastScrollTop);
+            raf(loop);
+        }
+    }
+  })();
+});
+
+</script>
+    
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    
+</body>
+</html>

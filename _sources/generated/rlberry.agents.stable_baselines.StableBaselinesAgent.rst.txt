@@ -1,0 +1,12 @@
+﻿:mod:`rlberry.agents.stable_baselines`.StableBaselinesAgent
+==================================================================
+
+.. currentmodule:: rlberry.agents.stable_baselines
+
+.. autoclass:: StableBaselinesAgent
+
+.. include:: rlberry.agents.stable_baselines.StableBaselinesAgent.examples
+
+.. raw:: html
+
+    <div class="clearer"></div>

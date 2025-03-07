@@ -1,0 +1,1701 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  
+  <title>rlberry.manager.experiment_manager &mdash; rlberry 0.7.3.post16.dev0+8710009 documentation</title>
+  
+  <link rel="canonical" href="https://rlberry-py.github.io/rlberry/_modules/rlberry/manager/experiment_manager.html" />
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/vendor/bootstrap.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/sg_gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/sg_gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/sg_gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/sphinx-design.4cbf315f70debaebd550c87a6162cf0f.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+<script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+<script src="../../../_static/js/vendor/jquery-3.6.3.slim.min.js"></script> 
+</head>
+<body>
+
+
+<nav id="navbar" class="sk-docs-navbar navbar navbar-expand-md navbar-light bg-light py-0">
+  <div class="container-fluid sk-docs-container px-0">
+    <button
+      id="sk-navbar-toggler"
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="sk-navbar-collapse collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../index.html">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../installation.html">Install</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../user_guide.html">User Guide</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../auto_examples/index.html">Examples</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../api.html">API</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../changelog.html">Changelog</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../../../about.html">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="https://github.com/rlberry-py/rlberry">GitHub</a>
+        </li>
+        <!--
+        <li class="nav-item dropdown nav-more-item-dropdown">
+          <a class="sk-nav-link nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">More</a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          </div>
+        </li>-->
+    </ul>
+      <div id="searchbox" role="search">
+          <div class="searchformwrapper">
+            <form action="https://duckduckgo.com/">
+            <input type="hidden" id="sites" name="sites" value="https://rlberry-py.github.io/rlberry/">
+            <input type="search" placeholder="Search &hellip;" value="" name="q" />
+            <input class="sk-search-text-btn" type="submit" value="Go" /></form>
+
+          </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="d-flex" id="sk-doc-wrapper">
+    <input type="checkbox" name="sk-toggle-checkbox" id="sk-toggle-checkbox">
+    <label id="sk-sidemenu-toggle" class="sk-btn-toggle-toc btn sk-btn-primary" for="sk-toggle-checkbox">Toggle Menu</label>
+    <div id="sk-sidebar-wrapper" class="border-right">
+      <div class="sk-sidebar-toc-wrapper">
+        <div class="sk-sidebar-toc-logo">
+        </div>
+	<br>
+        <div class="alert alert-warning p-1 mb-2" role="alert">
+
+          <p class="text-center mb-0">
+          rlberry 0.7.3.post16.dev0+8710009<br/>
+          <a href="../../../versions.html">Other versions</a>
+          </p>
+
+        </div>
+            <div class="sk-sidebar-toc">
+              
+            </div>
+      </div>
+    </div>
+    <div id="sk-page-content-wrapper">
+      <div class="sk-page-content container-fluid body px-md-3" role="main">
+        
+  <h1>Source code for rlberry.manager.experiment_manager</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">concurrent.futures</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">cProfile</span><span class="o">,</span> <span class="nn">pstats</span>
+<span class="kn">from</span> <span class="nn">pstats</span> <span class="kn">import</span> <span class="n">SortKey</span>
+<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">dill</span>
+<span class="kn">import</span> <span class="nn">gc</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">bz2</span>
+<span class="kn">import</span> <span class="nn">_pickle</span> <span class="k">as</span> <span class="nn">cPickle</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span>
+<span class="kn">from</span> <span class="nn">multiprocessing.spawn</span> <span class="kn">import</span> <span class="n">_check_not_importing_main</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">import</span> <span class="nn">rlberry</span>
+<span class="kn">from</span> <span class="nn">rlberry.seeding</span> <span class="kn">import</span> <span class="n">safe_reseed</span><span class="p">,</span> <span class="n">set_external_seed</span>
+<span class="kn">from</span> <span class="nn">rlberry.seeding</span> <span class="kn">import</span> <span class="n">Seeder</span>
+<span class="kn">from</span> <span class="nn">rlberry</span> <span class="kn">import</span> <span class="n">metadata_utils</span>
+<span class="kn">from</span> <span class="nn">rlberry.envs.utils</span> <span class="kn">import</span> <span class="n">process_env</span>
+<span class="kn">from</span> <span class="nn">rlberry.utils.logging</span> <span class="kn">import</span> <span class="n">configure_logging</span>
+<span class="kn">from</span> <span class="nn">rlberry.utils.writers</span> <span class="kn">import</span> <span class="n">DefaultWriter</span>
+<span class="kn">from</span> <span class="nn">rlberry.manager.utils</span> <span class="kn">import</span> <span class="n">create_database</span>
+<span class="kn">from</span> <span class="nn">rlberry</span> <span class="kn">import</span> <span class="n">types</span>
+
+<span class="n">_OPTUNA_INSTALLED</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">optuna</span>
+<span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+    <span class="n">_OPTUNA_INSTALLED</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># pragma: no cover</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">rlberry</span><span class="o">.</span><span class="n">logger</span>
+
+
+<span class="c1"># Aux</span>
+<span class="c1">#</span>
+
+
+<span class="k">class</span> <span class="nc">AgentHandler</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wraps an Agent so that it can be either loaded in memory</span>
+<span class="sd">    or represented by a file storing the Agent data.</span>
+<span class="sd">    It is used by `class`:~rlberry.manager.ExperimentManager` to handle the fact that</span>
+<span class="sd">    not all agents can be pickled, when returning from the processes that</span>
+<span class="sd">    train the agents.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    id: int</span>
+<span class="sd">        Integer identifying the handler.</span>
+<span class="sd">    filename: str or Path</span>
+<span class="sd">        File where to save/load the agent instance</span>
+<span class="sd">    seeder: :class:`~rlberry.seeding.seeder.Seeder`</span>
+<span class="sd">        Required for reseeding.</span>
+<span class="sd">    agent_class:</span>
+<span class="sd">        Class of the agent to be wrapped</span>
+<span class="sd">    agent_instance:</span>
+<span class="sd">        An instance of agent_class, or None (if not loaded).</span>
+<span class="sd">    agent_kwargs: dict</span>
+<span class="sd">        Arguments required by __init__ method of agent_class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">filename</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
+        <span class="n">seeder</span><span class="p">:</span> <span class="n">Seeder</span><span class="p">,</span>
+        <span class="n">agent_class</span><span class="p">,</span>
+        <span class="n">agent_instance</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">agent_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_id</span> <span class="o">=</span> <span class="nb">id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fname</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_seeder</span> <span class="o">=</span> <span class="n">seeder</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_agent_class</span> <span class="o">=</span> <span class="n">agent_class</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_agent_instance</span> <span class="o">=</span> <span class="n">agent_instance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_agent_kwargs</span> <span class="o">=</span> <span class="n">agent_kwargs</span> <span class="ow">or</span> <span class="p">{}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;AgentHandler identifier (int).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_id</span>
+
+    <span class="k">def</span> <span class="nf">set_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent_instance</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_agent_instance</span> <span class="o">=</span> <span class="n">agent_instance</span>
+
+    <span class="k">def</span> <span class="nf">get_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_loaded</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_instance</span>
+
+    <span class="k">def</span> <span class="nf">is_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_instance</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fname</span><span class="o">.</span><span class="n">exists</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">is_loaded</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_instance</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load agent from file.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_agent_instance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_class</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_fname</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_agent_kwargs</span>
+            <span class="p">)</span>
+            <span class="n">safe_reseed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_agent_instance</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_seeder</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_agent_instance</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Failed call to AgentHandler.load() for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_agent_class</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">ex</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Saves agent to file and remove it from memory.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_instance</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">saved_filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_instance</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fname</span><span class="p">)</span>
+
+            <span class="c1"># saved_filename might have appended the correct extension, for instance,</span>
+            <span class="c1"># so self._fname must be updated.</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">saved_filename</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Instance of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_agent_class</span><span class="si">}</span><span class="s2"> cannot be saved and will be kept in memory.&quot;</span>
+                <span class="p">)</span>
+                <span class="k">return</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fname</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">saved_filename</span><span class="p">)</span>
+
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_instance</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_agent_instance</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Allows AgentHandler to behave like the handled Agent.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">attr</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;__&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_empty</span><span class="p">()</span>
+        <span class="p">),</span> <span class="s2">&quot;Calling AgentHandler with no agent instance stored.&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_loaded</span><span class="p">():</span>
+            <span class="n">loaded</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">loaded</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not load Agent from </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_fname</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_agent_instance</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+
+
+<span class="c1">#</span>
+<span class="c1"># Main class</span>
+<span class="c1">#</span>
+
+
+<div class="viewcode-block" id="ExperimentManager"><a class="viewcode-back" href="../../../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager">[docs]</a><span class="k">class</span> <span class="nc">ExperimentManager</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to train, optimize hyperparameters, evaluate and gather</span>
+<span class="sd">    statistics about an agent.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    If parallelization=&quot;process&quot; and mp_context=&quot;spawn&quot; or mp_context=&quot;forkserver&quot;, make sure your main code</span>
+<span class="sd">    has a guard `if __name__ == &#39;__main__&#39;`. See https://docs.python.org/3/library/multiprocessing.html#multiprocessing-programming.</span>
+
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    agent_class</span>
+<span class="sd">        Class of the agent.</span>
+<span class="sd">    train_env : tuple (constructor, kwargs)</span>
+<span class="sd">        Environment used to initialize/train the agent.</span>
+<span class="sd">    fit_budget : int</span>
+<span class="sd">        Budget used to call :meth:`rlberry.agents.agent.Agent.fit`.</span>
+<span class="sd">        If None, must be given in ``fit_kwargs[&#39;fit_budget&#39;]``.</span>
+<span class="sd">    eval_env : Tuple (constructor, kwargs)</span>
+<span class="sd">        Environment used to evaluate the agent. If None, set to ``train_env``.</span>
+<span class="sd">    init_kwargs : dict</span>
+<span class="sd">        Arguments required by the agent&#39;s constructor. Shared across all n_fit instances.</span>
+<span class="sd">    fit_kwargs : dict</span>
+<span class="sd">        Extra arguments to call :meth:`rlberry.agents.agent.Agent.fit`.</span>
+<span class="sd">    eval_kwargs : dict</span>
+<span class="sd">        Arguments required to call :meth:`rlberry.agents.agent.Agent.eval`.</span>
+<span class="sd">        if eval was not overwritten it&#39;s (:class:`~rlberry.agents.AgentWithSimplePolicy`) :</span>
+<span class="sd">        eval_horizon : int, default: 10**5</span>
+<span class="sd">            Horizon, maximum episode length.</span>
+<span class="sd">        n_simulations : int, default: 10</span>
+<span class="sd">            Number of Monte Carlo simulations.</span>
+<span class="sd">        gamma : double, default: 1.0</span>
+<span class="sd">            Discount factor.</span>
+<span class="sd">    agent_name : str</span>
+<span class="sd">        Name of the agent. If None, set to agent_class.name</span>
+<span class="sd">    n_fit : int</span>
+<span class="sd">        Number of agent instances to fit.</span>
+<span class="sd">    output_dir : str or :class:`pathlib.Path`</span>
+<span class="sd">        Directory where to store data.</span>
+<span class="sd">    parallelization: {&#39;thread&#39;, &#39;process&#39;}, default: &#39;thread&#39;</span>
+<span class="sd">        Whether to parallelize  agent training using threads or processes.</span>
+<span class="sd">    max_workers: None or int, default: None</span>
+<span class="sd">        Number of processes/threads used in a call to fit().</span>
+<span class="sd">        If None and parallelization=&#39;process&#39;, it will default to the</span>
+<span class="sd">        number of processors on the machine.</span>
+<span class="sd">        If None and parallelization=&#39;thread&#39;, it will default to the</span>
+<span class="sd">        number of processors on the machine, multiplied by 5.</span>
+<span class="sd">    mp_context: {&#39;spawn&#39;, &#39;fork&#39;, &#39;forkserver}, default: &#39;spawn&#39;.</span>
+<span class="sd">        Context for python multiprocessing module.</span>
+<span class="sd">        Warning: If you&#39;re using JAX or PyTorch, it only works with &#39;spawn&#39;.</span>
+<span class="sd">                 If running code on a notebook or interpreter, use &#39;fork&#39;.</span>
+<span class="sd">                 forkserver and fork are available on Unix OS only.</span>
+<span class="sd">        worker_logging_level : str, default: None</span>
+<span class="sd">            Logging level in each of the threads/processes used to fit agents.</span>
+<span class="sd">            If None, use default logger level.</span>
+<span class="sd">    seed : :class:`numpy.random.SeedSequence`, :class:`~rlberry.seeding.seeder.Seeder` or int, default : None</span>
+<span class="sd">        Seed sequence from which to spawn the random number generator.</span>
+<span class="sd">        If None, generate random seed.</span>
+<span class="sd">        If int, use as entropy for SeedSequence.</span>
+<span class="sd">        If seeder, use seeder.seed_seq</span>
+<span class="sd">    enable_tensorboard : bool, default : False</span>
+<span class="sd">        If True, enable tensorboard logging in Agent&#39;s :class:`~rlberry.utils.writers.DefaultWriter`.</span>
+<span class="sd">    outdir_id_style: {None, &#39;unique&#39;, &#39;timestamp&#39;}, default = &#39;timestamp&#39;</span>
+<span class="sd">        If None, data is saved to output_dir/manager_data/&lt;AGENT_NAME_&gt;</span>
+<span class="sd">        If &#39;unique&#39;, data is saved to ``output_dir/manager_data/&lt;AGENT_NAME_UNIQUE_ID&gt;``</span>
+<span class="sd">        If &#39;timestamp&#39;, data is saved to ``output_dir/manager_data/&lt;AGENT_NAME_TIMESTAMP_SHORT_ID&gt;``</span>
+<span class="sd">    default_writer_kwargs : dict</span>
+<span class="sd">        Optional arguments for :class:`~rlberry.utils.writers.DefaultWriter`. Typically one may</span>
+<span class="sd">        want to change the log style with default_writer_kwargs set to {&quot;style_log&quot;:&quot;progressbar&quot;} or</span>
+<span class="sd">         {&quot;style_log&quot;:&quot;one_line&quot;}</span>
+<span class="sd">    init_kwargs_per_instance : List[dict] (optional)</span>
+<span class="sd">        List of length ``n_fit`` containing the params to initialize each of</span>
+<span class="sd">        the ``n_fit`` agent instances. It can be useful if different instances</span>
+<span class="sd">        require different parameters. If the same parameter is defined by</span>
+<span class="sd">        ``init_kwargs`` and ``init_kwargs_per_instance``, the value given by</span>
+<span class="sd">        ``init_kwargs_per_instance`` will be used.</span>
+<span class="sd">        Attention: parameters that are passed individually to each agent instance</span>
+<span class="sd">        cannot be optimized in the method optimize_hyperparams().</span>
+<span class="sd">    thread_shared_data : dict, optional</span>
+<span class="sd">        Data to be shared among agent instances in different threads.</span>
+<span class="sd">        If parallelization=&#39;process&#39;, data will be copied instead of shared.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    output_dir : :class:`pathlib.Path`</span>
+<span class="sd">        Directory where the manager saves data.</span>
+
+<span class="sd">    rlberry_version: str</span>
+<span class="sd">        Current version of rlberry. This is saved when calling experiment_manager.save()</span>
+<span class="sd">        and it is then used in load() to warn if the version of the agent is not a</span>
+<span class="sd">        match with current rlberry version.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from rlberry.agents.torch import A2CAgent</span>
+<span class="sd">    &gt;&gt;&gt; from rlberry.envs import gym_make</span>
+<span class="sd">    &gt;&gt;&gt; from rlberry.manager import ExperimentManager</span>
+<span class="sd">    &gt;&gt;&gt; manager = ExperimentManager(</span>
+<span class="sd">    &gt;&gt;&gt;      A2CAgent,</span>
+<span class="sd">    &gt;&gt;&gt;      (env_ctor, env_kwargs),</span>
+<span class="sd">    &gt;&gt;&gt;      fit_budget=100,</span>
+<span class="sd">    &gt;&gt;&gt;      eval_kwargs=dict(eval_horizon=500)</span>
+<span class="sd">    &gt;&gt;&gt;      n_fit=1,</span>
+<span class="sd">    &gt;&gt;&gt;      parallelization=&quot;spawn&quot;</span>
+<span class="sd">    &gt;&gt;&gt;    )</span>
+<span class="sd">    &gt;&gt;&gt;    if __name__ == &#39;__main__&#39;:</span>
+<span class="sd">    &gt;&gt;&gt;        manager.fit(1e4)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">agent_class</span><span class="p">,</span>
+        <span class="n">train_env</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="n">fit_budget</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">eval_env</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">init_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">fit_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">eval_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">agent_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">n_fit</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+        <span class="n">output_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">parallelization</span><span class="o">=</span><span class="s2">&quot;thread&quot;</span><span class="p">,</span>
+        <span class="n">max_workers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">mp_context</span><span class="o">=</span><span class="s2">&quot;spawn&quot;</span><span class="p">,</span>
+        <span class="n">worker_logging_level</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">enable_tensorboard</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">outdir_id_style</span><span class="o">=</span><span class="s2">&quot;timestamp&quot;</span><span class="p">,</span>
+        <span class="n">default_writer_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">init_kwargs_per_instance</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">thread_shared_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="c1"># agent_class should only be None when the constructor is called</span>
+        <span class="c1"># by the class method ExperimentManager.load(), since the agent class</span>
+        <span class="c1"># will be loaded.</span>
+
+        <span class="k">if</span> <span class="n">agent_class</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># Must only happen when load() method is called.</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">seeder</span> <span class="o">=</span> <span class="n">Seeder</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eval_seeder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">seeder</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">agent_name</span> <span class="o">=</span> <span class="n">agent_name</span>
+        <span class="k">if</span> <span class="n">agent_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">agent_name</span> <span class="o">=</span> <span class="n">agent_class</span><span class="o">.</span><span class="n">name</span>
+
+        <span class="c1"># Check train_env and eval_env</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+            <span class="n">train_env</span><span class="p">,</span> <span class="n">Tuple</span>
+        <span class="p">),</span> <span class="s2">&quot;[ExperimentManager]train_env must be Tuple (constructor, kwargs)&quot;</span>
+        <span class="k">if</span> <span class="n">eval_env</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+                <span class="n">eval_env</span><span class="p">,</span> <span class="n">Tuple</span>
+            <span class="p">),</span> <span class="s2">&quot;[ExperimentManager]train_env must be Tuple (constructor, kwargs)&quot;</span>
+
+        <span class="c1"># check options</span>
+        <span class="k">assert</span> <span class="n">outdir_id_style</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;unique&quot;</span><span class="p">,</span> <span class="s2">&quot;timestamp&quot;</span><span class="p">]</span>
+
+        <span class="c1"># create object identifier</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unique_id</span> <span class="o">=</span> <span class="n">metadata_utils</span><span class="o">.</span><span class="n">get_unique_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timestamp_id</span> <span class="o">=</span> <span class="n">metadata_utils</span><span class="o">.</span><span class="n">get_readable_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="c1"># Agent class</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">agent_class</span> <span class="o">=</span> <span class="n">agent_class</span>
+
+        <span class="c1"># Train env</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_env</span> <span class="o">=</span> <span class="n">train_env</span>
+
+        <span class="c1"># Check eval_env</span>
+        <span class="k">if</span> <span class="n">eval_env</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">eval_env</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">train_env</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_eval_env</span> <span class="o">=</span> <span class="n">eval_env</span>
+
+        <span class="c1"># shared data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thread_shared_data</span> <span class="o">=</span> <span class="n">thread_shared_data</span>  <span class="c1"># do not deepcopy for sharing!</span>
+        <span class="k">if</span> <span class="n">parallelization</span> <span class="o">!=</span> <span class="s2">&quot;thread&quot;</span> <span class="ow">and</span> <span class="n">thread_shared_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Using thread_shared_data and parallelization = </span><span class="si">{</span><span class="n">parallelization</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="s2">&quot; in ExperimentManager does *not* share data among Agent instances!&quot;</span>
+                <span class="s2">&quot; Each process will have its copy of thread_shared_data.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># check kwargs</span>
+        <span class="n">fit_kwargs</span> <span class="o">=</span> <span class="n">fit_kwargs</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="n">eval_kwargs</span> <span class="o">=</span> <span class="n">eval_kwargs</span> <span class="ow">or</span> <span class="p">{}</span>
+
+        <span class="c1"># params</span>
+        <span class="n">base_init_kwargs</span> <span class="o">=</span> <span class="n">init_kwargs</span> <span class="ow">or</span> <span class="p">{}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_base_init_kwargs</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">base_init_kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_kwargs</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">fit_kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eval_kwargs</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">eval_kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_fit</span> <span class="o">=</span> <span class="n">n_fit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parallelization</span> <span class="o">=</span> <span class="n">parallelization</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_workers</span> <span class="o">=</span> <span class="n">max_workers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mp_context</span> <span class="o">=</span> <span class="n">mp_context</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">worker_logging_level</span> <span class="o">=</span> <span class="n">worker_logging_level</span> <span class="ow">or</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLevelName</span><span class="p">(</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">getEffectiveLevel</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_dir</span> <span class="o">=</span> <span class="n">output_dir</span>
+        <span class="k">if</span> <span class="n">fit_budget</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fit_budget</span> <span class="o">=</span> <span class="n">fit_budget</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fit_budget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;fit_budget&quot;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;[ExperimentManager] fit_budget missing in __init__().&quot;</span>
+                <span class="p">)</span>
+        <span class="c1"># extra params per instance</span>
+        <span class="k">if</span> <span class="n">init_kwargs_per_instance</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">init_kwargs_per_instance</span><span class="p">)</span> <span class="o">==</span> <span class="n">n_fit</span>
+            <span class="n">init_kwargs_per_instance</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">init_kwargs_per_instance</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_kwargs_per_instance</span> <span class="o">=</span> <span class="n">init_kwargs_per_instance</span> <span class="ow">or</span> <span class="p">[</span>
+            <span class="nb">dict</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_fit</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="c1"># output dir</span>
+        <span class="k">if</span> <span class="n">output_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">output_dir_</span> <span class="o">=</span> <span class="n">metadata_utils</span><span class="o">.</span><span class="n">RLBERRY_TEMP_DATA_DIR</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">output_dir_</span> <span class="o">=</span> <span class="n">output_dir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_dir_</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_dir_</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;manager_data&quot;</span>
+        <span class="k">if</span> <span class="n">outdir_id_style</span> <span class="o">==</span> <span class="s2">&quot;unique&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">output_dir_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dir_</span> <span class="o">/</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">agent_name</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_id</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">outdir_id_style</span> <span class="o">==</span> <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">output_dir_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dir_</span> <span class="o">/</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">agent_name</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestamp_id</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">output_dir_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dir_</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">agent_name</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dir_</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;This output directory already exists, the save may overwrite the previous Experiment.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Create list of writers for each agent that will be trained</span>
+        <span class="c1"># &#39;default&#39; will keep Agent&#39;s use of DefaultWriter.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">writers</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_fit</span><span class="p">)]</span>
+
+        <span class="c1"># Parameters to setup Agent&#39;s DefaultWriter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">agent_default_writer_kwargs</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">dict</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">agent_name</span><span class="p">,</span>
+                <span class="n">log_interval</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                <span class="n">tensorboard_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">execution_metadata</span><span class="o">=</span><span class="n">metadata_utils</span><span class="o">.</span><span class="n">ExecutionMetadata</span><span class="p">(</span><span class="n">obj_worker_id</span><span class="o">=</span><span class="n">idx</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_fit</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tensorboard_dir</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">enable_tensorboard</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tensorboard_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dir_</span> <span class="o">/</span> <span class="s2">&quot;tensorboard&quot;</span>
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">params</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">agent_default_writer_kwargs</span><span class="p">):</span>
+                <span class="n">params</span><span class="p">[</span><span class="s2">&quot;tensorboard_kwargs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                    <span class="n">log_dir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tensorboard_dir</span> <span class="o">/</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+                <span class="p">)</span>
+        <span class="c1"># Update DefaultWriter according to user&#39;s settings.</span>
+        <span class="n">default_writer_kwargs</span> <span class="o">=</span> <span class="n">default_writer_kwargs</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="c1"># if default_writer_kwargs:</span>
+        <span class="c1">#     logger.warning(</span>
+        <span class="c1">#         &quot;(Re)defining the following DefaultWriter&quot;</span>
+        <span class="c1">#         f&quot; parameters in ExperimentManager: {list(default_writer_kwargs.keys())}&quot;</span>
+        <span class="c1">#     )</span>
+        <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_fit</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">agent_default_writer_kwargs</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">default_writer_kwargs</span><span class="p">)</span>
+
+        <span class="c1"># agent handlers and init kwargs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_init_kwargs</span><span class="p">()</span>  <span class="c1"># init_kwargs for each agent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">agent_handlers</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reset_agent_handlers</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default_writer_data</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">best_hyperparams</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># optuna study and database</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optuna_study</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db_filename</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optuna_storage_url</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># rlberry version for reproducibility purpose</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rlberry_version</span> <span class="o">=</span> <span class="n">rlberry</span><span class="o">.</span><span class="n">__version__</span>
+
+    <span class="k">def</span> <span class="nf">_init_optuna_storage_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_dir_</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db_filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dir_</span> <span class="o">/</span> <span class="s2">&quot;optuna_data.db&quot;</span>
+
+        <span class="k">if</span> <span class="n">create_database</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_filename</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">optuna_storage_url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;sqlite:///</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">db_filename</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">db_filename</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">optuna_storage_url</span> <span class="o">=</span> <span class="s2">&quot;sqlite:///:memory:&quot;</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Unable to create database </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">db_filename</span><span class="si">}</span><span class="s2">. Using sqlite:///:memory:&quot;</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_set_init_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">init_seeders</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">seeder</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_fit</span><span class="p">,</span> <span class="n">squeeze</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_kwargs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_fit</span><span class="p">):</span>
+            <span class="c1"># deepcopy base_init_kwargs</span>
+            <span class="n">kwargs_ii</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_base_init_kwargs</span><span class="p">)</span>
+            <span class="c1"># include shared data, without deep copy!</span>
+            <span class="n">kwargs_ii</span><span class="p">[</span><span class="s2">&quot;_thread_shared_data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">thread_shared_data</span>
+            <span class="n">kwargs_ii</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="nb">dict</span><span class="p">(</span>
+                    <span class="n">env</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train_env</span><span class="p">,</span>
+                    <span class="n">eval_env</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_eval_env</span><span class="p">,</span>
+                    <span class="n">copy_env</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">seeder</span><span class="o">=</span><span class="n">init_seeders</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span>
+                    <span class="n">output_dir</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dir_</span><span class="p">)</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;output_</span><span class="si">{</span><span class="n">ii</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="n">_execution_metadata</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">agent_default_writer_kwargs</span><span class="p">[</span><span class="n">ii</span><span class="p">][</span>
+                        <span class="s2">&quot;execution_metadata&quot;</span>
+                    <span class="p">],</span>
+                    <span class="n">_default_writer_kwargs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">agent_default_writer_kwargs</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">per_instance_kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_kwargs_per_instance</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span>
+            <span class="n">kwargs_ii</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">per_instance_kwargs</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">init_kwargs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">kwargs_ii</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_reset_agent_handlers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">handlers_seeders</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">seeder</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_fit</span><span class="p">,</span> <span class="n">squeeze</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">agent_handlers</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">AgentHandler</span><span class="p">(</span>
+                <span class="nb">id</span><span class="o">=</span><span class="n">ii</span><span class="p">,</span>
+                <span class="n">filename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dir_</span> <span class="o">/</span> <span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;agent_handlers/idx_</span><span class="si">{</span><span class="n">ii</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+                <span class="n">seeder</span><span class="o">=</span><span class="n">handlers_seeders</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span>
+                <span class="n">agent_class</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">agent_class</span><span class="p">,</span>
+                <span class="n">agent_instance</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="c1"># kwargs</span>
+                <span class="n">agent_kwargs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">init_kwargs</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_fit</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clear_handlers</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ExperimentManager.build_eval_env"><a class="viewcode-back" href="../../../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager.build_eval_env">[docs]</a>    <span class="k">def</span> <span class="nf">build_eval_env</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">types</span><span class="o">.</span><span class="n">Env</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return an instantiated and reseeded evaluation environment.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        :class:`types.Env`</span>
+<span class="sd">            Instance of evaluation environment.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">process_env</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_eval_env</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">seeder</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ExperimentManager.get_writer_data"><a class="viewcode-back" href="../../../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager.get_writer_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_writer_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a dataframe containing data from the writer of the agents.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        :class:`pandas.DataFrame`</span>
+<span class="sd">            Data from the agents&#39; writers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_writer_data</span></div>
+
+<div class="viewcode-block" id="ExperimentManager.get_agent_instances"><a class="viewcode-back" href="../../../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager.get_agent_instances">[docs]</a>    <span class="k">def</span> <span class="nf">get_agent_instances</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a list containing ``n_fit`` agent instances.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of :class:`~rlberry.agents.agent.Agent`</span>
+<span class="sd">            ``n_fit`` instances of the managed agents.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_handlers</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span>
+                <span class="n">agent_handler</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span> <span class="k">for</span> <span class="n">agent_handler</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_handlers</span>
+            <span class="p">]</span>
+        <span class="k">return</span> <span class="p">[]</span></div>
+
+<div class="viewcode-block" id="ExperimentManager.eval_agents"><a class="viewcode-back" href="../../../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager.eval_agents">[docs]</a>    <span class="k">def</span> <span class="nf">eval_agents</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">n_simulations</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">eval_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">agent_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluate managed agents using their &#39;eval&#39; method and return a list with the results.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        n_simulations : int, optional</span>
+<span class="sd">            The total number of agent evaluations (&#39;eval&#39; calls) to perform. If None, set to 2*(number of agents).</span>
+<span class="sd">        eval_kwargs : dict, optional</span>
+<span class="sd">            A dictionary containing arguments to be passed to the &#39;eval&#39; method of each trained instance.</span>
+<span class="sd">            If None, the default set of evaluation arguments will be used (self.eval_kwargs).</span>
+<span class="sd">                eval_horizon : int, default: 10**5</span>
+<span class="sd">                    Horizon, maximum episode length.</span>
+<span class="sd">                n_simulations : int, default: 10</span>
+<span class="sd">                    Number of Monte Carlo simulations.</span>
+<span class="sd">                gamma : double, default: 1.0</span>
+<span class="sd">                    Discount factor.</span>
+<span class="sd">        agent_id: int, optional</span>
+<span class="sd">            The index of the agent to be evaluated. If None, an agent will be chosen randomly for evaluation.</span>
+<span class="sd">        verbose: bool, optional</span>
+<span class="sd">            Determines whether to print a progress report during the evaluation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of float</span>
+<span class="sd">            A list of length &#39;n_simulations&#39;, containing the evaluation results</span>
+<span class="sd">            obtained from each call to the :meth:`~rlberry.agents.agent.Agent.eval` method.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This method facilitates the evaluation of multiple managed agents by calling their &#39;eval&#39;</span>
+<span class="sd">        method with the specified evaluation parameters.</span>
+
+<span class="sd">        The &#39;n_simulations&#39; parameter specifies the total number of evaluations to perform. Each</span>
+<span class="sd">        evaluation will be conducted on one of the managed agents.</span>
+
+<span class="sd">        The &#39;eval_kwargs&#39; parameter allows you to customize the evaluation by passing specific arguments</span>
+<span class="sd">        to the &#39;eval&#39; method of each agent. If not provided, the default evaluation arguments</span>
+<span class="sd">        (self.eval_kwargs) will be used.</span>
+
+<span class="sd">        The &#39;agent_id&#39; parameter is used to specify a particular agent for evaluation. If None, an agent</span>
+<span class="sd">        will be chosen randomly for evaluation.</span>
+
+<span class="sd">        The &#39;verbose&#39; parameter determines whether a progress report will be printed during the</span>
+<span class="sd">        evaluation process.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from rlberry.agents import ExperimentManager</span>
+<span class="sd">        &gt;&gt;&gt; eval_kwargs = {</span>
+<span class="sd">            &#39;horizon&#39;: 1000,</span>
+<span class="sd">            &#39;n_simulations&#39;: 10,</span>
+<span class="sd">            &#39;gamma&#39;: 0.99</span>
+<span class="sd">        }</span>
+<span class="sd">        &gt;&gt;&gt; agent_manager = ExperimentManager(..., eval_kwargs=eval_kwargs)</span>
+<span class="sd">        &gt;&gt;&gt; # evaluation_results will return 5 values (n_simulations=5) where each value is the Monte-Carlo</span>
+<span class="sd">        &gt;&gt;&gt; # evaluation over 10 simulations ((eval_kwargs[&quot;n_simulation&quot;]))</span>
+<span class="sd">        &gt;&gt;&gt; evaluation_results = agent_manager.eval_agents(n_simulations=5, verbose=True)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">eval_kwargs</span> <span class="o">=</span> <span class="n">eval_kwargs</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval_kwargs</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">n_simulations</span><span class="p">:</span>
+            <span class="n">n_simulations</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_fit</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Computing </span><span class="si">{</span><span class="n">n_simulations</span><span class="si">}</span><span class="s2"> evaluations.&quot;</span><span class="p">)</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">logger</span><span class="o">.</span><span class="n">getEffectiveLevel</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
+                <span class="n">previous_handlers</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">handlers</span>
+                <span class="n">ch</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">()</span>
+                <span class="n">ch</span><span class="o">.</span><span class="n">terminator</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="n">formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">ch</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">handlers</span> <span class="o">=</span> <span class="p">[</span><span class="n">ch</span><span class="p">]</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;[INFO] Evaluation:&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_simulations</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">agent_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># randomly choose one of the fitted agents</span>
+                <span class="n">agent_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval_seeder</span><span class="o">.</span><span class="n">rng</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">agent_handlers</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">agent_idx</span> <span class="o">=</span> <span class="n">agent_id</span>
+            <span class="n">agent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_handlers</span><span class="p">[</span><span class="n">agent_idx</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">agent</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                    <span class="s2">&quot;Calling eval() in an ExperimentManager instance containing an empty AgentHandler.&quot;</span>
+                    <span class="s2">&quot; Returning [].&quot;</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="p">[]</span>
+            <span class="c1"># Update eval_kwargs with n_simulations parameter</span>
+            <span class="n">eval_kwargs_with_n_simulations</span> <span class="o">=</span> <span class="n">eval_kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">eval_kwargs_with_n_simulations</span><span class="p">[</span><span class="s2">&quot;n_simulations&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">agent</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="o">**</span><span class="n">eval_kwargs_with_n_simulations</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">logger</span><span class="o">.</span><span class="n">getEffectiveLevel</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="mi">10</span><span class="p">:</span>  <span class="c1"># If debug</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[eval]... simulation </span><span class="si">{</span><span class="n">ii</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">n_simulations</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">logger</span><span class="o">.</span><span class="n">getEffectiveLevel</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  Evaluation finished </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">handlers</span> <span class="o">=</span> <span class="n">previous_handlers</span>
+
+        <span class="k">return</span> <span class="n">values</span></div>
+
+<div class="viewcode-block" id="ExperimentManager.clear_output_dir"><a class="viewcode-back" href="../../../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager.clear_output_dir">[docs]</a>    <span class="k">def</span> <span class="nf">clear_output_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete output_dir and all its data.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">optuna_study</span><span class="p">:</span>
+            <span class="n">optuna</span><span class="o">.</span><span class="n">delete_study</span><span class="p">(</span>
+                <span class="n">study_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optuna_study</span><span class="o">.</span><span class="n">study_name</span><span class="p">,</span> <span class="n">storage</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optuna_storage_url</span>
+            <span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dir_</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No directory </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dir_</span><span class="si">}</span><span class="s2"> found to be deleted.&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ExperimentManager.clear_handlers"><a class="viewcode-back" href="../../../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager.clear_handlers">[docs]</a>    <span class="k">def</span> <span class="nf">clear_handlers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete files from output_dir/agent_handlers that are managed by this class.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">handler</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_handlers</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">handler</span><span class="o">.</span><span class="n">_fname</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="n">handler</span><span class="o">.</span><span class="n">_fname</span><span class="o">.</span><span class="n">unlink</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ExperimentManager.set_writer"><a class="viewcode-back" href="../../../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager.set_writer">[docs]</a>    <span class="k">def</span> <span class="nf">set_writer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">writer_fn</span><span class="p">,</span> <span class="n">writer_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Defines the writer for one of the managed agents.</span>
+
+<span class="sd">        Note</span>
+<span class="sd">        -----</span>
+<span class="sd">        Must be called right after creating an instance of ExperimentManager.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        writer_fn : callable, None or &#39;default&#39;</span>
+<span class="sd">            Returns a writer for an agent, e.g. tensorboard SummaryWriter,</span>
+<span class="sd">            rlberry DefaultWriter.</span>
+<span class="sd">            If &#39;default&#39;, use the default writer in the Agent class.</span>
+<span class="sd">            If None, disable any writer</span>
+<span class="sd">        writer_kwargs : dict or None</span>
+<span class="sd">            kwargs for writer_fn</span>
+<span class="sd">        idx : int</span>
+<span class="sd">            Index of the agent to set the writer (0 &lt;= idx &lt; `n_fit`).</span>
+<span class="sd">            ExperimentManager fits `n_fit` agents, the writer of each one of them</span>
+<span class="sd">            needs to be set separately.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="n">idx</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_fit</span>
+        <span class="p">),</span> <span class="s2">&quot;Invalid index sent to ExperimentManager.set_writer()&quot;</span>
+        <span class="n">writer_kwargs</span> <span class="o">=</span> <span class="n">writer_kwargs</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">writers</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">writer_fn</span><span class="p">,</span> <span class="n">writer_kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ExperimentManager.generate_profile"><a class="viewcode-back" href="../../../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager.generate_profile">[docs]</a>    <span class="k">def</span> <span class="nf">generate_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">budget</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fname</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Do a fit to produce a profile (i.e. the cumulative time spent on each operation done during a fit).</span>
+<span class="sd">        The 20 first lines are printed out and the whole profile is saved in a file.</span>
+<span class="sd">        See `https://docs.python.org/3/library/profile.html`_ for more information on python profiler.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        budget: int or None, default=None</span>
+<span class="sd">            budget of the fit done to generate the profile</span>
+
+<span class="sd">        fname: string or None, default=None</span>
+<span class="sd">            name of the file where we save the profile. If None, the file is saved in self.output_dir/self.agent_name_profile.prof.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">budget</span> <span class="o">=</span> <span class="n">budget</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_budget</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">output_dir_</span> <span class="o">=</span> <span class="n">metadata_utils</span><span class="o">.</span><span class="n">RLBERRY_TEMP_DATA_DIR</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">output_dir_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dir</span>
+
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">fname</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">output_dir_</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_name</span> <span class="o">+</span> <span class="s2">&quot;_profile.prof&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Doing a profile run.&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">cProfile</span><span class="o">.</span><span class="n">Profile</span><span class="p">()</span> <span class="k">as</span> <span class="n">pr</span><span class="p">:</span>
+            <span class="n">agent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_class</span><span class="p">(</span><span class="o">**</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">init_kwargs</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+            <span class="n">agent</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">budget</span><span class="p">,</span> <span class="o">**</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_kwargs</span><span class="p">))</span>
+        <span class="n">pr</span><span class="o">.</span><span class="n">dump_stats</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">sortby</span> <span class="o">=</span> <span class="n">SortKey</span><span class="o">.</span><span class="n">CUMULATIVE</span>
+        <span class="n">ps</span> <span class="o">=</span> <span class="n">pstats</span><span class="o">.</span><span class="n">Stats</span><span class="p">(</span><span class="n">pr</span><span class="p">)</span><span class="o">.</span><span class="n">sort_stats</span><span class="p">(</span><span class="n">sortby</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Printing the 20 first lines of the profile&quot;</span><span class="p">)</span>
+        <span class="n">ps</span><span class="o">.</span><span class="n">print_stats</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ExperimentManager.fit"><a class="viewcode-back" href="../../../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">budget</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit the agent instances in parallel.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        budget: int or None</span>
+<span class="sd">            Computational or sample complexity budget.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">del</span> <span class="n">kwargs</span>
+        <span class="n">budget</span> <span class="o">=</span> <span class="n">budget</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_budget</span>
+
+        <span class="c1"># If spawn, test that protected by if __name__ == &quot;__main__&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mp_context</span> <span class="o">==</span> <span class="s2">&quot;spawn&quot;</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">_check_not_importing_main</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">RuntimeError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+<span class="w">                    </span><span class="sd">&quot;&quot;&quot;Warning: in ExperimentManager, if mp_context=&#39;spawn&#39; and</span>
+<span class="sd">                        parallelization=&quot;process&quot; then the script must be run</span>
+<span class="sd">                        outside a notebook and protected by a  if __name__ == &#39;__main__&#39;:</span>
+<span class="sd">                        For example:</span>
+<span class="sd">                            if __name__ == &#39;__main__&#39;:</span>
+<span class="sd">                                xp_manager = ExperimentManager(UCBVIAgent,(Chain, {}),</span>
+<span class="sd">                                                mp_context=&quot;spawn&quot;,</span>
+<span class="sd">                                                parallelization=&quot;process&quot;)</span>
+
+<span class="sd">                                xp_manager.fit(10)</span>
+<span class="sd">                                   &quot;&quot;&quot;</span>
+                <span class="p">)</span> <span class="kn">from</span> <span class="nn">exc</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Running ExperimentManager fit() for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">agent_name</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; with n_fit = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_fit</span><span class="si">}</span><span class="s2"> and max_workers = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">max_workers</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+        <span class="n">seeders</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">seeder</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_fit</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seeders</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">seeders</span> <span class="o">=</span> <span class="p">[</span><span class="n">seeders</span><span class="p">]</span>
+
+        <span class="c1"># remove agent instances from memory so that the agent handlers can be</span>
+        <span class="c1"># sent to different workers</span>
+        <span class="k">for</span> <span class="n">handler</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_handlers</span><span class="p">:</span>
+            <span class="n">handler</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parallelization</span> <span class="o">==</span> <span class="s2">&quot;thread&quot;</span><span class="p">:</span>
+            <span class="n">executor_class</span> <span class="o">=</span> <span class="n">concurrent</span><span class="o">.</span><span class="n">futures</span><span class="o">.</span><span class="n">ThreadPoolExecutor</span>
+            <span class="n">lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">parallelization</span> <span class="o">==</span> <span class="s2">&quot;process&quot;</span><span class="p">:</span>
+            <span class="n">executor_class</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+                <span class="n">concurrent</span><span class="o">.</span><span class="n">futures</span><span class="o">.</span><span class="n">ProcessPoolExecutor</span><span class="p">,</span>
+                <span class="n">mp_context</span><span class="o">=</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">get_context</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mp_context</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="n">lock</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Manager</span><span class="p">()</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Invalid backend for parallelization: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">parallelization</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span>
+                <span class="n">lock</span><span class="p">,</span>
+                <span class="n">handler</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">agent_class</span><span class="p">,</span>
+                <span class="n">budget</span><span class="p">,</span>
+                <span class="n">init_kwargs</span><span class="p">,</span>
+                <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_kwargs</span><span class="p">),</span>
+                <span class="n">writer</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">worker_logging_level</span><span class="p">,</span>
+                <span class="n">seeder</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">init_kwargs</span><span class="p">,</span> <span class="n">handler</span><span class="p">,</span> <span class="n">seeder</span><span class="p">,</span> <span class="n">writer</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">init_kwargs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_handlers</span><span class="p">,</span> <span class="n">seeders</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">writers</span>
+            <span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">workers_output</span> <span class="o">=</span> <span class="p">[</span><span class="n">_fit_worker</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">executor_class</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_workers</span><span class="p">)</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
+                <span class="n">futures</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+                    <span class="n">futures</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">executor</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">_fit_worker</span><span class="p">,</span> <span class="n">arg</span><span class="p">))</span>
+
+                <span class="n">workers_output</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">future</span> <span class="ow">in</span> <span class="n">concurrent</span><span class="o">.</span><span class="n">futures</span><span class="o">.</span><span class="n">as_completed</span><span class="p">(</span><span class="n">futures</span><span class="p">):</span>
+                    <span class="n">workers_output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">future</span><span class="o">.</span><span class="n">result</span><span class="p">())</span>
+                <span class="n">executor</span><span class="o">.</span><span class="n">shutdown</span><span class="p">()</span>
+
+        <span class="n">workers_output</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">agent_handlers</span> <span class="o">=</span> <span class="n">workers_output</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;... trained!&quot;</span><span class="p">)</span>
+
+        <span class="c1"># gather all stats in a dictionary</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_gather_default_writer_data</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">_gather_default_writer_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gather DefaultWriter data in a dictionary&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default_writer_data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">agent</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">agent_handlers</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">agent</span><span class="o">.</span><span class="n">is_empty</span><span class="p">()</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">agent</span><span class="o">.</span><span class="n">writer</span><span class="p">,</span> <span class="n">DefaultWriter</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">default_writer_data</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">writer</span><span class="o">.</span><span class="n">data</span>
+
+<div class="viewcode-block" id="ExperimentManager.save"><a class="viewcode-back" href="../../../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save ExperimentManager data to :attr:`~rlberry.manager.experiment_manager.ExperimentManager.output_dir`.</span>
+
+<span class="sd">        Saves object so that the data can be later loaded to recreate an ExperimentManager instance.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        :class:`pathlib.Path`</span>
+<span class="sd">            Filename where the ExperimentManager object was saved.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># use self.output_dir</span>
+        <span class="n">output_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dir_</span>
+        <span class="n">output_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
+
+        <span class="c1"># create dir if it does not exist</span>
+        <span class="n">output_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># save optimized hyperparameters</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_hyperparams</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fname</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;best_hyperparams.json&quot;</span>
+            <span class="n">_safe_serialize_json</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">best_hyperparams</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
+        <span class="c1"># save default_writer_data that can be aggregated in a pandas DataFrame</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_writer_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">data_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_writer_data</span><span class="p">:</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_writer_data</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+                <span class="n">data_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">all_writer_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">data_list</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">output</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">all_writer_data</span><span class="p">)</span>
+                    <span class="c1"># save</span>
+                    <span class="n">fname</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;data.csv&quot;</span>
+                    <span class="n">output</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Could not save default_writer_data.&quot;</span><span class="p">)</span>
+
+        <span class="c1">#</span>
+        <span class="c1"># Pickle ExperimentManager instance</span>
+        <span class="c1">#</span>
+
+        <span class="c1"># clear agent handlers</span>
+        <span class="k">for</span> <span class="n">handler</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_handlers</span><span class="p">:</span>
+            <span class="n">handler</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
+
+        <span class="c1"># save</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;manager_obj&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">&quot;.pickle&quot;</span><span class="p">)</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">output_dir</span> <span class="o">/</span> <span class="n">filename</span>
+        <span class="n">filename</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">filename</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ff</span><span class="p">:</span>
+                <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">,</span> <span class="n">ff</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;Saved ExperimentManager(</span><span class="si">{}</span><span class="s2">) using pickle.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">agent_name</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">filename</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ff</span><span class="p">:</span>
+                    <span class="n">dill</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">,</span> <span class="n">ff</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="s2">&quot;Saved ExperimentManager(</span><span class="si">{}</span><span class="s2">) using dill.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">agent_name</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;[ExperimentManager] Instance cannot be pickled: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span>
+                <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;The ExperimentManager was saved in : &#39;&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">filename</span></div>
+
+<div class="viewcode-block" id="ExperimentManager.load"><a class="viewcode-back" href="../../../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager.load">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Loads an ExperimentManager instance from a file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        filename: str or :class:`pathlib.Path`</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        :class:`rlberry.manager.ExperimentManager`</span>
+<span class="sd">            Loaded instance of ExperimentManager.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">&quot;.pickle&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s2">&quot;manager_obj.pickle&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The experiment_manager objects should be save in file named &#39;manager_obj.pickle&#39;&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">obj</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="n">compress_pickle</span> <span class="o">=</span> <span class="n">is_bz_file</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">compress_pickle</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">filename</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ff</span><span class="p">:</span>
+                    <span class="n">tmp_dict</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ff</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">bz2</span><span class="o">.</span><span class="n">BZ2File</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ff</span><span class="p">:</span>
+                    <span class="n">tmp_dict</span> <span class="o">=</span> <span class="n">cPickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ff</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">compress_pickle</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">filename</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ff</span><span class="p">:</span>
+                    <span class="n">tmp_dict</span> <span class="o">=</span> <span class="n">dill</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ff</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">bz2</span><span class="o">.</span><span class="n">BZ2File</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ff</span><span class="p">:</span>
+                    <span class="n">tmp_dict</span> <span class="o">=</span> <span class="n">dill</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ff</span><span class="p">)</span>
+
+        <span class="n">obj</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">obj</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">tmp_dict</span><span class="p">)</span>
+
+        <span class="c1"># If the agent is loaded from an agent pickle, compare versions</span>
+        <span class="k">if</span> <span class="s2">&quot;rlberry_version&quot;</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">rlberry</span><span class="o">.</span><span class="n">__version__</span> <span class="o">!=</span> <span class="n">obj</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;rlberry_version&quot;</span><span class="p">]:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="s2">&quot;Loaded an ExperimentManager that was created with an old version of rlberry.&quot;</span>
+                <span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="s2">&quot;Current is &quot;</span>
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">rlberry</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="s2">&quot;, version when constructed was &quot;</span>
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">rlberry_version</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="s2">&quot;.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">obj</span></div>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">self_init_kwargs</span> <span class="o">=</span> <span class="p">[</span><span class="n">_strip_seed_dir</span><span class="p">(</span><span class="n">kw</span><span class="p">)</span> <span class="k">for</span> <span class="n">kw</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_kwargs</span><span class="p">]</span>
+        <span class="n">other_init_kwargs</span> <span class="o">=</span> <span class="p">[</span><span class="n">_strip_seed_dir</span><span class="p">(</span><span class="n">kw</span><span class="p">)</span> <span class="k">for</span> <span class="n">kw</span> <span class="ow">in</span> <span class="n">other</span><span class="o">.</span><span class="n">init_kwargs</span><span class="p">]</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">result</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">self_init_kwargs</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">==</span> <span class="n">other_init_kwargs</span><span class="p">[</span><span class="n">f</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">self_init_kwargs</span><span class="p">))</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">self_eval_kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval_kwargs</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="n">other_eval_kwargs</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">eval_kwargs</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">result</span> <span class="ow">and</span> <span class="p">(</span><span class="n">self_eval_kwargs</span> <span class="o">==</span> <span class="n">other_eval_kwargs</span><span class="p">)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">result</span> <span class="ow">and</span> <span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">agent_class</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_class</span><span class="p">)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">result</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_kwargs</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">fit_kwargs</span><span class="p">)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">result</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_budget</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">fit_budget</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+
+<div class="viewcode-block" id="ExperimentManager.optimize_hyperparams"><a class="viewcode-back" href="../../../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager.optimize_hyperparams">[docs]</a>    <span class="k">def</span> <span class="nf">optimize_hyperparams</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">n_trials</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>
+        <span class="n">n_fit</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">n_optuna_workers</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">optuna_parallelization</span><span class="o">=</span><span class="s2">&quot;thread&quot;</span><span class="p">,</span>
+        <span class="n">sampler_method</span><span class="o">=</span><span class="s2">&quot;optuna_default&quot;</span><span class="p">,</span>
+        <span class="n">pruner_method</span><span class="o">=</span><span class="s2">&quot;halving&quot;</span><span class="p">,</span>
+        <span class="n">continue_previous</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">fit_fraction</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">sampler_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">disable_evaluation_writers</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">custom_eval_function</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run hyperparameter optimization and updates init_kwargs with the best hyperparameters found.</span>
+
+<span class="sd">        Currently supported sampler_method:</span>
+<span class="sd">            &#39;random&#39; -&gt; Random Search</span>
+<span class="sd">            &#39;optuna_default&#39; -&gt; TPE</span>
+<span class="sd">            &#39;grid&#39; -&gt; Grid Search</span>
+<span class="sd">            &#39;cmaes&#39; -&gt; CMA-ES</span>
+
+<span class="sd">        Currently supported pruner_method:</span>
+<span class="sd">            &#39;none&#39;</span>
+<span class="sd">            &#39;halving&#39;</span>
+
+<span class="sd">        Note</span>
+<span class="sd">        ----</span>
+<span class="sd">        * After calling this method, agent handlers from previous calls to fit() will be erased.</span>
+<span class="sd">        It is suggested to call fit() *after* a call to optimize_hyperparams().</span>
+<span class="sd">        * This method calls self.save() before the optuna optimization starts, to ensure</span>
+<span class="sd">        that we can continue the optimization later even if the program is stopped before the</span>
+<span class="sd">        optimization is finished.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        n_trials: int</span>
+<span class="sd">            Number of agent evaluations</span>
+<span class="sd">        timeout: int</span>
+<span class="sd">            Stop study after the given number of second(s).</span>
+<span class="sd">            Set to None for unlimited time.</span>
+<span class="sd">        n_fit: int</span>
+<span class="sd">            Number of agents to fit for each hyperparam evaluation.</span>
+<span class="sd">        n_optuna_workers: int</span>
+<span class="sd">            Number of workers used by optuna for optimization.</span>
+<span class="sd">        optuna_parallelization : &#39;thread&#39; or &#39;process&#39;</span>
+<span class="sd">            Whether to use threads or processes for optuna parallelization.</span>
+<span class="sd">        sampler_method : str</span>
+<span class="sd">            Optuna sampling method.</span>
+<span class="sd">        pruner_method : str</span>
+<span class="sd">            Optuna pruner method.</span>
+<span class="sd">        continue_previous : bool</span>
+<span class="sd">            Set to true to continue previous Optuna study. If true,</span>
+<span class="sd">            sampler_method and pruner_method will be</span>
+<span class="sd">            the same as in the previous study.</span>
+<span class="sd">        fit_fraction : double, in ]0, 1]</span>
+<span class="sd">            Fraction of the agent to fit for partial evaluation</span>
+<span class="sd">            (allows pruning of trials).</span>
+<span class="sd">        sampler_kwargs : dict or None</span>
+<span class="sd">            Allows users to use different Optuna samplers with</span>
+<span class="sd">            personalized arguments.</span>
+<span class="sd">        evaluation_function : callable(agent_list, eval_env, **kwargs)-&gt;double, default: None</span>
+<span class="sd">            Function to maximize, that takes a list of agents and an environment as input, and returns a double.</span>
+<span class="sd">            If None, search for hyperparameters that maximize the mean reward.</span>
+<span class="sd">        evaluation_function_kwargs : dict or None</span>
+<span class="sd">            kwargs for evaluation_function</span>
+<span class="sd">        disable_evaluation_writers : bool, default: True</span>
+<span class="sd">            If true, disable writers of agents used in the hyperparameter evaluation.</span>
+<span class="sd">        custom_eval_function : Callable</span>
+<span class="sd">            Takes as input a list of trained agents and output a scalar.</span>
+<span class="sd">            If given, the value of custom_eval_funct(trained_agents) is</span>
+<span class="sd">            optimized instead of mean([agent.eval() for agent in trained_agents]).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Optimized hyperparameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">#</span>
+        <span class="c1"># setup</span>
+        <span class="c1">#</span>
+        <span class="n">TEMP_DIR</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dir_</span> <span class="o">/</span> <span class="s2">&quot;optim&quot;</span>
+
+        <span class="k">global</span> <span class="n">_OPTUNA_INSTALLED</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_OPTUNA_INSTALLED</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Optuna not installed.&quot;</span><span class="p">)</span>  <span class="c1"># pragma: no cover</span>
+            <span class="k">return</span>  <span class="c1"># pragma: no cover</span>
+
+        <span class="k">assert</span> <span class="n">fit_fraction</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">fit_fraction</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
+
+        <span class="c1">#</span>
+        <span class="c1"># Create optuna study</span>
+        <span class="c1">#</span>
+        <span class="k">if</span> <span class="n">continue_previous</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">optuna_study</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="n">study</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optuna_study</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">sampler_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">sampler_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="c1"># get sampler</span>
+            <span class="k">if</span> <span class="n">sampler_method</span> <span class="o">==</span> <span class="s2">&quot;random&quot;</span><span class="p">:</span>
+                <span class="n">sampler</span> <span class="o">=</span> <span class="n">optuna</span><span class="o">.</span><span class="n">samplers</span><span class="o">.</span><span class="n">RandomSampler</span><span class="p">()</span>
+            <span class="k">elif</span> <span class="n">sampler_method</span> <span class="o">==</span> <span class="s2">&quot;grid&quot;</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="p">(</span>
+                    <span class="n">sampler_kwargs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="p">),</span> <span class="s2">&quot;To use GridSampler, a search_space dictionary must be provided.&quot;</span>
+                <span class="n">sampler</span> <span class="o">=</span> <span class="n">optuna</span><span class="o">.</span><span class="n">samplers</span><span class="o">.</span><span class="n">GridSampler</span><span class="p">(</span><span class="o">**</span><span class="n">sampler_kwargs</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">sampler_method</span> <span class="o">==</span> <span class="s2">&quot;cmaes&quot;</span><span class="p">:</span>
+                <span class="n">sampler</span> <span class="o">=</span> <span class="n">optuna</span><span class="o">.</span><span class="n">samplers</span><span class="o">.</span><span class="n">CmaEsSampler</span><span class="p">(</span><span class="o">**</span><span class="n">sampler_kwargs</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">sampler_method</span> <span class="o">==</span> <span class="s2">&quot;optuna_default&quot;</span><span class="p">:</span>
+                <span class="n">sampler</span> <span class="o">=</span> <span class="n">optuna</span><span class="o">.</span><span class="n">samplers</span><span class="o">.</span><span class="n">TPESampler</span><span class="p">(</span><span class="o">**</span><span class="n">sampler_kwargs</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                    <span class="s2">&quot;Sampler method </span><span class="si">%s</span><span class="s2"> is not implemented.&quot;</span> <span class="o">%</span> <span class="n">sampler_method</span>
+                <span class="p">)</span>
+
+            <span class="c1"># get pruner</span>
+            <span class="k">if</span> <span class="n">pruner_method</span> <span class="o">==</span> <span class="s2">&quot;halving&quot;</span><span class="p">:</span>
+                <span class="n">pruner</span> <span class="o">=</span> <span class="n">optuna</span><span class="o">.</span><span class="n">pruners</span><span class="o">.</span><span class="n">SuccessiveHalvingPruner</span><span class="p">(</span>
+                    <span class="n">min_resource</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">reduction_factor</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">min_early_stopping_rate</span><span class="o">=</span><span class="mi">0</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">pruner_method</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
+                <span class="n">pruner</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                    <span class="s2">&quot;Pruner method </span><span class="si">%s</span><span class="s2"> is not implemented.&quot;</span> <span class="o">%</span> <span class="n">pruner_method</span>
+                <span class="p">)</span>
+
+            <span class="c1"># storage</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_init_optuna_storage_url</span><span class="p">()</span>
+            <span class="n">storage</span> <span class="o">=</span> <span class="n">optuna</span><span class="o">.</span><span class="n">storages</span><span class="o">.</span><span class="n">RDBStorage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optuna_storage_url</span><span class="p">)</span>
+            <span class="c1"># optuna study</span>
+            <span class="n">study</span> <span class="o">=</span> <span class="n">optuna</span><span class="o">.</span><span class="n">create_study</span><span class="p">(</span>
+                <span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">,</span> <span class="n">pruner</span><span class="o">=</span><span class="n">pruner</span><span class="p">,</span> <span class="n">storage</span><span class="o">=</span><span class="n">storage</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;maximize&quot;</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">optuna_study</span> <span class="o">=</span> <span class="n">study</span>
+
+        <span class="c1"># save, to that optimization can be resumed later</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+        <span class="c1">#</span>
+        <span class="c1"># Objective function</span>
+        <span class="c1">#</span>
+        <span class="n">objective</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+            <span class="n">_optuna_objective</span><span class="p">,</span>
+            <span class="n">base_init_kwargs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_base_init_kwargs</span><span class="p">,</span>  <span class="c1"># self._base_init_kwargs</span>
+            <span class="n">agent_class</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">agent_class</span><span class="p">,</span>  <span class="c1"># self.agent_class</span>
+            <span class="n">train_env</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train_env</span><span class="p">,</span>  <span class="c1"># self.train_env</span>
+            <span class="n">eval_env</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_eval_env</span><span class="p">,</span>
+            <span class="n">fit_budget</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_budget</span><span class="p">,</span>  <span class="c1"># self.fit_budget</span>
+            <span class="n">eval_kwargs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">eval_kwargs</span><span class="p">,</span>  <span class="c1"># self.eval_kwargs</span>
+            <span class="n">n_fit</span><span class="o">=</span><span class="n">n_fit</span><span class="p">,</span>
+            <span class="n">temp_dir</span><span class="o">=</span><span class="n">TEMP_DIR</span><span class="p">,</span>  <span class="c1"># TEMP_DIR</span>
+            <span class="n">disable_evaluation_writers</span><span class="o">=</span><span class="n">disable_evaluation_writers</span><span class="p">,</span>
+            <span class="n">fit_fraction</span><span class="o">=</span><span class="n">fit_fraction</span><span class="p">,</span>
+            <span class="n">init_kwargs_per_instance</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">init_kwargs_per_instance</span><span class="p">[</span>
+                <span class="p">:</span><span class="n">n_fit</span>
+            <span class="p">],</span>  <span class="c1"># init_kwargs_per_instance only for the first n_fit instances</span>
+            <span class="n">custom_eval_function</span><span class="o">=</span><span class="n">custom_eval_function</span><span class="p">,</span>
+            <span class="n">thread_shared_data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">thread_shared_data</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">optuna_parallelization</span> <span class="o">==</span> <span class="s2">&quot;thread&quot;</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">concurrent</span><span class="o">.</span><span class="n">futures</span><span class="o">.</span><span class="n">ThreadPoolExecutor</span><span class="p">()</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_optuna_workers</span><span class="p">):</span>
+                        <span class="n">executor</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span>
+                            <span class="n">study</span><span class="o">.</span><span class="n">optimize</span><span class="p">,</span>
+                            <span class="n">objective</span><span class="p">,</span>
+                            <span class="n">n_trials</span><span class="o">=</span><span class="n">n_trials</span><span class="p">,</span>
+                            <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">,</span>
+                            <span class="n">gc_after_trial</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                        <span class="p">)</span>
+                    <span class="n">executor</span><span class="o">.</span><span class="n">shutdown</span><span class="p">()</span>
+            <span class="k">elif</span> <span class="n">optuna_parallelization</span> <span class="o">==</span> <span class="s2">&quot;process&quot;</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">concurrent</span><span class="o">.</span><span class="n">futures</span><span class="o">.</span><span class="n">ProcessPoolExecutor</span><span class="p">(</span>
+                    <span class="n">mp_context</span><span class="o">=</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">get_context</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mp_context</span><span class="p">)</span>
+                <span class="p">)</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_optuna_workers</span><span class="p">):</span>
+                        <span class="n">executor</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span>
+                            <span class="n">study</span><span class="o">.</span><span class="n">optimize</span><span class="p">,</span>
+                            <span class="n">objective</span><span class="p">,</span>
+                            <span class="n">n_trials</span><span class="o">=</span><span class="n">n_trials</span> <span class="o">//</span> <span class="n">n_optuna_workers</span><span class="p">,</span>
+                            <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">,</span>
+                            <span class="n">gc_after_trial</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                        <span class="p">)</span>
+                    <span class="n">executor</span><span class="o">.</span><span class="n">shutdown</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Invalid value for optuna_parallelization: </span><span class="si">{</span><span class="n">optuna_parallelization</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Evaluation stopped.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># clear temp folder</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">TEMP_DIR</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not delete </span><span class="si">{</span><span class="n">TEMP_DIR</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">ex</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># continue</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">best_trial</span> <span class="o">=</span> <span class="n">study</span><span class="o">.</span><span class="n">best_trial</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Hyperparam optimization failed due to the error: </span><span class="si">{</span><span class="n">ex</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of finished trials: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">study</span><span class="o">.</span><span class="n">trials</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Best trial:&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Value: </span><span class="si">{</span><span class="n">best_trial</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Params:&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">best_trial</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># store best parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">best_hyperparams</span> <span class="o">=</span> <span class="n">best_trial</span><span class="o">.</span><span class="n">params</span>
+
+        <span class="c1"># update using best parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_base_init_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">best_trial</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+
+        <span class="c1"># reset init_kwargs and agent handlers, so that they take the new</span>
+        <span class="c1"># parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_init_kwargs</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reset_agent_handlers</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">best_trial</span><span class="o">.</span><span class="n">params</span><span class="p">)</span></div></div>
+
+
+<span class="c1">#</span>
+<span class="c1"># Aux functions</span>
+<span class="c1">#</span>
+
+
+<span class="k">def</span> <span class="nf">_fit_worker</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create and fit an agent instance&quot;&quot;&quot;</span>
+    <span class="p">(</span>
+        <span class="n">lock</span><span class="p">,</span>
+        <span class="n">agent_handler</span><span class="p">,</span>
+        <span class="n">agent_class</span><span class="p">,</span>
+        <span class="n">fit_budget</span><span class="p">,</span>
+        <span class="n">init_kwargs</span><span class="p">,</span>
+        <span class="n">fit_kwargs</span><span class="p">,</span>
+        <span class="n">writer</span><span class="p">,</span>
+        <span class="n">worker_logging_level</span><span class="p">,</span>
+        <span class="n">seeder</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">=</span> <span class="n">args</span>
+
+    <span class="c1"># reseed external libraries</span>
+    <span class="n">set_external_seed</span><span class="p">(</span><span class="n">seeder</span><span class="p">)</span>
+
+    <span class="c1"># logging level in thread</span>
+    <span class="n">configure_logging</span><span class="p">(</span><span class="n">worker_logging_level</span><span class="p">)</span>
+
+    <span class="c1"># Using a lock when creating envs and agents, to avoid problems</span>
+    <span class="c1"># as here: https://github.com/openai/gym/issues/281</span>
+    <span class="k">with</span> <span class="n">lock</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">agent_handler</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
+            <span class="c1"># create agent</span>
+            <span class="n">agent</span> <span class="o">=</span> <span class="n">agent_class</span><span class="p">(</span><span class="o">**</span><span class="n">init_kwargs</span><span class="p">)</span>
+            <span class="c1"># seed agent</span>
+            <span class="c1"># TODO: check if extra reseeding here is necessary</span>
+            <span class="n">agent</span><span class="o">.</span><span class="n">reseed</span><span class="p">(</span><span class="n">seeder</span><span class="p">)</span>
+            <span class="n">agent_handler</span><span class="o">.</span><span class="n">set_instance</span><span class="p">(</span><span class="n">agent</span><span class="p">)</span>
+
+    <span class="c1"># set writer</span>
+    <span class="k">if</span> <span class="n">writer</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">agent_handler</span><span class="o">.</span><span class="n">set_writer</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="p">(</span>
+        <span class="n">writer</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;default&quot;</span>
+    <span class="p">):</span>  <span class="c1"># &#39;default&#39; corresponds to DefaultWriter created by Agent.__init__()</span>
+        <span class="n">writer_fn</span> <span class="o">=</span> <span class="n">writer</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">writer_kwargs</span> <span class="o">=</span> <span class="n">writer</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">agent_handler</span><span class="o">.</span><span class="n">set_writer</span><span class="p">(</span><span class="n">writer_fn</span><span class="p">(</span><span class="o">**</span><span class="n">writer_kwargs</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">agent_handler</span><span class="o">.</span><span class="n">writer</span><span class="o">.</span><span class="n">_style_log</span> <span class="o">==</span> <span class="s2">&quot;progressbar&quot;</span><span class="p">:</span>
+        <span class="n">agent_handler</span><span class="o">.</span><span class="n">writer</span><span class="o">.</span><span class="n">set_max_global_step</span><span class="p">(</span><span class="n">fit_budget</span><span class="p">)</span>
+    <span class="c1"># fit agent</span>
+    <span class="n">agent_handler</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">fit_budget</span><span class="p">,</span> <span class="o">**</span><span class="n">fit_kwargs</span><span class="p">)</span>
+
+    <span class="c1"># Remove writer after fit (prevent pickle problems),</span>
+    <span class="c1"># unless the agent uses DefaultWriter</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">agent_handler</span><span class="o">.</span><span class="n">writer</span><span class="p">,</span> <span class="n">DefaultWriter</span><span class="p">):</span>
+        <span class="n">agent_handler</span><span class="o">.</span><span class="n">set_writer</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">agent_handler</span><span class="o">.</span><span class="n">writer</span><span class="o">.</span><span class="n">_style_log</span> <span class="o">==</span> <span class="s2">&quot;progressbar&quot;</span><span class="p">:</span>
+        <span class="n">agent_handler</span><span class="o">.</span><span class="n">writer</span><span class="o">.</span><span class="n">pbar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">agent_handler</span><span class="o">.</span><span class="n">writer</span><span class="o">.</span><span class="n">pbar</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># remove from memory to avoid pickle issues</span>
+    <span class="n">agent_handler</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
+
+    <span class="c1"># garbage collector</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">agent_handler</span>
+
+
+<span class="k">def</span> <span class="nf">_safe_serialize_json</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Source: https://stackoverflow.com/a/56138540/5691288</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">default</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;&lt;non-serializable: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">&gt;&gt;&quot;</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_optuna_objective</span><span class="p">(</span>
+    <span class="n">trial</span><span class="p">,</span>
+    <span class="n">base_init_kwargs</span><span class="p">,</span>  <span class="c1"># self._base_init_kwargs</span>
+    <span class="n">agent_class</span><span class="p">,</span>  <span class="c1"># self.agent_class</span>
+    <span class="n">train_env</span><span class="p">,</span>  <span class="c1"># self.train_env</span>
+    <span class="n">eval_env</span><span class="p">,</span>
+    <span class="n">fit_budget</span><span class="p">,</span>  <span class="c1"># self.fit_budget</span>
+    <span class="n">eval_kwargs</span><span class="p">,</span>  <span class="c1"># self.eval_kwargs</span>
+    <span class="n">n_fit</span><span class="p">,</span>
+    <span class="n">temp_dir</span><span class="p">,</span>  <span class="c1"># TEMP_DIR</span>
+    <span class="n">disable_evaluation_writers</span><span class="p">,</span>
+    <span class="n">fit_fraction</span><span class="p">,</span>
+    <span class="n">init_kwargs_per_instance</span><span class="p">,</span>
+    <span class="n">custom_eval_function</span><span class="p">,</span>
+    <span class="n">thread_shared_data</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">base_init_kwargs</span><span class="p">)</span>
+
+    <span class="c1"># will raise exception if sample_parameters() is not</span>
+    <span class="c1"># implemented by the agent class</span>
+    <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">agent_class</span><span class="o">.</span><span class="n">sample_parameters</span><span class="p">(</span><span class="n">trial</span><span class="p">))</span>
+
+    <span class="c1">#</span>
+    <span class="c1"># fit and evaluate agents</span>
+    <span class="c1">#</span>
+    <span class="c1"># Create ExperimentManager with hyperparams</span>
+    <span class="n">params_stats</span> <span class="o">=</span> <span class="n">ExperimentManager</span><span class="p">(</span>
+        <span class="n">agent_class</span><span class="p">,</span>
+        <span class="n">train_env</span><span class="p">,</span>
+        <span class="n">fit_budget</span><span class="p">,</span>
+        <span class="n">eval_env</span><span class="o">=</span><span class="n">eval_env</span><span class="p">,</span>
+        <span class="n">init_kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span>  <span class="c1"># kwargs are being optimized</span>
+        <span class="n">eval_kwargs</span><span class="o">=</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">eval_kwargs</span><span class="p">),</span>
+        <span class="n">agent_name</span><span class="o">=</span><span class="s2">&quot;optim&quot;</span><span class="p">,</span>
+        <span class="n">n_fit</span><span class="o">=</span><span class="n">n_fit</span><span class="p">,</span>
+        <span class="n">worker_logging_level</span><span class="o">=</span><span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
+        <span class="n">parallelization</span><span class="o">=</span><span class="s2">&quot;thread&quot;</span><span class="p">,</span>
+        <span class="n">output_dir</span><span class="o">=</span><span class="n">temp_dir</span><span class="p">,</span>
+        <span class="n">enable_tensorboard</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">outdir_id_style</span><span class="o">=</span><span class="s2">&quot;unique&quot;</span><span class="p">,</span>
+        <span class="n">init_kwargs_per_instance</span><span class="o">=</span><span class="n">init_kwargs_per_instance</span><span class="p">,</span>
+        <span class="n">thread_shared_data</span><span class="o">=</span><span class="n">thread_shared_data</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">disable_evaluation_writers</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">params_stats</span><span class="o">.</span><span class="n">n_fit</span><span class="p">):</span>
+            <span class="n">params_stats</span><span class="o">.</span><span class="n">set_writer</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1"># Case 1: partial fit, that allows pruning</span>
+    <span class="c1">#</span>
+    <span class="k">if</span> <span class="n">fit_fraction</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
+        <span class="n">fraction_complete</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">step</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">fraction_complete</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="c1">#</span>
+            <span class="n">params_stats</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">fit_budget</span> <span class="o">*</span> <span class="n">fit_fraction</span><span class="p">))</span>
+            <span class="c1"># Evaluate params</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">custom_eval_function</span><span class="p">:</span>
+                <span class="n">eval_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">params_stats</span><span class="o">.</span><span class="n">eval_agents</span><span class="p">())</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">eval_value</span> <span class="o">=</span> <span class="n">custom_eval_function</span><span class="p">(</span><span class="n">params_stats</span><span class="o">.</span><span class="n">get_agent_instances</span><span class="p">())</span>
+
+            <span class="c1"># Report intermediate objective value</span>
+            <span class="n">trial</span><span class="o">.</span><span class="n">report</span><span class="p">(</span><span class="n">eval_value</span><span class="p">,</span> <span class="n">step</span><span class="p">)</span>
+
+            <span class="c1">#</span>
+            <span class="n">fraction_complete</span> <span class="o">+=</span> <span class="n">fit_fraction</span>
+            <span class="n">step</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="c1">#</span>
+
+            <span class="c1"># Handle pruning based on the intermediate value.</span>
+            <span class="k">if</span> <span class="n">trial</span><span class="o">.</span><span class="n">should_prune</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="n">optuna</span><span class="o">.</span><span class="n">TrialPruned</span><span class="p">()</span>
+
+    <span class="c1">#</span>
+    <span class="c1"># Case 2: full fit</span>
+    <span class="c1">#</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Fit and evaluate params_stats</span>
+        <span class="n">params_stats</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+        <span class="c1"># Evaluate params</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">custom_eval_function</span><span class="p">:</span>
+            <span class="n">eval_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">params_stats</span><span class="o">.</span><span class="n">eval_agents</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">eval_value</span> <span class="o">=</span> <span class="n">custom_eval_function</span><span class="p">(</span><span class="n">params_stats</span><span class="o">.</span><span class="n">get_agent_instances</span><span class="p">())</span>
+
+    <span class="c1"># clear aux data</span>
+    <span class="n">params_stats</span><span class="o">.</span><span class="n">clear_output_dir</span><span class="p">()</span>
+    <span class="k">del</span> <span class="n">params_stats</span>
+
+    <span class="k">return</span> <span class="n">eval_value</span>
+
+
+<span class="k">def</span> <span class="nf">_strip_seed_dir</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove keys that should not be compared in __eq__&quot;&quot;&quot;</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span>
+    <span class="k">del</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;seeder&quot;</span><span class="p">]</span>
+    <span class="k">del</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;output_dir&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">res</span>
+
+
+<span class="k">def</span> <span class="nf">is_bz_file</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">test_f</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">test_f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="sa">b</span><span class="s2">&quot;BZ&quot;</span>
+
+
+<div class="viewcode-block" id="preset_manager"><a class="viewcode-back" href="../../../generated/rlberry.manager.preset_manager.html#rlberry.manager.preset_manager">[docs]</a><span class="k">def</span> <span class="nf">preset_manager</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Preset an ExperimentManager to some fixed keywords.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from rlberry.agents.torch import PPOAgent, DQNAgent</span>
+<span class="sd">    &gt;&gt;&gt; from rlberry.manager import preset_manager</span>
+<span class="sd">    &gt;&gt;&gt; from rlberry.envs import Acrobot</span>
+<span class="sd">    &gt;&gt;&gt; env_ctor = Acrobot</span>
+<span class="sd">    &gt;&gt;&gt; env_kwargs = {}</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; manager_maker =  preset_manager(train_env=(env_ctor, env_kwargs),</span>
+<span class="sd">    &gt;&gt;&gt;                                 eval_kwargs=dict(eval_horizon=500),</span>
+<span class="sd">    &gt;&gt;&gt;                                 n_fit=4,</span>
+<span class="sd">    &gt;&gt;&gt;                                 parallelization = &quot;process&quot;,</span>
+<span class="sd">    &gt;&gt;&gt;                                 mp_context=&quot;spawn&quot;,</span>
+<span class="sd">    &gt;&gt;&gt;                                 seed=42,</span>
+<span class="sd">    &gt;&gt;&gt;                                 max_workers=6</span>
+<span class="sd">    &gt;&gt;&gt;                                 )</span>
+<span class="sd">    &gt;&gt;&gt; ppo = manager_maker(PPOAgent, fit_budget = 100) # of type ExperimentManager</span>
+<span class="sd">    &gt;&gt;&gt; dqn = manager_maker(DQNAgent, fit_budget = 200)</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; ppo.fit()</span>
+<span class="sd">    &gt;&gt;&gt; dqn.fit()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">class</span> <span class="nc">Manager</span><span class="p">(</span><span class="n">ExperimentManager</span><span class="p">):</span>
+        <span class="fm">__init__</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partialmethod</span><span class="p">(</span><span class="n">ExperimentManager</span><span class="o">.</span><span class="fm">__init__</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Manager</span></div>
+</pre></div>
+
+      </div>
+    <div class="container">
+      <footer class="sk-content-footer">
+            &copy; 2023, rlberry team.
+      </footer>
+    </div>
+  </div>
+</div>
+<script src="../../../_static/js/vendor/bootstrap.min.js"></script>
+
+<script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-22606712-2', 'auto');
+    ga('set', 'anonymizeIp', true);
+    ga('send', 'pageview');
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+<script>
+$(document).ready(function() {
+    /* Add a [>>>] button on the top-right corner of code samples to hide
+     * the >>> and ... prompts and the output and thus make the code
+     * copyable. */
+    var div = $('.highlight-python .highlight,' +
+                '.highlight-python3 .highlight,' +
+                '.highlight-pycon .highlight,' +
+		'.highlight-default .highlight')
+    var pre = div.find('pre');
+
+    // get the styles from the current theme
+    pre.parent().parent().css('position', 'relative');
+    var hide_text = 'Hide prompts and outputs';
+    var show_text = 'Show prompts and outputs';
+
+    // create and add the button to all the code blocks that contain >>>
+    div.each(function(index) {
+        var jthis = $(this);
+        if (jthis.find('.gp').length > 0) {
+            var button = $('<span class="copybutton">&gt;&gt;&gt;</span>');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+            jthis.prepend(button);
+        }
+        // tracebacks (.gt) contain bare text elements that need to be
+        // wrapped in a span to work with .nextUntil() (see later)
+        jthis.find('pre:has(.gt)').contents().filter(function() {
+            return ((this.nodeType == 3) && (this.data.trim().length > 0));
+        }).wrap('<span>');
+    });
+
+    // define the behavior of the button when it's clicked
+    $('.copybutton').click(function(e){
+        e.preventDefault();
+        var button = $(this);
+        if (button.data('hidden') === 'false') {
+            // hide the code output
+            button.parent().find('.go, .gp, .gt').hide();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'hidden');
+            button.css('text-decoration', 'line-through');
+            button.attr('title', show_text);
+            button.data('hidden', 'true');
+        } else {
+            // show the code output
+            button.parent().find('.go, .gp, .gt').show();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'visible');
+            button.css('text-decoration', 'none');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+        }
+    });
+
+	/*** Add permalink buttons next to glossary terms ***/
+	$('dl.glossary > dt[id]').append(function() {
+		return ('<a class="headerlink" href="#' +
+			    this.getAttribute('id') +
+			    '" title="Permalink to this term">¶</a>');
+	});
+  /*** Hide navbar when scrolling down ***/
+  // Returns true when headerlink target matches hash in url
+  (function() {
+    hashTargetOnTop = function() {
+        var hash = window.location.hash;
+        if ( hash.length < 2 ) { return false; }
+
+        var target = document.getElementById( hash.slice(1) );
+        if ( target === null ) { return false; }
+
+        var top = target.getBoundingClientRect().top;
+        return (top < 2) && (top > -2);
+    };
+
+    // Hide navbar on load if hash target is on top
+    var navBar = document.getElementById("navbar");
+    var navBarToggler = document.getElementById("sk-navbar-toggler");
+    var navBarHeightHidden = "-" + navBar.getBoundingClientRect().height + "px";
+    var $window = $(window);
+
+    hideNavBar = function() {
+        navBar.style.top = navBarHeightHidden;
+    };
+
+    showNavBar = function() {
+        navBar.style.top = "0";
+    }
+
+    if (hashTargetOnTop()) {
+        hideNavBar()
+    }
+
+    var prevScrollpos = window.pageYOffset;
+    hideOnScroll = function(lastScrollTop) {
+        if (($window.width() < 768) && (navBarToggler.getAttribute("aria-expanded") === 'true')) {
+            return;
+        }
+        if (lastScrollTop > 2 && (prevScrollpos <= lastScrollTop) || hashTargetOnTop()){
+            hideNavBar()
+        } else {
+            showNavBar()
+        }
+        prevScrollpos = lastScrollTop;
+    };
+
+    /*** high performance scroll event listener***/
+    var raf = window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        window.oRequestAnimationFrame;
+    var lastScrollTop = $window.scrollTop();
+
+    if (raf) {
+        loop();
+    }
+
+    function loop() {
+        var scrollTop = $window.scrollTop();
+        if (lastScrollTop === scrollTop) {
+            raf(loop);
+            return;
+        } else {
+            lastScrollTop = scrollTop;
+            hideOnScroll(lastScrollTop);
+            raf(loop);
+        }
+    }
+  })();
+});
+
+</script>
+    
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    
+</body>
+</html>

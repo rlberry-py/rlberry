@@ -1,0 +1,12 @@
+﻿:mod:`rlberry.envs`.gym_make
+=========================================
+
+.. currentmodule:: rlberry.envs
+
+.. autofunction:: gym_make
+
+.. include:: rlberry.envs.gym_make.examples
+
+.. raw:: html
+
+    <div class="clearer"></div>

@@ -1,0 +1,607 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  
+  <title>Changelog &mdash; rlberry 0.7.3.post16.dev0+8710009 documentation</title>
+  
+  <link rel="canonical" href="https://rlberry-py.github.io/rlberry/changelog.html" />
+
+  
+
+  <link rel="stylesheet" href="_static/css/vendor/bootstrap.min.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/sg_gallery.css" type="text/css" />
+  <link rel="stylesheet" href="_static/sg_gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="_static/sg_gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="_static/sg_gallery-rendered-html.css" type="text/css" />
+  <link rel="stylesheet" href="_static/sphinx-design.4cbf315f70debaebd550c87a6162cf0f.min.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+<script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+<script src="_static/js/vendor/jquery-3.6.3.slim.min.js"></script> 
+</head>
+<body>
+
+
+<nav id="navbar" class="sk-docs-navbar navbar navbar-expand-md navbar-light bg-light py-0">
+  <div class="container-fluid sk-docs-container px-0">
+    <button
+      id="sk-navbar-toggler"
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="sk-navbar-collapse collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="index.html">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="installation.html">Install</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="user_guide.html">User Guide</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="auto_examples/index.html">Examples</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="api.html">API</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="#">Changelog</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="about.html">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="https://github.com/rlberry-py/rlberry">GitHub</a>
+        </li>
+        <!--
+        <li class="nav-item dropdown nav-more-item-dropdown">
+          <a class="sk-nav-link nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">More</a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          </div>
+        </li>-->
+    </ul>
+      <div id="searchbox" role="search">
+          <div class="searchformwrapper">
+            <form action="https://duckduckgo.com/">
+            <input type="hidden" id="sites" name="sites" value="https://rlberry-py.github.io/rlberry/">
+            <input type="search" placeholder="Search &hellip;" value="" name="q" />
+            <input class="sk-search-text-btn" type="submit" value="Go" /></form>
+
+          </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="d-flex" id="sk-doc-wrapper">
+    <input type="checkbox" name="sk-toggle-checkbox" id="sk-toggle-checkbox">
+    <label id="sk-sidemenu-toggle" class="sk-btn-toggle-toc btn sk-btn-primary" for="sk-toggle-checkbox">Toggle Menu</label>
+    <div id="sk-sidebar-wrapper" class="border-right">
+      <div class="sk-sidebar-toc-wrapper">
+        <div class="sk-sidebar-toc-logo">
+        </div>
+	<br>
+        <div class="alert alert-warning p-1 mb-2" role="alert">
+
+          <p class="text-center mb-0">
+          rlberry 0.7.3.post16.dev0+8710009<br/>
+          <a href="versions.html">Other versions</a>
+          </p>
+
+        </div>
+            <div class="sk-sidebar-toc">
+              <ul>
+<li><a class="reference internal" href="#">Changelog</a><ul>
+<li><a class="reference internal" href="#dev-version">Dev version</a></li>
+<li><a class="reference internal" href="#version-0-7-3">Version 0.7.3</a></li>
+<li><a class="reference internal" href="#version-0-7-1">Version 0.7.1</a></li>
+<li><a class="reference internal" href="#version-0-7-0">Version 0.7.0</a></li>
+<li><a class="reference internal" href="#version-0-6-0">Version 0.6.0</a></li>
+<li><a class="reference internal" href="#version-0-5-0">Version 0.5.0</a></li>
+<li><a class="reference internal" href="#version-0-4-1">Version 0.4.1</a></li>
+<li><a class="reference internal" href="#version-0-4-0">Version 0.4.0</a></li>
+<li><a class="reference internal" href="#version-0-3-0">Version 0.3.0</a></li>
+<li><a class="reference internal" href="#version-0-2-1">Version 0.2.1</a></li>
+<li><a class="reference internal" href="#version-0-2">Version 0.2</a></li>
+</ul>
+</li>
+</ul>
+
+            </div>
+      </div>
+    </div>
+    <div id="sk-page-content-wrapper">
+      <div class="sk-page-content container-fluid body px-md-3" role="main">
+        
+  <section id="changelog">
+<span id="id1"></span><h1>Changelog<a class="headerlink" href="#changelog" title="Permalink to this heading">¶</a></h1>
+<section id="dev-version">
+<h2>Dev version<a class="headerlink" href="#dev-version" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><p><em>PR #476</em></p>
+</div></blockquote>
+<ul class="simple">
+<li><p>Update lib versions and remove warnings from tests/CI : <a class="reference external" href="https://github.com/rlberry-py/rlberry/issues/471">https://github.com/rlberry-py/rlberry/issues/471</a></p></li>
+</ul>
+<blockquote>
+<div><p><em>PR #474</em></p>
+</div></blockquote>
+<ul class="simple">
+<li><p>Create a new tool to load data from tensorboard logs : <a class="reference external" href="https://github.com/rlberry-py/rlberry/issues/472">https://github.com/rlberry-py/rlberry/issues/472</a></p></li>
+</ul>
+<blockquote>
+<div><p><em>PR #470</em></p>
+</div></blockquote>
+<ul class="simple">
+<li><p>Integrates the writer directly into the base “Agent” via an option: <a class="reference external" href="https://github.com/rlberry-py/rlberry/issues/457">https://github.com/rlberry-py/rlberry/issues/457</a></p></li>
+</ul>
+<blockquote>
+<div><p><em>PR #468</em></p>
+</div></blockquote>
+<ul class="simple">
+<li><p>New tool to find the path of the ‘manager_obj.pickle’ more easily: <a class="reference external" href="https://github.com/rlberry-py/rlberry/issues/407">https://github.com/rlberry-py/rlberry/issues/407</a></p></li>
+</ul>
+<blockquote>
+<div><p><em>PR #467</em></p>
+<ul class="simple">
+<li><p>Allow the save as Gif for gymnasium env (make_gym) : <a class="reference external" href="https://github.com/rlberry-py/rlberry/issues/453">https://github.com/rlberry-py/rlberry/issues/453</a></p></li>
+</ul>
+<p><em>PR #463</em></p>
+<ul class="simple">
+<li><p>Improve docstring and code documentation</p></li>
+<li><p>add warning on adastop seeding</p></li>
+<li><p>correct some typos</p></li>
+<li><p>patch a bug on writer_data</p></li>
+<li><p>update tests</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="version-0-7-3">
+<h2>Version 0.7.3<a class="headerlink" href="#version-0-7-3" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><p><em>PR #454</em></p>
+<ul class="simple">
+<li><p>remove unused libraries</p></li>
+</ul>
+</div></blockquote>
+<p><em>PR #451</em></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Moving UCBVI to rlberry_scool</p></li>
+</ul>
+<p><em>PR #438</em></p>
+<ul class="simple">
+<li><p>move long tests to rlberry research</p></li>
+</ul>
+<p><em>PR #436 #444 #445 #447 #448 #455 #456</em></p>
+<ul class="simple">
+<li><p>Update user guide</p></li>
+<li><p>add tests on the user guide examples</p></li>
+<li><p>removing rlberry_research references as much as possible (doc and code)</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="version-0-7-1">
+<h2>Version 0.7.1<a class="headerlink" href="#version-0-7-1" title="Permalink to this heading">¶</a></h2>
+<p><em>PR #411</em></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Moving “rendering” to rlberry</p></li>
+</ul>
+</div></blockquote>
+<p><em>PR #405 #406 #408</em></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>fix plots</p></li>
+</ul>
+</div></blockquote>
+<p><em>PR #404</em></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add AdaStop</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="version-0-7-0">
+<h2>Version 0.7.0<a class="headerlink" href="#version-0-7-0" title="Permalink to this heading">¶</a></h2>
+<p><em>PR #397</em></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Automatic save after fit() in ExperienceManager</p></li>
+</ul>
+</div></blockquote>
+<p><em>PR #396</em></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Improve coverage and fix version workflow</p></li>
+</ul>
+</div></blockquote>
+<p><em>PR #385 to #390</em></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Switch from RTD to github page</p></li>
+</ul>
+</div></blockquote>
+<p><em>PR #382</em></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>switch to poetry</p></li>
+</ul>
+</div></blockquote>
+<p><em>PR #379</em></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>rlberry: everything for rl that is not an agent or an environment, e.g. experiment management, parallelization, statistical tools, plotting…</p></li>
+<li><p>rlberry-scool: repository for teaching materials, e.g. simplified algorithms for teaching, notebooks for tutorials for learning RL…</p></li>
+<li><p>rlberry-research: repository of agents and environments used inside Inria Scool team</p></li>
+</ul>
+</div></blockquote>
+<p><em>PR #376</em></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>New plot_writer_data function that does not depend on seaborn and that can plot smoothed function and confidence band if scikit-fda is installed.</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="version-0-6-0">
+<h2>Version 0.6.0<a class="headerlink" href="#version-0-6-0" title="Permalink to this heading">¶</a></h2>
+<p><em>PR #276</em></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Non adaptive multiple tests for agent comparison.</p></li>
+</ul>
+</div></blockquote>
+<p><em>PR #365</em></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Fix Sphinx version to &lt;7.</p></li>
+</ul>
+</div></blockquote>
+<p><em>PR #350</em></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Rename AgentManager to ExperimentManager.</p></li>
+</ul>
+</div></blockquote>
+<p><em>PR #326</em></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Moved SAC from experimental to torch agents. Tested and benchmarked.</p></li>
+</ul>
+</div></blockquote>
+<p><em>PR #335</em></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Upgrade from Python3.9 -&gt; python3.10</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="version-0-5-0">
+<h2>Version 0.5.0<a class="headerlink" href="#version-0-5-0" title="Permalink to this heading">¶</a></h2>
+<p><em>PR #281, #323</em></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Merge gymnasium branch into main, make gymnasium the default library for environments in rlberry.</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="version-0-4-1">
+<h2>Version 0.4.1<a class="headerlink" href="#version-0-4-1" title="Permalink to this heading">¶</a></h2>
+<p><em>PR #318</em></p>
+<ul class="simple">
+<li><p>Update to allow the training on a computer with GPU, save the agents, then load it on a computer without GPU.</p></li>
+</ul>
+<p><em>PR #308</em></p>
+<ul class="simple">
+<li><p>Update make_atari_env and PPO to be compatible together and use vectorized env (PPO manage the vector)</p></li>
+</ul>
+<p><em>PR #298</em></p>
+<ul class="simple">
+<li><p>Move old scripts (jax agents, attention networks, old examples…) that we won’t maintain from the main branch to an archive branch.</p></li>
+</ul>
+<p><em>PR #277</em></p>
+<ul class="simple">
+<li><p>Add and update code to use “Atari games” env</p></li>
+</ul>
+<p><em>PR #281</em></p>
+<ul class="simple">
+<li><p>New branch for code compatible with Gymnasium</p></li>
+</ul>
+</section>
+<section id="version-0-4-0">
+<h2>Version 0.4.0<a class="headerlink" href="#version-0-4-0" title="Permalink to this heading">¶</a></h2>
+<p><em>PR #273</em></p>
+<ul class="simple">
+<li><p>Change the default behavior of <cite>plot_writer_data</cite> so that if seaborn has version &gt;= 0.12.0 then
+a 90% percentile interval is used instead of sd.</p></li>
+</ul>
+<p><em>PR #269</em></p>
+<ul class="simple">
+<li><p>Add <a class="reference internal" href="generated/rlberry.envs.PipelineEnv.html#rlberry.envs.PipelineEnv" title="rlberry.envs.PipelineEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">rlberry.envs.PipelineEnv</span></code></a> a way to define pipeline of wrappers in a simple way.</p></li>
+</ul>
+<p><em>PR #262</em></p>
+<ul class="simple">
+<li><p>PPO can now handle continuous actions.</p></li>
+</ul>
+<p><em>PR #261, #264</em></p>
+<ul class="simple">
+<li><p>Implementation of Munchausen DQN in <code class="xref py py-class docutils literal notranslate"><span class="pre">rlberry.agents.torch.MDQNAgent</span></code>.</p></li>
+<li><p>Comparison of MDQN with DQN agent in the long tests.</p></li>
+</ul>
+<p><em>PR #244, #250, #253</em></p>
+<ul class="simple">
+<li><p>Compress the pickles used to save the trained agents.</p></li>
+</ul>
+<p><em>PR #235</em></p>
+<ul class="simple">
+<li><p>Implementation  of <code class="xref py py-class docutils literal notranslate"><span class="pre">rlberry.envs.SpringCartPole</span></code> environment, an RL environment featuring two cartpoles linked by a spring.</p></li>
+</ul>
+<p><em>PR #226, #227</em></p>
+<ul class="simple">
+<li><p>Improve logging, the logging level can now be changed with <a class="reference internal" href="generated/rlberry.utils.logging.set_level.html#rlberry.utils.logging.set_level" title="rlberry.utils.logging.set_level"><code class="xref py py-func docutils literal notranslate"><span class="pre">rlberry.utils.logging.set_level()</span></code></a>.</p></li>
+<li><p>Introduce smoothing in curves done with <cite>plot_writer_data</cite> when only one seed is used.</p></li>
+</ul>
+<p><em>PR #223</em></p>
+<ul class="simple">
+<li><p>Moved PPO from experimental to torch agents. Tested and benchmarked.</p></li>
+</ul>
+</section>
+<section id="version-0-3-0">
+<h2>Version 0.3.0<a class="headerlink" href="#version-0-3-0" title="Permalink to this heading">¶</a></h2>
+<p><em>PR #206</em></p>
+<ul class="simple">
+<li><p>Creation of a Deep RL tutorial, in the user guide.</p></li>
+</ul>
+<p><em>PR #132</em></p>
+<ul class="simple">
+<li><p>New tracker class <code class="xref py py-class docutils literal notranslate"><span class="pre">rlberry.agents.bandit.tools.BanditTracker</span></code> to track statistics to be used in Bandit algorithms.</p></li>
+</ul>
+<p><em>PR #191</em></p>
+<ul class="simple">
+<li><p>Possibility to generate a profile with <code class="xref py py-class docutils literal notranslate"><span class="pre">rlberry.agents.manager.ExperimentManager</span></code>.</p></li>
+</ul>
+<p><em>PR #148, #161, #180</em></p>
+<ul class="simple">
+<li><p>Misc improvements on A2C.</p></li>
+<li><p>New StableBaselines3 wrapper <a class="reference internal" href="generated/rlberry.agents.stable_baselines.StableBaselinesAgent.html#rlberry.agents.stable_baselines.StableBaselinesAgent" title="rlberry.agents.stable_baselines.StableBaselinesAgent"><code class="xref py py-class docutils literal notranslate"><span class="pre">rlberry.agents.stable_baselines.StableBaselinesAgent</span></code></a> to import StableBaselines3 Agents.</p></li>
+</ul>
+<p><em>PR #119</em></p>
+<ul class="simple">
+<li><p>Improving documentation for agents.torch.utils</p></li>
+<li><p>New replay buffer <a class="reference internal" href="generated/rlberry.agents.utils.replay.ReplayBuffer.html#rlberry.agents.utils.replay.ReplayBuffer" title="rlberry.agents.utils.replay.ReplayBuffer"><code class="xref py py-class docutils literal notranslate"><span class="pre">rlberry.agents.utils.replay.ReplayBuffer</span></code></a>, aiming to replace code in utils/memories.py</p></li>
+<li><p>New DQN implementation, aiming to fix reproducibility and compatibility issues.</p></li>
+<li><p>Implements Q(lambda) in DQN Agent.</p></li>
+</ul>
+<p><em>Feb 22, 2022 (PR #126)</em></p>
+<ul class="simple">
+<li><p>Setup <code class="code docutils literal notranslate"><span class="pre">rlberry.__version__</span></code> (currently 0.3.0dev0)</p></li>
+<li><p>Record rlberry version in a ExperimentManager attribute equality of ExperimentManagers</p></li>
+<li><p>Override <code class="code docutils literal notranslate"><span class="pre">__eq__</span></code> method of the ExperimentManager class.</p></li>
+</ul>
+<p><em>Feb 14-15, 2022 (PR #97, #118)</em></p>
+<ul class="simple">
+<li><p>(feat) Add Bandits basic environments and agents. See <code class="xref py py-class docutils literal notranslate"><span class="pre">IndexAgent</span></code> and <code class="xref py py-class docutils literal notranslate"><span class="pre">Bandit</span></code>.</p></li>
+<li><p>Thompson Sampling bandit algorithm with gaussian or beta prior.</p></li>
+<li><p>Base class for bandits algorithms with custom save &amp; load functions (called <code class="xref py py-class docutils literal notranslate"><span class="pre">BanditWithSimplePolicy</span></code>)</p></li>
+</ul>
+<p><em>Feb 11, 2022 (#83, #95)</em></p>
+<ul class="simple">
+<li><p>(fix) Fixed bug in <code class="xref py py-meth docutils literal notranslate"><span class="pre">FiniteMDP.sample()</span></code>: terminal state was being checked with <cite>self.state</cite> instead of given <cite>state</cite></p></li>
+<li><p>(feat) Option to use ‘fork’ or ‘spawn’ in <a class="reference internal" href="generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExperimentManager</span></code></a></p></li>
+<li><p>(feat) ExperimentManager output_dir now has a timestamp and a short ID by default.</p></li>
+<li><p>(feat) Gridworld can be constructed from string layout</p></li>
+<li><p>(feat) <cite>max_workers</cite> argument for <a class="reference internal" href="generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExperimentManager</span></code></a> to control the maximum number of processes/threads created by the <code class="xref py py-meth docutils literal notranslate"><span class="pre">fit()</span></code> method.</p></li>
+</ul>
+<p><em>Feb 04, 2022</em></p>
+<ul class="simple">
+<li><p>Add <a class="reference internal" href="generated/rlberry.manager.read_writer_data.html#rlberry.manager.read_writer_data" title="rlberry.manager.read_writer_data"><code class="xref py py-class docutils literal notranslate"><span class="pre">read_writer_data</span></code></a> to load agent’s writer data from pickle files and make it simpler to customize in <a class="reference internal" href="generated/rlberry.manager.plot_writer_data.html#rlberry.manager.plot_writer_data" title="rlberry.manager.plot_writer_data"><code class="xref py py-class docutils literal notranslate"><span class="pre">plot_writer_data</span></code></a></p></li>
+<li><p>Fix bug, dqn should take a tuple as environment</p></li>
+<li><p>Add a quickstart tutorial in the docs <a class="reference internal" href="basics/quick_start_rl/quickstart.html#quick-start"><span class="std std-ref">Quick Start for Reinforcement Learning in rlberry</span></a></p></li>
+<li><p>Add the RLSVI algorithm (tabular) <code class="xref py py-class docutils literal notranslate"><span class="pre">RLSVIAgent</span></code></p></li>
+<li><p>Add the Posterior Sampling for Reinforcement Learning PSRL agent for tabular MDP <code class="xref py py-class docutils literal notranslate"><span class="pre">PSRLAgent</span></code></p></li>
+<li><p>Add a page to help contributors in the doc <a class="reference internal" href="contributing.html#contributing"><span class="std std-ref">Contributing</span></a></p></li>
+</ul>
+</section>
+<section id="version-0-2-1">
+<h2>Version 0.2.1<a class="headerlink" href="#version-0-2-1" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="generated/rlberry.agents.Agent.html#rlberry.agents.Agent" title="rlberry.agents.Agent"><code class="xref py py-class docutils literal notranslate"><span class="pre">Agent</span></code></a> and <a class="reference internal" href="generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExperimentManager</span></code></a> both have a unique_id attribute (useful for creating unique output files/directories).</p></li>
+<li><p><cite>DefaultWriter</cite> is now initialized in base class <cite>Agent</cite> and (optionally) wraps a tensorboard <cite>SummaryWriter</cite>.</p></li>
+<li><p><a class="reference internal" href="generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExperimentManager</span></code></a> has an option enable_tensorboard that activates tensorboard logging in each of its Agents (with their writer attribute). The log_dirs of tensorboard are automatically assigned by <a class="reference internal" href="generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExperimentManager</span></code></a>.</p></li>
+<li><p><cite>RemoteExperimentManager</cite> receives tensorboard data created in the server, when the method <cite>get_writer_data()</cite> is called. This is done by a zip file transfer with <code class="xref py py-class docutils literal notranslate"><span class="pre">network</span></code>.</p></li>
+<li><p><cite>BaseWrapper</cite> and <cite>gym_make</cite> now have an option <cite>wrap_spaces</cite>. If set to <cite>True</cite>, this option converts <cite>gym.spaces</cite> to <cite>rlberry.spaces</cite>, which provides classes with better seeding (using numpy’s default_rng instead of <cite>RandomState</cite>)</p></li>
+<li><p><a class="reference internal" href="generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExperimentManager</span></code></a>: new method <cite>get_agent_instances()</cite> that returns trained instances</p></li>
+<li><p><cite>plot_writer_data</cite>: possibility to set <cite>xtag</cite> (tag used for x-axis)</p></li>
+<li><p>Fixed agent initialization bug in <cite>AgentHandler</cite> (<cite>eval_env</cite> missing in <cite>kwargs</cite> for agent_class).</p></li>
+</ul>
+</section>
+<section id="version-0-2">
+<h2>Version 0.2<a class="headerlink" href="#version-0-2" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><cite>AgentStats</cite> renamed to <a class="reference internal" href="generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExperimentManager</span></code></a>.</p></li>
+<li><p><a class="reference internal" href="generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExperimentManager</span></code></a> can handle agents that cannot be pickled.</p></li>
+<li><p>Agent interface requires <cite>eval()</cite> method instead of <cite>policy()</cite> to handle more general agents (e.g. reward-free, POMDPs etc).</p></li>
+<li><p>Multi-processing and multi-threading are now done with <cite>ProcessPoolExecutor</cite> and <cite>ThreadPoolExecutor</cite> (allowing nested processes for example). Processes are created with spawn (jax does not work with fork, see #51).</p></li>
+<li><p>JAX implementation of DQN and replay buffer using reverb (experimental).</p></li>
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">network</span></code>: server and client interfaces to exchange messages via sockets (experimental).</p></li>
+<li><p><cite>RemoteExperimentManager</cite> to train agents in a remote server and gather the results locally (experimental).</p></li>
+<li><p>Fix rendering bug with OpenGL</p></li>
+</ul>
+</section>
+</section>
+
+
+      </div>
+    <div class="container">
+      <footer class="sk-content-footer">
+            &copy; 2023, rlberry team.
+          <a href="_sources/changelog.rst.txt" rel="nofollow">Show this page source</a>
+      </footer>
+    </div>
+  </div>
+</div>
+<script src="_static/js/vendor/bootstrap.min.js"></script>
+
+<script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-22606712-2', 'auto');
+    ga('set', 'anonymizeIp', true);
+    ga('send', 'pageview');
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+<script>
+$(document).ready(function() {
+    /* Add a [>>>] button on the top-right corner of code samples to hide
+     * the >>> and ... prompts and the output and thus make the code
+     * copyable. */
+    var div = $('.highlight-python .highlight,' +
+                '.highlight-python3 .highlight,' +
+                '.highlight-pycon .highlight,' +
+		'.highlight-default .highlight')
+    var pre = div.find('pre');
+
+    // get the styles from the current theme
+    pre.parent().parent().css('position', 'relative');
+    var hide_text = 'Hide prompts and outputs';
+    var show_text = 'Show prompts and outputs';
+
+    // create and add the button to all the code blocks that contain >>>
+    div.each(function(index) {
+        var jthis = $(this);
+        if (jthis.find('.gp').length > 0) {
+            var button = $('<span class="copybutton">&gt;&gt;&gt;</span>');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+            jthis.prepend(button);
+        }
+        // tracebacks (.gt) contain bare text elements that need to be
+        // wrapped in a span to work with .nextUntil() (see later)
+        jthis.find('pre:has(.gt)').contents().filter(function() {
+            return ((this.nodeType == 3) && (this.data.trim().length > 0));
+        }).wrap('<span>');
+    });
+
+    // define the behavior of the button when it's clicked
+    $('.copybutton').click(function(e){
+        e.preventDefault();
+        var button = $(this);
+        if (button.data('hidden') === 'false') {
+            // hide the code output
+            button.parent().find('.go, .gp, .gt').hide();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'hidden');
+            button.css('text-decoration', 'line-through');
+            button.attr('title', show_text);
+            button.data('hidden', 'true');
+        } else {
+            // show the code output
+            button.parent().find('.go, .gp, .gt').show();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'visible');
+            button.css('text-decoration', 'none');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+        }
+    });
+
+	/*** Add permalink buttons next to glossary terms ***/
+	$('dl.glossary > dt[id]').append(function() {
+		return ('<a class="headerlink" href="#' +
+			    this.getAttribute('id') +
+			    '" title="Permalink to this term">¶</a>');
+	});
+  /*** Hide navbar when scrolling down ***/
+  // Returns true when headerlink target matches hash in url
+  (function() {
+    hashTargetOnTop = function() {
+        var hash = window.location.hash;
+        if ( hash.length < 2 ) { return false; }
+
+        var target = document.getElementById( hash.slice(1) );
+        if ( target === null ) { return false; }
+
+        var top = target.getBoundingClientRect().top;
+        return (top < 2) && (top > -2);
+    };
+
+    // Hide navbar on load if hash target is on top
+    var navBar = document.getElementById("navbar");
+    var navBarToggler = document.getElementById("sk-navbar-toggler");
+    var navBarHeightHidden = "-" + navBar.getBoundingClientRect().height + "px";
+    var $window = $(window);
+
+    hideNavBar = function() {
+        navBar.style.top = navBarHeightHidden;
+    };
+
+    showNavBar = function() {
+        navBar.style.top = "0";
+    }
+
+    if (hashTargetOnTop()) {
+        hideNavBar()
+    }
+
+    var prevScrollpos = window.pageYOffset;
+    hideOnScroll = function(lastScrollTop) {
+        if (($window.width() < 768) && (navBarToggler.getAttribute("aria-expanded") === 'true')) {
+            return;
+        }
+        if (lastScrollTop > 2 && (prevScrollpos <= lastScrollTop) || hashTargetOnTop()){
+            hideNavBar()
+        } else {
+            showNavBar()
+        }
+        prevScrollpos = lastScrollTop;
+    };
+
+    /*** high performance scroll event listener***/
+    var raf = window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        window.oRequestAnimationFrame;
+    var lastScrollTop = $window.scrollTop();
+
+    if (raf) {
+        loop();
+    }
+
+    function loop() {
+        var scrollTop = $window.scrollTop();
+        if (lastScrollTop === scrollTop) {
+            raf(loop);
+            return;
+        } else {
+            lastScrollTop = scrollTop;
+            hideOnScroll(lastScrollTop);
+            raf(loop);
+        }
+    }
+  })();
+});
+
+</script>
+    
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    
+</body>
+</html>

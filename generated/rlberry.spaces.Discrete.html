@@ -1,0 +1,412 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  
+  <title>rlberry.spaces.Discrete &mdash; rlberry 0.7.3.post16.dev0+8710009 documentation</title>
+  
+  <link rel="canonical" href="https://rlberry-py.github.io/rlberry/generated/rlberry.spaces.Discrete.html" />
+
+  
+
+  <link rel="stylesheet" href="../_static/css/vendor/bootstrap.min.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sg_gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sg_gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sg_gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sphinx-design.4cbf315f70debaebd550c87a6162cf0f.min.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+<script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+<script src="../_static/js/vendor/jquery-3.6.3.slim.min.js"></script> 
+</head>
+<body>
+
+
+<nav id="navbar" class="sk-docs-navbar navbar navbar-expand-md navbar-light bg-light py-0">
+  <div class="container-fluid sk-docs-container px-0">
+    <button
+      id="sk-navbar-toggler"
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="sk-navbar-collapse collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../index.html">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../installation.html">Install</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../user_guide.html">User Guide</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../auto_examples/index.html">Examples</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../api.html">API</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../changelog.html">Changelog</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="../about.html">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="sk-nav-link nav-link" href="https://github.com/rlberry-py/rlberry">GitHub</a>
+        </li>
+        <!--
+        <li class="nav-item dropdown nav-more-item-dropdown">
+          <a class="sk-nav-link nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">More</a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          </div>
+        </li>-->
+    </ul>
+      <div id="searchbox" role="search">
+          <div class="searchformwrapper">
+            <form action="https://duckduckgo.com/">
+            <input type="hidden" id="sites" name="sites" value="https://rlberry-py.github.io/rlberry/">
+            <input type="search" placeholder="Search &hellip;" value="" name="q" />
+            <input class="sk-search-text-btn" type="submit" value="Go" /></form>
+
+          </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="d-flex" id="sk-doc-wrapper">
+    <input type="checkbox" name="sk-toggle-checkbox" id="sk-toggle-checkbox">
+    <label id="sk-sidemenu-toggle" class="sk-btn-toggle-toc btn sk-btn-primary" for="sk-toggle-checkbox">Toggle Menu</label>
+    <div id="sk-sidebar-wrapper" class="border-right">
+      <div class="sk-sidebar-toc-wrapper">
+        <div class="sk-sidebar-toc-logo">
+        </div>
+	<br>
+        <div class="alert alert-warning p-1 mb-2" role="alert">
+
+          <p class="text-center mb-0">
+          rlberry 0.7.3.post16.dev0+8710009<br/>
+          <a href="../versions.html">Other versions</a>
+          </p>
+
+        </div>
+            <div class="sk-sidebar-toc">
+              <ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">rlberry.spaces</span></code>.Discrete</a><ul>
+<li><a class="reference internal" href="#rlberry.spaces.Discrete"><code class="docutils literal notranslate"><span class="pre">Discrete</span></code></a><ul>
+<li><a class="reference internal" href="#rlberry.spaces.Discrete.contains"><code class="docutils literal notranslate"><span class="pre">Discrete.contains()</span></code></a></li>
+<li><a class="reference internal" href="#rlberry.spaces.Discrete.from_jsonable"><code class="docutils literal notranslate"><span class="pre">Discrete.from_jsonable()</span></code></a></li>
+<li><a class="reference internal" href="#rlberry.spaces.Discrete.is_np_flattenable"><code class="docutils literal notranslate"><span class="pre">Discrete.is_np_flattenable</span></code></a></li>
+<li><a class="reference internal" href="#rlberry.spaces.Discrete.np_random"><code class="docutils literal notranslate"><span class="pre">Discrete.np_random</span></code></a></li>
+<li><a class="reference internal" href="#rlberry.spaces.Discrete.reseed"><code class="docutils literal notranslate"><span class="pre">Discrete.reseed()</span></code></a></li>
+<li><a class="reference internal" href="#rlberry.spaces.Discrete.sample"><code class="docutils literal notranslate"><span class="pre">Discrete.sample()</span></code></a></li>
+<li><a class="reference internal" href="#rlberry.spaces.Discrete.seed"><code class="docutils literal notranslate"><span class="pre">Discrete.seed()</span></code></a></li>
+<li><a class="reference internal" href="#rlberry.spaces.Discrete.shape"><code class="docutils literal notranslate"><span class="pre">Discrete.shape</span></code></a></li>
+<li><a class="reference internal" href="#rlberry.spaces.Discrete.to_jsonable"><code class="docutils literal notranslate"><span class="pre">Discrete.to_jsonable()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#examples-using-rlberry-spaces-discrete">Examples using <code class="docutils literal notranslate"><span class="pre">rlberry.spaces.Discrete</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+            </div>
+      </div>
+    </div>
+    <div id="sk-page-content-wrapper">
+      <div class="sk-page-content container-fluid body px-md-3" role="main">
+        
+  <section id="rlberry-spaces-discrete">
+<h1><code class="xref py py-mod docutils literal notranslate"><span class="pre">rlberry.spaces</span></code>.Discrete<a class="headerlink" href="#rlberry-spaces-discrete" title="Permalink to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="rlberry.spaces.Discrete">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rlberry.spaces.</span></span><span class="sig-name descname"><span class="pre">Discrete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rlberry/spaces/discrete.html#Discrete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.spaces.Discrete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Discrete</span></code></p>
+<p>Class that represents discrete spaces.</p>
+<p>Inherited from gymnasium.spaces.Discrete for compatibility with gym.</p>
+<p>rlberry wraps gym.spaces to make sure the seeding
+mechanism is unified in the library (rlberry.seeding)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>rng</strong><span class="classifier">numpy.random._generator.Generator</span></dt><dd><p>random number generator provided by rlberry.seeding</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><strong>reseed()</strong></p></td>
+<td><p>get new random number generator</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="rlberry.spaces.Discrete.contains">
+<span class="sig-name descname"><span class="pre">contains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/gymnasium/spaces/discrete.html#Discrete.contains"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.spaces.Discrete.contains" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return boolean specifying if x is a valid member of this space.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rlberry.spaces.Discrete.from_jsonable">
+<span class="sig-name descname"><span class="pre">from_jsonable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample_n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.int64</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/gymnasium/spaces/discrete.html#Discrete.from_jsonable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.spaces.Discrete.from_jsonable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a list of json samples to a list of np.int64.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="rlberry.spaces.Discrete.is_np_flattenable">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_np_flattenable</span></span><a class="headerlink" href="#rlberry.spaces.Discrete.is_np_flattenable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether this space can be flattened to a <code class="xref py py-class docutils literal notranslate"><span class="pre">spaces.Box</span></code>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="rlberry.spaces.Discrete.np_random">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">np_random</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Generator</span></em><a class="headerlink" href="#rlberry.spaces.Discrete.np_random" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lazily seed the PRNG since this is expensive and only needed if sampling from this space.</p>
+<p>As <a class="reference internal" href="#rlberry.spaces.Discrete.seed" title="rlberry.spaces.Discrete.seed"><code class="xref py py-meth docutils literal notranslate"><span class="pre">seed()</span></code></a> is not guaranteed to set the <cite>_np_random</cite> for particular seeds. We add a
+check after <a class="reference internal" href="#rlberry.spaces.Discrete.seed" title="rlberry.spaces.Discrete.seed"><code class="xref py py-meth docutils literal notranslate"><span class="pre">seed()</span></code></a> to set a new random number generator.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rlberry.spaces.Discrete.reseed">
+<span class="sig-name descname"><span class="pre">reseed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed_seq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rlberry/spaces/discrete.html#Discrete.reseed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.spaces.Discrete.reseed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get new random number generator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>seed_seq</strong><span class="classifier">np.random.SeedSequence, rlberry.seeding.Seeder or int, default</span><span class="classifier">None</span></dt><dd><p>Seed sequence from which to spawn the random number generator.
+If None, generate random seed.
+If int, use as entropy for SeedSequence.
+If seeder, use seeder.seed_seq</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rlberry.spaces.Discrete.sample">
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rlberry/spaces/discrete.html#Discrete.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.spaces.Discrete.sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a single random sample from this space.</p>
+<p>A sample will be chosen uniformly at random with the mask if provided</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>mask: An optional mask for if an action can be selected.</dt><dd><p>Expected <cite>np.ndarray</cite> of shape <code class="docutils literal notranslate"><span class="pre">(n,)</span></code> and dtype <code class="docutils literal notranslate"><span class="pre">np.int8</span></code> where <code class="docutils literal notranslate"><span class="pre">1</span></code> represents valid actions and <code class="docutils literal notranslate"><span class="pre">0</span></code> invalid / infeasible actions.
+If there are no possible actions (i.e. <code class="docutils literal notranslate"><span class="pre">np.all(mask</span> <span class="pre">==</span> <span class="pre">0)</span></code>) then <code class="docutils literal notranslate"><span class="pre">space.start</span></code> will be returned.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>A sampled integer from the space</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rlberry.spaces.Discrete.seed">
+<span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#rlberry.spaces.Discrete.seed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Seed the pseudorandom number generator (PRNG) of this space and, if applicable, the PRNGs of subspaces.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>seed: The seed value for the space. This is expanded for composite spaces to accept multiple values. For further details, please refer to the space’s documentation.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The seed values used for all the PRNGs, for composite spaces this can be a tuple or dictionary of values.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="rlberry.spaces.Discrete.shape">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">shape</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#rlberry.spaces.Discrete.shape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the shape of the space as an immutable property.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rlberry.spaces.Discrete.to_jsonable">
+<span class="sig-name descname"><span class="pre">to_jsonable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample_n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/gymnasium/spaces/discrete.html#Discrete.to_jsonable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.spaces.Discrete.to_jsonable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a list of samples to a list of ints.</p>
+</dd></dl>
+
+</dd></dl>
+
+<section id="examples-using-rlberry-spaces-discrete">
+<h2>Examples using <code class="docutils literal notranslate"><span class="pre">rlberry.spaces.Discrete</span></code><a class="headerlink" href="#examples-using-rlberry-spaces-discrete" title="Permalink to this heading">¶</a></h2>
+<div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="The quirck of this application is that there is a possible timeout when pinging a server. We ha..."><img alt="" src="../_images/sphx_glr_plot_mirror_bandit_thumb.png" />
+<p><a class="reference internal" href="../auto_examples/demo_bandits/plot_mirror_bandit.html#sphx-glr-auto-examples-demo-bandits-plot-mirror-bandit-py"><span class="std std-ref">A demo of Bandit BAI on a real dataset to select mirrors</span></a></p>
+  <div class="sphx-glr-thumbnail-title">A demo of Bandit BAI on a real dataset to select mirrors</div>
+</div></div><div class="clearer"></div></section>
+</section>
+
+
+      </div>
+    <div class="container">
+      <footer class="sk-content-footer">
+            &copy; 2023, rlberry team.
+          <a href="../_sources/generated/rlberry.spaces.Discrete.rst.txt" rel="nofollow">Show this page source</a>
+      </footer>
+    </div>
+  </div>
+</div>
+<script src="../_static/js/vendor/bootstrap.min.js"></script>
+
+<script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-22606712-2', 'auto');
+    ga('set', 'anonymizeIp', true);
+    ga('send', 'pageview');
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+<script>
+$(document).ready(function() {
+    /* Add a [>>>] button on the top-right corner of code samples to hide
+     * the >>> and ... prompts and the output and thus make the code
+     * copyable. */
+    var div = $('.highlight-python .highlight,' +
+                '.highlight-python3 .highlight,' +
+                '.highlight-pycon .highlight,' +
+		'.highlight-default .highlight')
+    var pre = div.find('pre');
+
+    // get the styles from the current theme
+    pre.parent().parent().css('position', 'relative');
+    var hide_text = 'Hide prompts and outputs';
+    var show_text = 'Show prompts and outputs';
+
+    // create and add the button to all the code blocks that contain >>>
+    div.each(function(index) {
+        var jthis = $(this);
+        if (jthis.find('.gp').length > 0) {
+            var button = $('<span class="copybutton">&gt;&gt;&gt;</span>');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+            jthis.prepend(button);
+        }
+        // tracebacks (.gt) contain bare text elements that need to be
+        // wrapped in a span to work with .nextUntil() (see later)
+        jthis.find('pre:has(.gt)').contents().filter(function() {
+            return ((this.nodeType == 3) && (this.data.trim().length > 0));
+        }).wrap('<span>');
+    });
+
+    // define the behavior of the button when it's clicked
+    $('.copybutton').click(function(e){
+        e.preventDefault();
+        var button = $(this);
+        if (button.data('hidden') === 'false') {
+            // hide the code output
+            button.parent().find('.go, .gp, .gt').hide();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'hidden');
+            button.css('text-decoration', 'line-through');
+            button.attr('title', show_text);
+            button.data('hidden', 'true');
+        } else {
+            // show the code output
+            button.parent().find('.go, .gp, .gt').show();
+            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'visible');
+            button.css('text-decoration', 'none');
+            button.attr('title', hide_text);
+            button.data('hidden', 'false');
+        }
+    });
+
+	/*** Add permalink buttons next to glossary terms ***/
+	$('dl.glossary > dt[id]').append(function() {
+		return ('<a class="headerlink" href="#' +
+			    this.getAttribute('id') +
+			    '" title="Permalink to this term">¶</a>');
+	});
+  /*** Hide navbar when scrolling down ***/
+  // Returns true when headerlink target matches hash in url
+  (function() {
+    hashTargetOnTop = function() {
+        var hash = window.location.hash;
+        if ( hash.length < 2 ) { return false; }
+
+        var target = document.getElementById( hash.slice(1) );
+        if ( target === null ) { return false; }
+
+        var top = target.getBoundingClientRect().top;
+        return (top < 2) && (top > -2);
+    };
+
+    // Hide navbar on load if hash target is on top
+    var navBar = document.getElementById("navbar");
+    var navBarToggler = document.getElementById("sk-navbar-toggler");
+    var navBarHeightHidden = "-" + navBar.getBoundingClientRect().height + "px";
+    var $window = $(window);
+
+    hideNavBar = function() {
+        navBar.style.top = navBarHeightHidden;
+    };
+
+    showNavBar = function() {
+        navBar.style.top = "0";
+    }
+
+    if (hashTargetOnTop()) {
+        hideNavBar()
+    }
+
+    var prevScrollpos = window.pageYOffset;
+    hideOnScroll = function(lastScrollTop) {
+        if (($window.width() < 768) && (navBarToggler.getAttribute("aria-expanded") === 'true')) {
+            return;
+        }
+        if (lastScrollTop > 2 && (prevScrollpos <= lastScrollTop) || hashTargetOnTop()){
+            hideNavBar()
+        } else {
+            showNavBar()
+        }
+        prevScrollpos = lastScrollTop;
+    };
+
+    /*** high performance scroll event listener***/
+    var raf = window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        window.oRequestAnimationFrame;
+    var lastScrollTop = $window.scrollTop();
+
+    if (raf) {
+        loop();
+    }
+
+    function loop() {
+        var scrollTop = $window.scrollTop();
+        if (lastScrollTop === scrollTop) {
+            raf(loop);
+            return;
+        } else {
+            lastScrollTop = scrollTop;
+            hideOnScroll(lastScrollTop);
+            raf(loop);
+        }
+    }
+  })();
+});
+
+</script>
+    
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    
+</body>
+</html>
