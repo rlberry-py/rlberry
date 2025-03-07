@@ -1,4 +1,8 @@
 from rlberry.envs.gym_make import atari_make
+import gymnasium as gym
+import ale_py
+
+gym.register_envs(ale_py)
 
 
 def test_atari_make():
@@ -23,72 +27,29 @@ def test_atari_make():
 
 def test_rendering_with_atari_make():
     from rlberry.manager import ExperimentManager
-    from rlberry_research.agents.torch import PPOAgent
-    from gymnasium.wrappers.record_video import RecordVideo
+
+    from gymnasium.wrappers.rendering import RecordVideo
     import os
     from rlberry.envs.gym_make import atari_make
-    from rlberry_research.agents.torch.utils.training import model_factory_from_env
+
     import tempfile
 
     with tempfile.TemporaryDirectory() as tmpdirname:
-        policy_mlp_configs = {
-            "type": "MultiLayerPerceptron",  # A network architecture
-            "layer_sizes": [16],  # Network dimensions
-            "reshape": False,
-            "is_policy": True,  # The network should output a distribution
-            # over actions
-        }
+        from stable_baselines3 import (
+            PPO,
+        )  # https://stable-baselines3.readthedocs.io/en/master/modules/ppo.html
 
-        critic_mlp_configs = {
-            "type": "MultiLayerPerceptron",
-            "layer_sizes": [16],
-            "reshape": False,
-            "out_size": 1,  # The critic network is an approximator of
-            # a value function V: States -> |R
-        }
-
-        policy_configs = {
-            "type": "ConvolutionalNetwork",  # A network architecture
-            "activation": "RELU",
-            "in_channels": 4,
-            "in_height": 84,
-            "in_width": 84,
-            "head_mlp_kwargs": policy_mlp_configs,
-            "transpose_obs": False,
-            "is_policy": True,  # The network should output a distribution
-        }
-
-        critic_configs = {
-            "type": "ConvolutionalNetwork",
-            "activation": "RELU",
-            "in_channels": 4,
-            "in_height": 84,
-            "in_width": 84,
-            "head_mlp_kwargs": critic_mlp_configs,
-            "transpose_obs": False,
-            "out_size": 1,
-        }
+        from rlberry.agents.stable_baselines import StableBaselinesAgent
 
         tuned_xp = ExperimentManager(
-            PPOAgent,  # The Agent class.
+            StableBaselinesAgent,  # The Agent class.
             (
                 atari_make,
                 dict(id="ALE/Breakout-v5"),
             ),  # The Environment to solve.
             init_kwargs=dict(  # Where to put the agent's hyperparameters
-                batch_size=16,
-                optimizer_type="ADAM",  # What optimizer to use for policy gradient descent steps.
-                learning_rate=2.5e-4,  # Size of the policy gradient descent steps.
-                policy_net_fn=model_factory_from_env,  # A policy network constructor
-                policy_net_kwargs=policy_configs,  # Policy network's architecure
-                value_net_fn=model_factory_from_env,  # A Critic network constructor
-                value_net_kwargs=critic_configs,  # Critic network's architecure.
-                n_envs=8,
-                gamma=0.99,
-                gae_lambda=0.95,
-                clip_eps=0.1,
-                k_epochs=4,
-                n_steps=32,
+                algo_cls=PPO,
+                policy="MlpPolicy",
             ),
             fit_budget=1000,  # The number of interactions between the agent and the environment during training.
             eval_kwargs=dict(

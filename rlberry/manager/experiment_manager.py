@@ -11,7 +11,7 @@ import dill
 import gc
 import pickle
 import bz2
-import _pickle as cPickle
+import cloudpickle
 import shutil
 import threading
 import multiprocessing
@@ -924,7 +924,7 @@ class ExperimentManager:
                     tmp_dict = pickle.load(ff)
             else:
                 with bz2.BZ2File(filename, "rb") as ff:
-                    tmp_dict = cPickle.load(ff)
+                    tmp_dict = cloudpickle.load(ff)
         except Exception as ex:
             if not compress_pickle:
                 with filename.open("rb") as ff:

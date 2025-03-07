@@ -3,7 +3,7 @@ import pytest
 import rlberry.seeding as seeding
 
 from copy import deepcopy
-from rlberry_research.envs.classic_control import MountainCar, Acrobot, Pendulum
+from rlberry_research.envs.classic_control import MountainCar, Pendulum
 from rlberry_scool.envs.finite import Chain
 from rlberry_scool.envs.finite import GridWorld
 from rlberry_research.envs.benchmarks.grid_exploration.four_room import FourRoom
@@ -17,7 +17,6 @@ classes = [
     Chain,
     PBall2D,
     SimplePBallND,
-    Acrobot,
     Pendulum,
     FourRoom,
     SixRoom,

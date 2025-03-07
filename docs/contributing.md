@@ -29,7 +29,7 @@ In the following section, we assume that you are in the main rlberry directory.
 Building the documentation requires installing some additional packages:
 ```bash
 curl -sSL https://install.python-poetry.org | python3 -
-poetry install --with dev,doc,torch,extras --sync
+poetry sync --with dev,doc,torch,extras
 ```
 To build the documentation, you need to be in the docs folder:
 ```bash
