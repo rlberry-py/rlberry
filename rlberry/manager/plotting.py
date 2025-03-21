@@ -11,7 +11,6 @@ import pandas as pd
 from rlberry.manager import read_writer_data
 
 import rlberry
-import time
 
 logger = rlberry.logger
 
