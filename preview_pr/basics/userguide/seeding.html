@@ -160,7 +160,7 @@ When comparing the performance of different machine learning models, using a fix
 <p>Rlberry has a class <a class="reference internal" href="../../generated/rlberry.seeding.seeder.Seeder.html#rlberry.seeding.seeder.Seeder" title="rlberry.seeding.seeder.Seeder"><span class="xref myst py py-class">Seeder</span></a> that conveniently wraps a <a class="reference external" href="https://numpy.org/doc/stable/reference/random/parallel.html">NumPy SeedSequence</a>, and allows you to create independent random number generators for different objects and threads, using a single <a class="reference internal" href="../../generated/rlberry.seeding.seeder.Seeder.html#rlberry.seeding.seeder.Seeder" title="rlberry.seeding.seeder.Seeder"><span class="xref myst py py-class">Seeder</span></a> instance. It works as follows:</p>
 <p>Suppose you want generate 5 random Integer between 0 and 9.</p>
 <p>If you run this code many time, you should have different outputs.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.seeding</span> <span class="kn">import</span> <span class="n">Seeder</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.seeding</span><span class="w"> </span><span class="kn">import</span> <span class="n">Seeder</span>
 
 <span class="n">seeder</span> <span class="o">=</span> <span class="n">Seeder</span><span class="p">()</span>
 
@@ -183,7 +183,7 @@ When comparing the performance of different machine learning models, using a fix
 </pre></div>
 </div>
 <p>But if you fix the seed as follow, and run it many time… You should have the same ‘random’ numbers every time :</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.seeding</span> <span class="kn">import</span> <span class="n">Seeder</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.seeding</span><span class="w"> </span><span class="kn">import</span> <span class="n">Seeder</span>
 
 <span class="n">seeder</span> <span class="o">=</span> <span class="n">Seeder</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
 
@@ -215,12 +215,12 @@ When comparing the performance of different machine learning models, using a fix
 <p><a class="reference internal" href="agent.html#agent-page"><span class="std std-ref">Agent</span></a> and <a class="reference internal" href="environment.html#environment-page"><span class="std std-ref">Environment</span></a> <code class="docutils literal notranslate"><span class="pre">reseed(seeder)</span></code> functions should use <code class="docutils literal notranslate"><span class="pre">seeder.spawn()</span></code> that allow to create new independent child generators from the same seeder. So it’s a good practice to use single seeder to reseed the Agent or Environment, and they will have their own seeder and rng.</p>
 <p>When writing your own agents and inheriting from the Agent class, you should use agent.rng whenever you need to generate random numbers; the same applies to your environments.
 This is necessary to ensure reproducibility.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.seeding</span> <span class="kn">import</span> <span class="n">Seeder</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.seeding</span><span class="w"> </span><span class="kn">import</span> <span class="n">Seeder</span>
 
 <span class="n">seeder</span> <span class="o">=</span> <span class="n">Seeder</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>  <span class="c1"># seeder initialization</span>
 
-<span class="kn">from</span> <span class="nn">rlberry.envs</span> <span class="kn">import</span> <span class="n">gym_make</span>
-<span class="kn">from</span> <span class="nn">rlberry_scool.agents</span> <span class="kn">import</span> <span class="n">UCBVIAgent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.envs</span><span class="w"> </span><span class="kn">import</span> <span class="n">gym_make</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry_scool.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">UCBVIAgent</span>
 
 
 <span class="n">env</span> <span class="o">=</span> <span class="n">gym_make</span><span class="p">(</span><span class="s2">&quot;MountainCar-v0&quot;</span><span class="p">)</span>
@@ -260,10 +260,10 @@ random sample 2 from agent rng:  0.8402527193117317
 <h3>With ExperimentManager<a class="headerlink" href="#with-experimentmanager" title="Permalink to this heading">¶</a></h3>
 <p>For this part we will use the same code from the <a class="reference internal" href="experimentManager.html#experimentmanager-page"><span class="std std-ref">ExperimentManager</span></a> part.
 3 runs without the seeder :</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.envs</span> <span class="kn">import</span> <span class="n">gym_make</span>
-<span class="kn">from</span> <span class="nn">rlberry.agents.stable_baselines</span> <span class="kn">import</span> <span class="n">StableBaselinesAgent</span>
-<span class="kn">from</span> <span class="nn">stable_baselines3</span> <span class="kn">import</span> <span class="n">PPO</span>
-<span class="kn">from</span> <span class="nn">rlberry.manager</span> <span class="kn">import</span> <span class="n">ExperimentManager</span><span class="p">,</span> <span class="n">evaluate_agents</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.envs</span><span class="w"> </span><span class="kn">import</span> <span class="n">gym_make</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.agents.stable_baselines</span><span class="w"> </span><span class="kn">import</span> <span class="n">StableBaselinesAgent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">stable_baselines3</span><span class="w"> </span><span class="kn">import</span> <span class="n">PPO</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExperimentManager</span><span class="p">,</span> <span class="n">evaluate_agents</span>
 
 
 <span class="n">env_id</span> <span class="o">=</span> <span class="s2">&quot;CartPole-v1&quot;</span>  <span class="c1"># Id of the environment</span>
@@ -335,12 +335,12 @@ random sample 2 from agent rng:  0.8402527193117317
 <p><strong>Without the seeder, the outputs are different (non-reproducible).</strong></p>
 </br>
 <p>3 runs with the seeder :</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.envs</span> <span class="kn">import</span> <span class="n">gym_make</span>
-<span class="kn">from</span> <span class="nn">rlberry.agents.stable_baselines</span> <span class="kn">import</span> <span class="n">StableBaselinesAgent</span>
-<span class="kn">from</span> <span class="nn">stable_baselines3</span> <span class="kn">import</span> <span class="n">PPO</span>
-<span class="kn">from</span> <span class="nn">rlberry.manager</span> <span class="kn">import</span> <span class="n">ExperimentManager</span><span class="p">,</span> <span class="n">evaluate_agents</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.envs</span><span class="w"> </span><span class="kn">import</span> <span class="n">gym_make</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.agents.stable_baselines</span><span class="w"> </span><span class="kn">import</span> <span class="n">StableBaselinesAgent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">stable_baselines3</span><span class="w"> </span><span class="kn">import</span> <span class="n">PPO</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExperimentManager</span><span class="p">,</span> <span class="n">evaluate_agents</span>
 
-<span class="kn">from</span> <span class="nn">rlberry.seeding</span> <span class="kn">import</span> <span class="n">Seeder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.seeding</span><span class="w"> </span><span class="kn">import</span> <span class="n">Seeder</span>
 
 <span class="n">seeder</span> <span class="o">=</span> <span class="n">Seeder</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
 
@@ -418,7 +418,7 @@ random sample 2 from agent rng:  0.8402527193117317
 <h3>multi-threading<a class="headerlink" href="#multi-threading" title="Permalink to this heading">¶</a></h3>
 <p>If you want use multi-threading, a seeder can spawn other seeders that are independent from it.
 This is useful to seed two different threads, using seeder1 in the first thread, and seeder2 in the second thread.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.seeding</span> <span class="kn">import</span> <span class="n">Seeder</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.seeding</span><span class="w"> </span><span class="kn">import</span> <span class="n">Seeder</span>
 
 <span class="n">seeder</span> <span class="o">=</span> <span class="n">Seeder</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
 <span class="n">seeder1</span><span class="p">,</span> <span class="n">seeder2</span> <span class="o">=</span> <span class="n">seeder</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
@@ -446,7 +446,7 @@ random sample 2 from seeder2 rng:  -0.1930990650226178
 (currently only <a class="reference external" href="https://pytorch.org/tutorials/beginner/deep_learning_60min_blitz.html">torch</a>)</p>
 <p>It will be useful if you want reproducibility with external libraries. In this example, we will use <code class="docutils literal notranslate"><span class="pre">torch</span></code> to generate random numbers.</p>
 <p>If you run this code many time, you should have different outputs.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
 
 <span class="n">result_list</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
@@ -468,9 +468,9 @@ random sample 2 from seeder2 rng:  -0.1930990650226178
 </pre></div>
 </div>
 <p>If you add to this code a <a class="reference internal" href="../../generated/rlberry.seeding.seeder.Seeder.html#rlberry.seeding.seeder.Seeder" title="rlberry.seeding.seeder.Seeder"><span class="xref myst py py-class">Seeder</span></a>, use the <code class="docutils literal notranslate"><span class="pre">set_external_seed</span></code> method, and re-run it, you should have the same ‘random’ numbers every time.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">rlberry.seeding</span> <span class="kn">import</span> <span class="n">set_external_seed</span>
-<span class="kn">from</span> <span class="nn">rlberry.seeding</span> <span class="kn">import</span> <span class="n">Seeder</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.seeding</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_external_seed</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.seeding</span><span class="w"> </span><span class="kn">import</span> <span class="n">Seeder</span>
 
 <span class="n">seeder</span> <span class="o">=</span> <span class="n">Seeder</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
 

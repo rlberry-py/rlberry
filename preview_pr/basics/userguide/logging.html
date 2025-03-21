@@ -128,10 +128,10 @@
 <section id="set-rlberry-s-logger-level">
 <h2>Set rlberry’s logger level<a class="headerlink" href="#set-rlberry-s-logger-level" title="Permalink to this heading">¶</a></h2>
 <p>For this example, you will use the “PPO” torch agent from “<a class="reference external" href="https://stable-baselines3.readthedocs.io/en/master/guide/algos.html">StableBaselines3</a>” and wrap it in rlberry Agent. To do that, you need to use <a class="reference internal" href="../../generated/rlberry.agents.stable_baselines.StableBaselinesAgent.html#rlberry.agents.stable_baselines.StableBaselinesAgent" title="rlberry.agents.stable_baselines.StableBaselinesAgent"><span class="xref myst py py-class">StableBaselinesAgent</span></a>. More information <a class="reference internal" href="#stable_baselines"><span class="xref myst">here</span></a>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.envs</span> <span class="kn">import</span> <span class="n">gym_make</span>
-<span class="kn">from</span> <span class="nn">rlberry.agents.stable_baselines</span> <span class="kn">import</span> <span class="n">StableBaselinesAgent</span>
-<span class="kn">from</span> <span class="nn">stable_baselines3</span> <span class="kn">import</span> <span class="n">PPO</span>
-<span class="kn">from</span> <span class="nn">rlberry.manager</span> <span class="kn">import</span> <span class="n">ExperimentManager</span><span class="p">,</span> <span class="n">evaluate_agents</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.envs</span><span class="w"> </span><span class="kn">import</span> <span class="n">gym_make</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.agents.stable_baselines</span><span class="w"> </span><span class="kn">import</span> <span class="n">StableBaselinesAgent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">stable_baselines3</span><span class="w"> </span><span class="kn">import</span> <span class="n">PPO</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExperimentManager</span><span class="p">,</span> <span class="n">evaluate_agents</span>
 
 
 <span class="n">env_id</span> <span class="o">=</span> <span class="s2">&quot;CartPole-v1&quot;</span>  <span class="c1"># Id of the environment</span>
@@ -198,7 +198,7 @@ Wrapping the env in a DummyVecEnv.
 <p>You can choose the verbosity of your logger</p>
 <p>But, with <a class="reference internal" href="../../generated/rlberry.utils.logging.set_level.html#rlberry.utils.logging.set_level" title="rlberry.utils.logging.set_level"><span class="xref myst py py-func">rlberry.logging.set_level(level=’…’)</span></a>, you can select the level of your logger to choose what type of information you want.
 For examle, you can have only the “CRITICAL” information, for this add this lines on top of the previous code, then run it again :</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">rlberry</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">rlberry</span>
 
 <span class="n">rlberry</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="s2">&quot;CRITICAL&quot;</span><span class="p">)</span>
 </pre></div>

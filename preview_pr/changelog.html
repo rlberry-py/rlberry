@@ -136,6 +136,25 @@
 <section id="dev-version">
 <h2>Dev version<a class="headerlink" href="#dev-version" title="Permalink to this heading">¶</a></h2>
 <blockquote>
+<div><p><em>PR #478</em></p>
+</div></blockquote>
+<ul class="simple">
+<li><p>Update the current “ready for review” to “ready for CI”. And add a new “ready for review” that don’t trigger the CI.</p></li>
+</ul>
+<blockquote>
+<div><p><em>PR #477</em></p>
+</div></blockquote>
+<ul class="simple">
+<li><p>Update to gymnasium&gt;=1.0</p></li>
+<li><p>Moving to numpy&gt;=2.0 (for compatibility with gymnasium )</p></li>
+<li><p>Moving to stable-baselines3&gt;=2.4.1 (for compatibility with gymnasium )</p></li>
+<li><p>Moving to “develop” branch of ‘scikit-fda’ (for compatibility with numpy 2)</p></li>
+<li><p>Moving from cpickle to cloudpickle (for compatibility with gymnasium )</p></li>
+<li><p>Add a tools in wrapper to get the “base environment” (useful to reseed gymnasium&gt;=1.0 envs)</p></li>
+<li><p>update CI with new poetry syntax (poetry sync)</p></li>
+<li><p>Update CI with removing MacOS  (incompatibility : Azure MacOS VM / pytorch&gt;=2.3)</p></li>
+</ul>
+<blockquote>
 <div><p><em>PR #476</em></p>
 </div></blockquote>
 <ul class="simple">

@@ -134,7 +134,7 @@ With rlberry, you can use an algorithm from [StableBaselines3](https://stable-ba
 
 ```python
 from rlberry.envs import gym_make
-from gymnasium.wrappers.record_video import RecordVideo
+from gymnasium.wrappers.rendering import RecordVideo
 from stable_baselines3 import PPO
 from rlberry.agents.stable_baselines import StableBaselinesAgent
 
@@ -373,7 +373,7 @@ class MyAgentQLearning(AgentWithSimplePolicy):
 You can use it like this :
 
 ```python
-from gymnasium.wrappers.record_video import RecordVideo
+from gymnasium.wrappers.rendering import RecordVideo
 from rlberry.envs import gym_make
 
 env = gym_make(

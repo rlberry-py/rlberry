@@ -115,11 +115,11 @@
       <div class="sk-page-content container-fluid body px-md-3" role="main">
         
   <h1>Source code for rlberry.spaces.tuple</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
-<span class="kn">from</span> <span class="nn">rlberry.seeding</span> <span class="kn">import</span> <span class="n">Seeder</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.seeding</span><span class="w"> </span><span class="kn">import</span> <span class="n">Seeder</span>
 
 
-<div class="viewcode-block" id="Tuple"><a class="viewcode-back" href="../../../generated/rlberry.spaces.Tuple.html#rlberry.spaces.Tuple">[docs]</a><span class="k">class</span> <span class="nc">Tuple</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Tuple</span><span class="p">):</span>
+<div class="viewcode-block" id="Tuple"><a class="viewcode-back" href="../../../generated/rlberry.spaces.Tuple.html#rlberry.spaces.Tuple">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Tuple</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Tuple</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    Inherited from gymnasium.spaces.Tuple for compatibility with gym.</span>
@@ -138,15 +138,15 @@
 <span class="sd">        get new random number generator</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spaces</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spaces</span><span class="p">):</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Tuple</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spaces</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">seeder</span> <span class="o">=</span> <span class="n">Seeder</span><span class="p">()</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">rng</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rng</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">seeder</span><span class="o">.</span><span class="n">rng</span>
 
-    <span class="k">def</span> <span class="nf">reseed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed_seq</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reseed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed_seq</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">_</span> <span class="o">=</span> <span class="p">[</span><span class="n">space</span><span class="o">.</span><span class="n">reseed</span><span class="p">(</span><span class="n">seed_seq</span><span class="p">)</span> <span class="k">for</span> <span class="n">space</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">spaces</span><span class="p">]</span></div>
 </pre></div>
 

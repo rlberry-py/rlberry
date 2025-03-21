@@ -115,20 +115,20 @@
       <div class="sk-page-content container-fluid body px-md-3" role="main">
         
   <h1>Source code for rlberry.manager.multiple_managers</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">concurrent.futures</span>
-<span class="kn">import</span> <span class="nn">functools</span>
-<span class="kn">import</span> <span class="nn">multiprocessing</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">concurrent.futures</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">multiprocessing</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
 
 
-<span class="k">def</span> <span class="nf">fit_stats</span><span class="p">(</span><span class="n">stats</span><span class="p">,</span> <span class="n">save</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">fit_stats</span><span class="p">(</span><span class="n">stats</span><span class="p">,</span> <span class="n">save</span><span class="p">):</span>
     <span class="n">stats</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">save</span><span class="p">:</span>
         <span class="n">stats</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">stats</span>
 
 
-<div class="viewcode-block" id="MultipleManagers"><a class="viewcode-back" href="../../../generated/rlberry.manager.MultipleManagers.html#rlberry.manager.MultipleManagers">[docs]</a><span class="k">class</span> <span class="nc">MultipleManagers</span><span class="p">:</span>
+<div class="viewcode-block" id="MultipleManagers"><a class="viewcode-back" href="../../../generated/rlberry.manager.MultipleManagers.html#rlberry.manager.MultipleManagers">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">MultipleManagers</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class to fit multiple ExperimentManager instances in parallel with multiple threads.</span>
 
@@ -144,7 +144,7 @@
 <span class="sd">                 If running code on a notebook or interpreter, use &#39;fork&#39;.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">max_workers</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">parallelization</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;process&quot;</span><span class="p">,</span>
@@ -156,7 +156,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">parallelization</span> <span class="o">=</span> <span class="n">parallelization</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mp_context</span> <span class="o">=</span> <span class="n">mp_context</span>
 
-<div class="viewcode-block" id="MultipleManagers.append"><a class="viewcode-back" href="../../../generated/rlberry.manager.MultipleManagers.html#rlberry.manager.MultipleManagers.append">[docs]</a>    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">experiment_manager</span><span class="p">):</span>
+<div class="viewcode-block" id="MultipleManagers.append"><a class="viewcode-back" href="../../../generated/rlberry.manager.MultipleManagers.html#rlberry.manager.MultipleManagers.append">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">experiment_manager</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Append new ExperimentManager instance.</span>
 
@@ -166,7 +166,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">instances</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">experiment_manager</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="MultipleManagers.run"><a class="viewcode-back" href="../../../generated/rlberry.manager.MultipleManagers.html#rlberry.manager.MultipleManagers.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="MultipleManagers.run"><a class="viewcode-back" href="../../../generated/rlberry.manager.MultipleManagers.html#rlberry.manager.MultipleManagers.run">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fit ExperimentManager instances in parallel.</span>
 
@@ -199,7 +199,7 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">instances</span> <span class="o">=</span> <span class="n">fitted_instances</span></div>
 
-<div class="viewcode-block" id="MultipleManagers.save"><a class="viewcode-back" href="../../../generated/rlberry.manager.MultipleManagers.html#rlberry.manager.MultipleManagers.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MultipleManagers.save"><a class="viewcode-back" href="../../../generated/rlberry.manager.MultipleManagers.html#rlberry.manager.MultipleManagers.save">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Pickle ExperimentManager instances and saves fit statistics in .csv files.</span>
 <span class="sd">        The output folder is defined in each of the ExperimentManager instances.</span>
@@ -208,7 +208,7 @@
             <span class="n">stats</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">managers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">managers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">instances</span></div>
 </pre></div>
 

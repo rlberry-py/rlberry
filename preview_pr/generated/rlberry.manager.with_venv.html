@@ -147,15 +147,15 @@ import_libs.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">rlberry.manager</span> <span class="kn">import</span> <span class="n">with_venv</span><span class="p">,</span> <span class="n">run_venv_xp</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">with_venv</span><span class="p">,</span> <span class="n">run_venv_xp</span>
 <span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nd">@with_venv</span><span class="p">(</span><span class="n">import_libs</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;tqdm&quot;</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">run_tqdm</span><span class="p">():</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>  <span class="c1"># noqa</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">run_tqdm</span><span class="p">():</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>  <span class="c1"># noqa</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)):</span>
 <span class="gp">&gt;&gt;&gt; </span>        <span class="n">sleep</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">test_venv</span><span class="p">():</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">test_venv</span><span class="p">():</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">run_venv_xp</span><span class="p">()</span>
 </pre></div>
 </div>

@@ -115,10 +115,10 @@
       <div class="sk-page-content container-fluid body px-md-3" role="main">
         
   <h1>Source code for rlberry.seeding.seeder</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">SeedSequence</span><span class="p">,</span> <span class="n">default_rng</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">numpy.random</span><span class="w"> </span><span class="kn">import</span> <span class="n">SeedSequence</span><span class="p">,</span> <span class="n">default_rng</span>
 
 
-<div class="viewcode-block" id="Seeder"><a class="viewcode-back" href="../../../generated/rlberry.seeding.seeder.Seeder.html#rlberry.seeding.seeder.Seeder">[docs]</a><span class="k">class</span> <span class="nc">Seeder</span><span class="p">:</span>
+<div class="viewcode-block" id="Seeder"><a class="viewcode-back" href="../../../generated/rlberry.seeding.seeder.Seeder.html#rlberry.seeding.seeder.Seeder">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Seeder</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Base class to define objects that use random number generators.</span>
 
@@ -159,7 +159,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed_seq</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">spawn_seed_seq</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed_seq</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">spawn_seed_seq</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">seed_seq</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">seed_seq</span> <span class="o">=</span> <span class="n">SeedSequence</span><span class="p">()</span>
@@ -176,7 +176,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">seed_seq</span> <span class="o">=</span> <span class="n">seed_seq</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rng</span> <span class="o">=</span> <span class="n">default_rng</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seed_seq</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Seeder.reseed"><a class="viewcode-back" href="../../../generated/rlberry.seeding.seeder.Seeder.html#rlberry.seeding.seeder.Seeder.reseed">[docs]</a>    <span class="k">def</span> <span class="nf">reseed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed_seq</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Seeder.reseed"><a class="viewcode-back" href="../../../generated/rlberry.seeding.seeder.Seeder.html#rlberry.seeding.seeder.Seeder.reseed">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">reseed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed_seq</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get new random number generator.</span>
 
@@ -207,7 +207,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">seed_seq</span> <span class="o">=</span> <span class="n">seed_seq</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rng</span> <span class="o">=</span> <span class="n">default_rng</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seed_seq</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Seeder.spawn"><a class="viewcode-back" href="../../../generated/rlberry.seeding.seeder.Seeder.html#rlberry.seeding.seeder.Seeder.spawn">[docs]</a>    <span class="k">def</span> <span class="nf">spawn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">squeeze</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="Seeder.spawn"><a class="viewcode-back" href="../../../generated/rlberry.seeding.seeder.Seeder.html#rlberry.seeding.seeder.Seeder.spawn">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">spawn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">squeeze</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Spawn a list of Seeder from the seed sequence of the object (self.seed_seq).</span>
 
@@ -229,10 +229,10 @@
             <span class="n">spawned_seeders</span> <span class="o">=</span> <span class="n">spawned_seeders</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">spawned_seeders</span></div>
 
-    <span class="k">def</span> <span class="nf">generate_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">seed_seq</span><span class="o">.</span><span class="n">generate_state</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Seeder object with: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">seed_seq</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span></div>
 </pre></div>
 

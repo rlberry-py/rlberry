@@ -124,9 +124,9 @@
 several instances of it, analyze the results and optimize hyperparameters.</p>
 <p>This is one of the purposes of the <a class="reference internal" href="../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.experiment_manager.ExperimentManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExperimentManager</span></code></a> class,
 as shown in the examples below.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.envs</span> <span class="kn">import</span> <span class="n">gym_make</span>
-<span class="kn">from</span> <span class="nn">rlberry.agents.torch.reinforce</span> <span class="kn">import</span> <span class="n">REINFORCEAgent</span>
-<span class="kn">from</span> <span class="nn">rlberry.manager</span> <span class="kn">import</span> <span class="n">ExperimentManager</span><span class="p">,</span> <span class="n">plot_writer_data</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.envs</span><span class="w"> </span><span class="kn">import</span> <span class="n">gym_make</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.agents.torch.reinforce</span><span class="w"> </span><span class="kn">import</span> <span class="n">REINFORCEAgent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExperimentManager</span><span class="p">,</span> <span class="n">plot_writer_data</span>
 
 
 <span class="c1"># Environment (constructor, kwargs)</span>
@@ -166,7 +166,7 @@ as shown in the examples below.</p>
 <code class="xref py py-meth docutils literal notranslate"><span class="pre">sample_paratemers()</span></code> method (see <a class="reference internal" href="../generated/rlberry.agents.Agent.html#rlberry.agents.Agent" title="rlberry.agents.agent.Agent"><code class="xref py py-class docutils literal notranslate"><span class="pre">Agent</span></code></a> class).</p>
 <p>For <code class="xref py py-class docutils literal notranslate"><span class="pre">REINFORCEAgent</span></code>, this method looks like:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">sample_parameters</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">trial</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">sample_parameters</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">trial</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Sample hyperparameters for hyperparam optimization using</span>
 <span class="sd">    Optuna (https://optuna.org/)</span>

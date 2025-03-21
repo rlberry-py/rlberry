@@ -88,7 +88,7 @@ In rlberry, you can use Gymnasium environment with [gym_make](rlberry.envs.gym_m
 
 ```python
 from rlberry.envs import gym_make
-from gymnasium.wrappers.record_video import RecordVideo
+from gymnasium.wrappers.rendering import RecordVideo
 
 # If you want an output video of your Gymnasium env, you have to :
 # - add a 'render_mode' parameter at your gym_make
@@ -132,8 +132,13 @@ A set of Atari 2600 environment simulated through Stella and the Arcade Learning
 The function "[atari_make()](rlberry.envs.atari_make)" add wrappers on gym.make, to make it easier to use on Atari games.
 
 ```python
+import gymnasium as gym
+import ale_py
+
+gym.register_envs(ale_py)
+
 from rlberry.envs import atari_make
-from gymnasium.wrappers.record_video import RecordVideo
+from gymnasium.wrappers.rendering import RecordVideo
 
 
 # If you want an output video of your Atari env, you have to :

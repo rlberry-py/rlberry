@@ -115,18 +115,18 @@
       <div class="sk-page-content container-fluid body px-md-3" role="main">
         
   <h1>Source code for rlberry.envs.interface.model</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">import</span> <span class="nn">inspect</span>
-<span class="kn">from</span> <span class="nn">rlberry.seeding</span> <span class="kn">import</span> <span class="n">Seeder</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.seeding</span><span class="w"> </span><span class="kn">import</span> <span class="n">Seeder</span>
 
-<span class="kn">import</span> <span class="nn">rlberry</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">rlberry</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">rlberry</span><span class="o">.</span><span class="n">logger</span>
 
 
-<div class="viewcode-block" id="Model"><a class="viewcode-back" href="../../../../generated/rlberry.envs.interface.Model.html#rlberry.envs.interface.Model">[docs]</a><span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">):</span>
+<div class="viewcode-block" id="Model"><a class="viewcode-back" href="../../../../generated/rlberry.envs.interface.Model.html#rlberry.envs.interface.Model">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Model</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Base class for an environment model.</span>
 
@@ -147,14 +147,14 @@
 
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reward_range</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
         <span class="c1"># random number generator</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">seeder</span> <span class="o">=</span> <span class="n">Seeder</span><span class="p">()</span>
 
-<div class="viewcode-block" id="Model.reseed"><a class="viewcode-back" href="../../../../generated/rlberry.envs.interface.Model.html#rlberry.envs.interface.Model.reseed">[docs]</a>    <span class="k">def</span> <span class="nf">reseed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed_seq</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Model.reseed"><a class="viewcode-back" href="../../../../generated/rlberry.envs.interface.Model.html#rlberry.envs.interface.Model.reseed">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">reseed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed_seq</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get new random number generator for the model.</span>
 
@@ -175,7 +175,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">reseed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seeder</span><span class="o">.</span><span class="n">seed_seq</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">reseed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seeder</span><span class="o">.</span><span class="n">seed_seq</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Model.sample"><a class="viewcode-back" href="../../../../generated/rlberry.envs.interface.Model.html#rlberry.envs.interface.Model.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+<div class="viewcode-block" id="Model.sample"><a class="viewcode-back" href="../../../../generated/rlberry.envs.interface.Model.html#rlberry.envs.interface.Model.sample">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Execute a step from a state-action pair.</span>
 
@@ -195,7 +195,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;sample() method not implemented.&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Model.is_online"><a class="viewcode-back" href="../../../../generated/rlberry.envs.interface.Model.html#rlberry.envs.interface.Model.is_online">[docs]</a>    <span class="k">def</span> <span class="nf">is_online</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Model.is_online"><a class="viewcode-back" href="../../../../generated/rlberry.envs.interface.Model.html#rlberry.envs.interface.Model.is_online">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_online</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns true if reset() and step() methods are implemented</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -213,7 +213,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span></div>
 
-<div class="viewcode-block" id="Model.is_generative"><a class="viewcode-back" href="../../../../generated/rlberry.envs.interface.Model.html#rlberry.envs.interface.Model.is_generative">[docs]</a>    <span class="k">def</span> <span class="nf">is_generative</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Model.is_generative"><a class="viewcode-back" href="../../../../generated/rlberry.envs.interface.Model.html#rlberry.envs.interface.Model.is_generative">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_generative</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns true if sample() method is implemented</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -231,7 +231,7 @@
                 <span class="k">raise</span></div>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_get_param_names</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_param_names</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get parameter names for the Model</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -255,7 +255,7 @@
         <span class="c1"># Extract and sort argument names excluding &#39;self&#39;</span>
         <span class="k">return</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">])</span>
 
-<div class="viewcode-block" id="Model.get_params"><a class="viewcode-back" href="../../../../generated/rlberry.envs.interface.Model.html#rlberry.envs.interface.Model.get_params">[docs]</a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="Model.get_params"><a class="viewcode-back" href="../../../../generated/rlberry.envs.interface.Model.html#rlberry.envs.interface.Model.get_params">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get parameters for this model.</span>
 
@@ -280,11 +280,11 @@
         <span class="k">return</span> <span class="n">out</span></div>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">unwrapped</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">unwrapped</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">rng</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rng</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Random number generator.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">seeder</span><span class="o">.</span><span class="n">rng</span></div>
 </pre></div>

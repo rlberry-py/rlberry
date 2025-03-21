@@ -126,22 +126,22 @@ to download the full example code</p>
 <section class="sphx-glr-example-title" id="ucb-bandit-cumulative-regret">
 <span id="sphx-glr-auto-examples-demo-bandits-plot-ucb-bandit-py"></span><h1>UCB Bandit cumulative regret<a class="headerlink" href="#ucb-bandit-cumulative-regret" title="Permalink to this heading">¶</a></h1>
 <p>This script shows how to define a bandit environment and an UCB Index-based algorithm.</p>
-<img src="../../_images/sphx_glr_plot_ucb_bandit_001.png" srcset="../../_images/sphx_glr_plot_ucb_bandit_001.png" alt="Cumulative Pseudo-Regret" class = "sphx-glr-single-img"/><div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">rlberry_research.envs.bandits</span> <span class="kn">import</span> <span class="n">NormalBandit</span>
-<span class="kn">from</span> <span class="nn">rlberry_research.agents.bandits</span> <span class="kn">import</span> <a href="../../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">IndexAgent</span></a><span class="p">,</span> <span class="n">makeSubgaussianUCBIndex</span>
-<span class="kn">from</span> <span class="nn">rlberry.manager</span> <span class="kn">import</span> <a href="../../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-class"><span class="n">ExperimentManager</span></a><span class="p">,</span> <a href="../../generated/rlberry.manager.plot_writer_data.html#rlberry.manager.plot_writer_data" title="rlberry.manager.plot_writer_data" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-function"><span class="n">plot_writer_data</span></a>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<img src="../../_images/sphx_glr_plot_ucb_bandit_001.png" srcset="../../_images/sphx_glr_plot_ucb_bandit_001.png" alt="Cumulative Pseudo-Regret" class = "sphx-glr-single-img"/><div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry_research.envs.bandits</span><span class="w"> </span><span class="kn">import</span> <span class="n">NormalBandit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry_research.agents.bandits</span><span class="w"> </span><span class="kn">import</span> <a href="../../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">IndexAgent</span></a><span class="p">,</span> <span class="n">makeSubgaussianUCBIndex</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.manager</span><span class="w"> </span><span class="kn">import</span> <a href="../../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-class"><span class="n">ExperimentManager</span></a><span class="p">,</span> <a href="../../generated/rlberry.manager.plot_writer_data.html#rlberry.manager.plot_writer_data" title="rlberry.manager.plot_writer_data" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-function"><span class="n">plot_writer_data</span></a>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
 
 <span class="c1"># Agents definition</span>
 
 
-<span class="k">class</span> <span class="nc">UCBAgent</span><span class="p">(</span><a href="../../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">IndexAgent</span></a><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">UCBAgent</span><span class="p">(</span><a href="../../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">IndexAgent</span></a><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;UCB agent for sigma-subgaussian bandits&quot;&quot;&quot;</span>
 
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;UCB Agent&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">index</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">makeSubgaussianUCBIndex</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
         <a href="../../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">IndexAgent</span></a><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">writer_extra</span><span class="o">=</span><span class="s2">&quot;action&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -174,7 +174,7 @@ to download the full example code</p>
 
 
 <span class="c1"># Compute and plot (pseudo-)regret</span>
-<span class="k">def</span> <span class="nf">compute_pseudo_regret</span><span class="p">(</span><span class="n">actions</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_pseudo_regret</span><span class="p">(</span><span class="n">actions</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">means</span><span class="p">)</span> <span class="o">-</span> <span class="n">means</span><span class="p">[</span><span class="n">actions</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)])</span>
 
 
@@ -189,7 +189,7 @@ to download the full example code</p>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 4.594 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 4.639 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-demo-bandits-plot-ucb-bandit-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/3c50355e16583d3c58a37da5caf1b106/plot_ucb_bandit.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_ucb_bandit.py</span></code></a></p>

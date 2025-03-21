@@ -128,9 +128,9 @@ to download the full example code</p>
 <p>Illustration of the training and video rendering of DQN Agent in
 SpringCartPole environment.</p>
 <p>Agent is slightly tuned, but not optimal. This is just for illustration purpose.</p>
-<video controls="True" preload="auto" width="600"><source src="../../video_plot_springcartpole.mp4" type="video/mp4"></video><div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry_research.envs.classic_control</span> <span class="kn">import</span> <span class="n">SpringCartPole</span>
-<span class="kn">from</span> <span class="nn">rlberry_research.agents.torch</span> <span class="kn">import</span> <span class="n">DQNAgent</span>
-<span class="kn">from</span> <span class="nn">gymnasium.wrappers.time_limit</span> <span class="kn">import</span> <span class="n">TimeLimit</span>
+<video controls="True" preload="auto" width="600"><source src="../../video_plot_springcartpole.mp4" type="video/mp4"></video><div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry_research.envs.classic_control</span><span class="w"> </span><span class="kn">import</span> <span class="n">SpringCartPole</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry_research.agents.torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">DQNAgent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers.time_limit</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimeLimit</span>
 
 <span class="n">model_configs</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;MultiLayerPerceptron&quot;</span><span class="p">,</span>

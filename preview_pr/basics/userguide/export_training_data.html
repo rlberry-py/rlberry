@@ -137,11 +137,11 @@
 <p>But maybe you have your own favorite tool, and would like to use it.
 rlberry allows you to export the training data as dataframe, to be used with other tools.</p>
 <p>To show how it works with an example, here is a code training PPO from <a class="reference external" href="https://stable-baselines3.readthedocs.io">stablebaselines3</a> on <a class="reference external" href="https://www.gymlibrary.dev/environments/classic_control/cart_pole/">CartPole</a> environment via rlberry :</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.envs</span> <span class="kn">import</span> <span class="n">gym_make</span>
-<span class="kn">from</span> <span class="nn">stable_baselines3</span> <span class="kn">import</span> <span class="n">PPO</span>
-<span class="kn">from</span> <span class="nn">rlberry.agents.stable_baselines</span> <span class="kn">import</span> <span class="n">StableBaselinesAgent</span>
-<span class="kn">from</span> <span class="nn">rlberry.manager</span> <span class="kn">import</span> <span class="n">ExperimentManager</span><span class="p">,</span> <span class="n">plot_writer_data</span><span class="p">,</span> <span class="n">read_writer_data</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.envs</span><span class="w"> </span><span class="kn">import</span> <span class="n">gym_make</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">stable_baselines3</span><span class="w"> </span><span class="kn">import</span> <span class="n">PPO</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.agents.stable_baselines</span><span class="w"> </span><span class="kn">import</span> <span class="n">StableBaselinesAgent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExperimentManager</span><span class="p">,</span> <span class="n">plot_writer_data</span><span class="p">,</span> <span class="n">read_writer_data</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
 <span class="n">env_ctor</span><span class="p">,</span> <span class="n">env_kwargs</span> <span class="o">=</span> <span class="n">gym_make</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">)</span>
 
@@ -292,8 +292,8 @@ There are two input formats for the tensorboard data :</p>
 <li><p>You must have only one file (event.out.tfenvent.xxx) by leaf folder(n_simu), only the first one would be imported !</p></li>
 </ul>
 <p>For instance, suppose you do the following training with stablebaseline, and log with tensorboard :</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">stable_baselines3</span> <span class="kn">import</span> <span class="n">PPO</span>
-<span class="kn">from</span> <span class="nn">stable_baselines3</span> <span class="kn">import</span> <span class="n">A2C</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">stable_baselines3</span><span class="w"> </span><span class="kn">import</span> <span class="n">PPO</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">stable_baselines3</span><span class="w"> </span><span class="kn">import</span> <span class="n">A2C</span>
 
 <span class="n">log_path</span> <span class="o">=</span> <span class="s2">&quot;./log&quot;</span>
 <span class="n">path_ppo</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">log_path</span> <span class="o">+</span> <span class="s2">&quot;/PPO_cartpole/&quot;</span><span class="p">)</span>
@@ -314,7 +314,7 @@ It will give you a <code class="docutils literal notranslate"><span class="pre">
 <li><p>the <code class="docutils literal notranslate"><span class="pre">values</span></code> will be the <code class="docutils literal notranslate"><span class="pre">dataframe</span></code> with 4 columns : [“name”, “n_simu”, “x”, “y”]
 (respectively “name of the algorithm”, “seed number”, “step number”, and “measure value” )</p></li>
 </ul>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.manager</span> <span class="kn">import</span> <span class="n">tensorboard_to_dataframe</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">tensorboard_to_dataframe</span>
 
 <span class="n">data_in_dataframe</span> <span class="o">=</span> <span class="n">tensorboard_to_dataframe</span><span class="p">(</span><span class="n">log_path</span><span class="p">)</span>
 
@@ -546,7 +546,7 @@ It will give you a <code class="docutils literal notranslate"><span class="pre">
 <p>In <a class="reference internal" href="../../generated/rlberry.manager.tensorboard_to_dataframe.html#rlberry.manager.tensorboard_to_dataframe" title="rlberry.manager.tensorboard_to_dataframe"><span class="xref myst py py-func">tensorboard_to_dataframe</span></a>, you can also use a <code class="docutils literal notranslate"><span class="pre">Dict</span></code> as input.
 The Dict must have the <code class="docutils literal notranslate"><span class="pre">algo_name</span></code> in <strong>keys</strong>, and a list of <code class="docutils literal notranslate"><span class="pre">path</span></code> in <strong>values</strong> (path to the <code class="docutils literal notranslate"><span class="pre">events.out.tfevents</span></code> file). In the list, the position of the path will be consider as the <code class="docutils literal notranslate"><span class="pre">n_simu</span></code></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># creating the dic</span>
-<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
 <span class="n">folder_ppo_1</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">path_ppo</span> <span class="o">+</span> <span class="s2">&quot;ppo_1/&quot;</span><span class="p">)</span>
 <span class="n">folder_A2C_1</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">path_a2c</span> <span class="o">+</span> <span class="s2">&quot;A2C_1/&quot;</span><span class="p">)</span>

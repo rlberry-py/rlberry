@@ -115,16 +115,16 @@
       <div class="sk-page-content container-fluid body px-md-3" role="main">
         
   <h1>Source code for rlberry.envs.basewrapper</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
-<span class="kn">from</span> <span class="nn">rlberry.seeding</span> <span class="kn">import</span> <span class="n">Seeder</span><span class="p">,</span> <span class="n">safe_reseed</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">rlberry.envs.interface</span> <span class="kn">import</span> <span class="n">Model</span>
-<span class="kn">from</span> <span class="nn">rlberry.rendering</span> <span class="kn">import</span> <span class="n">RenderInterface</span>
-<span class="kn">from</span> <span class="nn">rlberry.spaces.from_gym</span> <span class="kn">import</span> <span class="n">convert_space_from_gym</span>
-<span class="kn">from</span> <span class="nn">rlberry.rendering.utils</span> <span class="kn">import</span> <span class="n">video_write</span><span class="p">,</span> <span class="n">gif_write</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.seeding</span><span class="w"> </span><span class="kn">import</span> <span class="n">Seeder</span><span class="p">,</span> <span class="n">safe_reseed</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.envs.interface</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.rendering</span><span class="w"> </span><span class="kn">import</span> <span class="n">RenderInterface</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.spaces.from_gym</span><span class="w"> </span><span class="kn">import</span> <span class="n">convert_space_from_gym</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.rendering.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">video_write</span><span class="p">,</span> <span class="n">gif_write</span>
 
 
-<div class="viewcode-block" id="Wrapper"><a class="viewcode-back" href="../../../generated/rlberry.envs.basewrapper.Wrapper.html#rlberry.envs.basewrapper.Wrapper">[docs]</a><span class="k">class</span> <span class="nc">Wrapper</span><span class="p">(</span><span class="n">Model</span><span class="p">,</span> <span class="n">RenderInterface</span><span class="p">):</span>
+<div class="viewcode-block" id="Wrapper"><a class="viewcode-back" href="../../../generated/rlberry.envs.basewrapper.Wrapper.html#rlberry.envs.basewrapper.Wrapper">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Wrapper</span><span class="p">(</span><span class="n">Model</span><span class="p">,</span> <span class="n">RenderInterface</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wraps a given environment, similar to OpenAI gym&#39;s wrapper [1,2] (now updated to gymnasium).</span>
 <span class="sd">    Can also be used to wrap gym environments.</span>
@@ -157,7 +157,7 @@
 <span class="sd">    [2] https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/core.py</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">wrap_spaces</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">wrap_spaces</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="c1"># Init base class</span>
         <span class="n">Model</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
@@ -180,18 +180,18 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">reward_range</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">unwrapped</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">unwrapped</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">spec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">spec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">class_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">class_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span>
 
-    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The first condition is to avoid infinite recursion when deep copying.</span>
 <span class="sd">        See https://stackoverflow.com/a/47300262</span>
@@ -202,7 +202,7 @@
             <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Wrapper.reseed"><a class="viewcode-back" href="../../../generated/rlberry.envs.basewrapper.Wrapper.html#rlberry.envs.basewrapper.Wrapper.reseed">[docs]</a>    <span class="k">def</span> <span class="nf">reseed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed_seq</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Wrapper.reseed"><a class="viewcode-back" href="../../../generated/rlberry.envs.basewrapper.Wrapper.html#rlberry.envs.basewrapper.Wrapper.reseed">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">reseed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed_seq</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="c1"># self.seeder</span>
         <span class="k">if</span> <span class="n">seed_seq</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">seeder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">seeder</span><span class="o">.</span><span class="n">spawn</span><span class="p">()</span>
@@ -224,36 +224,36 @@
         <span class="n">safe_reseed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">seeder</span><span class="p">)</span>
         <span class="n">safe_reseed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">seeder</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Wrapper.reset"><a class="viewcode-back" href="../../../generated/rlberry.envs.basewrapper.Wrapper.html#rlberry.envs.basewrapper.Wrapper.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Wrapper.reset"><a class="viewcode-back" href="../../../generated/rlberry.envs.basewrapper.Wrapper.html#rlberry.envs.basewrapper.Wrapper.reset">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">render_mode</span> <span class="o">==</span> <span class="s2">&quot;human&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">frames</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Wrapper.step"><a class="viewcode-back" href="../../../generated/rlberry.envs.basewrapper.Wrapper.html#rlberry.envs.basewrapper.Wrapper.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+<div class="viewcode-block" id="Wrapper.step"><a class="viewcode-back" href="../../../generated/rlberry.envs.basewrapper.Wrapper.html#rlberry.envs.basewrapper.Wrapper.step">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_mode</span> <span class="o">==</span> <span class="s2">&quot;human&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_mode</span> <span class="o">==</span> <span class="s2">&quot;rgb_array&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">())</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Wrapper.sample"><a class="viewcode-back" href="../../../generated/rlberry.envs.basewrapper.Wrapper.html#rlberry.envs.basewrapper.Wrapper.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+<div class="viewcode-block" id="Wrapper.sample"><a class="viewcode-back" href="../../../generated/rlberry.envs.basewrapper.Wrapper.html#rlberry.envs.basewrapper.Wrapper.sample">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Wrapper.render"><a class="viewcode-back" href="../../../generated/rlberry.envs.basewrapper.Wrapper.html#rlberry.envs.basewrapper.Wrapper.render">[docs]</a>    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Wrapper.render"><a class="viewcode-back" href="../../../generated/rlberry.envs.basewrapper.Wrapper.html#rlberry.envs.basewrapper.Wrapper.render">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Wrapper.close"><a class="viewcode-back" href="../../../generated/rlberry.envs.basewrapper.Wrapper.html#rlberry.envs.basewrapper.Wrapper.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Wrapper.close"><a class="viewcode-back" href="../../../generated/rlberry.envs.basewrapper.Wrapper.html#rlberry.envs.basewrapper.Wrapper.close">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
-    <span class="k">def</span> <span class="nf">seed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">seed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="c1"># return self.env.seed(seed)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">compute_reward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">achieved_goal</span><span class="p">,</span> <span class="n">desired_goal</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_reward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">achieved_goal</span><span class="p">,</span> <span class="n">desired_goal</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">compute_reward</span><span class="p">(</span><span class="n">achieved_goal</span><span class="p">,</span> <span class="n">desired_goal</span><span class="p">,</span> <span class="n">info</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Wrapper.is_online"><a class="viewcode-back" href="../../../generated/rlberry.envs.basewrapper.Wrapper.html#rlberry.envs.basewrapper.Wrapper.is_online">[docs]</a>    <span class="k">def</span> <span class="nf">is_online</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Wrapper.is_online"><a class="viewcode-back" href="../../../generated/rlberry.envs.basewrapper.Wrapper.html#rlberry.envs.basewrapper.Wrapper.is_online">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_online</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span>
@@ -261,7 +261,7 @@
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="Wrapper.is_generative"><a class="viewcode-back" href="../../../generated/rlberry.envs.basewrapper.Wrapper.html#rlberry.envs.basewrapper.Wrapper.is_generative">[docs]</a>    <span class="k">def</span> <span class="nf">is_generative</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Wrapper.is_generative"><a class="viewcode-back" href="../../../generated/rlberry.envs.basewrapper.Wrapper.html#rlberry.envs.basewrapper.Wrapper.is_generative">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_generative</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">sample</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
@@ -270,21 +270,21 @@
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="Wrapper.get_video"><a class="viewcode-back" href="../../../generated/rlberry.envs.basewrapper.Wrapper.html#rlberry.envs.basewrapper.Wrapper.get_video">[docs]</a>    <span class="k">def</span> <span class="nf">get_video</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Wrapper.get_video"><a class="viewcode-back" href="../../../generated/rlberry.envs.basewrapper.Wrapper.html#rlberry.envs.basewrapper.Wrapper.get_video">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_video</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">frames</span></div>
 
-<div class="viewcode-block" id="Wrapper.save_video"><a class="viewcode-back" href="../../../generated/rlberry.envs.basewrapper.Wrapper.html#rlberry.envs.basewrapper.Wrapper.save_video">[docs]</a>    <span class="k">def</span> <span class="nf">save_video</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">framerate</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Wrapper.save_video"><a class="viewcode-back" href="../../../generated/rlberry.envs.basewrapper.Wrapper.html#rlberry.envs.basewrapper.Wrapper.save_video">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">save_video</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">framerate</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">video_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_video</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">video_write</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">video_data</span><span class="p">,</span> <span class="n">framerate</span><span class="o">=</span><span class="n">framerate</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">save_gif</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_gif</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">video_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_video</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">gif_write</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">video_data</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;&lt;</span><span class="si">{}{}</span><span class="s2">&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">)</span></div>
 </pre></div>
 

@@ -128,7 +128,7 @@
 <section id="using-rlberry-and-gymnasium">
 <h2>Using rlberry and Gymnasium<a class="headerlink" href="#using-rlberry-and-gymnasium" title="Permalink to this heading">¶</a></h2>
 <p>If you want to use <a class="reference external" href="https://gymnasium.farama.org/">Gymnasium</a> environments with <a class="reference external" href="https://github.com/rlberry-py/rlberry">rlberry</a>, simply do the following:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.envs</span> <span class="kn">import</span> <span class="n">gym_make</span>  <span class="c1">#  wraps gym.make</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.envs</span><span class="w"> </span><span class="kn">import</span> <span class="n">gym_make</span>  <span class="c1">#  wraps gym.make</span>
 
 <span class="c1"># for example, let&#39;s take CartPole</span>
 <span class="n">env</span> <span class="o">=</span> <span class="n">gym_make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">)</span>
@@ -144,9 +144,9 @@ function by <code class="docutils literal notranslate"><span class="pre">env.res
 visualize the results, etc…</p>
 <p>The example below shows a how to quickly train a StableBaselines3 A2C agent
 in just a few lines:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.envs</span> <span class="kn">import</span> <span class="n">gym_make</span>
-<span class="kn">from</span> <span class="nn">stable_baselines3</span> <span class="kn">import</span> <span class="n">A2C</span>
-<span class="kn">from</span> <span class="nn">rlberry.agents.stable_baselines</span> <span class="kn">import</span> <span class="n">StableBaselinesAgent</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.envs</span><span class="w"> </span><span class="kn">import</span> <span class="n">gym_make</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">stable_baselines3</span><span class="w"> </span><span class="kn">import</span> <span class="n">A2C</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.agents.stable_baselines</span><span class="w"> </span><span class="kn">import</span> <span class="n">StableBaselinesAgent</span>
 
 <span class="n">env_ctor</span><span class="p">,</span> <span class="n">env_kwargs</span> <span class="o">=</span> <span class="n">gym_make</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">)</span>
 <span class="n">env</span> <span class="o">=</span> <span class="n">env_ctor</span><span class="p">(</span><span class="o">**</span><span class="n">env_kwargs</span><span class="p">)</span>
@@ -168,16 +168,16 @@ model.</p></li>
 agent. In order to use it with ExperimentManagers, it must be included in the
 <code class="docutils literal notranslate"><span class="pre">init_kwargs</span></code> parameter. For example, below we use rlberry_ to train several instances of the A2C
 implementation of <a class="reference external" href="https://github.com/DLR-RM/stable-baselines3">Stable Baselines</a> and evaluate two hyperparameter configurations.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">A2CAgent</span><span class="p">(</span><span class="n">StableBaselinesAgent</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">A2CAgent</span><span class="p">(</span><span class="n">StableBaselinesAgent</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A2C with hyperparameter optimization.&quot;&quot;&quot;</span>
 
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;A2C&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">A2CAgent</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">algo_cls</span><span class="o">=</span><span class="n">A2C</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">sample_parameters</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">trial</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sample_parameters</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">trial</span><span class="p">):</span>
         <span class="n">learning_rate</span> <span class="o">=</span> <span class="n">trial</span><span class="o">.</span><span class="n">suggest_float</span><span class="p">(</span><span class="s2">&quot;learning_rate&quot;</span><span class="p">,</span> <span class="mf">1e-5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">log</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">ent_coef</span> <span class="o">=</span> <span class="n">trial</span><span class="o">.</span><span class="n">suggest_float</span><span class="p">(</span><span class="s2">&quot;ent_coef&quot;</span><span class="p">,</span> <span class="mf">0.00000001</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">log</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">vf_coef</span> <span class="o">=</span> <span class="n">trial</span><span class="o">.</span><span class="n">suggest_float</span><span class="p">(</span><span class="s2">&quot;vf_coef&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
@@ -193,7 +193,7 @@ implementation of <a class="reference external" href="https://github.com/DLR-RM/
 
 
 <span class="c1"># Training several agents and comparing different hyperparams</span>
-<span class="kn">from</span> <span class="nn">rlberry.manager</span> <span class="kn">import</span> <span class="n">ExperimentManager</span><span class="p">,</span> <span class="n">MultipleManagers</span><span class="p">,</span> <span class="n">evaluate_agents</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExperimentManager</span><span class="p">,</span> <span class="n">MultipleManagers</span><span class="p">,</span> <span class="n">evaluate_agents</span>
 
 <span class="c1"># Pass the wrapper directly with init_kwargs</span>
 <span class="n">stats</span> <span class="o">=</span> <span class="n">ExperimentManager</span><span class="p">(</span>

@@ -123,14 +123,14 @@
 <p><a class="reference external" href="https://github.com/rlberry-py/rlberry">rlberry</a> requires you to use a <strong>very simple interface</strong> to write agents, with basically
 two methods to implement: <code class="code docutils literal notranslate"><span class="pre">fit()</span></code> and <code class="code docutils literal notranslate"><span class="pre">eval()</span></code>.</p>
 <p>The example below shows how to create an agent.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">rlberry.agents</span> <span class="kn">import</span> <span class="n">Agent</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">Agent</span>
 
 
-<span class="k">class</span> <span class="nc">MyAgent</span><span class="p">(</span><span class="n">Agent</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyAgent</span><span class="p">(</span><span class="n">Agent</span><span class="p">):</span>
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;MyAgent&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">param1</span><span class="o">=</span><span class="mf">0.99</span><span class="p">,</span> <span class="n">param2</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">):</span>  <span class="c1"># it&#39;s important to put **kwargs to ensure compatibility with the base class</span>
         <span class="c1"># self.env is initialized in the base class</span>
@@ -140,7 +140,7 @@ two methods to implement: <code class="code docutils literal notranslate"><span 
         <span class="bp">self</span><span class="o">.</span><span class="n">param1</span> <span class="o">=</span> <span class="n">param1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">param2</span> <span class="o">=</span> <span class="n">param2</span>
 
-    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">budget</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">budget</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The parameter budget can represent the number of steps, the number of episodes etc,</span>
 <span class="sd">        depending on the agent.</span>
@@ -163,7 +163,7 @@ two methods to implement: <code class="code docutils literal notranslate"><span 
         <span class="n">info</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;episode_rewards&quot;</span><span class="p">:</span> <span class="n">rewards</span><span class="p">}</span>
         <span class="k">return</span> <span class="n">info</span>
 
-    <span class="k">def</span> <span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a value corresponding to the evaluation of the agent on the</span>
 <span class="sd">        evaluation environment.</span>

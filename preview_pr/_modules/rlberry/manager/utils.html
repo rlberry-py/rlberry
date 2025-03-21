@@ -115,12 +115,12 @@
       <div class="sk-page-content container-fluid body px-md-3" role="main">
         
   <h1>Source code for rlberry.manager.utils</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">sqlite3</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
 
-<span class="k">def</span> <span class="nf">create_database</span><span class="p">(</span><span class="n">db_file</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_database</span><span class="p">(</span><span class="n">db_file</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a connection to a SQLite database.&quot;&quot;&quot;</span>
     <span class="n">connection</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
@@ -135,7 +135,7 @@
     <span class="k">return</span> <span class="kc">False</span>
 
 
-<div class="viewcode-block" id="tensorboard_to_dataframe"><a class="viewcode-back" href="../../../generated/rlberry.manager.tensorboard_to_dataframe.html#rlberry.manager.tensorboard_to_dataframe">[docs]</a><span class="k">def</span> <span class="nf">tensorboard_to_dataframe</span><span class="p">(</span><span class="n">tensorboard_data</span><span class="p">):</span>
+<div class="viewcode-block" id="tensorboard_to_dataframe"><a class="viewcode-back" href="../../../generated/rlberry.manager.tensorboard_to_dataframe.html#rlberry.manager.tensorboard_to_dataframe">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">tensorboard_to_dataframe</span><span class="p">(</span><span class="n">tensorboard_data</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Function to convert &#39;tensorboard log&#39; to &#39;Panda DataFrames&#39;.</span>
 
@@ -187,8 +187,8 @@
     <span class="k">return</span> <span class="n">df</span></div>
 
 
-<span class="k">def</span> <span class="nf">_tensorboard_to_dataframe_from_parent_path</span><span class="p">(</span><span class="n">path_to_tensorboard_data</span><span class="p">):</span>
-    <span class="kn">from</span> <span class="nn">tensorboard.backend.event_processing</span> <span class="kn">import</span> <span class="n">event_accumulator</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_tensorboard_to_dataframe_from_parent_path</span><span class="p">(</span><span class="n">path_to_tensorboard_data</span><span class="p">):</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">tensorboard.backend.event_processing</span><span class="w"> </span><span class="kn">import</span> <span class="n">event_accumulator</span>
 
     <span class="n">dataframe_by_tag</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">algo_name</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path_to_tensorboard_data</span><span class="p">):</span>
@@ -216,8 +216,8 @@
     <span class="k">return</span> <span class="n">dataframe_by_tag</span>
 
 
-<span class="k">def</span> <span class="nf">_tensorboard_to_dataframe_from_dict_paths</span><span class="p">(</span><span class="n">dict_tensorboard_data</span><span class="p">):</span>
-    <span class="kn">from</span> <span class="nn">tensorboard.backend.event_processing</span> <span class="kn">import</span> <span class="n">event_accumulator</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_tensorboard_to_dataframe_from_dict_paths</span><span class="p">(</span><span class="n">dict_tensorboard_data</span><span class="p">):</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">tensorboard.backend.event_processing</span><span class="w"> </span><span class="kn">import</span> <span class="n">event_accumulator</span>
 
     <span class="n">dataframe_by_tag</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">algo_name</span><span class="p">,</span> <span class="n">current_path_list</span> <span class="ow">in</span> <span class="n">dict_tensorboard_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>

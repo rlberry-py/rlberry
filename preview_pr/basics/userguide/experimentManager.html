@@ -133,10 +133,10 @@ It’s not the only solution, but it’s the compact (and recommended) way of do
 <p>For this example, you will use the “PPO” torch agent from “<a class="reference external" href="https://stable-baselines3.readthedocs.io/en/master/guide/algos.html">StableBaselines3</a>” and wrap it in rlberry Agent. To do that, you need to use <a class="reference internal" href="../../generated/rlberry.agents.stable_baselines.StableBaselinesAgent.html#rlberry.agents.stable_baselines.StableBaselinesAgent" title="rlberry.agents.stable_baselines.StableBaselinesAgent"><span class="xref myst py py-class">StableBaselinesAgent</span></a>. More information <a class="reference internal" href="#stable_baselines"><span class="xref myst">here</span></a>.</p>
 <section id="create-your-experiment">
 <h2>Create your experiment<a class="headerlink" href="#create-your-experiment" title="Permalink to this heading">¶</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.envs</span> <span class="kn">import</span> <span class="n">gym_make</span>
-<span class="kn">from</span> <span class="nn">rlberry.agents.stable_baselines</span> <span class="kn">import</span> <span class="n">StableBaselinesAgent</span>
-<span class="kn">from</span> <span class="nn">stable_baselines3</span> <span class="kn">import</span> <span class="n">PPO</span>
-<span class="kn">from</span> <span class="nn">rlberry.manager</span> <span class="kn">import</span> <span class="n">ExperimentManager</span><span class="p">,</span> <span class="n">evaluate_agents</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.envs</span><span class="w"> </span><span class="kn">import</span> <span class="n">gym_make</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.agents.stable_baselines</span><span class="w"> </span><span class="kn">import</span> <span class="n">StableBaselinesAgent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">stable_baselines3</span><span class="w"> </span><span class="kn">import</span> <span class="n">PPO</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExperimentManager</span><span class="p">,</span> <span class="n">evaluate_agents</span>
 
 
 <span class="n">env_id</span> <span class="o">=</span> <span class="s2">&quot;CartPole-v1&quot;</span>  <span class="c1"># Id of the environment</span>
@@ -256,8 +256,8 @@ Wrapping the env in a DummyVecEnv.
 <h2>Output the video<a class="headerlink" href="#output-the-video" title="Permalink to this heading">¶</a></h2>
 <p>If you want to see the output video of the trained Agent, you need to use the RecordVideo wrapper. As ExperimentManager use tuple for env parameter, you need to give the constructor with the wrapper. To do that, you can use <a class="reference internal" href="../../generated/rlberry.envs.PipelineEnv.html#rlberry.envs.PipelineEnv" title="rlberry.envs.PipelineEnv"><span class="xref myst py py-func">PipelineEnv</span></a> as constructor, and add the wrapper + the env information in its kwargs.</p>
 <p><span>⚠</span> <strong>warning :</strong> You have to do it on the ‘eval environment’, or you may have videos during the fit of your Agent. <span>⚠</span></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.envs</span> <span class="kn">import</span> <span class="n">PipelineEnv</span>
-<span class="kn">from</span> <span class="nn">gymnasium.wrappers.record_video</span> <span class="kn">import</span> <span class="n">RecordVideo</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.envs</span><span class="w"> </span><span class="kn">import</span> <span class="n">PipelineEnv</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers.rendering</span><span class="w"> </span><span class="kn">import</span> <span class="n">RecordVideo</span>
 
 <span class="n">env_id</span> <span class="o">=</span> <span class="s2">&quot;CartPole-v1&quot;</span>
 <span class="n">env_ctor</span> <span class="o">=</span> <span class="n">gym_make</span>  <span class="c1"># constructor for training env</span>
@@ -339,10 +339,10 @@ Moviepy - video ready &lt;yourPath&gt;/CartPole-v1-episode-1.mp4
 <section id="some-advanced-settings">
 <h2>Some advanced settings<a class="headerlink" href="#some-advanced-settings" title="Permalink to this heading">¶</a></h2>
 <p>Now an example with some more settings. (check the <a class="reference internal" href="../../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager"><span class="xref myst py py-class">API</span></a> to see all of them)</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.envs</span> <span class="kn">import</span> <span class="n">gym_make</span>
-<span class="kn">from</span> <span class="nn">rlberry.agents.stable_baselines</span> <span class="kn">import</span> <span class="n">StableBaselinesAgent</span>
-<span class="kn">from</span> <span class="nn">stable_baselines3</span> <span class="kn">import</span> <span class="n">PPO</span>
-<span class="kn">from</span> <span class="nn">rlberry.manager</span> <span class="kn">import</span> <span class="n">ExperimentManager</span><span class="p">,</span> <span class="n">evaluate_agents</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.envs</span><span class="w"> </span><span class="kn">import</span> <span class="n">gym_make</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.agents.stable_baselines</span><span class="w"> </span><span class="kn">import</span> <span class="n">StableBaselinesAgent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">stable_baselines3</span><span class="w"> </span><span class="kn">import</span> <span class="n">PPO</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExperimentManager</span><span class="p">,</span> <span class="n">evaluate_agents</span>
 
 
 <span class="n">env_id</span> <span class="o">=</span> <span class="s2">&quot;CartPole-v1&quot;</span>

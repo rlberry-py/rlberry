@@ -131,7 +131,7 @@
 <h2>Use rlberry environment<a class="headerlink" href="#use-rlberry-environment" title="Permalink to this heading">¶</a></h2>
 <p>You can find some environments in our other projects “<a class="reference external" href="https://github.com/rlberry-py/rlberry-research">rlberry-research</a>” and “<a class="reference external" href="https://github.com/rlberry-py/rlberry-scool">rlberry-scool</a>”.
 For this example, you can use “Chain” environment from “<a class="reference external" href="https://github.com/rlberry-py/rlberry-scool">rlberry-scool</a>”</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry_scool.envs.finite</span> <span class="kn">import</span> <span class="n">Chain</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry_scool.envs.finite</span><span class="w"> </span><span class="kn">import</span> <span class="n">Chain</span>
 
 <span class="n">env</span> <span class="o">=</span> <span class="n">Chain</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
 <span class="n">env</span><span class="o">.</span><span class="n">enable_rendering</span><span class="p">()</span>
@@ -205,8 +205,8 @@ video:10kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing ov
 <h2>Use Gymnasium environment<a class="headerlink" href="#use-gymnasium-environment" title="Permalink to this heading">¶</a></h2>
 <p>Gymnasium is a project that provides an API for all single agent reinforcement learning environments, and includes implementations of common environments: cartpole, pendulum, mountain-car, mujoco, atari, and more.More information <a class="reference external" href="https://gymnasium.farama.org/environments/classic_control/">here</a>.</p>
 <p>In rlberry, you can use Gymnasium environment with <a class="reference internal" href="../../generated/rlberry.envs.gym_make.html#rlberry.envs.gym_make" title="rlberry.envs.gym_make"><span class="xref myst py py-func">gym_make</span></a>. Here, we will use <code class="docutils literal notranslate"><span class="pre">MountainCar-v0</span></code>, one of the “Classic Control environments”.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.envs</span> <span class="kn">import</span> <span class="n">gym_make</span>
-<span class="kn">from</span> <span class="nn">gymnasium.wrappers.record_video</span> <span class="kn">import</span> <span class="n">RecordVideo</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.envs</span><span class="w"> </span><span class="kn">import</span> <span class="n">gym_make</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers.rendering</span><span class="w"> </span><span class="kn">import</span> <span class="n">RecordVideo</span>
 
 <span class="c1"># If you want an output video of your Gymnasium env, you have to :</span>
 <span class="c1"># - add a &#39;render_mode&#39; parameter at your gym_make</span>
@@ -243,8 +243,13 @@ Moviepy - video ready [your path]/MountainCar-episode-0.mp4
 <h2>Use Atari environment<a class="headerlink" href="#use-atari-environment" title="Permalink to this heading">¶</a></h2>
 <p>A set of Atari 2600 environment simulated through Stella and the Arcade Learning Environment. More information <a class="reference external" href="https://gymnasium.farama.org/environments/atari/">here</a>.</p>
 <p>The function “<a class="reference internal" href="../../generated/rlberry.envs.atari_make.html#rlberry.envs.atari_make" title="rlberry.envs.atari_make"><span class="xref myst py py-func">atari_make()</span></a>” add wrappers on gym.make, to make it easier to use on Atari games.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.envs</span> <span class="kn">import</span> <span class="n">atari_make</span>
-<span class="kn">from</span> <span class="nn">gymnasium.wrappers.record_video</span> <span class="kn">import</span> <span class="n">RecordVideo</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">ale_py</span>
+
+<span class="n">gym</span><span class="o">.</span><span class="n">register_envs</span><span class="p">(</span><span class="n">ale_py</span><span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.envs</span><span class="w"> </span><span class="kn">import</span> <span class="n">atari_make</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers.rendering</span><span class="w"> </span><span class="kn">import</span> <span class="n">RecordVideo</span>
 
 
 <span class="c1"># If you want an output video of your Atari env, you have to :</span>

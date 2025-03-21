@@ -17,7 +17,7 @@ Agent is slightly tuned, but not optimal. This is just for illustration purpose.
 from rlberry.manager import ExperimentManager
 from datetime import datetime
 from rlberry_research.agents.torch.dqn.dqn import DQNAgent
-from gymnasium.wrappers.record_video import RecordVideo
+from gymnasium.wrappers.rendering import RecordVideo
 import shutil
 import os
 from rlberry.envs.gym_make import atari_make

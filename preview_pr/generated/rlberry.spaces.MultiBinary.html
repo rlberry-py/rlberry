@@ -207,8 +207,8 @@ If seeder, use seeder.seed_seq</p>
 <p>A sample is drawn by independent, fair coin tosses (one toss per binary variable of the space).</p>
 <dl class="simple">
 <dt>Args:</dt><dd><dl class="simple">
-<dt>mask: An optional np.ndarray to mask samples with expected shape of <code class="docutils literal notranslate"><span class="pre">space.shape</span></code>.</dt><dd><p>For mask == 0 then the samples will be 0 and mask == 1 then random samples will be generated.
-The expected mask shape is the space shape and mask dtype is <cite>np.int8</cite>.</p>
+<dt>mask: An optional np.ndarray to mask samples with expected shape of <code class="docutils literal notranslate"><span class="pre">space.shape</span></code>.</dt><dd><p>For <code class="docutils literal notranslate"><span class="pre">mask</span> <span class="pre">==</span> <span class="pre">0</span></code> then the samples will be <code class="docutils literal notranslate"><span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">mask</span> <span class="pre">==</span> <span class="pre">1`</span> <span class="pre">then</span> <span class="pre">random</span> <span class="pre">samples</span> <span class="pre">will</span> <span class="pre">be</span> <span class="pre">generated.</span>
+<span class="pre">The</span> <span class="pre">expected</span> <span class="pre">mask</span> <span class="pre">shape</span> <span class="pre">is</span> <span class="pre">the</span> <span class="pre">space</span> <span class="pre">shape</span> <span class="pre">and</span> <span class="pre">mask</span> <span class="pre">dtype</span> <span class="pre">is</span> <span class="pre">``np.int8</span></code>.</p>
 </dd>
 </dl>
 </dd>
@@ -219,8 +219,14 @@ The expected mask shape is the space shape and mask dtype is <cite>np.int8</cite
 
 <dl class="py method">
 <dt class="sig sig-object py" id="rlberry.spaces.MultiBinary.seed">
-<span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#rlberry.spaces.MultiBinary.seed" title="Permalink to this definition">¶</a></dt>
-<dd><p>Seed the PRNG of this space and possibly the PRNGs of subspaces.</p>
+<span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#rlberry.spaces.MultiBinary.seed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Seed the pseudorandom number generator (PRNG) of this space and, if applicable, the PRNGs of subspaces.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>seed: The seed value for the space. This is expanded for composite spaces to accept multiple values. For further details, please refer to the space’s documentation.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The seed values used for all the PRNGs, for composite spaces this can be a tuple or dictionary of values.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">

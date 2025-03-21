@@ -127,24 +127,24 @@ to download the full example code</p>
 <span id="sphx-glr-auto-examples-demo-bandits-plot-exp3-bandit-py"></span><h1>EXP3 Bandit cumulative regret<a class="headerlink" href="#exp3-bandit-cumulative-regret" title="Permalink to this heading">¶</a></h1>
 <p>This script shows how to define a bandit environment and an EXP3
 randomized algorithm.</p>
-<img src="../../_images/sphx_glr_plot_exp3_bandit_001.png" srcset="../../_images/sphx_glr_plot_exp3_bandit_001.png" alt="Cumulative Pseudo-Regret" class = "sphx-glr-single-img"/><div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">rlberry_research.envs.bandits</span> <span class="kn">import</span> <span class="n">AdversarialBandit</span>
-<span class="kn">from</span> <span class="nn">rlberry_research.agents.bandits</span> <span class="kn">import</span> <span class="p">(</span>
+<img src="../../_images/sphx_glr_plot_exp3_bandit_001.png" srcset="../../_images/sphx_glr_plot_exp3_bandit_001.png" alt="Cumulative Pseudo-Regret" class = "sphx-glr-single-img"/><div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry_research.envs.bandits</span><span class="w"> </span><span class="kn">import</span> <span class="n">AdversarialBandit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry_research.agents.bandits</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <a href="../../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">RandomizedAgent</span></a><span class="p">,</span>
     <a href="../../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">TSAgent</span></a><span class="p">,</span>
     <span class="n">makeEXP3Index</span><span class="p">,</span>
     <span class="n">makeBetaPrior</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">rlberry.manager</span> <span class="kn">import</span> <a href="../../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-class"><span class="n">ExperimentManager</span></a><span class="p">,</span> <a href="../../generated/rlberry.manager.plot_writer_data.html#rlberry.manager.plot_writer_data" title="rlberry.manager.plot_writer_data" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-function"><span class="n">plot_writer_data</span></a>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.manager</span><span class="w"> </span><span class="kn">import</span> <a href="../../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-class"><span class="n">ExperimentManager</span></a><span class="p">,</span> <a href="../../generated/rlberry.manager.plot_writer_data.html#rlberry.manager.plot_writer_data" title="rlberry.manager.plot_writer_data" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-function"><span class="n">plot_writer_data</span></a>
 
 
 <span class="c1"># Agents definition</span>
 
 
-<span class="k">class</span> <span class="nc">EXP3Agent</span><span class="p">(</span><a href="../../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">RandomizedAgent</span></a><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">EXP3Agent</span><span class="p">(</span><a href="../../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">RandomizedAgent</span></a><span class="p">):</span>
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;EXP3&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">prob</span><span class="p">,</span> <span class="n">tracker_params</span> <span class="o">=</span> <span class="n">makeEXP3Index</span><span class="p">()</span>
         <a href="../../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">RandomizedAgent</span></a><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
@@ -156,12 +156,12 @@ randomized algorithm.</p>
         <span class="p">)</span>
 
 
-<span class="k">class</span> <span class="nc">BernoulliTSAgent</span><span class="p">(</span><a href="../../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">TSAgent</span></a><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BernoulliTSAgent</span><span class="p">(</span><a href="../../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">TSAgent</span></a><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Thompson sampling for Bernoulli bandit&quot;&quot;&quot;</span>
 
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;TS&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">prior</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">makeBetaPrior</span><span class="p">()</span>
         <a href="../../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">TSAgent</span></a><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">prior</span><span class="p">,</span> <span class="n">writer_extra</span><span class="o">=</span><span class="s2">&quot;action&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -171,7 +171,7 @@ randomized algorithm.</p>
 <span class="n">M</span> <span class="o">=</span> <span class="mi">20</span>  <span class="c1"># number of MC simu</span>
 
 
-<span class="k">def</span> <span class="nf">switching_rewards</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">gap</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.6</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">switching_rewards</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">gap</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.6</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Adversarially switching rewards over exponentially long phases.</span>
 <span class="sd">    Inspired by Zimmert, Julian, and Yevgeny Seldin.</span>
 <span class="sd">    &quot;Tsallis-INF: An Optimal Algorithm for Stochastic and Adversarial Bandits.&quot;</span>
@@ -224,7 +224,7 @@ randomized algorithm.</p>
 
 
 <span class="c1"># Compute and plot (pseudo-)regret</span>
-<span class="k">def</span> <span class="nf">compute_pseudo_regret</span><span class="p">(</span><span class="n">actions</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_pseudo_regret</span><span class="p">(</span><span class="n">actions</span><span class="p">):</span>
     <span class="n">selected_rewards</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
         <span class="p">[</span><span class="n">rewards</span><span class="p">[</span><span class="n">t</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">action</span><span class="p">)]</span> <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">action</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">actions</span><span class="p">)]</span>
     <span class="p">)</span>
@@ -239,7 +239,7 @@ randomized algorithm.</p>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 7.236 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 7.362 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-demo-bandits-plot-exp3-bandit-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/31263fddb8f9f1c2667f6022c77bba23/plot_exp3_bandit.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_exp3_bandit.py</span></code></a></p>

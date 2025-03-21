@@ -115,15 +115,15 @@
       <div class="sk-page-content container-fluid body px-md-3" role="main">
         
   <h1>Source code for rlberry.seeding.seeding</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">rlberry.check_packages</span> <span class="k">as</span> <span class="nn">check_packages</span>
-<span class="kn">from</span> <span class="nn">rlberry.seeding.seeder</span> <span class="kn">import</span> <span class="n">Seeder</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">rlberry.check_packages</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">check_packages</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.seeding.seeder</span><span class="w"> </span><span class="kn">import</span> <span class="n">Seeder</span>
 
 <span class="k">if</span> <span class="n">check_packages</span><span class="o">.</span><span class="n">TORCH_INSTALLED</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">torch</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
 
 
-<div class="viewcode-block" id="set_external_seed"><a class="viewcode-back" href="../../../generated/rlberry.seeding.set_external_seed.html#rlberry.seeding.set_external_seed">[docs]</a><span class="k">def</span> <span class="nf">set_external_seed</span><span class="p">(</span><span class="n">seeder</span><span class="p">):</span>
+<div class="viewcode-block" id="set_external_seed"><a class="viewcode-back" href="../../../generated/rlberry.seeding.set_external_seed.html#rlberry.seeding.set_external_seed">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">set_external_seed</span><span class="p">(</span><span class="n">seeder</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Set seeds of external libraries.</span>
 
@@ -149,7 +149,7 @@
         <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seeder</span><span class="o">.</span><span class="n">seed_seq</span><span class="o">.</span><span class="n">generate_state</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint32</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span></div>
 
 
-<div class="viewcode-block" id="safe_reseed"><a class="viewcode-back" href="../../../generated/rlberry.seeding.safe_reseed.html#rlberry.seeding.safe_reseed">[docs]</a><span class="k">def</span> <span class="nf">safe_reseed</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">seeder</span><span class="p">,</span> <span class="n">reseed_spaces</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="safe_reseed"><a class="viewcode-back" href="../../../generated/rlberry.seeding.safe_reseed.html#rlberry.seeding.safe_reseed">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">safe_reseed</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">seeder</span><span class="p">,</span> <span class="n">reseed_spaces</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calls obj.reseed(seed_seq) method if available;</span>
 <span class="sd">    If a obj.seed() method is available, call obj.seed(seed_val),</span>

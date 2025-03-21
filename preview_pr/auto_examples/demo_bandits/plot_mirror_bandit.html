@@ -132,39 +132,49 @@ a server. We handle this by using the median instead of the mean in sequential
 halving’s objective.</p>
 <p>The code is in three parts: definition of environment, definition of agent,
 and finally definition of the experiment.</p>
-<img src="../../_images/sphx_glr_plot_mirror_bandit_001.png" srcset="../../_images/sphx_glr_plot_mirror_bandit_001.png" alt="plot mirror bandit" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[INFO] 08:27:        agent_name  worker  reward  action  max_global_step
-                         SH        0     -1.283    6           8
-[INFO] 08:28:        agent_name  worker  reward  action  max_global_step
-                         SH        0     -0.338    4           22
-[INFO] 08:28:        agent_name  worker  reward  action  max_global_step
-                         SH        0     -0.173    6           37
-[INFO] 08:28:        agent_name  worker  reward  action  max_global_step
-                         SH        0     -0.172    4           55
-[INFO] 08:28:        agent_name  worker  reward  action  max_global_step
-                         SH        0     -0.171    6           73
-[INFO] 08:28:        agent_name  worker  reward  action  max_global_step
-                         SH        0     -0.171    6           91
-[INFO] 08:28: ... trained!
-[INFO] 08:28: Saved ExperimentManager(SH) using pickle.
-[INFO] 08:28: The ExperimentManager was saved in : &#39;rlberry_data/temp/manager_data/SH_2024-10-25_08-27-52_59156dbe/manager_obj.pickle&#39;
+<img src="../../_images/sphx_glr_plot_mirror_bandit_001.png" srcset="../../_images/sphx_glr_plot_mirror_bandit_001.png" alt="plot mirror bandit" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[INFO] 16:38:        agent_name  worker  reward  action  max_global_step
+                         SH        0     -1.037    3           5
+[INFO] 16:38:        agent_name  worker  reward  action  max_global_step
+                         SH        0     -0.479    0           10
+[INFO] 16:38:        agent_name  worker  reward  action  max_global_step
+                         SH        0     -0.474    0           18
+[INFO] 16:38:        agent_name  worker  reward  action  max_global_step
+                         SH        0     -0.433    1           27
+[INFO] 16:38:        agent_name  worker  reward  action  max_global_step
+                         SH        0     -0.309    3           36
+[INFO] 16:38:        agent_name  worker  reward  action  max_global_step
+                         SH        0     -0.317    7           46
+[INFO] 16:38:        agent_name  worker  reward  action  max_global_step
+                         SH        0     -0.308    3           56
+[INFO] 16:38:        agent_name  worker  reward  action  max_global_step
+                         SH        0     -0.311    6           65
+[INFO] 16:38:        agent_name  worker  reward  action  max_global_step
+                         SH        0     -0.311    6           75
+[INFO] 16:38:        agent_name  worker  reward  action  max_global_step
+                         SH        0     -0.311    6           85
+[INFO] 16:38:        agent_name  worker  reward  action  max_global_step
+                         SH        0     -0.312    6           95
+[INFO] 16:38: ... trained!
+[INFO] 16:38: Saved ExperimentManager(SH) using pickle.
+[INFO] 16:38: The ExperimentManager was saved in : &#39;rlberry_data/temp/manager_data/SH_2025-03-21_16-37-57_11c0feae/manager_obj.pickle&#39;
 The optimal action (fastest server) is server number  7
 </pre></div>
 </div>
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
-<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">rlberry.manager</span> <span class="kn">import</span> <a href="../../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-class"><span class="n">ExperimentManager</span></a><span class="p">,</span> <a href="../../generated/rlberry.manager.read_writer_data.html#rlberry.manager.read_writer_data" title="rlberry.manager.read_writer_data" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-function"><span class="n">read_writer_data</span></a>
-<span class="kn">from</span> <span class="nn">rlberry.envs.interface</span> <span class="kn">import</span> <span class="n">Model</span>
-<span class="kn">from</span> <span class="nn">rlberry_research.agents.bandits</span> <span class="kn">import</span> <a href="../../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">BanditWithSimplePolicy</span></a>
-<span class="kn">import</span> <span class="nn">rlberry.spaces</span> <span class="k">as</span> <span class="nn">spaces</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.manager</span><span class="w"> </span><span class="kn">import</span> <a href="../../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-class"><span class="n">ExperimentManager</span></a><span class="p">,</span> <a href="../../generated/rlberry.manager.read_writer_data.html#rlberry.manager.read_writer_data" title="rlberry.manager.read_writer_data" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-function"><span class="n">read_writer_data</span></a>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.envs.interface</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry_research.agents.bandits</span><span class="w"> </span><span class="kn">import</span> <a href="../../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">BanditWithSimplePolicy</span></a>
+<span class="kn">import</span><span class="w"> </span><span class="nn">rlberry.spaces</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">spaces</span>
 
-<span class="kn">import</span> <span class="nn">requests</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
 
-<span class="kn">import</span> <span class="nn">rlberry</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">rlberry</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">rlberry</span><span class="o">.</span><span class="n">logger</span>
 
@@ -187,7 +197,7 @@ The optimal action (fastest server) is server number  7
 <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">get_time</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_time</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">TIMEOUT</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">resp</span><span class="o">.</span><span class="n">elapsed</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span>
@@ -195,7 +205,7 @@ The optimal action (fastest server) is server number  7
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>  <span class="c1"># timeout</span>
 
 
-<span class="k">class</span> <span class="nc">MirrorBandit</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MirrorBandit</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Real environment for bandit problems.</span>
 <span class="sd">    The reward is the response time for French servers meant to download ubuntu.</span>
@@ -214,7 +224,7 @@ The optimal action (fastest server) is server number  7
 
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;MirrorEnv&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">Model</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">url_ids</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">url_list</span> <span class="o">=</span> <span class="n">mirrors_ubuntu</span><span class="p">[</span><span class="n">url_ids</span><span class="p">]</span>
@@ -224,7 +234,7 @@ The optimal action (fastest server) is server number  7
         <span class="bp">self</span><span class="o">.</span><span class="n">n_arms</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url_list</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span> <span class="o">=</span> <a href="../../generated/rlberry.spaces.Discrete.html#rlberry.spaces.Discrete" title="rlberry.spaces.Discrete" class="sphx-glr-backref-module-rlberry-spaces sphx-glr-backref-type-py-class"><span class="n">spaces</span><span class="o">.</span><span class="n">Discrete</span></a><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_arms</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Sample the reward associated to the action.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -236,7 +246,7 @@ The optimal action (fastest server) is server number  7
         <span class="n">truncated</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="p">{}</span>
 
-    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Reset the environment to a default state.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -249,19 +259,19 @@ The optimal action (fastest server) is server number  7
 <span class="c1"># BAI Agent definition</span>
 
 
-<span class="k">class</span> <span class="nc">SeqHalvAgent</span><span class="p">(</span><a href="../../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">BanditWithSimplePolicy</span></a><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SeqHalvAgent</span><span class="p">(</span><a href="../../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">BanditWithSimplePolicy</span></a><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Sequential Halving Agent</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;SeqHalvAgent&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <a href="../../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">BanditWithSimplePolicy</span></a><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">writer_extra</span><span class="o">=</span><span class="s2">&quot;action_and_reward&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">budget</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">budget</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">horizon</span> <span class="o">=</span> <span class="n">budget</span>
         <span class="n">rewards</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">actions</span> <span class="o">=</span> <span class="p">[]</span>
@@ -321,7 +331,7 @@ The optimal action (fastest server) is server number  7
 <span class="p">)</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 20.959 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 36.577 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-demo-bandits-plot-mirror-bandit-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/10b71a51b8ae10571824280d3b92d89b/plot_mirror_bandit.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_mirror_bandit.py</span></code></a></p>

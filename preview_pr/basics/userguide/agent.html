@@ -138,7 +138,7 @@ In rlberry, you can use existing Agent, or create your own custom Agent. You can
 (“Chain” environment from “<a class="reference external" href="https://github.com/rlberry-py/rlberry-scool">rlberry-scool</a>”)</p>
 <section id="without-agent">
 <h3>without agent<a class="headerlink" href="#without-agent" title="Permalink to this heading">¶</a></h3>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry_scool.envs.finite</span> <span class="kn">import</span> <span class="n">Chain</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry_scool.envs.finite</span><span class="w"> </span><span class="kn">import</span> <span class="n">Chain</span>
 
 <span class="n">env</span> <span class="o">=</span> <span class="n">Chain</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
 <span class="n">env</span><span class="o">.</span><span class="n">enable_rendering</span><span class="p">()</span>
@@ -161,8 +161,8 @@ In rlberry, you can use existing Agent, or create your own custom Agent. You can
 <h3>With agent<a class="headerlink" href="#with-agent" title="Permalink to this heading">¶</a></h3>
 <p>With the same environment, we will use an Agent to choose the actions instead of random actions.
 For this example, you can use “ValueIterationAgent” Agent from “<a class="reference external" href="https://github.com/rlberry-py/rlberry-scool">rlberry-scool</a>”</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry_scool.envs.finite</span> <span class="kn">import</span> <span class="n">Chain</span>
-<span class="kn">from</span> <span class="nn">rlberry_scool.agents.dynprog</span> <span class="kn">import</span> <span class="n">ValueIterationAgent</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry_scool.envs.finite</span><span class="w"> </span><span class="kn">import</span> <span class="n">Chain</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry_scool.agents.dynprog</span><span class="w"> </span><span class="kn">import</span> <span class="n">ValueIterationAgent</span>
 
 <span class="n">env</span> <span class="o">=</span> <span class="n">Chain</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>  <span class="c1"># same env</span>
 <span class="n">agent</span> <span class="o">=</span> <span class="n">ValueIterationAgent</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.95</span><span class="p">)</span>  <span class="c1"># creation of the agent</span>
@@ -249,10 +249,10 @@ video:11kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing ov
 <section id="use-stablebaselines3-as-rlberry-agent">
 <h2>Use StableBaselines3 as rlberry Agent<a class="headerlink" href="#use-stablebaselines3-as-rlberry-agent" title="Permalink to this heading">¶</a></h2>
 <p>With rlberry, you can use an algorithm from <a class="reference external" href="https://stable-baselines3.readthedocs.io/en/master/guide/algos.html">StableBaselines3</a> and wrap it in rlberry Agent. To do that, you need to use <a class="reference internal" href="../../generated/rlberry.agents.stable_baselines.StableBaselinesAgent.html#rlberry.agents.stable_baselines.StableBaselinesAgent" title="rlberry.agents.stable_baselines.StableBaselinesAgent"><span class="xref myst py py-class">StableBaselinesAgent</span></a>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.envs</span> <span class="kn">import</span> <span class="n">gym_make</span>
-<span class="kn">from</span> <span class="nn">gymnasium.wrappers.record_video</span> <span class="kn">import</span> <span class="n">RecordVideo</span>
-<span class="kn">from</span> <span class="nn">stable_baselines3</span> <span class="kn">import</span> <span class="n">PPO</span>
-<span class="kn">from</span> <span class="nn">rlberry.agents.stable_baselines</span> <span class="kn">import</span> <span class="n">StableBaselinesAgent</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.envs</span><span class="w"> </span><span class="kn">import</span> <span class="n">gym_make</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers.rendering</span><span class="w"> </span><span class="kn">import</span> <span class="n">RecordVideo</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">stable_baselines3</span><span class="w"> </span><span class="kn">import</span> <span class="n">PPO</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.agents.stable_baselines</span><span class="w"> </span><span class="kn">import</span> <span class="n">StableBaselinesAgent</span>
 
 <span class="n">env</span> <span class="o">=</span> <span class="n">gym_make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;rgb_array&quot;</span><span class="p">)</span>
 <span class="n">agent</span> <span class="o">=</span> <span class="n">StableBaselinesAgent</span><span class="p">(</span>
@@ -395,15 +395,15 @@ Moviepy - video ready &lt;yourPath&gt;/CartPole-episode-0.mp4
 two methods to implement: <code class="docutils literal notranslate"><span class="pre">fit()</span></code> and <code class="docutils literal notranslate"><span class="pre">eval()</span></code>.</p>
 <p>You can find more information on this interface <a class="reference internal" href="../../generated/rlberry.agents.Agent.html#rlberry.agents.Agent" title="rlberry.agents.agent.Agent"><span class="xref myst py py-class">here(Agent)</span></a>   (or <a class="reference internal" href="../../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.agent.AgentWithSimplePolicy"><span class="xref myst py py-class">here(AgentWithSimplePolicy)</span></a>)</p>
 <p>The example below shows how to create an agent.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">rlberry.agents</span> <span class="kn">import</span> <span class="n">AgentWithSimplePolicy</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">AgentWithSimplePolicy</span>
 
 
-<span class="k">class</span> <span class="nc">MyAgentQLearning</span><span class="p">(</span><span class="n">AgentWithSimplePolicy</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyAgentQLearning</span><span class="p">(</span><span class="n">AgentWithSimplePolicy</span><span class="p">):</span>
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;QLearning&quot;</span>
     <span class="c1"># create an agent with q-table</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">env</span><span class="p">,</span>
         <span class="n">exploration_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
@@ -424,7 +424,7 @@ two methods to implement: <code class="docutils literal notranslate"><span class
         <span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span> <span class="o">=</span> <span class="n">learning_rate</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">discount_factor</span> <span class="o">=</span> <span class="n">discount_factor</span>  <span class="c1"># gamma</span>
 
-    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">budget</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">budget</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The parameter budget can represent the number of steps, the number of episodes etc,</span>
 <span class="sd">        depending on the agent.</span>
@@ -454,7 +454,7 @@ two methods to implement: <code class="docutils literal notranslate"><span class
         <span class="n">info</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;episode_rewards&quot;</span><span class="p">:</span> <span class="n">rewards</span><span class="p">}</span>
         <span class="k">return</span> <span class="n">info</span>
 
-    <span class="k">def</span> <span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a value corresponding to the evaluation of the agent on the</span>
 <span class="sd">        evaluation environment.</span>
@@ -464,7 +464,7 @@ two methods to implement: <code class="docutils literal notranslate"><span class
 
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>  <span class="c1"># use the eval() from AgentWithSimplePolicy</span>
 
-    <span class="k">def</span> <span class="nf">policy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">,</span> <span class="n">explo</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">policy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">,</span> <span class="n">explo</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="n">state</span> <span class="o">=</span> <span class="n">observation</span>
         <span class="k">if</span> <span class="n">explo</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">exploration_rate</span><span class="p">:</span>
             <span class="n">action</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>  <span class="c1"># Explore</span>
@@ -476,8 +476,8 @@ two methods to implement: <code class="docutils literal notranslate"><span class
 </div>
 <p><span>⚠</span> <strong>warning :</strong>  It’s important that your agent accepts optional <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> and pass it to the base class as <code class="docutils literal notranslate"><span class="pre">Agent.__init__(self,</span> <span class="pre">env,</span> <span class="pre">**kwargs)</span></code>. <span>⚠</span></p>
 <p>You can use it like this :</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">gymnasium.wrappers.record_video</span> <span class="kn">import</span> <span class="n">RecordVideo</span>
-<span class="kn">from</span> <span class="nn">rlberry.envs</span> <span class="kn">import</span> <span class="n">gym_make</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers.rendering</span><span class="w"> </span><span class="kn">import</span> <span class="n">RecordVideo</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.envs</span><span class="w"> </span><span class="kn">import</span> <span class="n">gym_make</span>
 
 <span class="n">env</span> <span class="o">=</span> <span class="n">gym_make</span><span class="p">(</span>
     <span class="s2">&quot;FrozenLake-v1&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;rgb_array&quot;</span><span class="p">,</span> <span class="n">is_slippery</span><span class="o">=</span><span class="kc">False</span>

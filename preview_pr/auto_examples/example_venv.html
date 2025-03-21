@@ -132,26 +132,26 @@ for RL experimentation with several separated environments.</p>
 and then are run via <cite>run_venv_xp</cite>.
 Remark: the functions ‘run_sb’ and ‘run_mushroom’ are not directly called
 and are only there to give the script’s text.</p>
-<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.manager</span> <span class="kn">import</span> <a href="../generated/rlberry.manager.with_venv.html#rlberry.manager.with_venv" title="rlberry.manager.with_venv" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-function"><span class="n">with_venv</span></a><span class="p">,</span> <a href="../generated/rlberry.manager.run_venv_xp.html#rlberry.manager.run_venv_xp" title="rlberry.manager.run_venv_xp" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-function"><span class="n">run_venv_xp</span></a>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.manager</span><span class="w"> </span><span class="kn">import</span> <a href="../generated/rlberry.manager.with_venv.html#rlberry.manager.with_venv" title="rlberry.manager.with_venv" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-function"><span class="n">with_venv</span></a><span class="p">,</span> <a href="../generated/rlberry.manager.run_venv_xp.html#rlberry.manager.run_venv_xp" title="rlberry.manager.run_venv_xp" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-function"><span class="n">run_venv_xp</span></a>
 
 
 <span class="c1"># Decorator with_venv will create a script to be run in the virtual environment with</span>
 <span class="c1"># the libraries in the import_libs list. Here we want to create a virtual environment</span>
 <span class="c1"># containing mushroom_rl library and run an example script taken from mushroom_rl doc.</span>
 <span class="nd">@with_venv</span><span class="p">(</span><span class="n">import_libs</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;numpy&quot;</span><span class="p">,</span> <span class="s2">&quot;mushroom_rl&quot;</span><span class="p">],</span> <span class="n">venv_dir_name</span><span class="o">=</span><span class="s2">&quot;rlberry_venvs&quot;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">run_mushroom</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_mushroom</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Simple script to solve a simple chain with Q-Learning.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-    <span class="kn">from</span> <span class="nn">mushroom_rl.algorithms.value</span> <span class="kn">import</span> <span class="n">QLearning</span>
-    <span class="kn">from</span> <span class="nn">mushroom_rl.core</span> <span class="kn">import</span> <span class="n">Core</span><span class="p">,</span> <span class="n">Logger</span>
-    <span class="kn">from</span> <span class="nn">mushroom_rl.environments</span> <span class="kn">import</span> <span class="n">generate_simple_chain</span>
-    <span class="kn">from</span> <span class="nn">mushroom_rl.policy</span> <span class="kn">import</span> <span class="n">EpsGreedy</span>
-    <span class="kn">from</span> <span class="nn">mushroom_rl.utils.parameters</span> <span class="kn">import</span> <span class="n">Parameter</span>
-    <span class="kn">from</span> <span class="nn">mushroom_rl.utils.dataset</span> <span class="kn">import</span> <span class="n">compute_J</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">mushroom_rl.algorithms.value</span><span class="w"> </span><span class="kn">import</span> <span class="n">QLearning</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">mushroom_rl.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">Core</span><span class="p">,</span> <span class="n">Logger</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">mushroom_rl.environments</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_simple_chain</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">mushroom_rl.policy</span><span class="w"> </span><span class="kn">import</span> <span class="n">EpsGreedy</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">mushroom_rl.utils.parameters</span><span class="w"> </span><span class="kn">import</span> <span class="n">Parameter</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">mushroom_rl.utils.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_J</span>
 
     <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">()</span>
 
@@ -193,10 +193,10 @@ and are only there to give the script’s text.</p>
 <span class="nd">@with_venv</span><span class="p">(</span>
     <span class="n">import_libs</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;stable-baselines3&quot;</span><span class="p">],</span> <span class="n">venv_dir_name</span><span class="o">=</span><span class="s2">&quot;rlberry_venvs&quot;</span><span class="p">,</span> <span class="n">python_ver</span><span class="o">=</span><span class="s2">&quot;3.9&quot;</span>
 <span class="p">)</span>
-<span class="k">def</span> <span class="nf">run_sb</span><span class="p">():</span>
-    <span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_sb</span><span class="p">():</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
 
-    <span class="kn">from</span> <span class="nn">stable_baselines3</span> <span class="kn">import</span> <span class="n">A2C</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">stable_baselines3</span><span class="w"> </span><span class="kn">import</span> <span class="n">A2C</span>
 
     <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">)</span>
 

@@ -133,15 +133,15 @@ using the following command:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>tensorboard<span class="w"> </span>--logdir<span class="w"> </span><span class="o">{</span>Path<span class="o">(</span>agent.writer.log_dir<span class="o">)</span>.parent<span class="o">}</span>
 </pre></div>
 </div>
-<video controls="True" preload="auto" width="600"><source src="../../video_plot_mdqn.mp4" type="video/mp4"></video><div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.envs</span> <span class="kn">import</span> <a href="../../generated/rlberry.envs.gym_make.html#rlberry.envs.gym_make" title="rlberry.envs.gym_make" class="sphx-glr-backref-module-rlberry-envs sphx-glr-backref-type-py-function"><span class="n">gym_make</span></a>
-<span class="kn">from</span> <span class="nn">torch.utils.tensorboard</span> <span class="kn">import</span> <span class="n">SummaryWriter</span>
+<video controls="True" preload="auto" width="600"><source src="../../video_plot_mdqn.mp4" type="video/mp4"></video><div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.envs</span><span class="w"> </span><span class="kn">import</span> <a href="../../generated/rlberry.envs.gym_make.html#rlberry.envs.gym_make" title="rlberry.envs.gym_make" class="sphx-glr-backref-module-rlberry-envs sphx-glr-backref-type-py-function"><span class="n">gym_make</span></a>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.utils.tensorboard</span><span class="w"> </span><span class="kn">import</span> <span class="n">SummaryWriter</span>
 
-<span class="kn">from</span> <span class="nn">rlberry_research.agents.torch.dqn</span> <span class="kn">import</span> <span class="n">MunchausenDQNAgent</span>
-<span class="kn">from</span> <span class="nn">rlberry.utils.logging</span> <span class="kn">import</span> <span class="n">configure_logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry_research.agents.torch.dqn</span><span class="w"> </span><span class="kn">import</span> <span class="n">MunchausenDQNAgent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.utils.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">configure_logging</span>
 
-<span class="kn">from</span> <span class="nn">gymnasium.wrappers.record_video</span> <span class="kn">import</span> <span class="n">RecordVideo</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers.rendering</span><span class="w"> </span><span class="kn">import</span> <span class="n">RecordVideo</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
 
 <span class="n">configure_logging</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="s2">&quot;INFO&quot;</span><span class="p">)</span>

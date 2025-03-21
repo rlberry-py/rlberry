@@ -115,14 +115,14 @@
       <div class="sk-page-content container-fluid body px-md-3" role="main">
         
   <h1>Source code for rlberry.manager.env_tools</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">inspect</span>
-<span class="kn">from</span> <span class="nn">textwrap</span> <span class="kn">import</span> <span class="n">dedent</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">subprocess</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">textwrap</span><span class="w"> </span><span class="kn">import</span> <span class="n">dedent</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">nox</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">nox</span>
 
     <span class="n">NOX_INSTALLED</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="k">except</span><span class="p">:</span>
@@ -132,7 +132,7 @@
 <span class="n">temp_dir</span> <span class="o">=</span> <span class="s2">&quot;rlberry_venvs&quot;</span>
 
 
-<span class="k">def</span> <span class="nf">__func_to_script</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">__func_to_script</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Transform a function to a script string written in a python file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -162,7 +162,7 @@
     <span class="k">return</span> <span class="n">filename</span>
 
 
-<div class="viewcode-block" id="with_venv"><a class="viewcode-back" href="../../../generated/rlberry.manager.with_venv.html#rlberry.manager.with_venv">[docs]</a><span class="k">def</span> <span class="nf">with_venv</span><span class="p">(</span>
+<div class="viewcode-block" id="with_venv"><a class="viewcode-back" href="../../../generated/rlberry.manager.with_venv.html#rlberry.manager.with_venv">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">with_venv</span><span class="p">(</span>
     <span class="n">import_libs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">requirements</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">venv_dir_name</span><span class="o">=</span><span class="s2">&quot;rlberry_venvs&quot;</span><span class="p">,</span>
@@ -206,7 +206,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">wrap</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrap</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="n">NOX_INSTALLED</span>
         <span class="p">),</span> <span class="s2">&quot;module not found: nox. nox must be installed to use rlberry&#39;s venv tools&quot;</span>
@@ -220,7 +220,7 @@
         <span class="p">),</span> <span class="s2">&quot;At least one of import_libs or requirements must be not None&quot;</span>
 
         <span class="nd">@nox</span><span class="o">.</span><span class="n">session</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">reuse_venv</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">python</span><span class="o">=</span><span class="n">python_ver</span><span class="p">)</span>
-        <span class="k">def</span> <span class="nf">myscript</span><span class="p">(</span><span class="n">session</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">myscript</span><span class="p">(</span><span class="n">session</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">requirements</span><span class="p">:</span>
                 <span class="n">session</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s2">&quot;-r&quot;</span><span class="p">,</span> <span class="n">requirements</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -238,7 +238,7 @@
     <span class="k">return</span> <span class="n">wrap</span></div>
 
 
-<div class="viewcode-block" id="run_venv_xp"><a class="viewcode-back" href="../../../generated/rlberry.manager.run_venv_xp.html#rlberry.manager.run_venv_xp">[docs]</a><span class="k">def</span> <span class="nf">run_venv_xp</span><span class="p">(</span><span class="n">venv_dir_name</span><span class="o">=</span><span class="s2">&quot;rlberry_venvs&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="run_venv_xp"><a class="viewcode-back" href="../../../generated/rlberry.manager.run_venv_xp.html#rlberry.manager.run_venv_xp">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">run_venv_xp</span><span class="p">(</span><span class="n">venv_dir_name</span><span class="o">=</span><span class="s2">&quot;rlberry_venvs&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Function to launch experiments in the current script file in virtual environments.</span>
 

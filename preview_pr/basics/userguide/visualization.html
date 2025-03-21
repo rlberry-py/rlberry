@@ -149,8 +149,8 @@
 <section id="generating-gifs-with-rlberry-scool-env">
 <h3>Generating gifs with rlberry_scool env<a class="headerlink" href="#generating-gifs-with-rlberry-scool-env" title="Permalink to this heading">¶</a></h3>
 <p>Sometimes, it may be easier to use gif instead of videos (for teaching for instance, in order not to have to ask students to install ffmpeg on their computers). To do this, we have the tool <code class="xref py py-mod docutils literal notranslate"><span class="pre">rlberry.rendering.utils.gif_write</span></code> that works for rlberry-scool environments <code class="docutils literal notranslate"><span class="pre">rlberry_scool.envs.Chain</span></code> and <code class="docutils literal notranslate"><span class="pre">rlberry_scool.envs.Gridworld</span></code> in the following way:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.agents</span> <span class="kn">import</span> <span class="n">AgentWithSimplePolicy</span>
-<span class="kn">from</span> <span class="nn">rlberry_scool.envs</span> <span class="kn">import</span> <span class="n">Chain</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">AgentWithSimplePolicy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry_scool.envs</span><span class="w"> </span><span class="kn">import</span> <span class="n">Chain</span>
 
 <span class="n">env_ctor</span> <span class="o">=</span> <span class="n">Chain</span>
 <span class="n">env_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">L</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">fail_prob</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
@@ -178,9 +178,9 @@
 <li><p>Use <code class="docutils literal notranslate"><span class="pre">render_mode</span> <span class="pre">=</span> <span class="pre">&quot;rgb_array&quot;</span></code> as parameter to create the environment. More information <a class="reference external" href="https://gymnasium.farama.org/api/env/#gymnasium.Env.render">here</a>.</p></li>
 </ul>
 <p>An example here :</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.envs</span> <span class="kn">import</span> <span class="n">gym_make</span>
-<span class="kn">from</span> <span class="nn">rlberry.seeding</span> <span class="kn">import</span> <span class="n">Seeder</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.envs</span><span class="w"> </span><span class="kn">import</span> <span class="n">gym_make</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.seeding</span><span class="w"> </span><span class="kn">import</span> <span class="n">Seeder</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 
 <span class="n">seeder</span> <span class="o">=</span> <span class="n">Seeder</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
@@ -209,11 +209,11 @@
 <section id="plotting-raw-curves">
 <h3>Plotting raw curves<a class="headerlink" href="#plotting-raw-curves" title="Permalink to this heading">¶</a></h3>
 <p>If there are very few curves and they are not too “rugged”, they can be plotted directly through the parameter <code class="docutils literal notranslate"><span class="pre">error_representation=&quot;raw_curves&quot;</span></code>. In deep blue is plotted the mean curve, averaged over the training and in light blue are the inidividual curves for each training.  We give here an example of the plot of the entropy loss function for stablebaselines3 PPO agent on CartPole-v1 environment.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.envs</span> <span class="kn">import</span> <span class="n">gym_make</span>
-<span class="kn">from</span> <span class="nn">stable_baselines3</span> <span class="kn">import</span> <span class="n">PPO</span>
-<span class="kn">from</span> <span class="nn">rlberry.agents.stable_baselines</span> <span class="kn">import</span> <span class="n">StableBaselinesAgent</span>
-<span class="kn">from</span> <span class="nn">rlberry.manager</span> <span class="kn">import</span> <span class="n">ExperimentManager</span><span class="p">,</span> <span class="n">plot_writer_data</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.envs</span><span class="w"> </span><span class="kn">import</span> <span class="n">gym_make</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">stable_baselines3</span><span class="w"> </span><span class="kn">import</span> <span class="n">PPO</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.agents.stable_baselines</span><span class="w"> </span><span class="kn">import</span> <span class="n">StableBaselinesAgent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExperimentManager</span><span class="p">,</span> <span class="n">plot_writer_data</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
 <span class="n">env_ctor</span><span class="p">,</span> <span class="n">env_kwargs</span> <span class="o">=</span> <span class="n">gym_make</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">)</span>
 
@@ -256,11 +256,11 @@
 <section id="visualization-of-evaluations-of-trained-agents-in-rlberry">
 <h2>Visualization of evaluations of trained agents in rlberry<a class="headerlink" href="#visualization-of-evaluations-of-trained-agents-in-rlberry" title="Permalink to this heading">¶</a></h2>
 <p>Once agents are trained, you may want to compare their evaluations on environments. This is done through <a class="reference internal" href="../../generated/rlberry.manager.evaluate_agents.html#rlberry.manager.evaluate_agents" title="rlberry.manager.evaluate_agents"><code class="xref py py-mod docutils literal notranslate"><span class="pre">rlberry.manager.evaluate_agents</span></code></a>, this function takes as input a list of <a class="reference internal" href="../../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager"><code class="xref py py-mod docutils literal notranslate"><span class="pre">rlberry.manager.ExperimentManager</span></code></a> and plot the boxplots of the evaluations of each agent. If there are several fits for the agent in the experiment manager, an agent is chosen at random at each iteration (you can use the parameter <code class="docutils literal notranslate"><span class="pre">choose_random_agents</span></code> to change this behavior).</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.agents.stable_baselines</span> <span class="kn">import</span> <span class="n">StableBaselinesAgent</span>
-<span class="kn">from</span> <span class="nn">stable_baselines3</span> <span class="kn">import</span> <span class="n">PPO</span><span class="p">,</span> <span class="n">A2C</span>
-<span class="kn">from</span> <span class="nn">rlberry.manager</span> <span class="kn">import</span> <span class="n">ExperimentManager</span><span class="p">,</span> <span class="n">evaluate_agents</span>
-<span class="kn">from</span> <span class="nn">rlberry.envs</span> <span class="kn">import</span> <span class="n">gym_make</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.agents.stable_baselines</span><span class="w"> </span><span class="kn">import</span> <span class="n">StableBaselinesAgent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">stable_baselines3</span><span class="w"> </span><span class="kn">import</span> <span class="n">PPO</span><span class="p">,</span> <span class="n">A2C</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExperimentManager</span><span class="p">,</span> <span class="n">evaluate_agents</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.envs</span><span class="w"> </span><span class="kn">import</span> <span class="n">gym_make</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
 <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;A2C&quot;</span><span class="p">,</span> <span class="s2">&quot;PPO&quot;</span><span class="p">]</span>
 <span class="n">managers</span> <span class="o">=</span> <span class="p">[</span>

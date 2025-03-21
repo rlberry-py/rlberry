@@ -115,10 +115,10 @@
       <div class="sk-page-content container-fluid body px-md-3" role="main">
         
   <h1>Source code for rlberry.manager.evaluation</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
 <span class="c1"># import numpy as np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
 <span class="c1"># from pathlib import Path</span>
 <span class="c1"># from datetime import datetime</span>
@@ -127,14 +127,14 @@
 <span class="c1"># import _pickle as cPickle</span>
 <span class="c1"># import dill</span>
 
-<span class="kn">from</span> <span class="nn">rlberry.manager</span> <span class="kn">import</span> <span class="n">ExperimentManager</span>
-<span class="kn">from</span> <span class="nn">rlberry.utils</span> <span class="kn">import</span> <span class="n">loading_tools</span>
-<span class="kn">import</span> <span class="nn">rlberry</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExperimentManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">loading_tools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">rlberry</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">rlberry</span><span class="o">.</span><span class="n">logger</span>
 
 
-<div class="viewcode-block" id="evaluate_agents"><a class="viewcode-back" href="../../../generated/rlberry.manager.evaluate_agents.html#rlberry.manager.evaluate_agents">[docs]</a><span class="k">def</span> <span class="nf">evaluate_agents</span><span class="p">(</span>
+<div class="viewcode-block" id="evaluate_agents"><a class="viewcode-back" href="../../../generated/rlberry.manager.evaluate_agents.html#rlberry.manager.evaluate_agents">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">evaluate_agents</span><span class="p">(</span>
     <span class="n">experiment_manager_list</span><span class="p">,</span>
     <span class="n">n_simulations</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
     <span class="n">choose_random_agents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -249,7 +249,7 @@
     <span class="k">return</span> <span class="n">output</span></div>
 
 
-<span class="k">def</span> <span class="nf">_preprocess_list_datasource_str</span><span class="p">(</span><span class="n">data_source</span><span class="p">,</span> <span class="n">many_agent_by_str_datasource</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_preprocess_list_datasource_str</span><span class="p">(</span><span class="n">data_source</span><span class="p">,</span> <span class="n">many_agent_by_str_datasource</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get a list of ExperimentManager from a data_source that is a list of &#39;str&#39;</span>
 
@@ -278,7 +278,7 @@
     <span class="k">return</span> <span class="n">experiment_manager_list</span>
 
 
-<span class="k">def</span> <span class="nf">_preprocess_not_a_list_datasource_str</span><span class="p">(</span><span class="n">data_source</span><span class="p">,</span> <span class="n">many_agent_by_str_datasource</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_preprocess_not_a_list_datasource_str</span><span class="p">(</span><span class="n">data_source</span><span class="p">,</span> <span class="n">many_agent_by_str_datasource</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get a list of ExperimentManager from a data_source that is a &#39;str&#39;</span>
 
@@ -305,7 +305,7 @@
     <span class="k">return</span> <span class="n">experiment_manager_list</span>
 
 
-<span class="k">def</span> <span class="nf">_preprocess_list_datasource</span><span class="p">(</span><span class="n">data_source</span><span class="p">,</span> <span class="n">many_agent_by_str_datasource</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_preprocess_list_datasource</span><span class="p">(</span><span class="n">data_source</span><span class="p">,</span> <span class="n">many_agent_by_str_datasource</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get a list of ExperimentManager from a data_source that is a list (so a list of &#39;str&#39; or a list of &#39;ExperimentManager&#39;)</span>
 
@@ -325,7 +325,7 @@
     <span class="k">return</span> <span class="n">experiment_manager_list</span>
 
 
-<span class="k">def</span> <span class="nf">_preprocess_not_a_list_datasource</span><span class="p">(</span><span class="n">data_source</span><span class="p">,</span> <span class="n">many_agent_by_str_datasource</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_preprocess_not_a_list_datasource</span><span class="p">(</span><span class="n">data_source</span><span class="p">,</span> <span class="n">many_agent_by_str_datasource</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get a list of ExperimentManager from a data_source that is not a list (so a &#39;str&#39; or an &#39;ExperimentManager&#39;)</span>
 
@@ -345,7 +345,7 @@
     <span class="k">return</span> <span class="n">experiment_manager_list</span>
 
 
-<div class="viewcode-block" id="read_writer_data"><a class="viewcode-back" href="../../../generated/rlberry.manager.read_writer_data.html#rlberry.manager.read_writer_data">[docs]</a><span class="k">def</span> <span class="nf">read_writer_data</span><span class="p">(</span>
+<div class="viewcode-block" id="read_writer_data"><a class="viewcode-back" href="../../../generated/rlberry.manager.read_writer_data.html#rlberry.manager.read_writer_data">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">read_writer_data</span><span class="p">(</span>
     <span class="n">data_source</span><span class="p">,</span>
     <span class="n">many_agent_by_str_datasource</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">preprocess_tag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>

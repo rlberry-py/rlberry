@@ -135,11 +135,11 @@
 <h2>how to save an experiment?<a class="headerlink" href="#how-to-save-an-experiment" title="Permalink to this heading">¶</a></h2>
 <p>To save your experiment, you have to train it first (with <code class="docutils literal notranslate"><span class="pre">fit()</span></code>), then you just have to use the <code class="docutils literal notranslate"><span class="pre">save()</span></code> function.</p>
 <p>Train the Agent :</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.envs</span> <span class="kn">import</span> <span class="n">gym_make</span>
-<span class="kn">from</span> <span class="nn">rlberry_scool.agents.tabular_rl</span> <span class="kn">import</span> <span class="n">QLAgent</span>
-<span class="kn">from</span> <span class="nn">rlberry.manager</span> <span class="kn">import</span> <span class="n">ExperimentManager</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.envs</span><span class="w"> </span><span class="kn">import</span> <span class="n">gym_make</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry_scool.agents.tabular_rl</span><span class="w"> </span><span class="kn">import</span> <span class="n">QLAgent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExperimentManager</span>
 
-<span class="kn">from</span> <span class="nn">rlberry.seeding</span> <span class="kn">import</span> <span class="n">Seeder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.seeding</span><span class="w"> </span><span class="kn">import</span> <span class="n">Seeder</span>
 
 <span class="n">seeder</span> <span class="o">=</span> <span class="n">Seeder</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>  <span class="c1"># seeder initialization</span>
 
@@ -209,9 +209,9 @@ At the end of the fit, the data of this experiment are saved automatically. It w
 <li><p>Locate the file you want to load (you can use the tool function <code class="docutils literal notranslate"><span class="pre">get_single_path_of_most_recently_trained_experiment_manager_obj_from_path</span></code> to get the most recently saved <code class="docutils literal notranslate"><span class="pre">manager_obj.pickle</span></code> from a folder)</p></li>
 <li><p>use the function <code class="docutils literal notranslate"><span class="pre">load()</span></code> from the class <a class="reference internal" href="../../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager.load" title="rlberry.manager.ExperimentManager.load"><span class="xref myst py py-meth">ExperimentManager</span></a>.</p></li>
 </ul>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.envs</span> <span class="kn">import</span> <span class="n">gym_make</span>
-<span class="kn">from</span> <span class="nn">rlberry.manager.experiment_manager</span> <span class="kn">import</span> <span class="n">ExperimentManager</span>
-<span class="kn">from</span> <span class="nn">rlberry.utils</span> <span class="kn">import</span> <span class="n">loading_tools</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.envs</span><span class="w"> </span><span class="kn">import</span> <span class="n">gym_make</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.manager.experiment_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExperimentManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">loading_tools</span>
 
 
 <span class="n">path_to_load</span> <span class="o">=</span> <span class="n">loading_tools</span><span class="o">.</span><span class="n">get_single_path_of_most_recently_trained_experiment_manager_obj_from_path</span><span class="p">(</span>
@@ -285,9 +285,9 @@ Success!
 <section id="save-the-agent">
 <h3>Save the agent<a class="headerlink" href="#save-the-agent" title="Permalink to this heading">¶</a></h3>
 <p>To save an agent, you just have to call the method <code class="docutils literal notranslate"><span class="pre">save(&quot;output_dir_path&quot;)</span></code> of your train agent. Be careful, only the agent is save (not the training env)!</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.envs</span> <span class="kn">import</span> <span class="n">gym_make</span>
-<span class="kn">from</span> <span class="nn">rlberry_scool.agents.tabular_rl</span> <span class="kn">import</span> <span class="n">QLAgent</span>
-<span class="kn">from</span> <span class="nn">rlberry.seeding</span> <span class="kn">import</span> <span class="n">Seeder</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.envs</span><span class="w"> </span><span class="kn">import</span> <span class="n">gym_make</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry_scool.agents.tabular_rl</span><span class="w"> </span><span class="kn">import</span> <span class="n">QLAgent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.seeding</span><span class="w"> </span><span class="kn">import</span> <span class="n">Seeder</span>
 
 <span class="n">seeder</span> <span class="o">=</span> <span class="n">Seeder</span><span class="p">(</span><span class="mi">500</span><span class="p">)</span>  <span class="c1"># seeder initialization</span>
 <span class="n">env_seed_max_value</span> <span class="o">=</span> <span class="mi">500</span>

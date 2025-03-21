@@ -206,20 +206,26 @@ If seeder, use seeder.seed_seq</p>
 <dd><p>Generates a single random sample this space.</p>
 <dl class="simple">
 <dt>Args:</dt><dd><dl class="simple">
-<dt>mask: An optional mask for multi-discrete, expects tuples with a <cite>np.ndarray</cite> mask in the position of each</dt><dd><p>action with shape <cite>(n,)</cite> where <cite>n</cite> is the number of actions and <cite>dtype=np.int8</cite>.
-Only mask values == 1 are possible to sample unless all mask values for an action are 0 then the default action <cite>self.start</cite> (the smallest element) is sampled.</p>
+<dt>mask: An optional mask for multi-discrete, expects tuples with a <code class="docutils literal notranslate"><span class="pre">np.ndarray</span></code> mask in the position of each</dt><dd><p>action with shape <code class="docutils literal notranslate"><span class="pre">(n,)</span></code> where <code class="docutils literal notranslate"><span class="pre">n</span></code> is the number of actions and <code class="docutils literal notranslate"><span class="pre">dtype=np.int8</span></code>.
+Only <code class="docutils literal notranslate"><span class="pre">mask</span> <span class="pre">values</span> <span class="pre">==</span> <span class="pre">1</span></code> are possible to sample unless all mask values for an action are <code class="docutils literal notranslate"><span class="pre">0</span></code> then the default action <code class="docutils literal notranslate"><span class="pre">self.start</span></code> (the smallest element) is sampled.</p>
 </dd>
 </dl>
 </dd>
-<dt>Returns:</dt><dd><p>An <cite>np.ndarray</cite> of shape <cite>space.shape</cite></p>
+<dt>Returns:</dt><dd><p>An <code class="docutils literal notranslate"><span class="pre">np.ndarray</span></code> of <code class="xref py py-meth docutils literal notranslate"><span class="pre">Space.shape()</span></code></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="rlberry.spaces.MultiDiscrete.seed">
-<span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#rlberry.spaces.MultiDiscrete.seed" title="Permalink to this definition">¶</a></dt>
-<dd><p>Seed the PRNG of this space and possibly the PRNGs of subspaces.</p>
+<span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#rlberry.spaces.MultiDiscrete.seed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Seed the pseudorandom number generator (PRNG) of this space and, if applicable, the PRNGs of subspaces.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>seed: The seed value for the space. This is expanded for composite spaces to accept multiple values. For further details, please refer to the space’s documentation.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The seed values used for all the PRNGs, for composite spaces this can be a tuple or dictionary of values.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">

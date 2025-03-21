@@ -149,12 +149,12 @@
 </div>
 </li>
 <li><p>Install the development dependencies and activate the venv</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>install<span class="w"> </span>--with<span class="w"> </span>dev,doc,torch,extras<span class="w"> </span>--sync
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>sync<span class="w"> </span>--with<span class="w"> </span>dev,doc,torch,extras
 poetry<span class="w"> </span>shell<span class="w"> </span><span class="c1">#this will activate the venv, all the following commands will be executed in it.</span>
 </pre></div>
 </div>
 <p>alternatively you can also use</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>install<span class="w"> </span>--with<span class="w"> </span>dev,doc,torch,extras<span class="w"> </span>--sync
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>sync<span class="w"> </span>--with<span class="w"> </span>dev,doc,torch,extras
 poetry<span class="w"> </span>run<span class="w"> </span>yourcommandhere<span class="w"> </span><span class="c1">#e.g. poetry run python script.py</span>
 </pre></div>
 </div>

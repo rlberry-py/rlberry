@@ -115,19 +115,19 @@
       <div class="sk-page-content container-fluid body px-md-3" role="main">
         
   <h1>Source code for rlberry.wrappers.gym_utils</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
-<span class="kn">from</span> <span class="nn">gymnasium.utils.step_api_compatibility</span> <span class="kn">import</span> <span class="n">step_api_compatibility</span>
-<span class="kn">from</span> <span class="nn">rlberry.spaces</span> <span class="kn">import</span> <span class="n">Discrete</span>
-<span class="kn">from</span> <span class="nn">rlberry.spaces</span> <span class="kn">import</span> <span class="n">Box</span>
-<span class="kn">from</span> <span class="nn">rlberry.spaces</span> <span class="kn">import</span> <span class="n">Tuple</span>
-<span class="kn">from</span> <span class="nn">rlberry.spaces</span> <span class="kn">import</span> <span class="n">MultiDiscrete</span>
-<span class="kn">from</span> <span class="nn">rlberry.spaces</span> <span class="kn">import</span> <span class="n">MultiBinary</span>
-<span class="kn">from</span> <span class="nn">rlberry.spaces</span> <span class="kn">import</span> <span class="n">Dict</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.utils.step_api_compatibility</span><span class="w"> </span><span class="kn">import</span> <span class="n">step_api_compatibility</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.spaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">Discrete</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.spaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">Box</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.spaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.spaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiDiscrete</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.spaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiBinary</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.spaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span>
 
-<span class="kn">from</span> <span class="nn">rlberry.envs</span> <span class="kn">import</span> <span class="n">Wrapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.envs</span><span class="w"> </span><span class="kn">import</span> <span class="n">Wrapper</span>
 
 
-<span class="k">def</span> <span class="nf">convert_space_from_gym</span><span class="p">(</span><span class="n">gym_space</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_space_from_gym</span><span class="p">(</span><span class="n">gym_space</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gym_space</span><span class="p">,</span> <span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Discrete</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">Discrete</span><span class="p">(</span><span class="n">gym_space</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
     <span class="c1">#</span>
@@ -160,22 +160,22 @@
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unknown space class: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">gym_space</span><span class="p">)))</span>
 
 
-<div class="viewcode-block" id="OldGymCompatibilityWrapper"><a class="viewcode-back" href="../../../generated/rlberry.wrappers.gym_utils.OldGymCompatibilityWrapper.html#rlberry.wrappers.gym_utils.OldGymCompatibilityWrapper">[docs]</a><span class="k">class</span> <span class="nc">OldGymCompatibilityWrapper</span><span class="p">(</span><span class="n">Wrapper</span><span class="p">):</span>
+<div class="viewcode-block" id="OldGymCompatibilityWrapper"><a class="viewcode-back" href="../../../generated/rlberry.wrappers.gym_utils.OldGymCompatibilityWrapper.html#rlberry.wrappers.gym_utils.OldGymCompatibilityWrapper">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">OldGymCompatibilityWrapper</span><span class="p">(</span><span class="n">Wrapper</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Allow to use old gym env (V0.21) with rlberry (gymnasium).</span>
 <span class="sd">    (for basic use only)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">):</span>
         <span class="n">Wrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
 
-<div class="viewcode-block" id="OldGymCompatibilityWrapper.reset"><a class="viewcode-back" href="../../../generated/rlberry.wrappers.gym_utils.OldGymCompatibilityWrapper.html#rlberry.wrappers.gym_utils.OldGymCompatibilityWrapper.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="OldGymCompatibilityWrapper.reset"><a class="viewcode-back" href="../../../generated/rlberry.wrappers.gym_utils.OldGymCompatibilityWrapper.html#rlberry.wrappers.gym_utils.OldGymCompatibilityWrapper.reset">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">seed</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reseed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
         <span class="n">observation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">observation</span><span class="p">,</span> <span class="p">{}</span></div>
 
-<div class="viewcode-block" id="OldGymCompatibilityWrapper.step"><a class="viewcode-back" href="../../../generated/rlberry.wrappers.gym_utils.OldGymCompatibilityWrapper.html#rlberry.wrappers.gym_utils.OldGymCompatibilityWrapper.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+<div class="viewcode-block" id="OldGymCompatibilityWrapper.step"><a class="viewcode-back" href="../../../generated/rlberry.wrappers.gym_utils.OldGymCompatibilityWrapper.html#rlberry.wrappers.gym_utils.OldGymCompatibilityWrapper.step">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
         <span class="n">obs</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">step_api_compatibility</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">),</span> <span class="n">output_truncation_bool</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>

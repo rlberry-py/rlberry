@@ -134,10 +134,10 @@
 <section id="comparison-of-a2c-and-ppo-from-stable-baselines3">
 <h2>Comparison of A2C and PPO from stable-baselines3<a class="headerlink" href="#comparison-of-a2c-and-ppo-from-stable-baselines3" title="Permalink to this heading">¶</a></h2>
 <p>Below, we compare A2C and PPO agents from stable-baselines3 on Acrobot environment. We limit the maximum number of trainings for each agent to <span class="math notranslate nohighlight">\(5\times 5 = 25\)</span>, using <span class="math notranslate nohighlight">\(5\)</span> batches of size <span class="math notranslate nohighlight">\(5\)</span>. We ask that the resulting test has a level of <span class="math notranslate nohighlight">\(99%\)</span> (i.e. the probability to wrongly say that the agents are different is <span class="math notranslate nohighlight">\(1%\)</span>).</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.envs</span> <span class="kn">import</span> <span class="n">gym_make</span>
-<span class="kn">from</span> <span class="nn">stable_baselines3</span> <span class="kn">import</span> <span class="n">A2C</span><span class="p">,</span> <span class="n">PPO</span>
-<span class="kn">from</span> <span class="nn">rlberry.agents.stable_baselines</span> <span class="kn">import</span> <span class="n">StableBaselinesAgent</span>
-<span class="kn">from</span> <span class="nn">rlberry.manager</span> <span class="kn">import</span> <span class="n">AdastopComparator</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.envs</span><span class="w"> </span><span class="kn">import</span> <span class="n">gym_make</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">stable_baselines3</span><span class="w"> </span><span class="kn">import</span> <span class="n">A2C</span><span class="p">,</span> <span class="n">PPO</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.agents.stable_baselines</span><span class="w"> </span><span class="kn">import</span> <span class="n">StableBaselinesAgent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">AdastopComparator</span>
 
 <span class="n">env_ctor</span><span class="p">,</span> <span class="n">env_kwargs</span> <span class="o">=</span> <span class="n">gym_make</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">)</span>
 

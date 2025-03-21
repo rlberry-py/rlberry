@@ -244,9 +244,9 @@ match with current rlberry version.</p>
 <p>If parallelization=”process” and mp_context=”spawn” or mp_context=”forkserver”, make sure your main code
 has a guard <cite>if __name__ == ‘__main__’</cite>. See <a class="reference external" href="https://docs.python.org/3/library/multiprocessing.html#multiprocessing-programming">https://docs.python.org/3/library/multiprocessing.html#multiprocessing-programming</a>.</p>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">rlberry.agents.torch</span> <span class="kn">import</span> <span class="n">A2CAgent</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">rlberry.envs</span> <span class="kn">import</span> <span class="n">gym_make</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">rlberry.manager</span> <span class="kn">import</span> <span class="n">ExperimentManager</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.agents.torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">A2CAgent</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.envs</span><span class="w"> </span><span class="kn">import</span> <span class="n">gym_make</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExperimentManager</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">manager</span> <span class="o">=</span> <span class="n">ExperimentManager</span><span class="p">(</span>
 <span class="gp">&gt;&gt;&gt; </span>     <span class="n">A2CAgent</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>     <span class="p">(</span><span class="n">env_ctor</span><span class="p">,</span> <span class="n">env_kwargs</span><span class="p">),</span>
@@ -375,7 +375,7 @@ will be chosen randomly for evaluation.</p>
 <p>The ‘verbose’ parameter determines whether a progress report will be printed during the
 evaluation process.</p>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">rlberry.agents</span> <span class="kn">import</span> <span class="n">ExperimentManager</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExperimentManager</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">eval_kwargs</span> <span class="o">=</span> <span class="p">{</span>
 <span class="go">    &#39;horizon&#39;: 1000,</span>
 <span class="go">    &#39;n_simulations&#39;: 10,</span>

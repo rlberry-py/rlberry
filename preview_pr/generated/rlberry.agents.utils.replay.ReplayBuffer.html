@@ -178,9 +178,9 @@ by setting sampling_mode=”prioritized” in the <a class="reference internal" 
 <p>For prioritized experience replay, code was adapted from
 <a class="reference external" href="https://github.com/openai/baselines/blob/master/baselines/deepq/replay_buffer.py">https://github.com/openai/baselines/blob/master/baselines/deepq/replay_buffer.py</a></p>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">rlberry.agents.utils</span> <span class="kn">import</span> <span class="n">replay</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">rlberry.envs</span> <span class="kn">import</span> <span class="n">gym_make</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.agents.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">replay</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.envs</span><span class="w"> </span><span class="kn">import</span> <span class="n">gym_make</span>
 <span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">buffer</span> <span class="o">=</span> <span class="n">replay</span><span class="o">.</span><span class="n">ReplayBuffer</span><span class="p">(</span><span class="mi">100_000</span><span class="p">,</span> <span class="n">rng</span><span class="p">)</span>

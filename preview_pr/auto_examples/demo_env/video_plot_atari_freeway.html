@@ -128,13 +128,13 @@ to download the full example code</p>
 <p>Illustration of the training and video rendering of DQN Agent in
 ATARI Freeway environment.</p>
 <p>Agent is slightly tuned, but not optimal. This is just for illustration purpose.</p>
-<video controls="True" preload="auto" width="600"><source src="../../video_plot_atari_freeway.mp4" type="video/mp4"></video><div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.manager</span> <span class="kn">import</span> <a href="../../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ExperimentManager</span></a>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
-<span class="kn">from</span> <span class="nn">rlberry_research.agents.torch.dqn.dqn</span> <span class="kn">import</span> <span class="n">DQNAgent</span>
-<span class="kn">from</span> <span class="nn">gymnasium.wrappers.record_video</span> <span class="kn">import</span> <span class="n">RecordVideo</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">rlberry.envs.gym_make</span> <span class="kn">import</span> <a href="../../generated/rlberry.envs.atari_make.html#rlberry.envs.atari_make" title="rlberry.envs.atari_make" class="sphx-glr-backref-module-rlberry-envs sphx-glr-backref-type-py-function"><span class="n">atari_make</span></a>
+<video controls="True" preload="auto" width="600"><source src="../../video_plot_atari_freeway.mp4" type="video/mp4"></video><div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.manager</span><span class="w"> </span><span class="kn">import</span> <a href="../../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ExperimentManager</span></a>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry_research.agents.torch.dqn.dqn</span><span class="w"> </span><span class="kn">import</span> <span class="n">DQNAgent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers.rendering</span><span class="w"> </span><span class="kn">import</span> <span class="n">RecordVideo</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.envs.gym_make</span><span class="w"> </span><span class="kn">import</span> <a href="../../generated/rlberry.envs.atari_make.html#rlberry.envs.atari_make" title="rlberry.envs.atari_make" class="sphx-glr-backref-module-rlberry-envs sphx-glr-backref-type-py-function"><span class="n">atari_make</span></a>
 
 
 <span class="n">initial_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>

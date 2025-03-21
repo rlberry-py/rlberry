@@ -142,29 +142,29 @@ time you fitted the agent will automatically be loaded. See
 <li><img src="../_images/sphx_glr_plot_writer_wrapper_001.png" srcset="../_images/sphx_glr_plot_writer_wrapper_001.png" alt="Cumulative Reward" class = "sphx-glr-multi-img"/></li>
 <li><img src="../_images/sphx_glr_plot_writer_wrapper_002.png" srcset="../_images/sphx_glr_plot_writer_wrapper_002.png" alt="Cumulative Reward" class = "sphx-glr-multi-img"/></li>
 </ul>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[INFO] 08:26: ... trained!
-[INFO] 08:26: Saved ExperimentManager(UCBVIAgent) using pickle.
-[INFO] 08:26: The ExperimentManager was saved in : &#39;rlberry_data/temp/manager_data/UCBVIAgent_2024-10-25_08-26-14_1c0c2547/manager_obj.pickle&#39;
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[INFO] 16:36: ... trained!
+[INFO] 16:36: Saved ExperimentManager(UCBVIAgent) using pickle.
+[INFO] 16:36: The ExperimentManager was saved in : &#39;rlberry_data/temp/manager_data/UCBVIAgent_2025-03-21_16-36-23_55cdf421/manager_obj.pickle&#39;
 </pre></div>
 </div>
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
-<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">rlberry_scool.envs</span> <span class="kn">import</span> <span class="n">GridWorld</span>
-<span class="kn">from</span> <span class="nn">rlberry.manager</span> <span class="kn">import</span> <a href="../generated/rlberry.manager.plot_writer_data.html#rlberry.manager.plot_writer_data" title="rlberry.manager.plot_writer_data" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-function"><span class="n">plot_writer_data</span></a><span class="p">,</span> <a href="../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-class"><span class="n">ExperimentManager</span></a>
-<span class="kn">from</span> <span class="nn">rlberry_scool.agents</span> <span class="kn">import</span> <a href="../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">UCBVIAgent</span></a>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry_scool.envs</span><span class="w"> </span><span class="kn">import</span> <span class="n">GridWorld</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.manager</span><span class="w"> </span><span class="kn">import</span> <a href="../generated/rlberry.manager.plot_writer_data.html#rlberry.manager.plot_writer_data" title="rlberry.manager.plot_writer_data" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-function"><span class="n">plot_writer_data</span></a><span class="p">,</span> <a href="../generated/rlberry.manager.ExperimentManager.html#rlberry.manager.ExperimentManager" title="rlberry.manager.ExperimentManager" class="sphx-glr-backref-module-rlberry-manager sphx-glr-backref-type-py-class"><span class="n">ExperimentManager</span></a>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry_scool.agents</span><span class="w"> </span><span class="kn">import</span> <a href="../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">UCBVIAgent</span></a>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
 <span class="c1"># We wrape the default writer of the agent in a WriterWrapper</span>
 <span class="c1"># to record rewards.</span>
 
 
-<span class="k">class</span> <span class="nc">VIAgent</span><span class="p">(</span><a href="../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">UCBVIAgent</span></a><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VIAgent</span><span class="p">(</span><a href="../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">UCBVIAgent</span></a><span class="p">):</span>
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;UCBVIAgent&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <a href="../generated/rlberry.agents.AgentWithSimplePolicy.html#rlberry.agents.AgentWithSimplePolicy" title="rlberry.agents.AgentWithSimplePolicy" class="sphx-glr-backref-module-rlberry-agents sphx-glr-backref-type-py-class"><span class="n">UCBVIAgent</span></a><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">writer_extra</span><span class="o">=</span><span class="s2">&quot;reward&quot;</span><span class="p">,</span> <span class="n">horizon</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 
@@ -185,7 +185,7 @@ time you fitted the agent will automatically be loaded. See
 
 
 <span class="c1"># We use the following preprocessing function to plot the cumulative reward.</span>
-<span class="k">def</span> <span class="nf">compute_reward</span><span class="p">(</span><span class="n">rewards</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_reward</span><span class="p">(</span><span class="n">rewards</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">rewards</span><span class="p">)</span>
 
 
@@ -211,7 +211,7 @@ time you fitted the agent will automatically be loaded. See
 <span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 3.115 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 3.102 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-plot-writer-wrapper-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/451b8c16c365b401531cc14d86dea3ef/plot_writer_wrapper.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_writer_wrapper.py</span></code></a></p>

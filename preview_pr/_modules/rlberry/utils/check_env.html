@@ -115,15 +115,15 @@
       <div class="sk-page-content container-fluid body px-md-3" role="main">
         
   <h1>Source code for rlberry.utils.check_env</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">rlberry.seeding</span> <span class="kn">import</span> <span class="n">safe_reseed</span>
-<span class="kn">from</span> <span class="nn">rlberry.seeding</span> <span class="kn">import</span> <span class="n">Seeder</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">rlberry.utils.check_gym_env</span> <span class="kn">import</span> <span class="n">check_gym_env</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.seeding</span><span class="w"> </span><span class="kn">import</span> <span class="n">safe_reseed</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.seeding</span><span class="w"> </span><span class="kn">import</span> <span class="n">Seeder</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.utils.check_gym_env</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_gym_env</span>
 
 <span class="n">seeder</span> <span class="o">=</span> <span class="n">Seeder</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="check_env"><a class="viewcode-back" href="../../../generated/rlberry.utils.check_env.html#rlberry.utils.check_env">[docs]</a><span class="k">def</span> <span class="nf">check_env</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+<div class="viewcode-block" id="check_env"><a class="viewcode-back" href="../../../generated/rlberry.utils.check_env.html#rlberry.utils.check_env">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">check_env</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Check that the environment is (almost) gym-compatible and that it is reproducible</span>
 <span class="sd">    in the sense that it returns the same states when given the same seed.</span>
@@ -153,7 +153,7 @@
     <span class="n">check_gym_env</span><span class="p">(</span><span class="n">env</span><span class="p">)</span></div>
 
 
-<span class="k">def</span> <span class="nf">check_rlberry_env</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_rlberry_env</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Companion to check_env, contains additional tests. It is not mandatory</span>
 <span class="sd">    for an environment to satisfy this check but satisfying this check give access to</span>

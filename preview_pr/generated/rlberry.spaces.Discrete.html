@@ -209,8 +209,8 @@ If seeder, use seeder.seed_seq</p>
 <p>A sample will be chosen uniformly at random with the mask if provided</p>
 <dl class="simple">
 <dt>Args:</dt><dd><dl class="simple">
-<dt>mask: An optional mask for if an action can be selected.</dt><dd><p>Expected <cite>np.ndarray</cite> of shape <cite>(n,)</cite> and dtype <cite>np.int8</cite> where <cite>1</cite> represents valid actions and <cite>0</cite> invalid / infeasible actions.
-If there are no possible actions (i.e. <cite>np.all(mask == 0)</cite>) then <cite>space.start</cite> will be returned.</p>
+<dt>mask: An optional mask for if an action can be selected.</dt><dd><p>Expected <cite>np.ndarray</cite> of shape <code class="docutils literal notranslate"><span class="pre">(n,)</span></code> and dtype <code class="docutils literal notranslate"><span class="pre">np.int8</span></code> where <code class="docutils literal notranslate"><span class="pre">1</span></code> represents valid actions and <code class="docutils literal notranslate"><span class="pre">0</span></code> invalid / infeasible actions.
+If there are no possible actions (i.e. <code class="docutils literal notranslate"><span class="pre">np.all(mask</span> <span class="pre">==</span> <span class="pre">0)</span></code>) then <code class="docutils literal notranslate"><span class="pre">space.start</span></code> will be returned.</p>
 </dd>
 </dl>
 </dd>
@@ -221,8 +221,14 @@ If there are no possible actions (i.e. <cite>np.all(mask == 0)</cite>) then <cit
 
 <dl class="py method">
 <dt class="sig sig-object py" id="rlberry.spaces.Discrete.seed">
-<span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#rlberry.spaces.Discrete.seed" title="Permalink to this definition">¶</a></dt>
-<dd><p>Seed the PRNG of this space and possibly the PRNGs of subspaces.</p>
+<span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#rlberry.spaces.Discrete.seed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Seed the pseudorandom number generator (PRNG) of this space and, if applicable, the PRNGs of subspaces.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>seed: The seed value for the space. This is expanded for composite spaces to accept multiple values. For further details, please refer to the space’s documentation.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The seed values used for all the PRNGs, for composite spaces this can be a tuple or dictionary of values.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">

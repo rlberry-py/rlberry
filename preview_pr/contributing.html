@@ -145,7 +145,7 @@ issue and other information as needed).</p></li>
 <p>Please read the rest of this page for more information on how to contribute to
 rlberry and look at our <a class="reference internal" href="beginner_dev_guide.html#dev-guide"><span class="std std-ref">beginner developer guide</span></a> if you have questions
 about how to use git, do PR or for more informations about the documentation.</p>
-<p>For a PR to be accepted it must pass all the tests when the label ‘ready for review’ is set in the PR. The label ‘ready for review’ trigger additional tests to be done on the PR and should be set when the PR is ready.</p>
+<p>For a PR to be accepted it must pass all the tests when the label ‘ready for CI’ is set in the PR. The label ‘ready for CI’ trigger additional tests to be done on the PR and should be set when the PR is ready.</p>
 <section id="documentation">
 <h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this heading">¶</a></h2>
 <p>We are glad to accept any sort of documentation: function docstrings, reStructuredText or markdown documents (like this one), tutorials, examples, etc. reStructuredText and markdown documents live in the source code repository under the docs/ directory.</p>
@@ -154,7 +154,7 @@ about how to use git, do PR or for more informations about the documentation.</p
 <p>In the following section, we assume that you are in the main rlberry directory.</p>
 <p>Building the documentation requires installing some additional packages:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-sSL<span class="w"> </span>https://install.python-poetry.org<span class="w"> </span><span class="p">|</span><span class="w"> </span>python3<span class="w"> </span>-
-poetry<span class="w"> </span>install<span class="w"> </span>--with<span class="w"> </span>dev,doc,torch,extras<span class="w"> </span>--sync
+poetry<span class="w"> </span>sync<span class="w"> </span>--with<span class="w"> </span>dev,doc,torch,extras
 </pre></div>
 </div>
 <p>To build the documentation, you need to be in the docs folder:</p>
@@ -199,7 +199,7 @@ poetry<span class="w"> </span>install<span class="w"> </span>--with<span class="
 than <code class="docutils literal notranslate"><span class="pre">print()</span></code>.</p></li>
 <li><p>The desired level of verbosity can be chosen by calling <code class="docutils literal notranslate"><span class="pre">set_level</span></code>, e.g.:</p></li>
 </ul>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rlberry.utils.logging</span> <span class="kn">import</span> <span class="n">set_level</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.utils.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_level</span>
 
 <span class="n">set_level</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="s2">&quot;DEBUG&quot;</span><span class="p">)</span>
 <span class="n">set_level</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="s2">&quot;INFO&quot;</span><span class="p">)</span>
