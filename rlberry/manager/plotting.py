@@ -3,21 +3,15 @@ import numpy as np
 from itertools import cycle
 import numbers
 from scipy.stats import norm
+from scipy.ndimage import gaussian_filter1d
+from scipy.spatial.distance import pdist
+
 import pandas as pd
 
 from rlberry.manager import read_writer_data
 
-try:
-    from skfda.representation.grid import FDataGrid
-    from skfda.misc.hat_matrix import NadarayaWatsonHatMatrix
-    from skfda.preprocessing.smoothing import KernelSmoother
-    from skfda.preprocessing.smoothing.validation import SmoothingParameterSearch
-
-    SKFDA_INSTALLED = True
-except Exception as ex:
-    SKFDA_INSTALLED = False
-
 import rlberry
+import time
 
 logger = rlberry.logger
 
@@ -305,9 +299,7 @@ def plot_smoothed_curves(
         [2] scikit-fda, Carlos Ramos Carreño, hzzhyj, mellamansanchez, Pablo Marcos, pedrorponga, David del Val, Pablo, David García Fernández, Martín, Miguel Carbajo Berrocal, ElenaPetrunina, Pablo Cuesta Sierra, Rafa Hidalgo, Clément Lejeune, amandaher, dSerna4, ego-thales, pedrog99, Jorge Duque, … Álvaro Castillo. (2023). GAA-UAM/scikit-fda: Version 0.9 (0.9). Zenodo. https://doi.org/10.5281/zenodo.10016930
 
     """
-    assert (
-        SKFDA_INSTALLED
-    ), "please install scikit-fda to use the smoothing functionality in rlberry"
+
     xlabel = x
     ylabel = y
     x_values = data[xlabel].values
@@ -329,58 +321,25 @@ def plot_smoothed_curves(
         Change shape and smooth the curves contained in the dataset df if necessary.
         """
         # Nadaraya-Watson kernel smoothing
-        # with cross validation bandwidth selection
-        if not isinstance(smoothing_bandwidth, numbers.Number):
-            if smoothing_bandwidth is None:
-                bandwidth = np.linspace(
-                    min_bandwidth_x, max((max_x - min_x) / 100, min_bandwidth_x * 3), 10
-                )
-            else:
-                bandwidth = smoothing_bandwidth
-            nw = SmoothingParameterSearch(
-                KernelSmoother(
-                    kernel_estimator=NadarayaWatsonHatMatrix(), output_points=xplot
-                ),
-                bandwidth,
-                param_name="kernel_estimator__bandwidth",
-            )
-            bw = False
-        else:
-            nw = KernelSmoother(
-                kernel_estimator=NadarayaWatsonHatMatrix(bandwidth=smoothing_bandwidth),
-                output_points=xplot,
-            )
-            bw = smoothing_bandwidth
-
-        Xhat = np.zeros([n_tot_simu, len(xplot)])
+        Yhat = np.zeros([n_tot_simu, len(xplot)])
+        bw = smoothing_bandwidth
         for f in range(n_tot_simu):
-            X = df_name.loc[df["n_simu"] == f, ylabel].values
+            Y = df_name.loc[df["n_simu"] == f, ylabel].values
             try:
-                np.isfinite(X)
+                np.isfinite(Y)
             except:
                 raise ValueError("non-finite (or non float) data detected.")
-            if not np.all(np.isfinite(X)):
+
+            if not np.all(np.isfinite(Y)):
                 logger.warning(
                     "Some of the values are not finite. Not plotting the associated curves."
                 )
-                Xhat[f] = np.nan
+                Yhat[f] = np.nan
             else:
-                X_grid = df_name.loc[df["n_simu"] == f, xlabel].values.astype(float)
-                fd = FDataGrid([X], X_grid, domain_range=((min_x, max_x),))
-
-                if bw is False:  # Find the smoothing bandwidth once
-                    nw.fit(fd)
-                    bw = nw.best_params_[
-                        "kernel_estimator__bandwidth"
-                    ]  # don't search for bandwidth in futur run, reuse
-                else:  # after the first one, just apply smoothing with the given smoothing
-                    nw = KernelSmoother(
-                        kernel_estimator=NadarayaWatsonHatMatrix(bandwidth=bw),
-                        output_points=xplot,
-                    )
-                    nw.fit(fd)
-                Xhat[f] = nw.transform(fd).data_matrix.ravel()  # apply smoothing
-        return Xhat
+                X = df_name.loc[df["n_simu"] == f, xlabel].values.astype(float)
+                nw = Smoothed_curve_NW(X, xplot, bandwidth=bw) 
+                Yhat[f] = nw.get_y_smoothed(Y)
+        return Yhat
 
     names = np.unique(data["name"])
 
@@ -648,3 +607,20 @@ def _prepare_ax(data, ax, linestyles):
         cmap = [plt.cm.gist_rainbow(i / len(names)) for i in range(len(names))]
 
     return ax, styles, cmap
+
+class Smoothed_curve_NW():
+    def __init__(self, X, xref,  bandwidth=None):
+        self.kernel = lambda x: np.exp(-x**2/2)
+        self.bandwidth = bandwidth
+        self.Hmatrix = self.H(X, xref)
+
+    def H(self, xi, xref):
+        D = (xi[:,None]-xref).T
+        bandwidth = float(np.percentile(D.ravel()[D.ravel()>0], 25)) if self.bandwidth is None else self.bandwidth
+        numerator = self.kernel(D / bandwidth)
+
+        return numerator / np.sum(numerator, axis=1)[:,np.newaxis]
+    
+    def get_y_smoothed(self, y):
+        return self.Hmatrix.dot(y)
+        
