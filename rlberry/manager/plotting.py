@@ -337,7 +337,7 @@ def plot_smoothed_curves(
                 Yhat[f] = np.nan
             else:
                 X = df_name.loc[df["n_simu"] == f, xlabel].values.astype(float)
-                nw = Smoothed_curve_NW(X, xplot, bandwidth=bw) 
+                nw = Smoothed_curve_NW(X, xplot, bandwidth=bw)
                 Yhat[f] = nw.get_y_smoothed(Y)
         return Yhat
 
@@ -608,19 +608,23 @@ def _prepare_ax(data, ax, linestyles):
 
     return ax, styles, cmap
 
-class Smoothed_curve_NW():
-    def __init__(self, X, xref,  bandwidth=None):
-        self.kernel = lambda x: np.exp(-x**2/2)
+
+class Smoothed_curve_NW:
+    def __init__(self, X, xref, bandwidth=None):
+        self.kernel = lambda x: np.exp(-(x**2) / 2)
         self.bandwidth = bandwidth
         self.Hmatrix = self.H(X, xref)
 
     def H(self, xi, xref):
-        D = (xi[:,None]-xref).T
-        bandwidth = float(np.percentile(D.ravel()[D.ravel()>0], 25)) if self.bandwidth is None else self.bandwidth
+        D = (xi[:, None] - xref).T
+        bandwidth = (
+            float(np.percentile(D.ravel()[D.ravel() > 0], 25))
+            if self.bandwidth is None
+            else self.bandwidth
+        )
         numerator = self.kernel(D / bandwidth)
 
-        return numerator / np.sum(numerator, axis=1)[:,np.newaxis]
-    
+        return numerator / np.sum(numerator, axis=1)[:, np.newaxis]
+
     def get_y_smoothed(self, y):
         return self.Hmatrix.dot(y)
-        
