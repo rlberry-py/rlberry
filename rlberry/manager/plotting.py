@@ -73,7 +73,7 @@ def plot_writer_data(
     ax: matplotlib axis or None, default=None
         Matplotlib axis on which we plot. If None, create one. Can be used to
         customize the plot.
-    error_representation: str in {"cb", "raw_curves", "ci",  "pi"}
+    error_representation: str in {"cb", "raw_curves", "ci",  "pi", "none"}
         How to represent multiple simulations. The "ci" and "pi" do not take into account the need for simultaneous inference, it is then harder to draw conclusion from them than with "cb" and "pb" but they are the most widely used.
 
         - "cb" is a confidence band on the mean curve using functional data analysis (band in which the mean curve is with probability larger than 1-level).
@@ -83,6 +83,7 @@ def plot_writer_data(
         - "pi" is a plot of a non-simultaneous prediction interval with gaussian model around the mean smoothed curve (e.g. we do curve plus/minus gaussian quantile times std).
 
         - "ci" is a confidence interval with gaussian model around the mean smoothed curve (e.g. we do curve plus/minus gaussian quantile times std divided by sqrt of number of seeds).
+        - "none" don't represent the error, only plot the mean smoothed curve.
     n_boot: int, default=500,
 
         Number of bootstrap evaluations used for confidence interval estimation.
@@ -259,7 +260,7 @@ def plot_smoothed_curves(
     ax: matplotlib axis or None, default=None
         Matplotlib axis on which we plot. If None, create one. Can be used to
         customize the plot.
-    error_representation: str in {"cb", "raw_curves", "ci",  "pi"}
+    error_representation: str in {"cb", "raw_curves", "ci",  "pi", "none"}
         How to represent multiple simulations. The "ci" and "pi" do not take into account the need for simultaneous inference, it is then harder to draw conclusion from them than with "cb" but they are the most widely used.
 
         - "cb" is a confidence band on the mean curve using functional data analysis (band in which the mean curve is with probability larger than 1-level). Method from [1], using scikit-fda [2] library.
@@ -269,6 +270,7 @@ def plot_smoothed_curves(
         - "pi" is a plot of a non-simultaneous prediction interval with gaussian model around the mean smoothed curve (e.g. we do curve plus/minus gaussian quantile times std).
 
         - "ci" is a confidence interval with gaussian model around the mean smoothed curve (e.g. we do curve plus/minus gaussian quantile times std divided by sqrt of number of seeds).
+        - "none" don't represent the error, only plot the mean smoothed curve.
 
     n_boot: int, default=2500,
         Number of bootstrap evaluations used for confidence interval estimation.
@@ -336,8 +338,11 @@ def plot_smoothed_curves(
                 Yhat[f] = np.nan
             else:
                 X = df_name.loc[df["n_simu"] == f, xlabel].values.astype(float)
-                nw = Smoothed_curve_NW(X, xplot, bandwidth=bw)
-                Yhat[f] = nw.get_y_smoothed(Y)
+                if len(X) != 0:
+                    nw = Smoothed_curve_NW(X, xplot, bandwidth=bw)
+                    Yhat[f] = nw.get_y_smoothed(Y)
+                else:
+                    Yhat[f] = np.nan*np.ones(len(xplot))
         return Yhat
 
     names = np.unique(data["name"])
@@ -408,21 +413,27 @@ def plot_smoothed_curves(
                     logger.warning(
                         "The variance of the curve was 0, the confidence bound is very biased"
                     )
-
+            elif error_representation == "none":
+                pass
             else:
                 raise ValueError("error_representation not implemented")
-
-            ax.fill_between(
-                xplot[id_plot],
-                mu.ravel()[id_plot] - y_err[id_plot],
-                mu.ravel()[id_plot] + y_err[id_plot],
-                alpha=0.25,
-                color=cmap[id_c],
-            )
+            if error_representation != "none":
+                ax.fill_between(
+                    xplot[id_plot],
+                    mu.ravel()[id_plot] - y_err[id_plot],
+                    mu.ravel()[id_plot] + y_err[id_plot],
+                    alpha=0.25,
+                    color=cmap[id_c],
+                )
 
     ax.set_ylabel(ylabel)
     ax.set_xlabel(xlabel)
-    plt.legend()
+    # Shrink current axis by 20%
+    box = ax.get_position()
+    ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+
+    # Put a legend to the right of the current axis
+    ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 
     if show:
         plt.show()
@@ -466,7 +477,7 @@ def plot_synchronized_curves(
     ax: matplotlib axis or None, default=None
         Matplotlib axis on which we plot. If None, create one. Can be used to
         customize the plot.
-    error_representation: str in {"raw_curves", "ci",  "pi"}, default="pi"
+    error_representation: str in {"raw_curves", "ci",  "pi", "none"}, default="pi"
         How to represent multiple simulations.
 
         - "raw curves" is a plot of the raw curves.
@@ -474,6 +485,7 @@ def plot_synchronized_curves(
         - "pi" is a plot of a non-simultaneous prediction interval with gaussian model around the mean curve (e.g. we do curve plus/minus gaussian quantile times std).
 
         - "ci" is a confidence interval on the prediction interval with gaussian model around the mean curve (e.g. we do curve plus/minus gaussian quantile times std divided by sqrt of number of seeds).
+        - "none" don't represent the error, only plot the mean smoothed curve.
 
     level: float, default=0.95,
         Level of the confidence (or prediction) interval. Only used if error_representation is not "raw_curves".
@@ -564,6 +576,8 @@ def plot_synchronized_curves(
                     ax.plot(x_simu, y, alpha=0.2, color=cmap[id_c])
                 else:
                     ax.plot(x_simu, y, alpha=0.25, color=cmap[id_c])
+        elif error_representation == "none":
+            pass
         else:
             raise ValueError(
                 "Error representation {} not known for non-smoothed plots".format(
@@ -573,7 +587,13 @@ def plot_synchronized_curves(
 
     ax.set_ylabel(ylabel)
     ax.set_xlabel(xlabel)
-    plt.legend()
+    # Shrink current axis by 20%
+    box = ax.get_position()
+    ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+
+    # Put a legend to the right of the current axis
+    ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+
 
     if show:
         plt.show()
@@ -615,12 +635,16 @@ class Smoothed_curve_NW:
         self.Hmatrix = self.H(X, xref)
 
     def H(self, xi, xref):
-        D = (xi[:, None] - xref).T
-        bandwidth = (
-            float(np.percentile(D.ravel()[D.ravel() > 0], 25))
-            if self.bandwidth is None
-            else self.bandwidth
-        )
+        D = np.abs((xi[:, None] - xref).T)
+        nonzero_distances = D.ravel()[D.ravel() > 0]
+        if len(nonzero_distances) == 0:
+            bandwidth = (np.max(xi)-np.min(x_i))/100
+        else:
+            bandwidth = (
+                float(np.percentile(nonzero_distances, 10))
+                if self.bandwidth is None
+                else self.bandwidth
+            )
         numerator = self.kernel(D / bandwidth)
 
         return numerator / np.sum(numerator, axis=1)[:, np.newaxis]
