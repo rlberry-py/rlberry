@@ -3,9 +3,6 @@ import numpy as np
 from itertools import cycle
 import numbers
 from scipy.stats import norm
-from scipy.ndimage import gaussian_filter1d
-from scipy.spatial.distance import pdist
-
 import pandas as pd
 
 from rlberry.manager import read_writer_data
