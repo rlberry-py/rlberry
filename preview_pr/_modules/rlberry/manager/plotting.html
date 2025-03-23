@@ -120,9 +120,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">cycle</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numbers</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">norm</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.ndimage</span><span class="w"> </span><span class="kn">import</span> <span class="n">gaussian_filter1d</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial.distance</span><span class="w"> </span><span class="kn">import</span> <span class="n">pdist</span>
-
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">rlberry.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_writer_data</span>
@@ -190,7 +187,7 @@
 <span class="sd">    ax: matplotlib axis or None, default=None</span>
 <span class="sd">        Matplotlib axis on which we plot. If None, create one. Can be used to</span>
 <span class="sd">        customize the plot.</span>
-<span class="sd">    error_representation: str in {&quot;cb&quot;, &quot;raw_curves&quot;, &quot;ci&quot;,  &quot;pi&quot;}</span>
+<span class="sd">    error_representation: str in {&quot;cb&quot;, &quot;raw_curves&quot;, &quot;ci&quot;,  &quot;pi&quot;, &quot;none&quot;}</span>
 <span class="sd">        How to represent multiple simulations. The &quot;ci&quot; and &quot;pi&quot; do not take into account the need for simultaneous inference, it is then harder to draw conclusion from them than with &quot;cb&quot; and &quot;pb&quot; but they are the most widely used.</span>
 
 <span class="sd">        - &quot;cb&quot; is a confidence band on the mean curve using functional data analysis (band in which the mean curve is with probability larger than 1-level).</span>
@@ -200,6 +197,7 @@
 <span class="sd">        - &quot;pi&quot; is a plot of a non-simultaneous prediction interval with gaussian model around the mean smoothed curve (e.g. we do curve plus/minus gaussian quantile times std).</span>
 
 <span class="sd">        - &quot;ci&quot; is a confidence interval with gaussian model around the mean smoothed curve (e.g. we do curve plus/minus gaussian quantile times std divided by sqrt of number of seeds).</span>
+<span class="sd">        - &quot;none&quot; don&#39;t represent the error, only plot the mean smoothed curve.</span>
 <span class="sd">    n_boot: int, default=500,</span>
 
 <span class="sd">        Number of bootstrap evaluations used for confidence interval estimation.</span>
@@ -376,7 +374,7 @@
 <span class="sd">    ax: matplotlib axis or None, default=None</span>
 <span class="sd">        Matplotlib axis on which we plot. If None, create one. Can be used to</span>
 <span class="sd">        customize the plot.</span>
-<span class="sd">    error_representation: str in {&quot;cb&quot;, &quot;raw_curves&quot;, &quot;ci&quot;,  &quot;pi&quot;}</span>
+<span class="sd">    error_representation: str in {&quot;cb&quot;, &quot;raw_curves&quot;, &quot;ci&quot;,  &quot;pi&quot;, &quot;none&quot;}</span>
 <span class="sd">        How to represent multiple simulations. The &quot;ci&quot; and &quot;pi&quot; do not take into account the need for simultaneous inference, it is then harder to draw conclusion from them than with &quot;cb&quot; but they are the most widely used.</span>
 
 <span class="sd">        - &quot;cb&quot; is a confidence band on the mean curve using functional data analysis (band in which the mean curve is with probability larger than 1-level). Method from [1], using scikit-fda [2] library.</span>
@@ -386,6 +384,7 @@
 <span class="sd">        - &quot;pi&quot; is a plot of a non-simultaneous prediction interval with gaussian model around the mean smoothed curve (e.g. we do curve plus/minus gaussian quantile times std).</span>
 
 <span class="sd">        - &quot;ci&quot; is a confidence interval with gaussian model around the mean smoothed curve (e.g. we do curve plus/minus gaussian quantile times std divided by sqrt of number of seeds).</span>
+<span class="sd">        - &quot;none&quot; don&#39;t represent the error, only plot the mean smoothed curve.</span>
 
 <span class="sd">    n_boot: int, default=2500,</span>
 <span class="sd">        Number of bootstrap evaluations used for confidence interval estimation.</span>
@@ -453,8 +452,11 @@
                 <span class="n">Yhat</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">X</span> <span class="o">=</span> <span class="n">df_name</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;n_simu&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">f</span><span class="p">,</span> <span class="n">xlabel</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
-                <span class="n">nw</span> <span class="o">=</span> <span class="n">Smoothed_curve_NW</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">xplot</span><span class="p">,</span> <span class="n">bandwidth</span><span class="o">=</span><span class="n">bw</span><span class="p">)</span>
-                <span class="n">Yhat</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">=</span> <span class="n">nw</span><span class="o">.</span><span class="n">get_y_smoothed</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">nw</span> <span class="o">=</span> <span class="n">Smoothed_curve_NW</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">xplot</span><span class="p">,</span> <span class="n">bandwidth</span><span class="o">=</span><span class="n">bw</span><span class="p">)</span>
+                    <span class="n">Yhat</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">=</span> <span class="n">nw</span><span class="o">.</span><span class="n">get_y_smoothed</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">Yhat</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">xplot</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">Yhat</span>
 
     <span class="n">names</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])</span>
@@ -525,21 +527,27 @@
                     <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                         <span class="s2">&quot;The variance of the curve was 0, the confidence bound is very biased&quot;</span>
                     <span class="p">)</span>
-
+            <span class="k">elif</span> <span class="n">error_representation</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
+                <span class="k">pass</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;error_representation not implemented&quot;</span><span class="p">)</span>
-
-            <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
-                <span class="n">xplot</span><span class="p">[</span><span class="n">id_plot</span><span class="p">],</span>
-                <span class="n">mu</span><span class="o">.</span><span class="n">ravel</span><span class="p">()[</span><span class="n">id_plot</span><span class="p">]</span> <span class="o">-</span> <span class="n">y_err</span><span class="p">[</span><span class="n">id_plot</span><span class="p">],</span>
-                <span class="n">mu</span><span class="o">.</span><span class="n">ravel</span><span class="p">()[</span><span class="n">id_plot</span><span class="p">]</span> <span class="o">+</span> <span class="n">y_err</span><span class="p">[</span><span class="n">id_plot</span><span class="p">],</span>
-                <span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
-                <span class="n">color</span><span class="o">=</span><span class="n">cmap</span><span class="p">[</span><span class="n">id_c</span><span class="p">],</span>
-            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">error_representation</span> <span class="o">!=</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+                    <span class="n">xplot</span><span class="p">[</span><span class="n">id_plot</span><span class="p">],</span>
+                    <span class="n">mu</span><span class="o">.</span><span class="n">ravel</span><span class="p">()[</span><span class="n">id_plot</span><span class="p">]</span> <span class="o">-</span> <span class="n">y_err</span><span class="p">[</span><span class="n">id_plot</span><span class="p">],</span>
+                    <span class="n">mu</span><span class="o">.</span><span class="n">ravel</span><span class="p">()[</span><span class="n">id_plot</span><span class="p">]</span> <span class="o">+</span> <span class="n">y_err</span><span class="p">[</span><span class="n">id_plot</span><span class="p">],</span>
+                    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
+                    <span class="n">color</span><span class="o">=</span><span class="n">cmap</span><span class="p">[</span><span class="n">id_c</span><span class="p">],</span>
+                <span class="p">)</span>
 
     <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="c1"># Shrink current axis by 20%</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_position</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_position</span><span class="p">([</span><span class="n">box</span><span class="o">.</span><span class="n">x0</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">y0</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">width</span> <span class="o">*</span> <span class="mf">0.8</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">height</span><span class="p">])</span>
+
+    <span class="c1"># Put a legend to the right of the current axis</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;center left&quot;</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="n">show</span><span class="p">:</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -583,7 +591,7 @@
 <span class="sd">    ax: matplotlib axis or None, default=None</span>
 <span class="sd">        Matplotlib axis on which we plot. If None, create one. Can be used to</span>
 <span class="sd">        customize the plot.</span>
-<span class="sd">    error_representation: str in {&quot;raw_curves&quot;, &quot;ci&quot;,  &quot;pi&quot;}, default=&quot;pi&quot;</span>
+<span class="sd">    error_representation: str in {&quot;raw_curves&quot;, &quot;ci&quot;,  &quot;pi&quot;, &quot;none&quot;}, default=&quot;pi&quot;</span>
 <span class="sd">        How to represent multiple simulations.</span>
 
 <span class="sd">        - &quot;raw curves&quot; is a plot of the raw curves.</span>
@@ -591,6 +599,7 @@
 <span class="sd">        - &quot;pi&quot; is a plot of a non-simultaneous prediction interval with gaussian model around the mean curve (e.g. we do curve plus/minus gaussian quantile times std).</span>
 
 <span class="sd">        - &quot;ci&quot; is a confidence interval on the prediction interval with gaussian model around the mean curve (e.g. we do curve plus/minus gaussian quantile times std divided by sqrt of number of seeds).</span>
+<span class="sd">        - &quot;none&quot; don&#39;t represent the error, only plot the mean smoothed curve.</span>
 
 <span class="sd">    level: float, default=0.95,</span>
 <span class="sd">        Level of the confidence (or prediction) interval. Only used if error_representation is not &quot;raw_curves&quot;.</span>
@@ -681,6 +690,8 @@
                     <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_simu</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">cmap</span><span class="p">[</span><span class="n">id_c</span><span class="p">])</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_simu</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">cmap</span><span class="p">[</span><span class="n">id_c</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">error_representation</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
+            <span class="k">pass</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;Error representation </span><span class="si">{}</span><span class="s2"> not known for non-smoothed plots&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
@@ -690,7 +701,12 @@
 
     <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="c1"># Shrink current axis by 20%</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_position</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_position</span><span class="p">([</span><span class="n">box</span><span class="o">.</span><span class="n">x0</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">y0</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">width</span> <span class="o">*</span> <span class="mf">0.8</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">height</span><span class="p">])</span>
+
+    <span class="c1"># Put a legend to the right of the current axis</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;center left&quot;</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="n">show</span><span class="p">:</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -732,12 +748,16 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">Hmatrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">xref</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">H</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">xref</span><span class="p">):</span>
-        <span class="n">D</span> <span class="o">=</span> <span class="p">(</span><span class="n">xi</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">-</span> <span class="n">xref</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
-        <span class="n">bandwidth</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">ravel</span><span class="p">()[</span><span class="n">D</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">],</span> <span class="mi">25</span><span class="p">))</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span> <span class="ow">is</span> <span class="kc">None</span>
-            <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span>
-        <span class="p">)</span>
+        <span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">((</span><span class="n">xi</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">-</span> <span class="n">xref</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="n">nonzero_distances</span> <span class="o">=</span> <span class="n">D</span><span class="o">.</span><span class="n">ravel</span><span class="p">()[</span><span class="n">D</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nonzero_distances</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">bandwidth</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">x_i</span><span class="p">))</span> <span class="o">/</span> <span class="mi">100</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">bandwidth</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">nonzero_distances</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span> <span class="ow">is</span> <span class="kc">None</span>
+                <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span>
+            <span class="p">)</span>
         <span class="n">numerator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">(</span><span class="n">D</span> <span class="o">/</span> <span class="n">bandwidth</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">numerator</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">numerator</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>

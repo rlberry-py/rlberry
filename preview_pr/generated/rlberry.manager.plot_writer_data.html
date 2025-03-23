@@ -166,12 +166,13 @@ If None, a parameter search from a range of 20 possible values choosen by heuris
 <dt><strong>ax: matplotlib axis or None, default=None</strong></dt><dd><p>Matplotlib axis on which we plot. If None, create one. Can be used to
 customize the plot.</p>
 </dd>
-<dt><strong>error_representation: str in {“cb”, “raw_curves”, “ci”,  “pi”}</strong></dt><dd><p>How to represent multiple simulations. The “ci” and “pi” do not take into account the need for simultaneous inference, it is then harder to draw conclusion from them than with “cb” and “pb” but they are the most widely used.</p>
+<dt><strong>error_representation: str in {“cb”, “raw_curves”, “ci”,  “pi”, “none”}</strong></dt><dd><p>How to represent multiple simulations. The “ci” and “pi” do not take into account the need for simultaneous inference, it is then harder to draw conclusion from them than with “cb” and “pb” but they are the most widely used.</p>
 <ul class="simple">
 <li><p>“cb” is a confidence band on the mean curve using functional data analysis (band in which the mean curve is with probability larger than 1-level).</p></li>
 <li><p>“raw curves” is a plot of the raw curves.</p></li>
 <li><p>“pi” is a plot of a non-simultaneous prediction interval with gaussian model around the mean smoothed curve (e.g. we do curve plus/minus gaussian quantile times std).</p></li>
 <li><p>“ci” is a confidence interval with gaussian model around the mean smoothed curve (e.g. we do curve plus/minus gaussian quantile times std divided by sqrt of number of seeds).</p></li>
+<li><p>“none” don’t represent the error, only plot the mean smoothed curve.</p></li>
 </ul>
 </dd>
 <dt><strong>n_boot: int, default=500,</strong></dt><dd><p>Number of bootstrap evaluations used for confidence interval estimation.

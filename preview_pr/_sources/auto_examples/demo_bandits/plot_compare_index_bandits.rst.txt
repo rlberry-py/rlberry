@@ -54,23 +54,8 @@ how to use subplots in with `plot_writer_data`
          :class: sphx-glr-multi-img
 
 
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-    /home/runner/work/rlberry/rlberry/main/rlberry/manager/plotting.py:576: UserWarning: No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
-      plt.legend()
-    /home/runner/work/rlberry/rlberry/main/rlberry/manager/plotting.py:576: UserWarning: No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
-      plt.legend()
-    /home/runner/work/rlberry/rlberry/main/rlberry/manager/plotting.py:576: UserWarning: No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
-      plt.legend()
 
 
-
-
-
-
-|
 
 .. code-block:: python3
 
@@ -276,7 +261,7 @@ how to use subplots in with `plot_writer_data`
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 40.140 seconds)
+   **Total running time of the script:** (0 minutes 39.625 seconds)
 
 
 .. _sphx_glr_download_auto_examples_demo_bandits_plot_compare_index_bandits.py:
