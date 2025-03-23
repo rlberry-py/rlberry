@@ -339,7 +339,7 @@ def plot_smoothed_curves(
                     nw = Smoothed_curve_NW(X, xplot, bandwidth=bw)
                     Yhat[f] = nw.get_y_smoothed(Y)
                 else:
-                    Yhat[f] = np.nan*np.ones(len(xplot))
+                    Yhat[f] = np.nan * np.ones(len(xplot))
         return Yhat
 
     names = np.unique(data["name"])
@@ -430,7 +430,7 @@ def plot_smoothed_curves(
     ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
 
     # Put a legend to the right of the current axis
-    ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+    ax.legend(loc="center left", bbox_to_anchor=(1, 0.5))
 
     if show:
         plt.show()
@@ -589,8 +589,7 @@ def plot_synchronized_curves(
     ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
 
     # Put a legend to the right of the current axis
-    ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-
+    ax.legend(loc="center left", bbox_to_anchor=(1, 0.5))
 
     if show:
         plt.show()
@@ -635,7 +634,7 @@ class Smoothed_curve_NW:
         D = np.abs((xi[:, None] - xref).T)
         nonzero_distances = D.ravel()[D.ravel() > 0]
         if len(nonzero_distances) == 0:
-            bandwidth = (np.max(xi)-np.min(x_i))/100
+            bandwidth = (np.max(xi) - np.min(x_i)) / 100
         else:
             bandwidth = (
                 float(np.percentile(nonzero_distances, 10))
