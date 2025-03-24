@@ -146,6 +146,7 @@
     <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">savefig_fname</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">linestyles</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">return_smoothed_curves</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Given a list of ExperimentManager or a folder, plot data (corresponding to info) obtained in each episode.</span>
@@ -217,6 +218,9 @@
 <span class="sd">    savefig_fname: str (Optional)</span>
 <span class="sd">        Name of the figure in which the plot is saved with figure.savefig. If None,</span>
 <span class="sd">        the figure is not saved.</span>
+<span class="sd">    return_smoothed_curves: boolean, default=False</span>
+<span class="sd">        Whether to return a dataframe containing the smoothed curves. If True,</span>
+<span class="sd">        returns the tuple (data_preprocessed, data_smoothed).</span>
 <span class="sd">    linestyles: boolean, default=False</span>
 <span class="sd">        Whether to use different linestyles for each curve.</span>
 <span class="sd">    Returns</span>
@@ -297,7 +301,7 @@
     <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">figure</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">smooth</span><span class="p">:</span>
-        <span class="n">plot_smoothed_curves</span><span class="p">(</span>
+        <span class="n">data_smoothed</span> <span class="o">=</span> <span class="n">plot_smoothed_curves</span><span class="p">(</span>
             <span class="n">data</span><span class="p">[[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">xtag</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="s2">&quot;n_simu&quot;</span><span class="p">]],</span>
             <span class="n">xtag</span><span class="p">,</span>
             <span class="s2">&quot;value&quot;</span><span class="p">,</span>
@@ -311,7 +315,7 @@
             <span class="n">linestyles</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">plot_synchronized_curves</span><span class="p">(</span>
+        <span class="n">data_smoothed</span> <span class="o">=</span> <span class="n">plot_synchronized_curves</span><span class="p">(</span>
             <span class="n">data</span><span class="p">[[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">xtag</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="s2">&quot;n_simu&quot;</span><span class="p">]],</span>
             <span class="n">xtag</span><span class="p">,</span>
             <span class="s2">&quot;value&quot;</span><span class="p">,</span>
@@ -330,7 +334,10 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">savefig_fname</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">show</span><span class="p">:</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">data</span></div>
+    <span class="k">if</span> <span class="n">return_smoothed_curves</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="n">data_smoothed</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">data</span></div>
 
 
 <div class="viewcode-block" id="plot_smoothed_curves"><a class="viewcode-back" href="../../../generated/rlberry.manager.plot_smoothed_curves.html#rlberry.manager.plot_smoothed_curves">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">plot_smoothed_curves</span><span class="p">(</span>
@@ -419,23 +426,16 @@
     <span class="n">ylabel</span> <span class="o">=</span> <span class="n">y</span>
     <span class="n">x_values</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">xlabel</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
     <span class="n">min_x</span><span class="p">,</span> <span class="n">max_x</span> <span class="o">=</span> <span class="n">x_values</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">x_values</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
-    <span class="n">n_tot_simu</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;n_simu&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span> <span class="o">+</span> <span class="mi">1</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">smoothing_bandwidth</span><span class="p">,</span> <span class="n">numbers</span><span class="o">.</span><span class="n">Number</span><span class="p">):</span>
-        <span class="n">sorted_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">x_values</span><span class="p">))</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sorted_x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">200</span><span class="p">:</span>
-            <span class="n">min_bandwidth_x</span> <span class="o">=</span> <span class="p">(</span><span class="n">sorted_x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">sorted_x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="mi">3</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">min_bandwidth_x</span> <span class="o">=</span> <span class="n">sorted_x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">sorted_x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">xplot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">min_x</span><span class="p">,</span> <span class="n">max_x</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="n">ax</span><span class="p">,</span> <span class="n">styles</span><span class="p">,</span> <span class="n">cmap</span> <span class="o">=</span> <span class="n">_prepare_ax</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">linestyles</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Change shape and smooth the curves contained in the dataset df if necessary.</span>
+<span class="sd">        Nadaraya-Watson kernel smoothing</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Nadaraya-Watson kernel smoothing</span>
+        <span class="n">n_tot_simu</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;n_simu&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span> <span class="o">+</span> <span class="mi">1</span>
+
         <span class="n">Yhat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">n_tot_simu</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">xplot</span><span class="p">)])</span>
         <span class="n">bw</span> <span class="o">=</span> <span class="n">smoothing_bandwidth</span>
         <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_tot_simu</span><span class="p">):</span>
@@ -460,9 +460,11 @@
         <span class="k">return</span> <span class="n">Yhat</span>
 
     <span class="n">names</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])</span>
+    <span class="n">data_smoothed</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
 
     <span class="k">for</span> <span class="n">id_c</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">names</span><span class="p">):</span>
         <span class="n">df_name</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">name</span><span class="p">]</span>
+        <span class="n">n_tot_simu</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">df_name</span><span class="p">[</span><span class="s2">&quot;n_simu&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span> <span class="o">+</span> <span class="mi">1</span>
         <span class="n">Xhat</span> <span class="o">=</span> <span class="n">process</span><span class="p">(</span><span class="n">df_name</span><span class="p">)</span>
         <span class="n">mu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Xhat</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">id_plot</span> <span class="o">=</span> <span class="n">xplot</span> <span class="o">&lt;=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">df_name</span><span class="p">[</span><span class="n">xlabel</span><span class="p">])</span>
@@ -473,6 +475,19 @@
             <span class="n">label</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">color</span><span class="o">=</span><span class="n">cmap</span><span class="p">[</span><span class="n">id_c</span><span class="p">],</span>
             <span class="n">linestyle</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">styles</span><span class="p">[</span><span class="n">id_c</span><span class="p">]),</span>
+        <span class="p">)</span>
+        <span class="n">data_smoothed</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">data_smoothed</span><span class="p">,</span>
+                <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">id_plot</span><span class="p">),</span>
+                        <span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">xplot</span><span class="p">[</span><span class="n">id_plot</span><span class="p">],</span>
+                        <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">mu</span><span class="p">[</span><span class="n">id_plot</span><span class="p">],</span>
+                    <span class="p">}</span>
+                <span class="p">),</span>
+            <span class="p">],</span>
+            <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="n">error_representation</span> <span class="o">==</span> <span class="s2">&quot;raw_curves&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">n_tot_simu</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">):</span>
@@ -554,7 +569,7 @@
     <span class="k">if</span> <span class="n">savefig_fname</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">savefig_fname</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">data</span></div>
+    <span class="k">return</span> <span class="n">data_smoothed</span></div>
 
 
 <div class="viewcode-block" id="plot_synchronized_curves"><a class="viewcode-back" href="../../../generated/rlberry.manager.plot_synchronized_curves.html#rlberry.manager.plot_synchronized_curves">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">plot_synchronized_curves</span><span class="p">(</span>
@@ -644,6 +659,7 @@
     <span class="n">ax</span><span class="p">,</span> <span class="n">styles</span><span class="p">,</span> <span class="n">cmap</span> <span class="o">=</span> <span class="n">_prepare_ax</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">linestyles</span><span class="p">)</span>
 
     <span class="n">names</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])</span>
+    <span class="n">data_smoothed</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">id_c</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">names</span><span class="p">):</span>
         <span class="n">df_name</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">name</span><span class="p">,</span> <span class="p">[</span><span class="n">xlabel</span><span class="p">,</span> <span class="n">ylabel</span><span class="p">,</span> <span class="s2">&quot;n_simu&quot;</span><span class="p">]]</span>
         <span class="n">x_plot</span> <span class="o">=</span> <span class="n">df_name</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_name</span><span class="p">[</span><span class="s2">&quot;n_simu&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="n">xlabel</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
@@ -665,6 +681,13 @@
 
         <span class="n">quantile</span> <span class="o">=</span> <span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">level</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_plot</span><span class="p">,</span> <span class="n">y_mean</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">cmap</span><span class="p">[</span><span class="n">id_c</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">data_smoothed</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">data_smoothed</span><span class="p">,</span>
+                <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_plot</span><span class="p">),</span> <span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">x_plot</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">y_mean</span><span class="p">}),</span>
+            <span class="p">],</span>
+            <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">error_representation</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;ci&quot;</span><span class="p">,</span> <span class="s2">&quot;pi&quot;</span><span class="p">]:</span>
             <span class="k">if</span> <span class="n">error_representation</span> <span class="o">==</span> <span class="s2">&quot;pi&quot;</span><span class="p">:</span>
@@ -714,7 +737,7 @@
     <span class="k">if</span> <span class="n">savefig_fname</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">savefig_fname</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">data</span></div>
+    <span class="k">return</span> <span class="n">data_smoothed</span></div>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_prepare_ax</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">linestyles</span><span class="p">):</span>
@@ -731,7 +754,6 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">styles</span> <span class="o">=</span> <span class="p">[()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">size</span><span class="p">)]</span>
 
-    <span class="n">n_tot_simu</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;n_simu&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
     <span class="n">names</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">10</span><span class="p">:</span>
         <span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">tab10</span><span class="o">.</span><span class="n">colors</span><span class="p">[:</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)]</span>
@@ -742,6 +764,22 @@
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">Smoothed_curve_NW</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Nadaraya-Watson kernel smoothing</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    X: array of floats</span>
+<span class="sd">        Observed x-axis coordinates, usually either global_step or time.</span>
+<span class="sd">    xref: array of floats</span>
+<span class="sd">        x values at which we want to compute the smoothed curve</span>
+<span class="sd">    bandwidth: float or None, default=None</span>
+<span class="sd">        Bandwidth parameter which corresponds to the width of a window on which to smooth for Gaussian kernel,</span>
+<span class="sd">        if None, use the 10th percentile of the nonzero distances between all X[i]</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">xref</span><span class="p">,</span> <span class="n">bandwidth</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth</span> <span class="o">=</span> <span class="n">bandwidth</span>
@@ -751,7 +789,7 @@
         <span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">((</span><span class="n">xi</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">-</span> <span class="n">xref</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
         <span class="n">nonzero_distances</span> <span class="o">=</span> <span class="n">D</span><span class="o">.</span><span class="n">ravel</span><span class="p">()[</span><span class="n">D</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nonzero_distances</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">bandwidth</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">x_i</span><span class="p">))</span> <span class="o">/</span> <span class="mi">100</span>
+            <span class="n">bandwidth</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">xi</span><span class="p">))</span> <span class="o">/</span> <span class="mi">100</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">bandwidth</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">nonzero_distances</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
