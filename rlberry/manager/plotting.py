@@ -29,6 +29,7 @@ def plot_writer_data(
     title=None,
     savefig_fname=None,
     linestyles=False,
+    return_smoothed_curves=False,
 ):
     """
     Given a list of ExperimentManager or a folder, plot data (corresponding to info) obtained in each episode.
@@ -100,6 +101,9 @@ def plot_writer_data(
     savefig_fname: str (Optional)
         Name of the figure in which the plot is saved with figure.savefig. If None,
         the figure is not saved.
+    return_smoothed_curves: boolean, default=False
+        Whether to return a dataframe containing the smoothed curves. If True, 
+        returns the tuple (data_preprocessed, data_smoothed).
     linestyles: boolean, default=False
         Whether to use different linestyles for each curve.
     Returns
@@ -180,7 +184,7 @@ def plot_writer_data(
     if ax is None:
         figure, ax = plt.subplots(1, 1)
     if smooth:
-        plot_smoothed_curves(
+        data_smoothed = plot_smoothed_curves(
             data[["name", xtag, "value", "n_simu"]],
             xtag,
             "value",
@@ -194,7 +198,7 @@ def plot_writer_data(
             linestyles,
         )
     else:
-        plot_synchronized_curves(
+        data_smoothed = plot_synchronized_curves(
             data[["name", xtag, "value", "n_simu"]],
             xtag,
             "value",
@@ -213,7 +217,10 @@ def plot_writer_data(
         plt.gcf().savefig(savefig_fname)
     if show:
         plt.show()
-    return data
+    if return_smoothed_curves:
+        return data, data_smoothed
+    else:
+        return data
 
 
 def plot_smoothed_curves(
@@ -302,23 +309,16 @@ def plot_smoothed_curves(
     ylabel = y
     x_values = data[xlabel].values
     min_x, max_x = x_values.min(), x_values.max()
-    n_tot_simu = int(data["n_simu"].max()) + 1
-
-    if not isinstance(smoothing_bandwidth, numbers.Number):
-        sorted_x = np.sort(np.unique(x_values))
-        if len(sorted_x) > 200:
-            min_bandwidth_x = (sorted_x[1] - sorted_x[0]) * 3
-        else:
-            min_bandwidth_x = sorted_x[1] - sorted_x[0]
     xplot = np.linspace(min_x, max_x, 500, endpoint=True)
 
     ax, styles, cmap = _prepare_ax(data, ax, linestyles)
 
     def process(df):
         """
-        Change shape and smooth the curves contained in the dataset df if necessary.
+        Nadaraya-Watson kernel smoothing
         """
-        # Nadaraya-Watson kernel smoothing
+        n_tot_simu = int(data["n_simu"].max()) + 1
+
         Yhat = np.zeros([n_tot_simu, len(xplot)])
         bw = smoothing_bandwidth
         for f in range(n_tot_simu):
@@ -343,9 +343,11 @@ def plot_smoothed_curves(
         return Yhat
 
     names = np.unique(data["name"])
+    data_smoothed = pd.DataFrame()
 
     for id_c, name in enumerate(names):
         df_name = data.loc[data["name"] == name]
+        n_tot_simu = int(df_name["n_simu"].max()) + 1
         Xhat = process(df_name)
         mu = np.mean(Xhat, axis=0)
         id_plot = xplot <= np.max(df_name[xlabel])
@@ -357,6 +359,11 @@ def plot_smoothed_curves(
             color=cmap[id_c],
             linestyle=(0, styles[id_c]),
         )
+        data_smoothed = pd.concat([data_smoothed, 
+                                   pd.DataFrame({"name": [name]*len(id_plot), 
+                                                 "x": xplot[id_plot], 
+                                                 "y": mu[id_plot]})
+                                   ], ignore_index=True)
 
         if (error_representation == "raw_curves") and (n_tot_simu > 1):
             for n_simu in range(n_tot_simu):
@@ -437,7 +444,7 @@ def plot_smoothed_curves(
     if savefig_fname is not None:
         plt.gcf().savefig(savefig_fname)
 
-    return data
+    return data_smoothed
 
 
 def plot_synchronized_curves(
@@ -527,6 +534,7 @@ def plot_synchronized_curves(
     ax, styles, cmap = _prepare_ax(data, ax, linestyles)
 
     names = np.unique(data["name"])
+    data_smoothed = pd.DataFrame()
     for id_c, name in enumerate(names):
         df_name = data.loc[data["name"] == name, [xlabel, ylabel, "n_simu"]]
         x_plot = df_name.loc[df_name["n_simu"] == 0, xlabel].values.astype(float)
@@ -548,6 +556,8 @@ def plot_synchronized_curves(
 
         quantile = norm.ppf(1 - (1 - level) / 2)
         ax.plot(x_plot, y_mean, color=cmap[id_c], label=name)
+        data_smoothed = pd.concat([data_smoothed,pd.DataFrame({"name":[name]*len(x_plot),
+                                                               "x":x_plot,"y":y_mean})],ignore_index=True)
 
         if error_representation in ["ci", "pi"]:
             if error_representation == "pi":
@@ -597,7 +607,7 @@ def plot_synchronized_curves(
     if savefig_fname is not None:
         plt.gcf().savefig(savefig_fname)
 
-    return data
+    return data_smoothed
 
 
 def _prepare_ax(data, ax, linestyles):
@@ -614,7 +624,6 @@ def _prepare_ax(data, ax, linestyles):
     else:
         styles = [() for _ in range(data["name"].unique().size)]
 
-    n_tot_simu = int(data["n_simu"].max())
     names = data["name"].unique()
     if len(names) <= 10:
         cmap = plt.cm.tab10.colors[: len(names)]
@@ -625,6 +634,22 @@ def _prepare_ax(data, ax, linestyles):
 
 
 class Smoothed_curve_NW:
+    """
+    Nadaraya-Watson kernel smoothing
+
+    Parameters
+    ----------
+
+    X: array of floats
+        Observed x-axis coordinates, usually either global_step or time.
+    xref: array of floats
+        x values at which we want to compute the smoothed curve
+    bandwidth: float or None, default=None
+        Bandwidth parameter which corresponds to the width of a window on which to smooth for Gaussian kernel,
+        if None, use the 10th percentile of the nonzero distances between all X[i]
+
+    """
+
     def __init__(self, X, xref, bandwidth=None):
         self.kernel = lambda x: np.exp(-(x**2) / 2)
         self.bandwidth = bandwidth
@@ -634,7 +659,7 @@ class Smoothed_curve_NW:
         D = np.abs((xi[:, None] - xref).T)
         nonzero_distances = D.ravel()[D.ravel() > 0]
         if len(nonzero_distances) == 0:
-            bandwidth = (np.max(xi) - np.min(x_i)) / 100
+            bandwidth = (np.max(xi) - np.min(xi)) / 100
         else:
             bandwidth = (
                 float(np.percentile(nonzero_distances, 10))
