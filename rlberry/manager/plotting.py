@@ -102,7 +102,7 @@ def plot_writer_data(
         Name of the figure in which the plot is saved with figure.savefig. If None,
         the figure is not saved.
     return_smoothed_curves: boolean, default=False
-        Whether to return a dataframe containing the smoothed curves. If True, 
+        Whether to return a dataframe containing the smoothed curves. If True,
         returns the tuple (data_preprocessed, data_smoothed).
     linestyles: boolean, default=False
         Whether to use different linestyles for each curve.
@@ -359,11 +359,19 @@ def plot_smoothed_curves(
             color=cmap[id_c],
             linestyle=(0, styles[id_c]),
         )
-        data_smoothed = pd.concat([data_smoothed, 
-                                   pd.DataFrame({"name": [name]*len(id_plot), 
-                                                 "x": xplot[id_plot], 
-                                                 "y": mu[id_plot]})
-                                   ], ignore_index=True)
+        data_smoothed = pd.concat(
+            [
+                data_smoothed,
+                pd.DataFrame(
+                    {
+                        "name": [name] * len(id_plot),
+                        "x": xplot[id_plot],
+                        "y": mu[id_plot],
+                    }
+                ),
+            ],
+            ignore_index=True,
+        )
 
         if (error_representation == "raw_curves") and (n_tot_simu > 1):
             for n_simu in range(n_tot_simu):
@@ -556,8 +564,13 @@ def plot_synchronized_curves(
 
         quantile = norm.ppf(1 - (1 - level) / 2)
         ax.plot(x_plot, y_mean, color=cmap[id_c], label=name)
-        data_smoothed = pd.concat([data_smoothed,pd.DataFrame({"name":[name]*len(x_plot),
-                                                               "x":x_plot,"y":y_mean})],ignore_index=True)
+        data_smoothed = pd.concat(
+            [
+                data_smoothed,
+                pd.DataFrame({"name": [name] * len(x_plot), "x": x_plot, "y": y_mean}),
+            ],
+            ignore_index=True,
+        )
 
         if error_representation in ["ci", "pi"]:
             if error_representation == "pi":
