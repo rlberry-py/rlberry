@@ -78,7 +78,9 @@ def test_plot_writer_data_with_manager_input(outdir_id_style):
         assert len(output) > 1
 
 
-@pytest.mark.parametrize("error_representation", ["ci", "pi", "cb", "raw_curves","none"])
+@pytest.mark.parametrize(
+    "error_representation", ["ci", "pi", "cb", "raw_curves", "none"]
+)
 def test_smooth_ci(error_representation):
     with tempfile.TemporaryDirectory() as tmpdirname:
         output_dir = tmpdirname + "/rlberry_data"
@@ -159,12 +161,17 @@ def test_without_rlberry():
             plot_synchronized_curves(
                 df, "x", "y", savefig_fname=tmpdirname + "/test.png"
             )
-    
+
 
 def test_edge_cases():
     # Nan
     df = pd.DataFrame(
-        {"name": ["a", "a", "a"], "x": [1, 2, 3], "y": [3, 4, np.nan], "n_simu": [0, 0, 0]}
+        {
+            "name": ["a", "a", "a"],
+            "x": [1, 2, 3],
+            "y": [3, 4, np.nan],
+            "n_simu": [0, 0, 0],
+        }
     )
     with tempfile.TemporaryDirectory() as tmpdirname:
         with plt.ion():  # do not block on plt.show
@@ -174,11 +181,22 @@ def test_edge_cases():
             )
     # Inf
     df = pd.DataFrame(
-        {"name": ["a", "a", "a"], "x": [1, 2, 3], "y": [3, 4, np.inf], "n_simu": [0, 0, 0]}
+        {
+            "name": ["a", "a", "a"],
+            "x": [1, 2, 3],
+            "y": [3, 4, np.inf],
+            "n_simu": [0, 0, 0],
+        }
     )
     with tempfile.TemporaryDirectory() as tmpdirname:
         with plt.ion():  # do not block on plt.show
-            plot_smoothed_curves(df, "x", "y", smoothing_bandwidth=1,  savefig_fname=tmpdirname + "/test.png")
+            plot_smoothed_curves(
+                df,
+                "x",
+                "y",
+                smoothing_bandwidth=1,
+                savefig_fname=tmpdirname + "/test.png",
+            )
             plot_synchronized_curves(
                 df, "x", "y", savefig_fname=tmpdirname + "/test.png"
             )
