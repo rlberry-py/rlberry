@@ -118,7 +118,6 @@
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">cycle</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">numbers</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">norm</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
@@ -178,11 +177,10 @@
 <span class="sd">    smooth : boolean, default=False</span>
 <span class="sd">        Whether to smooth the curve with a Nadaraya-Watson Kernel smoothing.</span>
 <span class="sd">        Remark that this also allow for an xtag which is not synchronized on all the simulations (e.g. time for instance).</span>
-<span class="sd">    smoothing_bandwidth: float or array of floats or None</span>
+<span class="sd">    smoothing_bandwidth: float or None</span>
 <span class="sd">        How to choose the bandwidth parameter.</span>
 <span class="sd">        If float, then smoothing_bandwidth is used directly as a bandwidth.</span>
-<span class="sd">        If is an array, a parameter search using smoothing_bandwidth is used.</span>
-<span class="sd">        If None, a parameter search from a range of 20 possible values choosen by heuristics is performed.</span>
+<span class="sd">        If None, a heuristic based on the 10th percentile of nonzero distances in x is used.</span>
 <span class="sd">    id_agent : int or None, default=None</span>
 <span class="sd">        id of the agent to plot, if not None plot only the results for the agent whose id is id_agent.</span>
 <span class="sd">    ax: matplotlib axis or None, default=None</span>
@@ -373,11 +371,10 @@
 
 <span class="sd">        - y column is named according to y parameter and contain values to have in y axis.</span>
 
-
-<span class="sd">    smoothing_bandwidth: float or array of floats or None</span>
-<span class="sd">        How to choose the bandwidth parameter. If float, then smoothing_bandwidth is used</span>
-<span class="sd">        directly as a bandwidth and if is an array, a parameter search using smoothing_bandwidth is</span>
-<span class="sd">        used if None, a parameter search from a range of 20 possible values choosen by heuristics is performed.</span>
+<span class="sd">    smoothing_bandwidth: float or None</span>
+<span class="sd">        How to choose the bandwidth parameter.</span>
+<span class="sd">        If float, then smoothing_bandwidth is used directly as a bandwidth.</span>
+<span class="sd">        If None, a heuristic based on the 10th percentile of nonzero distances in x is used.</span>
 <span class="sd">    ax: matplotlib axis or None, default=None</span>
 <span class="sd">        Matplotlib axis on which we plot. If None, create one. Can be used to</span>
 <span class="sd">        customize the plot.</span>
@@ -769,7 +766,6 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-
 <span class="sd">    X: array of floats</span>
 <span class="sd">        Observed x-axis coordinates, usually either global_step or time.</span>
 <span class="sd">    xref: array of floats</span>

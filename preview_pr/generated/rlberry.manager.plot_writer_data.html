@@ -156,10 +156,9 @@ the time elapsed <cite>dw_time_elapsed</cite>, in which case smooth needs to be 
 <dt><strong>smooth</strong><span class="classifier">boolean, default=False</span></dt><dd><p>Whether to smooth the curve with a Nadaraya-Watson Kernel smoothing.
 Remark that this also allow for an xtag which is not synchronized on all the simulations (e.g. time for instance).</p>
 </dd>
-<dt><strong>smoothing_bandwidth: float or array of floats or None</strong></dt><dd><p>How to choose the bandwidth parameter.
+<dt><strong>smoothing_bandwidth: float or None</strong></dt><dd><p>How to choose the bandwidth parameter.
 If float, then smoothing_bandwidth is used directly as a bandwidth.
-If is an array, a parameter search using smoothing_bandwidth is used.
-If None, a parameter search from a range of 20 possible values choosen by heuristics is performed.</p>
+If None, a heuristic based on the 10th percentile of nonzero distances in x is used.</p>
 </dd>
 <dt><strong>id_agent</strong><span class="classifier">int or None, default=None</span></dt><dd><p>id of the agent to plot, if not None plot only the results for the agent whose id is id_agent.</p>
 </dd>

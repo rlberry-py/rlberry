@@ -140,9 +140,9 @@
 <li><p>y column is named according to y parameter and contain values to have in y axis.</p></li>
 </ul>
 </dd>
-<dt><strong>smoothing_bandwidth: float or array of floats or None</strong></dt><dd><p>How to choose the bandwidth parameter. If float, then smoothing_bandwidth is used
-directly as a bandwidth and if is an array, a parameter search using smoothing_bandwidth is
-used if None, a parameter search from a range of 20 possible values choosen by heuristics is performed.</p>
+<dt><strong>smoothing_bandwidth: float or None</strong></dt><dd><p>How to choose the bandwidth parameter.
+If float, then smoothing_bandwidth is used directly as a bandwidth.
+If None, a heuristic based on the 10th percentile of nonzero distances in x is used.</p>
 </dd>
 <dt><strong>ax: matplotlib axis or None, default=None</strong></dt><dd><p>Matplotlib axis on which we plot. If None, create one. Can be used to
 customize the plot.</p>
