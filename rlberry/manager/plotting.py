@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from itertools import cycle
-import numbers
 from scipy.stats import norm
 import pandas as pd
 
@@ -61,11 +60,10 @@ def plot_writer_data(
     smooth : boolean, default=False
         Whether to smooth the curve with a Nadaraya-Watson Kernel smoothing.
         Remark that this also allow for an xtag which is not synchronized on all the simulations (e.g. time for instance).
-    smoothing_bandwidth: float or array of floats or None
+    smoothing_bandwidth: float or None
         How to choose the bandwidth parameter.
         If float, then smoothing_bandwidth is used directly as a bandwidth.
-        If is an array, a parameter search using smoothing_bandwidth is used.
-        If None, a parameter search from a range of 20 possible values choosen by heuristics is performed.
+        If None, a heuristic based on the 10th percentile of nonzero distances in x is used.
     id_agent : int or None, default=None
         id of the agent to plot, if not None plot only the results for the agent whose id is id_agent.
     ax: matplotlib axis or None, default=None
@@ -256,11 +254,10 @@ def plot_smoothed_curves(
 
         - y column is named according to y parameter and contain values to have in y axis.
 
-
-    smoothing_bandwidth: float or array of floats or None
-        How to choose the bandwidth parameter. If float, then smoothing_bandwidth is used
-        directly as a bandwidth and if is an array, a parameter search using smoothing_bandwidth is
-        used if None, a parameter search from a range of 20 possible values choosen by heuristics is performed.
+    smoothing_bandwidth: float or None
+        How to choose the bandwidth parameter.
+        If float, then smoothing_bandwidth is used directly as a bandwidth.
+        If None, a heuristic based on the 10th percentile of nonzero distances in x is used.
     ax: matplotlib axis or None, default=None
         Matplotlib axis on which we plot. If None, create one. Can be used to
         customize the plot.
@@ -652,7 +649,6 @@ class Smoothed_curve_NW:
 
     Parameters
     ----------
-
     X: array of floats
         Observed x-axis coordinates, usually either global_step or time.
     xref: array of floats
