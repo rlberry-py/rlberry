@@ -203,11 +203,14 @@ If seeder, use seeder.seed_seq</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="rlberry.spaces.MultiDiscrete.sample">
 <span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rlberry/spaces/multi_discrete.html#MultiDiscrete.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.spaces.MultiDiscrete.sample" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generates a single random sample this space.</p>
+<dd><p>Generates a single random sample from this space.</p>
 <dl class="simple">
 <dt>Args:</dt><dd><dl class="simple">
 <dt>mask: An optional mask for multi-discrete, expects tuples with a <code class="docutils literal notranslate"><span class="pre">np.ndarray</span></code> mask in the position of each</dt><dd><p>action with shape <code class="docutils literal notranslate"><span class="pre">(n,)</span></code> where <code class="docutils literal notranslate"><span class="pre">n</span></code> is the number of actions and <code class="docutils literal notranslate"><span class="pre">dtype=np.int8</span></code>.
 Only <code class="docutils literal notranslate"><span class="pre">mask</span> <span class="pre">values</span> <span class="pre">==</span> <span class="pre">1</span></code> are possible to sample unless all mask values for an action are <code class="docutils literal notranslate"><span class="pre">0</span></code> then the default action <code class="docutils literal notranslate"><span class="pre">self.start</span></code> (the smallest element) is sampled.</p>
+</dd>
+<dt>probability: An optional probability mask for multi-discrete, expects tuples with a <code class="docutils literal notranslate"><span class="pre">np.ndarray</span></code> probability mask in the position of each</dt><dd><p>action with shape <code class="docutils literal notranslate"><span class="pre">(n,)</span></code> where <code class="docutils literal notranslate"><span class="pre">n</span></code> is the number of actions and <code class="docutils literal notranslate"><span class="pre">dtype=np.float64</span></code>.
+Only probability mask values within <code class="docutils literal notranslate"><span class="pre">[0,1]</span></code> are possible to sample as long as the sum of all values is <code class="docutils literal notranslate"><span class="pre">1</span></code>.</p>
 </dd>
 </dl>
 </dd>

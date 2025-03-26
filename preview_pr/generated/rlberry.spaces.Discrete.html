@@ -206,11 +206,14 @@ If seeder, use seeder.seed_seq</p>
 <dt class="sig sig-object py" id="rlberry.spaces.Discrete.sample">
 <span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rlberry/spaces/discrete.html#Discrete.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.spaces.Discrete.sample" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates a single random sample from this space.</p>
-<p>A sample will be chosen uniformly at random with the mask if provided</p>
+<p>A sample will be chosen uniformly at random with the mask if provided, or it will be chosen according to a specified probability distribution if the probability mask is provided.</p>
 <dl class="simple">
 <dt>Args:</dt><dd><dl class="simple">
 <dt>mask: An optional mask for if an action can be selected.</dt><dd><p>Expected <cite>np.ndarray</cite> of shape <code class="docutils literal notranslate"><span class="pre">(n,)</span></code> and dtype <code class="docutils literal notranslate"><span class="pre">np.int8</span></code> where <code class="docutils literal notranslate"><span class="pre">1</span></code> represents valid actions and <code class="docutils literal notranslate"><span class="pre">0</span></code> invalid / infeasible actions.
 If there are no possible actions (i.e. <code class="docutils literal notranslate"><span class="pre">np.all(mask</span> <span class="pre">==</span> <span class="pre">0)</span></code>) then <code class="docutils literal notranslate"><span class="pre">space.start</span></code> will be returned.</p>
+</dd>
+<dt>probability: An optional probability mask describing the probability of each action being selected.</dt><dd><p>Expected <cite>np.ndarray</cite> of shape <code class="docutils literal notranslate"><span class="pre">(n,)</span></code> and dtype <code class="docutils literal notranslate"><span class="pre">np.float64</span></code> where each value is in the range <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code> and the sum of all values is 1.
+If the values do not sum to 1, an exception will be thrown.</p>
 </dd>
 </dl>
 </dd>

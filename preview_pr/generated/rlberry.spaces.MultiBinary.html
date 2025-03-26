@@ -207,8 +207,12 @@ If seeder, use seeder.seed_seq</p>
 <p>A sample is drawn by independent, fair coin tosses (one toss per binary variable of the space).</p>
 <dl class="simple">
 <dt>Args:</dt><dd><dl class="simple">
-<dt>mask: An optional np.ndarray to mask samples with expected shape of <code class="docutils literal notranslate"><span class="pre">space.shape</span></code>.</dt><dd><p>For <code class="docutils literal notranslate"><span class="pre">mask</span> <span class="pre">==</span> <span class="pre">0</span></code> then the samples will be <code class="docutils literal notranslate"><span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">mask</span> <span class="pre">==</span> <span class="pre">1`</span> <span class="pre">then</span> <span class="pre">random</span> <span class="pre">samples</span> <span class="pre">will</span> <span class="pre">be</span> <span class="pre">generated.</span>
-<span class="pre">The</span> <span class="pre">expected</span> <span class="pre">mask</span> <span class="pre">shape</span> <span class="pre">is</span> <span class="pre">the</span> <span class="pre">space</span> <span class="pre">shape</span> <span class="pre">and</span> <span class="pre">mask</span> <span class="pre">dtype</span> <span class="pre">is</span> <span class="pre">``np.int8</span></code>.</p>
+<dt>mask: An optional <code class="docutils literal notranslate"><span class="pre">np.ndarray</span></code> to mask samples with expected shape of <code class="docutils literal notranslate"><span class="pre">space.shape</span></code>.</dt><dd><p>For <code class="docutils literal notranslate"><span class="pre">mask</span> <span class="pre">==</span> <span class="pre">0</span></code> then the samples will be <code class="docutils literal notranslate"><span class="pre">0</span></code>, for a <code class="docutils literal notranslate"><span class="pre">mask</span> <span class="pre">==</span> <span class="pre">1</span></code> then the samples will be <code class="docutils literal notranslate"><span class="pre">1</span></code>.
+For random samples, using a mask value of <code class="docutils literal notranslate"><span class="pre">2</span></code>.
+The expected mask shape is the space shape and mask dtype is <code class="docutils literal notranslate"><span class="pre">np.int8</span></code>.</p>
+</dd>
+<dt>probability: An optional <code class="docutils literal notranslate"><span class="pre">np.ndarray</span></code> to mask samples with expected shape of space.shape where each element</dt><dd><p>represents the probability of the corresponding sample element being a 1.
+The expected mask shape is the space shape and mask dtype is <code class="docutils literal notranslate"><span class="pre">np.float64</span></code>.</p>
 </dd>
 </dl>
 </dd>
