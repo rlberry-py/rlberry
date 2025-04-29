@@ -34,8 +34,8 @@ Evaluation and plot
    manager.evaluate_agents
    manager.read_writer_data
    manager.plot_writer_data
-   manager.plot_smoothed_curves
-   manager.plot_synchronized_curves
+   manager.plot_curves_smoothed_NW
+   manager.plot_curves_with_same_x
    manager.compare_agents
 
    manager.tensorboard_to_dataframe

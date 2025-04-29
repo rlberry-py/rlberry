@@ -1,0 +1,12 @@
+﻿:mod:`rlberry.manager`.plot_curves_smoothed_NW
+===========================================================
+
+.. currentmodule:: rlberry.manager
+
+.. autofunction:: plot_curves_smoothed_NW
+
+.. include:: rlberry.manager.plot_curves_smoothed_NW.examples
+
+.. raw:: html
+
+    <div class="clearer"></div>

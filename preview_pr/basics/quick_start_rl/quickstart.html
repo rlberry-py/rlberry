@@ -346,7 +346,7 @@ automatically. To do this, we can use the <code class="docutils literal notransl
 <p>For UCBVI this is the number of iterations of the algorithm and in each
 iteration, the environment takes 100 steps (<code class="docutils literal notranslate"><span class="pre">horizon</span></code>) times the
 <code class="docutils literal notranslate"><span class="pre">fit_budget</span></code>. Hence the fit_budget used here</p>
-<p>Finally, we plot the reward. Here you can see the mean value over the 10 fitted agent, with 2 options (raw and smoothed). Note that, to be able to see the smoothed version, you must have installed the extra package <code class="docutils literal notranslate"><span class="pre">scikit-fda</span></code>, (For more information, you can check the options on the <a class="reference internal" href="../../installation.html#options"><span class="std std-ref">install page</span></a>).</p>
+<p>Finally, we plot the reward. Here you can see the mean value over the 10 fitted agent, with 2 options (raw and smoothed).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot of the reward.</span>
 <span class="n">output</span> <span class="o">=</span> <span class="n">plot_writer_data</span><span class="p">(</span>
     <span class="p">[</span><span class="n">ucbvi_stats</span><span class="p">,</span> <span class="n">baseline_stats</span><span class="p">],</span>

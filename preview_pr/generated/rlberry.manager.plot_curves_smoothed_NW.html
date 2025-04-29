@@ -10,9 +10,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   
-  <title>rlberry.manager.plot_smoothed_curves &mdash; rlberry 0.7.3.post16.dev0+8710009 documentation</title>
+  <title>rlberry.manager.plot_curves_smoothed_NW &mdash; rlberry 0.7.3.post16.dev0+8710009 documentation</title>
   
-  <link rel="canonical" href="https://rlberry-py.github.io/rlberry/generated/rlberry.manager.plot_smoothed_curves.html" />
+  <link rel="canonical" href="https://rlberry-py.github.io/rlberry/generated/rlberry.manager.plot_curves_smoothed_NW.html" />
 
   
 
@@ -109,8 +109,8 @@
         </div>
             <div class="sk-sidebar-toc">
               <ul>
-<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">rlberry.manager</span></code>.plot_smoothed_curves</a><ul>
-<li><a class="reference internal" href="#rlberry.manager.plot_smoothed_curves"><code class="docutils literal notranslate"><span class="pre">plot_smoothed_curves()</span></code></a></li>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">rlberry.manager</span></code>.plot_curves_smoothed_NW</a><ul>
+<li><a class="reference internal" href="#rlberry.manager.plot_curves_smoothed_NW"><code class="docutils literal notranslate"><span class="pre">plot_curves_smoothed_NW()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -121,13 +121,13 @@
     <div id="sk-page-content-wrapper">
       <div class="sk-page-content container-fluid body px-md-3" role="main">
         
-  <section id="rlberry-manager-plot-smoothed-curves">
-<h1><code class="xref py py-mod docutils literal notranslate"><span class="pre">rlberry.manager</span></code>.plot_smoothed_curves<a class="headerlink" href="#rlberry-manager-plot-smoothed-curves" title="Permalink to this heading">¶</a></h1>
+  <section id="rlberry-manager-plot-curves-smoothed-nw">
+<h1><code class="xref py py-mod docutils literal notranslate"><span class="pre">rlberry.manager</span></code>.plot_curves_smoothed_NW<a class="headerlink" href="#rlberry-manager-plot-curves-smoothed-nw" title="Permalink to this heading">¶</a></h1>
 <dl class="py function">
-<dt class="sig sig-object py" id="rlberry.manager.plot_smoothed_curves">
-<span class="sig-prename descclassname"><span class="pre">rlberry.manager.</span></span><span class="sig-name descname"><span class="pre">plot_smoothed_curves</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smoothing_bandwidth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_representation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ci'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_boot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savefig_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">linestyles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rlberry/manager/plotting.html#plot_smoothed_curves"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.manager.plot_smoothed_curves" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="rlberry.manager.plot_curves_smoothed_NW">
+<span class="sig-prename descclassname"><span class="pre">rlberry.manager.</span></span><span class="sig-name descname"><span class="pre">plot_curves_smoothed_NW</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smoothing_bandwidth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_representation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ci'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_boot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savefig_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">linestyles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rlberry/manager/plotting.html#plot_curves_smoothed_NW"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rlberry.manager.plot_curves_smoothed_NW" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the performances contained in the data (see data parameter to learn what format it should be).</p>
-<p>If there are several simulations, a confidence interval is plotted.</p>
+<p>If there are several simulations, an error band is plotted.</p>
 <p>In all cases a smoothing is performed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -149,7 +149,7 @@ customize the plot.</p>
 </dd>
 <dt><strong>error_representation: str in {“cb”, “raw_curves”, “ci”,  “pi”, “none”}</strong></dt><dd><p>How to represent multiple simulations. The “ci” and “pi” do not take into account the need for simultaneous inference, it is then harder to draw conclusion from them than with “cb” but they are the most widely used.</p>
 <ul class="simple">
-<li><p>“cb” is a confidence band on the mean curve using functional data analysis (band in which the mean curve is with probability larger than 1-level). Method from [1], using scikit-fda [2] library.</p></li>
+<li><p>“cb” is a confidence band on the mean curve using functional data analysis (band in which the mean curve is with probability larger than 1-level). Method from [1].</p></li>
 <li><p>“raw curves” is a plot of the raw curves.</p></li>
 <li><p>“pi” is a plot of a non-simultaneous prediction interval with gaussian model around the mean smoothed curve (e.g. we do curve plus/minus gaussian quantile times std).</p></li>
 <li><p>“ci” is a confidence interval with gaussian model around the mean smoothed curve (e.g. we do curve plus/minus gaussian quantile times std divided by sqrt of number of seeds).</p></li>
@@ -189,7 +189,7 @@ the figure is not saved.</p>
     <div class="container">
       <footer class="sk-content-footer">
             &copy; 2023, rlberry team.
-          <a href="../_sources/generated/rlberry.manager.plot_smoothed_curves.rst.txt" rel="nofollow">Show this page source</a>
+          <a href="../_sources/generated/rlberry.manager.plot_curves_smoothed_NW.rst.txt" rel="nofollow">Show this page source</a>
       </footer>
     </div>
   </div>
