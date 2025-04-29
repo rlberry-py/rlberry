@@ -289,11 +289,11 @@ def plot_curves_smoothed_NW(
     Examples
     --------
     >>> import pandas as pd
-    >>> from rlberry.manager import plot_smoothed_curve
+    >>> from rlberry.manager import plot_curves_smoothed_NW
     >>>  df = pd.DataFrame(
         {"name": ["a", "a", "a"], "x": [1, 2, 3], "y": [3, 4, 5], "n_simu": [0, 0, 0]}
     )
-    >>> plot_smoothed_curve(df, "x", "y")
+    >>> plot_curves_smoothed_NW(df, "x", "y")
 
     References
     ----------

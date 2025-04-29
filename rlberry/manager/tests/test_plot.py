@@ -157,8 +157,8 @@ def test_without_rlberry():
     )
     with tempfile.TemporaryDirectory() as tmpdirname:
         with plt.ion():  # do not block on plt.show
-            plot_smoothed_curves(df, "x", "y", savefig_fname=tmpdirname + "/test.png")
-            plot_synchronized_curves(
+            plot_curves_smoothed_NW(df, "x", "y", savefig_fname=tmpdirname + "/test.png")
+            plot_curves_with_same_x(
                 df, "x", "y", savefig_fname=tmpdirname + "/test.png"
             )
 
@@ -175,8 +175,8 @@ def test_edge_cases():
     )
     with tempfile.TemporaryDirectory() as tmpdirname:
         with plt.ion():  # do not block on plt.show
-            plot_smoothed_curves(df, "x", "y", savefig_fname=tmpdirname + "/test.png")
-            plot_synchronized_curves(
+            plot_curves_smoothed_NW(df, "x", "y", savefig_fname=tmpdirname + "/test.png")
+            plot_curves_with_same_x(
                 df, "x", "y", savefig_fname=tmpdirname + "/test.png"
             )
     # Inf
@@ -190,14 +190,14 @@ def test_edge_cases():
     )
     with tempfile.TemporaryDirectory() as tmpdirname:
         with plt.ion():  # do not block on plt.show
-            plot_smoothed_curves(
+            plot_curves_smoothed_NW(
                 df,
                 "x",
                 "y",
                 smoothing_bandwidth=1,
                 savefig_fname=tmpdirname + "/test.png",
             )
-            plot_synchronized_curves(
+            plot_curves_with_same_x(
                 df, "x", "y", savefig_fname=tmpdirname + "/test.png"
             )
     # constant
@@ -206,8 +206,8 @@ def test_edge_cases():
     )
     with tempfile.TemporaryDirectory() as tmpdirname:
         with plt.ion():  # do not block on plt.show
-            plot_smoothed_curves(df, "x", "y", savefig_fname=tmpdirname + "/test.png")
-            plot_synchronized_curves(
+            plot_curves_smoothed_NW(df, "x", "y", savefig_fname=tmpdirname + "/test.png")
+            plot_curves_with_same_x(
                 df, "x", "y", savefig_fname=tmpdirname + "/test.png"
             )
 
