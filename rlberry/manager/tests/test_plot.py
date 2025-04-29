@@ -9,7 +9,11 @@ import matplotlib.pyplot as plt
 
 from rlberry_scool.envs import Chain
 from rlberry.manager import plot_writer_data, ExperimentManager, read_writer_data
-from rlberry.manager.plotting import plot_curves_smoothed_NW, plot_writer_data, plot_curves_with_same_x
+from rlberry.manager.plotting import (
+    plot_curves_smoothed_NW,
+    plot_writer_data,
+    plot_curves_with_same_x,
+)
 from rlberry.agents import AgentWithSimplePolicy
 
 # np.random.seed(42)
