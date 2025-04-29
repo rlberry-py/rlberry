@@ -3,7 +3,7 @@ from .experiment_manager import preset_manager
 from .multiple_managers import MultipleManagers
 from .evaluation import evaluate_agents, read_writer_data
 from .comparison import compare_agents, AdastopComparator
-from .plotting import plot_smoothed_curves, plot_writer_data, plot_synchronized_curves
+from .plotting import plot_curves_smoothed_NW, plot_writer_data, plot_curves_with_same_x
 from .env_tools import with_venv, run_venv_xp
 from .utils import tensorboard_to_dataframe
 

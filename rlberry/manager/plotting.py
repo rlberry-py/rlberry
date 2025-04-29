@@ -182,7 +182,7 @@ def plot_writer_data(
     if ax is None:
         figure, ax = plt.subplots(1, 1)
     if smooth:
-        data_smoothed = plot_smoothed_curves(
+        data_smoothed = plot_curves_smoothed_NW(
             data[["name", xtag, "value", "n_simu"]],
             xtag,
             "value",
@@ -196,7 +196,7 @@ def plot_writer_data(
             linestyles,
         )
     else:
-        data_smoothed = plot_synchronized_curves(
+        data_smoothed = plot_curves_with_same_x(
             data[["name", xtag, "value", "n_simu"]],
             xtag,
             "value",
@@ -221,7 +221,7 @@ def plot_writer_data(
         return data
 
 
-def plot_smoothed_curves(
+def plot_curves_smoothed_NW(
     data,
     x,
     y,
@@ -237,7 +237,7 @@ def plot_smoothed_curves(
     """
     Plot the performances contained in the data (see data parameter to learn what format it should be).
 
-    If there are several simulations, a confidence interval is plotted.
+    If there are several simulations, an error band is plotted.
 
     In all cases a smoothing is performed.
 
@@ -264,7 +264,7 @@ def plot_smoothed_curves(
     error_representation: str in {"cb", "raw_curves", "ci",  "pi", "none"}
         How to represent multiple simulations. The "ci" and "pi" do not take into account the need for simultaneous inference, it is then harder to draw conclusion from them than with "cb" but they are the most widely used.
 
-        - "cb" is a confidence band on the mean curve using functional data analysis (band in which the mean curve is with probability larger than 1-level). Method from [1], using scikit-fda [2] library.
+        - "cb" is a confidence band on the mean curve using functional data analysis (band in which the mean curve is with probability larger than 1-level). Method from [1].
 
         - "raw curves" is a plot of the raw curves.
 
@@ -298,7 +298,6 @@ def plot_smoothed_curves(
     References
     ----------
         [1] Degras, D. (2017). Simultaneous confidence bands for the mean of functional data. Wiley Interdisciplinary Reviews: Computational Statistics, 9(3), e1397.
-        [2] scikit-fda, Carlos Ramos Carreño, hzzhyj, mellamansanchez, Pablo Marcos, pedrorponga, David del Val, Pablo, David García Fernández, Martín, Miguel Carbajo Berrocal, ElenaPetrunina, Pablo Cuesta Sierra, Rafa Hidalgo, Clément Lejeune, amandaher, dSerna4, ego-thales, pedrog99, Jorge Duque, … Álvaro Castillo. (2023). GAA-UAM/scikit-fda: Version 0.9 (0.9). Zenodo. https://doi.org/10.5281/zenodo.10016930
 
     """
 
@@ -452,7 +451,7 @@ def plot_smoothed_curves(
     return data_smoothed
 
 
-def plot_synchronized_curves(
+def plot_curves_with_same_x(
     data,
     x,
     y,
@@ -509,7 +508,6 @@ def plot_synchronized_curves(
     References
     ----------
         [1] Degras, D. (2017). Simultaneous confidence bands for the mean of functional data. Wiley Interdisciplinary Reviews: Computational Statistics, 9(3), e1397.
-        [2] scikit-fda, Carlos Ramos Carreño, hzzhyj, mellamansanchez, Pablo Marcos, pedrorponga, David del Val, Pablo, David García Fernández, Martín, Miguel Carbajo Berrocal, ElenaPetrunina, Pablo Cuesta Sierra, Rafa Hidalgo, Clément Lejeune, amandaher, dSerna4, ego-thales, pedrog99, Jorge Duque, … Álvaro Castillo. (2023). GAA-UAM/scikit-fda: Version 0.9 (0.9). Zenodo. https://doi.org/10.5281/zenodo.10016930
 
     """
     xlabel = x
