@@ -313,12 +313,13 @@ def plot_curves_smoothed_NW(
         """
         Nadaraya-Watson kernel smoothing
         """
-        n_tot_simu = int(data["n_simu"].max()) + 1
+        n_tot_simu = int(df["n_simu"].max()) + 1
 
         Yhat = np.zeros([n_tot_simu, len(xplot)])
         bw = smoothing_bandwidth
         for f in range(n_tot_simu):
             Y = df_name.loc[df["n_simu"] == f, ylabel].values
+
             try:
                 np.isfinite(Y)
             except:
@@ -336,6 +337,7 @@ def plot_curves_smoothed_NW(
                     Yhat[f] = nw.get_y_smoothed(Y)
                 else:
                     Yhat[f] = np.nan * np.ones(len(xplot))
+
         return Yhat
 
     names = np.unique(data["name"])
@@ -345,7 +347,7 @@ def plot_curves_smoothed_NW(
         df_name = data.loc[data["name"] == name]
         n_tot_simu = int(df_name["n_simu"].max()) + 1
         Xhat = process(df_name)
-        mu = np.mean(Xhat, axis=0)
+        mu = np.nanmean(Xhat, axis=0)
         id_plot = xplot <= np.max(df_name[xlabel])
 
         ax.plot(
@@ -674,7 +676,6 @@ class Smoothed_curve_NW:
                 else self.bandwidth
             )
         numerator = self.kernel(D / bandwidth)
-
         return numerator / np.sum(numerator, axis=1)[:, np.newaxis]
 
     def get_y_smoothed(self, y):
