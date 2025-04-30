@@ -1,21 +1,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from itertools import cycle
-import numbers
 from scipy.stats import norm
 import pandas as pd
 
 from rlberry.manager import read_writer_data
-
-try:
-    from skfda.representation.grid import FDataGrid
-    from skfda.misc.hat_matrix import NadarayaWatsonHatMatrix
-    from skfda.preprocessing.smoothing import KernelSmoother
-    from skfda.preprocessing.smoothing.validation import SmoothingParameterSearch
-
-    SKFDA_INSTALLED = True
-except Exception as ex:
-    SKFDA_INSTALLED = False
 
 import rlberry
 
@@ -39,6 +28,7 @@ def plot_writer_data(
     title=None,
     savefig_fname=None,
     linestyles=False,
+    return_smoothed_curves=False,
 ):
     """
     Given a list of ExperimentManager or a folder, plot data (corresponding to info) obtained in each episode.
@@ -70,17 +60,16 @@ def plot_writer_data(
     smooth : boolean, default=False
         Whether to smooth the curve with a Nadaraya-Watson Kernel smoothing.
         Remark that this also allow for an xtag which is not synchronized on all the simulations (e.g. time for instance).
-    smoothing_bandwidth: float or array of floats or None
+    smoothing_bandwidth: float or None
         How to choose the bandwidth parameter.
         If float, then smoothing_bandwidth is used directly as a bandwidth.
-        If is an array, a parameter search using smoothing_bandwidth is used.
-        If None, a parameter search from a range of 20 possible values choosen by heuristics is performed.
+        If None, a heuristic based on the 10th percentile of nonzero distances in x is used.
     id_agent : int or None, default=None
         id of the agent to plot, if not None plot only the results for the agent whose id is id_agent.
     ax: matplotlib axis or None, default=None
         Matplotlib axis on which we plot. If None, create one. Can be used to
         customize the plot.
-    error_representation: str in {"cb", "raw_curves", "ci",  "pi"}
+    error_representation: str in {"cb", "raw_curves", "ci",  "pi", "none"}
         How to represent multiple simulations. The "ci" and "pi" do not take into account the need for simultaneous inference, it is then harder to draw conclusion from them than with "cb" and "pb" but they are the most widely used.
 
         - "cb" is a confidence band on the mean curve using functional data analysis (band in which the mean curve is with probability larger than 1-level).
@@ -90,6 +79,7 @@ def plot_writer_data(
         - "pi" is a plot of a non-simultaneous prediction interval with gaussian model around the mean smoothed curve (e.g. we do curve plus/minus gaussian quantile times std).
 
         - "ci" is a confidence interval with gaussian model around the mean smoothed curve (e.g. we do curve plus/minus gaussian quantile times std divided by sqrt of number of seeds).
+        - "none" don't represent the error, only plot the mean smoothed curve.
     n_boot: int, default=500,
 
         Number of bootstrap evaluations used for confidence interval estimation.
@@ -109,6 +99,9 @@ def plot_writer_data(
     savefig_fname: str (Optional)
         Name of the figure in which the plot is saved with figure.savefig. If None,
         the figure is not saved.
+    return_smoothed_curves: boolean, default=False
+        Whether to return a dataframe containing the smoothed curves. If True,
+        returns the tuple (data_preprocessed, data_smoothed).
     linestyles: boolean, default=False
         Whether to use different linestyles for each curve.
     Returns
@@ -189,7 +182,7 @@ def plot_writer_data(
     if ax is None:
         figure, ax = plt.subplots(1, 1)
     if smooth:
-        plot_smoothed_curves(
+        data_smoothed = plot_curves_smoothed_NW(
             data[["name", xtag, "value", "n_simu"]],
             xtag,
             "value",
@@ -203,7 +196,7 @@ def plot_writer_data(
             linestyles,
         )
     else:
-        plot_synchronized_curves(
+        data_smoothed = plot_curves_with_same_x(
             data[["name", xtag, "value", "n_simu"]],
             xtag,
             "value",
@@ -222,10 +215,13 @@ def plot_writer_data(
         plt.gcf().savefig(savefig_fname)
     if show:
         plt.show()
-    return data
+    if return_smoothed_curves:
+        return data, data_smoothed
+    else:
+        return data
 
 
-def plot_smoothed_curves(
+def plot_curves_smoothed_NW(
     data,
     x,
     y,
@@ -241,7 +237,7 @@ def plot_smoothed_curves(
     """
     Plot the performances contained in the data (see data parameter to learn what format it should be).
 
-    If there are several simulations, a confidence interval is plotted.
+    If there are several simulations, an error band is plotted.
 
     In all cases a smoothing is performed.
 
@@ -258,24 +254,24 @@ def plot_smoothed_curves(
 
         - y column is named according to y parameter and contain values to have in y axis.
 
-
-    smoothing_bandwidth: float or array of floats or None
-        How to choose the bandwidth parameter. If float, then smoothing_bandwidth is used
-        directly as a bandwidth and if is an array, a parameter search using smoothing_bandwidth is
-        used if None, a parameter search from a range of 20 possible values choosen by heuristics is performed.
+    smoothing_bandwidth: float or None
+        How to choose the bandwidth parameter.
+        If float, then smoothing_bandwidth is used directly as a bandwidth.
+        If None, a heuristic based on the 10th percentile of nonzero distances in x is used.
     ax: matplotlib axis or None, default=None
         Matplotlib axis on which we plot. If None, create one. Can be used to
         customize the plot.
-    error_representation: str in {"cb", "raw_curves", "ci",  "pi"}
+    error_representation: str in {"cb", "raw_curves", "ci",  "pi", "none"}
         How to represent multiple simulations. The "ci" and "pi" do not take into account the need for simultaneous inference, it is then harder to draw conclusion from them than with "cb" but they are the most widely used.
 
-        - "cb" is a confidence band on the mean curve using functional data analysis (band in which the mean curve is with probability larger than 1-level). Method from [1], using scikit-fda [2] library.
+        - "cb" is a confidence band on the mean curve using functional data analysis (band in which the mean curve is with probability larger than 1-level). Method from [1].
 
         - "raw curves" is a plot of the raw curves.
 
         - "pi" is a plot of a non-simultaneous prediction interval with gaussian model around the mean smoothed curve (e.g. we do curve plus/minus gaussian quantile times std).
 
         - "ci" is a confidence interval with gaussian model around the mean smoothed curve (e.g. we do curve plus/minus gaussian quantile times std divided by sqrt of number of seeds).
+        - "none" don't represent the error, only plot the mean smoothed curve.
 
     n_boot: int, default=2500,
         Number of bootstrap evaluations used for confidence interval estimation.
@@ -293,101 +289,71 @@ def plot_smoothed_curves(
     Examples
     --------
     >>> import pandas as pd
-    >>> from rlberry.manager import plot_smoothed_curve
+    >>> from rlberry.manager import plot_curves_smoothed_NW
     >>>  df = pd.DataFrame(
         {"name": ["a", "a", "a"], "x": [1, 2, 3], "y": [3, 4, 5], "n_simu": [0, 0, 0]}
     )
-    >>> plot_smoothed_curve(df, "x", "y")
+    >>> plot_curves_smoothed_NW(df, "x", "y")
 
     References
     ----------
         [1] Degras, D. (2017). Simultaneous confidence bands for the mean of functional data. Wiley Interdisciplinary Reviews: Computational Statistics, 9(3), e1397.
-        [2] scikit-fda, Carlos Ramos Carreño, hzzhyj, mellamansanchez, Pablo Marcos, pedrorponga, David del Val, Pablo, David García Fernández, Martín, Miguel Carbajo Berrocal, ElenaPetrunina, Pablo Cuesta Sierra, Rafa Hidalgo, Clément Lejeune, amandaher, dSerna4, ego-thales, pedrog99, Jorge Duque, … Álvaro Castillo. (2023). GAA-UAM/scikit-fda: Version 0.9 (0.9). Zenodo. https://doi.org/10.5281/zenodo.10016930
 
     """
-    assert (
-        SKFDA_INSTALLED
-    ), "please install scikit-fda to use the smoothing functionality in rlberry"
+
     xlabel = x
     ylabel = y
+
+    data_temp = data.copy()
+    for n, n_simu in enumerate(data_temp["n_simu"].unique()):
+        data.loc[data["n_simu"] == n_simu, "n_simu"] = n
+    del data_temp
+
     x_values = data[xlabel].values
     min_x, max_x = x_values.min(), x_values.max()
-    n_tot_simu = int(data["n_simu"].max()) + 1
-
-    if not isinstance(smoothing_bandwidth, numbers.Number):
-        sorted_x = np.sort(np.unique(x_values))
-        if len(sorted_x) > 200:
-            min_bandwidth_x = (sorted_x[1] - sorted_x[0]) * 3
-        else:
-            min_bandwidth_x = sorted_x[1] - sorted_x[0]
     xplot = np.linspace(min_x, max_x, 500, endpoint=True)
 
     ax, styles, cmap = _prepare_ax(data, ax, linestyles)
 
     def process(df):
         """
-        Change shape and smooth the curves contained in the dataset df if necessary.
+        Nadaraya-Watson kernel smoothing
         """
-        # Nadaraya-Watson kernel smoothing
-        # with cross validation bandwidth selection
-        if not isinstance(smoothing_bandwidth, numbers.Number):
-            if smoothing_bandwidth is None:
-                bandwidth = np.linspace(
-                    min_bandwidth_x, max((max_x - min_x) / 100, min_bandwidth_x * 3), 10
-                )
-            else:
-                bandwidth = smoothing_bandwidth
-            nw = SmoothingParameterSearch(
-                KernelSmoother(
-                    kernel_estimator=NadarayaWatsonHatMatrix(), output_points=xplot
-                ),
-                bandwidth,
-                param_name="kernel_estimator__bandwidth",
-            )
-            bw = False
-        else:
-            nw = KernelSmoother(
-                kernel_estimator=NadarayaWatsonHatMatrix(bandwidth=smoothing_bandwidth),
-                output_points=xplot,
-            )
-            bw = smoothing_bandwidth
+        n_tot_simu = int(df["n_simu"].max()) + 1
 
-        Xhat = np.zeros([n_tot_simu, len(xplot)])
+        Yhat = np.zeros([n_tot_simu, len(xplot)])
+        bw = smoothing_bandwidth
         for f in range(n_tot_simu):
-            X = df_name.loc[df["n_simu"] == f, ylabel].values
+            Y = df_name.loc[df["n_simu"] == f, ylabel].values
+
             try:
-                np.isfinite(X)
+                np.isfinite(Y)
             except:
                 raise ValueError("non-finite (or non float) data detected.")
-            if not np.all(np.isfinite(X)):
+
+            if not np.all(np.isfinite(Y)):
                 logger.warning(
                     "Some of the values are not finite. Not plotting the associated curves."
                 )
-                Xhat[f] = np.nan
+                Yhat[f] = np.nan
             else:
-                X_grid = df_name.loc[df["n_simu"] == f, xlabel].values.astype(float)
-                fd = FDataGrid([X], X_grid, domain_range=((min_x, max_x),))
+                X = df_name.loc[df["n_simu"] == f, xlabel].values.astype(float)
+                if len(X) != 0:
+                    nw = Smoothed_curve_NW(X, xplot, bandwidth=bw)
+                    Yhat[f] = nw.get_y_smoothed(Y)
+                else:
+                    Yhat[f] = np.nan * np.ones(len(xplot))
 
-                if bw is False:  # Find the smoothing bandwidth once
-                    nw.fit(fd)
-                    bw = nw.best_params_[
-                        "kernel_estimator__bandwidth"
-                    ]  # don't search for bandwidth in futur run, reuse
-                else:  # after the first one, just apply smoothing with the given smoothing
-                    nw = KernelSmoother(
-                        kernel_estimator=NadarayaWatsonHatMatrix(bandwidth=bw),
-                        output_points=xplot,
-                    )
-                    nw.fit(fd)
-                Xhat[f] = nw.transform(fd).data_matrix.ravel()  # apply smoothing
-        return Xhat
+        return Yhat
 
     names = np.unique(data["name"])
+    data_smoothed = pd.DataFrame()
 
     for id_c, name in enumerate(names):
         df_name = data.loc[data["name"] == name]
+        n_tot_simu = int(df_name["n_simu"].max()) + 1
         Xhat = process(df_name)
-        mu = np.mean(Xhat, axis=0)
+        mu = np.nanmean(Xhat, axis=0)
         id_plot = xplot <= np.max(df_name[xlabel])
 
         ax.plot(
@@ -396,6 +362,19 @@ def plot_smoothed_curves(
             label=name,
             color=cmap[id_c],
             linestyle=(0, styles[id_c]),
+        )
+        data_smoothed = pd.concat(
+            [
+                data_smoothed,
+                pd.DataFrame(
+                    {
+                        "name": [name] * np.sum(id_plot),
+                        "x": xplot[id_plot],
+                        "y": mu[id_plot],
+                    }
+                ),
+            ],
+            ignore_index=True,
         )
 
         if (error_representation == "raw_curves") and (n_tot_simu > 1):
@@ -450,31 +429,37 @@ def plot_smoothed_curves(
                     logger.warning(
                         "The variance of the curve was 0, the confidence bound is very biased"
                     )
-
+            elif error_representation == "none":
+                pass
             else:
                 raise ValueError("error_representation not implemented")
-
-            ax.fill_between(
-                xplot[id_plot],
-                mu.ravel()[id_plot] - y_err[id_plot],
-                mu.ravel()[id_plot] + y_err[id_plot],
-                alpha=0.25,
-                color=cmap[id_c],
-            )
+            if error_representation != "none":
+                ax.fill_between(
+                    xplot[id_plot],
+                    mu.ravel()[id_plot] - y_err[id_plot],
+                    mu.ravel()[id_plot] + y_err[id_plot],
+                    alpha=0.25,
+                    color=cmap[id_c],
+                )
 
     ax.set_ylabel(ylabel)
     ax.set_xlabel(xlabel)
-    plt.legend()
+    # Shrink current axis by 20%
+    box = ax.get_position()
+    ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+
+    # Put a legend to the right of the current axis
+    ax.legend(loc="center left", bbox_to_anchor=(1, 0.5))
 
     if show:
         plt.show()
     if savefig_fname is not None:
         plt.gcf().savefig(savefig_fname)
 
-    return data
+    return data_smoothed
 
 
-def plot_synchronized_curves(
+def plot_curves_with_same_x(
     data,
     x,
     y,
@@ -508,7 +493,7 @@ def plot_synchronized_curves(
     ax: matplotlib axis or None, default=None
         Matplotlib axis on which we plot. If None, create one. Can be used to
         customize the plot.
-    error_representation: str in {"raw_curves", "ci",  "pi"}, default="pi"
+    error_representation: str in {"raw_curves", "ci",  "pi", "none"}, default="pi"
         How to represent multiple simulations.
 
         - "raw curves" is a plot of the raw curves.
@@ -516,6 +501,7 @@ def plot_synchronized_curves(
         - "pi" is a plot of a non-simultaneous prediction interval with gaussian model around the mean curve (e.g. we do curve plus/minus gaussian quantile times std).
 
         - "ci" is a confidence interval on the prediction interval with gaussian model around the mean curve (e.g. we do curve plus/minus gaussian quantile times std divided by sqrt of number of seeds).
+        - "none" don't represent the error, only plot the mean smoothed curve.
 
     level: float, default=0.95,
         Level of the confidence (or prediction) interval. Only used if error_representation is not "raw_curves".
@@ -530,12 +516,18 @@ def plot_synchronized_curves(
     References
     ----------
         [1] Degras, D. (2017). Simultaneous confidence bands for the mean of functional data. Wiley Interdisciplinary Reviews: Computational Statistics, 9(3), e1397.
-        [2] scikit-fda, Carlos Ramos Carreño, hzzhyj, mellamansanchez, Pablo Marcos, pedrorponga, David del Val, Pablo, David García Fernández, Martín, Miguel Carbajo Berrocal, ElenaPetrunina, Pablo Cuesta Sierra, Rafa Hidalgo, Clément Lejeune, amandaher, dSerna4, ego-thales, pedrog99, Jorge Duque, … Álvaro Castillo. (2023). GAA-UAM/scikit-fda: Version 0.9 (0.9). Zenodo. https://doi.org/10.5281/zenodo.10016930
 
     """
     xlabel = x
     ylabel = y
+
     assert len(data) > 0, "dataset is empty"
+
+    data_temp = data.copy()
+    for n, n_simu in enumerate(data_temp["n_simu"].unique()):
+        data.loc[data["n_simu"] == n_simu, "n_simu"] = n
+    del data_temp
+
     n_tot_simu = int(data["n_simu"].max())
 
     # check that every simulation have the same xs or truncate
@@ -560,6 +552,7 @@ def plot_synchronized_curves(
     ax, styles, cmap = _prepare_ax(data, ax, linestyles)
 
     names = np.unique(data["name"])
+    data_smoothed = pd.DataFrame()
     for id_c, name in enumerate(names):
         df_name = data.loc[data["name"] == name, [xlabel, ylabel, "n_simu"]]
         x_plot = df_name.loc[df_name["n_simu"] == 0, xlabel].values.astype(float)
@@ -581,6 +574,13 @@ def plot_synchronized_curves(
 
         quantile = norm.ppf(1 - (1 - level) / 2)
         ax.plot(x_plot, y_mean, color=cmap[id_c], label=name)
+        data_smoothed = pd.concat(
+            [
+                data_smoothed,
+                pd.DataFrame({"name": [name] * len(x_plot), "x": x_plot, "y": y_mean}),
+            ],
+            ignore_index=True,
+        )
 
         if error_representation in ["ci", "pi"]:
             if error_representation == "pi":
@@ -606,6 +606,8 @@ def plot_synchronized_curves(
                     ax.plot(x_simu, y, alpha=0.2, color=cmap[id_c])
                 else:
                     ax.plot(x_simu, y, alpha=0.25, color=cmap[id_c])
+        elif error_representation == "none":
+            pass
         else:
             raise ValueError(
                 "Error representation {} not known for non-smoothed plots".format(
@@ -615,7 +617,12 @@ def plot_synchronized_curves(
 
     ax.set_ylabel(ylabel)
     ax.set_xlabel(xlabel)
-    plt.legend()
+    # Shrink current axis by 20%
+    box = ax.get_position()
+    ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+
+    # Put a legend to the right of the current axis
+    ax.legend(loc="center left", bbox_to_anchor=(1, 0.5))
 
     if show:
         plt.show()
@@ -623,7 +630,7 @@ def plot_synchronized_curves(
     if savefig_fname is not None:
         plt.gcf().savefig(savefig_fname)
 
-    return data
+    return data_smoothed
 
 
 def _prepare_ax(data, ax, linestyles):
@@ -640,7 +647,6 @@ def _prepare_ax(data, ax, linestyles):
     else:
         styles = [() for _ in range(data["name"].unique().size)]
 
-    n_tot_simu = int(data["n_simu"].max())
     names = data["name"].unique()
     if len(names) <= 10:
         cmap = plt.cm.tab10.colors[: len(names)]
@@ -648,3 +654,42 @@ def _prepare_ax(data, ax, linestyles):
         cmap = [plt.cm.gist_rainbow(i / len(names)) for i in range(len(names))]
 
     return ax, styles, cmap
+
+
+class Smoothed_curve_NW:
+    """
+    Nadaraya-Watson kernel smoothing
+
+    Parameters
+    ----------
+    X: array of floats
+        Observed x-axis coordinates, usually either global_step or time.
+    xref: array of floats
+        x values at which we want to compute the smoothed curve
+    bandwidth: float or None, default=None
+        Bandwidth parameter which corresponds to the width of a window on which to smooth for Gaussian kernel,
+        if None, use the 10th percentile of the nonzero distances between all X[i]
+
+    """
+
+    def __init__(self, X, xref, bandwidth=None):
+        self.kernel = lambda x: np.exp(-(x**2) / 2)
+        self.bandwidth = bandwidth
+        self.Hmatrix = self.H(X, xref)
+
+    def H(self, xi, xref):
+        D = np.abs((xi[:, None] - xref).T)
+        nonzero_distances = D.ravel()[D.ravel() > 0]
+        if len(nonzero_distances) == 0:
+            bandwidth = (np.max(xi) - np.min(xi)) / 100
+        else:
+            bandwidth = (
+                float(np.percentile(nonzero_distances, 10))
+                if self.bandwidth is None
+                else self.bandwidth
+            )
+        numerator = self.kernel(D / bandwidth)
+        return numerator / np.sum(numerator, axis=1)[:, np.newaxis]
+
+    def get_y_smoothed(self, y):
+        return self.Hmatrix.dot(y)

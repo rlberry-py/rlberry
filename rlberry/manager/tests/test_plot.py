@@ -9,7 +9,11 @@ import matplotlib.pyplot as plt
 
 from rlberry_scool.envs import Chain
 from rlberry.manager import plot_writer_data, ExperimentManager, read_writer_data
-from rlberry.manager.plotting import plot_smoothed_curves, plot_synchronized_curves
+from rlberry.manager.plotting import (
+    plot_curves_smoothed_NW,
+    plot_writer_data,
+    plot_curves_with_same_x,
+)
 from rlberry.agents import AgentWithSimplePolicy
 
 # np.random.seed(42)
@@ -78,7 +82,9 @@ def test_plot_writer_data_with_manager_input(outdir_id_style):
         assert len(output) > 1
 
 
-@pytest.mark.parametrize("error_representation", ["ci", "pi", "cb", "raw_curves"])
+@pytest.mark.parametrize(
+    "error_representation", ["ci", "pi", "cb", "raw_curves", "none"]
+)
 def test_smooth_ci(error_representation):
     with tempfile.TemporaryDirectory() as tmpdirname:
         output_dir = tmpdirname + "/rlberry_data"
@@ -123,7 +129,7 @@ def test_smooth_ci(error_representation):
         assert len(output) > 1
 
 
-@pytest.mark.parametrize("error_representation", ["ci", "pi", "raw_curves"])
+@pytest.mark.parametrize("error_representation", ["ci", "pi", "raw_curves", "none"])
 def test_non_smooth_ci(error_representation):
     with tempfile.TemporaryDirectory() as tmpdirname:
         output_dir = tmpdirname + "/rlberry_data"
@@ -155,8 +161,78 @@ def test_without_rlberry():
     )
     with tempfile.TemporaryDirectory() as tmpdirname:
         with plt.ion():  # do not block on plt.show
-            plot_smoothed_curves(df, "x", "y", savefig_fname=tmpdirname + "/test.png")
-            plot_synchronized_curves(
+            plot_curves_smoothed_NW(
+                df, "x", "y", savefig_fname=tmpdirname + "/test.png"
+            )
+            plot_curves_with_same_x(
+                df, "x", "y", savefig_fname=tmpdirname + "/test.png"
+            )
+
+
+def test_edge_cases():
+    # Nan
+    df = pd.DataFrame(
+        {
+            "name": ["a", "a", "a"],
+            "x": [1, 2, 3],
+            "y": [3, 4, np.nan],
+            "n_simu": [1, 1, 1],
+        }
+    )
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        with plt.ion():  # do not block on plt.show
+            plot_curves_smoothed_NW(
+                df, "x", "y", savefig_fname=tmpdirname + "/test.png"
+            )
+            plot_curves_with_same_x(
+                df, "x", "y", savefig_fname=tmpdirname + "/test.png"
+            )
+    # Inf
+    df = pd.DataFrame(
+        {
+            "name": ["a", "a", "a"],
+            "x": [1, 2, 3],
+            "y": [3, 4, np.inf],
+            "n_simu": [3, 3, 3],
+        }
+    )
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        with plt.ion():  # do not block on plt.show
+            plot_curves_smoothed_NW(
+                df,
+                "x",
+                "y",
+                smoothing_bandwidth=1,
+                savefig_fname=tmpdirname + "/test.png",
+            )
+            plot_curves_with_same_x(
+                df, "x", "y", savefig_fname=tmpdirname + "/test.png"
+            )
+    # constant
+    df = pd.DataFrame(
+        {"name": ["a", "a", "a"], "x": [1, 2, 3], "y": [3, 3, 3], "n_simu": [0, 0, 0]}
+    )
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        with plt.ion():  # do not block on plt.show
+            plot_curves_smoothed_NW(
+                df, "x", "y", savefig_fname=tmpdirname + "/test.png"
+            )
+            plot_curves_with_same_x(
+                df, "x", "y", savefig_fname=tmpdirname + "/test.png"
+            )
+
+    # Not same length
+    df = pd.DataFrame(
+        {
+            "name": ["a", "a", "a", "b", "b"],
+            "x": [1, 2, 3, 1, 2],
+            "y": [3, 3, 3, 4, 3],
+            "n_simu": [0, 0, 0, 1, 1],
+        }
+    )
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        with plt.ion():  # do not block on plt.show
+            plot_curves_smoothed_NW(
                 df, "x", "y", savefig_fname=tmpdirname + "/test.png"
             )
 
