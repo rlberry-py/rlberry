@@ -303,6 +303,12 @@ def plot_curves_smoothed_NW(
 
     xlabel = x
     ylabel = y
+    
+    data_temp = data.copy()
+    for n, n_simu in enumerate(data_temp["n_simu"].unique()):
+        data.loc[data["n_simu"] == n_simu, "n_simu"] = n
+    del data_temp
+
     x_values = data[xlabel].values
     min_x, max_x = x_values.min(), x_values.max()
     xplot = np.linspace(min_x, max_x, 500, endpoint=True)
@@ -514,7 +520,14 @@ def plot_curves_with_same_x(
     """
     xlabel = x
     ylabel = y
+
     assert len(data) > 0, "dataset is empty"
+
+    data_temp = data.copy()
+    for n, n_simu in enumerate(data_temp["n_simu"].unique()):
+        data.loc[data["n_simu"] == n_simu, "n_simu"] = n
+    del data_temp
+
     n_tot_simu = int(data["n_simu"].max())
 
     # check that every simulation have the same xs or truncate

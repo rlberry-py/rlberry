@@ -174,7 +174,7 @@ def test_edge_cases():
             "name": ["a", "a", "a"],
             "x": [1, 2, 3],
             "y": [3, 4, np.nan],
-            "n_simu": [0, 0, 0],
+            "n_simu": [1, 1, 1],
         }
     )
     with tempfile.TemporaryDirectory() as tmpdirname:
@@ -189,7 +189,7 @@ def test_edge_cases():
             "name": ["a", "a", "a"],
             "x": [1, 2, 3],
             "y": [3, 4, np.inf],
-            "n_simu": [0, 0, 0],
+            "n_simu": [3, 3, 3],
         }
     )
     with tempfile.TemporaryDirectory() as tmpdirname:
