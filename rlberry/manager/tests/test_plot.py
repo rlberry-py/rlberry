@@ -223,14 +223,18 @@ def test_edge_cases():
 
     # Not same length
     df = pd.DataFrame(
-        {"name": ["a", "a", "a","b","b"], "x": [1, 2, 3,1,2], "y": [3, 3, 3,4,3], "n_simu": [0, 0, 0,1,1]}
+        {
+            "name": ["a", "a", "a", "b", "b"],
+            "x": [1, 2, 3, 1, 2],
+            "y": [3, 3, 3, 4, 3],
+            "n_simu": [0, 0, 0, 1, 1],
+        }
     )
     with tempfile.TemporaryDirectory() as tmpdirname:
         with plt.ion():  # do not block on plt.show
             plot_curves_smoothed_NW(
                 df, "x", "y", savefig_fname=tmpdirname + "/test.png"
             )
-
 
 
 def test_warning_error_rep():
