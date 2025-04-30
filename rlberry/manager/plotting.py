@@ -368,7 +368,7 @@ def plot_curves_smoothed_NW(
                 data_smoothed,
                 pd.DataFrame(
                     {
-                        "name": [name] * len(id_plot),
+                        "name": [name] * np.sum(id_plot),
                         "x": xplot[id_plot],
                         "y": mu[id_plot],
                     }
