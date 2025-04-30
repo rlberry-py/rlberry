@@ -303,7 +303,7 @@ def plot_curves_smoothed_NW(
 
     xlabel = x
     ylabel = y
-    
+
     data_temp = data.copy()
     for n, n_simu in enumerate(data_temp["n_simu"].unique()):
         data.loc[data["n_simu"] == n_simu, "n_simu"] = n
