@@ -6,7 +6,6 @@ import os
 from rlberry.envs.gym_make import gym_make
 from rlberry.utils import loading_tools
 
-
 SEED = 42
 
 

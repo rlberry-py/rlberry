@@ -12,7 +12,6 @@ from rlberry_research.agents.bandits import IndexAgent, makeSubgaussianUCBIndex
 from rlberry.manager import ExperimentManager, plot_writer_data
 import matplotlib.pyplot as plt
 
-
 # Agents definition
 
 
