@@ -8,6 +8,7 @@ A demo of twinrooms environment
    :width: 600
 
 """
+
 # sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_twinrooms.jpg'
 
 from rlberry_research.envs.benchmarks.generalization.twinrooms import TwinRooms

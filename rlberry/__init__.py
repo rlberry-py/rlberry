@@ -8,7 +8,6 @@ logger = logging.getLogger("rlberry_logger")
 
 from rlberry.utils.logging import configure_logging
 
-
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 # Initialize logging level

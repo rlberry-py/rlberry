@@ -24,10 +24,8 @@ def least_used_device():
         raise RuntimeError("cuda unavailable")
 
     if shutil.which("nvidia-smi") is None:
-        raise RuntimeError(
-            "nvidia-smi unavailable: \
-cannot select device with most least memory used."
-        )
+        raise RuntimeError("nvidia-smi unavailable: \
+cannot select device with most least memory used.")
 
     memory_map = get_gpu_memory_map()
     device_id = np.argmin(memory_map)
