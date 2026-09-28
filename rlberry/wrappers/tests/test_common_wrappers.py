@@ -28,7 +28,6 @@ from rlberry.wrappers.tests.old_env.old_pball import Old_PBall2D, Old_SimplePBal
 from rlberry.wrappers.tests.old_env.old_six_room import Old_SixRoom
 from rlberry.wrappers.tests.old_env.old_twinrooms import Old_TwinRooms
 
-
 classes = [
     Old_Acrobot,
     Old_AppleGold,

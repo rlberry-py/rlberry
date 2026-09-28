@@ -22,7 +22,6 @@ from rlberry.seeding import Seeder
 
 import tempfile
 
-
 classes = [
     Acrobot,
     Pendulum,
