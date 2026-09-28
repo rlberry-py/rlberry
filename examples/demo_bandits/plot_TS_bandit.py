@@ -22,7 +22,6 @@ from rlberry_research.agents.bandits import (
 )
 from rlberry.manager import ExperimentManager, plot_writer_data
 
-
 # Bernoulli
 
 # Agents definition
