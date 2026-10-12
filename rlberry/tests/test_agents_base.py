@@ -6,7 +6,6 @@ tests based on test_agent.py and test_envs.py
 
 """
 
-
 import pytest
 import numpy as np
 import sys

@@ -8,6 +8,7 @@ A demo of PBALL2D environment
    :width: 600
 
 """
+
 # sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_pball.jpg'
 
 import numpy as np

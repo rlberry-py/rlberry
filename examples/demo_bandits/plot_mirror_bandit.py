@@ -12,6 +12,7 @@ halving's objective.
 The code is in three parts: definition of environment, definition of agent,
 and finally definition of the experiment.
 """
+
 import numpy as np
 
 from rlberry.manager import ExperimentManager, read_writer_data

@@ -5,7 +5,6 @@ from rlberry.manager import AgentManager
 from rlberry.manager import compare_agents, AdastopComparator
 import pandas as pd
 
-
 it = 1
 
 

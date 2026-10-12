@@ -18,7 +18,6 @@ from rlberry_research.agents.bandits import (
 from rlberry.manager import ExperimentManager, plot_writer_data
 import matplotlib.pyplot as plt
 
-
 # Parameters of the problem
 means = np.array([0, 0.9, 1])  # means of the arms
 T = 3000  # Horizon

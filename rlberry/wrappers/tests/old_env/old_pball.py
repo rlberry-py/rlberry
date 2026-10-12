@@ -129,10 +129,8 @@ class Old_PBall(Model):
 
         assert p >= 1, "PBall requires p>=1"
         if p not in [2, np.inf]:
-            logger.warning(
-                "For p!=2 or p!=np.inf, PBall \
-does not make true projections onto the lp ball."
-            )
+            logger.warning("For p!=2 or p!=np.inf, PBall \
+does not make true projections onto the lp ball.")
         self.p = p
         self.d, self.dp = B.shape  # d and d'
         self.m = len(action_list)
