@@ -3,7 +3,6 @@ import uuid
 import hashlib
 from typing import Optional, NamedTuple
 
-
 # Default output directory used by the library.
 RLBERRY_DEFAULT_DATA_DIR = "rlberry_data/"
 

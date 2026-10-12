@@ -15,7 +15,6 @@ from rlberry.experiment import load_experiment_results
 from rlberry.experiment import experiment_generator
 from rlberry.manager.multiple_managers import MultipleManagers
 
-
 if __name__ == "__main__":
     multimanagers = MultipleManagers(parallelization="thread")
 

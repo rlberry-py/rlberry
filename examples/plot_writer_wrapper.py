@@ -19,7 +19,6 @@ during the fit of the agent and then use the plot utils.
     `rlberry.manager.plot_writer_data` documentation for more information.
 """
 
-
 import numpy as np
 
 from rlberry_scool.envs import GridWorld

@@ -10,7 +10,6 @@ from tqdm import tqdm
 from tqdm.utils import _screen_shape_wrapper
 import sys
 
-
 if check_packages.TENSORBOARD_INSTALLED:
     from torch.utils.tensorboard import SummaryWriter
 

@@ -82,9 +82,7 @@ class Old_Pendulum(RenderInterface2D, Model):
 
         action = np.clip(action, -self.max_torque, self.max_torque)[0]
         self.last_action = action  # for rendering
-        costs = (
-            angle_normalize(theta) ** 2 + 0.1 * thetadot**2 + 0.001 * (action**2)
-        )
+        costs = angle_normalize(theta) ** 2 + 0.1 * thetadot**2 + 0.001 * (action**2)
 
         # compute the next state after action
         newthetadot = (
