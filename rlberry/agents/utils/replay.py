@@ -138,6 +138,13 @@ class ReplayBuffer:
         """Clear data in replay."""
         for tag in self._data:
             self._data[tag] = []
+        self._episodes = []
+        self._current_episode = 0
+        self._position = 0
+        if self._enable_prioritized:
+            self._it_sum = replay_utils.SumSegmentTree(self._it_sum._capacity)
+            self._it_min = replay_utils.MinSegmentTree(self._it_min._capacity)
+            self._max_priority = 1.0
 
     def setup_entry(self, tag, dtype):
         """Configure replay buffer to store data.
