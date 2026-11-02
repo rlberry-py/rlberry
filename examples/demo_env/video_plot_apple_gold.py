@@ -9,6 +9,7 @@ A demo of AppleGold environment
    :width: 600
 
 """
+
 # sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_apple_gold.jpg'
 from rlberry_research.envs.benchmarks.grid_exploration.apple_gold import AppleGold
 from rlberry_scool.agents.dynprog import ValueIterationAgent

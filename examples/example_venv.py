@@ -13,7 +13,6 @@ Remark: the functions 'run_sb' and 'run_mushroom' are not directly called
 and are only there to give the script's text.
 """
 
-
 from rlberry.manager import with_venv, run_venv_xp
 
 

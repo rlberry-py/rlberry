@@ -11,6 +11,7 @@ Agent is slightly tuned, but not optimal. This is just for illustration purpose.
    :width: 600
 
 """
+
 # sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_springcartpole.jpg'
 
 from rlberry_research.envs.classic_control import SpringCartPole

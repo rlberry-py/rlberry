@@ -4,7 +4,6 @@ import rlberry
 logger = rlberry.logger
 import imageio
 
-
 _FFMPEG_INSTALLED = True
 try:
     import ffmpeg
@@ -38,10 +37,8 @@ def video_write(fn, images, framerate=60, vcodec="libx264"):
             return
 
         if not _FFMPEG_INSTALLED:
-            logger.error(
-                "video_write(): Unable to save video, ffmpeg-python \
-    package required (https://github.com/kkroening/ffmpeg-python)"
-            )
+            logger.error("video_write(): Unable to save video, ffmpeg-python \
+    package required (https://github.com/kkroening/ffmpeg-python)")
             return
 
         if not isinstance(images, np.ndarray):
@@ -65,12 +62,8 @@ def video_write(fn, images, framerate=60, vcodec="libx264"):
         process.wait()
 
     except Exception as ex:
-        logger.warning(
-            "Not possible to save \
-video, due to exception: {}".format(
-                str(ex)
-            )
-        )
+        logger.warning("Not possible to save \
+video, due to exception: {}".format(str(ex)))
 
 
 def gif_write(fn, images):
@@ -98,9 +91,5 @@ def gif_write(fn, images):
                 writer.append_data(frame)
 
     except Exception as ex:
-        logger.warning(
-            "Not possible to save \
-gif, due to exception: {}".format(
-                str(ex)
-            )
-        )
+        logger.warning("Not possible to save \
+gif, due to exception: {}".format(str(ex)))

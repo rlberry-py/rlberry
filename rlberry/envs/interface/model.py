@@ -82,10 +82,8 @@ class Model(gym.Env):
         """
         Returns true if reset() and step() methods are implemented
         """
-        logger.warning(
-            "Checking if Model is\
-online calls reset() and step() methods."
-        )
+        logger.warning("Checking if Model is\
+online calls reset() and step() methods.")
         try:
             self.reset()
             self.step(self.action_space.sample())
@@ -100,10 +98,8 @@ online calls reset() and step() methods."
         """
         Returns true if sample() method is implemented
         """
-        logger.warning(
-            "Checking if Model is \
-generative calls sample() method."
-        )
+        logger.warning("Checking if Model is \
+generative calls sample() method.")
         try:
             self.sample(self.observation_space.sample(), self.action_space.sample())
             return True

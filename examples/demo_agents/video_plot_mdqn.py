@@ -30,7 +30,6 @@ from gymnasium.wrappers.rendering import RecordVideo
 import shutil
 import os
 
-
 configure_logging(level="INFO")
 
 env = gym_make("CartPole-v1", render_mode="rgb_array")

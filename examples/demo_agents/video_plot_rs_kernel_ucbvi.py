@@ -9,6 +9,7 @@ A demo of RSKernelUCBVIAgent algorithm in Acrobot environment
    :width: 600
 
 """
+
 # sphinx_gallery_thumbnail_path = 'thumbnails/video_plot_rs_kernel_ucbvi.jpg'
 
 from rlberry_research.envs import Acrobot
