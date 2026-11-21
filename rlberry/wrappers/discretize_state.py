@@ -45,7 +45,7 @@ class DiscretizeStateWrapper(Wrapper):
             self.discretized_states[:, ii] = self.get_continuous_state(ii, False)
 
     def reset(self, seed=None, options=None):
-        obs, info = self.env.reset(seed, options)
+        obs, info = self.env.reset(seed=seed, options=options)
         return self.get_discrete_state(obs), info
 
     def step(self, action):
